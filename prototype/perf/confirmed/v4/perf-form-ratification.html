@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GHR - 结果审定表单</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════
+   GHR 结果审定表单 — Quiet Precision
+   ═══════════════════════════════════════════════════════ */
+:root{
+  /* 主色系 */
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  /* 语义色 */
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  /* 灰色色阶 */
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  /* 背景 */
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  /* 侧边栏 */
+  --sb-bg:#FFF;--sb-hover:#F4F4F5;--sb-active-bg:#F0F5FF;--sb-active-l:#2563EB;
+  --sb-text:#71717A;--sb-text-hv:#3F3F46;--sb-text-act:#2563EB;
+  --sb-icon:#A1A1AA;--sb-icon-act:#2563EB;
+  /* 阴影 */
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --shadow-card-hover:0 8px 20px -4px rgba(0,0,0,.08),0 2px 6px -2px rgba(0,0,0,.04);
+  --shadow-dropdown:0 10px 40px -10px rgba(0,0,0,.12),0 2px 10px -2px rgba(0,0,0,.04);
+  /* 尺寸 */
+  --header-h:52px;--sidebar-w:240px;
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  /* 字体 */
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --m:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:var(--f);background:var(--bg);color:var(--c7);
+  height:100vh;overflow:hidden;
+  -webkit-font-smoothing:antialiased;line-height:1.5;
+}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+/* ═══ HEADER ═══ */
+.hdr{
+  height:var(--header-h);background:var(--sf);
+  border-bottom:1px solid var(--dv);
+  display:flex;align-items:center;
+  padding:0 24px;gap:16px;
+  position:sticky;top:0;z-index:1100;
+}
+.hdr-l{display:flex;align-items:center;gap:14px}
+.logo{display:flex;align-items:center;gap:8px}
+.logo-i{
+  width:28px;height:28px;border-radius:6px;
+  background:var(--pr);display:flex;align-items:center;justify-content:center;
+}
+.logo-i svg{width:15px;height:15px;color:#FFF}
+.logo-t{font-size:15px;font-weight:700;color:var(--c9);letter-spacing:-.3px}
+
+/* ═══ BREADCRUMB ═══ */
+.breadcrumb{
+  display:flex;align-items:center;gap:6px;
+  font:400 13px/1 var(--f);color:var(--c5);
+}
+.breadcrumb a{
+  color:var(--c5);text-decoration:none;
+  transition:color .12s;
+}
+.breadcrumb a:hover{color:var(--pr)}
+.breadcrumb .sep{color:var(--c3)}
+.breadcrumb .current{color:var(--c8);font-weight:500}
+
+/* ═══ PAGE CARD ═══ */
+.pg{
+  background:var(--sf);border-radius:var(--r3);
+  box-shadow:var(--shadow-card);
+  width:100%;
+  min-height:calc(100vh - var(--header-h) - 48px);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.pg-hd{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 24px;border-bottom:1px solid var(--dv);
+}
+.pg-hd-l{display:flex;align-items:center;gap:14px}
+.pg-hd-ic{
+  width:36px;height:36px;border-radius:var(--r2);
+  background:var(--pr);display:flex;align-items:center;justify-content:center;
+}
+.pg-hd-ic svg{width:18px;height:18px;color:#FFF}
+.pg-hd-t{font:700 18px/1.2 var(--f);color:var(--c9);letter-spacing:-.2px}
+.pg-hd-s{font:400 12px/1 var(--f);color:var(--c5);margin-top:3px}
+.pg-a{display:flex;gap:8px}
+
+/* ═══ BUTTONS ═══ */
+.btn{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:0 14px;height:32px;border-radius:var(--r1);
+  font:500 13px/1 var(--f);cursor:pointer;
+  transition:all .12s;border:none;font-family:inherit;
+}
+.btn svg{width:13px;height:13px}
+.btn-p{background:var(--pr);color:#FFF}
+.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}
+.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
+.btn-w{background:var(--ac);color:#FFF}
+.btn-w:hover{background:#D97706}
+.btn-d:disabled{
+  background:var(--c2);color:var(--c4);cursor:not-allowed;
+  border:none;
+}
+.btn-d:disabled:hover{
+  background:var(--c2);color:var(--c4);
+}
+
+/* ═══ FLOW STATUS ═══ */
+.flow-status{
+  display:flex;align-items:center;gap:8px;
+  padding:6px 12px;background:var(--em50);
+  border-radius:var(--r1);font:500 12px/1 var(--f);color:var(--em700);
+}
+.flow-status svg{width:14px;height:14px}
+
+/* ═══ SECTIONS ═══ */
+.section{
+  padding:20px 24px;border-bottom:1px solid var(--dv);
+}
+.section:last-child{border-bottom:none}
+.section-hd{
+  display:flex;align-items:center;gap:8px;
+  margin-bottom:16px;
+}
+.section-hd-ic{
+  width:24px;height:24px;border-radius:var(--r1);
+  background:var(--pr50);display:flex;align-items:center;justify-content:center;
+}
+.section-hd-ic svg{width:12px;height:12px;color:var(--pr)}
+.section-hd-t{font:600 14px/1 var(--f);color:var(--c9)}
+
+/* ═══ FORM GRID ═══ */
+.form-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:16px;
+}
+.form-item{
+  display:flex;flex-direction:column;gap:6px;
+}
+.form-label{
+  font:500 12px/1 var(--f);color:var(--c5);
+}
+.form-value{
+  font:400 14px/1.4 var(--f);color:var(--c9);
+  padding:8px 12px;background:var(--c0);
+  border-radius:var(--r1);border:1px solid var(--c2);
+  min-height:36px;
+}
+
+/* ═══ SCORE DISPLAY ═══ */
+.score-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:12px;margin-bottom:16px;
+}
+.score-card{
+  background:var(--sf);border:1px solid var(--c2);
+  border-radius:var(--r2);padding:14px 16px;
+  transition:all .2s;
+}
+.score-card:hover{
+  border-color:var(--pr200);
+  box-shadow:var(--shadow-card-hover);
+}
+.score-card-hd{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:8px;
+}
+.score-card-label{font:500 12px/1 var(--f);color:var(--c5)}
+.score-card-badge{
+  font:600 10px/1 var(--f);padding:2px 6px;
+  border-radius:3px;
+}
+.score-card-badge.high{color:var(--em700);background:var(--em50)}
+.score-card-badge.mid{color:var(--pr);background:var(--pr50)}
+.score-card-badge.low{color:var(--ac);background:var(--ac50)}
+.score-card-value{
+  font-family:var(--m);font-size:24px;font-weight:700;
+  color:var(--c9);line-height:1;letter-spacing:-.3px;
+}
+
+/* ═══ TOTAL SCORE ═══ */
+.total-score{
+  display:flex;align-items:center;gap:20px;
+  padding:16px 20px;background:linear-gradient(135deg,var(--pr50),var(--vi50));
+  border-radius:var(--r2);border:1px solid var(--pr100);
+}
+.total-score-value{
+  font-family:var(--m);font-size:36px;font-weight:700;
+  color:var(--pr);line-height:1;
+}
+.total-score-info{flex:1}
+.total-score-label{font:500 14px/1 var(--f);color:var(--c7);margin-bottom:4px}
+.total-score-grade{
+  font:600 16px/1 var(--f);color:var(--c9);
+  display:flex;align-items:center;gap:8px;
+}
+.grade-badge{
+  padding:3px 8px;border-radius:var(--r1);
+  font:600 12px/1 var(--f);
+}
+.grade-badge.expect-plus{
+  background:var(--pr50);color:var(--pr);
+}
+
+/* ═══ RATIFICATION FORM ═══ */
+.ratify-form{
+  display:flex;flex-direction:column;gap:16px;
+}
+.form-row{
+  display:flex;flex-direction:column;gap:6px;
+}
+.form-row label{
+  font:500 12px/1 var(--f);color:var(--c5);
+  display:flex;align-items:center;gap:4px;
+}
+.form-row label .required{
+  color:var(--ro);font-size:14px;
+}
+select,textarea{
+  font:400 14px/1.5 var(--f);color:var(--c9);
+  padding:8px 12px;border:1px solid var(--c2);
+  border-radius:var(--r1);background:var(--sf);
+  transition:all .12s;font-family:inherit;
+}
+select:focus,textarea:focus{
+  outline:none;border-color:var(--pr);
+  box-shadow:0 0 0 3px var(--pr50);
+}
+select{
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%2371717A' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 12px center;
+  padding-right:32px;
+}
+textarea{
+  resize:vertical;min-height:80px;
+}
+.form-hint{
+  font:400 11px/1 var(--f);color:var(--c4);
+  margin-top:4px;
+}
+.form-warning{
+  font:500 12px/1 var(--f);color:var(--ro);
+  display:flex;align-items:center;gap:4px;
+  margin-top:4px;
+}
+.form-warning svg{width:14px;height:14px}
+
+/* ═══ BATCH TABLE ═══ */
+.batch-container{
+  display:flex;gap:20px;flex:1;
+}
+.batch-table-wrap{
+  flex:1;overflow:auto;
+}
+.batch-table{
+  width:100%;border-collapse:collapse;
+}
+.batch-table th{
+  position:sticky;top:0;z-index:10;
+  background:var(--c0);font:600 12px/1 var(--f);color:var(--c5);
+  padding:12px 16px;text-align:left;
+  border-bottom:1px solid var(--c2);
+  white-space:nowrap;
+}
+.batch-table td{
+  padding:12px 16px;font:400 13px/1.4 var(--f);color:var(--c7);
+  border-bottom:1px solid var(--dv);
+  transition:background .1s;
+}
+.batch-table tr:hover td{background:var(--c0)}
+.batch-table tr.expanded td{background:var(--pr50)}
+.batch-table .name-cell{
+  font-weight:500;color:var(--c9);
+  cursor:pointer;
+}
+.batch-table .name-cell:hover{color:var(--pr)}
+.batch-table .score-cell{
+  font-family:var(--m);font-weight:600;
+}
+.batch-table .grade-cell{
+  display:inline-flex;align-items:center;gap:4px;
+}
+.grade-tag{
+  padding:2px 8px;border-radius:var(--r1);
+  font:500 11px/1 var(--f);
+}
+.grade-tag.exceed{background:var(--em50);color:var(--em700)}
+.grade-tag.expect-plus{background:var(--pr50);color:var(--pr)}
+.grade-tag.expect{background:var(--c1);color:var(--c6)}
+.grade-tag.expect-minus{background:var(--ac50);color:#92400E}
+.grade-tag.below{background:var(--ro50);color:var(--ro)}
+.change-mark{
+  display:inline-flex;align-items:center;gap:4px;
+  font:500 11px/1 var(--f);color:var(--ac);
+  background:var(--ac50);padding:2px 8px;border-radius:var(--r1);
+}
+.change-mark svg{width:12px;height:12px}
+.batch-table .action-cell{
+  display:flex;gap:4px;
+}
+.batch-table .action-btn{
+  width:28px;height:28px;border-radius:var(--r1);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .12s;border:none;background:transparent;
+  color:var(--c4);
+}
+.batch-table .action-btn:hover{
+  background:var(--pr50);color:var(--pr);
+}
+.batch-table .action-btn svg{width:14px;height:14px}
+
+/* ═══ EXPANDED ROW ═══ */
+.expand-row td{
+  padding:0 !important;
+  background:var(--pr50);
+}
+.expand-content{
+  padding:16px 20px;
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  animation:slideDown .2s ease;
+}
+@keyframes slideDown{
+  from{opacity:0;transform:translateY(-8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.expand-item{
+  display:flex;flex-direction:column;gap:4px;
+}
+.expand-item-label{font:500 11px/1 var(--f);color:var(--c5)}
+.expand-item-value{font:400 13px/1.3 var(--f);color:var(--c9)}
+
+/* ═══ DISTRIBUTION PANEL ═══ */
+.dist-panel{
+  width:360px;flex-shrink:0;
+  background:var(--sf);border:1px solid var(--c2);
+  border-radius:var(--r2);overflow:hidden;
+  display:flex;flex-direction:column;
+}
+.dist-panel-hd{
+  padding:16px;border-bottom:1px solid var(--dv);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.dist-panel-title{
+  font:600 14px/1 var(--f);color:var(--c9);
+  display:flex;align-items:center;gap:8px;
+}
+.dist-panel-title svg{width:16px;height:16px;color:var(--pr)}
+.dist-panel-badge{
+  font:500 10px/1 var(--f);padding:2px 8px;
+  border-radius:8px;
+}
+.dist-panel-badge.ok{background:var(--em50);color:var(--em700)}
+.dist-panel-badge.warn{background:var(--ac50);color:#92400E}
+.dist-panel-badge.error{background:var(--ro50);color:var(--ro)}
+.dist-panel-bd{
+  flex:1;overflow-y:auto;padding:16px;
+  display:flex;flex-direction:column;gap:16px;
+}
+.dist-item{
+  display:flex;flex-direction:column;gap:8px;
+}
+.dist-item-hd{
+  display:flex;align-items:center;justify-content:space-between;
+}
+.dist-item-label{font:500 13px/1 var(--f);color:var(--c7)}
+.dist-item-nums{
+  display:flex;align-items:center;gap:8px;
+  font:500 12px/1 var(--f);
+}
+.dist-item-required{color:var(--c4)}
+.dist-item-current{font-family:var(--m)}
+.dist-item-current.ok{color:var(--em700)}
+.dist-item-current.warn{color:#92400E}
+.dist-item-current.error{color:var(--ro)}
+.dist-bar-wrap{
+  position:relative;height:24px;
+  background:var(--c1);border-radius:4px;
+  overflow:hidden;
+}
+.dist-bar-required{
+  position:absolute;top:0;left:0;bottom:0;
+  background:var(--c2);border-radius:4px;
+  transition:width .3s ease;
+}
+.dist-bar-current{
+  position:absolute;top:0;left:0;bottom:0;
+  border-radius:4px;transition:width .3s ease;
+  min-width:2px;
+}
+.dist-bar-current.ok{background:var(--em)}
+.dist-bar-current.warn{background:var(--ac)}
+.dist-bar-current.error{background:var(--ro)}
+.dist-bar-label{
+  position:absolute;top:50%;left:8px;
+  transform:translateY(-50%);
+  font:600 11px/1 var(--f);color:var(--sf);
+  text-shadow:0 1px 2px rgba(0,0,0,.2);
+  z-index:1;
+}
+.dist-panel-ft{
+  padding:16px;border-top:1px solid var(--dv);
+  background:var(--c0);
+}
+.dist-summary{
+  display:flex;flex-direction:column;gap:8px;
+}
+.dist-summary-row{
+  display:flex;align-items:center;justify-content:space-between;
+  font:400 12px/1.3 var(--f);
+}
+.dist-summary-label{color:var(--c5)}
+.dist-summary-value{font-weight:600;color:var(--c9)}
+.dist-summary-value.ok{color:var(--em700)}
+.dist-summary-value.warn{color:#92400E}
+.dist-summary-value.error{color:var(--ro)}
+.dist-compliance{
+  display:flex;align-items:center;gap:6px;
+  padding:8px 12px;border-radius:var(--r1);
+  font:500 12px/1 var(--f);margin-top:8px;
+}
+.dist-compliance svg{width:14px;height:14px}
+.dist-compliance.ok{background:var(--em50);color:var(--em700)}
+.dist-compliance.warn{background:var(--ac50);color:#92400E}
+.dist-compliance.error{background:var(--ro50);color:var(--ro)}
+
+/* ═══ BATCH ACTIONS ═══ */
+.batch-actions{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 20px;border-top:1px solid var(--dv);
+  background:var(--c0);
+}
+.batch-actions-info{
+  font:400 12px/1 var(--f);color:var(--c5);
+}
+.batch-actions-btns{
+  display:flex;gap:8px;
+}
+
+/* ═══ DISTRIBUTION STATS (horizontal) ═══ */
+.dist-stats{
+  padding:16px 20px;
+  background:var(--sf);border:1px solid var(--c2);
+  border-radius:var(--r2);margin-bottom:16px;
+}
+.dist-stats-hd{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:12px;
+}
+.dist-stats-title{
+  font:600 13px/1 var(--f);color:var(--c9);
+  display:flex;align-items:center;gap:6px;
+}
+.dist-stats-title svg{width:14px;height:14px;color:var(--pr)}
+.dist-stats-badge{
+  font:500 10px/1 var(--f);padding:2px 8px;border-radius:8px;
+}
+.dist-stats-badge.ok{background:var(--em50);color:var(--em700)}
+.dist-stats-badge.warn{background:var(--ac50);color:#92400E}
+.dist-stats-badge.error{background:var(--ro50);color:var(--ro)}
+.dist-stats-items{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:12px;
+}
+.dist-stats-item{
+  display:flex;flex-direction:column;gap:6px;
+}
+.dist-stats-item-hd{
+  display:flex;align-items:center;justify-content:space-between;
+}
+.dist-stats-item-label{font:500 12px/1 var(--f);color:var(--c7)}
+.dist-stats-item-nums{display:flex;align-items:center;gap:4px;font:500 11px/1 var(--f)}
+.dist-stats-item-req{color:var(--c4)}
+.dist-stats-item-cur{font-family:var(--m)}
+.dist-stats-item-cur.ok{color:var(--em700)}
+.dist-stats-item-cur.warn{color:#92400E}
+.dist-stats-item-cur.error{color:var(--ro)}
+.dist-stats-bar{
+  position:relative;height:18px;background:var(--c1);
+  border-radius:4px;overflow:hidden;
+}
+.dist-stats-bar-req{
+  position:absolute;top:0;left:0;bottom:0;
+  background:var(--c2);border-radius:4px;
+}
+.dist-stats-bar-cur{
+  position:absolute;top:0;left:0;bottom:0;
+  border-radius:4px;transition:width .3s ease;min-width:2px;
+}
+.dist-stats-bar-cur.ok{background:var(--em)}
+.dist-stats-bar-cur.warn{background:var(--ac)}
+.dist-stats-bar-cur.error{background:var(--ro)}
+
+/* ═══ STATUS TABS ═══ */
+.status-tabs{
+  display:flex;align-items:center;gap:6px;
+  padding:0 20px 12px;
+}
+.status-tab{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:5px 12px;border-radius:var(--r1);
+  font:500 12px/1 var(--f);color:var(--c5);
+  cursor:pointer;border:1px solid var(--c2);
+  background:var(--sf);transition:all .12s;
+  font-family:inherit;
+}
+.status-tab:hover{border-color:var(--c3);color:var(--c7)}
+.status-tab.on{
+  background:var(--pr50);border-color:var(--pr200);color:var(--pr);
+}
+.status-tab-count{
+  font-family:var(--m);font-size:11px;
+  padding:1px 5px;border-radius:3px;
+  background:var(--c1);color:var(--c6);
+}
+.status-tab.on .status-tab-count{
+  background:var(--pr100);color:var(--pr);
+}
+.emp-status-tag{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:2px 8px;border-radius:var(--r1);
+  font:500 11px/1 var(--f);
+}
+.emp-status-tag.submitted{background:var(--em50);color:var(--em700)}
+.emp-status-tag.not-submitted{background:var(--ro50);color:var(--ro)}
+.emp-status-tag.pending{background:var(--ac50);color:#92400E}
+.emp-status-tag svg{width:12px;height:12px}
+
+/* ═══ MODAL ═══ */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.4);
+  display:flex;align-items:center;justify-content:center;
+  z-index:2000;opacity:0;pointer-events:none;
+  transition:opacity .2s;
+}
+.modal-overlay.on{opacity:1;pointer-events:all}
+.modal{
+  background:var(--sf);border-radius:var(--r3);
+  box-shadow:0 20px 60px rgba(0,0,0,.15);
+  width:400px;max-width:90vw;
+  transform:translateY(10px);transition:transform .2s;
+}
+.modal-overlay.on .modal{transform:translateY(0)}
+.modal-hd{
+  padding:20px 24px;border-bottom:1px solid var(--dv);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.modal-title{font:600 16px/1 var(--f);color:var(--c9)}
+.modal-close{
+  width:28px;height:28px;border-radius:var(--r1);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--c4);background:transparent;border:none;
+  transition:all .12s;
+}
+.modal-close:hover{background:var(--c1);color:var(--c7)}
+.modal-close svg{width:16px;height:16px}
+.modal-bd{
+  padding:20px 24px;font:400 14px/1.6 var(--f);color:var(--c7);
+}
+.modal-bd .warning-list{
+  margin:12px 0;padding-left:20px;
+}
+.modal-bd .warning-list li{
+  margin-bottom:6px;color:var(--ac);
+  font:500 13px/1.4 var(--f);
+}
+.modal-ft{
+  padding:16px 24px;border-top:1px solid var(--dv);
+  display:flex;justify-content:flex-end;gap:8px;
+}
+
+/* ═══ TOOLTIP ═══ */
+.tooltip-wrap{position:relative;display:inline-flex}
+.tooltip{
+  position:absolute;bottom:calc(100% + 8px);left:50%;
+  transform:translateX(-50%);
+  background:var(--c8);color:var(--sf);
+  padding:6px 10px;border-radius:var(--r1);
+  font:500 11px/1.3 var(--f);white-space:nowrap;
+  pointer-events:none;opacity:0;
+  transition:opacity .15s;
+  z-index:100;
+}
+.tooltip::after{
+  content:'';position:absolute;top:100%;left:50%;
+  transform:translateX(-50%);
+  border:5px solid transparent;
+  border-top-color:var(--c8);
+}
+.tooltip-wrap:hover .tooltip{opacity:1}
+
+/* ═══ ANIMATION ═══ */
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0;transform:translateX(-50%) translateY(-10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.fi{animation:fi .2s ease forwards}
+@keyframes barGrow{from{width:0}to{width:var(--target-width)}}
+.bar-animate{animation:barGrow .5s ease forwards}
+</style>
+</head>
+<body>
+
+<!-- Navigation will be injected by navigation.js -->
+
+<div id="ct"></div>
+
+<!-- Warning Modal -->
+<div class="modal-overlay" id="warningModal">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-title">强制分布校验</div>
+      <button class="modal-close" onclick="closeModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-bd" id="modalBd"></div>
+    <div class="modal-ft"></div>
+  </div>
+</div>
+
+<script src="navigation.js"></script>
+<script>
+// FIXME: 跳过审定的员工是否纳入强制分布分母？如果纳入，等级从哪儿来？
+// FIXME: 审定双流程模式选择时机未定义 - 汇报线逐级 vs 组织架构逐级
+
+// ═══ 图标集 ═══
+const I={
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+  eye:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
+  warning:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  checkCircle:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+  barChart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="12" width="4" height="8" rx="1"/><rect x="10" y="8" width="4" height="12" rx="1"/><rect x="17" y="4" width="4" height="16" rx="1"/></svg>',
+  arrowRight:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>',
+};
+
+// ═══ Mock Data ═══
+const EMPLOYEES = [
+  {id:'EMP001',name:'张明',dept:'产品部',title:'高级产品经理',score:87.5,grade:'符合预期+',adjusted:'符合预期+',changed:false,status:'已提交'},
+  {id:'EMP002',name:'李雪',dept:'产品部',title:'产品经理',score:78,grade:'符合预期',adjusted:'符合预期',changed:false,status:'已提交'},
+  {id:'EMP003',name:'王浩然',dept:'产品部',title:'产品助理',score:62,grade:'符合预期-',adjusted:'低于预期',changed:true,reason:'本季度目标完成率偏低',status:'已提交'},
+  {id:'EMP004',name:'周婷',dept:'产品部',title:'高级产品经理',score:92,grade:'远超预期',adjusted:'远超预期',changed:false,status:'已提交'},
+  {id:'EMP005',name:'吴强',dept:'技术部',title:'前端工程师',score:65,grade:'符合预期-',adjusted:'符合预期-',changed:false,status:'未提交'},
+  {id:'EMP006',name:'刘洋',dept:'技术部',title:'后端工程师',score:55,grade:'低于预期',adjusted:'低于预期',changed:false,status:'未提交'},
+  {id:'EMP007',name:'陈静',dept:'市场部',title:'市场专员',score:81,grade:'符合预期+',adjusted:'符合预期+',changed:false,status:'已提交'},
+  {id:'EMP008',name:'赵伟',dept:'市场部',title:'市场经理',score:73,grade:'符合预期',adjusted:'符合预期',changed:false,status:'待提交'},
+  {id:'EMP009',name:'孙丽',dept:'市场部',title:'品牌专员',score:88,grade:'符合预期+',adjusted:'远超预期',changed:true,reason:'品牌项目超额完成',status:'已提交'},
+  {id:'EMP010',name:'钱程',dept:'仓储部',title:'仓储主管',score:70,grade:'符合预期',adjusted:'符合预期',changed:false,status:'待提交'},
+];
+
+const DISTRIBUTION = [
+  {grade:'远超预期',required:10,requiredN:5,current:20,currentN:2},
+  {grade:'符合预期+',required:20,requiredN:10,current:30,currentN:3},
+  {grade:'符合预期',required:40,requiredN:20,current:40,currentN:4},
+  {grade:'符合预期-',required:20,requiredN:10,current:10,currentN:1},
+  {grade:'低于预期',required:10,requiredN:5,current:0,currentN:0},
+];
+
+const GRADES = ['远超预期','符合预期+','符合预期','符合预期-','低于预期'];
+
+// ═══ 状态 ═══
+let expandedRows = new Set();
+let employees = JSON.parse(JSON.stringify(EMPLOYEES));
+let statusFilter = 'all';
+let controlMode = 'strong'; // 'strong' | 'weak'
+
+// ═══ Grade Class ═══
+function gradeClass(grade) {
+  if (grade === '远超预期') return 'exceed';
+  if (grade === '符合预期+') return 'expect-plus';
+  if (grade === '符合预期') return 'expect';
+  if (grade === '符合预期-') return 'expect-minus';
+  if (grade === '低于预期') return 'below';
+  return '';
+}
+
+// ═══ Calculate Distribution ═══
+function calcDistribution() {
+  const dist = {};
+  GRADES.forEach(g => dist[g] = 0);
+  employees.forEach(emp => {
+    dist[emp.adjusted]++;
+  });
+  return dist;
+}
+
+// ═══ Distribution Status ═══
+function distStatus(required, current) {
+  const ratio = current / required;
+  if (ratio > 1) return 'error';
+  if (ratio > 0.8) return 'warn';
+  return 'ok';
+}
+
+// ═══ Render Batch Mode ═══
+function renderBatch() {
+  const dist = calcDistribution();
+  const totalHeadcount = employees.length;
+  const counts = {all:employees.length, '已提交':0, '未提交':0, '待提交':0};
+  employees.forEach(e => { if(counts[e.status] !== undefined) counts[e.status]++; });
+
+  const filtered = statusFilter === 'all' ? employees : employees.filter(e => e.status === statusFilter);
+  // Map filtered employees back to original indices for expand/grade change
+  const filteredWithIdx = filtered.map(emp => ({emp, idx: employees.indexOf(emp)}));
+
+  let html = `
+    <div class="pg fi" style="min-height:auto">
+      <div class="pg-hd">
+        <div class="pg-hd-l">
+          <div class="pg-hd-ic">${I.check}</div>
+          <div>
+            <div class="pg-hd-t">结果审定 - 批量对比</div>
+            <div class="pg-hd-s">共 ${employees.length} 人</div>
+          </div>
+        </div>
+        <div class="pg-a">
+          <button class="btn btn-s" onclick="exportTemplate()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 模板导出</button>
+          <button class="btn btn-s" onclick="showToast('批量导入功能开发中')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> 批量导入</button>
+          <button class="btn btn-s" onclick="batchReset()">重置</button>
+          <button class="btn btn-p" onclick="batchSubmit()">提交审定</button>
+        </div>
+      </div>
+
+      <!-- Distribution Stats (horizontal, above table) -->
+      <div style="padding:16px 20px 0">
+        <div class="dist-stats">
+          <div class="dist-stats-hd">
+            <div class="dist-stats-title">
+              ${I.barChart}
+              强制分布统计
+            </div>
+            <span class="dist-stats-badge ${getOverallDistStatus()}">${getOverallDistStatusText()}</span>
+          </div>
+          <div class="dist-stats-items">
+            ${DISTRIBUTION.map(d => {
+              const actual = dist[d.grade] || 0;
+              const status = distStatus(d.requiredN, actual);
+              const pct = Math.min(actual / d.requiredN * 100, 100);
+              return `
+                <div class="dist-stats-item">
+                  <div class="dist-stats-item-hd">
+                    <span class="dist-stats-item-label">${d.grade}</span>
+                    <div class="dist-stats-item-nums">
+                      <span class="dist-stats-item-req">≤${d.requiredN}</span>
+                      <span class="dist-stats-item-cur ${status}">${actual}</span>
+                    </div>
+                  </div>
+                  <div class="dist-stats-bar">
+                    <div class="dist-stats-bar-req" style="width:${d.required}%"></div>
+                    <div class="dist-stats-bar-cur ${status}" style="width:${pct}%"></div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      </div>
+
+      <!-- Status Tabs -->
+      <div class="status-tabs">
+        <button class="status-tab ${statusFilter==='all'?'on':''}" onclick="setStatusFilter('all')">
+          全部<span class="status-tab-count">${counts.all}</span>
+        </button>
+        <button class="status-tab ${statusFilter==='已提交'?'on':''}" onclick="setStatusFilter('已提交')">
+          已提交<span class="status-tab-count">${counts['已提交']}</span>
+        </button>
+        <button class="status-tab ${statusFilter==='未提交'?'on':''}" onclick="setStatusFilter('未提交')">
+          未提交<span class="status-tab-count">${counts['未提交']}</span>
+        </button>
+        <button class="status-tab ${statusFilter==='待提交'?'on':''}" onclick="setStatusFilter('待提交')">
+          待提交<span class="status-tab-count">${counts['待提交']}</span>
+        </button>
+      </div>
+
+      <!-- Employee Table + Distribution Panel -->
+      <div class="batch-container">
+        <div class="batch-table-wrap">
+          <table class="batch-table">
+            <thead>
+              <tr>
+                <th>姓名</th>
+                <th>部门</th>
+                <th>职位</th>
+                <th>考核得分</th>
+                <th>当前等级</th>
+                <th>调整后等级</th>
+                <th>提交状态</th>
+                <th>变更标记</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${filteredWithIdx.map(({emp, idx}) => `
+                <tr class="${expandedRows.has(idx) ? 'expanded' : ''}">
+                  <td class="name-cell" onclick="toggleExpand(${idx})">${emp.name}</td>
+                  <td>${emp.dept}</td>
+                  <td>${emp.title}</td>
+                  <td class="score-cell">${emp.score}</td>
+                  <td><span class="grade-tag ${gradeClass(emp.grade)}">${emp.grade}</span></td>
+                  <td>
+                    <select style="font:400 12px/1 var(--f);padding:4px 24px 4px 8px;height:28px;border-radius:4px" onchange="onBatchGradeChange(${idx},this.value)">
+                      ${GRADES.map(g => `<option value="${g}" ${g === emp.adjusted ? 'selected' : ''}>${g}</option>`).join('')}
+                    </select>
+                  </td>
+                  <td><span class="emp-status-tag ${{'已提交':'submitted','未提交':'not-submitted','待提交':'pending'}[emp.status]}">${emp.status}</span></td>
+                  <td>${emp.changed ? '<span class="change-mark">' + I.arrowRight + ' 已调整</span>' : '<span style="color:var(--c4);font:400 11px/1 var(--f)">-</span>'}</td>
+                  <td class="action-cell">
+                    <button class="action-btn" onclick="toggleExpand(${idx})" title="查看详情">
+                      ${I.eye}
+                    </button>
+                  </td>
+                </tr>
+                ${expandedRows.has(idx) ? `
+                  <tr class="expand-row">
+                    <td colspan="9">
+                      <div class="expand-content">
+                        <div class="expand-item">
+                          <span class="expand-item-label">原始等级</span>
+                          <span class="expand-item-value"><span class="grade-tag ${gradeClass(emp.grade)}">${emp.grade}</span></span>
+                        </div>
+                        <div class="expand-item">
+                          <span class="expand-item-label">调整后等级</span>
+                          <span class="expand-item-value"><span class="grade-tag ${gradeClass(emp.adjusted)}">${emp.adjusted}</span></span>
+                        </div>
+                        <div class="expand-item">
+                          <span class="expand-item-label">调整原因</span>
+                          <span class="expand-item-value">${emp.reason || '-'}</span>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                ` : ''}
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Distribution Panel (right side) -->
+        <div class="dist-panel">
+          <div class="dist-panel-hd">
+            <div class="dist-panel-title">
+              ${I.barChart}
+              强制分布
+            </div>
+            <span class="dist-panel-badge ${getOverallDistStatus()}">${getOverallDistStatusText()}</span>
+          </div>
+          <div class="dist-panel-bd">
+            ${DISTRIBUTION.map(d => {
+              const actual = dist[d.grade] || 0;
+              const status = distStatus(d.requiredN, actual);
+              const pct = Math.min(actual / d.requiredN * 100, 100);
+              return `
+                <div class="dist-item">
+                  <div class="dist-item-hd">
+                    <span class="dist-item-label">${d.grade}</span>
+                    <div class="dist-item-nums">
+                      <span class="dist-item-required">≤${d.requiredN} (${d.required}%)</span>
+                      <span class="dist-item-current ${status}">${actual}</span>
+                    </div>
+                  </div>
+                  <div class="dist-bar-wrap">
+                    <div class="dist-bar-required" style="width:${d.required}%"></div>
+                    <div class="dist-bar-current ${status}" style="width:${pct}%"></div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+          <div class="dist-panel-ft">
+            <div class="dist-summary">
+              <div class="dist-summary-row">
+                <span class="dist-summary-label">总人数</span>
+                <span class="dist-summary-value">${totalHeadcount}</span>
+              </div>
+              <div class="dist-summary-row">
+                <span class="dist-summary-label">已分配</span>
+                <span class="dist-summary-value">${employees.filter(e => e.adjusted).length}</span>
+              </div>
+              <div class="dist-summary-row">
+                <span class="dist-summary-label">未分配</span>
+                <span class="dist-summary-value">${totalHeadcount - employees.filter(e => e.adjusted).length}</span>
+              </div>
+            </div>
+            <div class="dist-compliance ${getOverallDistStatus()}">
+              ${getOverallDistStatus() === 'ok' ? I.checkCircle : I.warning}
+              ${getOverallDistStatus() === 'ok' ? '符合强制分布要求' : '存在等级超出分布限制'}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById('ct').innerHTML = html;
+}
+
+// ═══ Batch Mode Interactions ═══
+function toggleExpand(idx) {
+  if (expandedRows.has(idx)) {
+    expandedRows.delete(idx);
+  } else {
+    expandedRows.add(idx);
+  }
+  render();
+}
+
+function onBatchGradeChange(idx, value) {
+  employees[idx].adjusted = value;
+  employees[idx].changed = value !== employees[idx].grade;
+  render();
+}
+
+function setStatusFilter(filter) {
+  statusFilter = filter;
+  render();
+}
+
+function getOverallDistStatus() {
+  const dist = calcDistribution();
+  let hasError = false;
+  let hasWarn = false;
+  DISTRIBUTION.forEach(d => {
+    const actual = dist[d.grade] || 0;
+    const status = distStatus(d.requiredN, actual);
+    if (status === 'error') hasError = true;
+    if (status === 'warn') hasWarn = true;
+  });
+  if (hasError) return 'error';
+  if (hasWarn) return 'warn';
+  return 'ok';
+}
+
+function getOverallDistStatusText() {
+  const status = getOverallDistStatus();
+  if (status === 'error') return '超出限制';
+  if (status === 'warn') return '接近限制';
+  return '符合要求';
+}
+
+function checkDistribution() {
+  const dist = calcDistribution();
+  const warnings = [];
+  DISTRIBUTION.forEach(d => {
+    const actual = dist[d.grade] || 0;
+    if (actual > d.requiredN) {
+      warnings.push(`${d.grade}：要求≤${d.requiredN}人，当前${actual}人，超出${actual - d.requiredN}人`);
+    }
+  });
+  return warnings;
+}
+
+function showWarningModal(warnings) {
+  const modal = document.getElementById('warningModal');
+  const bd = document.getElementById('modalBd');
+  const ft = modal.querySelector('.modal-ft');
+  const isStrong = controlMode === 'strong';
+  bd.innerHTML = `
+    <p>以下等级超出强制分布限制：</p>
+    <ul class="warning-list">
+      ${warnings.map(w => `<li>${w}</li>`).join('')}
+    </ul>
+    <p style="color:${isStrong ? 'var(--ro)' : 'var(--ac)'}; font-weight:500; margin-top:8px">
+      ${isStrong ? '强控模式下，超出限制的提交已被阻止，请返回修改等级分配。' : '弱控制模式下可继续提交但需确认。'}
+    </p>
+  `;
+  ft.innerHTML = `
+    <button class="btn btn-s" onclick="closeModal()">返回修改</button>
+    ${isStrong ? '' : '<button class="btn btn-w" onclick="forceSubmit()">确认提交</button>'}
+  `;
+  modal.classList.add('on');
+}
+
+function closeModal() {
+  document.getElementById('warningModal').classList.remove('on');
+}
+
+function forceSubmit() {
+  closeModal();
+  alert('已强制提交（弱控制模式）');
+}
+
+function batchReset() {
+  employees = JSON.parse(JSON.stringify(EMPLOYEES));
+  expandedRows.clear();
+  render();
+}
+
+function exportTemplate() {
+  const headers = ['员工姓名','员工ID','部门','职位','绩效等级','调整说明'];
+  const rows = [headers.join(',')];
+  employees.forEach(e => {
+    rows.push([e.name,e.id,e.dept,e.title,e.grade||'',''].join(','));
+  });
+  const blob = new Blob(['﻿'+rows.join('\n')], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '结果审定模板.csv';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('模板已导出','success');
+}
+
+function batchSubmit() {
+  const warnings = checkDistribution();
+  if (warnings.length > 0) {
+    showWarningModal(warnings);
+  } else {
+    alert('批量提交成功！');
+  }
+}
+
+// ═══ Render ═══
+function render() {
+  renderBatch();
+}
+
+function showToast(msg, type) {
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);padding:10px 20px;border-radius:8px;font:500 13px/1 var(--f);color:#FFF;z-index:9999;animation:fadeIn .2s ease;background:' + (type==='success'?'var(--em)':'var(--pr)');
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 2500);
+}
+
+// ═══ 初始化 ═══
+// Initialize navigation first to create the content container
+GHR_NAV.init('perf', '绩效表单');
+render();
+</script>
+</body>
+</html>

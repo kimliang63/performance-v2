@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GHR - 目标填写</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --shadow-card-hover:0 8px 20px -4px rgba(0,0,0,.08),0 2px 6px -2px rgba(0,0,0,.04);
+  --shadow-dropdown:0 10px 40px -10px rgba(0,0,0,.12),0 2px 10px -2px rgba(0,0,0,.04);
+  --shadow-modal:0 20px 60px -12px rgba(0,0,0,.18),0 4px 16px -4px rgba(0,0,0,.08);
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --m:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);height:100vh;overflow:hidden;-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+/* ═══ HEADER ═══ */
+.hdr{height:52px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:1100}
+.hdr-l{display:flex;align-items:center;gap:14px}
+.logo{display:flex;align-items:center;gap:8px;cursor:pointer}
+.logo-i{width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center}
+.logo-i svg{width:15px;height:15px;color:#FFF}
+.logo-t{font-size:15px;font-weight:700;color:var(--c9);letter-spacing:-.3px}
+.hdr-sep{width:1px;height:20px;background:var(--c2);margin:0 2px}
+.breadcrumb{display:flex;align-items:center;gap:4px;font:500 13px/1 var(--f);color:var(--c5)}
+.breadcrumb span{cursor:pointer;transition:color .12s}
+.breadcrumb span:hover{color:var(--pr)}
+.breadcrumb .sep{color:var(--c3);cursor:default}
+.breadcrumb .cur{color:var(--c8);font-weight:600;cursor:default}
+.hdr-r{margin-left:auto;display:flex;align-items:center;gap:10px}
+.flow-badge{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:var(--r1);background:var(--pr50);border:1px solid var(--pr200);font:500 12px/1 var(--f);color:var(--pr)}
+.flow-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--pr);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ═══ SPLIT LAYOUT ═══ */
+.split{display:flex;height:calc(100vh - 52px)}
+
+/* ═══ LEFT PANEL ═══ */
+.left{width:320px;background:var(--sf);border-right:1px solid var(--dv);display:flex;flex-direction:column;flex-shrink:0}
+.left-hd{padding:16px;border-bottom:1px solid var(--dv)}
+.left-hd-title{font:600 14px/1 var(--f);color:var(--c9);margin-bottom:10px}
+.left-hd-stats{display:flex;gap:12px}
+.left-hd-stat{font:400 12px/1 var(--f);color:var(--c5)}
+.left-hd-stat strong{font-weight:600;color:var(--c8);font-family:var(--m)}
+
+.left-bd{flex:1;overflow-y:auto;padding:8px}
+
+/* Module group */
+.mod-group{margin-bottom:4px}
+.mod-group-hd{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:var(--r1);cursor:pointer;transition:all .12s;font:600 13px/1 var(--f);color:var(--c7)}
+.mod-group-hd:hover{background:var(--c0)}
+.mod-group-hd.open{color:var(--c9)}
+.mod-group-hd .expand{width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:var(--c4);transition:transform .2s;flex-shrink:0}
+.mod-group-hd.open .expand{transform:rotate(90deg)}
+.mod-group-hd .mod-icon{width:22px;height:22px;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mod-group-hd .mod-icon svg{width:11px;height:11px;color:#FFF}
+.mod-group-hd .mod-badge{font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px;margin-left:auto}
+.mod-group-hd .weight-badge{font:500 11px/1 var(--m);padding:2px 6px;border-radius:3px;background:var(--pr50);color:var(--pr);margin-left:auto}
+
+.mod-group-items{max-height:0;overflow:hidden;transition:max-height .25s ease}
+.mod-group-items.open{max-height:600px}
+
+.goal-item{display:flex;align-items:center;gap:8px;padding:8px 12px 8px 42px;border-radius:var(--r1);cursor:pointer;transition:all .12s;font:400 13px/1.3 var(--f);color:var(--c6);position:relative}
+.goal-item:hover{background:var(--pr50);color:var(--pr)}
+.goal-item.active{background:var(--pr50);color:var(--pr);font-weight:500}
+.goal-item.active::before{content:'';position:absolute;left:12px;top:50%;transform:translateY(-50%);width:3px;height:16px;background:var(--pr);border-radius:0 2px 2px 0}
+.goal-item .gw{font:500 11px/1 var(--m);color:var(--c4);margin-left:auto}
+.goal-item.active .gw{color:var(--pr)}
+
+.empty-mod{padding:12px 42px;font:400 12px/1.3 var(--f);color:var(--c4);font-style:italic}
+
+/* Add goal btn */
+.add-goal-btn{display:flex;align-items:center;gap:6px;padding:8px 12px 8px 42px;font:500 12px/1 var(--f);color:var(--pr);cursor:pointer;border-radius:var(--r1);transition:all .12s;border:none;background:transparent;width:100%;text-align:left;font-family:inherit}
+.add-goal-btn:hover{background:var(--pr50)}
+.add-goal-btn svg{width:12px;height:12px}
+
+/* Left footer */
+.left-ft{padding:12px 16px;border-top:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between}
+.weight-display{font:500 12px/1 var(--f);color:var(--c5)}
+.weight-display strong{font-family:var(--m);font-weight:600;color:var(--em700)}
+.weight-display strong.invalid{color:var(--ro)}
+
+/* ═══ RIGHT PANEL ═══ */
+.right{flex:1;overflow-y:auto;padding:24px}
+
+/* Detail header */
+.detail-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
+.detail-hd-l{display:flex;align-items:center;gap:12px}
+.detail-mod-badge{font:500 11px/1 var(--f);padding:3px 8px;border-radius:3px}
+.detail-hd-t{font:700 20px/1.2 var(--f);color:var(--c9);letter-spacing:-.3px}
+.detail-hd-s{font:400 12px/1 var(--f);color:var(--c5);margin-top:4px}
+.detail-actions{display:flex;gap:8px}
+
+/* Sections */
+.detail-sec{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden}
+.detail-sec-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--dv);cursor:pointer;transition:background .12s}
+.detail-sec-hd:hover{background:var(--c0)}
+.detail-sec-title{font:600 14px/1 var(--f);color:var(--c8);display:flex;align-items:center;gap:8px}
+.detail-sec-title svg{width:16px;height:16px;color:var(--pr)}
+.detail-sec-bd{padding:16px 20px}
+
+/* Form grid */
+.fg{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.fg.f3{grid-template-columns:repeat(3,1fr)}
+.fg .full{grid-column:1/-1}
+.fi{display:flex;flex-direction:column;gap:4px}
+.fi-l{font:400 12px/1 var(--f);color:var(--c5)}
+.fi-l .req{color:var(--ro);margin-left:2px}
+.fi-v{font:400 13px/1.4 var(--f);color:var(--c8)}
+
+/* Inputs */
+.inp{width:100%;padding:7px 10px;border:1px solid var(--c2);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c9);background:var(--sf);transition:all .12s;outline:none}
+.inp:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
+.inp:read-only{background:var(--c0);color:var(--c6);cursor:default}
+.inp:read-only:focus{border-color:var(--c2);box-shadow:none}
+.inp.num{font-family:var(--m);text-align:right}
+
+select.inp{-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:24px;cursor:pointer}
+
+textarea.inp{min-height:60px;resize:vertical;font-family:var(--f)}
+
+/* Measurement standards table */
+.ms-table{width:100%;border-collapse:collapse;margin-top:8px}
+.ms-table th{background:var(--c0);padding:8px 12px;font:500 12px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv)}
+.ms-table td{padding:10px 12px;font:400 13px/1.4 var(--f);color:var(--c7);border-bottom:1px solid var(--dv)}
+.ms-table tr:last-child td{border-bottom:none}
+.ms-table tr:hover td{background:var(--c0)}
+.ms-table .level{display:inline-flex;align-items:center;gap:4px}
+.ms-table .level-dot{width:8px;height:8px;border-radius:50%}
+
+/* Calculation rule */
+.rule-box{background:var(--c0);border:1px solid var(--c2);border-radius:var(--r2);padding:12px 16px;margin-top:8px}
+.rule-box-code{font:400 13px/1.5 var(--m);color:var(--c8);white-space:pre-wrap;word-break:break-all}
+.rule-box-label{font:500 11px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
+.btn svg{width:13px;height:13px}
+.btn-p{background:var(--pr);color:#FFF}
+.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}
+.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
+.btn-d{background:transparent;color:var(--c5);border:1px solid transparent;padding:0 8px;height:28px}
+.btn-d:hover{color:var(--ro);background:var(--ro50)}
+.btn-sm{height:28px;padding:0 10px;font-size:12px}
+.btn-sm svg{width:12px;height:12px}
+
+/* Bottom bar */
+.action-bar{position:fixed;bottom:0;left:320px;right:0;background:var(--sf);border-top:1px solid var(--dv);box-shadow:0 -4px 12px rgba(0,0,0,.06);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;z-index:1000}
+.action-bar-l{display:flex;align-items:center;gap:12px}
+.action-bar-r{display:flex;align-items:center;gap:10px}
+.total-weight{display:flex;align-items:center;gap:8px;padding:8px 16px;background:var(--c0);border-radius:var(--r1);font:500 13px/1 var(--f);color:var(--c6)}
+.total-weight .value{font-family:var(--m);font-weight:600;font-size:16px}
+.total-weight .value.valid{color:var(--em700)}
+.total-weight .value.invalid{color:var(--ro)}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:2000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--sf);border-radius:var(--r4);box-shadow:var(--shadow-modal);width:560px;max-height:80vh;display:flex;flex-direction:column;transform:scale(.96);transition:transform .2s ease}
+.modal-overlay.open .modal{transform:scale(1)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--dv)}
+.modal-title{font:600 16px/1 var(--f);color:var(--c9)}
+.modal-close{width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c4);background:transparent;border:none;transition:all .12s}
+.modal-close:hover{background:var(--c1);color:var(--c7)}
+.modal-close svg{width:16px;height:16px}
+.modal-body{flex:1;overflow-y:auto;padding:16px 24px}
+.modal-footer{display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:14px 24px;border-top:1px solid var(--dv)}
+
+/* Picker list */
+.picker-list{border:1px solid var(--c2);border-radius:var(--r2);max-height:400px;overflow-y:auto}
+.picker-item{padding:12px 16px;border-bottom:1px solid var(--dv);cursor:pointer;transition:background .12s}
+.picker-item:last-child{border-bottom:none}
+.picker-item:hover{background:var(--pr50)}
+.picker-item.selected{background:var(--pr50);border-left:3px solid var(--pr)}
+.picker-item-name{font:500 13px/1.3 var(--f);color:var(--c8);margin-bottom:4px}
+.picker-item-desc{font:400 12px/1.4 var(--f);color:var(--c5)}
+.picker-item-preview{margin-top:8px;padding:8px 10px;background:var(--c0);border-radius:var(--r1);font:400 12px/1.4 var(--m);color:var(--c6);border:1px solid var(--c2)}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .2s ease forwards}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-l">
+    <div class="logo" onclick="window.location.href='perf-index.html'">
+      <div class="logo-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+      <span class="logo-t">GHR</span>
+    </div>
+    <div class="hdr-sep"></div>
+    <div class="breadcrumb">
+      <span onclick="window.location.href='perf-index.html'">绩效方案</span>
+      <span class="sep">/</span>
+      <span onclick="window.location.href='perf-form-pbc.html'">目标制定</span>
+      <span class="sep">/</span>
+      <span class="cur">填写目标</span>
+    </div>
+  </div>
+  <div class="hdr-r">
+    <div class="flow-badge">
+      <span class="dot"></span>
+      <span>当前节点: 员工填写</span>
+    </div>
+  </div>
+</header>
+
+<div class="split">
+  <!-- LEFT: Goal List -->
+  <div class="left">
+    <div class="left-hd">
+      <div class="left-hd-title">目标模块</div>
+      <div class="left-hd-stats">
+        <span class="left-hd-stat">模块 <strong>6</strong></span>
+        <span class="left-hd-stat">目标 <strong id="goalCount">6</strong></span>
+        <span class="left-hd-stat">权重 <strong id="totalWeightL">100</strong>%</span>
+      </div>
+    </div>
+    <div class="left-bd" id="leftPanel"></div>
+    <div class="left-ft">
+      <div class="weight-display">权重合计: <strong id="weightSumL">100%</strong></div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Goal Detail -->
+  <div class="right fade-in" id="rightPanel">
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--c4)">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:8px;opacity:.4"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+      <span style="font:400 14px/1.3 var(--f)">选择左侧目标查看详情</span>
+    </div>
+  </div>
+</div>
+
+<div class="action-bar">
+  <div class="action-bar-l">
+    <div class="total-weight">
+      总权重:
+      <span class="value valid" id="bottomWeight">100%</span>
+    </div>
+  </div>
+  <div class="action-bar-r">
+    <button class="btn btn-s" onclick="alert('草稿已保存')">保存草稿</button>
+    <button class="btn btn-p" onclick="alert('提交成功')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      提交
+    </button>
+  </div>
+</div>
+
+<!-- Measurement Standard Modal -->
+<div class="modal-overlay" id="measureModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">引用衡量标准</span>
+      <button class="modal-close" onclick="closeModal('measureModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body"><div class="picker-list" id="measureList"></div></div>
+    <div class="modal-footer">
+      <button class="btn btn-s" onclick="closeModal('measureModal')">取消</button>
+      <button class="btn btn-p" onclick="confirmMeasure()">确定</button>
+    </div>
+  </div>
+</div>
+
+<!-- Rule Modal -->
+<div class="modal-overlay" id="ruleModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">引用计算规则</span>
+      <button class="modal-close" onclick="closeModal('ruleModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body"><div class="picker-list" id="ruleList"></div></div>
+    <div class="modal-footer">
+      <button class="btn btn-s" onclick="closeModal('ruleModal')">取消</button>
+      <button class="btn btn-p" onclick="confirmRule()">确定</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══ ICONS ═══
+const I={
+  chevron:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>',
+  target:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
+  users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  star:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+  book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+  trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+  link:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+  chart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+  edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+};
+
+// ═══ DATA ═══
+const MODULES = [
+  {name:'业绩目标',weight:50,icon:'target',color:'blue',colorVar:'var(--pr)',desc:'核心业务指标',goals:[
+    {id:'g1',name:'完成Q2产品迭代',indicator:'产品迭代完成率',weight:30,desc:'完成3个核心功能迭代',measure:'梯度评分',
+     target:100,challenge:120,baseline:80,rule:'标准梯度计算',
+     ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',
+     msLevels:[{level:'优秀',color:'var(--em)',score:'120分',condition:'达成率 >= 120%'},{level:'良好',color:'var(--pr)',score:'100分',condition:'达成率 >= 100%'},{level:'合格',color:'var(--ac)',score:'80分',condition:'达成率 >= 80%'},{level:'不合格',color:'var(--ro)',score:'0分',condition:'达成率 < 80%'}]},
+    {id:'g2',name:'用户增长目标',indicator:'新增用户数',weight:20,desc:'Q2新增注册用户',measure:'线性评分',
+     target:5000,challenge:7000,baseline:3000,rule:'线性插值计算',
+     ruleFormula:'CLAMP((实际-保底)/(目标-保底)*100,0,120)',
+     msLevels:[{level:'优秀',color:'var(--em)',score:'120分',condition:'新增 >= 7000'},{level:'良好',color:'var(--pr)',score:'100分',condition:'新增 >= 5000'},{level:'合格',color:'var(--ac)',score:'80分',condition:'新增 >= 3000'},{level:'不合格',color:'var(--ro)',score:'0分',condition:'新增 < 3000'}]},
+  ]},
+  {name:'管理目标',weight:20,icon:'users',color:'green',colorVar:'var(--em)',desc:'团队管理与协作',goals:[
+    {id:'g3',name:'团队效能提升',indicator:'团队产出效率',weight:10,desc:'提升团队交付速度',measure:'梯度评分',
+     target:110,challenge:130,baseline:100,rule:'标准梯度计算',
+     ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',
+     msLevels:[{level:'优秀',color:'var(--em)',score:'120分',condition:'效率 >= 130%'},{level:'良好',color:'var(--pr)',score:'100分',condition:'效率 >= 110%'},{level:'合格',color:'var(--ac)',score:'80分',condition:'效率 >= 100%'},{level:'不合格',color:'var(--ro)',score:'0分',condition:'效率 < 100%'}]},
+    {id:'g4',name:'人才培养',indicator:'下属成长指标',weight:10,desc:'培养2名骨干',measure:'定性评分',
+     target:2,challenge:3,baseline:1,rule:'-',
+     ruleFormula:'',
+     msLevels:[{level:'优秀',color:'var(--em)',score:'120分',condition:'培养 >= 3人'},{level:'良好',color:'var(--pr)',score:'100分',condition:'培养 >= 2人'},{level:'合格',color:'var(--ac)',score:'80分',condition:'培养 >= 1人'},{level:'不合格',color:'var(--ro)',score:'0分',condition:'培养 < 1人'}]},
+  ]},
+  {name:'能力发展目标',weight:15,icon:'star',color:'orange',colorVar:'var(--ac)',desc:'个人能力提升',goals:[
+    {id:'g5',name:'技术能力提升',indicator:'技术认证',weight:8,desc:'完成云原生架构认证',measure:'是否达成',
+     target:1,challenge:2,baseline:1,rule:'-',
+     ruleFormula:'',
+     msLevels:[{level:'达成',color:'var(--em)',score:'100分',condition:'完成认证'},{level:'未达成',color:'var(--ro)',score:'0分',condition:'未完成'}]},
+    {id:'g6',name:'业务理解深化',indicator:'业务分析报告',weight:7,desc:'输出2份业务分析',measure:'梯度评分',
+     target:2,challenge:3,baseline:1,rule:'加权汇总计算',
+     ruleFormula:'SUM(子项得分*子项权重)/SUM(子项权重)',
+     msLevels:[{level:'优秀',color:'var(--em)',score:'120分',condition:'报告 >= 3份'},{level:'良好',color:'var(--pr)',score:'100分',condition:'报告 >= 2份'},{level:'合格',color:'var(--ac)',score:'80分',condition:'报告 >= 1份'},{level:'不合格',color:'var(--ro)',score:'0分',condition:'报告 < 1份'}]},
+  ]},
+  {name:'价值观目标',weight:15,icon:'book',color:'purple',colorVar:'var(--vi)',desc:'企业价值观践行',goals:[]},
+  {name:'加减分项',weight:0,icon:'chart',color:'red',colorVar:'var(--ro)',desc:'额外加分或扣分项',goals:[]},
+  {name:'其他',weight:0,icon:'chart',color:'blue',colorVar:'var(--pr)',desc:'其他考核项',goals:[]},
+];
+
+const MEASURES = [
+  {name:'梯度评分',desc:'根据完成度分梯度评分',preview:'达成率>=120%: 120分\n达成率>=100%: 100分\n达成率>=80%: 80分\n达成率<80%: 0分'},
+  {name:'线性评分',desc:'根据实际值线性计算',preview:'得分 = (实际值 - 保底值) / (目标值 - 保底值) * 100'},
+  {name:'定性评分',desc:'由评价人主观评定',preview:'优秀: 120分\n良好: 100分\n合格: 80分\n不合格: 0分'},
+  {name:'是否达成',desc:'二值判断',preview:'达成: 100分\n未达成: 0分'},
+];
+
+const RULES = [
+  {name:'标准梯度计算',desc:'IF-THEN梯度',formula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))'},
+  {name:'线性插值计算',desc:'CLAMP线性',formula:'CLAMP((实际-保底)/(目标-保底)*100,0,120)'},
+  {name:'加权汇总计算',desc:'SUM加权',formula:'SUM(子项得分*子项权重)/SUM(子项权重)'},
+];
+
+// ═══ STATE ═══
+let activeGoalId = 'g1';
+let expandedMods = new Set([0,1,2]);
+let selectedMeasure = null;
+let selectedRule = null;
+let modalCtx = null;
+
+// ═══ LEFT PANEL ═══
+function renderLeft() {
+  const panel = document.getElementById('leftPanel');
+  let html = '';
+  MODULES.forEach((mod, mi) => {
+    const isOpen = expandedMods.has(mi);
+    const goalCount = mod.goals.length;
+    html += `
+    <div class="mod-group">
+      <div class="mod-group-hd ${isOpen?'open':''}" onclick="toggleMod(${mi})">
+        <span class="expand">${I.chevron}</span>
+        <span class="mod-icon" style="background:${mod.colorVar}">${I[mod.icon]||I.target}</span>
+        <span>${mod.name}</span>
+        <span class="weight-badge">${mod.weight}%</span>
+      </div>
+      <div class="mod-group-items ${isOpen?'open':''}">`;
+    if (goalCount === 0) {
+      html += `<div class="empty-mod">暂无目标</div>`;
+    } else {
+      mod.goals.forEach(g => {
+        html += `<div class="goal-item ${g.id===activeGoalId?'active':''}" onclick="selectGoal('${g.id}')">${g.name}<span class="gw">${g.weight}%</span></div>`;
+      });
+    }
+    html += `
+        <button class="add-goal-btn" onclick="event.stopPropagation();addGoal(${mi})">${I.plus} 添加目标</button>
+      </div>
+    </div>`;
+  });
+  panel.innerHTML = html;
+
+  const totalGoals = MODULES.reduce((s,m) => s + m.goals.length, 0);
+  const totalWeight = MODULES.reduce((s,m) => s + m.weight, 0);
+  document.getElementById('goalCount').textContent = totalGoals;
+  document.getElementById('totalWeightL').textContent = totalWeight;
+  document.getElementById('weightSumL').textContent = totalWeight + '%';
+  document.getElementById('weightSumL').className = totalWeight === 100 ? '' : 'invalid';
+  const bw = document.getElementById('bottomWeight');
+  bw.textContent = totalWeight + '%';
+  bw.className = 'value ' + (totalWeight === 100 ? 'valid' : 'invalid');
+}
+
+function toggleMod(mi) {
+  expandedMods.has(mi) ? expandedMods.delete(mi) : expandedMods.add(mi);
+  renderLeft();
+}
+
+function selectGoal(id) {
+  activeGoalId = id;
+  renderLeft();
+  renderRight();
+}
+
+function addGoal(mi) {
+  const id = 'g' + Date.now();
+  MODULES[mi].goals.push({id,name:'新目标',indicator:'',weight:10,desc:'',measure:'梯度评分',target:0,challenge:0,baseline:0,rule:'-',ruleFormula:'',msLevels:[]});
+  expandedMods.add(mi);
+  activeGoalId = id;
+  renderLeft();
+  renderRight();
+}
+
+// ═══ RIGHT PANEL ═══
+function getActiveGoal() {
+  for (const mod of MODULES) {
+    const g = mod.goals.find(g => g.id === activeGoalId);
+    if (g) return {mod, goal: g};
+  }
+  return null;
+}
+
+function renderRight() {
+  const data = getActiveGoal();
+  if (!data) {
+    document.getElementById('rightPanel').innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--c4)">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:8px;opacity:.4"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+      <span style="font:400 14px/1.3 var(--f)">选择左侧目标查看详情</span>
+    </div>`;
+    return;
+  }
+  const {mod, goal: g} = data;
+  const msRows = g.msLevels.map(l => `<tr><td><span class="level"><span class="level-dot" style="background:${l.color}"></span>${l.level}</span></td><td style="font-family:var(--m);font-weight:600">${l.score}</td><td>${l.condition}</td></tr>`).join('');
+
+  document.getElementById('rightPanel').innerHTML = `
+  <div class="detail-hd fade-in">
+    <div class="detail-hd-l">
+      <span class="detail-mod-badge" style="background:${mod.colorVar}15;color:${mod.colorVar}">${mod.name}</span>
+      <div>
+        <div class="detail-hd-t">${g.name}</div>
+        <div class="detail-hd-s">${mod.desc} · 权重 ${g.weight}%</div>
+      </div>
+    </div>
+    <div class="detail-actions">
+      <button class="btn btn-d btn-sm" onclick="deleteGoal('${g.id}')" title="删除目标">${I.trash}</button>
+    </div>
+  </div>
+
+  <!-- 基本信息 -->
+  <div class="detail-sec fade-in">
+    <div class="detail-sec-hd">
+      <div class="detail-sec-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        目标信息
+      </div>
+    </div>
+    <div class="detail-sec-bd">
+      <div class="fg">
+        <div class="fi">
+          <span class="fi-l">目标名称<span class="req">*</span></span>
+          <input class="inp" value="${g.name}" onchange="updateGoal('name',this.value)" />
+        </div>
+        <div class="fi">
+          <span class="fi-l">关联指标<span class="req">*</span></span>
+          <input class="inp" value="${g.indicator}" placeholder="输入或选择指标" />
+        </div>
+        <div class="fi">
+          <span class="fi-l">权重(%)<span class="req">*</span></span>
+          <input class="inp num" type="number" value="${g.weight}" min="0" max="100" onchange="updateGoal('weight',parseInt(this.value)||0)" />
+        </div>
+        <div class="fi">
+          <span class="fi-l">衡量方式<span class="req">*</span></span>
+          <select class="inp" onchange="updateGoal('measure',this.value)">
+            ${MEASURES.map(m => `<option ${m.name===g.measure?'selected':''}>${m.name}</option>`).join('')}
+          </select>
+        </div>
+        <div class="fi full">
+          <span class="fi-l">目标描述</span>
+          <textarea class="inp" placeholder="描述目标的具体内容和期望">${g.desc}</textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 目标值配置 -->
+  <div class="detail-sec fade-in">
+    <div class="detail-sec-hd">
+      <div class="detail-sec-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+        目标值配置
+      </div>
+    </div>
+    <div class="detail-sec-bd">
+      <div class="fg f3">
+        <div class="fi">
+          <span class="fi-l">目标值<span class="req">*</span></span>
+          <input class="inp num" type="number" value="${g.target}" onchange="updateGoal('target',parseFloat(this.value)||0)" />
+        </div>
+        <div class="fi">
+          <span class="fi-l">挑战值</span>
+          <input class="inp num" type="number" value="${g.challenge}" onchange="updateGoal('challenge',parseFloat(this.value)||0)" />
+        </div>
+        <div class="fi">
+          <span class="fi-l">保底值</span>
+          <input class="inp num" type="number" value="${g.baseline}" onchange="updateGoal('baseline',parseFloat(this.value)||0)" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 衡量标准 -->
+  <div class="detail-sec fade-in">
+    <div class="detail-sec-hd">
+      <div class="detail-sec-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        衡量标准
+      </div>
+      <button class="btn btn-s btn-sm" onclick="openMeasureModal()">
+        ${I.link} 引用标准
+      </button>
+    </div>
+    <div class="detail-sec-bd">
+      <table class="ms-table">
+        <thead><tr><th>等级</th><th>分值</th><th>达成条件</th></tr></thead>
+        <tbody>${msRows || '<tr><td colspan="3" style="text-align:center;color:var(--c4);padding:24px">暂无衡量标准，点击上方按钮引用</td></tr>'}</tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 计算规则 -->
+  <div class="detail-sec fade-in">
+    <div class="detail-sec-hd">
+      <div class="detail-sec-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        计算规则
+      </div>
+      <button class="btn btn-s btn-sm" onclick="openRuleModal()">
+        ${I.link} 引用规则
+      </button>
+    </div>
+    <div class="detail-sec-bd">
+      ${g.rule !== '-' ? `
+      <div style="font:500 13px/1 var(--f);color:var(--c8);margin-bottom:8px">${g.rule}</div>
+      <div class="rule-box">
+        <div class="rule-box-label">计算公式</div>
+        <div class="rule-box-code">${g.ruleFormula}</div>
+      </div>
+      ` : '<div style="color:var(--c4);font:400 13px/1.3 var(--f);padding:8px 0">暂未关联计算规则</div>'}
+    </div>
+  </div>`;
+}
+
+function updateGoal(field, val) {
+  const data = getActiveGoal();
+  if (!data) return;
+  data.goal[field] = val;
+  renderLeft();
+}
+
+function deleteGoal(id) {
+  if (!confirm('确定删除该目标？')) return;
+  for (const mod of MODULES) {
+    const idx = mod.goals.findIndex(g => g.id === id);
+    if (idx >= 0) {mod.goals.splice(idx, 1); break;}
+  }
+  activeGoalId = null;
+  renderLeft();
+  renderRight();
+}
+
+// ═══ MODALS ═══
+function openModal(id) {document.getElementById(id).classList.add('open')}
+function closeModal(id) {document.getElementById(id).classList.remove('open')}
+
+function openMeasureModal() {
+  modalCtx = 'measure';
+  selectedMeasure = getActiveGoal()?.goal.measure || null;
+  const list = document.getElementById('measureList');
+  list.innerHTML = MEASURES.map(m => `
+    <div class="picker-item ${selectedMeasure===m.name?'selected':''}" onclick="pickMeasure('${m.name}',this)">
+      <div class="picker-item-name">${m.name}</div>
+      <div class="picker-item-desc">${m.desc}</div>
+      <div class="picker-item-preview">${m.preview}</div>
+    </div>`).join('');
+  openModal('measureModal');
+}
+
+function pickMeasure(name, el) {
+  selectedMeasure = name;
+  document.querySelectorAll('#measureList .picker-item').forEach(i=>i.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function confirmMeasure() {
+  if (selectedMeasure) updateGoal('measure', selectedMeasure);
+  closeModal('measureModal');
+}
+
+function openRuleModal() {
+  modalCtx = 'rule';
+  selectedRule = getActiveGoal()?.goal.rule || null;
+  const list = document.getElementById('ruleList');
+  list.innerHTML = RULES.map(r => `
+    <div class="picker-item ${selectedRule===r.name?'selected':''}" onclick="pickRule('${r.name}',this)">
+      <div class="picker-item-name">${r.name}</div>
+      <div class="picker-item-desc">${r.desc}</div>
+      <div class="picker-item-preview">${r.formula}</div>
+    </div>`).join('');
+  openModal('ruleModal');
+}
+
+function pickRule(name, el) {
+  selectedRule = name;
+  document.querySelectorAll('#ruleList .picker-item').forEach(i=>i.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function confirmRule() {
+  if (selectedRule) {
+    const rule = RULES.find(r => r.name === selectedRule);
+    updateGoal('rule', selectedRule);
+    if (rule) updateGoal('ruleFormula', rule.formula);
+  }
+  closeModal('ruleModal');
+}
+
+// Close modal on overlay click
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => {if (e.target === o) o.classList.remove('open')});
+});
+
+// ═══ INIT ═══
+renderLeft();
+renderRight();
+</script>
+</body>
+</html>
