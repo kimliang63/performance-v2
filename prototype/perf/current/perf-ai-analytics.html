@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GHR - AI 绩效分析与洞察</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --shadow-card-hover:0 8px 20px -4px rgba(0,0,0,.08),0 2px 6px -2px rgba(0,0,0,.04);
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --m:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+/* Page Header */
+.pg-hd{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:20px}
+.pg-hd-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.pg-hd-t{font:700 18px/1.3 var(--f);color:var(--c9)}
+.pg-hd-tabs{display:flex;gap:2px;background:var(--c1);border-radius:var(--r1);padding:3px}
+.pg-hd-tab{font:500 12px/1 var(--f);padding:6px 14px;border-radius:var(--r1);cursor:pointer;color:var(--c5);transition:all .12s}
+.pg-hd-tab.on{background:var(--sf);color:var(--c8);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.stat{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:18px 20px;position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.stat.pr::before{background:var(--pr)}.stat.em::before{background:var(--em)}.stat.vi::before{background:var(--vi)}.stat.ac::before{background:var(--ac)}
+.stat-t{font:400 12px/1 var(--f);color:var(--c5);margin-bottom:8px}
+.stat-v{font:700 28px/1 var(--f);color:var(--c9);margin-bottom:4px}
+.stat-d{font:400 11px/1 var(--f);color:var(--c4);display:flex;align-items:center;gap:4px}
+.stat-d svg{width:12px;height:12px}
+.stat-d.up{color:var(--em700)}.stat-d.down{color:var(--ro)}
+.stat-ic{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:var(--r2);display:flex;align-items:center;justify-content:center}
+.stat-ic svg{width:18px;height:18px}
+.stat-ic.pr{background:var(--pr50);color:var(--pr)}
+.stat-ic.em{background:var(--em50);color:var(--em)}
+.stat-ic.vi{background:var(--vi50);color:var(--vi)}
+.stat-ic.ac{background:var(--ac50);color:var(--ac)}
+
+/* Section */
+.sec{margin-bottom:24px}
+.sec-t{font:600 15px/1.3 var(--f);color:var(--c9);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.sec-t::before{content:'';width:3px;height:16px;background:var(--pr);border-radius:2px}
+
+/* Chart Placeholder */
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.chart-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden}
+.chart-card-hd{padding:14px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between}
+.chart-card-t{font:600 14px/1.3 var(--f);color:var(--c8)}
+.chart-card-body{padding:20px;min-height:200px}
+
+/* Bar Chart */
+.bar-chart{display:flex;align-items:flex-end;gap:12px;height:160px;padding:0 10px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar{width:100%;border-radius:4px 4px 0 0;transition:height .5s ease;min-height:4px}
+.bar-label{font:500 11px/1 var(--f);color:var(--c5);text-align:center}
+.bar-value{font:600 12px/1 var(--f);color:var(--c8)}
+
+/* Distribution */
+.dist-row{display:flex;align-items:center;gap:12px;padding:8px 0}
+.dist-label{font:500 13px/1 var(--f);color:var(--c7);width:40px;flex-shrink:0}
+.dist-bar-wrap{flex:1;height:24px;background:var(--c1);border-radius:var(--r1);overflow:hidden;position:relative}
+.dist-bar{height:100%;border-radius:var(--r1);display:flex;align-items:center;padding-left:8px;transition:width .5s ease}
+.dist-bar span{font:600 11px/1 var(--f);color:#FFF}
+.dist-target{position:absolute;top:0;height:100%;width:2px;background:var(--c9);opacity:.5}
+
+/* Radar-like Grid */
+.radar-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.radar-item{background:var(--c0);border-radius:var(--r2);padding:12px;text-align:center}
+.radar-item-t{font:500 11px/1 var(--f);color:var(--c5);margin-bottom:6px}
+.radar-item-v{font:700 20px/1 var(--f);color:var(--c9)}
+.radar-item-d{font:400 10px/1 var(--f);color:var(--c4);margin-top:4px}
+
+/* Table */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font:600 12px/1 var(--f);color:var(--c5);text-align:left;padding:10px 16px;background:var(--c0);border-bottom:1px solid var(--dv);position:sticky;top:0}
+.tbl td{font:400 13px/1.4 var(--f);color:var(--c7);padding:12px 16px;border-bottom:1px solid var(--dv)}
+.tbl tr:hover td{background:var(--c0)}
+.tag{font:500 10px/1 var(--f);padding:2px 7px;border-radius:3px;display:inline-block}
+.tag.pr{color:var(--pr);background:var(--pr50)}
+.tag.em{color:var(--em700);background:var(--em50)}
+.tag.ac{color:var(--ac);background:var(--ac50)}
+.tag.ro{color:var(--ro);background:var(--ro50)}
+.tag.vi{color:var(--vi);background:var(--vi50)}
+
+/* AI Insight Card */
+.insight{background:linear-gradient(135deg,var(--pr50) 0%,var(--vi50) 100%);border:1px solid var(--pr100);border-radius:var(--r3);padding:20px;margin-bottom:20px}
+.insight-hd{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.insight-ic{width:36px;height:36px;border-radius:var(--r2);background:linear-gradient(135deg,var(--pr) 0%,var(--vi) 100%);display:flex;align-items:center;justify-content:center}
+.insight-ic svg{width:18px;height:18px;color:#FFF}
+.insight-t{font:600 14px/1.3 var(--f);color:var(--c9)}
+.insight-items{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.insight-item{background:var(--sf);border-radius:var(--r2);padding:14px;border:1px solid var(--pr100)}
+.insight-item-t{font:600 12px/1.3 var(--f);color:var(--c8);margin-bottom:4px}
+.insight-item-d{font:400 12px/1.5 var(--f);color:var(--c6)}
+
+/* Buttons */
+.btn{font:500 13px/1 var(--f);padding:7px 16px;border-radius:var(--r1);border:1px solid transparent;cursor:pointer;transition:all .12s;display:inline-flex;align-items:center;gap:6px}
+.btn-p{background:var(--pr);color:#FFF;border-color:var(--pr)}.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c7);border-color:var(--c2)}.btn-s:hover{border-color:var(--c3);background:var(--c0)}
+.btn-o{background:transparent;color:var(--pr);border-color:var(--pr100)}.btn-o:hover{background:var(--pr50)}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn-vi{background:var(--vi);color:#FFF;border-color:var(--vi)}.btn-vi:hover{opacity:.9}
+
+/* Role Match */
+.role-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.role-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:16px;text-align:center}
+.role-card-ic{width:48px;height:48px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font:700 16px/1 var(--f);color:#FFF}
+.role-card-ic.vi{background:var(--vi)}
+.role-card-ic.pr{background:var(--pr)}
+.role-card-ic.em{background:var(--em)}
+.role-card-ic.ac{background:var(--ac)}
+.role-card-n{font:600 13px/1.3 var(--f);color:var(--c8);margin-bottom:2px}
+.role-card-d{font:400 11px/1.4 var(--f);color:var(--c5);margin-bottom:8px}
+.role-card-score{font:700 24px/1 var(--f)}
+.role-card-score.high{color:var(--em700)}
+.role-card-score.med{color:var(--ac)}
+.role-card-label{font:400 10px/1 var(--f);color:var(--c4);margin-top:2px}
+
+/* Implementation Notes */
+.impl-notes{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-top:24px;overflow:hidden;border:1px solid var(--pr100)}
+.impl-notes-hd{padding:16px 20px;background:var(--pr50);border-bottom:1px solid var(--pr100);display:flex;align-items:center;gap:10px}
+.impl-notes-hd-t{font:600 14px/1.3 var(--f);color:var(--pr900)}
+.impl-notes-body{padding:20px}
+.impl-phase{margin-bottom:20px}
+.impl-phase:last-child{margin-bottom:0}
+.impl-phase-hd{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.impl-phase-tag{font:600 11px/1 var(--f);padding:3px 8px;border-radius:var(--r1);color:#FFF;background:var(--pr)}
+.impl-phase-tag.vi{background:var(--vi)}
+.impl-phase-tag.em{background:var(--em)}
+.impl-phase-t{font:600 13px/1.3 var(--f);color:var(--c8)}
+.impl-phase-items{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.impl-item{background:var(--c0);border-radius:var(--r2);padding:12px 14px}
+.impl-item-t{font:600 12px/1.3 var(--f);color:var(--c8);margin-bottom:4px}
+.impl-item-d{font:400 12px/1.5 var(--f);color:var(--c5)}
+.impl-item-tag{display:inline-block;font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px;margin-top:4px}
+.impl-item-tag.api{color:var(--pr);background:var(--pr50)}
+.impl-item-tag.model{color:var(--vi);background:var(--vi50)}
+.impl-item-tag.data{color:var(--em700);background:var(--em50)}
+.impl-item-tag.ui{color:var(--ac);background:var(--ac50)}
+</style>
+</head>
+<body>
+
+<!-- Page Header -->
+<div class="pg-hd">
+  <div class="pg-hd-top">
+    <div class="pg-hd-t">AI 绩效分析与洞察</div>
+    <div class="pg-hd-tabs">
+      <div class="pg-hd-tab on">总览</div>
+      <div class="pg-hd-tab">团队分析</div>
+      <div class="pg-hd-tab">人岗匹配</div>
+      <div class="pg-hd-tab">趋势洞察</div>
+    </div>
+  </div>
+  <div class="pg-hd-info" style="display:flex;gap:20px;font:400 13px/1 var(--f);color:var(--c5)">
+    <span>考核周期: <b style="color:var(--c8)">2026-Q2</b></span>
+    <span>范围: <b style="color:var(--c8)">全公司 · 232 人</b></span>
+    <span>数据更新: <b style="color:var(--c8)">实时</b></span>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="stats">
+  <div class="stat pr">
+    <div class="stat-t">平均绩效得分</div>
+    <div class="stat-v">82.5</div>
+    <div class="stat-d up">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>
+      较上期 +3.2
+    </div>
+    <div class="stat-ic pr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+  </div>
+  <div class="stat em">
+    <div class="stat-t">绩效达标率</div>
+    <div class="stat-v">78%</div>
+    <div class="stat-d up">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>
+      较上期 +5%
+    </div>
+    <div class="stat-ic em"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div>
+  </div>
+  <div class="stat vi">
+    <div class="stat-t">人岗匹配度</div>
+    <div class="stat-v">85%</div>
+    <div class="stat-d up">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>
+      较上期 +8%
+    </div>
+    <div class="stat-ic vi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+  </div>
+  <div class="stat ac">
+    <div class="stat-t">AI 洞察数</div>
+    <div class="stat-v">12</div>
+    <div class="stat-d">3 条高优建议</div>
+    <div class="stat-ic ac"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg></div>
+  </div>
+</div>
+
+<!-- AI Insight -->
+<div class="insight">
+  <div class="insight-hd">
+    <div class="insight-ic">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg>
+    </div>
+    <div class="insight-t">AI 核心洞察 — 基于 2026-Q2 全量绩效数据分析</div>
+  </div>
+  <div class="insight-items">
+    <div class="insight-item">
+      <div class="insight-item-t">绩效归因: 团队目标对齐度是最大影响因子</div>
+      <div class="insight-item-d">数据显示，个人目标与团队 OKR 对齐度 > 80% 的员工，绩效得分平均高出 12 分。建议目标制定环节增加对齐度校验。</div>
+    </div>
+    <div class="insight-item">
+      <div class="insight-item-t">趋势预警: 产品研发部连续 2 季度绩效下滑</div>
+      <div class="insight-item-d">Q1→Q2 平均分从 85 降至 79，主因: 3 人离职导致工作量重新分配，建议关注团队负载均衡。</div>
+    </div>
+    <div class="insight-item">
+      <div class="insight-item-t">人岗匹配: 5 人存在岗位不匹配风险</div>
+      <div class="insight-item-d">基于绩效数据 + 能力评估，AI 识别出 5 人当前岗位与能力模型匹配度 < 60%，建议考虑调岗或培训。</div>
+    </div>
+  </div>
+</div>
+
+<!-- Charts -->
+<div class="chart-grid">
+  <!-- Distribution Chart -->
+  <div class="chart-card">
+    <div class="chart-card-hd">
+      <div class="chart-card-t">绩效等级分布</div>
+      <span class="tag pr">AI 分析</span>
+    </div>
+    <div class="chart-card-body">
+      <div class="dist-row">
+        <span class="dist-label" style="color:var(--em700);font-weight:700">A</span>
+        <div class="dist-bar-wrap">
+          <div class="dist-bar" style="width:22%;background:var(--em)"><span>22%</span></div>
+          <div class="dist-target" style="left:25%"></div>
+        </div>
+        <span style="font:500 11px/1 var(--f);color:var(--c4)">目标25%</span>
+      </div>
+      <div class="dist-row">
+        <span class="dist-label" style="color:var(--pr);font-weight:700">B+</span>
+        <div class="dist-bar-wrap">
+          <div class="dist-bar" style="width:35%;background:var(--pr)"><span>35%</span></div>
+          <div class="dist-target" style="left:35%"></div>
+        </div>
+        <span style="font:500 11px/1 var(--f);color:var(--c4)">目标35%</span>
+      </div>
+      <div class="dist-row">
+        <span class="dist-label" style="color:var(--c6);font-weight:700">B</span>
+        <div class="dist-bar-wrap">
+          <div class="dist-bar" style="width:28%;background:var(--c4)"><span>28%</span></div>
+          <div class="dist-target" style="left:25%"></div>
+        </div>
+        <span style="font:500 11px/1 var(--f);color:var(--c4)">目标25%</span>
+      </div>
+      <div class="dist-row">
+        <span class="dist-label" style="color:var(--ac);font-weight:700">C</span>
+        <div class="dist-bar-wrap">
+          <div class="dist-bar" style="width:12%;background:var(--ac)"><span>12%</span></div>
+          <div class="dist-target" style="left:12%"></div>
+        </div>
+        <span style="font:500 11px/1 var(--f);color:var(--c4)">目标12%</span>
+      </div>
+      <div class="dist-row">
+        <span class="dist-label" style="color:var(--ro);font-weight:700">D</span>
+        <div class="dist-bar-wrap">
+          <div class="dist-bar" style="width:3%;background:var(--ro)"><span>3%</span></div>
+          <div class="dist-target" style="left:3%"></div>
+        </div>
+        <span style="font:500 11px/1 var(--f);color:var(--c4)">目标3%</span>
+      </div>
+      <div style="margin-top:12px;font:400 12px/1.5 var(--f);color:var(--c5)">
+        AI 判定: 分布基本合理，A 级占比略低于目标 3%，建议审定时微调
+      </div>
+    </div>
+  </div>
+
+  <!-- Department Comparison -->
+  <div class="chart-card">
+    <div class="chart-card-hd">
+      <div class="chart-card-t">部门绩效对比</div>
+      <span class="tag pr">AI 分析</span>
+    </div>
+    <div class="chart-card-body">
+      <div class="bar-chart">
+        <div class="bar-col">
+          <div class="bar-value">85</div>
+          <div class="bar" style="height:85%;background:var(--em)"></div>
+          <div class="bar-label">市场<br/>运营</div>
+        </div>
+        <div class="bar-col">
+          <div class="bar-value">82</div>
+          <div class="bar" style="height:82%;background:var(--pr)"></div>
+          <div class="bar-label">产品<br/>研发</div>
+        </div>
+        <div class="bar-col">
+          <div class="bar-value">88</div>
+          <div class="bar" style="height:88%;background:var(--em)"></div>
+          <div class="bar-label">销售</div>
+        </div>
+        <div class="bar-col">
+          <div class="bar-value">80</div>
+          <div class="bar" style="height:80%;background:var(--pr)"></div>
+          <div class="bar-label">财务</div>
+        </div>
+        <div class="bar-col">
+          <div class="bar-value">79</div>
+          <div class="bar" style="height:79%;background:var(--ac)"></div>
+          <div class="bar-label">人力<br/>行政</div>
+        </div>
+        <div class="bar-col">
+          <div class="bar-value">83</div>
+          <div class="bar" style="height:83%;background:var(--pr)"></div>
+          <div class="bar-label">基础<br/>架构</div>
+        </div>
+      </div>
+      <div style="margin-top:12px;font:400 12px/1.5 var(--f);color:var(--c5)">
+        AI 洞察: 销售部绩效最优(88分)，人力行政部需关注(79分)
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Role Match -->
+<div class="sec" style="margin-top:24px">
+  <div class="sec-t">人岗匹配分析</div>
+  <div class="role-cards">
+    <div class="role-card">
+      <div class="role-card-ic vi">高</div>
+      <div class="role-card-n">高匹配 (196人)</div>
+      <div class="role-card-d">绩效稳定，能力与岗位高度匹配</div>
+      <div class="role-card-score high">84%</div>
+      <div class="role-card-label">平均匹配度</div>
+    </div>
+    <div class="role-card">
+      <div class="role-card-ic ac">中</div>
+      <div class="role-card-n">待提升 (31人)</div>
+      <div class="role-card-d">部分能力短板，建议培训或辅导</div>
+      <div class="role-card-score med">68%</div>
+      <div class="role-card-label">平均匹配度</div>
+    </div>
+    <div class="role-card">
+      <div class="role-card-ic pr">低</div>
+      <div class="role-card-n">不匹配 (5人)</div>
+      <div class="role-card-d">建议考虑调岗或绩效改进计划</div>
+      <div class="role-card-score" style="color:var(--ro)">52%</div>
+      <div class="role-card-label">平均匹配度</div>
+    </div>
+  </div>
+</div>
+
+<!-- Trend Table -->
+<div class="sec">
+  <div class="sec-t">绩效归因分析 — AI 识别关键影响因子</div>
+  <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden">
+    <div style="overflow-x:auto">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>影响因子</th>
+            <th>相关系数</th>
+            <th>影响方向</th>
+            <th>AI 建议</th>
+            <th>优先级</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>目标对齐度</b><br/><span style="font-size:11px;color:var(--c5)">个人目标与团队 OKR 的语义匹配度</span></td>
+            <td><span class="tag em">0.82</span></td>
+            <td><span style="color:var(--em700)">正相关 ↑</span></td>
+            <td>目标制定环节增加 AI 对齐度校验，低于 70% 提醒调整</td>
+            <td><span class="tag ro">高</span></td>
+          </tr>
+          <tr>
+            <td><b>目标完成率</b><br/><span style="font-size:11px;color:var(--c5)">季度内 KPI 实际完成比例</span></td>
+            <td><span class="tag em">0.75</span></td>
+            <td><span style="color:var(--em700)">正相关 ↑</span></td>
+            <td>AI 辅助设置合理目标值，避免过高或过低</td>
+            <td><span class="tag ro">高</span></td>
+          </tr>
+          <tr>
+            <td><b>过程跟进频率</b><br/><span style="font-size:11px;color:var(--c5)">上级与员工 1on1 沟通频次</span></td>
+            <td><span class="tag pr">0.65</span></td>
+            <td><span style="color:var(--em700)">正相关 ↑</span></td>
+            <td>AI 定期提醒管理者进行 1on1，低于月均 2 次时预警</td>
+            <td><span class="tag ac">中</span></td>
+          </tr>
+          <tr>
+            <td><b>团队规模</b><br/><span style="font-size:11px;color:var(--c5)">管理幅度对绩效评估的影响</span></td>
+            <td><span class="tag ac">-0.45</span></td>
+            <td><span style="color:var(--ro)">负相关 ↓</span></td>
+            <td>管理幅度 > 12 人时，建议增加 HRBP 支持</td>
+            <td><span class="tag ac">中</span></td>
+          </tr>
+          <tr>
+            <td><b>历史绩效</b><br/><span style="font-size:11px;color:var(--c5)">过去 3 季度绩效趋势</span></td>
+            <td><span class="tag pr">0.58</span></td>
+            <td><span style="color:var(--em700)">正相关 ↑</span></td>
+            <td>连续 2 季度下滑的员工自动触发绩效改进流程</td>
+            <td><span class="tag ac">中</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Implementation Notes -->
+<div class="impl-notes">
+  <div class="impl-notes-hd">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+    <div class="impl-notes-hd-t">可落地方案 — 实现思路与阶段交付</div>
+  </div>
+  <div class="impl-notes-body">
+    <div class="impl-phase">
+      <div class="impl-phase-hd">
+        <span class="impl-phase-tag">P1</span>
+        <span class="impl-phase-t">阶段一: 数据聚合 + 统计报表 (2-3 周)</span>
+      </div>
+      <div class="impl-phase-items">
+        <div class="impl-item">
+          <div class="impl-item-t">绩效数据仓库</div>
+          <div class="impl-item-d">汇总各环节评分数据，按部门/职级/周期维度聚合，支持多维度交叉分析</div>
+          <span class="impl-item-tag data">ETL + 数据仓库</span>
+        </div>
+        <div class="impl-item">
+          <div class="impl-item-t">等级分布分析</div>
+          <div class="impl-item-d">实时计算各部门/公司级等级分布，对比目标分布生成偏差报告</div>
+          <span class="impl-item-tag api">API: GET /analytics/distribution</span>
+        </div>
+        <div class="impl-item">
+          <div class="impl-item-t">部门对比看板</div>
+          <div class="impl-item-d">柱状图展示各部门平均绩效分、达标率、优秀率，支持钻取到个人</div>
+          <span class="impl-item-tag ui">可视化看板</span>
+        </div>
+        <div class="impl-item">
+          <div class="impl-item-t">历史趋势追踪</div>
+          <div class="impl-item-d">多季度绩效趋势折线图，识别上升/下降/平稳三种模式</div>
+          <span class="impl-item-tag api">API: GET /analytics/trend</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="impl-phase">
+      <div class="impl-phase-hd">
+        <span class="impl-phase-tag vi">P2</span>
+        <span class="impl-phase-t">阶段二: AI 归因 + 人岗匹配 (3-4 周)</span>
+      </div>
+      <div class="impl-phase-items">
+        <div class="impl-item">
+          <div class="impl-item-t">绩效归因模型</div>
+          <div class="impl-item-d">用回归分析识别影响绩效的关键因子(目标对齐度、跟进频率、培训投入等)，输出相关系数排序</div>
+          <span class="impl-item-tag model">ML: 回归分析</span>
+        </div>
+        <div class="impl-item">
+          <div class="impl-item-t">人岗匹配算法</div>
+          <div class="impl-item-d">基于员工能力模型 + 岗位胜任力模型，计算匹配度分数，识别不匹配风险</div>
+          <span class="impl-item-tag model">ML: 能力匹配</span>
+        </div>
+        <div class="impl-item">
+          <div class="impl-item-t">趋势预警引擎</div>
+          <div class="impl-item-d">检测连续 2+ 季度绩效下滑，自动触发预警并建议干预措施(辅导/培训/调岗)</div>
+          <span class="impl-item-tag api">API: POST /ai/trend-alert</span>
+        </div>
+        <div class="impl-item">
+          <div class="impl-item-t">AI 洞察生成</div>
+          <div class="impl-item-d">LLM 基于数据分析结果，生成自然语言洞察报告，突出关键发现和建议</div>
+          <span class="impl-item-tag model">LLM: 报告生成</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="impl-phase">
+      <div class="impl-phase-hd">
+        <span class="impl-phase-tag em" style="background:var(--em)">P3</span>
+        <span class="impl-phase-t">阶段三: 持续洞察 + 决策支持 (4-6 周)</span>
+      </div>
+      <div class="impl-phase-items">
+        <div class="impl-item">
+          <div class="impl-item-t">组织智能中枢</div>
+          <div class="impl-item-d">整合绩效+能力+培训+流动数据，构建组织人才画像，支撑战略级人才决策</div>
+          <span class="impl-item-tag data">数据融合</span>
+        </div>
+        <div class="impl-item">
+          <div class="impl-item-t">预测性分析</div>
+          <div class="impl-item-d">预测下季度各团队绩效走势、高风险人员、人才流失概率，支持提前干预</div>
+          <span class="impl-item-tag model">ML: 时序预测</span>
+        </div>
+        <div class="impl-item">
+          <div class="impl-item-t">智能报告生成</div>
+          <div class="impl-item-d">AI 自动生成季度绩效分析报告，包含数据、洞察、建议，HR 一键导出</div>
+          <span class="impl-item-tag model">LLM: 报告输出</span>
+        </div>
+        <div class="impl-item">
+          <div class="impl-item-t">决策效果追踪</div>
+          <div class="impl-item-d">追踪 AI 建议被采纳后的实际效果，形成「分析→决策→执行→反馈」闭环</div>
+          <span class="impl-item-tag api">API: POST /ai/decision-track</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:var(--c0);border-radius:var(--r2);padding:14px 16px;margin-top:8px">
+      <div style="font:600 12px/1.3 var(--f);color:var(--c8);margin-bottom:6px">核心交付物</div>
+      <div style="font:400 12px/1.6 var(--f);color:var(--c6)">
+        P1 交付: 数据仓库 + 分布分析 + 部门对比 → <b>HR 数据获取效率提升 60%</b><br/>
+        P2 交付: 归因模型 + 人岗匹配 + 趋势预警 → <b>人才风险识别提前 30 天</b><br/>
+        P3 交付: 组织中枢 + 预测分析 + 智能报告 → <b>战略决策数据支撑率 ≥ 90%</b>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="height:40px"></div>
+
+<script src="navigation.js"></script>
+<script>
+GHR_NAV.init('perf','AI 绩效分析');
+</script>
+</body>
+</html>
