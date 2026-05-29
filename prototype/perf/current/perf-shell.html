@@ -79,7 +79,6 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);height:100vh;over
 }
 .nav-item-v.v2{color:var(--pr);background:var(--pr50)}
 .nav-item-v.v3{color:var(--vi);background:var(--vi50)}
-.nav-item-v.ai{color:var(--pr);background:linear-gradient(135deg,var(--pr50),var(--vi50))}
 
 .sidebar-ft{
   padding:10px 16px;border-top:1px solid var(--dv);
@@ -183,14 +182,6 @@ const SECTIONS = [
       {f:'perf-form-ratification.html', n:'结果审定', d:'等级调整 + 强制分布 + 批量对比'},
       {f:'perf-form-confirmation.html', n:'员工确认', d:'绩效结果展示 + 确认/不确认'},
     ]
-  },
-  {
-    label: 'AI 智能应用',
-    items: [
-      {f:'perf-ai-form-assistant.html', n:'AI 表单填写辅助', d:'对话式目标生成 + 智能预填 + 合规检查'},
-      {f:'perf-ai-monitor.html', n:'AI 过程监控与预警', d:'进度追踪 + 风险预测 + 智能催办'},
-      {f:'perf-ai-analytics.html', n:'AI 绩效分析与洞察', d:'团队分析 + 人岗匹配 + 绩效归因'},
-    ]
   }
 ];
 
@@ -214,9 +205,6 @@ const ICON_MAP = {
   'perf-form-evaluation.html': 'check',
   'perf-form-ratification.html': 'chart',
   'perf-form-confirmation.html': 'user',
-  'perf-ai-form-assistant.html': 'target',
-  'perf-ai-monitor.html': 'target',
-  'perf-ai-analytics.html': 'chart',
 };
 
 let activeFile = null;
@@ -230,7 +218,7 @@ nav.innerHTML = SECTIONS.map(sec => `
       <a class="nav-item" data-file="${item.f}" onclick="loadPage('${item.f}','${item.n}','${item.d}')" title="${item.d}">
         <div class="nav-item-ic">${I[ICON_MAP[item.f]] || I.file}</div>
         <span class="nav-item-t">${item.n}</span>
-        <span class="nav-item-v ${item.f.includes('scheme')||item.f.includes('template')||item.f.includes('forced')?'v2':item.f.includes('ai')?'ai':'v3'}">${item.f.includes('scheme')||item.f.includes('template')||item.f.includes('forced')?'V2':item.f.includes('ai')?'AI':'V3'}</span>
+        <span class="nav-item-v ${item.f.includes('scheme')||item.f.includes('template')||item.f.includes('forced')?'v2':'v3'}">${item.f.includes('scheme')||item.f.includes('template')||item.f.includes('forced')?'V2':'V3'}</span>
       </a>
     `).join('')}
   </div>
