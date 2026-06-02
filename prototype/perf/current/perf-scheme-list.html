@@ -308,12 +308,12 @@ const I={
 
 // ═══ 模拟数据 ═══
 const SCHEMES=[
-  {id:'S001',name:'2026年度绩效考核方案',code:'PERF-2026-001',cycle:'年度',status:'enabled',groups:3,activities:2,progress:85,creator:'王管理',modified:'2026-05-20 14:30'},
-  {id:'S002',name:'2026年半年度绩效考核',code:'PERF-2026-002',cycle:'半年度',status:'enabled',groups:2,activities:1,progress:100,creator:'王管理',modified:'2026-05-18 09:15'},
-  {id:'S003',name:'月度绩效考核-仓储',code:'PERF-2026-003',cycle:'月度',status:'disabled',groups:1,activities:0,progress:60,creator:'李HR',modified:'2026-05-10 16:45'},
-  {id:'S004',name:'2025年度绩效考核方案',code:'PERF-2025-001',cycle:'年度',status:'draft',groups:3,activities:0,progress:100,creator:'王管理',modified:'2025-12-15 11:00'},
-  {id:'S005',name:'试用期考核方案',code:'PERF-2026-004',cycle:'自定义',status:'draft',groups:1,activities:0,progress:30,creator:'李HR',modified:'2026-05-22 08:30'},
-  {id:'S006',name:'特殊岗位考核方案',code:'PERF-2026-005',cycle:'半年度',status:'enabled',groups:2,activities:0,progress:70,creator:'王管理',modified:'2026-05-25 10:20'},
+  {id:'S001',name:'2026年度绩效考核方案',code:'PERF-2026-001',cycle:'年度',status:'enabled',version:3,groups:3,activities:2,progress:85,creator:'王管理',modified:'2026-05-20 14:30'},
+  {id:'S002',name:'2026年半年度绩效考核',code:'PERF-2026-002',cycle:'半年度',status:'enabled',version:1,groups:2,activities:1,progress:100,creator:'王管理',modified:'2026-05-18 09:15'},
+  {id:'S003',name:'月度绩效考核-仓储',code:'PERF-2026-003',cycle:'月度',status:'disabled',version:5,groups:1,activities:0,progress:60,creator:'李HR',modified:'2026-05-10 16:45'},
+  {id:'S004',name:'2025年度绩效考核方案',code:'PERF-2025-001',cycle:'年度',status:'draft',version:1,groups:3,activities:0,progress:100,creator:'王管理',modified:'2025-12-15 11:00'},
+  {id:'S005',name:'试用期考核方案',code:'PERF-2026-004',cycle:'自定义',status:'draft',version:2,groups:1,activities:0,progress:30,creator:'李HR',modified:'2026-05-22 08:30'},
+  {id:'S006',name:'特殊岗位考核方案',code:'PERF-2026-005',cycle:'半年度',status:'enabled',version:1,groups:2,activities:0,progress:70,creator:'王管理',modified:'2026-05-25 10:20'},
 ];
 
 const STATUS_MAP={
@@ -405,6 +405,7 @@ function renderTable(data){
     return `<tr>
       <td class="cell-name">${s.name}</td>
       <td class="cell-code">${s.code}</td>
+      <td><span style="font-family:var(--m);font-size:11px;color:var(--c5);padding:2px 6px;background:var(--c1);border-radius:3px">v${s.version}</span></td>
       <td><span class="cell-cycle">${s.cycle}</span></td>
       <td><span class="cell-status ${st.cls}">${st.label}</span></td>
       <td class="cell-act"><span class="cell-act-count">${s.activities}</span> 个活动</td>
@@ -437,6 +438,7 @@ function renderTable(data){
           <tr>
             <th>方案名称</th>
             <th>方案编号</th>
+            <th>版本</th>
             <th>周期类型</th>
             <th>状态</th>
             <th>关联活动</th>
@@ -446,7 +448,7 @@ function renderTable(data){
             <th>操作</th>
           </tr>
         </thead>
-        <tbody>${rows.length?rows:`<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--c4);font-size:13px">暂无匹配的绩效方案</td></tr>`}</tbody>
+        <tbody>${rows.length?rows:`<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--c4);font-size:13px">暂无匹配的绩效方案</td></tr>`}</tbody>
       </table>
     </div>
     <div class="pg-bar">

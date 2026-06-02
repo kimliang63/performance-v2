@@ -107,6 +107,11 @@ const GHR_NAV = {
         {n:'考核进度',ic:'chart'},
         {n:'绩效结果',ic:'chart'},
       ]},
+      {n:'AI 智能应用',ic:'settings',items:[
+        {n:'AI 表单辅助',ic:'edit',file:'perf-ai-form-assistant.html'},
+        {n:'AI 进程监控',ic:'eye',file:'perf-ai-monitor.html'},
+        {n:'AI 绩效分析',ic:'chart',file:'perf-ai-analytics.html'},
+      ]},
     ]},
   },
   MO:['workbench','perf'],

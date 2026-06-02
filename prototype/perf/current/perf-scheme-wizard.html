@@ -276,6 +276,8 @@ let form={
   name:'',code:'PERF-2026-'+String(Math.floor(Math.random()*900)+100),cycle:'年度',enabled:true,downward:true,desc:'',
   dept:'',
   gradeRule:'标准五级', // 引用的等级规则名称
+  version:1,
+  forcedDistRule:'标准强制分布',
   grades:JSON.parse(JSON.stringify(GRADES)),
   stages:JSON.parse(JSON.stringify(STAGES)),
   groups:JSON.parse(JSON.stringify(GROUPS)),
@@ -286,6 +288,15 @@ const GRADE_RULES=[
   {name:'标准五级',grades:[{name:'远超预期',code:'A',min:90,max:100},{name:'符合预期+',code:'B+',min:80,max:89},{name:'符合预期',code:'B',min:70,max:79},{name:'符合预期-',code:'B-',min:60,max:69},{name:'低于预期',code:'C',min:0,max:59}]},
   {name:'简化三级',grades:[{name:'优秀',code:'A',min:80,max:100},{name:'合格',code:'B',min:60,max:79},{name:'待改进',code:'C',min:0,max:59}]},
   {name:'四级制',grades:[{name:'卓越',code:'S',min:90,max:100},{name:'优秀',code:'A',min:75,max:89},{name:'合格',code:'B',min:60,max:74},{name:'不合格',code:'C',min:0,max:59}]},
+];
+
+const FORCED_DIST_RULES=[
+  {name:'标准强制分布',desc:'A 10% / B+ 20% / B 40% / B- 20% / C 10%',
+   grades:[{code:'A',name:'远超预期',op:'不超过',pct:10},{code:'B+',name:'符合预期+',op:'不超过',pct:20},{code:'B',name:'符合预期',op:'不低于',pct:40},{code:'B-',name:'符合预期-',op:'不超过',pct:20},{code:'C',name:'低于预期',op:'不低于',pct:10}]},
+  {name:'宽松强制分布',desc:'A 15% / B+ 25% / B 40% / B- 15% / C 5%',
+   grades:[{code:'A',name:'远超预期',op:'不超过',pct:15},{code:'B+',name:'符合预期+',op:'不超过',pct:25},{code:'B',name:'符合预期',op:'不低于',pct:40},{code:'B-',name:'符合预期-',op:'不超过',pct:15},{code:'C',name:'低于预期',op:'不超过',pct:5}]},
+  {name:'严格强制分布',desc:'A 5% / B+ 15% / B 40% / B- 25% / C 15%',
+   grades:[{code:'A',name:'远超预期',op:'不超过',pct:5},{code:'B+',name:'符合预期+',op:'不超过',pct:15},{code:'B',name:'符合预期',op:'不低于',pct:40},{code:'B-',name:'符合预期-',op:'不超过',pct:25},{code:'C',name:'低于预期',op:'不低于',pct:15}]},
 ];
 
 // 模板预设：每个模板定义启用的阶段
@@ -434,6 +445,12 @@ function renderBasicInfo(ct){
           </div>
           <div class="form-grp"><label class="form-lb">方案编号</label><input class="form-input" value="${form.code}" disabled></div>
         </div>
+        <div class="form-row">
+          <div class="form-grp"><label class="form-lb">方案版本</label>
+            <input class="form-input" value="v${form.version}" disabled style="width:80px">
+          </div>
+          <div class="form-grp"></div>
+        </div>
         <div class="form-row" style="grid-template-columns:1fr">
           <div class="form-grp"><label class="form-lb">规则描述</label><textarea class="form-input" placeholder="请输入" maxlength="100" oninput="form.desc=this.value">${form.desc}</textarea><div class="form-hint">${form.desc.length}/100</div></div>
         </div>
@@ -500,9 +517,6 @@ function renderGroups(ct){
         </div>
         <div class="form-row">
           <div class="form-grp"><label class="form-lb">排除人员</label><input class="form-input" value="${grp.excluded.join(', ')}" placeholder="输入姓名，逗号分隔" oninput="form.groups[${gi}].excluded=this.value.split(',').map(s=>s.trim()).filter(Boolean)"></div>
-          <div class="form-grp"><label class="form-lb">评价规则</label>
-            <select class="form-input" onchange="form.groups[${gi}].evalRule=this.value"><option ${grp.evalRule==='通用评价规则'?'selected':''}>通用评价规则</option><option ${grp.evalRule==='仓储评价规则'?'selected':''}>仓储评价规则</option><option ${grp.evalRule==='销售评价规则'?'selected':''}>销售评价规则</option></select>
-          </div>
         </div>
       </div>
     </div>`).join('')}
@@ -582,14 +596,14 @@ function renderGoalCfg(s){
   const grades=getSelectedRule().grades;
   return `<div class="form-row">
     <div class="form-grp"><label class="form-lb">流程模型</label><select class="form-input">${models.map(m=>`<option ${s.flow===m?'selected':''}>${m}</option>`).join('')}</select></div>
-    <div class="form-grp"><label class="form-lb">开启方式</label><select class="form-input"><option>手动开启</option><option>自动开启</option></select></div>
+    <div class="form-grp"><label class="form-lb">开启方式</label><select class="form-input"><option>手动</option><option>自动</option></select></div>
   </div>
   <div class="form-row">
-    <div class="form-grp"><label class="form-lb">结束方式</label><select class="form-input" onchange="toggleTimeout('goal',this.value)"><option>手动结束</option><option>自动结束</option><option>超时自动结束</option></select></div>
+    <div class="form-grp"><label class="form-lb">结束方式</label><select class="form-input" onchange="toggleTimeout('goal',this.value)"><option>手动</option><option>超时自动结束</option></select></div>
   </div>
   <div id="timeout-goal" style="display:none;margin-top:12px;padding:12px;background:var(--c0);border-radius:var(--r1)">
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-      <div style="display:flex;align-items:center;gap:6px"><label style="font:400 12px/1 var(--f);color:var(--c7)">超时天数</label><input class="form-input" type="number" value="7" min="1" max="90" style="width:70px"><span style="font:400 12px/1 var(--f);color:var(--c5)">天，超时后按下方「强制结束规则」处理</span></div>
+      <div style="display:flex;align-items:center;gap:6px"><label style="font:400 12px/1 var(--f);color:var(--c7)">超时天数</label><input class="form-input" type="number" value="7" min="1" max="90" style="width:70px"><span style="font:400 12px/1 var(--f);color:var(--c5)">天</span></div>
     </div>
   </div>
   <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
@@ -604,19 +618,26 @@ function renderGoalCfg(s){
 function renderEvalCfg(s){
   const models=FLOW_MODELS[s.id]||[];
   const grades=getSelectedRule().grades;
-  // 节点由流程模型决定，此处为演示数据
   const FLOW_NODES={
     '通用绩效考核流程':[{name:'员工自评',type:'填写',weight:20},{name:'直接上级评分',type:'评分',weight:50},{name:'隔级上级评分',type:'评分',weight:30}],
     '简化绩效考核流程':[{name:'员工自评',type:'填写',weight:30},{name:'直接上级评分',type:'评分',weight:70}],
   };
   const nodes=FLOW_NODES[s.flow]||FLOW_NODES['通用绩效考核流程'];
+  const EVAL_RULES=['通用评价规则','仓储评价规则','销售评价规则','研发评价规则'];
   return `<div class="form-row">
     <div class="form-grp"><label class="form-lb">流程模型</label><select class="form-input" onchange="render()">${models.map(m=>`<option ${s.flow===m?'selected':''}>${m}</option>`).join('')}</select></div>
-    <div class="form-grp"><label class="form-lb">结束处理规则</label><select class="form-input" onchange="toggleTimeout('eval',this.value)"><option>自动结束</option><option>手动结束</option><option>超时自动结束</option></select></div>
+    <div class="form-grp"><label class="form-lb">评价规则 <span class="req">*</span></label>
+      <select class="form-input"><option>通用评价规则</option>${EVAL_RULES.filter(r=>r!=='通用评价规则').map(r=>`<option>${r}</option>`).join('')}</select>
+      <div class="form-hint">引用自基础设置 → 评价规则</div>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-grp"><label class="form-lb">开启方式</label><select class="form-input"><option>手动</option><option>自动</option></select></div>
+    <div class="form-grp"><label class="form-lb">结束方式</label><select class="form-input" onchange="toggleTimeout('eval',this.value)"><option>手动</option><option>超时自动结束</option></select></div>
   </div>
   <div id="timeout-eval" style="display:none;margin-top:12px;padding:12px;background:var(--c0);border-radius:var(--r1)">
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-      <div style="display:flex;align-items:center;gap:6px"><label style="font:400 12px/1 var(--f);color:var(--c7)">超时天数</label><input class="form-input" type="number" value="7" min="1" max="90" style="width:70px"><span style="font:400 12px/1 var(--f);color:var(--c5)">天，超时后按下方「强制结束规则」处理</span></div>
+      <div style="display:flex;align-items:center;gap:6px"><label style="font:400 12px/1 var(--f);color:var(--c7)">超时天数</label><input class="form-input" type="number" value="7" min="1" max="90" style="width:70px"><span style="font:400 12px/1 var(--f);color:var(--c5)">天</span></div>
     </div>
   </div>
   <div style="margin-top:16px"><label class="form-lb" style="margin-bottom:8px;display:block">节点权重分配 <span style="font:400 11px/1 var(--f);color:var(--c4)">（节点由流程模型「${s.flow}」决定）</span></label>
@@ -630,8 +651,7 @@ function renderEvalCfg(s){
       <span style="font:400 13px/1 var(--f);color:var(--c7)">结束流程并默认结果等级</span>
       <select class="form-input" style="width:160px">${grades.map(g=>`<option${g.code==='B-'?' selected':''}>${g.name}</option>`).join('')}</select>
     </div>
-  </div>
-  `;
+  </div>`;
 }
 
 function renderRatifyCfg(s){
@@ -640,11 +660,14 @@ function renderRatifyCfg(s){
   const showGroups=stageConfigMode==='merged'?form.groups:[form.groups.find(g=>g.id===(activeGroupTab[s.id]||form.groups[0]?.id))].filter(Boolean);
   return `<div class="form-row">
     <div class="form-grp"><label class="form-lb">流程模型</label><select class="form-input">${models.map(m=>`<option ${s.flow===m?'selected':''}>${m}</option>`).join('')}</select></div>
-    <div class="form-grp"><label class="form-lb">结束处理规则</label><select class="form-input" onchange="toggleTimeout('ratify',this.value)"><option>手动结束</option><option>自动结束</option><option>超时自动结束</option></select></div>
+    <div class="form-grp"><label class="form-lb">开启方式</label><select class="form-input"><option>手动</option><option>自动</option></select></div>
+  </div>
+  <div class="form-row">
+    <div class="form-grp"><label class="form-lb">结束方式</label><select class="form-input" onchange="toggleTimeout('ratify',this.value)"><option>手动</option><option>超时自动结束</option></select></div>
   </div>
   <div id="timeout-ratify" style="display:none;margin-top:12px;padding:12px;background:var(--c0);border-radius:var(--r1)">
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-      <div style="display:flex;align-items:center;gap:6px"><label style="font:400 12px/1 var(--f);color:var(--c7)">超时天数</label><input class="form-input" type="number" value="7" min="1" max="90" style="width:70px"><span style="font:400 12px/1 var(--f);color:var(--c5)">天，超时后按下方「强制结束规则」处理</span></div>
+      <div style="display:flex;align-items:center;gap:6px"><label style="font:400 12px/1 var(--f);color:var(--c7)">超时天数</label><input class="form-input" type="number" value="7" min="1" max="90" style="width:70px"><span style="font:400 12px/1 var(--f);color:var(--c5)">天</span></div>
     </div>
   </div>
   <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
@@ -654,14 +677,34 @@ function renderRatifyCfg(s){
       <select class="form-input" style="width:160px">${grades.map(g=>`<option${g.code==='B-'?' selected':''}>${g.name}</option>`).join('')}</select>
     </div>
   </div>
-  <div style="margin-top:12px"><label class="form-lb" style="margin-bottom:8px;display:block">强制分布参数${stageConfigMode==='merged'?'（按考核组分别设置）':''}</label>
-    ${showGroups.map(g=>`<div style="display:flex;align-items:center;gap:12px;padding:8px 12px;border:1px solid var(--dv);border-radius:var(--r1);margin-bottom:6px">
-      ${stageConfigMode==='merged'?`<span style="font:500 13px/1 var(--f);color:var(--c8);min-width:100px">${g.name}</span>`:''}
-      <select class="form-input" style="width:120px"><option>强控</option><option>弱控</option></select>
-      <span style="font:400 12px/1 var(--f);color:var(--c5)">最少人数</span>
-      <input class="form-input" type="number" value="5" style="width:60px">
-      <a href="perf-forced-distribution.html" target="_blank" style="font:500 12px/1 var(--f);color:var(--pr);text-decoration:none">查看分布规则 →</a>
-    </div>`).join('')}
+  <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
+    <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制分布规则</div>
+    <div class="form-row">
+      <div class="form-grp">
+        <label class="form-lb">关联强制分布规则 <span class="req">*</span></label>
+        <select class="form-input" onchange="form.forcedDistRule=this.value;render()">
+          ${FORCED_DIST_RULES.map(r=>`<option ${form.forcedDistRule===r.name?'selected':''}>${r.name}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-grp">
+        <label class="form-lb">控制模式 <span class="req">*</span></label>
+        <select class="form-input"><option>强控</option><option>弱控</option></select>
+      </div>
+    </div>
+    <div style="margin-top:4px"><a href="perf-forced-distribution.html" target="_blank" style="font:500 12px/1 var(--f);color:var(--pr);text-decoration:none">查看分布规则 →</a></div>
+    <div style="margin-top:16px;padding:14px 16px;background:var(--c0);border-radius:var(--r2);border:1px solid var(--dv)">
+      <div style="font:600 12px/1 var(--f);color:var(--c8);margin-bottom:10px">当前规则：${form.forcedDistRule}</div>
+      ${(()=>{
+        const rule=FORCED_DIST_RULES.find(r=>r.name===form.forcedDistRule);
+        if(!rule||!rule.grades) return '';
+        return `<table class="tbl" style="margin:0"><thead><tr><th>等级</th><th>等级名称</th><th>计算规则</th><th>比例上限(%)</th></tr></thead><tbody>${rule.grades.map(g=>`<tr>
+          <td><span style="font:500 11px/1 var(--f);padding:2px 8px;border-radius:3px;background:var(--pr50);color:var(--pr)">${g.code}</span></td>
+          <td style="font:500 13px/1 var(--f);color:var(--c9)">${g.name}</td>
+          <td style="font:400 13px/1 var(--f);color:var(--c6)">${g.op}</td>
+          <td style="font-family:var(--m);font-size:13px;font-weight:600;color:var(--c9)">${g.pct}%</td>
+        </tr>`).join('')}</tbody></table>`;
+      })()}
+    </div>
   </div>`;
 }
 
@@ -669,20 +712,14 @@ function renderConfirmCfg(s){
   const models=FLOW_MODELS[s.id]||[];
   return `<div class="form-row">
     <div class="form-grp"><label class="form-lb">流程模型</label><select class="form-input">${models.map(m=>`<option ${s.flow===m?'selected':''}>${m}</option>`).join('')}</select></div>
-    <div class="form-grp"><label class="form-lb">开启方式</label><select class="form-input"><option>自动开启</option><option>手动开启</option><option>不开启</option></select></div>
+    <div class="form-grp"><label class="form-lb">开启方式</label><select class="form-input"><option>手动</option><option>自动</option></select></div>
   </div>
   <div class="form-row">
-    <div class="form-grp"><label class="form-lb">结束处理规则</label><select class="form-input" onchange="toggleTimeout('confirm',this.value)"><option>手动结束</option><option>自动结束</option><option>超时自动结束</option></select></div>
+    <div class="form-grp"><label class="form-lb">结束方式</label><select class="form-input" onchange="toggleTimeout('confirm',this.value)"><option>手动</option><option>超时自动结束</option></select></div>
   </div>
   <div id="timeout-confirm" style="display:none;margin-top:12px;padding:12px;background:var(--c0);border-radius:var(--r1)">
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-      <div style="display:flex;align-items:center;gap:6px"><label style="font:400 12px/1 var(--f);color:var(--c7)">超时天数</label><input class="form-input" type="number" value="7" min="1" max="90" style="width:70px"><span style="font:400 12px/1 var(--f);color:var(--c5)">天，超时后直接结束流程</span></div>
-    </div>
-  </div>
-  <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
-    <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制结束规则</div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <span style="font:400 13px/1 var(--f);color:var(--c7)">结束流程（员工已有绩效等级，无需再次评定）</span>
+      <div style="display:flex;align-items:center;gap:6px"><label style="font:400 12px/1 var(--f);color:var(--c7)">超时天数</label><input class="form-input" type="number" value="7" min="1" max="90" style="width:70px"><span style="font:400 12px/1 var(--f);color:var(--c5)">天</span></div>
     </div>
   </div>
   <div style="margin-top:12px;padding:10px 12px;background:var(--pr50);border:1px solid var(--pr100);border-radius:var(--r1)">
@@ -696,14 +733,14 @@ function renderInterviewCfg(s){
   const grades=getSelectedRule().grades;
   return `<div class="form-row">
     <div class="form-grp"><label class="form-lb">流程模型</label><select class="form-input">${models.map(m=>`<option ${s.flow===m?'selected':''}>${m}</option>`).join('')}</select></div>
-    <div class="form-grp"><label class="form-lb">开启方式</label><select class="form-input"><option>自动开启</option><option>手动开启</option></select></div>
+    <div class="form-grp"><label class="form-lb">开启方式</label><select class="form-input"><option>手动</option><option>自动</option></select></div>
   </div>
   <div class="form-row">
-    <div class="form-grp"><label class="form-lb">结束处理规则</label><select class="form-input" onchange="toggleTimeout('interview',this.value)"><option>手动结束</option><option>自动结束</option><option>超时自动结束</option></select></div>
+    <div class="form-grp"><label class="form-lb">结束方式</label><select class="form-input" onchange="toggleTimeout('interview',this.value)"><option>手动</option><option>超时自动结束</option></select></div>
   </div>
   <div id="timeout-interview" style="display:none;margin-top:12px;padding:12px;background:var(--c0);border-radius:var(--r1)">
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-      <div style="display:flex;align-items:center;gap:6px"><label style="font:400 12px/1 var(--f);color:var(--c7)">超时天数</label><input class="form-input" type="number" value="7" min="1" max="90" style="width:70px"><span style="font:400 12px/1 var(--f);color:var(--c5)">天，超时后按下方「强制结束规则」处理</span></div>
+      <div style="display:flex;align-items:center;gap:6px"><label style="font:400 12px/1 var(--f);color:var(--c7)">超时天数</label><input class="form-input" type="number" value="7" min="1" max="90" style="width:70px"><span style="font:400 12px/1 var(--f);color:var(--c5)">天</span></div>
     </div>
   </div>
   <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">

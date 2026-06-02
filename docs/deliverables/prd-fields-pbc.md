@@ -35,24 +35,24 @@
 
 ### 2.1 Goal 对象
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| `id` | string | 唯一标识，格式 `g{timestamp}` |
-| `name` | string | 目标名称 |
-| `indicator` | string | 关联指标名称（从指标库带入） |
-| `type` | `'quant' \| 'qual'` | 定量 / 定性 |
-| `weight` | number | 权重百分比 |
-| `desc` | string | 目标描述 |
-| `measure` | string | 衡量方式（定量从指标带入，定性用户输入） |
-| `measureText` | string | 定性目标的衡量标准文本 |
-| `target` | number | 目标值（定量） |
-| `challenge` | number | 挑战值（定量） |
-| `baseline` | number | 保底值（定量） |
-| `rule` | string | 计算规则名称（定量从指标带入） |
-| `ruleFormula` | string | 计算公式文本（定量从指标带入） |
-| `msLevels` | array | 等级标准数组，从指标带入 |
-| `linkedIndicatorId` | string \| null | 关联的指标 ID |
-| `i18n` | object | 多语言内容 `{name:{zh,en}, desc:{zh,en}}` |
+| 字段                  | 类型                  | 说明                                   |
+| ------------------- | ------------------- | ------------------------------------ |
+| `id`                | string              | 唯一标识，格式 `g{timestamp}`               |
+| `name`              | string              | 目标名称                                 |
+| `indicator`         | string              | 关联指标名称（从指标库带入）                       |
+| `type`              | `'quant' \| 'qual'` | 定量 / 定性                              |
+| `weight`            | number              | 权重百分比                                |
+| `desc`              | string              | 目标描述                                 |
+| `measure`           | string              | 衡量方式（定量从指标带入，定性用户输入）                 |
+| `measureText`       | string              | 定性目标的衡量标准文本                          |
+| `target`            | number              | 目标值（定量）                              |
+| `challenge`         | number              | 挑战值（定量）                              |
+| `baseline`          | number              | 保底值（定量）                              |
+| `rule`              | string              | 计算规则名称（定量从指标带入）                      |
+| `ruleFormula`       | string              | 计算公式文本（定量从指标带入）                      |
+| `msLevels`          | array               | 等级标准数组，从指标带入                         |
+| `linkedIndicatorId` | string \| null      | 关联的指标 ID                             |
+| `i18n`              | object              | 多语言内容 `{name:{zh,en}, desc:{zh,en}}` |
 
 ### 2.2 Module 对象
 

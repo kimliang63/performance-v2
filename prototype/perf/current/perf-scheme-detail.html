@@ -194,6 +194,8 @@ const SCHEME={
   cycle:'年度',
   status:'enabled',
   downward:true,
+  version:3,
+  forcedDistRule:'标准强制分布',
   desc:'适用于全公司正式员工的年度绩效考核，包含目标制定、绩效考核、结果审定、结果确认、绩效面谈五个阶段。',
   creator:'王管理',
   created:'2026-01-10 09:00',
@@ -209,13 +211,13 @@ const GRADES=[
 ];
 
 const STAGES=[
-  {id:'goal',name:'目标制定',desc:'员工/上级填写绩效目标',enabled:true,flow:'通用目标制定流程',startMethod:'手动开启',endMethod:'手动结束'},
-  {id:'eval',name:'绩效考核',desc:'考核人评分',enabled:true,flow:'通用绩效考核流程',endRule:'自动结束',
+  {id:'goal',name:'目标制定',desc:'员工/上级填写绩效目标',enabled:true,flow:'通用目标制定流程',startMethod:'手动',endMethod:'手动',endRule:'符合预期-'},
+  {id:'eval',name:'绩效考核',desc:'考核人评分',enabled:true,flow:'通用绩效考核流程',startMethod:'手动',endMethod:'超时自动结束',evalRule:'通用评价规则',endRule:'符合预期-',
    nodes:[{name:'员工自评',type:'填写',weight:20},{name:'直接上级评分',type:'评分',weight:50},{name:'隔级上级评分',type:'评分',weight:30}]},
-  {id:'ratify',name:'结果审定',desc:'审定人调整等级',enabled:true,flow:'汇报线逐级审定',endRule:'不处理',
+  {id:'ratify',name:'结果审定',desc:'审定人调整等级',enabled:true,flow:'汇报线逐级审定',startMethod:'手动',endMethod:'手动',endRule:'符合预期-',forcedDistRule:'标准强制分布',
    forcedDist:[{group:'默认考核组',mode:'强控',minCount:5},{group:'仓储特殊组',mode:'弱控',minCount:3},{group:'销售精英组',mode:'强控',minCount:8}]},
-  {id:'confirm',name:'结果确认',desc:'员工确认绩效结果',enabled:true,flow:'员工确认流程',startMethod:'自动开启'},
-  {id:'interview',name:'绩效面谈',desc:'上级与员工面谈',enabled:true,flow:'绩效面谈流程',startMethod:'自动开启'},
+  {id:'confirm',name:'结果确认',desc:'员工确认绩效结果',enabled:true,flow:'员工确认流程',startMethod:'手动',endMethod:'手动'},
+  {id:'interview',name:'绩效面谈',desc:'上级与员工面谈',enabled:true,flow:'绩效面谈流程',startMethod:'手动',endMethod:'手动',endRule:'符合预期-'},
 ];
 
 const GROUPS=[
@@ -230,6 +232,15 @@ const ACTIVITIES=[
 ];
 
 const ACT_STATUS={进行中:{cls:'warn',color:'var(--ac700)',bg:'var(--ac50)'},已结束:{cls:'',color:'var(--em700)',bg:'var(--em50)'},未开始:{cls:'off',color:'var(--c5)',bg:'var(--c1)'}};
+
+const FORCED_DIST_RULES=[
+  {name:'标准强制分布',desc:'A 10% / B+ 20% / B 40% / B- 20% / C 10%',
+   grades:[{code:'A',name:'远超预期',op:'不超过',pct:10},{code:'B+',name:'符合预期+',op:'不超过',pct:20},{code:'B',name:'符合预期',op:'不低于',pct:40},{code:'B-',name:'符合预期-',op:'不超过',pct:20},{code:'C',name:'低于预期',op:'不低于',pct:10}]},
+  {name:'宽松强制分布',desc:'A 15% / B+ 25% / B 40% / B- 15% / C 5%',
+   grades:[{code:'A',name:'远超预期',op:'不超过',pct:15},{code:'B+',name:'符合预期+',op:'不超过',pct:25},{code:'B',name:'符合预期',op:'不低于',pct:40},{code:'B-',name:'符合预期-',op:'不超过',pct:15},{code:'C',name:'低于预期',op:'不超过',pct:5}]},
+  {name:'严格强制分布',desc:'A 5% / B+ 15% / B 40% / B- 25% / C 15%',
+   grades:[{code:'A',name:'远超预期',op:'不超过',pct:5},{code:'B+',name:'符合预期+',op:'不超过',pct:15},{code:'B',name:'符合预期',op:'不低于',pct:40},{code:'B-',name:'符合预期-',op:'不超过',pct:25},{code:'C',name:'低于预期',op:'不低于',pct:15}]},
+];
 
 // ═══ 状态 ═══
 let curTab='info', activeSection='basic', activeGroup='g1', openStage='goal';
@@ -300,6 +311,10 @@ function renderBasicInfo(){
       <div class="form-grp"><label class="form-lb">启用状态</label><div class="ro-val"><span class="ro-tag${SCHEME.status==='disabled'?' off':''}${SCHEME.status==='draft'?' warn':''}">${SCHEME.status==='enabled'?'已启用':SCHEME.status==='disabled'?'已停用':'草稿'}</span></div></div>
     </div>
     <div class="form-row">
+      <div class="form-grp"><label class="form-lb">方案版本</label><div class="ro-val mono">v${SCHEME.version}</div></div>
+      <div class="form-grp"></div>
+    </div>
+    <div class="form-row">
       <div class="form-grp"><label class="form-lb">向下公开</label><div class="ro-val">${SCHEME.downward?'是':'否'}</div></div>
       <div class="form-grp"><label class="form-lb">创建人</label><div class="ro-val">${SCHEME.creator}</div></div>
     </div>
@@ -357,7 +372,6 @@ function renderGroupDetail(gid){
     </div>
     <div class="form-row">
       <div class="form-grp"><label class="form-lb">排除人员</label><div class="ro-val">${grp.excluded.length?grp.excluded.join('、'):'无'}</div></div>
-      <div class="form-grp"><label class="form-lb">评价规则</label><div class="ro-val">${grp.evalRule}</div></div>
     </div>
     <div style="margin-top:8px">
       <label class="form-lb" style="margin-bottom:8px;display:block">共用环节</label>
@@ -393,14 +407,24 @@ function renderGoalCfg(s){
   </div>
   <div class="form-row">
     <div class="form-grp"><label class="form-lb">结束方式</label><div class="ro-val">${s.endMethod}</div></div>
-    <div class="form-grp"><label class="form-lb">未填写人员处理</label><div class="ro-val">不处理</div></div>
+  </div>
+  <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
+    <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制结束规则</div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font:400 13px/1 var(--f);color:var(--c7)">结束流程并默认结果等级</span>
+      <div class="ro-val" style="width:160px">${s.endRule}</div>
+    </div>
   </div>`;
 }
 
 function renderEvalCfg(s){
   return `<div class="form-row">
     <div class="form-grp"><label class="form-lb">流程模型</label><div class="ro-val">${s.flow}</div></div>
-    <div class="form-grp"><label class="form-lb">结束处理规则</label><div class="ro-val">${s.endRule}</div></div>
+    <div class="form-grp"><label class="form-lb">评价规则</label><div class="ro-val">${s.evalRule}</div></div>
+  </div>
+  <div class="form-row">
+    <div class="form-grp"><label class="form-lb">开启方式</label><div class="ro-val">${s.startMethod}</div></div>
+    <div class="form-grp"><label class="form-lb">结束方式</label><div class="ro-val">${s.endMethod}</div></div>
   </div>
   <div style="margin-top:16px">
     <label class="form-lb" style="margin-bottom:8px;display:block">节点权重分配</label>
@@ -413,24 +437,51 @@ function renderEvalCfg(s){
       </tr>`).join('')}</tbody>
     </table>
     <div class="wt-sum"><span>总权重：</span><span class="ok">${s.nodes.reduce((a,n)=>a+n.weight,0)}%</span></div>
+  </div>
+  <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
+    <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制结束规则</div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font:400 13px/1 var(--f);color:var(--c7)">结束流程并默认结果等级</span>
+      <div class="ro-val" style="width:160px">${s.endRule}</div>
+    </div>
   </div>`;
 }
 
 function renderRatifyCfg(s){
   return `<div class="form-row">
     <div class="form-grp"><label class="form-lb">流程模型</label><div class="ro-val">${s.flow}</div></div>
-    <div class="form-grp"><label class="form-lb">结束处理规则</label><div class="ro-val">${s.endRule}</div></div>
+    <div class="form-grp"><label class="form-lb">开启方式</label><div class="ro-val">${s.startMethod}</div></div>
   </div>
-  <div style="margin-top:16px">
-    <label class="form-lb" style="margin-bottom:8px;display:block">强制分布参数（按考核组）</label>
-    <table class="tbl">
-      <thead><tr><th>考核组</th><th>控制模式</th><th>最少人数</th></tr></thead>
-      <tbody>${s.forcedDist.map(fd=>`<tr>
-        <td style="font-weight:500;color:var(--c9)">${fd.group}</td>
-        <td><span style="font:500 11px/1 var(--f);padding:2px 8px;border-radius:3px;background:${fd.mode==='强控'?'var(--ro50)':'var(--ac50)'};color:${fd.mode==='强控'?'var(--ro)':'var(--ac700)'}">${fd.mode}</span></td>
-        <td style="font-family:var(--m);font-size:12px">${fd.minCount}</td>
-      </tr>`).join('')}</tbody>
-    </table>
+  <div class="form-row">
+    <div class="form-grp"><label class="form-lb">结束方式</label><div class="ro-val">${s.endMethod}</div></div>
+  </div>
+  <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
+    <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制结束规则</div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font:400 13px/1 var(--f);color:var(--c7)">结束流程并默认结果等级</span>
+      <div class="ro-val" style="width:160px">${s.endRule}</div>
+    </div>
+  </div>
+  <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
+    <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制分布规则</div>
+    <div class="form-row">
+      <div class="form-grp"><label class="form-lb">关联强制分布规则</label><div class="ro-val">${s.forcedDistRule}</div></div>
+      <div class="form-grp"><label class="form-lb">控制模式</label><div class="ro-val">强控</div></div>
+    </div>
+    <div style="margin-bottom:16px"><a href="perf-forced-distribution.html" target="_blank" style="font:500 12px/1 var(--f);color:var(--pr);text-decoration:none">查看分布规则 →</a></div>
+    <div style="padding:14px 16px;background:var(--c0);border-radius:var(--r2);border:1px solid var(--dv)">
+      <div style="font:600 12px/1 var(--f);color:var(--c8);margin-bottom:10px">当前规则：${s.forcedDistRule}</div>
+      <table class="tbl" style="margin:0"><thead><tr><th>等级</th><th>等级名称</th><th>计算规则</th><th>比例上限(%)</th></tr></thead><tbody>${(()=>{
+        const rule=FORCED_DIST_RULES.find(r=>r.name===s.forcedDistRule);
+        if(!rule||!rule.grades) return '';
+        return rule.grades.map(g=>`<tr>
+          <td><span style="font:500 11px/1 var(--f);padding:2px 8px;border-radius:3px;background:var(--pr50);color:var(--pr)">${g.code}</span></td>
+          <td style="font:500 13px/1 var(--f);color:var(--c9)">${g.name}</td>
+          <td style="font:400 13px/1 var(--f);color:var(--c6)">${g.op}</td>
+          <td style="font-family:var(--m);font-size:13px;font-weight:600;color:var(--c9)">${g.pct}%</td>
+        </tr>`).join('');
+      })()}</tbody></table>
+    </div>
   </div>`;
 }
 
@@ -438,6 +489,12 @@ function renderConfirmCfg(s){
   return `<div class="form-row">
     <div class="form-grp"><label class="form-lb">流程模型</label><div class="ro-val">${s.flow}</div></div>
     <div class="form-grp"><label class="form-lb">开启方式</label><div class="ro-val">${s.startMethod}</div></div>
+  </div>
+  <div class="form-row">
+    <div class="form-grp"><label class="form-lb">结束方式</label><div class="ro-val">${s.endMethod}</div></div>
+  </div>
+  <div style="margin-top:12px;padding:10px 12px;background:var(--pr50);border:1px solid var(--pr100);border-radius:var(--r1)">
+    <div style="font:500 12px/1.4 var(--f);color:var(--pr)">流程包含分支：员工确认「同意」→ 流程结束；员工确认「不同意」→ 通知 HRBP 知悉 → 流程结束</div>
   </div>`;
 }
 
@@ -445,6 +502,16 @@ function renderInterviewCfg(s){
   return `<div class="form-row">
     <div class="form-grp"><label class="form-lb">流程模型</label><div class="ro-val">${s.flow}</div></div>
     <div class="form-grp"><label class="form-lb">开启方式</label><div class="ro-val">${s.startMethod}</div></div>
+  </div>
+  <div class="form-row">
+    <div class="form-grp"><label class="form-lb">结束方式</label><div class="ro-val">${s.endMethod}</div></div>
+  </div>
+  <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
+    <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制结束规则</div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font:400 13px/1 var(--f);color:var(--c7)">结束流程并默认结果等级</span>
+      <div class="ro-val" style="width:160px">${s.endRule}</div>
+    </div>
   </div>`;
 }
 
