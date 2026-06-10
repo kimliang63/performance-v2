@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HR ONE - AI绩效助手(对话式)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Design tokens */
+:root{
+  --pr:#2563EB;--pr700:#1D4ED8;--pr50:#F0F5FF;--pr100:#E0EAFF;
+  --em:#10B981;--em50:#ECFDF5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac700:#B45309;
+  --ro:#F43F5E;--ro100:#FFE4E6;--ro50:#FFF1F2;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+}
+
+/* Reset */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:var(--f);background:var(--bg);color:var(--c8);-webkit-font-smoothing:antialiased}
+
+/* Shell */
+.shell{display:flex;flex-direction:column;max-width:520px;height:100vh;height:100dvh;margin:0 auto;background:var(--sf);box-shadow:0 0 40px rgba(0,0,0,.08)}
+
+/* Header */
+.hdr{padding:14px 18px;border-bottom:1px solid var(--c2);display:flex;align-items:center;gap:12px;flex-shrink:0;background:var(--sf)}
+.hdr-av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--pr),var(--vi));display:flex;align-items:center;justify-content:center;font-size:18px;color:#FFF;flex-shrink:0}
+.hdr-info{flex:1;min-width:0}
+.hdr-name{font:600 14px/1.2 var(--f);color:var(--c9)}
+.hdr-desc{font:400 11px/1 var(--f);color:var(--c5);margin-top:2px}
+.hdr-status{display:flex;align-items:center;gap:5px;font:500 11px/1 var(--f);color:var(--em700);flex-shrink:0}
+.hdr-dot{width:8px;height:8px;border-radius:50%;background:var(--em)}
+
+/* Chat area */
+.chat{flex:1;overflow-y:auto;padding:16px 18px;scroll-behavior:smooth;background:var(--c0)}
+.chat::-webkit-scrollbar{width:4px}
+.chat::-webkit-scrollbar-thumb{background:var(--c3);border-radius:4px}
+.chat>*+*{margin-top:4px}
+
+/* Messages */
+.msg{display:flex;gap:8px;max-width:440px;animation:fadeIn .3s ease}
+.msg.user{flex-direction:row-reverse;margin-left:auto}
+.msg-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font:600 12px/1 var(--f);color:#FFF}
+.msg-av.bot{background:linear-gradient(135deg,var(--pr),var(--vi))}
+.msg-av.user{background:var(--c6)}
+.msg-bd{display:flex;flex-direction:column;gap:2px}
+.msg-name{font:500 11px/1 var(--f);color:var(--c5)}
+.msg.user .msg-name{text-align:right}
+.msg-text{padding:10px 14px;border-radius:var(--r2);font:400 13px/1.6 var(--f);color:var(--c8);background:var(--sf);border:1px solid var(--c2);white-space:pre-line}
+.msg.user .msg-text{background:var(--pr);color:#FFF;border-color:var(--pr)}
+.msg-text strong{font-weight:600;color:var(--c9)}
+.msg.user .msg-text strong{color:#FFF}
+.msg-time{font:400 10px/1 var(--f);color:var(--c4);margin-top:2px}
+.msg.user .msg-time{text-align:right}
+
+/* Typing indicator */
+.typing{display:flex;gap:8px;max-width:440px;margin:4px 0;animation:fadeIn .3s ease}
+.typing .msg-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font:600 12px/1 var(--f);color:#FFF;background:linear-gradient(135deg,var(--pr),var(--vi))}
+.typing-dots{display:flex;align-items:center;gap:4px;padding:10px 14px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2)}
+.typing-dot{width:6px;height:6px;border-radius:50%;background:var(--c4);animation:bounce .6s infinite}
+.typing-dot:nth-child(2){animation-delay:.15s}
+.typing-dot:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* Cards */
+.fc{background:var(--sf);border:1px solid var(--c2);border-radius:8px;overflow:hidden;margin:4px 0;max-width:420px;width:100%;animation:fadeIn .3s ease}
+.fc-tall{display:flex;flex-direction:column}
+.fc-tall{max-height:70vh}
+.fc-tall .fc-hd{flex-shrink:0}
+.fc-tall .fc-bd{flex:1;overflow-y:auto;min-height:0}
+.fc-tall .fc-bd::-webkit-scrollbar{width:3px}
+.fc-tall .fc-bd::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+.fc-tall .fc-ft{flex-shrink:0}
+.fc-hd{padding:12px 14px;border-left:4px solid var(--pr);display:flex;align-items:center;gap:8px;flex-shrink:0}
+.fc-hd.em{border-left-color:var(--em)}
+.fc-hd.vi{border-left-color:var(--vi)}
+.fc-hd.ac{border-left-color:var(--ac)}
+.fc-hd-icon{font-size:16px;flex-shrink:0}
+.fc-hd-t{font:600 13px/1.2 var(--f);color:var(--c8)}
+.fc-hd-s{font:400 11px/1 var(--f);color:var(--c5);margin-top:2px}
+.fc-bd{padding:0 14px 12px}
+.fc-section{margin-top:8px}
+.fc-section-title{font:600 11px/1 var(--f);color:var(--c6);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--dv)}
+.fc-row{display:flex;align-items:center;padding:5px 0;border-bottom:1px solid var(--dv);gap:8px;font-size:12px}
+.fc-row:last-child{border-bottom:none}
+.fc-row-name{flex:1;font:400 12px/1.3 var(--f);color:var(--c8)}
+.fc-row-val{font:500 12px/1 var(--fm);color:var(--c7)}
+.fc-tag{display:inline-block;font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px;white-space:nowrap}
+.fc-tag.ai{color:var(--vi);background:var(--vi50)}
+.fc-tag.em{color:var(--em700);background:var(--em50)}
+.fc-tag.ac{color:var(--ac700);background:var(--ac50)}
+.fc-tag.ro{color:var(--ro);background:var(--ro50)}
+.fc-ft{padding:10px 14px;border-top:1px solid var(--dv);display:flex;gap:6px;flex-wrap:wrap}
+.fc-btn{font:500 12px/1 var(--f);padding:6px 14px;border-radius:var(--r1);border:1px solid var(--c2);background:var(--sf);color:var(--c7);cursor:pointer;transition:all .15s}
+.fc-btn:hover{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.fc-btn.primary{background:var(--pr);color:#FFF;border-color:var(--pr)}
+.fc-btn.primary:hover{background:var(--pr700)}
+.fc-btn.danger{color:var(--ro);border-color:var(--ro100)}
+.fc-btn.danger:hover{background:var(--ro50)}
+
+/* Goal card */
+.goal-group{margin-bottom:6px}
+.goal-group-hd{font:600 11px/1 var(--f);color:var(--pr);padding:6px 0 4px;border-bottom:1px solid var(--pr100)}
+.goal-item{padding:5px 0;font-size:12px}
+.goal-item .gi-name{font:500 12px/1.3 var(--f);color:var(--c8)}
+.goal-item .gi-meta{font:400 11px/1.4 var(--f);color:var(--c5)}
+.goal-item .gi-vals{display:flex;gap:12px;font:400 11px/1 var(--fm);color:var(--c6);margin-top:2px}
+.goal-empty{font:400 12px/1.4 var(--f);color:var(--c4);padding:6px 0}
+
+/* Score card */
+.score-section{margin-bottom:8px}
+.score-hd{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--dv)}
+.score-hd-left{font:600 12px/1 var(--f);color:var(--c8)}
+.score-hd-right{font:600 14px/1 var(--fm);color:var(--pr)}
+.score-row{display:flex;align-items:center;padding:4px 0;font-size:12px;gap:6px}
+.score-row .sr-name{flex:1;font:400 12px/1.3 var(--f);color:var(--c7)}
+.score-row .sr-wt{font:400 11px/1 var(--fm);color:var(--c4);width:32px;text-align:right}
+.score-row .sr-tag{font:500 11px/1 var(--f);padding:2px 8px;border-radius:3px;color:var(--em700);background:var(--em50)}
+.score-total{margin-top:8px;padding-top:8px;border-top:2px solid var(--c2);display:flex;justify-content:space-between;align-items:center}
+.score-total-left{font:600 13px/1 var(--f);color:var(--c8)}
+.score-total-right{display:flex;align-items:baseline;gap:8px}
+.score-total-val{font:700 20px/1 var(--fm);color:var(--pr)}
+.score-total-grade{font:600 12px/1 var(--f);color:var(--em700);background:var(--em50);padding:3px 8px;border-radius:4px}
+
+/* Ratification card */
+.ratify-section{margin-bottom:8px}
+.ratify-grade-hd{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--dv);gap:8px}
+.ratify-grade-hd .rg-name{font:600 12px/1 var(--f);color:var(--c8)}
+.ratify-grade-hd .rg-info{font:400 11px/1 var(--f);color:var(--c5)}
+.ratify-grade-hd .rg-warn{font:500 10px/1 var(--f);color:var(--ac700);background:var(--ac50);padding:2px 6px;border-radius:3px}
+.ratify-row{display:flex;align-items:center;padding:4px 0;font-size:12px;gap:6px}
+.ratify-row .rr-name{width:56px;font:500 12px/1.3 var(--f);color:var(--c8)}
+.ratify-row .rr-dept{width:48px;font:400 11px/1 var(--f);color:var(--c5)}
+.ratify-row .rr-score{width:36px;font:500 12px/1 var(--fm);color:var(--c7);text-align:center}
+.ratify-row .rr-arrow{color:var(--c4)}
+.ratify-row .rr-grade{font:600 12px/1 var(--f);color:var(--pr);background:var(--pr50);padding:2px 8px;border-radius:3px;width:28px;text-align:center}
+.ratify-row .rr-tag{margin-left:auto}
+.ratify-alert{margin-top:8px;padding:8px 10px;background:var(--ac50);border-radius:var(--r1);font:400 12px/1.5 var(--f);color:var(--ac700)}
+
+/* Recommend card */
+.rec-item{padding:8px 0;border-bottom:1px solid var(--dv)}
+.rec-item:last-child{border-bottom:none}
+.rec-item .ri-head{display:flex;align-items:center;gap:6px}
+.rec-item .ri-icon{font-size:16px}
+.rec-item .ri-name{font:600 13px/1.2 var(--f);color:var(--c8)}
+.rec-item .ri-wt{font:500 11px/1 var(--fm);color:var(--pr);background:var(--pr50);padding:2px 6px;border-radius:3px}
+.rec-item .ri-desc{font:400 12px/1.4 var(--f);color:var(--c5);margin-top:4px;padding-left:22px}
+.rec-item .ri-kpi{font:400 11px/1.4 var(--fm);color:var(--c6);margin-top:2px;padding-left:22px}
+
+/* Compliance card */
+.comp-item{display:flex;align-items:center;gap:6px;padding:3px 0;font:400 12px/1 var(--f);color:var(--c6)}
+.comp-ck{width:14px;height:14px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.comp-ck svg{width:8px;height:8px;color:#FFF}
+
+/* Bottom area */
+.bottom{flex-shrink:0;background:var(--sf);border-top:1px solid var(--c2)}
+
+/* Tabs */
+.tabs{display:flex;align-items:center;padding:8px 14px;gap:4px;border-bottom:1px solid var(--dv)}
+.tab{font:500 12px/1 var(--f);padding:7px 14px;border-radius:var(--r1);border:none;background:transparent;color:var(--c6);cursor:pointer;transition:all .15s;white-space:nowrap}
+.tab:hover{background:var(--c1);color:var(--c8)}
+.tab.active{background:var(--pr50);color:var(--pr)}
+.tab-replay{margin-left:auto;font:500 12px/1 var(--f);padding:7px 12px;border-radius:var(--r1);border:1px solid var(--c2);background:var(--sf);color:var(--c6);cursor:pointer;transition:all .15s}
+.tab-replay:hover{border-color:var(--pr);color:var(--pr)}
+
+/* Input */
+.input-bar{display:flex;align-items:center;gap:8px;padding:10px 14px}
+.input-bar input{flex:1;padding:9px 14px;border:1px solid var(--c2);border-radius:var(--r2);font:400 13px/1 var(--f);color:var(--c8);background:var(--c0);outline:none}
+.input-bar input::placeholder{color:var(--c4)}
+.input-bar button{padding:9px 20px;border:none;border-radius:var(--r2);background:var(--pr);color:#FFF;font:500 13px/1 var(--f);cursor:pointer;transition:all .15s}
+.input-bar button:hover{background:var(--pr700)}
+.input-bar button:disabled{opacity:.4;cursor:not-allowed}
+.input-actions{display:flex;gap:4px;flex-shrink:0}
+.input-icon-btn{width:36px;height:36px;border-radius:var(--r2);border:1px solid var(--c2);background:var(--sf);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;color:var(--c6)}
+.input-icon-btn:hover{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.input-icon-btn svg{width:18px;height:18px}
+
+/* Document card */
+.doc-preview{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--c0);border-radius:var(--r2);margin-top:6px;border:1px solid var(--c2)}
+.doc-icon{width:36px;height:44px;background:linear-gradient(135deg,var(--pr),var(--pr700));border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.doc-icon svg{width:18px;height:18px;color:#FFF}
+.doc-info{flex:1;min-width:0}
+.doc-name{font:500 12px/1.3 var(--f);color:var(--c8);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.doc-meta{font:400 11px/1 var(--f);color:var(--c5);margin-top:2px}
+.doc-status{font:500 11px/1 var(--f);padding:2px 8px;border-radius:3px;flex-shrink:0}
+.doc-status.parsed{color:var(--em700);background:var(--em50)}
+.doc-status.loading{color:var(--ac700);background:var(--ac50)}
+
+/* Parsed result card */
+.parsed-section{margin-top:8px}
+.parsed-section-hd{font:600 11px/1 var(--f);color:var(--c6);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:6px}
+.parsed-section-hd .count{font:400 11px/1 var(--f);color:var(--c5);font-weight:400;text-transform:none;letter-spacing:0}
+.parsed-row{display:flex;align-items:center;padding:5px 0;border-bottom:1px solid var(--dv);gap:8px;font-size:12px}
+.parsed-row:last-child{border-bottom:none}
+.parsed-row-name{flex:1;font:400 12px/1.3 var(--f);color:var(--c8)}
+.parsed-row-val{font:500 12px/1 var(--fm);color:var(--c7)}
+.parsed-row-tag{font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px}
+.parsed-row-tag.new{color:var(--vi);background:var(--vi50)}
+.parsed-row-tag.upd{color:var(--ac700);background:var(--ac50)}
+</style>
+</head>
+<body>
+<div class="shell">
+  <!-- Header -->
+  <div class="hdr">
+    <div class="hdr-av">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg>
+    </div>
+    <div class="hdr-info">
+      <div class="hdr-name">HR ONE 绩效助手</div>
+      <div class="hdr-desc">智能绩效管理 · 目标填写 · 评分 · 审定</div>
+    </div>
+    <div class="hdr-status"><span class="hdr-dot"></span>在线</div>
+  </div>
+
+  <!-- Chat area -->
+  <div class="chat" id="chat"></div>
+
+  <!-- Bottom -->
+  <div class="bottom">
+    <div class="tabs">
+      <button class="tab active" data-tab="goal">目标填写</button>
+      <button class="tab" data-tab="eval">绩效评分</button>
+      <button class="tab" data-tab="ratify">审定</button>
+      <button class="tab-replay" id="replayBtn">重播</button>
+    </div>
+    <div class="input-bar">
+      <div class="input-actions">
+        <div class="input-icon-btn" onclick="triggerUpload()" title="上传文件">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+        </div>
+      </div>
+      <input type="text" id="userInput" placeholder="输入消息...（演示模式）" onkeydown="if(event.key==='Enter')sendUserMsg()">
+      <button onclick="sendUserMsg()">发送</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* Helpers */
+const $=s=>document.querySelector(s),chat=$('#chat');
+let timers=[],currentTab='goal',isPlaying=false;
+
+function clearTimers(){timers.forEach(clearTimeout);timers=[];isPlaying=false}
+
+function scrollToBottom(){
+  requestAnimationFrame(()=>chat.scrollTop=chat.scrollHeight);
+}
+
+function addTyping(){
+  const el=document.createElement('div');
+  el.className='typing';
+  el.innerHTML='<div class="msg-av"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg></div><div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+  chat.appendChild(el);
+  scrollToBottom();
+  return el;
+}
+function removeTyping(el){if(el&&el.parentNode)el.parentNode.removeChild(el)}
+
+function addMsg(role,text,time){
+  const names={bot:'HR ONE 绩效助手',user:'张明'};
+  const avSvg='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg>';
+  const avatars={bot:avSvg,user:'张'};
+  const el=document.createElement('div');
+  el.className='msg '+role;
+  el.innerHTML=`<div class="msg-av ${role}">${avatars[role]}</div><div class="msg-bd"><div class="msg-name">${names[role]}</div><div class="msg-text">${text}</div><div class="msg-time">${time||''}</div></div>`;
+  chat.appendChild(el);
+  scrollToBottom();
+}
+
+function addCard(html){
+  const wrap=document.createElement('div');
+  wrap.innerHTML=html;
+  const el=wrap.firstElementChild;
+  chat.appendChild(el);
+  scrollToBottom();
+  return el;
+}
+
+/* Card builders */
+function infoCard(){
+  return `<div class="fc"><div class="fc-hd"><div class="fc-hd-icon">👤</div><div><div class="fc-hd-t">员工信息</div></div></div><div class="fc-bd"><div class="fc-row"><div class="fc-row-name">张明 · 高级产品经理 · 产品部</div></div><div class="fc-row"><div class="fc-row-name">考核周期</div><div class="fc-row-val">2026年Q2</div></div><div class="fc-row"><div class="fc-row-name">考核方案</div><div class="fc-row-val">PBC季度考核</div></div></div></div>`;
+}
+
+function goalCard(){
+  return `<div class="fc"><div class="fc-hd vi"><div class="fc-hd-icon">🎯</div><div><div class="fc-hd-t">目标预填结果</div><div class="fc-hd-s">基于Q1历史 + 指标库智能生成</div></div></div><div class="fc-bd"><div class="goal-group"><div class="goal-group-hd">业绩目标 · 权重 50% · 2条</div><div class="goal-item"><div class="gi-name">✦ AI 产品迭代完成率 <span class="fc-tag ai">定量 30%</span></div><div class="gi-vals"><span>目标值 100</span><span>挑战值 120</span><span>保底值 80</span></div></div><div class="goal-item"><div class="gi-name">✦ AI 新增用户数 <span class="fc-tag ai">定量 20%</span></div><div class="gi-vals"><span>目标值 5000</span><span>挑战值 7000</span><span>保底值 3000</span></div></div></div><div class="goal-group"><div class="goal-group-hd">管理目标 · 权重 20% · 2条</div><div class="goal-item"><div class="gi-name">✦ AI 团队效能提升 <span class="fc-tag ai">定量 10%</span></div></div><div class="goal-item"><div class="gi-name">✦ AI 人才培养 <span class="fc-tag ai">定性 10%</span></div></div></div><div class="goal-group"><div class="goal-group-hd">能力发展 · 权重 15% · 2条</div><div class="goal-item"><div class="gi-name">✦ AI 技术能力提升 <span class="fc-tag ai">定性 8%</span></div></div><div class="goal-item"><div class="gi-name">✦ AI 业务理解深化 <span class="fc-tag ai">定量 7%</span></div></div></div><div class="goal-group"><div class="goal-group-hd">价值观 · 权重 15%</div><div class="goal-empty">暂无，AI 可推荐</div></div></div><div class="fc-ft"><button class="fc-btn primary" onclick="handleBtn(this,'确认全部')">确认全部</button><button class="fc-btn" onclick="handleBtn(this,'逐项审核')">逐项审核</button><button class="fc-btn" onclick="handleBtn(this,'调整权重')">调整权重</button></div></div>`;
+}
+
+function confirmGoalCard(){
+  return `<div class="fc"><div class="fc-hd em"><div class="fc-hd-icon">✅</div><div><div class="fc-hd-t">目标确认</div><div class="fc-hd-s">6 条目标 · 总权重 100%</div></div></div><div class="fc-bd"><div class="fc-row"><div class="fc-row-name">业绩目标 (2条)</div><div class="fc-row-val">50%</div></div><div class="fc-row"><div class="fc-row-name">管理目标 (2条)</div><div class="fc-row-val">20%</div></div><div class="fc-row"><div class="fc-row-name">能力发展 (2条)</div><div class="fc-row-val">15%</div></div><div class="fc-row"><div class="fc-row-name">价值观 (0条)</div><div class="fc-row-val">15%</div></div><div style="margin-top:6px"><div class="comp-item"><div class="comp-ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>必填字段完整性</div><div class="comp-item"><div class="comp-ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>总权重和 = 100%</div><div class="comp-item"><div class="comp-ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>每条目标已关联指标</div><div class="comp-item"><div class="comp-ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>定量目标三值完整</div></div></div><div class="fc-ft"><button class="fc-btn primary" onclick="handleBtn(this,'提交目标')">提交目标</button><button class="fc-btn" onclick="handleBtn(this,'返回修改')">返回修改</button></div></div>`;
+}
+
+function scoreCard(){
+  return `<div class="fc fc-tall"><div class="fc-hd vi"><div class="fc-hd-icon">📊</div><div><div class="fc-hd-t">智能评分结果</div><div class="fc-hd-s">基于指标完成度 + 历史表现生成</div></div></div><div class="fc-bd"><div class="score-section"><div class="score-hd"><div class="score-hd-left">业绩维度</div><div class="score-hd-right">90</div></div><div class="score-row"><span class="sr-name">✦ AI 产品迭代完成率</span><span class="sr-wt">25%</span><span class="sr-tag">符合预期+</span></div><div class="score-row"><span class="sr-name">✦ AI 用户增长目标</span><span class="sr-wt">20%</span><span class="sr-tag">符合预期</span></div><div class="score-row"><span class="sr-name">营收贡献</span><span class="sr-wt">15%</span><span class="sr-tag">远超预期</span></div></div><div class="score-section"><div class="score-hd"><div class="score-hd-left">能力维度</div><div class="score-hd-right">87</div></div><div class="score-row"><span class="sr-name">✦ 专业技能</span><span class="sr-wt">10%</span><span class="sr-tag">符合预期+</span></div><div class="score-row"><span class="sr-name">创新能力</span><span class="sr-wt">8%</span><span class="sr-tag">符合预期</span></div><div class="score-row"><span class="sr-name">问题解决</span><span class="sr-wt">7%</span><span class="sr-tag">符合预期+</span></div></div><div class="score-section"><div class="score-hd"><div class="score-hd-left">态度维度</div><div class="score-hd-right">85</div></div><div class="score-row"><span class="sr-name">责任心</span><span class="sr-wt">5%</span><span class="sr-tag">符合预期</span></div><div class="score-row"><span class="sr-name">✦ 主动性</span><span class="sr-wt">5%</span><span class="sr-tag">符合预期+</span></div></div><div class="score-section"><div class="score-hd"><div class="score-hd-left">价值观</div><div class="score-hd-right">80</div></div><div class="score-row"><span class="sr-name">团队协作</span><span class="sr-wt">5%</span><span class="sr-tag">符合预期</span></div></div><div class="score-total"><div class="score-total-left">加权总分</div><div class="score-total-right"><span class="score-total-val">87</span><span class="score-total-grade">B+</span></div></div></div><div class="fc-ft"><button class="fc-btn primary" onclick="handleBtn(this,'确认提交')">确认提交</button><button class="fc-btn" onclick="handleBtn(this,'逐项调整')">逐项调整</button><button class="fc-btn" onclick="handleBtn(this,'查看依据')">查看依据</button></div></div>`;
+}
+
+function scoreUpdateCard(){
+  return `<div class="fc"><div class="fc-hd em"><div class="fc-hd-icon">✅</div><div><div class="fc-hd-t">评分更新</div></div></div><div class="fc-bd"><div class="score-total"><div class="score-total-left">加权总分</div><div class="score-total-right"><span class="score-total-val">86</span><span class="score-total-grade">B+</span></div></div><div style="margin-top:6px;font:400 11px/1.4 var(--f);color:var(--c5)">人才培养: 符合预期+(90分) → 已更新</div></div><div class="fc-ft"><button class="fc-btn primary" onclick="handleBtn(this,'确认提交')">确认提交</button><button class="fc-btn" onclick="handleBtn(this,'继续调整')">继续调整</button></div></div>`;
+}
+
+function ratifyCard(){
+  return `<div class="fc fc-tall"><div class="fc-hd vi"><div class="fc-hd-icon">🏆</div><div><div class="fc-hd-t">审定结果</div><div class="fc-hd-s">强制分布 · 10 人</div></div></div><div class="fc-bd"><div class="ratify-section"><div class="ratify-grade-hd"><span class="rg-name">A 级</span><span class="rg-info">目标 25% · 当前 20%</span><span class="rg-warn">偏离</span></div><div class="ratify-row"><span class="rr-name">张三</span><span class="rr-dept">技术部</span><span class="rr-score">92</span><span class="rr-arrow">→</span><span class="rr-grade">A</span><span class="rr-tag fc-tag ai">AI匹配</span></div><div class="ratify-row"><span class="rr-name">周八</span><span class="rr-dept">市场部</span><span class="rr-score">91</span><span class="rr-arrow">→</span><span class="rr-grade">A</span><span class="rr-tag fc-tag ai">AI匹配</span></div></div><div class="ratify-section"><div class="ratify-grade-hd"><span class="rg-name">B+ 级</span><span class="rg-info">目标 35% · 当前 30%</span></div><div class="ratify-row"><span class="rr-name">李四</span><span class="rr-dept">技术部</span><span class="rr-score">85</span><span class="rr-arrow">→</span><span class="rr-grade">B+</span><span class="rr-tag fc-tag ai">AI匹配</span></div><div class="ratify-row"><span class="rr-name">赵六</span><span class="rr-dept">产品部</span><span class="rr-score">88</span><span class="rr-arrow">→</span><span class="rr-grade">B+</span><span class="rr-tag fc-tag ac">AI偏离</span></div><div class="ratify-row"><span class="rr-name">陈十一</span><span class="rr-dept">技术部</span><span class="rr-score">82</span><span class="rr-arrow">→</span><span class="rr-grade">B+</span><span class="rr-tag fc-tag ai">AI匹配</span></div></div><div class="ratify-section"><div class="ratify-grade-hd"><span class="rg-name">B 级</span><span class="rg-info">目标 25% · 当前 30%</span></div><div class="ratify-row"><span class="rr-name">王五</span><span class="rr-dept">产品部</span><span class="rr-score">78</span><span class="rr-arrow">→</span><span class="rr-grade">B</span><span class="rr-tag fc-tag ai">AI匹配</span></div><div class="ratify-row"><span class="rr-name">吴九</span><span class="rr-dept">财务部</span><span class="rr-score">72</span><span class="rr-arrow">→</span><span class="rr-grade">B</span><span class="rr-tag fc-tag ai">AI匹配</span></div><div class="ratify-row"><span class="rr-name">林十二</span><span class="rr-dept">产品部</span><span class="rr-score">76</span><span class="rr-arrow">→</span><span class="rr-grade">B</span><span class="rr-tag fc-tag ai">AI匹配</span></div></div><div class="ratify-section"><div class="ratify-grade-hd"><span class="rg-name">B- 级</span><span class="rg-info">目标 10% · 当前 10%</span></div><div class="ratify-row"><span class="rr-name">孙七</span><span class="rr-dept">市场部</span><span class="rr-score">65</span><span class="rr-arrow">→</span><span class="rr-grade">B-</span><span class="rr-tag fc-tag ai">AI匹配</span></div></div><div class="ratify-section"><div class="ratify-grade-hd"><span class="rg-name">C 级</span><span class="rg-info">目标 5% · 当前 10%</span><span class="rg-warn">偏离</span></div><div class="ratify-row"><span class="rr-name">郑十</span><span class="rr-dept">财务部</span><span class="rr-score">58</span><span class="rr-arrow">→</span><span class="rr-grade">C</span><span class="rr-tag fc-tag ai">AI匹配</span></div></div><div class="ratify-alert">A 级占比 20% 低于目标 25%<br>C 级占比 10% 高于目标 5%</div></div><div class="fc-ft"><button class="fc-btn primary" onclick="handleBtn(this,'确认应用')">确认应用</button><button class="fc-btn" onclick="handleBtn(this,'调整分布')">调整分布</button><button class="fc-btn" onclick="handleBtn(this,'查看偏离')">查看偏离</button></div></div>`;
+}
+
+function adjustSuggestCard(){
+  return `<div class="fc"><div class="fc-hd ac"><div class="fc-hd-icon">📊</div><div><div class="fc-hd-t">分布调整建议</div></div></div><div class="fc-bd"><div style="font:400 12px/1.6 var(--f);color:var(--c7);padding:4px 0">当前 A 级 20%（2人），目标 25%。<br><br>建议将 <strong>赵六</strong>（88分）从 B+ 调整为 A 级：<div style="margin-top:4px;font-size:11px;color:var(--c5)">- 赵六评分 88 分，高于 A 级门槛 85 分<br>- 调整后 A 级占比 30%，分布达标</div></div></div><div class="fc-ft"><button class="fc-btn primary" onclick="handleBtn(this,'采纳建议')">采纳建议</button><button class="fc-btn" onclick="handleBtn(this,'保持不变')">保持不变</button><button class="fc-btn" onclick="handleBtn(this,'自定义调整')">自定义调整</button></div></div>`;
+}
+
+function submittedCard(title,items){
+  return `<div class="fc"><div class="fc-hd em"><div class="fc-hd-icon">✅</div><div><div class="fc-hd-t">${title}</div></div></div><div class="fc-bd"><div style="font:400 12px/1.6 var(--f);color:var(--c7);padding:4px 0">${items.map(i=>`- ${i}`).join('<br>')}</div></div><div class="fc-ft"><button class="fc-btn" onclick="handleBtn(this,'查看审定报告')">查看审定报告</button><button class="fc-btn" onclick="handleBtn(this,'导出结果')">导出结果</button><button class="fc-btn" onclick="handleBtn(this,'返回首页')">返回首页</button></div></div>`;
+}
+
+/* Card builders — adjustment & follow-up */
+function goalWeightAdjustCard(){
+  return `<div class="fc"><div class="fc-hd ac"><div class="fc-hd-icon">⚖️</div><div><div class="fc-hd-t">权重调整预览</div></div></div><div class="fc-bd"><div class="fc-row"><div class="fc-row-name">业绩目标</div><div class="fc-row-val" style="color:var(--ac)">50% → 45%</div></div><div class="fc-row"><div class="fc-row-name">管理目标</div><div class="fc-row-val" style="color:var(--em)">20% → 25%</div></div><div class="fc-row"><div class="fc-row-name">能力发展</div><div class="fc-row-val">15% → 不变</div></div><div class="fc-row"><div class="fc-row-name">价值观</div><div class="fc-row-val">15% → 不变</div></div><div style="margin-top:6px;padding:6px 8px;background:var(--em50);border-radius:4px;font:400 11px/1.4 var(--f);color:var(--em700)">✅ 调整后总权重 100%，合规通过</div></div><div class="fc-ft"><button class="fc-btn primary" onclick="handleBtn(this,'确认调整')">确认调整</button><button class="fc-btn" onclick="handleBtn(this,'取消调整')">取消</button></div></div>`;
+}
+
+function goalAdjustDoneCard(){
+  return `<div class="fc"><div class="fc-hd em"><div class="fc-hd-icon">✅</div><div><div class="fc-hd-t">调整完成</div></div></div><div class="fc-bd"><div style="font:400 12px/1.6 var(--f);color:var(--c7)">权重已更新：</div><div class="fc-row"><div class="fc-row-name">业绩目标</div><div class="fc-row-val">45%</div></div><div class="fc-row"><div class="fc-row-name">管理目标</div><div class="fc-row-val">25%</div></div><div class="fc-row"><div class="fc-row-name">能力发展</div><div class="fc-row-val">15%</div></div><div class="fc-row"><div class="fc-row-name">价值观</div><div class="fc-row-val">15%</div></div></div><div class="fc-ft"><button class="fc-btn primary" onclick="handleBtn(this,'确认全部')">确认全部</button><button class="fc-btn" onclick="handleBtn(this,'继续调整')">继续调整</button></div></div>`;
+}
+
+function goalAddGoalCard(){
+  return `<div class="fc"><div class="fc-hd vi"><div class="fc-hd-icon">🎯</div><div><div class="fc-hd-t">AI 推荐新目标</div><div class="fc-hd-s">基于岗位「高级产品经理」+ 指标库</div></div></div><div class="fc-bd"><div class="rec-item"><div class="ri-head"><span class="ri-icon">📈</span><span class="ri-name">NPS 提升</span><span class="ri-wt">8%</span></div><div class="ri-desc">净推荐值从 45 提升至 60</div><div class="ri-kpi">指标: NPS | 类型: 定量 | 关联: 产品满意度</div></div><div class="rec-item"><div class="ri-head"><span class="ri-icon">⏱️</span><span class="ri-name">需求交付周期</span><span class="ri-wt">7%</span></div><div class="ri-desc">从 14 天缩短至 10 天</div><div class="ri-kpi">指标: 平均交付周期 | 类型: 定量 | 关联: 研发效率</div></div></div><div class="fc-ft"><button class="fc-btn primary" onclick="handleBtn(this,'添加到业绩目标')">添加到业绩目标</button><button class="fc-btn" onclick="handleBtn(this,'跳过推荐')">跳过</button></div></div>`;
+}
+
+function goalAddedConfirmCard(){
+  return `<div class="fc"><div class="fc-hd em"><div class="fc-hd-icon">✅</div><div><div class="fc-hd-t">已添加 2 条目标</div></div></div><div class="fc-bd"><div style="font:400 12px/1.4 var(--f);color:var(--c7);padding:4px 0">NPS 提升（8%）和需求交付周期（7%）已添加到业绩目标。</div><div style="margin-top:4px;padding:6px 8px;background:var(--ac50);border-radius:4px;font:400 11px/1.4 var(--f);color:var(--ac700)">⚠️ 当前业绩目标总权重 63%，超过 50% 上限，建议调整其他目标权重</div></div><div class="fc-ft"><button class="fc-btn primary" onclick="handleBtn(this,'调整权重')">自动平衡权重</button><button class="fc-btn" onclick="handleBtn(this,'确认全部')">直接确认</button></div></div>`;
+}
+
+function evalScoreDetailCard(){
+  return `<div class="fc"><div class="fc-hd"><div class="fc-hd-icon">📋</div><div><div class="fc-hd-t">评分明细依据</div></div></div><div class="fc-bd"><div class="fc-section"><div class="fc-section-title">产品迭代完成率 (25%)</div><div class="fc-row"><div class="fc-row-name">目标值</div><div class="fc-row-val">100%</div></div><div class="fc-row"><div class="fc-row-name">实际完成</div><div class="fc-row-val" style="color:var(--em)">108%</div></div><div class="fc-row"><div class="fc-row-name">评分逻辑</div><div class="fc-row-val">完成率>100% → 符合预期+</div></div></div><div class="fc-section"><div class="fc-section-title">用户增长目标 (20%)</div><div class="fc-row"><div class="fc-row-name">目标值</div><div class="fc-row-val">5000人</div></div><div class="fc-row"><div class="fc-row-name">实际完成</div><div class="fc-row-val" style="color:var(--ac)">4800人</div></div><div class="fc-row"><div class="fc-row-name">评分逻辑</div><div class="fc-row-val">完成率96% → 符合预期</div></div></div><div class="fc-section"><div class="fc-section-title">营收贡献 (15%)</div><div class="fc-row"><div class="fc-row-name">目标值</div><div class="fc-row-val">200万</div></div><div class="fc-row"><div class="fc-row-name">实际完成</div><div class="fc-row-val" style="color:var(--em)">245万</div></div><div class="fc-row"><div class="fc-row-name">评分逻辑</div><div class="fc-row-val">完成率122% → 远超预期</div></div></div></div><div class="fc-ft"><button class="fc-btn" onclick="handleBtn(this,'关闭')">关闭</button></div></div>`;
+}
+
+function evalGradeUpdateCard(){
+  return `<div class="fc"><div class="fc-hd em"><div class="fc-hd-icon">✅</div><div><div class="fc-hd-t">等级已更新</div></div></div><div class="fc-bd"><div style="font:400 12px/1.6 var(--f);color:var(--c7);padding:4px 0">已完成调整：</div><div class="fc-row"><div class="fc-row-name">责任心</div><div class="fc-row-val" style="color:var(--ac)">符合预期 → 符合预期+</div></div><div class="fc-row"><div class="fc-row-name">加权总分</div><div class="fc-row-val" style="color:var(--pr)">87 → 88</div></div></div><div class="fc-ft"><button class="fc-btn primary" onclick="handleBtn(this,'确认提交')">确认提交</button><button class="fc-btn" onclick="handleBtn(this,'继续调整')">继续调整</button></div></div>`;
+}
+
+function ratifyCustomCard(){
+  return `<div class="fc fc-tall"><div class="fc-hd ac"><div class="fc-hd-icon">✏️</div><div><div class="fc-hd-t">自定义调整</div><div class="fc-hd-s">点击人员手动调整等级</div></div></div><div class="fc-bd"><div class="ratify-row"><span class="rr-name">张三</span><span class="rr-dept">技术部</span><span class="rr-score">92</span><span class="rr-arrow">→</span><span class="rr-grade">A</span><span class="fc-tag ai" style="margin-left:auto">AI匹配</span></div><div class="ratify-row" style="background:var(--ac50);margin:0 -14px;padding:4px 14px;border-radius:4px"><span class="rr-name">赵六</span><span class="rr-dept">产品部</span><span class="rr-score">88</span><span class="rr-arrow">→</span><select style="padding:2px 4px;border:1px solid var(--ac);border-radius:4px;font:600 12px/1 var(--f);color:var(--ac700);background:var(--sf)"><option>B+</option><option selected>A</option><option>B</option></select><span class="fc-tag ac" style="margin-left:auto">手动调整</span></div><div class="ratify-row"><span class="rr-name">李四</span><span class="rr-dept">技术部</span><span class="rr-score">85</span><span class="rr-arrow">→</span><span class="rr-grade">B+</span><span class="fc-tag ai" style="margin-left:auto">AI匹配</span></div></div><div class="fc-ft"><button class="fc-btn primary" onclick="handleBtn(this,'确认自定义')">确认调整</button><button class="fc-btn" onclick="handleBtn(this,'重置')">重置</button></div></div>`;
+}
+
+function ratifyFinalConfirmCard(){
+  return `<div class="fc"><div class="fc-hd em"><div class="fc-hd-icon">✅</div><div><div class="fc-hd-t">审定结果确认</div></div></div><div class="fc-bd"><div style="font:400 12px/1.4 var(--f);color:var(--c7);padding:4px 0">调整后分布：</div><div class="fc-row"><div class="fc-row-name">A 级</div><div class="fc-row-val">30% (3人)</div></div><div class="fc-row"><div class="fc-row-name">B+ 级</div><div class="fc-row-val">20% (2人)</div></div><div class="fc-row"><div class="fc-row-name">B 级</div><div class="fc-row-val">30% (3人)</div></div><div class="fc-row"><div class="fc-row-name">B- 级</div><div class="fc-row-val">10% (1人)</div></div><div class="fc-row"><div class="fc-row-name">C 级</div><div class="fc-row-val">10% (1人)</div></div><div style="margin-top:6px;padding:6px 8px;background:var(--em50);border-radius:4px;font:400 11px/1.4 var(--f);color:var(--em700)">✅ 强制分布全部达标，可提交</div></div><div class="fc-ft"><button class="fc-btn primary" onclick="handleBtn(this,'提交审定')">提交审定</button><button class="fc-btn" onclick="handleBtn(this,'导出结果')">导出 Excel</button></div></div>`;
+}
+
+/* Card builders — file upload & document parsing */
+function docPreviewCard(name,size){
+  return `<div class="fc"><div class="fc-hd"><div class="fc-hd-icon">📎</div><div><div class="fc-hd-t">文件已上传</div></div></div><div class="fc-bd"><div class="doc-preview"><div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div><div class="doc-info"><div class="doc-name">${name}</div><div class="doc-meta">${size} · PDF 文档</div></div><div class="doc-status loading">解析中...</div></div></div></div>`;
+}
+
+function docParsedGoalCard(){
+  return `<div class="fc fc-tall"><div class="fc-hd vi"><div class="fc-hd-icon">📄</div><div><div class="fc-hd-t">文档解析完成</div><div class="fc-hd-s">Q1述职报告_张明.pdf · 已提取绩效数据</div></div></div><div class="fc-bd"><div class="parsed-section"><div class="parsed-section-hd">🎯 提取的目标 <span class="count">（6条）</span></div><div class="parsed-row"><div class="parsed-row-name">产品迭代完成率</div><div class="parsed-row-val">30%</div><div class="parsed-row-tag new">新增</div></div><div class="parsed-row"><div class="parsed-row-name">新增用户数</div><div class="parsed-row-val">20%</div><div class="parsed-row-tag new">新增</div></div><div class="parsed-row"><div class="parsed-row-name">团队效能提升</div><div class="parsed-row-val">10%</div><div class="parsed-row-tag new">新增</div></div><div class="parsed-row"><div class="parsed-row-name">人才培养</div><div class="parsed-row-val">10%</div><div class="parsed-row-tag new">新增</div></div><div class="parsed-row"><div class="parsed-row-name">技术能力提升</div><div class="parsed-row-val">8%</div><div class="parsed-row-tag new">新增</div></div><div class="parsed-row"><div class="parsed-row-name">业务理解深化</div><div class="parsed-row-val">7%</div><div class="parsed-row-tag new">新增</div></div></div><div class="parsed-section"><div class="parsed-section-hd">📊 提取的完成数据 <span class="count">（Q1实际值）</span></div><div class="parsed-row"><div class="parsed-row-name">产品迭代完成率</div><div class="parsed-row-val" style="color:var(--em)">108%</div></div><div class="parsed-row"><div class="parsed-row-name">新增用户数</div><div class="parsed-row-val" style="color:var(--ac)">4800人</div></div><div class="parsed-row"><div class="parsed-row-name">营收贡献</div><div class="parsed-row-val" style="color:var(--em)">245万</div></div></div></div><div class="fc-ft"><button class="fc-btn primary" onclick="handleBtn(this,'应用到目标表单')">应用到目标表单</button><button class="fc-btn" onclick="handleBtn(this,'仅参考不填入')">仅参考</button></div></div>`;
+}
+
+function docParsedEvalCard(){
+  return `<div class="fc fc-tall"><div class="fc-hd vi"><div class="fc-hd-icon">📄</div><div><div class="fc-hd-t">文档解析完成</div><div class="fc-hd-s">Q1述职报告_张明.pdf · 已提取评分数据</div></div></div><div class="fc-bd"><div class="parsed-section"><div class="parsed-section-hd">📊 提取的完成数据 <span class="count">（用于评分）</span></div><div class="parsed-row"><div class="parsed-row-name">产品迭代完成率</div><div class="parsed-row-val" style="color:var(--em)">108%（目标100%）</div></div><div class="parsed-row"><div class="parsed-row-name">新增用户数</div><div class="parsed-row-val" style="color:var(--ac)">4800人（目标5000）</div></div><div class="parsed-row"><div class="parsed-row-name">营收贡献</div><div class="parsed-row-val" style="color:var(--em)">245万（目标200万）</div></div><div class="parsed-row"><div class="parsed-row-name">团队效能提升</div><div class="parsed-row-val" style="color:var(--em)">92分（部门前20%）</div></div><div class="parsed-row"><div class="parsed-row-name">人才培养</div><div class="parsed-row-val" style="color:var(--pr)">2人晋升（目标1人）</div></div></div><div class="parsed-section"><div class="parsed-section-hd">💡 AI 评分建议 <span class="count">（基于完成度）</span></div><div class="parsed-row"><div class="parsed-row-name">产品迭代完成率</div><div class="parsed-row-val">符合预期+（108%>100%）</div></div><div class="parsed-row"><div class="parsed-row-name">用户增长目标</div><div class="parsed-row-val">符合预期（96%≈100%）</div></div><div class="parsed-row"><div class="parsed-row-name">营收贡献</div><div class="parsed-row-val">远超预期（122%>100%）</div></div></div></div><div class="fc-ft"><button class="fc-btn primary" onclick="handleBtn(this,'应用到评分表单')">应用到评分表单</button><button class="fc-btn" onclick="handleBtn(this,'仅参考不填入')">仅参考</button></div></div>`;
+}
+
+function docParsedRatifyCard(){
+  return `<div class="fc fc-tall"><div class="fc-hd vi"><div class="fc-hd-icon">📄</div><div><div class="fc-hd-t">文档解析完成</div><div class="fc-hd-s">部门绩效汇总_产品部.xlsx · 已提取审定数据</div></div></div><div class="fc-bd"><div class="parsed-section"><div class="parsed-section-hd">🏆 提取的部门数据 <span class="count">（10人）</span></div><div class="parsed-row"><div class="parsed-row-name">张三 · 技术部</div><div class="parsed-row-val">92分</div><div class="parsed-row-tag new">A</div></div><div class="parsed-row"><div class="parsed-row-name">李四 · 技术部</div><div class="parsed-row-val">85分</div><div class="parsed-row-tag new">B+</div></div><div class="parsed-row"><div class="parsed-row-name">赵六 · 产品部</div><div class="parsed-row-val">88分</div><div class="parsed-row-tag new">A</div></div><div class="parsed-row"><div class="parsed-row-name">王五 · 产品部</div><div class="parsed-row-val">78分</div><div class="parsed-row-tag new">B</div></div><div class="parsed-row"><div class="parsed-row-name">周八 · 市场部</div><div class="parsed-row-val">91分</div><div class="parsed-row-tag new">A</div></div></div><div class="parsed-section"><div class="parsed-section-hd">📊 AI 审定建议 <span class="count">（含强制分布）</span></div><div style="font:400 12px/1.5 var(--f);color:var(--c7);padding:4px 0">基于文档数据 + 强制分布规则，AI 建议等级分配。</div></div></div><div class="fc-ft"><button class="fc-btn primary" onclick="handleBtn(this,'应用到审定表单')">应用到审定表单</button><button class="fc-btn" onclick="handleBtn(this,'仅参考不填入')">仅参考</button></div></div>`;
+}
+
+/* Conversation definitions */
+const TABS={
+  goal:[
+    {t:0,type:'msg',role:'bot',text:'你好！我是 HR ONE 绩效助手。\n\n我可以帮你完成 Q2 目标填写，支持：\n- 基于历史目标智能预填\n- 指标库自动匹配\n- 对话式创建新目标',time:'09:28'},
+    {t:2000,type:'card',html:infoCard},
+    {t:3000,type:'typing'},
+    {t:3800,type:'msg',role:'user',text:'帮我生成Q2目标'},
+    {t:4400,type:'typing'},
+    {t:5200,type:'msg',role:'bot',text:'已基于 Q1 目标 + 指标库为你预填 6 条目标：\n\n- 业绩目标 2条（50%）\n- 管理目标 2条（20%）\n- 能力发展 2条（15%）\n- 价值观（15%）暂无，AI 可推荐',time:'09:29'},
+    {t:6000,type:'card',html:goalCard}
+  ],
+  goal_weight_adjust:[
+    {t:0,type:'msg',role:'user',text:'把管理目标权重调到25%，业绩目标降一点',time:'09:30'},
+    {t:600,type:'typing'},
+    {t:1400,type:'msg',role:'bot',text:'好的，帮你调整权重：\n\n- 业绩目标 50% → 45%\n- 管理目标 20% → 25%\n- 能力发展 / 价值观 不变',time:'09:30'},
+    {t:2000,type:'card',html:goalWeightAdjustCard}
+  ],
+  goal_weight_done:[
+    {t:0,type:'msg',role:'user',text:'确认调整',time:'09:30'},
+    {t:600,type:'typing'},
+    {t:1400,type:'msg',role:'bot',text:'权重已更新。当前总权重 100%，合规通过。',time:'09:30'},
+    {t:2000,type:'card',html:goalAdjustDoneCard}
+  ],
+  goal_add:[
+    {t:0,type:'msg',role:'user',text:'帮我推荐几个新的业绩目标',time:'09:31'},
+    {t:600,type:'typing'},
+    {t:1400,type:'msg',role:'bot',text:'基于你的岗位「高级产品经理」和部门「产品部」，从指标库推荐 2 条新目标：',time:'09:31'},
+    {t:2000,type:'card',html:goalAddGoalCard}
+  ],
+  goal_add_confirm:[
+    {t:0,type:'msg',role:'user',text:'添加到业绩目标',time:'09:31'},
+    {t:600,type:'typing'},
+    {t:1400,type:'msg',role:'bot',text:'已添加 2 条目标到业绩模块。\n\n⚠️ 当前业绩目标总权重 63%，超过 50% 上限，建议调整。',time:'09:31'},
+    {t:2000,type:'card',html:goalAddedConfirmCard}
+  ],
+  goal_confirm:[
+    {t:0,type:'msg',role:'user',text:'确认全部',time:'09:32'},
+    {t:600,type:'typing'},
+    {t:1400,type:'msg',role:'bot',text:'已确认全部目标，总权重 100%。\n\n合规检查结果：',time:'09:32'},
+    {t:2000,type:'card',html:confirmGoalCard}
+  ],
+  goal_submit:[
+    {t:0,type:'msg',role:'user',text:'提交目标',time:'09:33'},
+    {t:600,type:'typing'},
+    {t:1400,type:'msg',role:'bot',text:'目标已提交成功！已流转至上级审批。\n\n审批人：李总监\n预计审批时间：1-2个工作日',time:'09:33'},
+    {t:2000,type:'card',html:()=>submittedCard('提交成功',['目标已提交至上级审批流程','审批人：李总监','预计 1-2 个工作日完成审批','提交后可在「绩效工作台」查看审批进度'])},
+    {t:2800,type:'msg',role:'bot',text:'审批通过后，系统会自动创建 Q2 考核活动，届时会通知你开始填写执行记录。',time:'09:33'}
+  ],
+  eval:[
+    {t:0,type:'msg',role:'bot',text:'以下是张明的绩效评分，基于指标完成度 + 历史表现自动生成：',time:'10:15'},
+    {t:800,type:'typing'},
+    {t:1600,type:'msg',role:'user',text:'查看评分'},
+    {t:2200,type:'typing'},
+    {t:3000,type:'msg',role:'bot',text:'已为 9 项指标完成智能评分：',time:'10:16'},
+    {t:3600,type:'card',html:scoreCard},
+    {t:4400,type:'msg',role:'bot',text:'加权总分 87 分，综合等级 B+。\n\n需要调整哪项指标？',time:'10:16'},
+  ],
+  eval_adjust:[
+    {t:0,type:'msg',role:'user',text:'人才培养那条改成90分',time:'10:17'},
+    {t:600,type:'typing'},
+    {t:1400,type:'msg',role:'bot',text:'已更新人才培养评分为 90 分（符合预期+），重新计算总分：',time:'10:17'},
+    {t:2000,type:'card',html:scoreUpdateCard}
+  ],
+  eval_adjust2:[
+    {t:0,type:'msg',role:'user',text:'责任心改成符合预期+',time:'10:17'},
+    {t:600,type:'typing'},
+    {t:1400,type:'msg',role:'bot',text:'已更新责任心等级为「符合预期+」，总分重新计算：',time:'10:17'},
+    {t:2000,type:'card',html:evalGradeUpdateCard}
+  ],
+  eval_detail:[
+    {t:0,type:'msg',role:'user',text:'查看依据',time:'10:17'},
+    {t:600,type:'typing'},
+    {t:1400,type:'msg',role:'bot',text:'以下是前三项业绩指标的评分明细：',time:'10:17'},
+    {t:2000,type:'card',html:evalScoreDetailCard},
+    {t:2600,type:'msg',role:'bot',text:'如需查看其他指标的评分依据，可告诉我具体指标名称。',time:'10:17'}
+  ],
+  eval_submit:[
+    {t:0,type:'msg',role:'user',text:'确认提交',time:'10:18'},
+    {t:600,type:'typing'},
+    {t:1400,type:'msg',role:'bot',text:'评分已提交成功！已流转至审定环节。\n\n下一步：结果审定（由王总监执行）\n预计完成时间：本周五前',time:'10:18'},
+    {t:2000,type:'card',html:()=>submittedCard('评分已提交',['9 项指标评分已保存','加权总分 88 分，等级 B+','已流转至审定环节','审定人：王总监'])},
+    {t:2800,type:'msg',role:'bot',text:'审定完成后你会收到通知，届时可在绩效工作台查看最终结果。',time:'10:18'}
+  ],
+  ratify:[
+    {t:0,type:'msg',role:'bot',text:'AI 已为 10 人分配等级，基于评分 + 强制分布规则：',time:'14:00'},
+    {t:800,type:'typing'},
+    {t:1600,type:'msg',role:'user',text:'查看审定结果'},
+    {t:2200,type:'typing'},
+    {t:3000,type:'msg',role:'bot',text:'审定结果如下，发现 2 处分布偏离：',time:'14:01'},
+    {t:3600,type:'card',html:ratifyCard}
+  ],
+  ratify_adjust:[
+    {t:0,type:'msg',role:'user',text:'A级占比太低',time:'14:02'},
+    {t:600,type:'typing'},
+    {t:1400,type:'msg',role:'bot',text:'当前 A 级 20%（2人），目标 25%。\n\n建议将赵六（88分）从 B+ 调整为 A 级：\n- 赵六评分 88 分，高于 A 级门槛 85 分\n- 调整后 A 级占比 30%，分布达标',time:'14:02'},
+    {t:2000,type:'card',html:adjustSuggestCard}
+  ],
+  ratify_adjust2:[
+    {t:0,type:'msg',role:'user',text:'C级的人表现也没那么差，能不能调成B-',time:'14:03'},
+    {t:600,type:'typing'},
+    {t:1400,type:'msg',role:'bot',text:'郑十（58分）目前在 C 级。\n\n调整为 B- 的影响：\n- C 级占比 10% → 0%（低于目标 5%）\n- B- 占比 10% → 20%（高于目标 10%）\n\n⚠️ 会导致 B- 超标、C 低于下限',time:'14:03'},
+    {t:2200,type:'msg',role:'bot',text:'建议保持郑十 C 级不变，或考虑将另一名 B- 级人员（孙七，65分）也调为 C 级以平衡分布。',time:'14:03'},
+    {t:3000,type:'card',html:()=>`<div class="fc"><div class="fc-hd"><div class="fc-hd-icon">💡</div><div><div class="fc-hd-t">分布平衡方案</div></div></div><div class="fc-bd"><div style="font:400 12px/1.4 var(--f);color:var(--c7);padding:4px 0">方案A：保持现状（推荐）<br>方案B：孙七 B- → C，郑十 C → B-<br><br><span style="color:var(--c5);font-size:11px">两种方案分布均可达标</span></div></div><div class="fc-ft"><button class="fc-btn primary" onclick="handleBtn(this,'采纳建议')">采纳建议</button><button class="fc-btn" onclick="handleBtn(this,'保持不变')">保持不变</button><button class="fc-btn" onclick="handleBtn(this,'自定义调整')">自定义调整</button></div></div>`}
+  ],
+  ratify_confirm:[
+    {t:0,type:'msg',role:'user',text:'采纳建议',time:'14:04'},
+    {t:600,type:'typing'},
+    {t:1400,type:'msg',role:'bot',text:'已将赵六等级调整为 A 级。\n\n更新后分布：A 30% | B+ 20% | B 30% | B- 10% | C 10%',time:'14:04'},
+    {t:2000,type:'card',html:ratifyFinalConfirmCard}
+  ],
+  ratify_custom:[
+    {t:0,type:'msg',role:'user',text:'自定义调整',time:'14:04'},
+    {t:600,type:'typing'},
+    {t:1400,type:'msg',role:'bot',text:'进入自定义调整模式，可以手动修改每个人的等级：',time:'14:04'},
+    {t:2000,type:'card',html:ratifyCustomCard}
+  ],
+  ratify_submit:[
+    {t:0,type:'msg',role:'user',text:'提交审定',time:'14:05'},
+    {t:600,type:'typing'},
+    {t:1400,type:'msg',role:'bot',text:'审定已提交成功！考核结果已生效。\n\n后续流程：\n- 员工可在绩效工作台查看结果\n- 申诉期：提交后 5 个工作日内\n- 结果归档：自动归入员工档案',time:'14:05'},
+    {t:2000,type:'card',html:()=>submittedCard('审定完成',[
+      '考核结果已生效，员工可查看',
+      '申诉期：提交后 5 个工作日内',
+      '结果自动归入员工档案'
+    ])},
+    {t:2800,type:'msg',role:'bot',text:'已完成全部绩效流程。员工端会收到通知，可在工作台查看详情和申诉。',time:'14:05'}
+  ],
+  /* File upload sequences — Goal tab */
+  goal_upload:[
+    {t:0,type:'msg',role:'bot',text:'收到文件，正在解析文档内容...',time:'09:28'},
+    {t:600,type:'card',html:()=>docPreviewCard('Q1述职报告_张明.pdf','2.3 MB')},
+    {t:2000,type:'typing'},
+    {t:3200,type:'msg',role:'bot',text:'文档解析完成！已从述职报告中提取以下绩效数据：\n\n- 提取目标 6 条（业绩/管理/能力）\n- 提取 Q1 完成数据（用于目标值参考）\n- 提取工作亮点（可用于价值观目标）',time:'09:29'},
+    {t:4000,type:'card',html:docParsedGoalCard}
+  ],
+  goal_upload_apply:[
+    {t:0,type:'msg',role:'user',text:'应用到目标表单',time:'09:29'},
+    {t:600,type:'typing'},
+    {t:1400,type:'msg',role:'bot',text:'已将文档数据应用到目标表单：\n\n- 6 条目标已自动填入\n- 目标值基于 Q1 实际数据推算\n- 权重沿用部门默认分配',time:'09:29'},
+    {t:2000,type:'card',html:goalCard}
+  ],
+  /* File upload sequences — Eval tab */
+  eval_upload:[
+    {t:0,type:'msg',role:'bot',text:'收到文件，正在解析文档内容...',time:'10:15'},
+    {t:600,type:'card',html:()=>docPreviewCard('Q1述职报告_张明.pdf','2.3 MB')},
+    {t:2000,type:'typing'},
+    {t:3200,type:'msg',role:'bot',text:'文档解析完成！已从述职报告中提取完成数据：\n\n- 业绩指标实际完成值\n- 团队/个人贡献数据\n- AI 基于完成度生成评分建议',time:'10:16'},
+    {t:4000,type:'card',html:docParsedEvalCard}
+  ],
+  eval_upload_apply:[
+    {t:0,type:'msg',role:'user',text:'应用到评分表单',time:'10:16'},
+    {t:600,type:'typing'},
+    {t:1400,type:'msg',role:'bot',text:'已将文档数据应用到评分表单：\n\n- 完成值已自动填入\n- AI 评分建议已生成\n- 加权总分重新计算',time:'10:16'},
+    {t:2000,type:'card',html:scoreCard},
+    {t:2800,type:'msg',role:'bot',text:'加权总分 87 分，综合等级 B+。\n\n如需调整，告诉我具体指标。',time:'10:16'}
+  ],
+  /* File upload sequences — Ratify tab */
+  ratify_upload:[
+    {t:0,type:'msg',role:'bot',text:'收到文件，正在解析文档内容...',time:'14:00'},
+    {t:600,type:'card',html:()=>docPreviewCard('部门绩效汇总_产品部.xlsx','156 KB')},
+    {t:2000,type:'typing'},
+    {t:3200,type:'msg',role:'bot',text:'文档解析完成！已从汇总表中提取审定数据：\n\n- 10 人评分数据\n- 各部门绩效等级分布\n- AI 基于评分 + 强制分布生成审定建议',time:'14:01'},
+    {t:4000,type:'card',html:docParsedRatifyCard}
+  ],
+  ratify_upload_apply:[
+    {t:0,type:'msg',role:'user',text:'应用到审定表单',time:'14:01'},
+    {t:600,type:'typing'},
+    {t:1400,type:'msg',role:'bot',text:'已将文档数据应用到审定表单：\n\n- 10 人等级已自动分配\n- 强制分布已校验\n- 发现 2 处分布偏离',time:'14:01'},
+    {t:2000,type:'card',html:ratifyCard}
+  ]
+};
+
+/* Tab -> initial sequence mapping */
+const TAB_SEQ={goal:'goal',eval:'eval',ratify:'ratify'};
+
+/* Button action -> next sequence mapping */
+const BTN_MAP={
+  '确认全部':'goal_confirm',
+  '逐项审核':null,'调整权重':'goal_weight_adjust',
+  '提交目标':'goal_submit',
+  '返回修改':null,
+  '确认调整':'goal_weight_done',
+  '取消调整':null,
+  '继续调整':'goal_add',
+  '帮我推荐几个新的业绩目标':'goal_add',
+  '添加到业绩目标':'goal_add_confirm',
+  '跳过推荐':null,
+  '自动平衡权重':null,
+  '确认提交':'eval_submit',
+  '逐项调整':null,'查看依据':'eval_detail','关闭':'eval',
+  '人才培养那条改成90分':'eval_adjust',
+  '责任心改成符合预期+':'eval_adjust2',
+  '继续调整':null,
+  '确认应用':'ratify_confirm',
+  '调整分布':null,'查看偏离':null,
+  '采纳建议':'ratify_confirm',
+  '提交审定':'ratify_submit',
+  '保持不变':'ratify_confirm',
+  '自定义调整':'ratify_custom',
+  '确认自定义':'ratify_confirm',
+  '重置':'ratify',
+  '查看审定报告':null,'导出结果':null,'返回首页':null,
+  /* Upload actions */
+  '应用到目标表单':'goal_upload_apply',
+  '应用到评分表单':'eval_upload_apply',
+  '应用到审定表单':'ratify_upload_apply',
+  '仅参考不填入':null
+};
+
+/* Play a sequence */
+function playSequence(seqKey,append){
+  const seq=TABS[seqKey];
+  if(!seq)return;
+  isPlaying=true;
+
+  seq.forEach(item=>{
+    const tid=setTimeout(()=>{
+      if(item.type==='typing'){
+        const el=addTyping();
+        const rmTid=setTimeout(()=>removeTyping(el),800);
+        timers.push(rmTid);
+      } else if(item.type==='msg'){
+        document.querySelectorAll('.typing').forEach(e=>removeTyping(e));
+        addMsg(item.role,item.text,item.time);
+      } else if(item.type==='card'){
+        document.querySelectorAll('.typing').forEach(e=>removeTyping(e));
+        addCard(item.html());
+      }
+    },item.t);
+    timers.push(tid);
+  });
+
+  const lastDelay=seq[seq.length-1].t+200;
+  const doneTid=setTimeout(()=>{isPlaying=false},lastDelay);
+  timers.push(doneTid);
+}
+
+/* Handle button clicks */
+function handleBtn(el,text){
+  const card=el.closest('.fc');
+  if(card)card.querySelectorAll('.fc-btn').forEach(b=>{b.disabled=true;b.style.opacity='.5';b.style.cursor='default'});
+  addMsg('user',text,'');
+  const nextSeq=BTN_MAP[text];
+  if(nextSeq){
+    setTimeout(()=>playSequence(nextSeq),400);
+  }
+}
+
+/* Tab switching */
+function switchTab(tab){
+  if(isPlaying)return;
+  currentTab=tab;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
+  chat.innerHTML='';
+  playSequence(TAB_SEQ[tab]);
+}
+
+document.querySelectorAll('.tab').forEach(btn=>{
+  btn.addEventListener('click',()=>switchTab(btn.dataset.tab));
+});
+
+$('#replayBtn').addEventListener('click',()=>{
+  if(isPlaying)return;
+  clearTimers();
+  chat.innerHTML='';
+  playSequence(TAB_SEQ[currentTab]);
+});
+
+/* User text input -> auto-match sequence */
+const INPUT_MAP=[
+  {keywords:['上传','文件','述职','报告','文档'],seq:'goal_upload'},
+  {keywords:['权重','调整权重','管理目标','业绩目标'],seq:'goal_weight_adjust'},
+  {keywords:['推荐','新目标','新增','添加目标'],seq:'goal_add'},
+  {keywords:['确认全部','确认','提交目标','提交'],seq:'goal_confirm'},
+  {keywords:['上传','文件','述职','报告','文档'],seq:'eval_upload'},
+  {keywords:['改成','调整','评分','分数'],seq:'eval_adjust'},
+  {keywords:['依据','评分明细','查看依据'],seq:'eval_detail'},
+  {keywords:['等级','责任心'],seq:'eval_adjust2'},
+  {keywords:['提交评分','确认提交'],seq:'eval_submit'},
+  {keywords:['上传','文件','汇总','绩效表'],seq:'ratify_upload'},
+  {keywords:['占比','太低','太高','分布'],seq:'ratify_adjust'},
+  {keywords:['C级','调','自定义'],seq:'ratify_custom'},
+  {keywords:['确认审定','提交审定','审定'],seq:'ratify_confirm'},
+];
+
+function matchInput(text){
+  for(const m of INPUT_MAP){
+    if(m.keywords.some(k=>text.includes(k))) return m.seq;
+  }
+  return null;
+}
+
+const UPLOAD_SEQ={goal:'goal_upload',eval:'eval_upload',ratify:'ratify_upload'};
+const UPLOAD_NAMES={goal:'Q1述职报告_张明.pdf',eval:'Q1述职报告_张明.pdf',ratify:'部门绩效汇总_产品部.xlsx'};
+const UPLOAD_SIZES={goal:'2.3 MB',eval:'2.3 MB',ratify:'156 KB'};
+
+function triggerUpload(){
+  if(isPlaying) return;
+  clearTimers();
+  const seq=UPLOAD_SEQ[currentTab];
+  const name=UPLOAD_NAMES[currentTab];
+  const size=UPLOAD_SIZES[currentTab];
+  /* Show user message with file attachment */
+  const el=document.createElement('div');
+  el.className='msg user';
+  el.innerHTML=`<div class="msg-av user">张</div><div class="msg-bd"><div class="msg-name">张明</div><div class="msg-text" style="display:flex;align-items:center;gap:8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>${name}</div></div>`;
+  chat.appendChild(el);
+  scrollToBottom();
+  setTimeout(()=>playSequence(seq),400);
+}
+
+function sendUserMsg(){
+  if(isPlaying) return;
+  const inp=$('#userInput');
+  const text=inp.value.trim();
+  if(!text) return;
+  inp.value='';
+  clearTimers();
+
+  const seq=matchInput(text);
+  if(seq){
+    playSequence(seq);
+  } else {
+    addMsg('user',text,'');
+    setTimeout(()=>{
+      addTyping();
+      setTimeout(()=>{
+        document.querySelectorAll('.typing').forEach(e=>removeTyping(e));
+        addMsg('bot',`收到「${text}」。\n\n当前处于演示模式，你可以尝试：\n- "调整权重"\n- "推荐新目标"\n- "改成90分"\n- "查看依据"\n- "A级占比太低"\n- "自定义调整"`,'');
+      },1200);
+    },400);
+  }
+  inp.focus();
+}
+
+/* Init */
+playSequence('goal');
+</script>
+</body>
+</html>

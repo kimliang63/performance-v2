@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HR ONE - 强制分布规则</title>
+<title>HR ONE - 等级规则</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -49,6 +49,7 @@ tbody tr:last-child td{border-bottom:none}tbody tr:nth-child(even){background:va
 tbody tr{transition:background .1s}tbody tr:hover{background:var(--pr50)}
 .inp{border:1px solid var(--c2);border-radius:var(--r1);padding:6px 10px;font:400 13px/1 var(--f);color:var(--c9);background:var(--sf);outline:none;transition:all .15s;width:100%}
 .inp:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr100)}
+.inp-sm{padding:4px 8px;font-size:12px;width:70px}
 select.inp{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
 label{font:500 13px/1 var(--f);color:var(--c6);display:block;margin-bottom:6px}
 .form-row{display:flex;gap:16px;margin-bottom:16px}.form-row:last-child{margin-bottom:0}.form-g{flex:1}
@@ -56,6 +57,7 @@ label{font:500 13px/1 var(--f);color:var(--c6);display:block;margin-bottom:6px}
 .badge-ok{color:var(--em700);background:var(--em50)}.badge-off{color:var(--c5);background:var(--c1)}
 .filter-bar{display:flex;align-items:flex-end;gap:12px;margin-bottom:16px;flex-wrap:wrap}
 .filter-bar .form-g{flex:none}
+.color-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px;vertical-align:middle;flex-shrink:0}
 .modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:2000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
 .modal-ov.on{opacity:1;pointer-events:all}
 .modal{background:var(--sf);border-radius:var(--r4);box-shadow:var(--shadow-dropdown);width:680px;max-height:85vh;overflow-y:auto;transform:translateY(8px);transition:transform .2s}
@@ -70,13 +72,15 @@ label{font:500 13px/1 var(--f);color:var(--c6);display:block;margin-bottom:6px}
 .toggle::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#FFF;transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
 .toggle.on{background:var(--em)}.toggle.on::after{left:19px}
 .toggle.off{background:var(--c3)}.toggle.off::after{left:3px}
-.grade-tbl{margin-top:12px}.grade-tbl table{font-size:12px}.grade-tbl th{padding:8px 10px;font-size:11px}.grade-tbl td{padding:6px 10px}
-.grade-tbl .inp{padding:4px 8px;font-size:12px}
-.grade-tbl select.inp{padding-right:24px}
-.grade-tbl .del-btn{background:none;border:none;color:var(--ro);cursor:pointer;padding:4px;border-radius:var(--r1);transition:all .12s}
-.grade-tbl .del-btn:hover{background:var(--ro50)}
-.grade-tbl .del-btn svg{width:14px;height:14px}
-.section-title{font:600 13px/1 var(--f);color:var(--c8);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--dv)}
+.radio-group{display:flex;gap:0;border:1px solid var(--c2);border-radius:var(--r1);overflow:hidden}
+.radio-group label{flex:1;text-align:center;padding:7px 16px;font:500 13px/1 var(--f);color:var(--c5);cursor:pointer;background:var(--sf);transition:all .15s;border:none;margin:0}
+.radio-group label:not(:last-child){border-right:1px solid var(--c2)}
+.radio-group input{display:none}
+.radio-group input:checked+label{background:var(--pr);color:#FFF}
+.grade-tbl{margin-top:12px}
+.grade-tbl table{font-size:12px}
+.grade-tbl th{padding:8px 10px;font-size:11px}
+.grade-tbl td{padding:6px 10px}
 </style>
 </head>
 <body>
@@ -90,33 +94,32 @@ const I={
   refresh:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>',
   plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
   edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+  eye:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
   trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
   x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
   toggleOn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="5" width="22" height="14" rx="7" ry="7"/><circle cx="16" cy="12" r="3"/></svg>',
   toggleOff:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="5" width="22" height="14" rx="7" ry="7"/><circle cx="8" cy="12" r="3"/></svg>',
-  minus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>',
 };
 
-const GRADES = [
-  { name:'远超预期', code:'A' },
-  { name:'符合预期+', code:'B+' },
-  { name:'符合预期', code:'B' },
-  { name:'符合预期-', code:'B-' },
-  { name:'待改进', code:'C' },
-];
-
-let RULES = [
-  { id:1, name:'强制分布比例', code:'PERK0001', dept:'纵腾网络', enabled:true, lastMod:'Kim', lastModTime:'2026/01/01 00:00:00', gradeRule:'百分制绩效等级', ruleType:'数值', minHeadcount:10, gradeRows:[
-    { grade:'A', calcRule:'不超过', value:10 },
-    { grade:'B+', calcRule:'不低于', value:15 },
-    { grade:'B', calcRule:'不低于', value:30 },
+let GRADE_RULES = [
+  { id:1, name:'年度标准等级规则', dept:'中国区', visible:true, matchType:'按条件', matchDesc:'部门=中国区 AND 职级>=P5', grades:[
+    {name:'远超预期',code:'A',min:90,max:100,color:'#10B981'},
+    {name:'符合预期+',code:'B+',min:80,max:89,color:'#2563EB'},
+    {name:'符合预期',code:'B',min:70,max:79,color:'#2563EB'},
+    {name:'符合预期-',code:'B-',min:60,max:69,color:'#F59E0B'},
+    {name:'低于预期',code:'C',min:0,max:59,color:'#F43F5E'},
   ]},
-  { id:2, name:'宽松分布规则', code:'PERK0002', dept:'纵腾网络', enabled:true, lastMod:'Kim', lastModTime:'2026/01/01 00:00:00', gradeRule:'百分制绩效等级', ruleType:'等级', minHeadcount:5, gradeRows:[
-    { grade:'A', calcRule:'不低于', value:15 },
-    { grade:'B+', calcRule:'不低于', value:25 },
+  { id:2, name:'管理层等级规则', dept:'中国区', visible:false, matchType:'按人员', matchDesc:'职级>=M3', grades:[
+    {name:'卓越',code:'S',min:95,max:100,color:'#10B981'},
+    {name:'优秀',code:'A',min:85,max:94,color:'#2563EB'},
+    {name:'良好',code:'B+',min:75,max:84,color:'#2563EB'},
+    {name:'合格',code:'B',min:60,max:74,color:'#F59E0B'},
+    {name:'待改进',code:'C',min:0,max:59,color:'#F43F5E'},
   ]},
-  { id:3, name:'严格分布规则', code:'PERK0003', dept:'纵腾网络', enabled:false, lastMod:'Molly', lastModTime:'2026/01/01 00:00:00', gradeRule:'百分制绩效等级', ruleType:'数值', minHeadcount:15, gradeRows:[
-    { grade:'C', calcRule:'不超过', value:5 },
+  { id:3, name:'月度快速等级规则', dept:'华东大区', visible:true, matchType:'按条件', matchDesc:'部门=华东大区 AND 周期类型=月度', grades:[
+    {name:'A',code:'A',min:90,max:100,color:'#10B981'},
+    {name:'B',code:'B',min:70,max:89,color:'#2563EB'},
+    {name:'C',code:'C',min:0,max:69,color:'#F43F5E'},
   ]},
 ];
 let nextId = 4;
@@ -124,7 +127,7 @@ let searchText = '';
 let filterDept = '';
 
 function render(){
-  let filtered = RULES.filter(r => {
+  let filtered = GRADE_RULES.filter(r => {
     if(searchText && !r.name.includes(searchText)) return false;
     if(filterDept && r.dept !== filterDept) return false;
     return true;
@@ -133,14 +136,15 @@ function render(){
     <tr>
       <td>${i+1}</td>
       <td style="font-weight:500;color:var(--c8)">${r.name}</td>
-      <td><span style="font-family:var(--m);font-weight:500;font-size:12px;color:var(--c6)">${r.code}</span></td>
       <td>${r.dept}</td>
-      <td>${r.gradeRule}</td>
-      <td>${r.enabled ? '<span class="badge badge-ok">是</span>' : '<span class="badge badge-off">否</span>'}</td>
-      <td>${r.lastMod}</td>
-      <td style="font-size:12px;color:var(--c5)">${r.lastModTime}</td>
+      <td>${r.visible ? '<span class="badge badge-ok">是</span>' : '<span class="badge badge-off">否</span>'}</td>
+      <td>${r.matchType}</td>
+      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.matchDesc}">${r.matchDesc}</td>
+      <td>${r.grades.length}</td>
       <td>
-        <button class="btn btn-s btn-sm btn-edit" data-id="${r.id}">${I.edit} 编辑</button>
+        <button class="btn btn-s btn-sm btn-view" data-id="${r.id}">${I.eye}</button>
+        <button class="btn btn-s btn-sm btn-edit" data-id="${r.id}">${I.edit}</button>
+        <button class="btn btn-d btn-sm btn-del" data-id="${r.id}">${I.trash}</button>
       </td>
     </tr>
   `).join('');
@@ -150,20 +154,20 @@ function render(){
       <div class="sec-hd">
         <div class="sec-hd-l">
           <div class="sec-hd-ic b">${I.settings}</div>
-          <div><div class="sec-hd-t">强制分布规则</div><div class="sec-hd-s">Forced Distribution Rules · 管理绩效等级的强制分布策略</div></div>
+          <div><div class="sec-hd-t">等级规则</div><div class="sec-hd-s">Grade Rules · 管理绩效等级定义及分数区间</div></div>
         </div>
-        <button class="btn btn-p" id="btnAdd">${I.plus} 新增</button>
+        <button class="btn btn-p" id="btnAdd">${I.plus} 新增规则</button>
       </div>
       <div class="sec-bd">
         <div class="filter-bar">
           <div class="form-g" style="width:200px"><label>规则名称</label><input class="inp" id="searchInp" placeholder="搜索规则名称" value="${searchText}"></div>
-          <div class="form-g" style="width:140px"><label>部门</label><select class="inp" id="filterDept"><option value="">全部</option><option value="纵腾网络" ${filterDept==='纵腾网络'?'selected':''}>纵腾网络</option></select></div>
+          <div class="form-g" style="width:140px"><label>适用部门</label><select class="inp" id="filterDept"><option value="">全部</option><option value="中国区" ${filterDept==='中国区'?'selected':''}>中国区</option><option value="华东大区" ${filterDept==='华东大区'?'selected':''}>华东大区</option><option value="华南大区" ${filterDept==='华南大区'?'selected':''}>华南大区</option></select></div>
           <button class="btn btn-s" id="btnSearch">${I.search} 搜索</button>
           <button class="btn btn-s" id="btnReset">${I.refresh} 重置</button>
         </div>
         <div class="tbl-wrap">
           <table>
-            <thead><tr><th>序号</th><th>规则名称</th><th>编码值</th><th>部门</th><th>等级</th><th>是否启用</th><th>最近修改人</th><th>最近修改时间</th><th>操作</th></tr></thead>
+            <thead><tr><th>序号</th><th>规则名称</th><th>适用部门</th><th>向下公开</th><th>匹配方式</th><th>匹配规则</th><th>等级数</th><th>操作</th></tr></thead>
             <tbody>${rows}</tbody>
           </table>
         </div>
@@ -177,135 +181,99 @@ function bindEvents(){
   document.getElementById('btnAdd').onclick = () => openModal(-1);
   document.getElementById('btnSearch').onclick = () => { searchText = document.getElementById('searchInp').value.trim(); filterDept = document.getElementById('filterDept').value; render(); };
   document.getElementById('btnReset').onclick = () => { searchText = ''; filterDept = ''; render(); };
+  document.querySelectorAll('.btn-view').forEach(b => b.onclick = () => openViewModal(parseInt(b.dataset.id)));
   document.querySelectorAll('.btn-edit').forEach(b => b.onclick = () => openModal(parseInt(b.dataset.id)));
+  document.querySelectorAll('.btn-del').forEach(b => b.onclick = () => {
+    const id = parseInt(b.dataset.id);
+    const r = GRADE_RULES.find(x=>x.id===id);
+    if(confirm(`确定删除"${r.name}"吗？`)){ GRADE_RULES = GRADE_RULES.filter(x=>x.id!==id); render(); }
+  });
+}
+
+function gradeRowsHTML(grades, editable=true){
+  return grades.map((g,i) => `<tr>
+    <td><span class="color-dot" style="background:${g.color}"></span><input class="inp inp-sm g-name" value="${g.name}" data-idx="${i}" ${editable?'':'readonly'}></td>
+    <td><input class="inp inp-sm g-code" value="${g.code}" data-idx="${i}" style="width:50px" ${editable?'':'readonly'}></td>
+    <td><input class="inp inp-sm g-min" type="number" value="${g.min}" data-idx="${i}" ${editable?'':'readonly'}></td>
+    <td><input class="inp inp-sm g-max" type="number" value="${g.max}" data-idx="${i}" ${editable?'':'readonly'}></td>
+    <td><input class="inp inp-sm g-color" value="${g.color}" data-idx="${i}" style="width:80px" ${editable?'':'readonly'}></td>
+    ${editable?`<td><button class="btn btn-d btn-sm g-del" data-idx="${i}">${I.trash}</button></td>`:''}
+  </tr>`).join('');
 }
 
 function openModal(id){
   const isNew = id < 0;
-  const r = isNew
-    ? { name:'', code:'', dept:'纵腾网络', enabled:true, gradeRule:'百分制绩效等级', ruleType:'数值', minHeadcount:'', gradeRows:[ { grade:'A', calcRule:'不超过', value:10 }, { grade:'B+', calcRule:'不低于', value:15 } ] }
-    : RULES.find(x=>x.id===id);
-
-  const gradeOpts = GRADES.map(g => `<option value="${g.code}">${g.name}</option>`).join('');
-  const calcOpts = '<option>不超过</option><option>不低于</option>';
-
-  const gradeRows = r.gradeRows.map((row, i) => `
-    <tr>
-      <td style="text-align:center;color:var(--c5)">${i+1}</td>
-      <td><select class="inp grade-select" data-idx="${i}">${GRADES.map(g => `<option value="${g.code}" ${row.grade===g.code?'selected':''}>${g.name}</option>`).join('')}</select></td>
-      <td><select class="inp calc-select" data-idx="${i}">${['不超过','不低于'].map(c => `<option ${row.calcRule===c?'selected':''}>${c}</option>`).join('')}</select></td>
-      <td><div style="display:flex;align-items:center;gap:4px"><input class="inp value-input" data-idx="${i}" type="number" value="${row.value}" min="0" max="100" style="width:60px"><span style="font:500 12px/1 var(--f);color:var(--c5)">%</span></div></td>
-      <td><button class="del-btn grade-del" data-idx="${i}">${I.trash}</button></td>
-    </tr>
-  `).join('');
+  const r = isNew ? { name:'', dept:'中国区', visible:true, matchType:'按条件', matchDesc:'', grades:[{name:'A',code:'A',min:90,max:100,color:'#10B981'},{name:'B',code:'B',min:70,max:89,color:'#2563EB'},{name:'C',code:'C',min:0,max:69,color:'#F43F5E'}] } : JSON.parse(JSON.stringify(GRADE_RULES.find(x=>x.id===id)));
 
   openModalBox(`
-    <div class="modal-hd"><span class="modal-hd-t">${isNew?'新增强制分布规则':'编辑强制分布规则'}</span><button class="modal-close" onclick="closeModal()">${I.x}</button></div>
+    <div class="modal-hd"><span class="modal-hd-t">${isNew?'新增规则':'编辑规则'}</span><button class="modal-close" onclick="closeModal()">${I.x}</button></div>
     <div class="modal-bd">
-      <div class="section-title">基本信息</div>
+      <div class="form-row"><div class="form-g"><label>规则名称</label><input class="inp" id="mName" value="${r.name}" placeholder="输入规则名称"></div></div>
       <div class="form-row">
-        <div class="form-g"><label>名称</label><input class="inp" id="mName" value="${r.name}" placeholder="请输入"></div>
-        <div class="form-g"><label>编码值</label><input class="inp" id="mCode" value="${r.code}" placeholder="请输入" style="font-family:var(--m)"></div>
+        <div class="form-g"><label>适用部门</label><select class="inp" id="mDept"><option ${r.dept==='中国区'?'selected':''}>中国区</option><option ${r.dept==='华东大区'?'selected':''}>华东大区</option><option ${r.dept==='华南大区'?'selected':''}>华南大区</option></select></div>
+        <div class="form-g"><label>向下公开</label><button class="toggle ${r.visible?'on':'off'}" id="mVisible" onclick="this.classList.toggle('on');this.classList.toggle('off')">${r.visible?I.toggleOn:I.toggleOff}</button></div>
       </div>
       <div class="form-row">
-        <div class="form-g"><label>部门</label><select class="inp" id="mDept"><option ${r.dept==='纵腾网络'?'selected':''}>纵腾网络</option><option ${r.dept==='纵腾网络/FBU'?'selected':''}>纵腾网络/FBU</option></select></div>
-        <div class="form-g"><label>状态</label><button class="toggle ${r.enabled?'on':'off'}" id="mEnabled" onclick="this.classList.toggle('on');this.classList.toggle('off')">${r.enabled?I.toggleOn:I.toggleOff}</button></div>
+        <div class="form-g"><label>匹配方式</label><div class="radio-group"><input type="radio" name="mMatch" id="mMatchCond" value="按条件" ${r.matchType==='按条件'?'checked':''}><label for="mMatchCond">按条件</label><input type="radio" name="mMatch" id="mMatchPerson" value="按人员" ${r.matchType==='按人员'?'checked':''}><label for="mMatchPerson">按人员</label></div></div>
       </div>
-
-      <div class="section-title" style="margin-top:20px">规则信息</div>
-      <div class="form-row">
-        <div class="form-g" style="flex:none;width:180px"><label>应用等级</label><select class="inp" id="mGradeRule"><option ${r.gradeRule==='百分制绩效等级'?'selected':''}>百分制绩效等级</option><option ${r.gradeRule==='五分制绩效等级'?'selected':''}>五分制绩效等级</option></select></div>
-        <div class="form-g" style="flex:none;width:140px"><label>规则类型</label><select class="inp" id="mRuleType"><option ${r.ruleType==='数值'?'selected':''}>数值</option><option ${r.ruleType==='等级'?'selected':''}>等级</option></select></div>
-        <div class="form-g" style="flex:none;width:120px"><label>起控人数</label><input class="inp" id="mMinHead" type="number" value="${r.minHeadcount||''}" min="1" step="1" placeholder="正整数"></div>
-        <div class="form-g" style="flex:none;display:flex;align-items:flex-end"><button class="btn btn-s btn-sm" id="btnAddGrade">${I.plus} 新增规则</button></div>
-      </div>
+      <div class="form-row"><div class="form-g"><label>匹配规则</label><input class="inp" id="mMatchDesc" value="${r.matchDesc}" placeholder="如：部门=中国区 AND 职级>=P5"></div></div>
       <div class="grade-tbl">
-        <div class="tbl-wrap">
-          <table>
-            <thead><tr><th style="width:50px;text-align:center">#</th><th style="width:200px">等级</th><th style="width:160px">计算规则</th><th style="width:120px">值%</th><th style="width:60px">操作</th></tr></thead>
-            <tbody id="gradeBody">${gradeRows}</tbody>
-          </table>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <label style="margin:0">等级定义</label>
+          <button class="btn btn-s btn-sm" id="btnAddGrade">${I.plus} 添加等级</button>
         </div>
+        <div class="tbl-wrap"><table><thead><tr><th>等级名称</th><th>代码</th><th>下限</th><th>上限</th><th>颜色</th><th></th></tr></thead><tbody id="gradeBody">${gradeRowsHTML(r.grades)}</tbody></table></div>
       </div>
     </div>
-    <div class="modal-ft"><button class="btn btn-s" onclick="closeModal()">取消</button><button class="btn btn-p" id="btnSave">确定</button></div>
+    <div class="modal-ft"><button class="btn btn-s" onclick="closeModal()">取消</button><button class="btn btn-p" id="btnSave">保存</button></div>
   `);
 
-  // Add grade row
-  document.getElementById('btnAddGrade').onclick = () => {
-    const tbody = document.getElementById('gradeBody');
-    const idx = tbody.children.length;
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td style="text-align:center;color:var(--c5)">${idx+1}</td>
-      <td><select class="inp grade-select" data-idx="${idx}">${gradeOpts}</select></td>
-      <td><select class="inp calc-select" data-idx="${idx}">${['不超过','不低于'].map(c => `<option>${c}</option>`).join('')}</select></td>
-      <td><div style="display:flex;align-items:center;gap:4px"><input class="inp value-input" data-idx="${idx}" type="number" value="10" min="0" max="100" style="width:60px"><span style="font:500 12px/1 var(--f);color:var(--c5)">%</span></div></td>
-      <td><button class="del-btn grade-del" data-idx="${idx}">${I.trash}</button></td>
-    `;
-    tbody.appendChild(tr);
-    bindGradeEvents();
+  let grades = r.grades;
+  document.getElementById('btnAddGrade').onclick = () => { grades.push({name:'新等级',code:'D',min:0,max:0,color:'#A1A1AA'}); document.getElementById('gradeBody').innerHTML = gradeRowsHTML(grades); };
+  document.getElementById('gradeBody').onclick = (e) => {
+    const del = e.target.closest('.g-del');
+    if(del){ grades.splice(parseInt(del.dataset.idx),1); document.getElementById('gradeBody').innerHTML = gradeRowsHTML(grades); }
   };
-
-  // Delete grade row
-  function bindGradeEvents(){
-    document.querySelectorAll('.grade-del').forEach(btn => {
-      btn.onclick = () => {
-        btn.closest('tr').remove();
-        // Re-number
-        document.querySelectorAll('#gradeBody tr').forEach((tr, i) => {
-          tr.children[0].textContent = i+1;
-        });
-      };
-    });
-  }
-  bindGradeEvents();
-
-  // Save
   document.getElementById('btnSave').onclick = () => {
     const name = document.getElementById('mName').value.trim();
     if(!name){ alert('请输入规则名称'); return; }
-    const code = document.getElementById('mCode').value.trim();
-    if(!code){ alert('请输入编码值'); return; }
-
-    const gradeRows = [];
-    document.querySelectorAll('#gradeBody tr').forEach(tr => {
-      gradeRows.push({
-        grade: tr.querySelector('.grade-select').value,
-        calcRule: tr.querySelector('.calc-select').value,
-        value: parseInt(tr.querySelector('.value-input').value) || 0,
-      });
+    document.querySelectorAll('#gradeBody tr').forEach((tr,i) => {
+      grades[i].name = tr.querySelector('.g-name').value;
+      grades[i].code = tr.querySelector('.g-code').value;
+      grades[i].min = parseInt(tr.querySelector('.g-min').value)||0;
+      grades[i].max = parseInt(tr.querySelector('.g-max').value)||0;
+      grades[i].color = tr.querySelector('.g-color').value;
     });
-
-    const minHeadRaw = document.getElementById('mMinHead').value.trim();
-    const minHeadcount = minHeadRaw ? parseInt(minHeadRaw) : '';
-    if(minHeadcount !== '' && (!Number.isInteger(minHeadcount) || minHeadcount < 1)){
-      alert('起控人数必须为正整数'); return;
-    }
-
-    const data = {
-      name, code,
-      dept: document.getElementById('mDept').value,
-      enabled: document.getElementById('mEnabled').classList.contains('on'),
-      gradeRule: document.getElementById('mGradeRule').value,
-      ruleType: document.getElementById('mRuleType').value,
-      minHeadcount,
-      gradeRows,
-      lastMod: 'Molly',
-      lastModTime: new Date().toISOString().slice(0,19).replace('T',' ').replace(/-/g,'/'),
-    };
-
-    if(isNew){ data.id = nextId++; RULES.unshift(data); }
-    else { Object.assign(RULES.find(x=>x.id===id), data); }
+    const data = { name, dept:document.getElementById('mDept').value, visible:document.getElementById('mVisible').classList.contains('on'), matchType:document.querySelector('input[name="mMatch"]:checked').value, matchDesc:document.getElementById('mMatchDesc').value, grades };
+    if(isNew){ data.id = nextId++; GRADE_RULES.push(data); } else { Object.assign(GRADE_RULES.find(x=>x.id===id), data); }
     closeModal(); render();
   };
+}
+
+function openViewModal(id){
+  const r = GRADE_RULES.find(x=>x.id===id);
+  const gradeRows = r.grades.map(g => `<tr><td><span class="color-dot" style="background:${g.color}"></span>${g.name}</td><td style="font-family:var(--m);font-weight:600">${g.code}</td><td>${g.min}</td><td>${g.max}</td></tr>`).join('');
+  openModalBox(`
+    <div class="modal-hd"><span class="modal-hd-t">查看规则</span><button class="modal-close" onclick="closeModal()">${I.x}</button></div>
+    <div class="modal-bd">
+      <div class="form-row"><div class="form-g"><label>规则名称</label><div style="font:400 14px/1.5 var(--f);color:var(--c8)">${r.name}</div></div></div>
+      <div class="form-row">
+        <div class="form-g"><label>适用部门</label><div style="font:400 14px/1.5 var(--f);color:var(--c8)">${r.dept}</div></div>
+        <div class="form-g"><label>向下公开</label><div>${r.visible?'<span class="badge badge-ok">是</span>':'<span class="badge badge-off">否</span>'}</div></div>
+      </div>
+      <div class="form-row"><div class="form-g"><label>匹配方式</label><div style="font:400 14px/1.5 var(--f);color:var(--c8)">${r.matchType}</div></div></div>
+      <div class="form-row"><div class="form-g"><label>匹配规则</label><div style="font:400 13px/1.5 var(--m);color:var(--c7)">${r.matchDesc}</div></div></div>
+      <div class="grade-tbl"><label>等级定义</label><div class="tbl-wrap" style="margin-top:8px"><table><thead><tr><th>等级名称</th><th>代码</th><th>下限</th><th>上限</th></tr></thead><tbody>${gradeRows}</tbody></table></div></div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-s" onclick="closeModal()">关闭</button></div>
+  `);
 }
 
 function openModalBox(html){ document.getElementById('modalBox').innerHTML = html; document.getElementById('modalOv').classList.add('on'); }
 function closeModal(){ document.getElementById('modalOv').classList.remove('on'); }
 document.getElementById('modalOv').onclick = (e) => { if(e.target === document.getElementById('modalOv')) closeModal(); };
 
-GHR_NAV.init('perf', '强制分布规则');
+GHR_NAV.init('perf', '等级规则');
 render();
 </script>
 </body>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 公式编辑器</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --shadow-card-hover:0 8px 20px -4px rgba(0,0,0,.08),0 2px 6px -2px rgba(0,0,0,.04);
+  --shadow-dropdown:0 10px 40px -10px rgba(0,0,0,.12),0 2px 10px -2px rgba(0,0,0,.04);
+  --header-h:52px;--r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --m:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+.hdr{height:var(--header-h);background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:1100}
+.hdr-l{display:flex;align-items:center;gap:14px}.logo{display:flex;align-items:center;gap:8px}
+.logo-i{width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center}
+.logo-i svg{width:15px;height:15px;color:#FFF}.logo-t{font-size:15px;font-weight:700;color:var(--c9);letter-spacing:-.3px}
+.hdr-title{font:600 14px/1 var(--f);color:var(--c7);padding-left:14px;border-left:1px solid var(--c2)}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
+.btn svg{width:13px;height:13px}.btn-p{background:var(--pr);color:#FFF}.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
+.btn-sm{height:26px;padding:0 10px;font-size:12px}.btn-sm svg{width:11px;height:11px}
+.sec{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:20px;overflow:hidden}
+.sec-hd{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--dv)}
+.sec-hd-l{display:flex;align-items:center;gap:10px}
+.sec-hd-ic{width:30px;height:30px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center}
+.sec-hd-ic svg{width:15px;height:15px;color:#FFF}.sec-hd-ic.b{background:var(--pr)}
+.sec-hd-t{font:600 15px/1.2 var(--f);color:var(--c9)}.sec-hd-s{font:400 11px/1 var(--f);color:var(--c4);margin-top:2px}
+.sec-bd{padding:20px 24px}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--c2);border-radius:var(--r2)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{background:var(--c0);padding:10px 14px;font:600 12px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--c2);white-space:nowrap;text-transform:uppercase;letter-spacing:.3px}
+tbody td{padding:10px 14px;border-bottom:1px solid var(--dv);font:400 13px/1.4 var(--f);color:var(--c7);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}tbody tr:nth-child(even){background:var(--c0)}
+tbody tr{transition:background .1s}tbody tr:hover{background:var(--pr50)}
+.inp{border:1px solid var(--c2);border-radius:var(--r1);padding:6px 10px;font:400 13px/1 var(--f);color:var(--c9);background:var(--sf);outline:none;transition:all .15s;width:100%}
+.inp:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr100)}
+label{font:500 13px/1 var(--f);color:var(--c6);display:block;margin-bottom:6px}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}.fi{animation:fi .25s ease forwards}
+.val-msg{display:flex;align-items:center;gap:6px;font:500 12px/1 var(--f);margin-top:10px;padding:8px 12px;border-radius:var(--r1);transition:all .2s}
+.val-msg.ok{color:var(--em700);background:var(--em50)}.val-msg.err{color:var(--ro);background:var(--ro50)}
+.val-msg svg{width:14px;height:14px;flex-shrink:0}
+/* Formula editor layout */
+.fe-layout{display:flex;gap:0;border:1px solid var(--c2);border-radius:var(--r2);overflow:hidden;min-height:320px}
+.fe-panel{padding:14px;overflow-y:auto}
+.fe-left{width:200px;border-right:1px solid var(--c2);background:var(--c0);flex-shrink:0}
+.fe-center{flex:1;display:flex;flex-direction:column}
+.fe-right{width:220px;border-left:1px solid var(--c2);background:var(--c0);flex-shrink:0}
+.fe-hd{font:600 12px/1 var(--f);color:var(--c5);text-transform:uppercase;letter-spacing:.3px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--c2)}
+.fe-tree-cat{margin-bottom:8px}
+.fe-tree-cat-name{font:500 12px/1 var(--f);color:var(--c6);padding:4px 6px;cursor:pointer;display:flex;align-items:center;gap:4px;border-radius:var(--r1)}
+.fe-tree-cat-name:hover{background:var(--c1)}
+.fe-tree-items{padding-left:16px}
+.fe-tree-item{font:400 12px/1 var(--f);color:var(--c6);padding:4px 8px;cursor:pointer;border-radius:var(--r1);display:flex;align-items:center;gap:4px;margin-bottom:2px}
+.fe-tree-item:hover{background:var(--pr50);color:var(--pr)}
+.fe-fn-cat{margin-bottom:10px}
+.fe-fn-cat-name{font:600 11px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px}
+.fe-fn-item{font:500 12px/1 var(--m);color:var(--c6);padding:4px 8px;cursor:pointer;border-radius:var(--r1);margin-bottom:2px}
+.fe-fn-item:hover{background:var(--pr50);color:var(--pr)}
+.fe-toolbar{display:flex;gap:4px;padding:8px 12px;border-bottom:1px solid var(--c2);background:var(--c0);flex-wrap:wrap}
+.fe-toolbar-btn{font:500 11px/1 var(--m);color:var(--pr);background:var(--pr50);border:1px solid var(--pr100);border-radius:var(--r1);padding:4px 8px;cursor:pointer;transition:all .12s}
+.fe-toolbar-btn:hover{background:var(--pr);color:#FFF;border-color:var(--pr)}
+.fe-expr{font:400 14px/1.6 var(--m);border:none;outline:none;resize:none;padding:14px;flex:1;min-height:160px;color:var(--c8);background:var(--sf)}
+.fe-desc{border-top:1px solid var(--c2);padding:10px 14px}
+.fe-desc textarea{font:400 12px/1.4 var(--f);border:1px solid var(--c2);border-radius:var(--r1);padding:6px 10px;width:100%;resize:vertical;min-height:40px;outline:none}
+.fe-desc textarea:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr100)}
+.fe-actions{display:flex;align-items:center;gap:10px;padding:10px 14px;border-top:1px solid var(--c2)}
+.fe-fn-desc{font:400 12px/1.4 var(--f);color:var(--c5);padding:8px;background:var(--c1);border-radius:var(--r1);margin-top:8px;min-height:40px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="navigation.js"></script>
+<script>
+const I={
+  code:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>',
+  tag:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+  alert:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  folder:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>',
+  chevDown:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>',
+  chevRight:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>',
+  clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+};
+
+const DATA_SOURCES = [
+  { name:'基本信息', children:['员工姓名','部门','职位','职级','入职日期'] },
+  { name:'绩效数据', children:['目标完成率','自评得分','上级评分','综合得分'] },
+  { name:'360评价', children:['上级评分','同事评分','下级评分','自评分数'] },
+  { name:'项目数据', children:['项目完成数','按时交付率','客户满意度'] },
+];
+
+const FUNCTIONS = [
+  { cat:'数学函数', items:['SUM','AVG','MAX','MIN','ABS','ROUND','POWER'] },
+  { cat:'逻辑函数', items:['IF','AND','OR','NOT','IFNULL'] },
+  { cat:'统计函数', items:['COUNT','COUNTA','STDEV','VAR'] },
+  { cat:'文本函数', items:['CONCAT','LEN','LEFT','RIGHT','TRIM'] },
+  { cat:'日期函数', items:['TODAY','YEAR','MONTH','DAY','DATEDIF'] },
+];
+
+const FN_DESC = {
+  SUM:'求和: SUM(值1, 值2, ...)', AVG:'平均值: AVG(值1, 值2, ...)',
+  MAX:'最大值: MAX(值1, 值2, ...)', MIN:'最小值: MIN(值1, 值2, ...)',
+  IF:'条件判断: IF(条件, 真值, 假值)', AND:'逻辑与: AND(条件1, 条件2, ...)',
+  OR:'逻辑或: OR(条件1, 条件2, ...)', COUNT:'计数: COUNT(值1, 值2, ...)',
+  ROUND:'四舍五入: ROUND(值, 小数位)', POWER:'幂运算: POWER(底数, 指数)',
+};
+
+const RECENT_FORMULAS = [
+  { name:'绩效得分加权', formula:'SUM(评分*权重)/SUM(权重)', usedBy:'绩效考核', lastUsed:'2026-05-20' },
+  { name:'目标完成率', formula:'完成目标数/总目标数*100', usedBy:'目标制定', lastUsed:'2026-05-18' },
+  { name:'360综合评分', formula:'上级*40%+同事*30%+下级*20%+自评*10%', usedBy:'绩效考核', lastUsed:'2026-05-15' },
+];
+
+let currentFormula = 'SUM([目标完成率]*[权重]) / SUM([权重]) * [信心指数]';
+let currentDesc = '按节点权重加权计算绩效得分，乘以信心指数调整';
+let selectedFn = '';
+
+function render(){
+  const treeHTML = DATA_SOURCES.map(ds => {
+    const items = ds.children.map(c => `<div class="fe-tree-item" data-field="${c}">${I.tag} ${c}</div>`).join('');
+    return `<div class="fe-tree-cat"><div class="fe-tree-cat-name">${I.folder} ${ds.name}</div><div class="fe-tree-items">${items}</div></div>`;
+  }).join('');
+
+  const fnHTML = FUNCTIONS.map(f => {
+    const items = f.items.map(fn => `<div class="fe-fn-item" data-fn="${fn}">${fn}</div>`).join('');
+    return `<div class="fe-fn-cat"><div class="fe-fn-cat-name">${f.cat}</div>${items}</div>`;
+  }).join('');
+
+  const toolbarFns = ['SUM','AVG','MAX','MIN','COUNT','IF','ROUND'];
+  const toolbar = toolbarFns.map(fn => `<button class="fe-toolbar-btn" data-fn="${fn}">${fn}()</button>`).join('');
+
+  const recentRows = RECENT_FORMULAS.map(f => `
+    <tr>
+      <td style="font-weight:500;color:var(--c8)">${f.name}</td>
+      <td style="font:400 12px/1.4 var(--m);color:var(--c7)">${f.formula}</td>
+      <td>${f.usedBy}</td>
+      <td>${f.lastUsed}</td>
+    </tr>
+  `).join('');
+
+  document.getElementById('app').innerHTML = `
+    <div class="sec fi">
+      <div class="sec-hd">
+        <div class="sec-hd-l">
+          <div class="sec-hd-ic b">${I.code}</div>
+          <div><div class="sec-hd-t">公式编辑器</div><div class="sec-hd-s">Formula Editor · 构建和验证绩效计算公式</div></div>
+        </div>
+      </div>
+      <div class="sec-bd" style="padding:0">
+        <div class="fe-layout">
+          <div class="fe-panel fe-left">
+            <div class="fe-hd">数据源</div>
+            ${treeHTML}
+          </div>
+          <div class="fe-center">
+            <div class="fe-toolbar">${toolbar}</div>
+            <textarea class="fe-expr" id="exprArea" spellcheck="false">${currentFormula}</textarea>
+            <div class="fe-desc">
+              <label style="margin-bottom:4px">公式说明</label>
+              <textarea id="descArea" rows="2" placeholder="输入公式说明">${currentDesc}</textarea>
+            </div>
+            <div class="fe-actions">
+              <button class="btn btn-p" id="btnValidate">${I.check} 校验</button>
+              <button class="btn btn-s" id="btnClear">清空</button>
+              <div id="validateResult"></div>
+            </div>
+          </div>
+          <div class="fe-panel fe-right">
+            <div class="fe-hd">函数列表</div>
+            ${fnHTML}
+            <div class="fe-fn-desc" id="fnDesc">点击函数查看详情</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sec fi" style="animation-delay:.05s">
+      <div class="sec-hd">
+        <div class="sec-hd-l">
+          <div class="sec-hd-ic b" style="background:var(--em)">${I.clock}</div>
+          <div><div class="sec-hd-t">最近使用的公式</div><div class="sec-hd-s">Recent Formulas</div></div>
+        </div>
+      </div>
+      <div class="sec-bd" style="padding:0">
+        <div class="tbl-wrap" style="border:none;border-radius:0">
+          <table>
+            <thead><tr><th>公式名称</th><th>公式表达式</th><th>使用场景</th><th>最近使用</th></tr></thead>
+            <tbody>${recentRows}</tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  `;
+  bindEvents();
+}
+
+function insertAtCursor(text){
+  const area = document.getElementById('exprArea');
+  const start = area.selectionStart;
+  const end = area.selectionEnd;
+  currentFormula = currentFormula.substring(0,start) + text + currentFormula.substring(end);
+  area.value = currentFormula;
+  area.focus();
+  area.selectionStart = area.selectionEnd = start + text.length;
+}
+
+function bindEvents(){
+  document.querySelectorAll('.fe-tree-item').forEach(el => {
+    el.onclick = () => insertAtCursor('[' + el.dataset.field + ']');
+  });
+  document.querySelectorAll('.fe-toolbar-btn').forEach(el => {
+    el.onclick = () => insertAtCursor(el.dataset.fn + '()');
+  });
+  document.querySelectorAll('.fe-fn-item').forEach(el => {
+    el.onclick = () => {
+      selectedFn = el.dataset.fn;
+      document.getElementById('fnDesc').textContent = FN_DESC[el.dataset.fn] || el.dataset.fn;
+      insertAtCursor(el.dataset.fn + '()');
+    };
+  });
+  document.getElementById('exprArea').oninput = (e) => { currentFormula = e.target.value; };
+  document.getElementById('descArea').oninput = (e) => { currentDesc = e.target.value; };
+  document.getElementById('btnClear').onclick = () => { currentFormula = ''; document.getElementById('exprArea').value = ''; document.getElementById('validateResult').innerHTML = ''; };
+  document.getElementById('btnValidate').onclick = () => {
+    const expr = document.getElementById('exprArea').value.trim();
+    if(!expr){ document.getElementById('validateResult').innerHTML = '<div class="val-msg err">' + I.alert + '<span>请输入公式表达式</span></div>'; return; }
+    const openP = (expr.match(/\(/g)||[]).length;
+    const closeP = (expr.match(/\)/g)||[]).length;
+    const openB = (expr.match(/\[/g)||[]).length;
+    const closeB = (expr.match(/\]/g)||[]).length;
+    if(openP !== closeP || openB !== closeB){
+      document.getElementById('validateResult').innerHTML = '<div class="val-msg err">' + I.alert + '<span>语法错误：括号/方括号不匹配</span></div>';
+    } else if(expr.includes('undefined') || expr.includes('NaN')){
+      document.getElementById('validateResult').innerHTML = '<div class="val-msg err">' + I.alert + '<span>公式包含无效引用</span></div>';
+    } else {
+      document.getElementById('validateResult').innerHTML = '<div class="val-msg ok">' + I.check + '<span>公式校验通过</span></div>';
+    }
+  };
+}
+
+GHR_NAV.init('perf', '公式编辑器');
+render();
+</script>
+</body>
+</html>

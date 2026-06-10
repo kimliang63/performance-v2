@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 指标库</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --shadow-card-hover:0 8px 20px -4px rgba(0,0,0,.08),0 2px 6px -2px rgba(0,0,0,.04);
+  --shadow-dropdown:0 10px 40px -10px rgba(0,0,0,.12),0 2px 10px -2px rgba(0,0,0,.04);
+  --header-h:52px;--r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --m:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+.hdr{height:var(--header-h);background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:1100}
+.hdr-l{display:flex;align-items:center;gap:14px}.logo{display:flex;align-items:center;gap:8px}
+.logo-i{width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center}
+.logo-i svg{width:15px;height:15px;color:#FFF}.logo-t{font-size:15px;font-weight:700;color:var(--c9);letter-spacing:-.3px}
+.hdr-title{font:600 14px/1 var(--f);color:var(--c7);padding-left:14px;border-left:1px solid var(--c2)}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
+.btn svg{width:13px;height:13px}.btn-p{background:var(--pr);color:#FFF}.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
+.btn-d{background:var(--sf);color:var(--ro);border:1px solid var(--ro100)}.btn-d:hover{background:var(--ro50);border-color:var(--ro)}
+.btn-sm{height:26px;padding:0 10px;font-size:12px}.btn-sm svg{width:11px;height:11px}
+.sec{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:20px;overflow:hidden}
+.sec-hd{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--dv)}
+.sec-hd-l{display:flex;align-items:center;gap:10px}
+.sec-hd-ic{width:30px;height:30px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center}
+.sec-hd-ic svg{width:15px;height:15px;color:#FFF}.sec-hd-ic.b{background:var(--pr)}
+.sec-hd-t{font:600 15px/1.2 var(--f);color:var(--c9)}.sec-hd-s{font:400 11px/1 var(--f);color:var(--c4);margin-top:2px}
+.sec-bd{padding:0}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--c2);border-radius:var(--r2)}
+table{width:100%;border-collapse:collapse;font-size:13px}thead{position:sticky;top:0;z-index:1}
+thead th{background:var(--c0);padding:10px 14px;font:600 12px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--c2);white-space:nowrap;text-transform:uppercase;letter-spacing:.3px}
+tbody td{padding:10px 14px;border-bottom:1px solid var(--dv);font:400 13px/1.4 var(--f);color:var(--c7);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}tbody tr:nth-child(even){background:var(--c0)}
+tbody tr{transition:background .1s}tbody tr:hover{background:var(--pr50)}
+.inp{border:1px solid var(--c2);border-radius:var(--r1);padding:6px 10px;font:400 13px/1 var(--f);color:var(--c9);background:var(--sf);outline:none;transition:all .15s;width:100%}
+.inp:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr100)}
+select.inp{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+label{font:500 13px/1 var(--f);color:var(--c6);display:block;margin-bottom:6px}
+.form-row{display:flex;gap:16px;margin-bottom:16px}.form-row:last-child{margin-bottom:0}.form-g{flex:1}
+.badge{display:inline-flex;align-items:center;gap:4px;font:600 11px/1 var(--f);padding:3px 8px;border-radius:var(--r1)}
+.badge-ok{color:var(--em700);background:var(--em50)}.badge-off{color:var(--c5);background:var(--c1)}
+.badge-code{font-family:var(--m);font-weight:500;font-size:11px;color:var(--vi);background:var(--vi50)}
+.filter-bar{display:flex;align-items:flex-end;gap:12px;padding:16px 24px;border-bottom:1px solid var(--dv)}
+.filter-bar .form-g{flex:none}
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:2000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-ov.on{opacity:1;pointer-events:all}
+.modal{background:var(--sf);border-radius:var(--r4);box-shadow:var(--shadow-dropdown);width:560px;max-height:80vh;overflow-y:auto;transform:translateY(8px);transition:transform .2s}
+.modal-ov.on .modal{transform:translateY(0)}
+.modal-hd{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--dv)}
+.modal-hd-t{font:600 16px/1 var(--f);color:var(--c9)}
+.modal-close{width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c4);background:transparent;border:none;transition:all .12s}
+.modal-close:hover{background:var(--c1);color:var(--c7)}.modal-close svg{width:14px;height:14px}
+.modal-bd{padding:20px 24px}.modal-ft{display:flex;justify-content:flex-end;gap:8px;padding:14px 24px;border-top:1px solid var(--dv)}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}.fi{animation:fi .25s ease forwards}
+.toggle{width:36px;height:20px;border-radius:10px;border:none;cursor:pointer;position:relative;transition:all .2s}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#FFF;transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.toggle.on{background:var(--em)}.toggle.on::after{left:19px}
+.toggle.off{background:var(--c3)}.toggle.off::after{left:3px}
+/* Tree panel */
+.tree-panel{width:240px;border-right:1px solid var(--c2);background:var(--c0);padding:16px;overflow-y:auto;flex-shrink:0}
+.tree-title{font:600 12px/1 var(--f);color:var(--c5);text-transform:uppercase;letter-spacing:.3px;margin-bottom:12px}
+.tree-item{display:flex;align-items:center;gap:6px;padding:7px 10px;border-radius:var(--r1);cursor:pointer;font:400 13px/1 var(--f);color:var(--c6);transition:all .1s}
+.tree-item:hover{background:var(--pr50);color:var(--pr)}
+.tree-item.active{background:var(--pr50);color:var(--pr);font-weight:500}
+.tree-item svg{width:14px;height:14px;flex-shrink:0}
+.tree-children{padding-left:20px}
+.tree-child{display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:var(--r1);cursor:pointer;font:400 12px/1 var(--f);color:var(--c5);transition:all .1s}
+.tree-child:hover{background:var(--pr50);color:var(--pr)}
+.tree-child.active{background:var(--pr);color:#FFF}
+.content-area{flex:1;overflow:auto}
+.search-bar{display:flex;align-items:flex-end;gap:12px;padding:16px 20px;border-bottom:1px solid var(--dv)}
+.search-bar .form-g{flex:none}
+.layout{display:flex;min-height:400px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div class="modal-ov" id="modalOv"><div class="modal" id="modalBox"></div></div>
+<script src="navigation.js"></script>
+<script>
+const I={
+  file:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
+  folder:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>',
+  folderOpen:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4l2 3h9a2 2 0 0 1 2 2v1"/><path d="M3.5 14.5L22 14.5"/></svg>',
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>',
+  refresh:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+  edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+  trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+  x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+  chevDown:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>',
+  chevRight:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>',
+  tag:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>',
+  toggleOn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="5" width="22" height="14" rx="7" ry="7"/><circle cx="16" cy="12" r="3"/></svg>',
+  toggleOff:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="5" width="22" height="14" rx="7" ry="7"/><circle cx="8" cy="12" r="3"/></svg>',
+};
+
+let CATEGORIES = [
+  { id:1, name:'财务指标', children:[ { id:11, name:'收入类' }, { id:12, name:'成本类' }, { id:13, name:'利润类' } ] },
+  { id:2, name:'客户指标', children:[ { id:21, name:'满意度' }, { id:22, name:'留存率' } ] },
+  { id:3, name:'内部流程', children:[ { id:31, name:'效率指标' }, { id:32, name:'质量指标' } ] },
+  { id:4, name:'学习成长', children:[ { id:41, name:'培训完成率' }, { id:42, name:'创新能力' } ] },
+];
+
+let INDICATORS = [
+  { id:1, name:'营收增长率', code:'REV_GROWTH', categoryId:11, unit:'%', calcRule:'(本期-上期)/上期*100', desc:'衡量业务收入增长情况', enabled:true },
+  { id:2, name:'净利润率', code:'NET_PROFIT_RATE', categoryId:13, unit:'%', calcRule:'净利润/营收*100', desc:'衡量盈利能力', enabled:true },
+  { id:3, name:'客户满意度', code:'CSAT', categoryId:21, unit:'分', calcRule:'SUM(满意度评分)/COUNT', desc:'客户满意度调查得分', enabled:true },
+  { id:4, name:'客户续约率', code:'RENEWAL_RATE', categoryId:22, unit:'%', calcRule:'续约客户数/总客户数*100', desc:'衡量客户粘性', enabled:true },
+  { id:5, name:'项目按时交付率', code:'ON_TIME_DELIVERY', categoryId:31, unit:'%', calcRule:'按时交付项目数/总项目数*100', desc:'衡量项目管理效率', enabled:true },
+  { id:6, name:'产品缺陷率', code:'DEFECT_RATE', categoryId:32, unit:'%', calcRule:'缺陷数/总测试数*100', desc:'衡量产品质量', enabled:false },
+  { id:7, name:'培训完成率', code:'TRAINING_COMPLETE', categoryId:41, unit:'%', calcRule:'完成培训人数/应培训人数*100', desc:'衡量员工学习投入', enabled:true },
+];
+let nextId = 8;
+let selectedCatId = null;
+let searchText = '';
+
+function getCategoryPath(catId){
+  for(const cat of CATEGORIES){
+    for(const ch of cat.children){ if(ch.id === catId) return cat.name + ' > ' + ch.name; }
+  }
+  return '';
+}
+
+function render(){
+  let filtered = INDICATORS.filter(ind => {
+    if(selectedCatId && ind.categoryId !== selectedCatId) return false;
+    if(searchText && !ind.name.includes(searchText)) return false;
+    return true;
+  });
+  const rows = filtered.map((ind,i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td style="font-weight:500;color:var(--c8)">${ind.name}</td>
+      <td><span class="badge badge-code">${ind.code}</span></td>
+      <td style="font-size:12px;color:var(--c5)">${getCategoryPath(ind.categoryId)}</td>
+      <td>${ind.unit}</td>
+      <td style="font:400 12px/1.4 var(--m);color:var(--c6);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${ind.calcRule}">${ind.calcRule}</td>
+      <td>${ind.enabled ? '<span class="badge badge-ok">启用</span>' : '<span class="badge badge-off">停用</span>'}</td>
+      <td>
+        <button class="btn btn-s btn-sm btn-edit" data-id="${ind.id}">${I.edit}</button>
+        <button class="btn btn-d btn-sm btn-del" data-id="${ind.id}">${I.trash}</button>
+      </td>
+    </tr>
+  `).join('');
+
+  const treeHTML = CATEGORIES.map(cat => {
+    const isOpen = true;
+    const childrenHTML = cat.children.map(ch => `<div class="tree-child ${selectedCatId===ch.id?'active':''}" data-cat="${ch.id}">${ch.name}</div>`).join('');
+    return `<div class="tree-item" data-cat="${cat.id}">${I.folder} ${cat.name}</div><div class="tree-children">${childrenHTML}</div>`;
+  }).join('');
+
+  document.getElementById('app').innerHTML = `
+    <div class="sec fi">
+      <div class="sec-hd">
+        <div class="sec-hd-l">
+          <div class="sec-hd-ic b">${I.file}</div>
+          <div><div class="sec-hd-t">指标库</div><div class="sec-hd-s">Indicator Library · 管理绩效考核指标定义</div></div>
+        </div>
+        <button class="btn btn-p" id="btnAdd">${I.plus} 新增指标</button>
+      </div>
+      <div class="layout">
+        <div class="tree-panel">
+          <div class="tree-title">指标分类</div>
+          <div class="tree-item ${selectedCatId===null?'active':''}" data-cat="all">${I.folderOpen} 全部指标</div>
+          ${treeHTML}
+        </div>
+        <div class="content-area">
+          <div class="search-bar">
+            <div class="form-g" style="width:200px"><label>指标名称</label><input class="inp" id="searchInp" placeholder="搜索指标名称" value="${searchText}"></div>
+            <button class="btn btn-s" id="btnSearch">${I.search} 搜索</button>
+            <button class="btn btn-s" id="btnReset">${I.refresh} 重置</button>
+          </div>
+          <div style="padding:0">
+            <div class="tbl-wrap" style="border:none;border-radius:0">
+              <table>
+                <thead><tr><th>序号</th><th>指标名称</th><th>指标编码</th><th>所属分类</th><th>计量单位</th><th>计算规则</th><th>状态</th><th>操作</th></tr></thead>
+                <tbody>${rows}</tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  bindEvents();
+}
+
+function bindEvents(){
+  document.getElementById('btnAdd').onclick = () => openModal(-1);
+  document.getElementById('btnSearch').onclick = () => { searchText = document.getElementById('searchInp').value.trim(); render(); };
+  document.getElementById('btnReset').onclick = () => { searchText = ''; selectedCatId = null; render(); };
+  document.querySelectorAll('.tree-child').forEach(el => el.onclick = () => { selectedCatId = parseInt(el.dataset.cat); searchText = ''; render(); });
+  document.querySelectorAll('.tree-item[data-cat="all"]').forEach(el => el.onclick = () => { selectedCatId = null; searchText = ''; render(); });
+  document.querySelectorAll('.btn-edit').forEach(b => b.onclick = () => openModal(parseInt(b.dataset.id)));
+  document.querySelectorAll('.btn-del').forEach(b => b.onclick = () => {
+    const id = parseInt(b.dataset.id);
+    const ind = INDICATORS.find(x=>x.id===id);
+    if(confirm(`确定删除"${ind.name}"吗？`)){ INDICATORS = INDICATORS.filter(x=>x.id!==id); render(); }
+  });
+}
+
+function getAllCatOptions(){
+  let opts = '';
+  CATEGORIES.forEach(cat => { cat.children.forEach(ch => { opts += `<option value="${ch.id}">${cat.name} > ${ch.name}</option>`; }); });
+  return opts;
+}
+
+function openModal(id){
+  const isNew = id < 0;
+  const ind = isNew ? { name:'', code:'', categoryId:11, unit:'%', calcRule:'', desc:'', enabled:true } : INDICATORS.find(x=>x.id===id);
+  openModalBox(`
+    <div class="modal-hd"><span class="modal-hd-t">${isNew?'新增指标':'编辑指标'}</span><button class="modal-close" onclick="closeModal()">${I.x}</button></div>
+    <div class="modal-bd">
+      <div class="form-row"><div class="form-g"><label>指标名称</label><input class="inp" id="mName" value="${ind.name}" placeholder="输入指标名称"></div></div>
+      <div class="form-row">
+        <div class="form-g"><label>指标编码</label><input class="inp" id="mCode" value="${ind.code}" placeholder="如: REV_GROWTH" style="font-family:var(--m)"></div>
+        <div class="form-g"><label>所属分类</label><select class="inp" id="mCat">${getAllCatOptions()}</select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-g"><label>计量单位</label><input class="inp" id="mUnit" value="${ind.unit}" placeholder="%/分/次/人"></div>
+        <div class="form-g"><label>启用状态</label><button class="toggle ${ind.enabled?'on':'off'}" id="mEnabled" onclick="this.classList.toggle('on');this.classList.toggle('off')">${ind.enabled?I.toggleOn:I.toggleOff}</button></div>
+      </div>
+      <div class="form-row"><div class="form-g"><label>计算规则</label><textarea class="inp" id="mCalc" rows="2" style="font-family:var(--m)" placeholder="如: (本期-上期)/上期*100">${ind.calcRule}</textarea></div></div>
+      <div class="form-row"><div class="form-g"><label>指标说明</label><textarea class="inp" id="mDesc" rows="2" placeholder="输入指标说明">${ind.desc}</textarea></div></div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-s" onclick="closeModal()">取消</button><button class="btn btn-p" id="btnSave">保存</button></div>
+  `);
+  document.getElementById('mCat').value = ind.categoryId;
+  document.getElementById('btnSave').onclick = () => {
+    const name = document.getElementById('mName').value.trim();
+    if(!name){ alert('请输入指标名称'); return; }
+    const code = document.getElementById('mCode').value.trim();
+    if(!code){ alert('请输入指标编码'); return; }
+    const data = { name, code, categoryId:parseInt(document.getElementById('mCat').value), unit:document.getElementById('mUnit').value.trim(), calcRule:document.getElementById('mCalc').value.trim(), desc:document.getElementById('mDesc').value.trim(), enabled:document.getElementById('mEnabled').classList.contains('on') };
+    if(isNew){ data.id = nextId++; INDICATORS.push(data); } else { Object.assign(INDICATORS.find(x=>x.id===id), data); }
+    closeModal(); render();
+  };
+}
+
+function openModalBox(html){ document.getElementById('modalBox').innerHTML = html; document.getElementById('modalOv').classList.add('on'); }
+function closeModal(){ document.getElementById('modalOv').classList.remove('on'); }
+document.getElementById('modalOv').onclick = (e) => { if(e.target === document.getElementById('modalOv')) closeModal(); };
+
+GHR_NAV.init('perf', '指标库');
+render();
+</script>
+</body>
+</html>

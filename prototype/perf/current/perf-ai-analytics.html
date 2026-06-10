@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - AI 绩效分析</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5;transition:margin-right .3s ease}
+body.chat-open{margin-right:380px}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+/* Page Header */
+.pg-hd{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:20px}
+.pg-hd-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.pg-hd-t{font:700 18px/1.3 var(--f);color:var(--c9)}
+.pg-hd-tabs{display:flex;gap:2px;background:var(--c1);border-radius:var(--r1);padding:3px}
+.pg-hd-tab{font:500 12px/1 var(--f);padding:6px 14px;border-radius:var(--r1);cursor:pointer;color:var(--c5);transition:all .12s;user-select:none}
+.pg-hd-tab.on{background:var(--sf);color:var(--c8);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.stat{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:18px 20px;position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.stat.pr::before{background:var(--pr)}.stat.em::before{background:var(--em)}.stat.vi::before{background:var(--vi)}.stat.ac::before{background:var(--ac)}
+.stat-t{font:400 12px/1 var(--f);color:var(--c5);margin-bottom:8px}
+.stat-v{font:700 28px/1 var(--f);color:var(--c9);margin-bottom:4px}
+.stat-d{font:400 11px/1 var(--f);color:var(--c4);display:flex;align-items:center;gap:4px}
+.stat-d svg{width:12px;height:12px}
+.stat-d.up{color:var(--em700)}.stat-d.down{color:var(--ro)}
+.stat-ic{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:var(--r2);display:flex;align-items:center;justify-content:center}
+.stat-ic svg{width:18px;height:18px}
+.stat-ic.pr{background:var(--pr50);color:var(--pr)}
+.stat-ic.em{background:var(--em50);color:var(--em)}
+.stat-ic.vi{background:var(--vi50);color:var(--vi)}
+.stat-ic.ac{background:var(--ac50);color:var(--ac)}
+
+/* Section */
+.sec{margin-bottom:24px}
+.sec-t{font:600 15px/1.3 var(--f);color:var(--c9);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.sec-t::before{content:'';width:3px;height:16px;background:var(--pr);border-radius:2px}
+
+/* Chart Grid */
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.chart-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden}
+.chart-card-hd{padding:14px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between}
+.chart-card-t{font:600 14px/1.3 var(--f);color:var(--c8)}
+.chart-card-body{padding:20px;min-height:200px}
+
+/* Bar Chart */
+.bar-chart{display:flex;align-items:flex-end;gap:12px;height:160px;padding:0 10px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar{width:100%;border-radius:4px 4px 0 0;transition:height .5s ease;min-height:4px}
+.bar-label{font:500 11px/1 var(--f);color:var(--c5);text-align:center}
+.bar-value{font:600 12px/1 var(--f);color:var(--c8)}
+
+/* Distribution */
+.dist-row{display:flex;align-items:center;gap:12px;padding:8px 0}
+.dist-label{font:500 13px/1 var(--f);color:var(--c7);width:40px;flex-shrink:0}
+.dist-bar-wrap{flex:1;height:24px;background:var(--c1);border-radius:var(--r1);overflow:hidden;position:relative}
+.dist-bar{height:100%;border-radius:var(--r1);display:flex;align-items:center;padding-left:8px;transition:width .5s ease}
+.dist-bar span{font:600 11px/1 var(--f);color:#FFF}
+.dist-target{position:absolute;top:0;height:100%;width:2px;background:var(--c9);opacity:.5}
+
+/* Table */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font:600 12px/1 var(--f);color:var(--c5);text-align:left;padding:10px 16px;background:var(--c0);border-bottom:1px solid var(--dv);position:sticky;top:0}
+.tbl td{font:400 13px/1.4 var(--f);color:var(--c7);padding:12px 16px;border-bottom:1px solid var(--dv)}
+.tbl tr:hover td{background:var(--c0)}
+.tag{font:500 10px/1 var(--f);padding:2px 7px;border-radius:3px;display:inline-block}
+.tag.pr{color:var(--pr);background:var(--pr50)}
+.tag.em{color:var(--em700);background:var(--em50)}
+.tag.ac{color:var(--ac700);background:var(--ac50)}
+.tag.ro{color:var(--ro);background:var(--ro50)}
+.tag.vi{color:var(--vi);background:var(--vi50)}
+
+/* AI Insight Card */
+.insight{background:linear-gradient(135deg,var(--pr50) 0%,var(--vi50) 100%);border:1px solid var(--pr100);border-radius:var(--r3);padding:20px;margin-bottom:20px}
+.insight-hd{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.insight-ic{width:36px;height:36px;border-radius:var(--r2);background:linear-gradient(135deg,var(--pr) 0%,var(--vi) 100%);display:flex;align-items:center;justify-content:center}
+.insight-ic svg{width:18px;height:18px;color:#FFF}
+.insight-t{font:600 14px/1.3 var(--f);color:var(--c9)}
+.insight-items{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.insight-item{background:var(--sf);border-radius:var(--r2);padding:14px;border:1px solid var(--pr100)}
+.insight-item-t{font:600 12px/1.3 var(--f);color:var(--c8);margin-bottom:4px}
+.insight-item-d{font:400 12px/1.5 var(--f);color:var(--c6)}
+
+/* Role Match Cards */
+.role-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.role-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:16px;text-align:center}
+.role-card-ic{width:48px;height:48px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font:700 16px/1 var(--f);color:#FFF}
+.role-card-n{font:600 13px/1.3 var(--f);color:var(--c8);margin-bottom:2px}
+.role-card-d{font:400 11px/1.4 var(--f);color:var(--c5);margin-bottom:8px}
+.role-card-score{font:700 24px/1 var(--f)}
+.role-card-label{font:400 10px/1 var(--f);color:var(--c4);margin-top:2px}
+
+/* Dropdown */
+.dropdown{height:32px;padding:0 28px 0 12px;border:1px solid var(--c2);border-radius:var(--r1);font:500 13px/1 var(--f);color:var(--c8);background:var(--sf) url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center;appearance:none;cursor:pointer;outline:none;min-width:140px}
+.dropdown:focus{border-color:var(--pr)}
+
+/* Trend bars */
+.trend-bars{display:flex;align-items:flex-end;gap:20px;height:140px;padding:0 20px}
+.trend-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px}
+.trend-bar{width:100%;border-radius:4px 4px 0 0;transition:height .5s ease}
+.trend-label{font:500 12px/1 var(--f);color:var(--c5)}
+.trend-val{font:600 13px/1 var(--f);color:var(--c8)}
+
+/* AI Chat Sidebar */
+body.chat-open .ct-wrap{margin-right:380px;transition:margin .3s ease}
+.ai-chat{position:fixed;top:0;right:0;width:380px;height:100vh;background:var(--sf);border-left:1px solid var(--dv);z-index:900;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s ease}
+body.chat-open .ai-chat{transform:translateX(0)}
+.ai-chat-hd{padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:10px}
+.ai-chat-hd-ic{width:32px;height:32px;border-radius:var(--r2);background:linear-gradient(135deg,var(--pr) 0%,var(--vi) 100%);display:flex;align-items:center;justify-content:center}
+.ai-chat-hd-ic svg{width:16px;height:16px;color:#FFF}
+.ai-chat-hd-info{flex:1;min-width:0}
+.ai-chat-hd-t{font:600 14px/1.2 var(--f);color:var(--c9)}
+.ai-chat-hd-s{font:400 11px/1 var(--f);color:var(--c5)}
+.ai-chat-close{width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:transparent;color:var(--c5);transition:all .12s}
+.ai-chat-close:hover{background:var(--c1);color:var(--c7)}
+.ai-chat-bd{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:16px}
+.ai-msg{max-width:92%;animation:msgIn .3s ease}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.ai-msg.bot{align-self:flex-start}
+.ai-msg.user{align-self:flex-end}
+.ai-msg-bd{padding:12px 16px;border-radius:var(--r3);font:400 13px/1.6 var(--f)}
+.ai-msg.bot .ai-msg-bd{background:var(--c0);color:var(--c8);border-bottom-left-radius:4px}
+.ai-msg.user .ai-msg-bd{background:var(--pr);color:#FFF;border-bottom-right-radius:4px}
+.ai-msg-time{font:400 10px/1 var(--f);color:var(--c4);margin-top:4px}
+.ai-msg.user .ai-msg-time{text-align:right}
+.ai-msg-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.ai-msg-btn{font:500 11px/1 var(--f);padding:5px 10px;border-radius:var(--r1);border:1px solid var(--c2);background:var(--sf);color:var(--c6);cursor:pointer;transition:all .12s}
+.ai-msg-btn:hover{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-msg-btn.primary{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-msg-card{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);padding:12px;margin-top:8px}
+.ai-msg-card-t{font:600 12px/1.3 var(--f);color:var(--c8);margin-bottom:6px}
+.ai-msg-card-row{display:flex;justify-content:space-between;padding:4px 0;font:400 12px/1.4 var(--f);color:var(--c6)}
+.ai-msg-card-row .v{font-weight:600;color:var(--c8)}
+.ai-msg-card-tag{display:inline-block;font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px;margin-top:6px}
+.ai-msg-card-tag.em{color:var(--em700);background:var(--em50)}
+.ai-msg-card-tag.pr{color:var(--pr);background:var(--pr50)}
+.ai-msg-card-tag.ac{color:var(--ac700);background:var(--ac50)}
+.ai-chat-ft{padding:12px 16px;border-top:1px solid var(--dv);display:flex;gap:8px;align-items:center}
+.ai-chat-input{flex:1;height:36px;border:1px solid var(--c2);border-radius:var(--r2);padding:0 12px;font:400 13px/1 var(--f);color:var(--c8);outline:none;transition:border .15s}
+.ai-chat-input:focus{border-color:var(--pr)}
+.ai-chat-send{width:36px;height:36px;border-radius:var(--r2);background:var(--pr);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#FFF;transition:all .12s}
+.ai-chat-send:hover{background:var(--pr700)}
+
+/* AI Toggle */
+.ai-toggle{position:fixed;bottom:80px;right:24px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--pr) 0%,var(--vi) 100%);border:none;box-shadow:0 4px 16px rgba(37,99,235,.3);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:950;transition:all .2s}
+.ai-toggle:hover{transform:scale(1.08);box-shadow:0 6px 20px rgba(37,99,235,.4)}
+.ai-toggle svg{width:22px;height:22px;color:#FFF}
+body.chat-open .ai-toggle{display:none}
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<button class="ai-toggle" onclick="toggleChat()" title="AI 分析助手">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg>
+</button>
+
+<div class="ai-chat" id="aiChat"></div>
+
+<script src="navigation.js"></script>
+<script>
+// ═══ SVG Icons ═══
+const I = {
+  trend: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>',
+  users: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  brain: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg>',
+  bar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+  close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+  send: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>',
+};
+
+// ═══ State ═══
+let curTab = 'overview';
+let chatOpen = false;
+let selectedDept = '';
+
+// ═══ Mock Data ═══
+const DEPTS = [
+  { name: '销售部', headcount: 42, avgScore: 88, completion: 92, trend: 'up', suggestion: '保持优势，可作为标杆推广经验' },
+  { name: '产品研发部', headcount: 65, avgScore: 82, completion: 85, trend: 'down', suggestion: '关注连续下滑趋势，建议增加团队建设投入' },
+  { name: '市场运营部', headcount: 38, avgScore: 85, completion: 88, trend: 'up', suggestion: '整体表现良好，关注新员工融入' },
+  { name: '财务部', headcount: 28, avgScore: 80, completion: 90, trend: 'stable', suggestion: '达标率高但优秀率偏低，建议差异化激励' },
+  { name: '人力行政部', headcount: 32, avgScore: 79, completion: 82, trend: 'down', suggestion: '绩效偏低，需分析根因并制定改进计划' },
+  { name: '基础架构部', headcount: 27, avgScore: 83, completion: 87, trend: 'up', suggestion: '技术岗匹配度高，关注跨部门协作能力' },
+];
+
+const MATCH_DATA = [
+  { name: '张明', dept: '产品研发部', pos: '高级前端工程师', score: 92, risk: 'low', suggestion: '能力突出，建议纳入技术专家培养计划' },
+  { name: '李婷', dept: '销售部', pos: '大客户经理', score: 88, risk: 'low', suggestion: '客户关系维护能力强，适合带教新人' },
+  { name: '王浩', dept: '市场运营部', pos: '内容运营主管', score: 85, risk: 'low', suggestion: '内容策划能力优秀，可拓展品牌方向' },
+  { name: '赵雪', dept: '产品研发部', pos: '后端工程师', score: 72, risk: 'medium', suggestion: '架构设计能力待提升，建议安排专项培训' },
+  { name: '孙磊', dept: '财务部', pos: '财务分析师', score: 68, risk: 'medium', suggestion: '数据分析基础扎实，业务理解需加强' },
+  { name: '周琳', dept: '人力行政部', pos: 'HRBP', score: 65, risk: 'medium', suggestion: '沟通能力好但 HR 专业深度不足' },
+  { name: '吴强', dept: '基础架构部', pos: '运维工程师', score: 55, risk: 'high', suggestion: '岗位技能匹配度低，建议评估转岗可能性' },
+  { name: '郑伟', dept: '产品研发部', pos: '测试工程师', score: 48, risk: 'high', suggestion: '当前岗位与能力模型严重不匹配，建议调岗或 PIP' },
+];
+
+const TREND_FACTORS = [
+  { name: '目标对齐度', desc: '个人目标与团队 OKR 的语义匹配度', coef: 0.82, dir: 'up', suggestion: '目标制定环节增加 AI 对齐度校验，低于 70% 提醒调整', priority: 'high' },
+  { name: '目标完成率', desc: '季度内 KPI 实际完成比例', coef: 0.75, dir: 'up', suggestion: 'AI 辅助设置合理目标值，避免过高或过低', priority: 'high' },
+  { name: '过程跟进频率', desc: '上级与员工 1on1 沟通频次', coef: 0.65, dir: 'up', suggestion: 'AI 定期提醒管理者进行 1on1，低于月均 2 次时预警', priority: 'medium' },
+  { name: '团队规模', desc: '管理幅度对绩效评估的影响', coef: -0.45, dir: 'down', suggestion: '管理幅度 > 12 人时，建议增加 HRBP 支持', priority: 'medium' },
+  { name: '历史绩效', desc: '过去 3 季度绩效趋势', coef: 0.58, dir: 'up', suggestion: '连续 2 季度下滑的员工自动触发绩效改进流程', priority: 'medium' },
+];
+
+const TREND_QUARTERS = [
+  { q: 'Q1', score: 78 },
+  { q: 'Q2', score: 80 },
+  { q: 'Q3', score: 82 },
+  { q: 'Q4', score: 82.5 },
+];
+
+const CHAT_MSGS = [
+  { role: 'bot', text: '你好！我是 AI 分析助手，可以帮你深入分析绩效数据。你可以试试以下指令：', buttons: ['增加分析维度', '对比部门差异', '生成分析报告'] },
+  { role: 'user', text: '增加一个维度：按司龄分析绩效分布' },
+  { role: 'bot', text: '已为你新增「司龄-绩效」交叉分析维度，以下是关键发现：', card: { title: '司龄绩效分布分析', rows: [
+    { label: '< 1年', value: '76.2 分', tag: '需关注', tagCls: 'ac' },
+    { label: '1-3年', value: '83.5 分', tag: '稳定', tagCls: 'em' },
+    { label: '3-5年', value: '86.1 分', tag: '优秀', tagCls: 'em' },
+    { label: '> 5年', value: '81.8 分', tag: '平稳', tagCls: 'pr' },
+  ], note: '核心发现：3-5年司龄员工绩效最优，新人(< 1年)需要加强 onboarding 支持。' }},
+  { role: 'user', text: '对比销售部和产品研发部的关键差异' },
+  { role: 'bot', text: '已为你生成两个部门的对比分析：', card: { title: '销售部 vs 产品研发部', rows: [
+    { label: '平均绩效分', value: '88 vs 82', tag: '差异 6 分', tagCls: 'ro' },
+    { label: '达标率', value: '92% vs 85%', tag: '差异 7%', tagCls: 'ro' },
+    { label: '人岗匹配度', value: '89% vs 82%', tag: '差异 7%', tagCls: 'ac' },
+    { label: '目标对齐度', value: '91% vs 78%', tag: '差异 13%', tagCls: 'ro' },
+  ], note: '关键差异：产品研发部目标对齐度(78%)显著低于销售部(91%)，是绩效差距的主要驱动因素。建议产品研发部在 Q3 目标制定阶段引入 AI 对齐度校验。' }},
+];
+
+// ═══ Render ═══
+function render() {
+  document.getElementById('app').innerHTML = renderPage();
+  renderChat();
+}
+
+function renderPage() {
+  return `<div class="ct-wrap">
+    <div class="pg-hd">
+      <div class="pg-hd-top">
+        <div class="pg-hd-t">AI 绩效分析</div>
+        <div class="pg-hd-tabs">
+          ${['overview|总览','team|团队分析','match|人岗匹配','trend|趋势洞察'].map(t => {
+            const [id, label] = t.split('|');
+            return `<div class="pg-hd-tab${curTab===id?' on':''}" onclick="switchTab('${id}')">${label}</div>`;
+          }).join('')}
+        </div>
+      </div>
+      <div style="display:flex;gap:20px;font:400 13px/1 var(--f);color:var(--c5)">
+        <span>考核周期: <b style="color:var(--c8)">2026-Q2</b></span>
+        <span>范围: <b style="color:var(--c8)">全公司 · 232 人</b></span>
+        <span>数据更新: <b style="color:var(--c8)">实时</b></span>
+      </div>
+    </div>
+    ${renderTabContent()}
+  </div>`;
+}
+
+function renderTabContent() {
+  switch(curTab) {
+    case 'overview': return renderOverviewTab();
+    case 'team': return renderTeamTab();
+    case 'match': return renderMatchTab();
+    case 'trend': return renderTrendTab();
+  }
+}
+
+// ═══ Tab 1: Overview ═══
+function renderOverviewTab() {
+  return renderStats() + renderInsight() + renderCharts();
+}
+
+function renderStats() {
+  const stats = [
+    { cls:'pr', label:'平均绩效得分', value:'82.5', dir:'up', delta:'较上期 +3.2', icon: I.bar },
+    { cls:'em', label:'绩效达标率', value:'78%', dir:'up', delta:'较上期 +5%', icon: I.check },
+    { cls:'vi', label:'人岗匹配度', value:'85%', dir:'up', delta:'较上期 +8%', icon: I.users },
+    { cls:'ac', label:'AI 洞察数', value:'12', dir:'', delta:'3 条高优建议', icon: I.brain },
+  ];
+  return `<div class="stats">${stats.map(s => `
+    <div class="stat ${s.cls}">
+      <div class="stat-t">${s.label}</div>
+      <div class="stat-v">${s.value}</div>
+      <div class="stat-d ${s.dir}">
+        ${s.dir==='up'?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>':''}
+        ${s.delta}
+      </div>
+      <div class="stat-ic ${s.cls}">${s.icon}</div>
+    </div>`).join('')}</div>`;
+}
+
+function renderInsight() {
+  const items = [
+    { t:'绩效归因: 团队目标对齐度是最大影响因子', d:'数据显示，个人目标与团队 OKR 对齐度 > 80% 的员工，绩效得分平均高出 12 分。建议目标制定环节增加对齐度校验。' },
+    { t:'趋势预警: 产品研发部连续 2 季度绩效下滑', d:'Q1→Q2 平均分从 85 降至 79，主因: 3 人离职导致工作量重新分配，建议关注团队负载均衡。' },
+    { t:'人岗匹配: 5 人存在岗位不匹配风险', d:'基于绩效数据 + 能力评估，AI 识别出 5 人当前岗位与能力模型匹配度 < 60%，建议考虑调岗或培训。' },
+  ];
+  return `<div class="insight">
+    <div class="insight-hd">
+      <div class="insight-ic">${I.brain}</div>
+      <div class="insight-t">AI 核心洞察 — 基于 2026-Q2 全量绩效数据分析</div>
+    </div>
+    <div class="insight-items">${items.map(i => `
+      <div class="insight-item">
+        <div class="insight-item-t">${i.t}</div>
+        <div class="insight-item-d">${i.d}</div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function renderCharts() {
+  return `<div class="chart-grid">
+    <div class="chart-card">
+      <div class="chart-card-hd">
+        <div class="chart-card-t">绩效等级分布</div>
+        <span class="tag pr">AI 分析</span>
+      </div>
+      <div class="chart-card-body">
+        ${[
+          { label:'A', pct:22, target:25, color:'var(--em)', labelColor:'var(--em700)' },
+          { label:'B+', pct:35, target:35, color:'var(--pr)', labelColor:'var(--pr)' },
+          { label:'B', pct:28, target:25, color:'var(--c4)', labelColor:'var(--c6)' },
+          { label:'C', pct:12, target:12, color:'var(--ac)', labelColor:'var(--ac)' },
+          { label:'D', pct:3, target:3, color:'var(--ro)', labelColor:'var(--ro)' },
+        ].map(r => `
+        <div class="dist-row">
+          <span class="dist-label" style="color:${r.labelColor};font-weight:700">${r.label}</span>
+          <div class="dist-bar-wrap">
+            <div class="dist-bar" style="width:${r.pct}%;background:${r.color}"><span>${r.pct}%</span></div>
+            <div class="dist-target" style="left:${r.target}%"></div>
+          </div>
+          <span style="font:500 11px/1 var(--f);color:var(--c4)">目标${r.target}%</span>
+        </div>`).join('')}
+        <div style="margin-top:12px;font:400 12px/1.5 var(--f);color:var(--c5)">
+          AI 判定: 分布基本合理，A 级占比略低于目标 3%，建议审定时微调
+        </div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-hd">
+        <div class="chart-card-t">部门绩效对比</div>
+        <span class="tag pr">AI 分析</span>
+      </div>
+      <div class="chart-card-body">
+        <div class="bar-chart">
+          ${[
+            { label:'市场<br/>运营', val:85, color:'var(--em)' },
+            { label:'产品<br/>研发', val:82, color:'var(--pr)' },
+            { label:'销售', val:88, color:'var(--em)' },
+            { label:'财务', val:80, color:'var(--pr)' },
+            { label:'人力<br/>行政', val:79, color:'var(--ac)' },
+            { label:'基础<br/>架构', val:83, color:'var(--pr)' },
+          ].map(b => `
+          <div class="bar-col">
+            <div class="bar-value">${b.val}</div>
+            <div class="bar" style="height:${b.val}%;background:${b.color}"></div>
+            <div class="bar-label">${b.label}</div>
+          </div>`).join('')}
+        </div>
+        <div style="margin-top:12px;font:400 12px/1.5 var(--f);color:var(--c5)">
+          AI 洞察: 销售部绩效最优(88分)，人力行政部需关注(79分)
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ═══ Tab 2: Team Analysis ═══
+function renderTeamTab() {
+  const dept = selectedDept || 'all';
+  const filtered = dept === 'all' ? DEPTS : DEPTS.filter(d => d.name === dept);
+  const trendIcon = { up:'↑', down:'↓', stable:'→' };
+  const trendColor = { up:'var(--em700)', down:'var(--ro)', stable:'var(--c5)' };
+  const trendLabel = { up:'上升', down:'下降', stable:'平稳' };
+
+  return `<div style="margin-bottom:16px">
+    <select class="dropdown" onchange="selectedDept=this.value;render()">
+      <option value="all">全部部门</option>
+      ${DEPTS.map(d => `<option value="${d.name}"${dept===d.name?' selected':''}>${d.name}</option>`).join('')}
+    </select>
+  </div>
+
+  ${dept !== 'all' ? renderDeptDetail(filtered[0]) : ''}
+
+  <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden">
+    <div style="overflow-x:auto">
+      <table class="tbl">
+        <thead><tr>
+          <th>部门名称</th><th>人数</th><th>平均绩效分</th><th>完成率</th><th>趋势</th><th>AI 建议</th>
+        </tr></thead>
+        <tbody>
+          ${filtered.map(d => `<tr>
+            <td><b>${d.name}</b></td>
+            <td>${d.headcount} 人</td>
+            <td><b>${d.avgScore}</b></td>
+            <td>${d.completion}%</td>
+            <td style="color:${trendColor[d.trend]}">${trendIcon[d.trend]} ${trendLabel[d.trend]}</td>
+            <td style="font-size:12px;color:var(--c6)">${d.suggestion}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+function renderDeptDetail(dept) {
+  if (!dept) return '';
+  const scoreDistributions = {
+    '销售部': [{ grade:'A', pct:28 }, { grade:'B+', pct:38 }, { grade:'B', pct:24 }, { grade:'C', pct:8 }, { grade:'D', pct:2 }],
+    '产品研发部': [{ grade:'A', pct:18 }, { grade:'B+', pct:32 }, { grade:'B', pct:32 }, { grade:'C', pct:14 }, { grade:'D', pct:4 }],
+    '市场运营部': [{ grade:'A', pct:24 }, { grade:'B+', pct:36 }, { grade:'B', pct:28 }, { grade:'C', pct:10 }, { grade:'D', pct:2 }],
+    '财务部': [{ grade:'A', pct:15 }, { grade:'B+', pct:35 }, { grade:'B', pct:32 }, { grade:'C', pct:14 }, { grade:'D', pct:4 }],
+    '人力行政部': [{ grade:'A', pct:12 }, { grade:'B+', pct:30 }, { grade:'B', pct:35 }, { grade:'C', pct:18 }, { grade:'D', pct:5 }],
+    '基础架构部': [{ grade:'A', pct:22 }, { grade:'B+', pct:34 }, { grade:'B', pct:30 }, { grade:'C', pct:12 }, { grade:'D', pct:2 }],
+  };
+  const dist = scoreDistributions[dept.name] || [];
+  const colors = { A:'var(--em)', 'B+':'var(--pr)', B:'var(--c4)', C:'var(--ac)', D:'var(--ro)' };
+
+  return `<div class="chart-grid" style="margin-bottom:16px">
+    <div class="chart-card">
+      <div class="chart-card-hd"><div class="chart-card-t">${dept.name} - 绩效等级分布</div><span class="tag pr">AI</span></div>
+      <div class="chart-card-body">
+        ${dist.map(r => `
+        <div class="dist-row">
+          <span class="dist-label" style="font-weight:700;color:${colors[r.grade]||'var(--c6)'}">${r.grade}</span>
+          <div class="dist-bar-wrap">
+            <div class="dist-bar" style="width:${r.pct}%;background:${colors[r.grade]||'var(--c4)'}"><span>${r.pct}%</span></div>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-hd"><div class="chart-card-t">${dept.name} - 关键指标</div><span class="tag pr">AI</span></div>
+      <div class="chart-card-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          ${[
+            { label:'平均绩效分', value: dept.avgScore, suffix:'' },
+            { label:'完成率', value: dept.completion, suffix:'%' },
+            { label:'人数', value: dept.headcount, suffix:' 人' },
+            { label:'趋势', value: { up:'上升 ↑', down:'下降 ↓', stable:'平稳 →' }[dept.trend], suffix:'' },
+          ].map(m => `
+          <div style="background:var(--c0);border-radius:var(--r2);padding:14px;text-align:center">
+            <div style="font:400 11px/1 var(--f);color:var(--c5);margin-bottom:8px">${m.label}</div>
+            <div style="font:700 22px/1 var(--f);color:var(--c9)">${m.value}${m.suffix}</div>
+          </div>`).join('')}
+        </div>
+        <div style="margin-top:12px;font:400 12px/1.5 var(--f);color:var(--c5)">
+          AI 建议: ${dept.suggestion}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ═══ Tab 3: Role Matching ═══
+function renderMatchTab() {
+  const riskColor = { low:'em', medium:'ac', high:'ro' };
+  const riskLabel = { low:'低风险', medium:'中风险', high:'高风险' };
+  const cardColors = [
+    { bg:'var(--vi)', cls:'vi', label:'高匹配', count:'196人', desc:'绩效稳定，能力与岗位高度匹配', score:'84%', scoreColor:'var(--em700)' },
+    { bg:'var(--ac)', cls:'ac', label:'待提升', count:'31人', desc:'部分能力短板，建议培训或辅导', score:'68%', scoreColor:'var(--ac700)' },
+    { bg:'var(--ro)', cls:'ro', label:'不匹配', count:'5人', desc:'建议考虑调岗或绩效改进计划', score:'52%', scoreColor:'var(--ro)' },
+  ];
+
+  return `<div class="role-cards" style="margin-bottom:20px">
+    ${cardColors.map(c => `
+    <div class="role-card">
+      <div class="role-card-ic" style="background:${c.bg}">${c.label.charAt(0)}</div>
+      <div class="role-card-n">${c.label} (${c.count})</div>
+      <div class="role-card-d">${c.desc}</div>
+      <div class="role-card-score" style="color:${c.scoreColor}">${c.score}</div>
+      <div class="role-card-label">平均匹配度</div>
+    </div>`).join('')}
+  </div>
+
+  <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden">
+    <div style="overflow-x:auto">
+      <table class="tbl">
+        <thead><tr>
+          <th>姓名</th><th>部门</th><th>岗位</th><th>匹配度</th><th>风险等级</th><th>AI 建议</th>
+        </tr></thead>
+        <tbody>
+          ${MATCH_DATA.map(m => `<tr>
+            <td><b>${m.name}</b></td>
+            <td>${m.dept}</td>
+            <td>${m.pos}</td>
+            <td>
+              <div style="display:flex;align-items:center;gap:8px">
+                <div style="flex:1;height:6px;background:var(--c1);border-radius:3px;overflow:hidden">
+                  <div style="width:${m.score}%;height:100%;background:${m.score>=80?'var(--em)':m.score>=65?'var(--ac)':'var(--ro)'};border-radius:3px"></div>
+                </div>
+                <b style="font:600 13px/1 var(--fm);color:var(--c8);min-width:30px">${m.score}</b>
+              </div>
+            </td>
+            <td><span class="tag ${riskColor[m.risk]}">${riskLabel[m.risk]}</span></td>
+            <td style="font-size:12px;color:var(--c6)">${m.suggestion}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+// ═══ Tab 4: Trend Insights ═══
+function renderTrendTab() {
+  const maxScore = 90;
+  const priorityLabel = { high:'高', medium:'中', low:'低' };
+  const priorityColor = { high:'ro', medium:'ac', low:'em' };
+
+  return `<div class="sec">
+    <div class="sec-t">绩效归因分析 — AI 识别关键影响因子</div>
+    <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden">
+      <div style="overflow-x:auto">
+        <table class="tbl">
+          <thead><tr>
+            <th>影响因子</th><th>相关系数</th><th>影响方向</th><th>AI 建议</th><th>优先级</th>
+          </tr></thead>
+          <tbody>
+            ${TREND_FACTORS.map(f => `<tr>
+              <td><b>${f.name}</b><br/><span style="font-size:11px;color:var(--c5)">${f.desc}</span></td>
+              <td><span class="tag ${f.coef>=0?'em':'ac'}">${f.coef>0?'+':''}${f.coef.toFixed(2)}</span></td>
+              <td style="color:${f.dir==='up'?'var(--em700)':'var(--ro)'}">${f.dir==='up'?'正相关 ↑':'负相关 ↓'}</td>
+              <td style="font-size:12px;color:var(--c6)">${f.suggestion}</td>
+              <td><span class="tag ${priorityColor[f.priority]}">${priorityLabel[f.priority]}</span></td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-t">季度绩效趋势</div>
+    <div class="chart-card">
+      <div class="chart-card-hd">
+        <div class="chart-card-t">全公司平均绩效得分趋势 (2026)</div>
+        <span class="tag pr">AI 分析</span>
+      </div>
+      <div class="chart-card-body">
+        <div class="trend-bars">
+          ${TREND_QUARTERS.map((q, i) => {
+            const h = (q.score / maxScore) * 100;
+            return `<div class="trend-col">
+              <div class="trend-val">${q.score}</div>
+              <div class="trend-bar" style="height:${h}%;background:${i===TREND_QUARTERS.length-1?'var(--pr)':'var(--pr200)'}"></div>
+              <div class="trend-label">${q.q}</div>
+            </div>`;
+          }).join('')}
+        </div>
+        <div style="margin-top:16px;font:400 12px/1.5 var(--f);color:var(--c5)">
+          AI 趋势分析: 全公司绩效呈稳步上升趋势，Q1→Q2 提升最为显著(+2.5分)。Q3→Q4 增速放缓，建议关注目标挑战性设置。
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ═══ Tab Switching ═══
+function switchTab(id) {
+  curTab = id;
+  render();
+}
+
+// ═══ AI Chat ═══
+function toggleChat() {
+  chatOpen = !chatOpen;
+  document.body.classList.toggle('chat-open', chatOpen);
+  renderChat();
+}
+
+function renderChat() {
+  const el = document.getElementById('aiChat');
+  if (!el) return;
+  el.innerHTML = `
+    <div class="ai-chat-hd">
+      <div class="ai-chat-hd-ic">${I.brain}</div>
+      <div class="ai-chat-hd-info">
+        <div class="ai-chat-hd-t">AI 分析助手</div>
+        <div class="ai-chat-hd-s">深度洞察 · 智能归因 · 决策支持</div>
+      </div>
+      <button class="ai-chat-close" onclick="toggleChat()">${I.close}</button>
+    </div>
+    <div class="ai-chat-bd" id="chatBd">
+      ${CHAT_MSGS.map(m => renderChatMsg(m)).join('')}
+    </div>
+    <div class="ai-chat-ft">
+      <input class="ai-chat-input" id="chatInput" placeholder="输入分析指令，如「按司龄分析」「生成报告」..." onkeydown="if(event.key==='Enter')sendMsg()" />
+      <button class="ai-chat-send" onclick="sendMsg()">${I.send}</button>
+    </div>`;
+  scrollChatBottom();
+}
+
+function renderChatMsg(m) {
+  let html = `<div class="ai-msg ${m.role}">
+    <div class="ai-msg-bd">${m.text}</div>`;
+  if (m.card) {
+    html += `<div class="ai-msg-card">
+      <div class="ai-msg-card-t">${m.card.title}</div>
+      ${m.card.rows.map(r => `<div class="ai-msg-card-row"><span>${r.label}</span><span class="v">${r.value}</span> <span class="ai-msg-card-tag ${r.tagCls}">${r.tag}</span></div>`).join('')}
+      ${m.card.note ? `<div style="margin-top:8px;font:400 11px/1.5 var(--f);color:var(--c5)">${m.card.note}</div>` : ''}
+    </div>`;
+  }
+  if (m.buttons) {
+    html += `<div class="ai-msg-actions">
+      ${m.buttons.map((b, i) => `<button class="ai-msg-btn${i===0?' primary':''}" onclick="clickSuggest('${b}')">${b}</button>`).join('')}
+    </div>`;
+  }
+  html += `<div class="ai-msg-time">${m.role==='bot'?'AI · ':'你 · '}刚刚</div></div>`;
+  return html;
+}
+
+function scrollChatBottom() {
+  const bd = document.getElementById('chatBd');
+  if (bd) setTimeout(() => bd.scrollTop = bd.scrollHeight, 50);
+}
+
+function clickSuggest(text) {
+  const input = document.getElementById('chatInput');
+  if (input) { input.value = text; sendMsg(); }
+}
+
+function sendMsg() {
+  const input = document.getElementById('chatInput');
+  if (!input || !input.value.trim()) return;
+  const text = input.value.trim();
+  input.value = '';
+
+  CHAT_MSGS.push({ role: 'user', text });
+  renderChatMsgs();
+
+  setTimeout(() => {
+    CHAT_MSGS.push({
+      role: 'bot',
+      text: `已为你分析「${text}」。基于当前 232 人绩效数据，AI 正在生成深度分析报告，预计 3 秒后完成。`,
+      card: { title: '分析结果预览', rows: [
+        { label: '覆盖人数', value: '232 人', tag: '全量', tagCls: 'pr' },
+        { label: '数据维度', value: '6 个部门', tag: '完整', tagCls: 'em' },
+        { label: '分析深度', value: '多维交叉', tag: 'AI 驱动', tagCls: 'ac' },
+      ]}
+    });
+    renderChatMsgs();
+    scrollChatBottom();
+  }, 600);
+}
+
+function renderChatMsgs() {
+  const bd = document.getElementById('chatBd');
+  if (!bd) return;
+  bd.innerHTML = CHAT_MSGS.map(m => renderChatMsg(m)).join('');
+  scrollChatBottom();
+}
+
+// ═══ Init ═══
+GHR_NAV.init('perf', 'AI 绩效分析');
+render();
+</script>
+</body>
+</html>

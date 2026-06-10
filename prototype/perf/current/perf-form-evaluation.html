@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GHR - 绩效考核表单</title>
+<title>HR ONE - 绩效考核表单</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════════════════
@@ -436,6 +436,62 @@ textarea.edit-cell{
 .grade-meet{color:var(--pr);background:var(--pr50)}
 .grade-meet-minus{color:var(--vi);background:var(--vi50)}
 .grade-fail{color:var(--ro);background:var(--ro50)}
+
+/* ═══ AI Chat ═══ */
+body.chat-open .pg{margin-right:380px;transition:margin .3s ease}
+body.chat-open .main-area{margin-right:380px;transition:margin .3s ease}
+.ai-chat{position:fixed;top:52px;right:0;width:380px;height:calc(100vh - 52px);background:var(--sf);border-left:1px solid var(--dv);z-index:900;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s ease}
+body.chat-open .ai-chat{transform:translateX(0)}
+.ai-chat-hd{padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:10px}
+.ai-chat-hd-ic{width:32px;height:32px;border-radius:var(--r2);background:linear-gradient(135deg,var(--pr) 0%,var(--vi) 100%);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ai-chat-hd-ic svg{width:16px;height:16px;color:#FFF}
+.ai-chat-hd-t{font:600 14px/1.2 var(--f);color:var(--c9)}
+.ai-chat-hd-s{font:400 11px/1 var(--f);color:var(--c5)}
+.ai-chat-close{margin-left:auto;width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:transparent;color:var(--c5);transition:all .12s}
+.ai-chat-close:hover{background:var(--c1);color:var(--c7)}
+.ai-chat-bd{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:16px}
+.ai-msg{max-width:92%;animation:aiMsgIn .3s ease}
+@keyframes aiMsgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.ai-msg.bot{align-self:flex-start}
+.ai-msg.user{align-self:flex-end}
+.ai-msg-bd{padding:12px 16px;border-radius:var(--r3);font:400 13px/1.6 var(--f)}
+.ai-msg.bot .ai-msg-bd{background:var(--c0);color:var(--c8);border-bottom-left-radius:4px}
+.ai-msg.user .ai-msg-bd{background:var(--pr);color:#FFF;border-bottom-right-radius:4px}
+.ai-msg-time{font:400 10px/1 var(--f);color:var(--c4);margin-top:4px}
+.ai-msg.user .ai-msg-time{text-align:right}
+.ai-msg-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.ai-msg-btn{font:500 11px/1 var(--f);padding:5px 10px;border-radius:var(--r1);border:1px solid var(--c2);background:var(--sf);color:var(--c6);cursor:pointer;transition:all .12s}
+.ai-msg-btn:hover{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-msg-btn.primary{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-msg-card{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);padding:12px;margin-top:8px}
+.ai-msg-card-t{font:600 12px/1.3 var(--f);color:var(--c8);margin-bottom:4px}
+.ai-msg-card-d{font:400 12px/1.5 var(--f);color:var(--c5)}
+.ai-msg-card-tag{display:inline-block;font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px;margin-top:6px}
+.ai-msg-card-tag.em{color:var(--em700);background:var(--em50)}
+.ai-msg-card-tag.pr{color:var(--pr);background:var(--pr50)}
+.ai-msg-card-tag.ac{color:var(--ac);background:var(--ac50)}
+.ai-msg-card-tag.ro{color:var(--ro);background:var(--ro50)}
+.ai-chat-ft{padding:12px 16px;border-top:1px solid var(--dv);display:flex;gap:8px;align-items:center}
+.ai-chat-input{flex:1;height:36px;border:1px solid var(--c2);border-radius:var(--r2);padding:0 12px;font:400 13px/1 var(--f);color:var(--c8);outline:none;transition:border .15s}
+.ai-chat-input:focus{border-color:var(--pr)}
+.ai-chat-send{width:36px;height:36px;border-radius:var(--r2);background:var(--pr);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#FFF;transition:all .12s}
+.ai-chat-send:hover{background:var(--pr700)}
+.ai-toggle{position:fixed;bottom:80px;right:24px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--pr) 0%,var(--vi) 100%);border:none;box-shadow:0 4px 16px rgba(37,99,235,.3);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:950;transition:all .2s}
+.ai-toggle:hover{transform:scale(1.08);box-shadow:0 6px 20px rgba(37,99,235,.4)}
+.ai-toggle svg{width:22px;height:22px;color:#FFF}
+body.chat-open .ai-toggle{display:none}
+/* AI Suggest Banner */
+.ai-suggest{background:linear-gradient(135deg,var(--pr50) 0%,var(--vi50) 100%);border:1px solid var(--pr100);border-radius:var(--r3);padding:16px 20px;margin-bottom:16px;display:flex;align-items:flex-start;gap:14px}
+.ai-suggest-ic{width:40px;height:40px;border-radius:var(--r2);background:linear-gradient(135deg,var(--pr) 0%,var(--vi) 100%);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ai-suggest-ic svg{width:20px;height:20px;color:#FFF}
+.ai-suggest-t{font:600 14px/1.3 var(--f);color:var(--c9);margin-bottom:4px}
+.ai-suggest-d{font:400 13px/1.5 var(--f);color:var(--c6);margin-bottom:10px}
+.ai-suggest-actions{display:flex;gap:8px}
+/* AI Filled Tag */
+.ai-tag{display:inline-flex;align-items:center;gap:3px;font:600 9px/1 var(--f);color:var(--vi);background:var(--vi50);border:1px solid rgba(139,92,246,.2);padding:2px 5px;border-radius:3px;vertical-align:middle;margin-left:4px;white-space:nowrap}
+.ai-tag svg{width:9px;height:9px}
+.ai-cell-wrap{position:relative;display:flex;align-items:center;gap:4px}
+.ai-cell-wrap .edit-cell{flex:1}
 </style>
 </head>
 <body>
@@ -458,6 +514,21 @@ textarea.edit-cell{
       <div class="pg-a">
         <button class="btn btn-s" onclick="showToast('表单已保存为草稿','success')">暂存</button>
         <button class="btn btn-p" onclick="submitSingle()">提交评分</button>
+      </div>
+    </div>
+
+    <div class="ai-suggest">
+      <div class="ai-suggest-ic">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg>
+      </div>
+      <div style="flex:1">
+        <div class="ai-suggest-t">AI 已根据目标完成度自动计算 6 条目标得分</div>
+        <div class="ai-suggest-d">基于目标三值体系 + 计算规则，自动匹配完成度并计算分值。AI 建议等级: B+（良好），加权总分 87 分。</div>
+        <div class="ai-suggest-actions">
+          <button class="btn btn-p btn-sm" onclick="confirmAiScore()">确认 AI 评分</button>
+          <button class="btn btn-o btn-sm" onclick="toggleAiChat()">逐项审核</button>
+          <button class="btn btn-s btn-sm">撤销 AI 评分</button>
+        </div>
       </div>
     </div>
 
@@ -639,6 +710,7 @@ EMPLOYEES.forEach(e => {
         else ind.grade = GRADE_OPTIONS[2]; // 符合预期
         ind.completed = Math.round(parseFloat(ind.target)*f*10)/10 + (ind.target.replace(/[0-9.≥]/g,'')||'');
         ind.comment = '表现良好，继续努力';
+        ind.aiFilled = true;
       });
     });
   }
@@ -691,18 +763,19 @@ function renderSingleForm(empId) {
         </tr>`;
       } else {
         // 定量填完成值，定性选自评等级
+        const aiTag = '<span class="ai-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg>AI</span>';
         let completedCell;
         if (ind.type === 'quant') {
-          completedCell = `<td><div style="display:flex;align-items:center;gap:4px"><input class="edit-cell" type="number" step="any" value="${ind.completed}" placeholder="输入完成值" onchange="updateScore('${empId}','${mod.name}',${i},'completed',this.value)" style="flex:1"><span style="font:400 12px/1 var(--f);color:var(--c5);white-space:nowrap">${ind.unit||''}</span></div></td>`;
+          completedCell = `<td><div class="ai-cell-wrap"><input class="edit-cell" type="number" step="any" value="${ind.completed}" placeholder="输入完成值" onchange="updateScore('${empId}','${mod.name}',${i},'completed',this.value)" style="flex:1">${ind.aiFilled?aiTag:''}<span style="font:400 12px/1 var(--f);color:var(--c5);white-space:nowrap">${ind.unit||''}</span></div></td>`;
         } else {
-          completedCell = `<td><select class="edit-cell" onchange="updateScore('${empId}','${mod.name}',${i},'grade',this.value)"><option value="">请选择</option>${GRADE_OPTIONS.map(g=>`<option value="${g}" ${ind.grade===g?'selected':''}>${g}</option>`).join('')}</select></td>`;
+          completedCell = `<td><div class="ai-cell-wrap"><select class="edit-cell" onchange="updateScore('${empId}','${mod.name}',${i},'grade',this.value)"><option value="">请选择</option>${GRADE_OPTIONS.map(g=>`<option value="${g}" ${ind.grade===g?'selected':''}>${g}</option>`).join('')}</select>${ind.aiFilled?aiTag:''}</div></td>`;
         }
         html += `<tr>
           <td><span class="ind-name">${ind.name}</span></td>
           <td><span class="ind-weight">${ind.weight}%</span></td>
           <td><span class="ind-target">${ind.target}</span></td>
           ${completedCell}
-          <td><textarea class="edit-cell" rows="1" placeholder="评语" onchange="updateScore('${empId}','${mod.name}',${i},'comment',this.value)">${ind.comment}</textarea></td>
+          <td><div class="ai-cell-wrap"><textarea class="edit-cell" rows="1" placeholder="评语" onchange="updateScore('${empId}','${mod.name}',${i},'comment',this.value)">${ind.comment}</textarea>${ind.aiFilled?aiTag:''}</div></td>
         </tr>`;
       }
     });
@@ -711,6 +784,18 @@ function renderSingleForm(empId) {
 
   // 总分
   updateTotalScore(empId);
+}
+
+// ═══ AI 确认评分 ═══
+function confirmAiScore() {
+  const scores = empScores[selectedEmpId];
+  scores.forEach(m => {
+    m.indicators.forEach(ind => {
+      if (ind.type !== 'bonus') ind.aiFilled = true;
+    });
+  });
+  renderSingleForm(selectedEmpId);
+  showToast('AI 评分已确认，字段已标记', 'success');
 }
 
 function updateScore(empId, modName, idx, field, value) {
@@ -1030,6 +1115,84 @@ renderSingleForm('E001');
 
 // Initialize navigation
 GHR_NAV.init('perf', '绩效表单');
+
+// ═══ AI Chat ═══
+const AI_MSGS=[
+  {role:'bot',text:'你好！我是 AI 评分助手。我可以帮你完成绩效评分：基于目标完成度自动计算得分、生成评语、校验评分一致性。',time:'09:30',actions:['AI 自动评分','查看完成度详情','批量生成评语']},
+  {role:'user',text:'帮我自动评分'},
+  {role:'bot',text:'已根据目标完成度 + 计算规则为 6 条目标自动评分：',time:'09:31',cards:[
+    {t:'产品迭代完成率: 108%',d:'目标100 / 挑战120 → 得分 100（良好）',tag:'100分',tc:'em'},
+    {t:'新增用户数: 6200人',d:'目标5000 / 挑战7000 → 得分 110（良好偏上）',tag:'110分',tc:'em'},
+    {t:'团队产出效率: 115%',d:'目标110 / 挑战130 → 得分 100（良好）',tag:'100分',tc:'em'},
+  ],actions:['确认评分','调整偏差','查看加权总分']},
+  {role:'user',text:'查看加权总分'},
+  {role:'bot',text:'加权总分计算结果：\n\n• 业绩目标: 100×30% + 110×20% = 52 分\n• 管理目标: 100×10% + 100×10% = 20 分\n• 能力发展: 100×8% + 100×7% = 15 分\n\n当前加权总分: 87 / 100',time:'09:32',cards:[
+    {t:'加权总分: 87分',d:'等级建议: B+（良好）',tag:'AI 建议',tc:'pr'},
+  ]},
+  {role:'user',text:'人才培养那条我打了 90 分，帮我重新算'},
+  {role:'bot',text:'已更新人才培养评分为 90 分，重新计算加权总分：\n\n• 业绩目标: 52 分（不变）\n• 管理目标: 100×10% + 90×10% = 19 分\n• 能力发展: 15 分（不变）\n\n加权总分: 86 / 100 → 等级建议: B+（良好）',time:'09:33',cards:[
+    {t:'更新后总分: 86分',d:'等级仍为 B+，无变化',tag:'已更新',tc:'em'},
+  ]},
+  {role:'user',text:'帮我批量生成评语'},
+  {role:'bot',text:'已为 6 条目标生成评语，基于完成度 + 目标值对比：\n\n• 产品迭代: "Q2完成3个核心功能迭代，达成率108%，超额完成目标"\n• 用户增长: "新增注册用户6200人，达成率124%，接近挑战值"\n• 团队效能: "团队产出效率提升15%，高于目标值"\n• 人才培养: "培养2名骨干成员，达到目标"\n\n评语已自动填入各目标评语栏。',time:'09:34',actions:['查看评语','调整措辞','确认提交']},
+  {role:'user',text:'产品迭代的评语加一句不足'},
+  {role:'bot',text:'已补充不足描述：\n\n"Q2完成3个核心功能迭代，达成率108%，超额完成目标。不足：迭代周期较Q1延长2天，需优化需求评审效率。"',time:'09:35'},
+];
+function renderAiChat(){
+  const bd=document.getElementById('chatBd');
+  if(!bd)return;
+  bd.innerHTML=AI_MSGS.map(m=>`
+    <div class="ai-msg ${m.role}">
+      <div class="ai-msg-bd">${m.text.replace(/\n/g,'<br/>')}</div>
+      ${m.cards?m.cards.map(c=>`<div class="ai-msg-card"><div class="ai-msg-card-t">${c.t}</div><div class="ai-msg-card-d">${c.d}</div><span class="ai-msg-card-tag ${c.tc}">${c.tag}</span></div>`).join(''):''}
+      ${m.actions?`<div class="ai-msg-actions">${m.actions.map(a=>`<button class="ai-msg-btn${a.includes('确认')||a.includes('采纳')?' primary':''}">${a}</button>`).join('')}</div>`:''}
+      ${m.time?`<div class="ai-msg-time">${m.time}</div>`:''}
+    </div>
+  `).join('');
+  bd.scrollTop=bd.scrollHeight;
+}
+function sendAiMsg(){
+  const input=document.getElementById('chatInput');
+  const text=input.value.trim();
+  if(!text)return;
+  AI_MSGS.push({role:'user',text});
+  input.value='';
+  renderAiChat();
+  setTimeout(()=>{
+    AI_MSGS.push({role:'bot',text:'收到，正在分析评分数据…\n\n已根据你的描述调整评分，请查看更新结果。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
+    renderAiChat();
+  },800);
+}
+function toggleAiChat(){document.body.classList.toggle('chat-open')}
+
+// Create AI elements on body (after nav init)
+document.body.insertAdjacentHTML('beforeend',`
+<div class="ai-chat" id="aiChat">
+  <div class="ai-chat-hd">
+    <div class="ai-chat-hd-ic">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg>
+    </div>
+    <div>
+      <div class="ai-chat-hd-t">AI 评分助手</div>
+      <div class="ai-chat-hd-s">基于目标完成度 + 历史评分</div>
+    </div>
+    <button class="ai-chat-close" onclick="toggleAiChat()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="ai-chat-bd" id="chatBd"></div>
+  <div class="ai-chat-ft">
+    <input class="ai-chat-input" id="chatInput" placeholder="输入评分指令，如「批量评分」「查看偏差」…" onkeydown="if(event.key==='Enter')sendAiMsg()"/>
+    <button class="ai-chat-send" onclick="sendAiMsg()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>
+<button class="ai-toggle" onclick="toggleAiChat()">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg>
+</button>
+`);
+renderAiChat();
 </script>
 </body>
 </html>

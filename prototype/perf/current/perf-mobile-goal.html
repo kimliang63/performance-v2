@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 移动端目标制定</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:#E8E8ED;color:var(--c7);display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:20px;-webkit-font-smoothing:antialiased}
+
+/* Phone Frame */
+.phone{width:375px;height:812px;background:var(--sf);border-radius:40px;box-shadow:0 20px 60px rgba(0,0,0,.15),0 0 0 1px rgba(0,0,0,.05);overflow:hidden;position:relative;display:flex;flex-direction:column}
+.phone-status{height:44px;background:var(--sf);display:flex;align-items:center;justify-content:space-between;padding:0 24px;font:600 14px/1 var(--f);color:var(--c9)}
+.phone-status-r{display:flex;align-items:center;gap:6px}
+.phone-notch{width:126px;height:28px;background:var(--c9);border-radius:0 0 18px 18px;position:absolute;top:0;left:50%;transform:translateX(-50%)}
+.phone-nav{height:44px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 16px;gap:12px}
+.phone-nav-back{width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c7)}
+.phone-nav-back svg{width:20px;height:20px}
+.phone-nav-t{flex:1;font:600 17px/1 var(--f);color:var(--c9);text-align:center}
+
+/* AI FAB */
+.m-fab{position:absolute;bottom:90px;right:16px;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--pr),var(--vi));border:none;box-shadow:0 4px 14px rgba(37,99,235,.35);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:700;transition:transform .2s}
+.m-fab:active{transform:scale(.92)}
+.m-fab svg{width:20px;height:20px;color:#FFF}
+
+/* Scrollable Content */
+.phone-body{flex:1;overflow-y:auto;padding:0 0 80px 0;background:var(--bg)}
+.phone-body::-webkit-scrollbar{width:0}
+
+/* AI Banner */
+.m-ai-banner{margin:12px 16px;padding:12px 14px;background:linear-gradient(135deg,var(--pr50),var(--vi50));border:1px solid var(--pr100);border-radius:var(--r2);display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .15s}
+.m-ai-banner:active{transform:scale(.98)}
+.m-ai-banner-ic{width:32px;height:32px;border-radius:var(--r1);background:linear-gradient(135deg,var(--pr),var(--vi));display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.m-ai-banner-ic svg{width:16px;height:16px;color:#FFF}
+.m-ai-banner-t{font:600 13px/1.3 var(--f);color:var(--c8)}
+.m-ai-banner-d{font:400 11px/1.3 var(--f);color:var(--c5);margin-top:2px}
+
+/* Info Card */
+.m-info{margin:12px 16px;background:var(--sf);border-radius:var(--r2);box-shadow:0 1px 3px rgba(0,0,0,.05);padding:14px 16px}
+.m-info-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--dv)}
+.m-info-row:last-child{border-bottom:none}
+.m-info-l{font:400 13px/1 var(--f);color:var(--c5)}
+.m-info-v{font:500 13px/1 var(--f);color:var(--c8)}
+
+/* Section */
+.m-sec{margin:16px 16px 0}
+.m-sec-t{font:600 14px/1 var(--f);color:var(--c9);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.m-sec-t::before{content:'';width:3px;height:12px;background:var(--pr);border-radius:2px}
+
+/* Module Card */
+.m-mod{background:var(--sf);border-radius:var(--r2);box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:10px;overflow:hidden}
+.m-mod-hd{display:flex;align-items:center;padding:12px 14px;cursor:pointer;gap:10px;transition:background .1s}
+.m-mod-hd:active{background:var(--c0)}
+.m-mod-ic{width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.m-mod-ic svg{width:14px;height:14px;color:#FFF}
+.m-mod-info{flex:1;min-width:0}
+.m-mod-name{font:600 13px/1 var(--f);color:var(--c8)}
+.m-mod-meta{font:400 11px/1 var(--f);color:var(--c5);margin-top:3px}
+.m-mod-chevron{width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--c4);transition:transform .2s}
+.m-mod-chevron.open{transform:rotate(180deg)}
+.m-mod-chevron svg{width:14px;height:14px}
+.m-mod-body{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.m-mod-body.open{max-height:1000px}
+
+/* Goal Item */
+.m-goal{border-top:1px solid var(--dv);padding:12px 14px}
+.m-goal:first-child{border-top:none}
+.m-goal-hd{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.m-goal-name{flex:1;font:500 13px/1.3 var(--f);color:var(--c8)}
+.m-goal-name .ai-badge{font:700 9px/1 var(--f);color:var(--vi);background:var(--vi50);padding:2px 5px;border-radius:3px;margin-left:4px}
+.m-goal-type{font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px}
+.m-goal-type.q{background:var(--pr50);color:var(--pr)}
+.m-goal-type.w{background:var(--vi50);color:var(--vi)}
+.m-goal-weight{font:500 12px/1 var(--fm);color:var(--c6)}
+.m-goal-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px}
+.m-gd-item{display:flex;flex-direction:column;gap:1px}
+.m-gd-l{font:400 10px/1 var(--f);color:var(--c4)}
+.m-gd-v{font:500 12px/1.3 var(--f);color:var(--c7);font-family:var(--fm)}
+
+/* Grade Table */
+.m-gt{width:100%;border-collapse:collapse;margin-top:8px}
+.m-gt th{font:500 10px/1 var(--f);color:var(--c5);text-align:left;padding:5px 6px;border-bottom:1px solid var(--dv)}
+.m-gt td{font:400 11px/1.3 var(--f);color:var(--c7);padding:5px 6px;border-bottom:1px solid var(--dv)}
+.m-gt .dot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:4px;vertical-align:middle}
+
+/* Compliance */
+.m-comp{background:var(--sf);border-radius:var(--r2);box-shadow:0 1px 3px rgba(0,0,0,.05);margin:12px 16px;padding:12px 14px}
+.m-comp-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.m-comp-t{font:600 13px/1 var(--f);color:var(--c8);display:flex;align-items:center;gap:6px}
+.m-comp-t svg{width:14px;height:14px;color:var(--em)}
+.m-comp-cnt{font:600 12px/1 var(--f);color:var(--em700)}
+.m-comp-item{display:flex;align-items:center;gap:8px;padding:5px 0;font:400 12px/1 var(--f);color:var(--c6)}
+.m-comp-ck{width:14px;height:14px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.m-comp-ck svg{width:8px;height:8px;color:#FFF}
+
+/* Bottom Bar */
+.m-bar{position:absolute;bottom:0;left:0;right:0;height:80px;background:var(--sf);border-top:1px solid var(--dv);display:flex;align-items:center;padding:0 16px;gap:10px;padding-bottom:20px}
+.m-bar .btn{flex:1;height:40px;border-radius:var(--r2);font:600 14px/1 var(--f);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.m-bar .btn-s{background:var(--c1);color:var(--c7)}
+.m-bar .btn-p{background:var(--pr);color:#FFF}
+
+/* AI Drawer (bottom sheet) */
+.m-drawer-ov{position:absolute;inset:0;background:rgba(0,0,0,.4);z-index:800;opacity:0;pointer-events:none;transition:opacity .25s}
+.m-drawer-ov.on{opacity:1;pointer-events:auto}
+.m-drawer{position:absolute;bottom:0;left:0;right:0;height:70%;background:var(--sf);border-radius:16px 16px 0 0;z-index:810;transform:translateY(100%);transition:transform .3s ease;display:flex;flex-direction:column}
+.m-drawer-ov.on .m-drawer{transform:translateY(0)}
+.m-drawer-handle{width:36px;height:4px;background:var(--c3);border-radius:2px;margin:8px auto 0}
+.m-drawer-hd{padding:12px 16px;border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:10px}
+.m-drawer-hd-ic{width:28px;height:28px;border-radius:var(--r1);background:linear-gradient(135deg,var(--pr),var(--vi));display:flex;align-items:center;justify-content:center}
+.m-drawer-hd-ic svg{width:14px;height:14px;color:#FFF}
+.m-drawer-hd-t{font:600 14px/1 var(--f);color:var(--c8)}
+.m-drawer-hd-s{font:400 11px/1 var(--f);color:var(--c5)}
+.m-drawer-close{margin-left:auto;width:24px;height:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c5);border:none;background:transparent}
+.m-drawer-bd{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:12px}
+.m-drawer-ft{padding:10px 16px;border-top:1px solid var(--dv);display:flex;gap:8px}
+.m-drawer-input{flex:1;height:36px;border:1px solid var(--c2);border-radius:var(--r2);padding:0 12px;font:400 13px/1 var(--f);outline:none}
+.m-drawer-input:focus{border-color:var(--pr)}
+.m-drawer-send{width:36px;height:36px;border-radius:var(--r2);background:var(--pr);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#FFF}
+.m-drawer-send svg{width:16px;height:16px}
+
+/* Chat Messages (mobile) */
+.m-msg{max-width:88%;animation:mMsgIn .25s ease}
+@keyframes mMsgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.m-msg.bot{align-self:flex-start}
+.m-msg.user{align-self:flex-end}
+.m-msg-bd{padding:10px 14px;border-radius:var(--r2);font:400 13px/1.5 var(--f)}
+.m-msg.bot .m-msg-bd{background:var(--c0);color:var(--c8);border-bottom-left-radius:4px}
+.m-msg.user .m-msg-bd{background:var(--pr);color:#FFF;border-bottom-right-radius:4px}
+.m-msg-time{font:400 10px/1 var(--f);color:var(--c4);margin-top:3px}
+.m-msg.user .m-msg-time{text-align:right}
+.m-msg-actions{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.m-msg-btn{font:500 11px/1 var(--f);padding:5px 10px;border-radius:var(--r1);border:1px solid var(--c2);background:var(--sf);color:var(--c6);cursor:pointer}
+.m-msg-btn:hover{border-color:var(--pr);color:var(--pr)}
+.m-msg-card{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r1);padding:10px;margin-top:6px}
+.m-msg-card-t{font:600 12px/1.3 var(--f);color:var(--c8);margin-bottom:3px}
+.m-msg-card-d{font:400 11px/1.4 var(--f);color:var(--c5)}
+.m-msg-card-tag{display:inline-block;font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px;margin-top:4px}
+.m-msg-card-tag.em{color:var(--em700);background:var(--em50)}
+.m-msg-card-tag.pr{color:var(--pr);background:var(--pr50)}
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="phone-notch"></div>
+  <div class="phone-status">
+    <span>9:41</span>
+    <div class="phone-status-r">
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="var(--c9)"><rect x="0" y="6" width="3" height="6" rx="1"/><rect x="4.5" y="4" width="3" height="8" rx="1"/><rect x="9" y="1.5" width="3" height="10.5" rx="1"/><rect x="13.5" y="0" width="2.5" height="12" rx="1"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="var(--c9)"><path d="M8 2.4C5.6 2.4 3.4 3.3 1.8 4.8L0 3C2 1.1 4.9 0 8 0s6 1.1 8 3l-1.8 1.8C12.6 3.3 10.4 2.4 8 2.4z"/><path d="M8 6.4c-1.6 0-3 .6-4.1 1.6L2.1 6.2C3.6 4.8 5.7 4 8 4s4.4.8 5.9 2.2l-1.8 1.8C11 7 9.6 6.4 8 6.4z"/><path d="M8 10.4c-.8 0-1.6.3-2.1.9L8 14l2.1-2.7c-.5-.6-1.3-.9-2.1-.9z"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="2" stroke="var(--c9)"/><rect x="2" y="2" width="16" height="8" rx="1" fill="var(--c9)"/><path d="M23 4v4a2 2 0 0 0 0-4z" fill="var(--c9)"/></svg>
+    </div>
+  </div>
+
+  <div class="phone-nav">
+    <div class="phone-nav-back" onclick="history.back()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div class="phone-nav-t">目标制定</div>
+  </div>
+
+  <div class="phone-body" id="phoneBody"></div>
+
+  <!-- AI FAB -->
+  <button class="m-fab" onclick="toggleDrawer()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg>
+  </button>
+
+  <!-- Bottom Bar -->
+  <div class="m-bar">
+    <button class="btn btn-s">保存草稿</button>
+    <button class="btn btn-p">提交</button>
+  </div>
+
+  <!-- AI Drawer -->
+  <div class="m-drawer-ov" id="drawerOv" onclick="if(event.target===this)toggleDrawer()">
+    <div class="m-drawer">
+      <div class="m-drawer-handle"></div>
+      <div class="m-drawer-hd">
+        <div class="m-drawer-hd-ic">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg>
+        </div>
+        <div>
+          <div class="m-drawer-hd-t">AI 填写助手</div>
+          <div class="m-drawer-hd-s">基于历史数据 + 指标库</div>
+        </div>
+        <button class="m-drawer-close" onclick="toggleDrawer()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="m-drawer-bd" id="drawerBd"></div>
+      <div class="m-drawer-ft">
+        <input class="m-drawer-input" id="drawerInput" placeholder="描述你的目标，AI 帮你填写…" onkeydown="if(event.key==='Enter')sendDrawerMsg()"/>
+        <button class="m-drawer-send" onclick="sendDrawerMsg()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="navigation.js"></script>
+<script>
+const IC={
+  chevron:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+  target:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
+  users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  star:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+  book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
+};
+
+const MODULES=[
+  {name:'业绩目标',weight:50,color:'var(--pr)',icon:IC.target,goals:[
+    {name:'完成Q2产品迭代',indicator:'产品迭代完成率',type:'q',weight:30,aiFill:true,target:100,challenge:120,baseline:80,rule:'标准梯度计算',levels:[{l:'优秀',c:'var(--em)',s:'120分',d:'≥120%'},{l:'良好',c:'var(--pr)',s:'100分',d:'≥100%'},{l:'合格',c:'var(--ac)',s:'80分',d:'≥80%'},{l:'不合格',c:'var(--ro)',s:'0分',d:'<80%'}]},
+    {name:'用户增长目标',indicator:'新增用户数',type:'q',weight:20,aiFill:true,target:5000,challenge:7000,baseline:3000,rule:'线性插值计算',levels:[{l:'优秀',c:'var(--em)',s:'120分',d:'≥7000'},{l:'良好',c:'var(--pr)',s:'100分',d:'≥5000'},{l:'合格',c:'var(--ac)',s:'80分',d:'≥3000'},{l:'不合格',c:'var(--ro)',s:'0分',d:'<3000'}]},
+  ]},
+  {name:'管理目标',weight:20,color:'var(--em)',icon:IC.users,goals:[
+    {name:'团队效能提升',indicator:'团队产出效率',type:'q',weight:10,aiFill:true,target:110,challenge:130,baseline:100,rule:'标准梯度计算',levels:[{l:'优秀',c:'var(--em)',s:'120分',d:'≥130%'},{l:'良好',c:'var(--pr)',s:'100分',d:'≥110%'},{l:'合格',c:'var(--ac)',s:'80分',d:'≥100%'},{l:'不合格',c:'var(--ro)',s:'0分',d:'<100%'}]},
+    {name:'人才培养',indicator:'下属成长指标',type:'w',weight:10,aiFill:true,target:2,challenge:3,baseline:1,rule:'-',levels:[{l:'优秀',c:'var(--em)',s:'120分',d:'≥3人'},{l:'良好',c:'var(--pr)',s:'100分',d:'≥2人'},{l:'合格',c:'var(--ac)',s:'80分',d:'≥1人'},{l:'不合格',c:'var(--ro)',s:'0分',d:'<1人'}]},
+  ]},
+  {name:'能力发展目标',weight:15,color:'var(--ac)',icon:IC.star,goals:[
+    {name:'技术能力提升',indicator:'技术认证',type:'w',weight:8,aiFill:true,target:1,challenge:2,baseline:1,rule:'-',levels:[{l:'达成',c:'var(--em)',s:'100分',d:'完成认证'},{l:'未达成',c:'var(--ro)',s:'0分',d:'未完成'}]},
+    {name:'业务理解深化',indicator:'业务分析报告',type:'q',weight:7,target:2,challenge:3,baseline:1,rule:'加权汇总计算',levels:[{l:'优秀',c:'var(--em)',s:'120分',d:'≥3份'},{l:'良好',c:'var(--pr)',s:'100分',d:'≥2份'},{l:'合格',c:'var(--ac)',s:'80分',d:'≥1份'},{l:'不合格',c:'var(--ro)',s:'0分',d:'<1份'}]},
+  ]},
+  {name:'价值观目标',weight:15,color:'var(--vi)',icon:IC.book,goals:[]},
+];
+
+const COMPLIANCE=[
+  {t:'必填字段完整性',s:1},{t:'总权重和 = 100%',s:1},{t:'每条目标已关联指标',s:1},
+  {t:'定量目标三值完整',s:1},{t:'计算规则已配置',s:1},{t:'等级标准覆盖完整',s:1},
+  {t:'目标层级 ≤ 3 级',s:1},{t:'权重分配均匀性',s:1},{t:'团队 OKR 对齐度',s:1},
+  {t:'历史目标重复率检查',s:1},
+];
+
+// Open modules state
+const openMods=new Set([0,1]);
+
+function render(){
+  const el=document.getElementById('phoneBody');
+  let h='';
+
+  // AI Banner
+  h+=`<div class="m-ai-banner" onclick="toggleDrawer()">
+    <div class="m-ai-banner-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg></div>
+    <div><div class="m-ai-banner-t">AI 已预填 5 条目标</div><div class="m-ai-banner-d">基于 Q1 目标 + 指标库 + 团队 OKR，点击查看</div></div>
+  </div>`;
+
+  // Info card
+  h+=`<div class="m-info">
+    <div class="m-info-row"><span class="m-info-l">考核周期</span><span class="m-info-v">2026年Q2</span></div>
+    <div class="m-info-row"><span class="m-info-l">员工</span><span class="m-info-v">张明 (EMP20240315)</span></div>
+    <div class="m-info-row"><span class="m-info-l">部门</span><span class="m-info-v">产品部</span></div>
+    <div class="m-info-row"><span class="m-info-l">职位</span><span class="m-info-v">高级产品经理</span></div>
+    <div class="m-info-row"><span class="m-info-l">总权重</span><span class="m-info-v" style="color:var(--em700);font-weight:600">100%</span></div>
+  </div>`;
+
+  // Modules
+  h+=`<div class="m-sec"><div class="m-sec-t">目标模块</div>`;
+  MODULES.forEach((m,mi)=>{
+    const tw=m.goals.reduce((s,g)=>s+g.weight,0);
+    const isOpen=openMods.has(mi);
+    h+=`<div class="m-mod">
+      <div class="m-mod-hd" onclick="toggleMod(${mi})">
+        <div class="m-mod-ic" style="background:${m.color}">${m.icon}</div>
+        <div class="m-mod-info">
+          <div class="m-mod-name">${m.name}</div>
+          <div class="m-mod-meta">权重 ${tw}% · ${m.goals.length} 条目标</div>
+        </div>
+        <div class="m-mod-chevron${isOpen?' open':''}">${IC.chevron}</div>
+      </div>
+      <div class="m-mod-body${isOpen?' open':''}">`;
+    if(!m.goals.length){
+      h+=`<div style="padding:16px;text-align:center;font:400 12px/1.3 var(--f);color:var(--c4)">暂无目标，AI 可自动生成</div>`;
+    }else{
+      m.goals.forEach(g=>{
+        const typeLabel=g.type==='q'?'定量':'定性';
+        const typeCls=g.type==='q'?'q':'w';
+        h+=`<div class="m-goal">
+          <div class="m-goal-hd">
+            <span class="m-goal-name">${g.name}${g.aiFill?'<span class="ai-badge">AI</span>':''}</span>
+            <span class="m-goal-type ${typeCls}">${typeLabel}</span>
+            <span class="m-goal-weight">${g.weight}%</span>
+          </div>
+          <div class="m-goal-grid">
+            ${g.type==='q'?`
+              <div class="m-gd-item"><span class="m-gd-l">挑战值</span><span class="m-gd-v">${g.challenge}</span></div>
+              <div class="m-gd-item"><span class="m-gd-l">目标值</span><span class="m-gd-v">${g.target}</span></div>
+              <div class="m-gd-item"><span class="m-gd-l">保底值</span><span class="m-gd-v">${g.baseline}</span></div>
+              <div class="m-gd-item"><span class="m-gd-l">计算规则</span><span class="m-gd-v" style="font-family:var(--f)">${g.rule}</span></div>
+            `:`
+              <div class="m-gd-item"><span class="m-gd-l">衡量方式</span><span class="m-gd-v" style="font-family:var(--f)">${g.type==='q'?'梯度评分':'定性评分'}</span></div>
+              <div class="m-gd-item"><span class="m-gd-l">目标描述</span><span class="m-gd-v" style="font-family:var(--f)">${g.name}</span></div>
+            `}
+          </div>
+          ${g.levels?`<table class="m-gt"><thead><tr><th>等级</th><th>分值</th><th>条件</th></tr></thead><tbody>
+            ${g.levels.map(l=>`<tr><td><span class="dot" style="background:${l.c}"></span>${l.l}</td><td style="font-family:var(--fm);font-weight:600">${l.s}</td><td>${l.d}</td></tr>`).join('')}
+          </tbody></table>`:''}
+        </div>`;
+      });
+    }
+    h+=`</div></div>`;
+  });
+  h+=`</div>`;
+
+  // Compliance
+  h+=`<div class="m-comp">
+    <div class="m-comp-hd">
+      <div class="m-comp-t">${IC.check} AI 合规检查</div>
+      <span class="m-comp-cnt">${COMPLIANCE.length}/${COMPLIANCE.length} 通过</span>
+    </div>
+    ${COMPLIANCE.map(c=>`<div class="m-comp-item"><div class="m-comp-ck">${IC.check}</div>${c.t}</div>`).join('')}
+  </div>`;
+
+  h+=`<div style="height:16px"></div>`;
+  el.innerHTML=h;
+}
+
+function toggleMod(mi){
+  if(openMods.has(mi)) openMods.delete(mi); else openMods.add(mi);
+  render();
+}
+
+// Drawer
+let drawerOpen=false;
+function toggleDrawer(){
+  drawerOpen=!drawerOpen;
+  document.getElementById('drawerOv').classList.toggle('on',drawerOpen);
+  if(drawerOpen) renderDrawerChat();
+}
+
+// Chat messages
+const MSGS=[
+  {role:'bot',text:'你好！我是 AI 填写助手。我可以帮你快速完成目标制定：自动匹配指标库、填充目标值三值、配置计算规则。',time:'09:30',actions:['从 Q1 目标继承','基于指标库推荐','对话式创建新目标']},
+  {role:'user',text:'帮我基于 Q1 目标生成 Q2 PBC'},
+  {role:'bot',text:'已读取你 Q1 的目标数据，为你继承并优化了 5 条目标：',time:'09:31',cards:[
+    {t:'业绩目标: 2/2 条已填充',d:'产品迭代完成率(30%) + 新增用户数(20%)',tag:'已填充',tc:'em'},
+    {t:'管理目标: 2/2 条已填充',d:'团队产出效率(10%) + 下属成长指标(10%)',tag:'已填充',tc:'em'},
+    {t:'能力发展: 1/2 条已填充',d:'技术认证(8%)',tag:'部分填充',tc:'pr'},
+  ]},
+  {role:'user',text:'价值观目标模块也帮我填充'},
+  {role:'bot',text:'基于你的岗位和团队文化，建议添加以下价值观目标：',cards:[
+    {t:'客户第一 (8%)',d:'以客户需求为导向，季度客户满意度 ≥ 4.5',tag:'建议',tc:'pr'},
+    {t:'团队协作 (7%)',d:'跨部门协作项目 ≥ 2 个，获得协作方好评',tag:'建议',tc:'pr'},
+  ],actions:['确认添加','调整权重','跳过']},
+];
+
+function renderDrawerChat(){
+  const bd=document.getElementById('drawerBd');
+  bd.innerHTML=MSGS.map(m=>{
+    let h=`<div class="m-msg ${m.role}">
+      <div class="m-msg-bd">${m.text.replace(/\n/g,'<br/>')}`;
+    if(m.cards) m.cards.forEach(c=>{
+      h+=`<div class="m-msg-card"><div class="m-msg-card-t">${c.t}</div><div class="m-msg-card-d">${c.d}</div><span class="m-msg-card-tag ${c.tc}">${c.tag}</span></div>`;
+    });
+    h+=`</div>`;
+    if(m.actions) h+=`<div class="m-msg-actions">${m.actions.map(a=>`<button class="m-msg-btn" onclick="drawerAction('${a}')">${a}</button>`).join('')}</div>`;
+    if(m.time) h+=`<div class="m-msg-time">${m.time}</div>`;
+    h+=`</div>`;
+    return h;
+  }).join('');
+  bd.scrollTop=bd.scrollHeight;
+}
+
+function sendDrawerMsg(){
+  const inp=document.getElementById('drawerInput');
+  const txt=inp.value.trim();
+  if(!txt)return;
+  MSGS.push({role:'user',text:txt});
+  inp.value='';
+  renderDrawerChat();
+  setTimeout(()=>{
+    MSGS.push({role:'bot',text:'收到，正在分析你的需求…',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
+    renderDrawerChat();
+  },800);
+}
+
+function drawerAction(label){
+  MSGS.push({role:'user',text:label});
+  renderDrawerChat();
+  setTimeout(()=>{
+    MSGS.push({role:'bot',text:`已执行「${label}」，请在页面上查看更新结果。`,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
+    renderDrawerChat();
+  },600);
+}
+
+render();
+</script>
+</body>
+</html>

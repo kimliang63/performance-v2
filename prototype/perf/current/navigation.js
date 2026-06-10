@@ -78,18 +78,17 @@ const GHR_NAV = {
     ]},
     perf:{n:'绩效管理',l:'Performance',ic:'target',groups:[
       {n:'绩效基础配置',ic:'settings',items:[
-        {n:'绩效周期',ic:'calendar'},
-        {n:'单位',ic:'building'},
-        {n:'等级规则',ic:'settings'},
-        {n:'计算规则',ic:'settings'},
-        {n:'衡量标准',ic:'target'},
-        {n:'指标库',ic:'file'},
-        {n:'评价规则',ic:'settings'},
+        {n:'绩效周期',ic:'calendar',file:'perf-base-cycle.html'},
+        {n:'单位',ic:'building',file:'perf-base-unit.html'},
+        {n:'等级规则',ic:'settings',file:'perf-base-grade.html'},
+        {n:'计算规则',ic:'settings',file:'perf-base-calc.html'},
+        {n:'衡量标准',ic:'target',file:'perf-base-standard.html'},
+        {n:'指标库',ic:'file',file:'perf-base-indicator.html'},
+        {n:'评价规则',ic:'settings',file:'perf-base-evaluation.html'},
         {n:'强制分布规则',ic:'settings',file:'perf-forced-distribution.html'},
       ]},
       {n:'绩效方案',ic:'file',items:[
         {n:'绩效方案',ic:'file',file:'perf-scheme-list.html'},
-        {n:'绩效模板',ic:'copy',file:'perf-form-templates.html'},
         {n:'绩效表单',ic:'file',file:null,children:[
           {n:'PBC目标制定',ic:'target',file:'perf-form-pbc.html'},
           {n:'绩效考核',ic:'check',file:'perf-form-evaluation.html'},
@@ -99,8 +98,8 @@ const GHR_NAV = {
         ]},
       ]},
       {n:'绩效活动',ic:'calendar',items:[
-        {n:'进行中',ic:'clock'},
-        {n:'所有活动',ic:'grid'},
+        {n:'活动管理',ic:'grid',file:'perf-activity.html'},
+        {n:'活动详情',ic:'eye',file:'perf-activity-detail.html'},
       ]},
       {n:'绩效报表',ic:'chart',items:[
         {n:'目标中心',ic:'target'},
@@ -109,8 +108,11 @@ const GHR_NAV = {
       ]},
       {n:'AI 智能应用',ic:'settings',items:[
         {n:'AI 表单辅助',ic:'edit',file:'perf-ai-form-assistant.html'},
-        {n:'AI 进程监控',ic:'eye',file:'perf-ai-monitor.html'},
+        {n:'AI 绩效活动',ic:'eye',file:'perf-ai-monitor.html'},
         {n:'AI 绩效分析',ic:'chart',file:'perf-ai-analytics.html'},
+        {n:'AI 移动端',ic:'user',file:'perf-mobile.html'},
+        {n:'移动端AI表单',ic:'edit',file:'perf-mobile-ai-form.html'},
+        {n:'对话式AI助手',ic:'inbox',file:'perf-mobile-feishu-bot.html'},
       ]},
     ]},
   },
@@ -274,7 +276,7 @@ const GHR_NAV = {
       <div class="hdr-l">
         <div class="logo">
           <div class="logo-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
-          <span class="logo-t">GHR</span>
+          <span class="logo-t">HR ONE</span>
         </div>
         <button class="menu-btn" id="menuBtn" onclick="GHR_NAV.toggleMenu()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
@@ -330,7 +332,7 @@ const GHR_NAV = {
       sidebar.innerHTML = `
         <div class="sb-hd" id="sbHd"></div>
         <div class="sb-bd" id="sbBd"></div>
-        <div class="sb-ft">GHR v3.0</div>
+        <div class="sb-ft">HR ONE v3.0</div>
       `;
 
       const ct = document.createElement('div');
