@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 我的目标</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoothing:antialiased}
+.card{background:var(--sf);border-radius:var(--r3);box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:16px}
+.card-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--dv)}
+.card-t{font:600 15px/1 var(--f);color:var(--c9)}
+.card-action{font:500 13px/1 var(--f);color:var(--pr);cursor:pointer;display:flex;align-items:center;gap:4px}
+.card-action:hover{color:var(--pr700)}
+.card-action svg{width:14px;height:14px}
+.card-bd{padding:16px 20px}
+.btn{height:34px;padding:0 16px;border-radius:var(--r1);font:500 13px/1 var(--f);border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .15s}
+.btn-p{background:var(--pr);color:#FFF}.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c7);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3)}
+.btn-ai{background:linear-gradient(135deg,var(--pr),var(--vi));color:#FFF}
+
+/* Overview */
+.ov{display:flex;align-items:center;gap:16px;padding:20px;background:var(--sf);border-radius:var(--r3);box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:16px}
+.ov-av{width:48px;height:48px;border-radius:50%;background:var(--pr50);display:flex;align-items:center;justify-content:center;font:700 18px/1 var(--f);color:var(--pr);flex-shrink:0}
+.ov-info{flex:1}
+.ov-name{font:600 16px/1 var(--f);color:var(--c9)}
+.ov-meta{font:400 13px/1 var(--f);color:var(--c5);margin-top:4px}
+.ov-tags{display:flex;gap:8px;margin-left:auto}
+.ov-tag{padding:4px 10px;border-radius:var(--r1);font:500 12px/1 var(--f)}
+.ov-tag.cycle{background:var(--pr50);color:var(--pr)}
+.ov-tag.status{background:var(--em50);color:var(--em700)}
+
+/* Module */
+.mod{background:var(--sf);border-radius:var(--r3);box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:12px;overflow:hidden}
+.mod-hd{display:flex;align-items:center;padding:14px 20px;cursor:pointer;gap:12px;transition:background .1s}
+.mod-hd:hover{background:var(--c0)}
+.mod-ic{width:32px;height:32px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mod-ic svg{width:16px;height:16px;color:#FFF}
+.mod-info{flex:1}
+.mod-name{font:600 14px/1 var(--f);color:var(--c8)}
+.mod-meta{font:400 12px/1 var(--f);color:var(--c5);margin-top:3px}
+.mod-chevron{color:var(--c4);transition:transform .2s}
+.mod-chevron.open{transform:rotate(180deg)}
+.mod-chevron svg{width:16px;height:16px}
+.mod-body{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.mod-body.open{max-height:2000px}
+
+/* Goal */
+.goal{border-top:1px solid var(--dv);padding:14px 20px;cursor:pointer;transition:background .1s}
+.goal:first-child{border-top:none}
+.goal:hover{background:var(--c0)}
+.goal-hd{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.goal-name{flex:1;font:500 14px/1.3 var(--f);color:var(--c8)}
+.goal-name .ai{font:700 10px/1 var(--f);color:var(--vi);background:var(--vi50);padding:2px 5px;border-radius:3px;margin-left:6px}
+.goal-weight{font:500 12px/1 var(--f);color:var(--pr);background:var(--pr50);padding:3px 8px;border-radius:4px}
+.goal-type{font:500 11px/1 var(--f);padding:2px 8px;border-radius:4px}
+.goal-type.q{background:var(--pr50);color:var(--pr)}
+.goal-type.w{background:var(--vi50);color:var(--vi)}
+.goal-vals{display:flex;align-items:center;gap:16px;margin-top:6px}
+.goal-val{display:flex;align-items:center;gap:4px;font:400 12px/1 var(--f);color:var(--c5)}
+.goal-val b{font:600 12px/1 var(--fm);color:var(--c7)}
+.goal-val.ch b{color:var(--ac700)}
+.goal-val.tg b{color:var(--pr)}
+.goal-val.bl b{color:var(--c5)}
+
+/* Weight Bar */
+.weight-bar{display:flex;height:8px;border-radius:4px;overflow:hidden;margin:12px 0}
+.weight-seg{transition:width .3s ease}
+
+/* Table */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font:500 12px/1 var(--f);color:var(--c5);text-align:left;padding:8px 12px;border-bottom:1px solid var(--dv);background:var(--c0)}
+.tbl td{font:400 13px/1.4 var(--f);color:var(--c7);padding:10px 12px;border-bottom:1px solid var(--dv)}
+.tbl tr:hover td{background:var(--c0)}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;vertical-align:middle}
+</style>
+</head>
+<body>
+
+<script>
+GHR_NAV.init('workbench', '我的目标');
+</script>
+
+<div style="padding:24px">
+  <!-- Overview -->
+  <div class="ov">
+    <div class="ov-av">张</div>
+    <div class="ov-info">
+      <div class="ov-name">张明</div>
+      <div class="ov-meta">高级产品经理 · 产品部 · EMP20240315</div>
+    </div>
+    <div class="ov-tags">
+      <span class="ov-tag cycle">2026年Q2</span>
+      <span class="ov-tag status">目标制定中</span>
+    </div>
+  </div>
+
+  <!-- Weight Bar -->
+  <div class="card">
+    <div class="card-hd">
+      <span class="card-t">权重分配</span>
+      <span style="font:600 14px/1 var(--fm);color:var(--em700)">100%</span>
+    </div>
+    <div class="card-bd">
+      <div class="weight-bar">
+        <div class="weight-seg" style="width:50%;background:var(--pr)"></div>
+        <div class="weight-seg" style="width:20%;background:var(--em)"></div>
+        <div class="weight-seg" style="width:15%;background:var(--ac)"></div>
+        <div class="weight-seg" style="width:15%;background:var(--vi)"></div>
+      </div>
+      <div style="display:flex;gap:16px;font:400 12px/1 var(--f)">
+        <span><span class="dot" style="background:var(--pr)"></span>业绩 50%</span>
+        <span><span class="dot" style="background:var(--em)"></span>管理 20%</span>
+        <span><span class="dot" style="background:var(--ac)"></span>能力 15%</span>
+        <span><span class="dot" style="background:var(--vi)"></span>价值观 15%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div style="display:flex;gap:10px;margin-bottom:16px">
+    <button class="btn btn-ai" onclick="location.href='perf-mobile-ai-form.html'">AI 智能填写</button>
+    <button class="btn btn-s">导出目标</button>
+    <button class="btn btn-s">查看审批流程</button>
+  </div>
+
+  <!-- Modules -->
+  <div id="modules"></div>
+</div>
+
+<script>
+const MODULES=[
+  {name:'业绩目标',weight:50,color:'var(--pr)',goals:[
+    {name:'完成Q2产品迭代',type:'q',weight:30,ai:true,target:100,challenge:120,baseline:80},
+    {name:'用户增长目标',type:'q',weight:20,ai:true,target:5000,challenge:7000,baseline:3000},
+  ]},
+  {name:'管理目标',weight:20,color:'var(--em)',goals:[
+    {name:'团队效能提升',type:'q',weight:10,ai:true,target:110,challenge:130,baseline:100},
+    {name:'人才培养',type:'w',weight:10,ai:true},
+  ]},
+  {name:'能力发展目标',weight:15,color:'var(--ac)',goals:[
+    {name:'技术能力提升',type:'w',weight:8,ai:true},
+    {name:'业务理解深化',type:'q',weight:7,target:2,challenge:3,baseline:1},
+  ]},
+  {name:'价值观目标',weight:15,color:'var(--vi)',goals:[]},
+];
+
+const openMods=new Set([0,1]);
+
+function render(){
+  let h='';
+  MODULES.forEach((m,mi)=>{
+    const isOpen=openMods.has(mi);
+    h+=`<div class="mod">
+      <div class="mod-hd" onclick="toggleMod(${mi})">
+        <div class="mod-ic" style="background:${m.color}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+        <div class="mod-info">
+          <div class="mod-name">${m.name}</div>
+          <div class="mod-meta">权重 ${m.weight}% · ${m.goals.length} 条目标</div>
+        </div>
+        <div class="mod-chevron${isOpen?' open':''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="mod-body${isOpen?' open':''}">`;
+    if(!m.goals.length){
+      h+=`<div style="padding:20px;text-align:center;font:400 13px/1.4 var(--f);color:var(--c4)">暂无目标，点击 AI 智能填写自动生成</div>`;
+    }else{
+      m.goals.forEach(g=>{
+        const isQ=g.type==='q';
+        h+=`<div class="goal">
+          <div class="goal-hd">
+            <span class="goal-type ${isQ?'q':'w'}">${isQ?'定量':'定性'}</span>
+            <span class="goal-name">${g.name}${g.ai?'<span class="ai">AI</span>':''}</span>
+            <span class="goal-weight">${g.weight}%</span>
+          </div>`;
+        if(isQ){
+          h+=`<div class="goal-vals">
+            <span class="goal-val ch">挑战 <b>${g.challenge}</b></span>
+            <span class="goal-val tg">目标 <b>${g.target}</b></span>
+            <span class="goal-val bl">保底 <b>${g.baseline}</b></span>
+          </div>`;
+        }
+        h+=`</div>`;
+      });
+    }
+    h+=`</div></div>`;
+  });
+  document.getElementById('modules').innerHTML=h;
+}
+
+function toggleMod(i){
+  if(openMods.has(i))openMods.delete(i);else openMods.add(i);
+  render();
+}
+
+render();
+</script>
+
+</body>
+</html>

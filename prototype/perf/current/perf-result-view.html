@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 绩效结果查看</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoothing:antialiased}
+.card{background:var(--sf);border-radius:var(--r3);box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:16px}
+.card-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--dv)}
+.card-t{font:600 15px/1 var(--f);color:var(--c9)}
+.card-bd{padding:16px 20px}
+.btn{height:34px;padding:0 16px;border-radius:var(--r1);font:500 13px/1 var(--f);border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.btn-s{background:var(--sf);color:var(--c7);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3)}
+
+/* Table */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font:500 12px/1 var(--f);color:var(--c5);text-align:left;padding:10px 12px;border-bottom:1px solid var(--dv);background:var(--c0)}
+.tbl td{font:400 13px/1.4 var(--f);color:var(--c7);padding:10px 12px;border-bottom:1px solid var(--dv)}
+.tbl tr:hover td{background:var(--c0)}
+.tbl .score{font:600 14px/1 var(--fm)}
+.tbl .grade{font:500 12px/1 var(--f);padding:3px 8px;border-radius:4px}
+.tbl .grade.a{background:var(--em50);color:var(--em700)}
+.tbl .grade.bp{background:var(--pr50);color:var(--pr)}
+.tbl .grade.b{background:var(--c1);color:var(--c7)}
+.tbl .grade.bm{background:var(--ac50);color:var(--ac700)}
+.tbl .grade.c{background:var(--ro50);color:var(--ro)}
+
+/* Distribution */
+.dist-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.dist-row:last-child{margin-bottom:0}
+.dist-label{font:600 13px/1 var(--f);width:28px;flex-shrink:0}
+.dist-bar{flex:1;height:20px;background:var(--c1);border-radius:4px;overflow:hidden;position:relative}
+.dist-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px;font:600 10px/1 var(--f);color:#FFF}
+.dist-target{position:absolute;top:0;bottom:0;width:2px;background:var(--c9);opacity:.5}
+.dist-pct{font:500 12px/1 var(--fm);width:40px;text-align:right;flex-shrink:0}
+
+/* Filter */
+.filter{display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap}
+.filter-tag{padding:5px 12px;border-radius:var(--r1);font:500 12px/1 var(--f);cursor:pointer;border:1px solid var(--c2);color:var(--c6);background:var(--sf);transition:all .15s}
+.filter-tag.on{background:var(--pr);color:#FFF;border-color:var(--pr)}
+.filter-search{margin-left:auto;width:200px;height:32px;border:1px solid var(--c2);border-radius:var(--r1);padding:0 10px;font:13px/1 var(--f);outline:none}
+.filter-search:focus{border-color:var(--pr)}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.stat{background:var(--sf);border-radius:var(--r2);padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.05);text-align:center}
+.stat-v{font:700 24px/1 var(--fm);color:var(--c9)}
+.stat-l{font:400 12px/1 var(--f);color:var(--c5);margin-top:4px}
+</style>
+</head>
+<body>
+
+<script>
+GHR_NAV.init('perf', '绩效结果');
+</script>
+
+<div style="padding:24px">
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat"><div class="stat-v">45</div><div class="stat-l">总人数</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--em700)">82.6</div><div class="stat-l">平均分</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--pr)">B+</div><div class="stat-l">中位等级</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--ac700)">95</div><div class="stat-l">最高分</div></div>
+  </div>
+
+  <div style="display:flex;gap:10px;margin-bottom:16px">
+    <button class="btn btn-s">导出结果</button>
+    <button class="btn btn-s">批量导出</button>
+  </div>
+
+  <!-- Filter -->
+  <div class="filter">
+    <span class="filter-tag on">全部 (45)</span>
+    <span class="filter-tag">A (9)</span>
+    <span class="filter-tag">B+ (16)</span>
+    <span class="filter-tag">B (11)</span>
+    <span class="filter-tag">B- (5)</span>
+    <span class="filter-tag">C (4)</span>
+    <select style="height:32px;border:1px solid var(--c2);border-radius:var(--r1);padding:0 10px;font:13px/1 var(--f);color:var(--c7);background:var(--sf);outline:none;margin-left:8px">
+      <option>全部部门</option>
+      <option>技术部</option>
+      <option>产品部</option>
+      <option>市场部</option>
+      <option>财务部</option>
+    </select>
+    <input class="filter-search" placeholder="搜索姓名/工号…"/>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <!-- Left: Result Table -->
+    <div class="card">
+      <div class="card-hd"><span class="card-t">绩效结果明细 · 2026年Q2</span></div>
+      <div class="card-bd" style="padding:0;overflow-x:auto">
+        <table class="tbl">
+          <thead><tr>
+            <th>姓名</th><th>工号</th><th>部门</th><th>评分</th><th>等级</th><th>环比</th><th>操作</th>
+          </tr></thead>
+          <tbody>
+            <tr><td style="font-weight:500;color:var(--c8)">张三</td><td style="font-family:var(--fm)">EMP001</td><td>技术部</td><td><span class="score" style="color:var(--em700)">95</span></td><td><span class="grade a">A</span></td><td style="color:var(--em700)">+4</td><td><a style="font:500 12px/1 var(--f);color:var(--pr);cursor:pointer">查看</a></td></tr>
+            <tr><td style="font-weight:500;color:var(--c8)">周八</td><td style="font-family:var(--fm)">EMP006</td><td>市场部</td><td><span class="score" style="color:var(--em700)">92</span></td><td><span class="grade a">A</span></td><td style="color:var(--em700)">+6</td><td><a style="font:500 12px/1 var(--f);color:var(--pr);cursor:pointer">查看</a></td></tr>
+            <tr><td style="font-weight:500;color:var(--c8)">王五</td><td style="font-family:var(--fm)">EMP003</td><td>产品部</td><td><span class="score" style="color:var(--em700)">90</span></td><td><span class="grade a">A</span></td><td style="color:var(--em700)">+2</td><td><a style="font:500 12px/1 var(--f);color:var(--pr);cursor:pointer">查看</a></td></tr>
+            <tr><td style="font-weight:500;color:var(--c8)">李四</td><td style="font-family:var(--fm)">EMP002</td><td>技术部</td><td><span class="score" style="color:var(--pr)">87</span></td><td><span class="grade bp">B+</span></td><td style="color:var(--em700)">+3</td><td><a style="font:500 12px/1 var(--f);color:var(--pr);cursor:pointer">查看</a></td></tr>
+            <tr><td style="font-weight:500;color:var(--c8)">赵六</td><td style="font-family:var(--fm)">EMP004</td><td>产品部</td><td><span class="score" style="color:var(--pr)">85</span></td><td><span class="grade bp">B+</span></td><td style="color:var(--em700)">+5</td><td><a style="font:500 12px/1 var(--f);color:var(--pr);cursor:pointer">查看</a></td></tr>
+            <tr><td style="font-weight:500;color:var(--c8)">陈十一</td><td style="font-family:var(--fm)">EMP009</td><td>技术部</td><td><span class="score" style="color:var(--pr)">83</span></td><td><span class="grade bp">B+</span></td><td style="color:var(--ro)">-2</td><td><a style="font:500 12px/1 var(--f);color:var(--pr);cursor:pointer">查看</a></td></tr>
+            <tr><td style="font-weight:500;color:var(--c8)">林十二</td><td style="font-family:var(--fm)">EMP010</td><td>产品部</td><td><span class="score" style="color:var(--c7)">79</span></td><td><span class="grade b">B</span></td><td style="color:var(--em700)">+1</td><td><a style="font:500 12px/1 var(--f);color:var(--pr);cursor:pointer">查看</a></td></tr>
+            <tr><td style="font-weight:500;color:var(--c8)">孙七</td><td style="font-family:var(--fm)">EMP005</td><td>市场部</td><td><span class="score" style="color:var(--ac700)">68</span></td><td><span class="grade bm">B-</span></td><td style="color:var(--ro)">-3</td><td><a style="font:500 12px/1 var(--f);color:var(--pr);cursor:pointer">查看</a></td></tr>
+            <tr><td style="font-weight:500;color:var(--c8)">吴九</td><td style="font-family:var(--fm)">EMP007</td><td>财务部</td><td><span class="score" style="color:var(--ro)">62</span></td><td><span class="grade c">C</span></td><td style="color:var(--ro)">-5</td><td><a style="font:500 12px/1 var(--f);color:var(--pr);cursor:pointer">查看</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Right: Distribution -->
+    <div>
+      <div class="card">
+        <div class="card-hd"><span class="card-t">等级分布</span></div>
+        <div class="card-bd">
+          <div class="dist-row">
+            <span class="dist-label" style="color:var(--em)">A</span>
+            <div class="dist-bar">
+              <div class="dist-fill" style="width:20%;background:var(--em)">20%</div>
+              <div class="dist-target" style="left:25%"></div>
+            </div>
+            <span class="dist-pct" style="color:var(--ro)">-5%</span>
+          </div>
+          <div class="dist-row">
+            <span class="dist-label" style="color:var(--pr)">B+</span>
+            <div class="dist-bar">
+              <div class="dist-fill" style="width:35.6%;background:var(--pr)">35.6%</div>
+              <div class="dist-target" style="left:35%"></div>
+            </div>
+            <span class="dist-pct" style="color:var(--em700)">+0.6%</span>
+          </div>
+          <div class="dist-row">
+            <span class="dist-label">B</span>
+            <div class="dist-bar">
+              <div class="dist-fill" style="width:24.4%;background:var(--c5)">24.4%</div>
+              <div class="dist-target" style="left:25%"></div>
+            </div>
+            <span class="dist-pct" style="color:var(--ro)">-0.6%</span>
+          </div>
+          <div class="dist-row">
+            <span class="dist-label" style="color:var(--ac)">B-</span>
+            <div class="dist-bar">
+              <div class="dist-fill" style="width:11.1%;background:var(--ac)">11.1%</div>
+              <div class="dist-target" style="left:10%"></div>
+            </div>
+            <span class="dist-pct" style="color:var(--ro)">+1.1%</span>
+          </div>
+          <div class="dist-row">
+            <span class="dist-label" style="color:var(--ro)">C</span>
+            <div class="dist-bar">
+              <div class="dist-fill" style="width:8.9%;background:var(--ro)">8.9%</div>
+              <div class="dist-target" style="left:5%"></div>
+            </div>
+            <span class="dist-pct" style="color:var(--ro)">+3.9%</span>
+          </div>
+          <div style="margin-top:12px;font:400 12px/1 var(--f);color:var(--c4)">目标：A 25% · B+ 35% · B 25% · B- 10% · C 5%</div>
+        </div>
+      </div>
+
+      <!-- Approval Status -->
+      <div class="card">
+        <div class="card-hd"><span class="card-t">审定状态</span></div>
+        <div class="card-bd">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--dv)">
+            <div>
+              <div style="font:500 13px/1 var(--f);color:var(--c8)">已审定</div>
+              <div style="font:400 11px/1 var(--f);color:var(--c4);margin-top:3px">主管已确认等级</div>
+            </div>
+            <span style="font:600 20px/1 var(--fm);color:var(--em700)">38</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--dv)">
+            <div>
+              <div style="font:500 13px/1 var(--f);color:var(--c8)">待审定</div>
+              <div style="font:400 11px/1 var(--f);color:var(--c4);margin-top:3px">等待主管确认</div>
+            </div>
+            <span style="font:600 20px/1 var(--fm);color:var(--ac700)">5</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--dv)">
+            <div>
+              <div style="font:500 13px/1 var(--f);color:var(--c8)">员工已确认</div>
+              <div style="font:400 11px/1 var(--f);color:var(--c4);margin-top:3px">员工已查看结果</div>
+            </div>
+            <span style="font:600 20px/1 var(--fm);color:var(--pr)">32</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0">
+            <div>
+              <div style="font:500 13px/1 var(--f);color:var(--c8)">已申诉</div>
+              <div style="font:400 11px/1 var(--f);color:var(--c4);margin-top:3px">员工发起绩效申诉</div>
+            </div>
+            <span style="font:600 20px/1 var(--fm);color:var(--ro)">2</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.querySelectorAll('.filter-tag').forEach(tag=>{
+  tag.onclick=()=>{
+    document.querySelectorAll('.filter-tag').forEach(t=>t.classList.remove('on'));
+    tag.classList.add('on');
+  };
+});
+</script>
+
+</body>
+</html>

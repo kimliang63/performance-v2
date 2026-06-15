@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 团队目标</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoothing:antialiased}
+.card{background:var(--sf);border-radius:var(--r3);box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:16px}
+.card-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--dv)}
+.card-t{font:600 15px/1 var(--f);color:var(--c9)}
+.card-action{font:500 13px/1 var(--f);color:var(--pr);cursor:pointer;display:flex;align-items:center;gap:4px}
+.card-action:hover{color:var(--pr700)}
+.card-action svg{width:14px;height:14px}
+.card-bd{padding:16px 20px}
+.btn{height:34px;padding:0 16px;border-radius:var(--r1);font:500 13px/1 var(--f);border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.btn-s{background:var(--sf);color:var(--c7);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3)}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.stat{background:var(--sf);border-radius:var(--r2);padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.05);text-align:center}
+.stat-v{font:700 24px/1 var(--fm);color:var(--c9)}
+.stat-l{font:400 12px/1 var(--f);color:var(--c5);margin-top:4px}
+
+/* Person */
+.person{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--dv);cursor:pointer}
+.person:last-child{border-bottom:none}
+.person:hover{background:var(--c0);margin:0 -20px;padding:12px 20px}
+.person-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 13px/1 var(--f);color:#FFF;flex-shrink:0}
+.person-info{flex:1;min-width:0}
+.person-name{font:500 13px/1 var(--f);color:var(--c8)}
+.person-meta{font:400 12px/1 var(--f);color:var(--c5);margin-top:2px}
+.person-progress{width:100px}
+.person-bar{height:6px;background:var(--c1);border-radius:3px;overflow:hidden}
+.person-fill{height:100%;border-radius:3px}
+.person-pct{font:500 11px/1 var(--fm);color:var(--c5);margin-top:2px;text-align:right}
+.person-status{font:500 11px/1 var(--f);padding:3px 8px;border-radius:4px}
+.person-status.done{background:var(--em50);color:var(--em700)}
+.person-status.active{background:var(--pr50);color:var(--pr)}
+.person-status.pending{background:var(--ac50);color:var(--ac700)}
+
+/* Filter */
+.filter{display:flex;gap:8px;margin-bottom:16px;align-items:center}
+.filter-tag{padding:5px 12px;border-radius:var(--r1);font:500 12px/1 var(--f);cursor:pointer;border:1px solid var(--c2);color:var(--c6);background:var(--sf);transition:all .15s}
+.filter-tag.on{background:var(--pr);color:#FFF;border-color:var(--pr)}
+.filter-tag:hover:not(.on){border-color:var(--pr);color:var(--pr)}
+.filter-search{margin-left:auto;width:200px;height:32px;border:1px solid var(--c2);border-radius:var(--r1);padding:0 10px;font:13px/1 var(--f);outline:none}
+.filter-search:focus{border-color:var(--pr)}
+</style>
+</head>
+<body>
+
+<script>
+GHR_NAV.init('workbench', '团队目标');
+</script>
+
+<div style="padding:24px">
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat"><div class="stat-v">8</div><div class="stat-l">团队成员</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--em700)">5</div><div class="stat-l">目标已提交</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--ac700)">2</div><div class="stat-l">填写中</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--ro)">1</div><div class="stat-l">未开始</div></div>
+  </div>
+
+  <!-- Filter -->
+  <div class="filter">
+    <span class="filter-tag on">全部</span>
+    <span class="filter-tag">已提交</span>
+    <span class="filter-tag">填写中</span>
+    <span class="filter-tag">未开始</span>
+    <input class="filter-search" placeholder="搜索成员…"/>
+  </div>
+
+  <!-- Team Members -->
+  <div class="card">
+    <div class="card-hd">
+      <span class="card-t">团队目标进度</span>
+      <span class="card-action">批量催办 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+    </div>
+    <div class="card-bd">
+      <div class="person">
+        <div class="person-av" style="background:var(--pr)">李</div>
+        <div class="person-info">
+          <div class="person-name">李四</div>
+          <div class="person-meta">技术部 · 高级工程师</div>
+        </div>
+        <div class="person-progress">
+          <div class="person-bar"><div class="person-fill" style="width:100%;background:var(--em)"></div></div>
+          <div class="person-pct">100%</div>
+        </div>
+        <span class="person-status done">已提交</span>
+      </div>
+      <div class="person">
+        <div class="person-av" style="background:var(--em)">王</div>
+        <div class="person-info">
+          <div class="person-name">王五</div>
+          <div class="person-meta">产品部 · 产品经理</div>
+        </div>
+        <div class="person-progress">
+          <div class="person-bar"><div class="person-fill" style="width:100%;background:var(--em)"></div></div>
+          <div class="person-pct">100%</div>
+        </div>
+        <span class="person-status done">已提交</span>
+      </div>
+      <div class="person">
+        <div class="person-av" style="background:var(--ac)">赵</div>
+        <div class="person-info">
+          <div class="person-name">赵六</div>
+          <div class="person-meta">产品部 · 产品经理</div>
+        </div>
+        <div class="person-progress">
+          <div class="person-bar"><div class="person-fill" style="width:100%;background:var(--em)"></div></div>
+          <div class="person-pct">100%</div>
+        </div>
+        <span class="person-status done">已提交</span>
+      </div>
+      <div class="person">
+        <div class="person-av" style="background:var(--vi)">孙</div>
+        <div class="person-info">
+          <div class="person-name">孙七</div>
+          <div class="person-meta">市场部 · 市场经理</div>
+        </div>
+        <div class="person-progress">
+          <div class="person-bar"><div class="person-fill" style="width:100%;background:var(--em)"></div></div>
+          <div class="person-pct">100%</div>
+        </div>
+        <span class="person-status done">已提交</span>
+      </div>
+      <div class="person">
+        <div class="person-av" style="background:var(--ro)">周</div>
+        <div class="person-info">
+          <div class="person-name">周八</div>
+          <div class="person-meta">市场部 · 市场专员</div>
+        </div>
+        <div class="person-progress">
+          <div class="person-bar"><div class="person-fill" style="width:100%;background:var(--em)"></div></div>
+          <div class="person-pct">100%</div>
+        </div>
+        <span class="person-status done">已提交</span>
+      </div>
+      <div class="person">
+        <div class="person-av" style="background:var(--pr)">吴</div>
+        <div class="person-info">
+          <div class="person-name">吴九</div>
+          <div class="person-meta">财务部 · 财务主管</div>
+        </div>
+        <div class="person-progress">
+          <div class="person-bar"><div class="person-fill" style="width:60%;background:var(--pr)"></div></div>
+          <div class="person-pct">60%</div>
+        </div>
+        <span class="person-status active">填写中</span>
+      </div>
+      <div class="person">
+        <div class="person-av" style="background:var(--ac)">郑</div>
+        <div class="person-info">
+          <div class="person-name">郑十</div>
+          <div class="person-meta">财务部 · 会计</div>
+        </div>
+        <div class="person-progress">
+          <div class="person-bar"><div class="person-fill" style="width:30%;background:var(--ac)"></div></div>
+          <div class="person-pct">30%</div>
+        </div>
+        <span class="person-status active">填写中</span>
+      </div>
+      <div class="person">
+        <div class="person-av" style="background:var(--c4)">陈</div>
+        <div class="person-info">
+          <div class="person-name">陈十一</div>
+          <div class="person-meta">技术部 · 前端工程师</div>
+        </div>
+        <div class="person-progress">
+          <div class="person-bar"><div class="person-fill" style="width:0%;background:var(--c3)"></div></div>
+          <div class="person-pct">0%</div>
+        </div>
+        <span class="person-status pending">未开始</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.querySelectorAll('.filter-tag').forEach(tag=>{
+  tag.onclick=()=>{
+    document.querySelectorAll('.filter-tag').forEach(t=>t.classList.remove('on'));
+    tag.classList.add('on');
+  };
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 绩效流程</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoothing:antialiased}
+.card{background:var(--sf);border-radius:var(--r3);box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:16px}
+.card-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--dv)}
+.card-t{font:600 15px/1 var(--f);color:var(--c9)}
+.card-action{font:500 13px/1 var(--f);color:var(--pr);cursor:pointer;display:flex;align-items:center;gap:4px}
+.card-action:hover{color:var(--pr700)}
+.card-action svg{width:14px;height:14px}
+.card-bd{padding:16px 20px}
+.btn{height:34px;padding:0 16px;border-radius:var(--r1);font:500 13px/1 var(--f);border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.btn-p{background:var(--pr);color:#FFF}.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c7);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3)}
+
+/* Flow Steps */
+.flow{display:flex;align-items:flex-start;gap:0;padding:20px 0}
+.flow-step{flex:1;text-align:center;position:relative}
+.flow-step::after{content:'';position:absolute;top:20px;left:50%;width:100%;height:2px;background:var(--dv)}
+.flow-step:last-child::after{display:none}
+.flow-dot{width:40px;height:40px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;font:600 14px/1 var(--f);transition:all .3s}
+.flow-dot.done{background:var(--em);color:#FFF}
+.flow-dot.active{background:var(--pr);color:#FFF;box-shadow:0 0 0 4px rgba(37,99,235,.15)}
+.flow-dot.pending{background:var(--c1);color:var(--c4);border:2px solid var(--c3)}
+.flow-step.done::after{background:var(--em)}
+.flow-step.active::after{background:linear-gradient(90deg,var(--em),var(--c3))}
+.flow-name{font:500 13px/1 var(--f);color:var(--c8);margin-bottom:4px}
+.flow-meta{font:400 11px/1 var(--f);color:var(--c5)}
+
+/* Timeline */
+.tl{position:relative;padding-left:28px}
+.tl::before{content:'';position:absolute;left:9px;top:0;bottom:0;width:2px;background:var(--dv)}
+.tl-item{position:relative;padding-bottom:24px}
+.tl-item:last-child{padding-bottom:0}
+.tl-dot{position:absolute;left:-28px;top:0;width:20px;height:20px;border-radius:50%;border:2px solid;display:flex;align-items:center;justify-content:center}
+.tl-dot.done{border-color:var(--em);background:var(--em50)}
+.tl-dot.active{border-color:var(--pr);background:var(--pr50);box-shadow:0 0 0 4px rgba(37,99,235,.1)}
+.tl-dot.pending{border-color:var(--c3);background:var(--sf)}
+.tl-dot svg{width:10px;height:10px}
+.tl-hd{display:flex;align-items:center;justify-content:space-between}
+.tl-name{font:500 14px/1 var(--f);color:var(--c8)}
+.tl-time{font:400 12px/1 var(--f);color:var(--c4)}
+.tl-desc{font:400 13px/1 var(--f);color:var(--c5);margin-top:6px;padding:10px 14px;background:var(--c0);border-radius:var(--r2)}
+.tl-assignee{display:flex;align-items:center;gap:6px;margin-top:8px}
+.tl-av{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 9px/1 var(--f);color:#FFF}
+.tl-assignee-name{font:400 12px/1 var(--f);color:var(--c6)}
+
+/* Table */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font:500 12px/1 var(--f);color:var(--c5);text-align:left;padding:10px 12px;border-bottom:1px solid var(--dv);background:var(--c0)}
+.tbl td{font:400 13px/1.4 var(--f);color:var(--c7);padding:10px 12px;border-bottom:1px solid var(--dv)}
+.tbl tr:hover td{background:var(--c0)}
+.tag{font:500 11px/1 var(--f);padding:3px 8px;border-radius:4px}
+.tag.active{background:var(--pr50);color:var(--pr)}
+.tag.done{background:var(--em50);color:var(--em700)}
+.tag.pending{background:var(--ac50);color:var(--ac700)}
+</style>
+</head>
+<body>
+
+<script>
+GHR_NAV.init('perf', '绩效流程');
+</script>
+
+<div style="padding:24px">
+  <!-- Flow Steps -->
+  <div class="card">
+    <div class="card-hd"><span class="card-t">2026年Q2 绩效流程</span></div>
+    <div class="card-bd">
+      <div class="flow">
+        <div class="flow-step done">
+          <div class="flow-dot done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="flow-name">方案配置</div>
+          <div class="flow-meta">已完成 · 03-15</div>
+        </div>
+        <div class="flow-step done">
+          <div class="flow-dot done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="flow-name">目标制定</div>
+          <div class="flow-meta">已完成 · 04-01</div>
+        </div>
+        <div class="flow-step active">
+          <div class="flow-dot active">3</div>
+          <div class="flow-name">绩效评分</div>
+          <div class="flow-meta">进行中 · 截止 04-15</div>
+        </div>
+        <div class="flow-step pending">
+          <div class="flow-dot pending">4</div>
+          <div class="flow-name">结果审定</div>
+          <div class="flow-meta">待开始 · 04-20</div>
+        </div>
+        <div class="flow-step pending">
+          <div class="flow-dot pending">5</div>
+          <div class="flow-name">员工确认</div>
+          <div class="flow-meta">待开始 · 04-25</div>
+        </div>
+        <div class="flow-step pending">
+          <div class="flow-dot pending">6</div>
+          <div class="flow-name">绩效面谈</div>
+          <div class="flow-meta">待开始 · 04-30</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <!-- Left: Timeline -->
+    <div class="card">
+      <div class="card-hd"><span class="card-t">流程日志</span></div>
+      <div class="card-bd">
+        <div class="tl">
+          <div class="tl-item">
+            <div class="tl-dot done"><svg viewBox="0 0 24 24" fill="none" stroke="var(--em)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="tl-hd"><span class="tl-name">方案配置完成</span><span class="tl-time">2026-03-15 10:30</span></div>
+            <div class="tl-desc">管理员完成绩效方案配置，包含考核维度、权重、等级规则。</div>
+            <div class="tl-assignee"><div class="tl-av" style="background:var(--pr)">管</div><span class="tl-assignee-name">管理员</span></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot done"><svg viewBox="0 0 24 24" fill="none" stroke="var(--em)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="tl-hd"><span class="tl-name">目标制定启动</span><span class="tl-time">2026-04-01 09:00</span></div>
+            <div class="tl-desc">系统自动发起目标制定流程，已通知 45 名员工。</div>
+            <div class="tl-assignee"><div class="tl-av" style="background:var(--c5)">系</div><span class="tl-assignee-name">系统自动</span></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot done"><svg viewBox="0 0 24 24" fill="none" stroke="var(--em)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="tl-hd"><span class="tl-name">目标制定截止</span><span class="tl-time">2026-04-12 18:00</span></div>
+            <div class="tl-desc">42/45 人已提交目标，3 人未提交已自动催办。</div>
+            <div class="tl-assignee"><div class="tl-av" style="background:var(--c5)">系</div><span class="tl-assignee-name">系统自动</span></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot active"></div>
+            <div class="tl-hd"><span class="tl-name">绩效评分进行中</span><span class="tl-time">2026-04-13 09:00 - 进行中</span></div>
+            <div class="tl-desc">评分流程已启动，当前 28/45 人已完成评分。</div>
+            <div class="tl-assignee"><div class="tl-av" style="background:var(--pr)">系</div><span class="tl-assignee-name">系统自动</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Activity List -->
+    <div class="card">
+      <div class="card-hd">
+        <span class="card-t">考核活动</span>
+        <span class="card-action">查看全部 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+      </div>
+      <div class="card-bd" style="padding:0">
+        <table class="tbl">
+          <thead><tr><th>活动名称</th><th>状态</th><th>进度</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:500;color:var(--c8)">Q2目标制定</td><td><span class="tag done">已完成</span></td><td style="font-family:var(--fm);font-weight:500">42/45</td></tr>
+            <tr><td style="font-weight:500;color:var(--c8)">Q2绩效评分</td><td><span class="tag active">进行中</span></td><td style="font-family:var(--fm);font-weight:500">28/45</td></tr>
+            <tr><td style="font-weight:500;color:var(--c8)">Q2结果审定</td><td><span class="tag pending">待开始</span></td><td style="font-family:var(--fm);font-weight:500">0/45</td></tr>
+            <tr><td style="font-weight:500;color:var(--c8)">Q2员工确认</td><td><span class="tag pending">待开始</span></td><td style="font-family:var(--fm);font-weight:500">0/45</td></tr>
+            <tr><td style="font-weight:500;color:var(--c8)">Q2绩效面谈</td><td><span class="tag pending">待开始</span></td><td style="font-family:var(--fm);font-weight:500">0/45</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

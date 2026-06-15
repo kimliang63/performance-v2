@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 团队绩效结果</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoothing:antialiased}
+.card{background:var(--sf);border-radius:var(--r3);box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:16px}
+.card-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--dv)}
+.card-t{font:600 15px/1 var(--f);color:var(--c9)}
+.card-action{font:500 13px/1 var(--f);color:var(--pr);cursor:pointer;display:flex;align-items:center;gap:4px}
+.card-action:hover{color:var(--pr700)}
+.card-action svg{width:14px;height:14px}
+.card-bd{padding:16px 20px}
+.btn{height:34px;padding:0 16px;border-radius:var(--r1);font:500 13px/1 var(--f);border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.btn-s{background:var(--sf);color:var(--c7);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3)}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.stat{background:var(--sf);border-radius:var(--r2);padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.05);position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.stat.pr::before{background:var(--pr)}.stat.em::before{background:var(--em)}.stat.ac::before{background:var(--ac)}.stat.vi::before{background:var(--vi)}
+.stat-v{font:700 24px/1 var(--fm);color:var(--c9)}
+.stat-l{font:400 12px/1 var(--f);color:var(--c5);margin-top:4px}
+
+/* Table */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font:500 12px/1 var(--f);color:var(--c5);text-align:left;padding:10px 12px;border-bottom:1px solid var(--dv);background:var(--c0)}
+.tbl td{font:400 13px/1.4 var(--f);color:var(--c7);padding:12px;border-bottom:1px solid var(--dv)}
+.tbl tr:hover td{background:var(--c0)}
+.tbl .score{font:600 14px/1 var(--fm)}
+.tbl .grade{font:500 12px/1 var(--f);padding:3px 8px;border-radius:4px}
+.tbl .grade.a{background:var(--em50);color:var(--em700)}
+.tbl .grade.bp{background:var(--pr50);color:var(--pr)}
+.tbl .grade.b{background:var(--c1);color:var(--c7)}
+.tbl .grade.bm{background:var(--ac50);color:var(--ac700)}
+.tbl .grade.c{background:var(--ro50);color:var(--ro)}
+
+/* Distribution */
+.dist-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.dist-row:last-child{margin-bottom:0}
+.dist-label{font:600 13px/1 var(--f);width:28px;flex-shrink:0}
+.dist-bar{flex:1;height:20px;background:var(--c1);border-radius:4px;overflow:hidden;position:relative}
+.dist-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px;font:600 10px/1 var(--f);color:#FFF}
+.dist-target{position:absolute;top:0;bottom:0;width:2px;background:var(--c9);opacity:.5}
+.dist-pct{font:500 12px/1 var(--fm);width:40px;text-align:right;flex-shrink:0}
+
+/* Two Column */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+</style>
+</head>
+<body>
+
+<script>
+GHR_NAV.init('workbench', '团队绩效结果');
+</script>
+
+<div style="padding:24px">
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat pr"><div class="stat-v">8</div><div class="stat-l">团队总人数</div></div>
+    <div class="stat em"><div class="stat-v">85.3</div><div class="stat-l">平均分</div></div>
+    <div class="stat ac"><div class="stat-v">B+</div><div class="stat-l">中位等级</div></div>
+    <div class="stat vi"><div class="stat-v">92</div><div class="stat-l">最高分</div></div>
+  </div>
+
+  <div style="display:flex;gap:10px;margin-bottom:16px">
+    <button class="btn btn-s">导出报表</button>
+    <button class="btn btn-s">对比上季度</button>
+  </div>
+
+  <div class="two-col">
+    <!-- Left: Result Table -->
+    <div class="card">
+      <div class="card-hd"><span class="card-t">绩效结果明细</span></div>
+      <div class="card-bd" style="padding:0;overflow-x:auto">
+        <table class="tbl">
+          <thead><tr>
+            <th>姓名</th><th>部门</th><th>评分</th><th>等级</th><th>环比</th>
+          </tr></thead>
+          <tbody>
+            <tr><td style="font-weight:500;color:var(--c8)">张三</td><td>技术部</td><td><span class="score" style="color:var(--em700)">92</span></td><td><span class="grade a">A</span></td><td style="color:var(--em700)">+3</td></tr>
+            <tr><td style="font-weight:500;color:var(--c8)">周八</td><td>市场部</td><td><span class="score" style="color:var(--em700)">91</span></td><td><span class="grade a">A</span></td><td style="color:var(--em700)">+5</td></tr>
+            <tr><td style="font-weight:500;color:var(--c8)">李四</td><td>技术部</td><td><span class="score" style="color:var(--pr)">85</span></td><td><span class="grade bp">B+</span></td><td style="color:var(--em700)">+2</td></tr>
+            <tr><td style="font-weight:500;color:var(--c8)">赵六</td><td>产品部</td><td><span class="score" style="color:var(--pr)">88</span></td><td><span class="grade bp">B+</span></td><td style="color:var(--em700)">+4</td></tr>
+            <tr><td style="font-weight:500;color:var(--c8)">陈十一</td><td>技术部</td><td><span class="score" style="color:var(--pr)">82</span></td><td><span class="grade bp">B+</span></td><td style="color:var(--ro)">-1</td></tr>
+            <tr><td style="font-weight:500;color:var(--c8)">王五</td><td>产品部</td><td><span class="score" style="color:var(--c7)">78</span></td><td><span class="grade b">B</span></td><td style="color:var(--em700)">+1</td></tr>
+            <tr><td style="font-weight:500;color:var(--c8)">吴九</td><td>财务部</td><td><span class="score" style="color:var(--c7)">72</span></td><td><span class="grade b">B</span></td><td style="color:var(--ro)">-3</td></tr>
+            <tr><td style="font-weight:500;color:var(--c8)">林十二</td><td>产品部</td><td><span class="score" style="color:var(--c7)">76</span></td><td><span class="grade b">B</span></td><td style="color:var(--em700)">+2</td></tr>
+            <tr><td style="font-weight:500;color:var(--c8)">孙七</td><td>市场部</td><td><span class="score" style="color:var(--ac700)">65</span></td><td><span class="grade bm">B-</span></td><td style="color:var(--ro)">-2</td></tr>
+            <tr><td style="font-weight:500;color:var(--c8)">郑十</td><td>财务部</td><td><span class="score" style="color:var(--ro)">58</span></td><td><span class="grade c">C</span></td><td style="color:var(--ro)">-4</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Right: Distribution -->
+    <div>
+      <div class="card">
+        <div class="card-hd"><span class="card-t">等级分布</span></div>
+        <div class="card-bd">
+          <div class="dist-row">
+            <span class="dist-label" style="color:var(--em)">A</span>
+            <div class="dist-bar">
+              <div class="dist-fill" style="width:25%;background:var(--em)">25%</div>
+              <div class="dist-target" style="left:25%"></div>
+            </div>
+            <span class="dist-pct" style="color:var(--em700)">达标</span>
+          </div>
+          <div class="dist-row">
+            <span class="dist-label" style="color:var(--pr)">B+</span>
+            <div class="dist-bar">
+              <div class="dist-fill" style="width:37.5%;background:var(--pr)">37.5%</div>
+              <div class="dist-target" style="left:35%"></div>
+            </div>
+            <span class="dist-pct" style="color:var(--em700)">+2.5%</span>
+          </div>
+          <div class="dist-row">
+            <span class="dist-label">B</span>
+            <div class="dist-bar">
+              <div class="dist-fill" style="width:25%;background:var(--c5)">25%</div>
+              <div class="dist-target" style="left:25%"></div>
+            </div>
+            <span class="dist-pct" style="color:var(--em700)">达标</span>
+          </div>
+          <div class="dist-row">
+            <span class="dist-label" style="color:var(--ac)">B-</span>
+            <div class="dist-bar">
+              <div class="dist-fill" style="width:12.5%;background:var(--ac)">12.5%</div>
+              <div class="dist-target" style="left:10%"></div>
+            </div>
+            <span class="dist-pct" style="color:var(--ro)">+2.5%</span>
+          </div>
+          <div class="dist-row">
+            <span class="dist-label" style="color:var(--ro)">C</span>
+            <div class="dist-bar">
+              <div class="dist-fill" style="width:12.5%;background:var(--ro)">12.5%</div>
+              <div class="dist-target" style="left:5%"></div>
+            </div>
+            <span class="dist-pct" style="color:var(--ro)">+7.5%</span>
+          </div>
+          <div style="margin-top:12px;font:400 12px/1 var(--f);color:var(--c4)">目标：A 25% · B+ 35% · B 25% · B- 10% · C 5%</div>
+        </div>
+      </div>
+
+      <!-- Dimension Comparison -->
+      <div class="card">
+        <div class="card-hd"><span class="card-t">维度对比</span></div>
+        <div class="card-bd">
+          <div style="margin-bottom:12px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;font:500 12px/1 var(--f)"><span style="color:var(--c7)">业绩维度</span><span style="color:var(--pr)">88.5</span></div>
+            <div style="height:8px;background:var(--c1);border-radius:4px;overflow:hidden"><div style="height:100%;width:88.5%;background:var(--pr);border-radius:4px"></div></div>
+          </div>
+          <div style="margin-bottom:12px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;font:500 12px/1 var(--f)"><span style="color:var(--c7)">能力维度</span><span style="color:var(--em700)">85.2</span></div>
+            <div style="height:8px;background:var(--c1);border-radius:4px;overflow:hidden"><div style="height:100%;width:85.2%;background:var(--em);border-radius:4px"></div></div>
+          </div>
+          <div style="margin-bottom:12px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;font:500 12px/1 var(--f)"><span style="color:var(--c7)">态度维度</span><span style="color:var(--ac700)">83.0</span></div>
+            <div style="height:8px;background:var(--c1);border-radius:4px;overflow:hidden"><div style="height:100%;width:83%;background:var(--ac);border-radius:4px"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;font:500 12px/1 var(--f)"><span style="color:var(--c7)">价值观</span><span style="color:var(--c7)">80.0</span></div>
+            <div style="height:8px;background:var(--c1);border-radius:4px;overflow:hidden"><div style="height:100%;width:80%;background:var(--c5);border-radius:4px"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

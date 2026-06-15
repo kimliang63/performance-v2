@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 绩效分析报表</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoothing:antialiased}
+.card{background:var(--sf);border-radius:var(--r3);box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:16px}
+.card-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--dv)}
+.card-t{font:600 15px/1 var(--f);color:var(--c9)}
+.card-action{font:500 13px/1 var(--f);color:var(--pr);cursor:pointer;display:flex;align-items:center;gap:4px}
+.card-action:hover{color:var(--pr700)}
+.card-action svg{width:14px;height:14px}
+.card-bd{padding:16px 20px}
+.btn{height:34px;padding:0 16px;border-radius:var(--r1);font:500 13px/1 var(--f);border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.btn-s{background:var(--sf);color:var(--c7);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3)}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.stat{background:var(--sf);border-radius:var(--r2);padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.05);position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.stat.pr::before{background:var(--pr)}.stat.em::before{background:var(--em)}.stat.ac::before{background:var(--ac)}.stat.ro::before{background:var(--ro)}
+.stat-v{font:700 24px/1 var(--fm);color:var(--c9)}
+.stat-l{font:400 12px/1 var(--f);color:var(--c5);margin-top:4px}
+.stat-d{font:500 11px/1 var(--f);margin-top:4px}
+.stat-d.up{color:var(--em700)}.stat-d.down{color:var(--ro)}
+
+/* Chart placeholder */
+.chart{height:240px;background:var(--c0);border-radius:var(--r2);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.chart-bars{display:flex;align-items:flex-end;gap:12px;height:180px;padding:0 20px}
+.chart-bar{width:32px;border-radius:4px 4px 0 0;position:relative;transition:height .5s}
+.chart-bar::after{content:attr(data-val);position:absolute;top:-18px;left:50%;transform:translateX(-50%);font:600 10px/1 var(--fm);color:var(--c5)}
+.chart-label{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:space-around;padding:8px 20px 0;font:400 11px/1 var(--f);color:var(--c4)}
+
+/* Dimension bars */
+.dim{margin-bottom:14px}
+.dim:last-child{margin-bottom:0}
+.dim-hd{display:flex;justify-content:space-between;margin-bottom:4px;font:500 12px/1 var(--f)}
+.dim-name{color:var(--c7)}.dim-val{color:var(--pr);font-family:var(--fm);font-weight:600}
+.dim-bar{height:8px;background:var(--c1);border-radius:4px;overflow:hidden}
+.dim-fill{height:100%;border-radius:4px}
+
+/* Dept Table */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font:500 12px/1 var(--f);color:var(--c5);text-align:left;padding:10px 12px;border-bottom:1px solid var(--dv);background:var(--c0)}
+.tbl td{font:400 13px/1.4 var(--f);color:var(--c7);padding:10px 12px;border-bottom:1px solid var(--dv)}
+.tbl tr:hover td{background:var(--c0)}
+.tbl .score{font:600 13px/1 var(--fm)}
+
+/* Two Column */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+/* Filter */
+.filter{display:flex;gap:8px;margin-bottom:16px;align-items:center}
+.filter-tag{padding:5px 12px;border-radius:var(--r1);font:500 12px/1 var(--f);cursor:pointer;border:1px solid var(--c2);color:var(--c6);background:var(--sf);transition:all .15s}
+.filter-tag.on{background:var(--pr);color:#FFF;border-color:var(--pr)}
+</style>
+</head>
+<body>
+
+<script>
+GHR_NAV.init('perf', '绩效分析报表');
+</script>
+
+<div style="padding:24px">
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat pr"><div class="stat-v">82.6</div><div class="stat-l">全公司平均分</div><div class="stat-d up">↑ 3.2 vs 上季</div></div>
+    <div class="stat em"><div class="stat-v">45</div><div class="stat-l">参评总人数</div><div class="stat-d up">↑ 5 vs 上季</div></div>
+    <div class="stat ac"><div class="stat-v">73.3%</div><div class="stat-l">参评率</div><div class="stat-d up">↑ 2.1%</div></div>
+    <div class="stat ro"><div class="stat-v">2</div><div class="stat-l">绩效申诉</div><div class="stat-d down">↑ 1 vs 上季</div></div>
+  </div>
+
+  <div style="display:flex;gap:10px;margin-bottom:16px">
+    <button class="btn btn-s">导出报表</button>
+    <button class="btn btn-s">对比上季度</button>
+  </div>
+
+  <!-- Period Filter -->
+  <div class="filter">
+    <span class="filter-tag on">2026年Q2</span>
+    <span class="filter-tag">2026年Q1</span>
+    <span class="filter-tag">2025年Q4</span>
+    <span class="filter-tag">2025年Q3</span>
+    <select style="height:32px;border:1px solid var(--c2);border-radius:var(--r1);padding:0 10px;font:13px/1 var(--f);color:var(--c7);background:var(--sf);outline:none;margin-left:8px">
+      <option>全部部门</option>
+      <option>技术部</option>
+      <option>产品部</option>
+      <option>市场部</option>
+      <option>财务部</option>
+    </select>
+  </div>
+
+  <!-- Score Trend Chart -->
+  <div class="card">
+    <div class="card-hd">
+      <span class="card-t">平均分趋势</span>
+      <span class="card-action">查看详情 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+    </div>
+    <div class="card-bd">
+      <div class="chart">
+        <div class="chart-bars">
+          <div class="chart-bar" style="height:140px;background:var(--c3)" data-val="72.1"></div>
+          <div class="chart-bar" style="height:155px;background:var(--c3)" data-val="76.8"></div>
+          <div class="chart-bar" style="height:165px;background:var(--c3)" data-val="79.4"></div>
+          <div class="chart-bar" style="height:175px;background:var(--pr)" data-val="82.6"></div>
+        </div>
+        <div class="chart-label"><span>2025-Q3</span><span>2025-Q4</span><span>2026-Q1</span><span>2026-Q2</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <!-- Left: Dimension Comparison -->
+    <div class="card">
+      <div class="card-hd"><span class="card-t">维度得分对比</span></div>
+      <div class="card-bd">
+        <div class="dim">
+          <div class="dim-hd"><span class="dim-name">业绩维度</span><span class="dim-val">85.2</span></div>
+          <div class="dim-bar"><div class="dim-fill" style="width:85.2%;background:var(--pr)"></div></div>
+        </div>
+        <div class="dim">
+          <div class="dim-hd"><span class="dim-name">能力维度</span><span class="dim-val">83.8</span></div>
+          <div class="dim-bar"><div class="dim-fill" style="width:83.8%;background:var(--em)"></div></div>
+        </div>
+        <div class="dim">
+          <div class="dim-hd"><span class="dim-name">态度维度</span><span class="dim-val">81.5</span></div>
+          <div class="dim-bar"><div class="dim-fill" style="width:81.5%;background:var(--ac)"></div></div>
+        </div>
+        <div class="dim">
+          <div class="dim-hd"><span class="dim-name">价值观</span><span class="dim-val">79.3</span></div>
+          <div class="dim-bar"><div class="dim-fill" style="width:79.3%;background:var(--c5)"></div></div>
+        </div>
+        <div style="margin-top:16px;padding:12px;background:var(--c0);border-radius:var(--r2);font:400 12px/1.5 var(--f);color:var(--c5)">
+          业绩维度得分最高，价值观维度相对偏低。建议加强价值观宣导与培训。
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Department Comparison -->
+    <div class="card">
+      <div class="card-hd"><span class="card-t">部门平均分</span></div>
+      <div class="card-bd">
+        <div class="dim">
+          <div class="dim-hd"><span class="dim-name">技术部</span><span class="dim-val">87.3</span></div>
+          <div class="dim-bar"><div class="dim-fill" style="width:87.3%;background:var(--pr)"></div></div>
+        </div>
+        <div class="dim">
+          <div class="dim-hd"><span class="dim-name">产品部</span><span class="dim-val">84.1</span></div>
+          <div class="dim-bar"><div class="dim-fill" style="width:84.1%;background:var(--em)"></div></div>
+        </div>
+        <div class="dim">
+          <div class="dim-hd"><span class="dim-name">市场部</span><span class="dim-val">80.5</span></div>
+          <div class="dim-bar"><div class="dim-fill" style="width:80.5%;background:var(--ac)"></div></div>
+        </div>
+        <div class="dim">
+          <div class="dim-hd"><span class="dim-name">财务部</span><span class="dim-val">76.8</span></div>
+          <div class="dim-bar"><div class="dim-fill" style="width:76.8%;background:var(--ro)"></div></div>
+        </div>
+        <div style="margin-top:16px;padding:12px;background:var(--c0);border-radius:var(--r2);font:400 12px/1.5 var(--f);color:var(--c5)">
+          技术部平均分领先，财务部偏低。建议关注财务部绩效改进计划。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Department Detail Table -->
+  <div class="card">
+    <div class="card-hd"><span class="card-t">部门绩效明细</span></div>
+    <div class="card-bd" style="padding:0;overflow-x:auto">
+      <table class="tbl">
+        <thead><tr>
+          <th>部门</th><th>人数</th><th>平均分</th><th>最高分</th><th>最低分</th><th>A级占比</th><th>C级占比</th><th>环比变化</th><th>操作</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:500;color:var(--c8)">技术部</td>
+            <td style="font-family:var(--fm)">15</td>
+            <td><span class="score" style="color:var(--em700)">87.3</span></td>
+            <td style="font-family:var(--fm)">95</td>
+            <td style="font-family:var(--fm)">72</td>
+            <td style="font-family:var(--fm)">26.7%</td>
+            <td style="font-family:var(--fm)">0%</td>
+            <td style="color:var(--em700)">+4.1</td>
+            <td><a style="font:500 12px/1 var(--f);color:var(--pr);cursor:pointer">查看</a></td>
+          </tr>
+          <tr>
+            <td style="font-weight:500;color:var(--c8)">产品部</td>
+            <td style="font-family:var(--fm)">12</td>
+            <td><span class="score" style="color:var(--em700)">84.1</span></td>
+            <td style="font-family:var(--fm)">92</td>
+            <td style="font-family:var(--fm)">68</td>
+            <td style="font-family:var(--fm)">25%</td>
+            <td style="font-family:var(--fm)">0%</td>
+            <td style="color:var(--em700)">+2.8</td>
+            <td><a style="font:500 12px/1 var(--f);color:var(--pr);cursor:pointer">查看</a></td>
+          </tr>
+          <tr>
+            <td style="font-weight:500;color:var(--c8)">市场部</td>
+            <td style="font-family:var(--fm)">10</td>
+            <td><span class="score" style="color:var(--pr)">80.5</span></td>
+            <td style="font-family:var(--fm)">88</td>
+            <td style="font-family:var(--fm)">62</td>
+            <td style="font-family:var(--fm)">10%</td>
+            <td style="font-family:var(--fm)">10%</td>
+            <td style="color:var(--ro)">-1.2</td>
+            <td><a style="font:500 12px/1 var(--f);color:var(--pr);cursor:pointer">查看</a></td>
+          </tr>
+          <tr>
+            <td style="font-weight:500;color:var(--c8)">财务部</td>
+            <td style="font-family:var(--fm)">8</td>
+            <td><span class="score" style="color:var(--ac700)">76.8</span></td>
+            <td style="font-family:var(--fm)">85</td>
+            <td style="font-family:var(--fm)">58</td>
+            <td style="font-family:var(--fm)">12.5%</td>
+            <td style="font-family:var(--fm)">12.5%</td>
+            <td style="color:var(--ro)">-3.5</td>
+            <td><a style="font:500 12px/1 var(--f);color:var(--pr);cursor:pointer">查看</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Insights -->
+  <div class="card">
+    <div class="card-hd"><span class="card-t">智能分析洞察</span></div>
+    <div class="card-bd">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+        <div style="padding:14px;background:var(--em50);border-radius:var(--r2);border-left:3px solid var(--em)">
+          <div style="font:600 13px/1 var(--f);color:var(--em700);margin-bottom:6px">整体提升</div>
+          <div style="font:400 12px/1.5 var(--f);color:var(--c7)">全公司平均分较上季度提升 3.2 分，连续两个季度正增长。</div>
+        </div>
+        <div style="padding:14px;background:var(--pr50);border-radius:var(--r2);border-left:3px solid var(--pr)">
+          <div style="font:600 13px/1 var(--f);color:var(--pr);margin-bottom:6px">技术部领先</div>
+          <div style="font:400 12px/1.5 var(--f);color:var(--c7)">技术部平均分 87.3 分，环比提升 4.1 分，为全公司最高。</div>
+        </div>
+        <div style="padding:14px;background:var(--ro50);border-radius:var(--r2);border-left:3px solid var(--ro)">
+          <div style="font:600 13px/1 var(--f);color:var(--ro);margin-bottom:6px">需关注</div>
+          <div style="font:400 12px/1.5 var(--f);color:var(--c7)">财务部平均分下滑 3.5 分，C 级占比 12.5% 超出目标。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.querySelectorAll('.filter-tag').forEach(tag=>{
+  tag.onclick=()=>{
+    document.querySelectorAll('.filter-tag').forEach(t=>t.classList.remove('on'));
+    tag.classList.add('on');
+  };
+});
+</script>
+
+</body>
+</html>

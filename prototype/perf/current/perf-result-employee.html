@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 员工目标查看</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoothing:antialiased}
+.card{background:var(--sf);border-radius:var(--r3);box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:16px}
+.card-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--dv)}
+.card-t{font:600 15px/1 var(--f);color:var(--c9)}
+.card-action{font:500 13px/1 var(--f);color:var(--pr);cursor:pointer;display:flex;align-items:center;gap:4px}
+.card-action:hover{color:var(--pr700)}
+.card-action svg{width:14px;height:14px}
+.card-bd{padding:16px 20px}
+.btn{height:34px;padding:0 16px;border-radius:var(--r1);font:500 13px/1 var(--f);border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.btn-p{background:var(--pr);color:#FFF}.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c7);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3)}
+
+/* Table */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font:500 12px/1 var(--f);color:var(--c5);text-align:left;padding:10px 12px;border-bottom:1px solid var(--dv);background:var(--c0)}
+.tbl td{font:400 13px/1.4 var(--f);color:var(--c7);padding:10px 12px;border-bottom:1px solid var(--dv)}
+.tbl tr:hover td{background:var(--c0)}
+.tag{font:500 11px/1 var(--f);padding:3px 8px;border-radius:4px;display:inline-block}
+.tag.done{background:var(--em50);color:var(--em700)}
+.tag.active{background:var(--pr50);color:var(--pr)}
+.tag.pending{background:var(--ac50);color:var(--ac700)}
+
+/* Progress */
+.prog{display:flex;align-items:center;gap:8px}
+.prog-bar{flex:1;height:6px;background:var(--c1);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;border-radius:3px}
+.prog-pct{font:500 12px/1 var(--fm);color:var(--c5);width:36px;text-align:right}
+
+/* Filter */
+.filter{display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap}
+.filter-tag{padding:5px 12px;border-radius:var(--r1);font:500 12px/1 var(--f);cursor:pointer;border:1px solid var(--c2);color:var(--c6);background:var(--sf);transition:all .15s}
+.filter-tag.on{background:var(--pr);color:#FFF;border-color:var(--pr)}
+.filter-search{margin-left:auto;width:200px;height:32px;border:1px solid var(--c2);border-radius:var(--r1);padding:0 10px;font:13px/1 var(--f);outline:none}
+.filter-search:focus{border-color:var(--pr)}
+</style>
+</head>
+<body>
+
+<script>
+GHR_NAV.init('perf', '目标中心');
+</script>
+
+<div style="padding:24px">
+  <div style="display:flex;gap:10px;margin-bottom:16px">
+    <button class="btn btn-s">导出目标</button>
+    <button class="btn btn-s">批量导出</button>
+  </div>
+
+  <!-- Filter -->
+  <div class="filter">
+    <span class="filter-tag on">全部</span>
+    <span class="filter-tag">已提交</span>
+    <span class="filter-tag">填写中</span>
+    <span class="filter-tag">未开始</span>
+    <select style="height:32px;border:1px solid var(--c2);border-radius:var(--r1);padding:0 10px;font:13px/1 var(--f);color:var(--c7);background:var(--sf);outline:none;margin-left:8px">
+      <option>全部部门</option>
+      <option>技术部</option>
+      <option>产品部</option>
+      <option>市场部</option>
+      <option>财务部</option>
+    </select>
+    <input class="filter-search" placeholder="搜索姓名/工号…"/>
+  </div>
+
+  <!-- Employee Goal List -->
+  <div class="card">
+    <div class="card-hd"><span class="card-t">员工目标列表 · 2026年Q2</span></div>
+    <div class="card-bd" style="padding:0;overflow-x:auto">
+      <table class="tbl">
+        <thead><tr>
+          <th>姓名</th><th>工号</th><th>部门</th><th>目标数</th><th>权重</th><th>进度</th><th>状态</th><th>操作</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:500;color:var(--c8)">张三</td>
+            <td style="font-family:var(--fm)">EMP001</td>
+            <td>技术部</td>
+            <td style="font-family:var(--fm)">5</td>
+            <td style="font-family:var(--fm)">100%</td>
+            <td><div class="prog"><div class="prog-bar"><div class="prog-fill" style="width:100%;background:var(--em)"></div></div><span class="prog-pct">100%</span></div></td>
+            <td><span class="tag done">已提交</span></td>
+            <td><a style="font:500 12px/1 var(--f);color:var(--pr);cursor:pointer">查看</a></td>
+          </tr>
+          <tr>
+            <td style="font-weight:500;color:var(--c8)">李四</td>
+            <td style="font-family:var(--fm)">EMP002</td>
+            <td>技术部</td>
+            <td style="font-family:var(--fm)">4</td>
+            <td style="font-family:var(--fm)">100%</td>
+            <td><div class="prog"><div class="prog-bar"><div class="prog-fill" style="width:100%;background:var(--em)"></div></div><span class="prog-pct">100%</span></div></td>
+            <td><span class="tag done">已提交</span></td>
+            <td><a style="font:500 12px/1 var(--f);color:var(--pr);cursor:pointer">查看</a></td>
+          </tr>
+          <tr>
+            <td style="font-weight:500;color:var(--c8)">王五</td>
+            <td style="font-family:var(--fm)">EMP003</td>
+            <td>产品部</td>
+            <td style="font-family:var(--fm)">6</td>
+            <td style="font-family:var(--fm)">100%</td>
+            <td><div class="prog"><div class="prog-bar"><div class="prog-fill" style="width:100%;background:var(--em)"></div></div><span class="prog-pct">100%</span></div></td>
+            <td><span class="tag done">已提交</span></td>
+            <td><a style="font:500 12px/1 var(--f);color:var(--pr);cursor:pointer">查看</a></td>
+          </tr>
+          <tr>
+            <td style="font-weight:500;color:var(--c8)">赵六</td>
+            <td style="font-family:var(--fm)">EMP004</td>
+            <td>产品部</td>
+            <td style="font-family:var(--fm)">5</td>
+            <td style="font-family:var(--fm)">80%</td>
+            <td><div class="prog"><div class="prog-bar"><div class="prog-fill" style="width:60%;background:var(--pr)"></div></div><span class="prog-pct">60%</span></div></td>
+            <td><span class="tag active">填写中</span></td>
+            <td><a style="font:500 12px/1 var(--f);color:var(--pr);cursor:pointer">催办</a></td>
+          </tr>
+          <tr>
+            <td style="font-weight:500;color:var(--c8)">孙七</td>
+            <td style="font-family:var(--fm)">EMP005</td>
+            <td>市场部</td>
+            <td style="font-family:var(--fm)">4</td>
+            <td style="font-family:var(--fm)">100%</td>
+            <td><div class="prog"><div class="prog-bar"><div class="prog-fill" style="width:100%;background:var(--em)"></div></div><span class="prog-pct">100%</span></div></td>
+            <td><span class="tag done">已提交</span></td>
+            <td><a style="font:500 12px/1 var(--f);color:var(--pr);cursor:pointer">查看</a></td>
+          </tr>
+          <tr>
+            <td style="font-weight:500;color:var(--c8)">周八</td>
+            <td style="font-family:var(--fm)">EMP006</td>
+            <td>市场部</td>
+            <td style="font-family:var(--fm)">3</td>
+            <td style="font-family:var(--fm)">60%</td>
+            <td><div class="prog"><div class="prog-bar"><div class="prog-fill" style="width:33%;background:var(--ac)"></div></div><span class="prog-pct">33%</span></div></td>
+            <td><span class="tag active">填写中</span></td>
+            <td><a style="font:500 12px/1 var(--f);color:var(--pr);cursor:pointer">催办</a></td>
+          </tr>
+          <tr>
+            <td style="font-weight:500;color:var(--c8)">吴九</td>
+            <td style="font-family:var(--fm)">EMP007</td>
+            <td>财务部</td>
+            <td style="font-family:var(--fm)">0</td>
+            <td style="font-family:var(--fm)">0%</td>
+            <td><div class="prog"><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--c3)"></div></div><span class="prog-pct">0%</span></div></td>
+            <td><span class="tag pending">未开始</span></td>
+            <td><a style="font:500 12px/1 var(--f);color:var(--pr);cursor:pointer">催办</a></td>
+          </tr>
+          <tr>
+            <td style="font-weight:500;color:var(--c8)">郑十</td>
+            <td style="font-family:var(--fm)">EMP008</td>
+            <td>财务部</td>
+            <td style="font-family:var(--fm)">0</td>
+            <td style="font-family:var(--fm)">0%</td>
+            <td><div class="prog"><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--c3)"></div></div><span class="prog-pct">0%</span></div></td>
+            <td><span class="tag pending">未开始</span></td>
+            <td><a style="font:500 12px/1 var(--f);color:var(--pr);cursor:pointer">催办</a></td>
+          </tr>
+          <tr>
+            <td style="font-weight:500;color:var(--c8)">陈十一</td>
+            <td style="font-family:var(--fm)">EMP009</td>
+            <td>技术部</td>
+            <td style="font-family:var(--fm)">5</td>
+            <td style="font-family:var(--fm)">100%</td>
+            <td><div class="prog"><div class="prog-bar"><div class="prog-fill" style="width:100%;background:var(--em)"></div></div><span class="prog-pct">100%</span></div></td>
+            <td><span class="tag done">已提交</span></td>
+            <td><a style="font:500 12px/1 var(--f);color:var(--pr);cursor:pointer">查看</a></td>
+          </tr>
+          <tr>
+            <td style="font-weight:500;color:var(--c8)">林十二</td>
+            <td style="font-family:var(--fm)">EMP010</td>
+            <td>产品部</td>
+            <td style="font-family:var(--fm)">4</td>
+            <td style="font-family:var(--fm)">75%</td>
+            <td><div class="prog"><div class="prog-bar"><div class="prog-fill" style="width:50%;background:var(--pr)"></div></div><span class="prog-pct">50%</span></div></td>
+            <td><span class="tag active">填写中</span></td>
+            <td><a style="font:500 12px/1 var(--f);color:var(--pr);cursor:pointer">催办</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+document.querySelectorAll('.filter-tag').forEach(tag=>{
+  tag.onclick=()=>{
+    document.querySelectorAll('.filter-tag').forEach(t=>t.classList.remove('on'));
+    tag.classList.add('on');
+  };
+});
+</script>
+
+</body>
+</html>

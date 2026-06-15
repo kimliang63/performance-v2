@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 申诉记录</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoothing:antialiased}
+.card{background:var(--sf);border-radius:var(--r3);box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:16px}
+.card-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--dv)}
+.card-t{font:600 15px/1 var(--f);color:var(--c9)}
+.card-bd{padding:16px 20px}
+.btn{height:34px;padding:0 16px;border-radius:var(--r1);font:500 13px/1 var(--f);border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.btn-s{background:var(--sf);color:var(--c7);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3)}
+.btn-p{background:var(--pr);color:#FFF}.btn-p:hover{background:var(--pr700)}
+
+/* Table */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font:500 12px/1 var(--f);color:var(--c5);text-align:left;padding:10px 12px;border-bottom:1px solid var(--dv);background:var(--c0)}
+.tbl td{font:400 13px/1.4 var(--f);color:var(--c7);padding:12px;border-bottom:1px solid var(--dv)}
+.tbl tr:hover td{background:var(--c0)}
+.tag{font:500 11px/1 var(--f);padding:3px 8px;border-radius:4px;display:inline-block}
+.tag.pending{background:var(--ac50);color:var(--ac700)}
+.tag.processing{background:var(--pr50);color:var(--pr)}
+.tag.accepted{background:var(--em50);color:var(--em700)}
+.tag.rejected{background:var(--ro50);color:var(--ro)}
+.tag.closed{background:var(--c1);color:var(--c5)}
+
+/* Filter */
+.filter{display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap}
+.filter-tag{padding:5px 12px;border-radius:var(--r1);font:500 12px/1 var(--f);cursor:pointer;border:1px solid var(--c2);color:var(--c6);background:var(--sf);transition:all .15s}
+.filter-tag.on{background:var(--pr);color:#FFF;border-color:var(--pr)}
+.filter-search{margin-left:auto;width:200px;height:32px;border:1px solid var(--c2);border-radius:var(--r1);padding:0 10px;font:13px/1 var(--f);outline:none}
+.filter-search:focus{border-color:var(--pr)}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.stat{background:var(--sf);border-radius:var(--r2);padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.05);text-align:center}
+.stat-v{font:700 24px/1 var(--fm);color:var(--c9)}
+.stat-l{font:400 12px/1 var(--f);color:var(--c5);margin-top:4px}
+</style>
+</head>
+<body>
+
+<script>
+GHR_NAV.init('perf', '申诉记录');
+</script>
+
+<div style="padding:24px">
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat"><div class="stat-v">8</div><div class="stat-l">总申诉数</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--ac700)">3</div><div class="stat-l">待处理</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--pr)">2</div><div class="stat-l">处理中</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--em700)">3</div><div class="stat-l">已结案</div></div>
+  </div>
+
+  <div style="display:flex;gap:10px;margin-bottom:16px">
+    <button class="btn btn-s">导出记录</button>
+  </div>
+
+  <!-- Filter -->
+  <div class="filter">
+    <span class="filter-tag on">全部 (8)</span>
+    <span class="filter-tag">待处理 (3)</span>
+    <span class="filter-tag">处理中 (2)</span>
+    <span class="filter-tag">已采纳 (1)</span>
+    <span class="filter-tag">已驳回 (1)</span>
+    <span class="filter-tag">已关闭 (1)</span>
+    <select style="height:32px;border:1px solid var(--c2);border-radius:var(--r1);padding:0 10px;font:13px/1 var(--f);color:var(--c7);background:var(--sf);outline:none;margin-left:8px">
+      <option>全部周期</option>
+      <option>2026年Q2</option>
+      <option>2026年Q1</option>
+      <option>2025年Q4</option>
+    </select>
+    <input class="filter-search" placeholder="搜索申诉人…"/>
+  </div>
+
+  <!-- Appeal Table -->
+  <div class="card">
+    <div class="card-hd"><span class="card-t">申诉记录列表</span></div>
+    <div class="card-bd" style="padding:0;overflow-x:auto">
+      <table class="tbl">
+        <thead><tr>
+          <th>编号</th><th>申诉人</th><th>部门</th><th>申诉周期</th><th>申诉类型</th><th>申诉标题</th><th>提交时间</th><th>状态</th><th>操作</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td style="font-family:var(--fm);font-weight:500;color:var(--pr)">APL-001</td>
+            <td style="font-weight:500;color:var(--c8)">张三</td>
+            <td>技术部</td>
+            <td>2026年Q2</td>
+            <td>评分异议</td>
+            <td>业绩维度评分偏低</td>
+            <td style="font-family:var(--fm)">2026-06-10</td>
+            <td><span class="tag processing">处理中</span></td>
+            <td><a style="font:500 12px/1 var(--f);color:var(--pr);cursor:pointer">处理</a></td>
+          </tr>
+          <tr>
+            <td style="font-family:var(--fm);font-weight:500;color:var(--pr)">APL-002</td>
+            <td style="font-weight:500;color:var(--c8)">李四</td>
+            <td>技术部</td>
+            <td>2026年Q2</td>
+            <td>等级异议</td>
+            <td>等级分配结果不合理</td>
+            <td style="font-family:var(--fm)">2026-06-09</td>
+            <td><span class="tag pending">待处理</span></td>
+            <td><a style="font:500 12px/1 var(--f);color:var(--pr);cursor:pointer">处理</a></td>
+          </tr>
+          <tr>
+            <td style="font-family:var(--fm);font-weight:500;color:var(--pr)">APL-003</td>
+            <td style="font-weight:500;color:var(--c8)">王五</td>
+            <td>产品部</td>
+            <td>2026年Q2</td>
+            <td>流程异议</td>
+            <td>评分流程存在程序问题</td>
+            <td style="font-family:var(--fm)">2026-06-08</td>
+            <td><span class="tag pending">待处理</span></td>
+            <td><a style="font:500 12px/1 var(--f);color:var(--pr);cursor:pointer">处理</a></td>
+          </tr>
+          <tr>
+            <td style="font-family:var(--fm);font-weight:500;color:var(--pr)">APL-004</td>
+            <td style="font-weight:500;color:var(--c8)">赵六</td>
+            <td>产品部</td>
+            <td>2026年Q2</td>
+            <td>评分异议</td>
+            <td>能力维度评分标准争议</td>
+            <td style="font-family:var(--fm)">2026-06-07</td>
+            <td><span class="tag processing">处理中</span></td>
+            <td><a style="font:500 12px/1 var(--f);color:var(--pr);cursor:pointer">处理</a></td>
+          </tr>
+          <tr>
+            <td style="font-family:var(--fm);font-weight:500;color:var(--pr)">APL-005</td>
+            <td style="font-weight:500;color:var(--c8)">孙七</td>
+            <td>市场部</td>
+            <td>2026年Q2</td>
+            <td>等级异议</td>
+            <td>B-等级认定有误</td>
+            <td style="font-family:var(--fm)">2026-06-06</td>
+            <td><span class="tag pending">待处理</span></td>
+            <td><a style="font:500 12px/1 var(--f);color:var(--pr);cursor:pointer">处理</a></td>
+          </tr>
+          <tr>
+            <td style="font-family:var(--fm);font-weight:500;color:var(--pr)">APL-006</td>
+            <td style="font-weight:500;color:var(--c8)">周八</td>
+            <td>市场部</td>
+            <td>2026年Q1</td>
+            <td>评分异议</td>
+            <td>Q1绩效评分结果异议</td>
+            <td style="font-family:var(--fm)">2026-04-05</td>
+            <td><span class="tag accepted">已采纳</span></td>
+            <td><a style="font:500 12px/1 var(--f);color:var(--c5);cursor:pointer">详情</a></td>
+          </tr>
+          <tr>
+            <td style="font-family:var(--fm);font-weight:500;color:var(--pr)">APL-007</td>
+            <td style="font-weight:500;color:var(--c8)">吴九</td>
+            <td>财务部</td>
+            <td>2025年Q4</td>
+            <td>等级异议</td>
+            <td>Q4绩效结果申诉</td>
+            <td style="font-family:var(--fm)">2025-12-20</td>
+            <td><span class="tag accepted">已采纳</span></td>
+            <td><a style="font:500 12px/1 var(--f);color:var(--c5);cursor:pointer">详情</a></td>
+          </tr>
+          <tr>
+            <td style="font-family:var(--fm);font-weight:500;color:var(--pr)">APL-008</td>
+            <td style="font-weight:500;color:var(--c8)">郑十</td>
+            <td>财务部</td>
+            <td>2025年Q3</td>
+            <td>流程异议</td>
+            <td>目标权重分配不合理</td>
+            <td style="font-family:var(--fm)">2025-09-15</td>
+            <td><span class="tag closed">已关闭</span></td>
+            <td><a style="font:500 12px/1 var(--f);color:var(--c5);cursor:pointer">详情</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+document.querySelectorAll('.filter-tag').forEach(tag=>{
+  tag.onclick=()=>{
+    document.querySelectorAll('.filter-tag').forEach(t=>t.classList.remove('on'));
+    tag.classList.add('on');
+  };
+});
+</script>
+
+</body>
+</html>

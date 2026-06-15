@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 我的绩效结果</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoothing:antialiased}
+.card{background:var(--sf);border-radius:var(--r3);box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:16px}
+.card-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--dv)}
+.card-t{font:600 15px/1 var(--f);color:var(--c9)}
+.card-bd{padding:16px 20px}
+.btn{height:34px;padding:0 16px;border-radius:var(--r1);font:500 13px/1 var(--f);border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.btn-s{background:var(--sf);color:var(--c7);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3)}
+
+/* Score Hero */
+.score-hero{display:flex;align-items:center;gap:32px;padding:32px;background:linear-gradient(135deg,var(--pr50),var(--vi50));border-radius:var(--r3);margin-bottom:16px}
+.score-main{text-align:center}
+.score-num{font:700 56px/1 var(--fm);color:var(--pr)}
+.score-label{font:400 13px/1 var(--f);color:var(--c5);margin-top:6px}
+.score-grade{text-align:center}
+.score-grade-v{font:600 32px/1 var(--f);color:var(--em700)}
+.score-grade-l{font:400 13px/1 var(--f);color:var(--c5);margin-top:6px}
+.score-divider{width:1px;height:64px;background:var(--c3)}
+.score-meta{flex:1}
+.score-meta-row{display:flex;justify-content:space-between;padding:6px 0;font:400 13px/1 var(--f)}
+.score-meta-row .l{color:var(--c5)}.score-meta-row .v{color:var(--c8);font-weight:500}
+
+/* Dimension Score */
+.dim{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--dv)}
+.dim:last-child{border-bottom:none}
+.dim-name{flex:1;font:500 13px/1 var(--f);color:var(--c8)}
+.dim-weight{font:500 12px/1 var(--fm);color:var(--c5);width:40px;text-align:right}
+.dim-bar{width:120px;height:6px;background:var(--c1);border-radius:3px;overflow:hidden}
+.dim-fill{height:100%;border-radius:3px}
+.dim-score{font:600 14px/1 var(--fm);width:36px;text-align:right}
+.dim-grade{font:500 12px/1 var(--f);padding:2px 8px;border-radius:4px;width:72px;text-align:center}
+
+/* Timeline */
+.tl{position:relative;padding-left:24px}
+.tl::before{content:'';position:absolute;left:7px;top:4px;bottom:4px;width:2px;background:var(--dv)}
+.tl-item{position:relative;padding-bottom:20px}
+.tl-item:last-child{padding-bottom:0}
+.tl-dot{position:absolute;left:-24px;top:2px;width:16px;height:16px;border-radius:50%;border:2px solid;display:flex;align-items:center;justify-content:center}
+.tl-dot.done{border-color:var(--em);background:var(--em50)}
+.tl-dot.active{border-color:var(--pr);background:var(--pr50);box-shadow:0 0 0 4px rgba(37,99,235,.1)}
+.tl-dot.pending{border-color:var(--c3);background:var(--sf)}
+.tl-dot svg{width:8px;height:8px}
+.tl-hd{display:flex;align-items:center;justify-content:space-between}
+.tl-name{font:500 13px/1 var(--f);color:var(--c8)}
+.tl-time{font:400 12px/1 var(--f);color:var(--c4)}
+.tl-desc{font:400 12px/1 var(--f);color:var(--c5);margin-top:4px}
+
+/* Bar Chart */
+.bar-chart{display:flex;align-items:flex-end;gap:8px;height:120px;padding:0 4px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar{width:100%;border-radius:4px 4px 0 0;transition:height .5s ease;min-height:2px}
+.bar-label{font:400 11px/1 var(--f);color:var(--c5)}
+.bar-val{font:600 11px/1 var(--fm);color:var(--c7)}
+</style>
+</head>
+<body>
+
+<script>
+GHR_NAV.init('workbench', '我的绩效结果');
+</script>
+
+<div style="padding:24px">
+  <!-- Score Hero -->
+  <div class="score-hero">
+    <div class="score-main">
+      <div class="score-num">87</div>
+      <div class="score-label">加权总分</div>
+    </div>
+    <div class="score-divider"></div>
+    <div class="score-grade">
+      <div class="score-grade-v">B+</div>
+      <div class="score-grade-l">综合等级</div>
+    </div>
+    <div class="score-divider"></div>
+    <div class="score-meta">
+      <div class="score-meta-row"><span class="l">绩效周期</span><span class="v">2026年Q1</span></div>
+      <div class="score-meta-row"><span class="l">部门</span><span class="v">产品部</span></div>
+      <div class="score-meta-row"><span class="l">职位</span><span class="v">高级产品经理</span></div>
+      <div class="score-meta-row"><span class="l">审批状态</span><span class="v" style="color:var(--em700)">已通过</span></div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:10px;margin-bottom:16px">
+    <button class="btn btn-s">导出结果</button>
+    <button class="btn btn-s" onclick="location.href='perf-workbench-my-appeal.html'">提起申诉</button>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <!-- Left: Dimension Scores -->
+    <div>
+      <div class="card">
+        <div class="card-hd"><span class="card-t">维度得分</span></div>
+        <div class="card-bd">
+          <div class="dim">
+            <span class="dim-name">业绩维度</span>
+            <span class="dim-weight">60%</span>
+            <div class="dim-bar"><div class="dim-fill" style="width:90%;background:var(--pr)"></div></div>
+            <span class="dim-score" style="color:var(--pr)">90</span>
+            <span class="dim-grade" style="background:var(--pr50);color:var(--pr)">符合预期+</span>
+          </div>
+          <div class="dim">
+            <span class="dim-name">能力维度</span>
+            <span class="dim-weight">25%</span>
+            <div class="dim-bar"><div class="dim-fill" style="width:87%;background:var(--em)"></div></div>
+            <span class="dim-score" style="color:var(--em700)">87</span>
+            <span class="dim-grade" style="background:var(--em50);color:var(--em700)">符合预期+</span>
+          </div>
+          <div class="dim">
+            <span class="dim-name">态度维度</span>
+            <span class="dim-weight">10%</span>
+            <div class="dim-bar"><div class="dim-fill" style="width:85%;background:var(--ac)"></div></div>
+            <span class="dim-score" style="color:var(--ac700)">85</span>
+            <span class="dim-grade" style="background:var(--ac50);color:var(--ac700)">符合预期</span>
+          </div>
+          <div class="dim">
+            <span class="dim-name">价值观</span>
+            <span class="dim-weight">5%</span>
+            <div class="dim-bar"><div class="dim-fill" style="width:80%;background:var(--vi)"></div></div>
+            <span class="dim-score" style="color:var(--vi)">80</span>
+            <span class="dim-grade" style="background:var(--vi50);color:var(--vi)">符合预期</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trend -->
+      <div class="card">
+        <div class="card-hd"><span class="card-t">绩效趋势</span></div>
+        <div class="card-bd">
+          <div class="bar-chart">
+            <div class="bar-col">
+              <div class="bar-val">82</div>
+              <div class="bar" style="height:68%;background:var(--c3)"></div>
+              <div class="bar-label">Q3'25</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-val">85</div>
+              <div class="bar" style="height:75%;background:var(--c3)"></div>
+              <div class="bar-label">Q4'25</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-val">87</div>
+              <div class="bar" style="height:80%;background:var(--pr)"></div>
+              <div class="bar-label">Q1'26</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Timeline + Comments -->
+    <div>
+      <div class="card">
+        <div class="card-hd"><span class="card-t">审批流程</span></div>
+        <div class="card-bd">
+          <div class="tl">
+            <div class="tl-item">
+              <div class="tl-dot done"><svg viewBox="0 0 24 24" fill="none" stroke="var(--em)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="tl-hd"><span class="tl-name">直属上级评分</span><span class="tl-time">2026-03-25</span></div>
+              <div class="tl-desc">王总监 · 评分 87 · 等级 B+</div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot done"><svg viewBox="0 0 24 24" fill="none" stroke="var(--em)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="tl-hd"><span class="tl-name">部门负责人审定</span><span class="tl-time">2026-03-28</span></div>
+              <div class="tl-desc">李VP · 确认等级 B+</div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot done"><svg viewBox="0 0 24 24" fill="none" stroke="var(--em)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="tl-hd"><span class="tl-name">HRBP 审核</span><span class="tl-time">2026-03-30</span></div>
+              <div class="tl-desc">赵HR · 通过</div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot done"><svg viewBox="0 0 24 24" fill="none" stroke="var(--em)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="tl-hd"><span class="tl-name">最终确认</span><span class="tl-time">2026-04-01</span></div>
+              <div class="tl-desc">刘总 · 已确认</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comments -->
+      <div class="card">
+        <div class="card-hd"><span class="card-t">评语反馈</span></div>
+        <div class="card-bd">
+          <div style="padding:12px;background:var(--c0);border-radius:var(--r2);margin-bottom:10px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+              <div style="width:24px;height:24px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF">王</div>
+              <span style="font:500 12px/1 var(--f);color:var(--c8)">王总监</span>
+              <span style="font:400 11px/1 var(--f);color:var(--c4)">2026-03-25</span>
+            </div>
+            <div style="font:400 13px/1.6 var(--f);color:var(--c7)">张明本季度在产品迭代方面表现突出，按时完成了Q1全部迭代计划，用户增长目标也超额完成。建议在团队协作方面进一步加强跨部门沟通。</div>
+          </div>
+          <div style="padding:12px;background:var(--c0);border-radius:var(--r2)">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+              <div style="width:24px;height:24px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF">李</div>
+              <span style="font:500 12px/1 var(--f);color:var(--c8)">李VP</span>
+              <span style="font:400 11px/1 var(--f);color:var(--c4)">2026-03-28</span>
+            </div>
+            <div style="font:400 13px/1.6 var(--f);color:var(--c7)">认可评分结果。Q2建议重点关注用户留存和NPS提升，这是下一阶段的核心竞争力。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

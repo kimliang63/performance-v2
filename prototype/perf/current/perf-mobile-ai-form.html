@@ -7,37 +7,62 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
-  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
-  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;--ac700:#B45309;
-  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
-  --vi:#8B5CF6;--vi50:#F5F3FF;
-  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
-  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
-  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
-  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
-  --fm:'JetBrains Mono','SF Mono',monospace;
+  --pr:#2563EB;--em:#10B981;--ac:#F59E0B;--ro:#F43F5E;--vi:#8B5CF6;
+  --pr50:#EFF6FF;--em50:#ECFDF5;--ac50:#FFFBEB;--ro50:#FFF1F2;--vi50:#F5F3FF;
+  --pr700:#1D4ED8;--em700:#047857;--ac700:#B45309;
+  --c9:#0F172A;--c8:#1E293B;--c7:#334155;--c6:#52525B;
+  --c5:#64748B;--c4:#94A3B8;--c3:#CBD5E1;--c2:#E2E8F0;
+  --c1:#F1F5F8;--c0:#F8FAFC;
+  --sf:#FFF;--bg:#F0F4F8;--dv:#F1F5F9;
+  --r1:10px;--r2:14px;--r3:18px;--r4:16px;
+  --sx:0 1px 2px rgba(0,0,0,.04);
+  --sm:0 2px 8px rgba(0,0,0,.06);
+  --bd:rgba(15,23,42,.06);
+  --f:'Inter','Noto Sans SC',system-ui,sans-serif;
+  --fm:'JetBrains Mono',monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:var(--f);background:#E8E8ED;color:var(--c7);display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:20px;-webkit-font-smoothing:antialiased}
 
 /* Phone Frame */
-.phone{width:375px;height:812px;background:var(--sf);border-radius:40px;box-shadow:0 20px 60px rgba(0,0,0,.15),0 0 0 1px rgba(0,0,0,.05);overflow:hidden;position:relative;display:flex;flex-direction:column}
+.phone{width:393px;height:852px;background:var(--bg);border-radius:48px;box-shadow:0 25px 60px rgba(0,0,0,.3),0 0 0 5px #0F172A,0 0 0 8px #1E293B;overflow:hidden;position:relative;display:flex;flex-direction:column}
 .phone-status{height:44px;background:var(--sf);display:flex;align-items:center;justify-content:space-between;padding:0 24px;font:600 14px/1 var(--f);color:var(--c9)}
 .phone-status-r{display:flex;align-items:center;gap:6px}
 .phone-notch{width:126px;height:28px;background:var(--c9);border-radius:0 0 18px 18px;position:absolute;top:0;left:50%;transform:translateX(-50%)}
-.phone-nav{height:44px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 16px;gap:12px}
+.phone-nav{height:44px;background:var(--sf);border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 16px;gap:12px}
 .phone-nav-back{width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c7)}
 .phone-nav-back svg{width:20px;height:20px}
 .phone-nav-t{flex:1;font:600 17px/1 var(--f);color:var(--c9);text-align:center}
+.phone-nav-menu{width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c7)}
+.phone-nav-menu svg{width:20px;height:20px}
 
-/* Segmented Tabs */
-.m-tabs{display:flex;gap:0;margin:8px 16px;background:var(--c1);border-radius:var(--r2);padding:3px}
-.m-tab{flex:1;text-align:center;padding:8px 0;font:600 12px/1 var(--f);color:var(--c5);border-radius:var(--r1);cursor:pointer;transition:all .2s}
-.m-tab.active{background:var(--sf);color:var(--pr);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+/* Mega Menu */
+.m-mega-ov{position:absolute;inset:0;background:rgba(0,0,0,.4);z-index:750;opacity:0;pointer-events:none;transition:opacity .25s}
+.m-mega-ov.on{opacity:1;pointer-events:auto}
+.m-mega{position:absolute;top:0;left:0;right:0;background:var(--sf);z-index:760;transform:translateY(-100%);transition:transform .3s ease;max-height:80%;overflow-y:auto;border-radius:0 0 var(--r4) var(--r4);box-shadow:0 8px 30px rgba(0,0,0,.12)}
+.m-mega-ov.on .m-mega{transform:translateY(0)}
+.m-mega-hd{padding:14px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.m-mega-hd-t{font:600 15px/1 var(--f);color:var(--c9)}
+.m-mega-close{width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c5);border:none;background:transparent}
+.m-mega-close:hover{background:var(--c1)}
+.m-mega-bd{padding:8px 0}
+.m-mega-group{padding:4px 0}
+.m-mega-group-t{font:500 11px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px;padding:8px 20px 6px}
+.m-mega-item{display:flex;align-items:center;gap:12px;padding:12px 20px;cursor:pointer;transition:background .1s}
+.m-mega-item:active{background:var(--c0)}
+.m-mega-item.on{background:var(--pr50)}
+.m-mega-item-ic{width:32px;height:32px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.m-mega-item-ic svg{width:16px;height:16px;color:#FFF}
+.m-mega-item-info{flex:1;min-width:0}
+.m-mega-item-name{font:500 14px/1 var(--f);color:var(--c8)}
+.m-mega-item.on .m-mega-item-name{color:var(--pr);font-weight:600}
+.m-mega-item-desc{font:400 11px/1 var(--f);color:var(--c5);margin-top:3px}
+.m-mega-item-arrow{color:var(--c4);flex-shrink:0}
+.m-mega-item-arrow svg{width:14px;height:14px}
+.m-mega-item-badge{font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px;background:var(--pr50);color:var(--pr);flex-shrink:0}
 
 /* AI FAB */
-.m-fab{position:absolute;bottom:90px;right:16px;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--pr),var(--vi));border:none;box-shadow:0 4px 14px rgba(37,99,235,.35);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:700;transition:transform .2s}
+.m-fab{position:absolute;bottom:96px;right:16px;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--pr),var(--vi));border:none;box-shadow:0 4px 14px rgba(37,99,235,.35);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:700;transition:transform .2s}
 .m-fab:active{transform:scale(.92)}
 .m-fab svg{width:20px;height:20px;color:#FFF}
 
@@ -46,7 +71,7 @@ body{font-family:var(--f);background:#E8E8ED;color:var(--c7);display:flex;justif
 .phone-body::-webkit-scrollbar{width:0}
 
 /* AI Banner */
-.m-ai-banner{margin:12px 16px;padding:12px 14px;background:linear-gradient(135deg,var(--pr50),var(--vi50));border:1px solid var(--pr100);border-radius:var(--r2);cursor:pointer;transition:all .15s}
+.m-ai-banner{margin:12px 16px;padding:14px 16px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r4);cursor:pointer;transition:all .15s}
 .m-ai-banner:active{transform:scale(.98)}
 .m-ai-banner-top{display:flex;align-items:center;gap:10px}
 .m-ai-banner-ic{width:32px;height:32px;border-radius:var(--r1);background:linear-gradient(135deg,var(--pr),var(--vi));display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -58,21 +83,22 @@ body{font-family:var(--f);background:#E8E8ED;color:var(--c7);display:flex;justif
 .m-ai-banner-btn.primary{background:var(--pr);color:#FFF}
 .m-ai-banner-btn.secondary{background:var(--sf);color:var(--c7);border:1px solid var(--c2)}
 
-/* Info Card */
-.m-info{margin:12px 16px;background:var(--sf);border-radius:var(--r2);box-shadow:0 1px 3px rgba(0,0,0,.05);padding:14px 16px}
-.m-info-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--dv)}
-.m-info-row:last-child{border-bottom:none}
-.m-info-l{font:400 13px/1 var(--f);color:var(--c5)}
-.m-info-v{font:500 13px/1 var(--f);color:var(--c8)}
+/* Overview Card */
+.m-ov{margin:12px 16px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r4);box-shadow:var(--sx);padding:14px 16px}
+.m-ov-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--dv)}
+.m-ov-row:last-child{border-bottom:none}
+.m-ov-l{font:400 13px/1 var(--f);color:var(--c5)}
+.m-ov-v{font:500 13px/1 var(--f);color:var(--c8)}
 
 /* Section */
 .m-sec{margin:16px 16px 0}
-.m-sec-t{font:600 14px/1 var(--f);color:var(--c9);margin-bottom:10px;display:flex;align-items:center;gap:6px}
-.m-sec-t::before{content:'';width:3px;height:12px;background:var(--pr);border-radius:2px}
+.m-sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.m-sec-t{font:600 14px/1 var(--f);color:var(--c8)}
+.m-sec-meta{font:500 12px/1 var(--f);color:var(--c5)}
 
 /* Module Card */
-.m-mod{background:var(--sf);border-radius:var(--r2);box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:10px;overflow:hidden}
-.m-mod-hd{display:flex;align-items:center;padding:12px 14px;cursor:pointer;gap:10px;transition:background .1s}
+.m-mod{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r4);box-shadow:var(--sx);margin-bottom:8px;overflow:hidden}
+.m-mod-hd{display:flex;align-items:center;padding:12px 16px;cursor:pointer;gap:10px;transition:background .1s}
 .m-mod-hd:active{background:var(--c0)}
 .m-mod-ic{width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .m-mod-ic svg{width:14px;height:14px;color:#FFF}
@@ -86,29 +112,27 @@ body{font-family:var(--f);background:#E8E8ED;color:var(--c7);display:flex;justif
 .m-mod-body.open{max-height:2000px}
 
 /* Goal Item */
-.m-goal{border-top:1px solid var(--dv);padding:12px 14px}
+.m-goal{border-top:1px solid var(--bd);padding:12px 16px;cursor:pointer}
 .m-goal:first-child{border-top:none}
-.m-goal-hd{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.m-goal-name{flex:1;font:500 13px/1.3 var(--f);color:var(--c8)}
+.m-goal:active{background:var(--c0)}
+.m-goal-hd{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.m-goal-name{flex:1;font:600 14px/1.3 var(--f);color:var(--c9)}
 .m-goal-name .ai-badge{font:700 9px/1 var(--f);color:var(--vi);background:var(--vi50);padding:2px 5px;border-radius:3px;margin-left:4px}
-.m-goal-type{font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px}
-.m-goal-type.q{background:var(--pr50);color:var(--pr)}
-.m-goal-type.w{background:var(--vi50);color:var(--vi)}
-.m-goal-weight{font:500 12px/1 var(--fm);color:var(--c6)}
-.m-goal-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px}
-.m-gd-item{display:flex;flex-direction:column;gap:1px}
-.m-gd-l{font:400 10px/1 var(--f);color:var(--c4)}
-.m-gd-v{font:500 12px/1.3 var(--f);color:var(--c7);font-family:var(--fm)}
-
-/* Grade Table */
-.m-gt{width:100%;border-collapse:collapse;margin-top:8px}
-.m-gt th{font:500 10px/1 var(--f);color:var(--c5);text-align:left;padding:5px 6px;border-bottom:1px solid var(--dv)}
-.m-gt td{font:400 11px/1.3 var(--f);color:var(--c7);padding:5px 6px;border-bottom:1px solid var(--dv)}
-.m-gt .dot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:4px;vertical-align:middle}
+.m-goal-weight{font:500 11px/1 var(--f);color:var(--pr);background:var(--pr50);padding:3px 8px;border-radius:6px}
+.m-goal-arrow{color:var(--c4);flex-shrink:0}
+.m-goal-arrow svg{width:14px;height:14px}
+.m-goal-values{display:flex;align-items:baseline;gap:4px;margin-top:8px}
+.m-goal-val-l{font:500 13px/1 var(--f);color:var(--c5)}
+.m-goal-val-v{font:700 13px/1 var(--fm)}
+.m-goal-val-v.challenge{color:var(--ac700)}
+.m-goal-val-v.target{color:var(--pr)}
+.m-goal-val-v.baseline{color:var(--c5)}
+.m-goal-val-dot{color:var(--c3);font-size:11px}
+.m-goal-desc{font:400 13px/1.3 var(--f);color:var(--c5);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 /* Compliance */
-.m-comp{background:var(--sf);border-radius:var(--r2);box-shadow:0 1px 3px rgba(0,0,0,.05);margin:12px 16px;padding:12px 14px}
-.m-comp-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.m-comp{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r4);box-shadow:var(--sx);margin:12px 16px;padding:14px 16px}
+.m-comp-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .m-comp-t{font:600 13px/1 var(--f);color:var(--c8);display:flex;align-items:center;gap:6px}
 .m-comp-t svg{width:14px;height:14px;color:var(--em)}
 .m-comp-cnt{font:600 12px/1 var(--f);color:var(--em700)}
@@ -117,34 +141,34 @@ body{font-family:var(--f);background:#E8E8ED;color:var(--c7);display:flex;justif
 .m-comp-ck svg{width:8px;height:8px;color:#FFF}
 
 /* Score Row */
-.m-score-row{border-top:1px solid var(--dv);padding:10px 14px;display:flex;align-items:center;gap:8px}
+.m-score-row{border-top:1px solid var(--bd);padding:10px 16px;display:flex;align-items:center;gap:8px}
 .m-score-row:first-child{border-top:none}
 .m-score-name{flex:1;font:500 13px/1 var(--f);color:var(--c8)}
 .m-score-name .ai-badge{font:700 9px/1 var(--f);color:var(--vi);background:var(--vi50);padding:2px 5px;border-radius:3px;margin-left:4px}
 .m-score-wt{font:500 11px/1 var(--fm);color:var(--c5);width:32px;text-align:right}
-.m-score-sel{height:28px;padding:0 6px;border:1px solid var(--c2);border-radius:var(--r1);font:500 11px/1 var(--f);color:var(--c8);background:var(--sf);cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='8' height='5' viewBox='0 0 8 5' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L4 4L7 1' stroke='%23A1A1AA' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 6px center;padding-right:20px;font-size:11px}
+.m-score-sel{height:28px;padding:0 6px;border:1px solid var(--c2);border-radius:var(--r1);font:500 11px/1 var(--f);color:var(--c8);background:var(--sf);cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='8' height='5' viewBox='0 0 8 5' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L4 4L7 1' stroke='%2394A3B8' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 6px center;padding-right:20px;font-size:11px}
 .m-score-val{font:700 13px/1 var(--fm);color:var(--pr);width:30px;text-align:right}
-.m-score-summary{background:var(--sf);border-radius:var(--r2);box-shadow:0 1px 3px rgba(0,0,0,.05);margin:12px 16px;padding:14px;display:flex;align-items:center;justify-content:space-around}
+.m-score-summary{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r4);box-shadow:var(--sx);margin:12px 16px;padding:16px;display:flex;align-items:center;justify-content:space-around}
 .m-score-summary-item{text-align:center}
 .m-score-summary-v{font:700 24px/1 var(--fm);color:var(--pr)}
 .m-score-summary-l{font:400 11px/1 var(--f);color:var(--c5);margin-top:4px}
 .m-score-summary-grade{font:600 14px/1 var(--f);color:var(--em700)}
 
 /* Warning Banner */
-.m-warn{margin:12px 16px;padding:10px 14px;background:var(--ac50);border:1px solid var(--ac100);border-radius:var(--r2);display:flex;align-items:center;gap:8px;font:500 12px/1.3 var(--f);color:var(--ac700)}
+.m-warn{margin:12px 16px;padding:10px 14px;background:var(--ac50);border:1px solid var(--ac);border-radius:var(--r4);display:flex;align-items:center;gap:8px;font:500 12px/1.3 var(--f);color:var(--ac700)}
 .m-warn svg{width:16px;height:16px;flex-shrink:0}
 
 /* Stats Row */
 .m-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:12px 16px}
-.m-stat{background:var(--sf);border-radius:var(--r2);box-shadow:0 1px 3px rgba(0,0,0,.05);padding:12px 14px;position:relative;overflow:hidden}
-.m-stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.m-stat{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r4);box-shadow:var(--sx);padding:12px 14px;position:relative;overflow:hidden}
+.m-stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
 .m-stat.pr::before{background:var(--pr)}.m-stat.em::before{background:var(--em)}.m-stat.ac::before{background:var(--ac)}.m-stat.ro::before{background:var(--ro)}
 .m-stat-t{font:400 11px/1 var(--f);color:var(--c5);margin-bottom:6px}
 .m-stat-v{font:700 22px/1 var(--f);color:var(--c9)}
 .m-stat-d{font:400 10px/1 var(--f);color:var(--c4);margin-top:3px}
 
 /* Distribution */
-.m-dist{margin:12px 16px;background:var(--sf);border-radius:var(--r2);box-shadow:0 1px 3px rgba(0,0,0,.05);padding:14px}
+.m-dist{margin:12px 16px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r4);box-shadow:var(--sx);padding:14px 16px}
 .m-dist-t{font:600 13px/1 var(--f);color:var(--c8);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
 .m-dist-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
 .m-dist-row:last-child{margin-bottom:0}
@@ -154,7 +178,7 @@ body{font-family:var(--f);background:#E8E8ED;color:var(--c7);display:flex;justif
 .m-dist-pct{font:500 10px/1 var(--fm);width:32px;text-align:right;flex-shrink:0}
 
 /* Person Card */
-.m-person{background:var(--sf);border-radius:var(--r2);box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:8px;padding:12px 14px;display:flex;align-items:center;gap:10px}
+.m-person{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r4);box-shadow:var(--sx);margin-bottom:8px;padding:12px 14px;display:flex;align-items:center;gap:10px}
 .m-person-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 13px/1 var(--f);color:#FFF;flex-shrink:0}
 .m-person-info{flex:1;min-width:0}
 .m-person-name{font:500 13px/1 var(--f);color:var(--c8)}
@@ -167,19 +191,19 @@ body{font-family:var(--f);background:#E8E8ED;color:var(--c7);display:flex;justif
 .m-person-ai-tag.match{color:var(--em700);background:var(--em50)}
 .m-person-ai-tag.deviate{color:var(--ac);background:var(--ac50)}
 .m-person-grade{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
-.m-person-grade-sel{height:28px;padding:0 8px;border:1px solid var(--c2);border-radius:var(--r1);font:500 12px/1 var(--f);color:var(--c8);background:var(--sf);cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='8' height='5' viewBox='0 0 8 5' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L4 4L7 1' stroke='%23A1A1AA' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 6px center;padding-right:20px}
+.m-person-grade-sel{height:28px;padding:0 8px;border:1px solid var(--c2);border-radius:var(--r1);font:500 12px/1 var(--f);color:var(--c8);background:var(--sf);cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='8' height='5' viewBox='0 0 8 5' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L4 4L7 1' stroke='%2394A3B8' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 6px center;padding-right:20px}
 .m-person-grade-l{font:400 10px/1 var(--f);color:var(--c4)}
 
 /* Bottom Bar */
-.m-bar{position:absolute;bottom:0;left:0;right:0;height:80px;background:var(--sf);border-top:1px solid var(--dv);display:flex;align-items:center;padding:0 16px;gap:10px;padding-bottom:20px}
-.m-bar .btn{flex:1;height:40px;border-radius:var(--r2);font:600 14px/1 var(--f);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.m-bar .btn-s{background:var(--c1);color:var(--c7)}
-.m-bar .btn-p{background:var(--pr);color:#FFF}
-.m-bar .btn-ai{background:linear-gradient(135deg,var(--pr),var(--vi));color:#FFF}
+.m-bar{position:absolute;bottom:0;left:0;right:0;height:88px;background:var(--sf);border-top:1px solid var(--bd);display:flex;align-items:center;padding:0 20px;gap:10px;padding-bottom:34px}
+.m-bar .btn{flex:1;height:44px;border-radius:var(--r4);font:600 14px/1 var(--f);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.m-bar .btn-s{background:var(--c1);color:var(--c7);border:1px solid var(--c2)}
+.m-bar .btn-p{background:var(--pr);color:#FFF;box-shadow:0 2px 8px rgba(37,99,235,.25)}
+.m-bar .btn-ai{background:linear-gradient(135deg,var(--pr),var(--vi));color:#FFF;box-shadow:0 2px 8px rgba(37,99,235,.25)}
 
 /* File upload & voice input */
 .m-action-row{display:flex;gap:8px;margin:0 16px 8px}
-.m-action-btn{height:36px;padding:0 14px;border-radius:var(--r2);border:1px solid var(--c2);background:var(--sf);display:flex;align-items:center;gap:6px;cursor:pointer;font:500 12px/1 var(--f);color:var(--c6);transition:all .15s;flex-shrink:0}
+.m-action-btn{height:36px;padding:0 14px;border-radius:var(--r1);border:1px solid var(--c2);background:var(--sf);display:flex;align-items:center;gap:6px;cursor:pointer;font:500 12px/1 var(--f);color:var(--c6);transition:all .15s;flex-shrink:0}
 .m-action-btn:hover{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
 .m-action-btn svg{width:16px;height:16px;flex-shrink:0}
 .m-action-btn.recording{border-color:var(--ro);color:var(--ro);background:var(--ro50);animation:pulse 1.5s infinite}
@@ -206,18 +230,19 @@ body{font-family:var(--f);background:#E8E8ED;color:var(--c7);display:flex;justif
 /* AI Drawer */
 .m-drawer-ov{position:absolute;inset:0;background:rgba(0,0,0,.4);z-index:800;opacity:0;pointer-events:none;transition:opacity .25s}
 .m-drawer-ov.on{opacity:1;pointer-events:auto}
-.m-drawer{position:absolute;bottom:0;left:0;right:0;height:70%;background:var(--sf);border-radius:16px 16px 0 0;z-index:810;transform:translateY(100%);transition:transform .3s ease;display:flex;flex-direction:column}
+.m-drawer{position:absolute;bottom:0;left:0;right:0;height:70%;background:var(--sf);border-radius:var(--r4) var(--r4) 0 0;z-index:810;transform:translateY(100%);transition:transform .3s ease;display:flex;flex-direction:column}
 .m-drawer-ov.on .m-drawer{transform:translateY(0)}
 .m-drawer-handle{width:36px;height:4px;background:var(--c3);border-radius:2px;margin:8px auto 0}
-.m-drawer-hd{padding:12px 16px;border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:10px}
+.m-drawer-hd{padding:14px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px}
 .m-drawer-hd-ic{width:28px;height:28px;border-radius:var(--r1);background:linear-gradient(135deg,var(--pr),var(--vi));display:flex;align-items:center;justify-content:center}
 .m-drawer-hd-ic svg{width:14px;height:14px;color:#FFF}
 .m-drawer-hd-t{font:600 14px/1 var(--f);color:var(--c8)}
 .m-drawer-hd-s{font:400 11px/1 var(--f);color:var(--c5)}
-.m-drawer-close{margin-left:auto;width:24px;height:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c5);border:none;background:transparent}
-.m-drawer-bd{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:12px}
-.m-drawer-ft{padding:10px 16px;border-top:1px solid var(--dv);display:flex;gap:8px}
-.m-drawer-input{flex:1;height:36px;border:1px solid var(--c2);border-radius:var(--r2);padding:0 12px;font:400 13px/1 var(--f);outline:none}
+.m-drawer-close{margin-left:auto;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c5);border:none;background:transparent;border-radius:var(--r1)}
+.m-drawer-close:hover{background:var(--c1)}
+.m-drawer-bd{flex:1;overflow-y:auto;padding:12px 20px;display:flex;flex-direction:column;gap:12px}
+.m-drawer-ft{padding:12px 20px;border-top:1px solid var(--bd);display:flex;gap:8px}
+.m-drawer-input{flex:1;height:36px;border:1px solid var(--c2);border-radius:var(--r2);padding:0 12px;font:400 13px/1 var(--f);outline:none;color:var(--c9)}
 .m-drawer-input:focus{border-color:var(--pr)}
 .m-drawer-send{width:36px;height:36px;border-radius:var(--r2);background:var(--pr);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#FFF}
 .m-drawer-send svg{width:16px;height:16px}
@@ -246,24 +271,23 @@ body{font-family:var(--f);background:#E8E8ED;color:var(--c7);display:flex;justif
 /* Goal Edit Sheet */
 .m-edit-ov{position:absolute;inset:0;background:rgba(0,0,0,.4);z-index:820;opacity:0;pointer-events:none;transition:opacity .25s}
 .m-edit-ov.on{opacity:1;pointer-events:auto}
-.m-edit{position:absolute;bottom:0;left:0;right:0;max-height:85%;background:var(--sf);border-radius:16px 16px 0 0;z-index:830;transform:translateY(100%);transition:transform .3s ease;display:flex;flex-direction:column}
+.m-edit{position:absolute;bottom:0;left:0;right:0;max-height:85%;background:var(--sf);border-radius:var(--r4) var(--r4) 0 0;z-index:830;transform:translateY(100%);transition:transform .3s ease;display:flex;flex-direction:column}
 .m-edit-ov.on .m-edit{transform:translateY(0)}
-.m-edit-hd{padding:14px 16px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.m-edit-hd{padding:14px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .m-edit-hd-t{font:600 15px/1 var(--f);color:var(--c9)}
 .m-edit-close{width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c5);border:none;background:transparent}
-.m-edit-bd{flex:1;overflow-y:auto;padding:16px}
-.m-edit-ft{padding:12px 16px;border-top:1px solid var(--dv);display:flex;gap:8px;flex-shrink:0;padding-bottom:20px}
-.m-edit-ft .btn{flex:1;height:40px;border-radius:var(--r2);font:600 14px/1 var(--f);border:none;cursor:pointer}
+.m-edit-close:hover{background:var(--c1)}
+.m-edit-bd{flex:1;overflow-y:auto;padding:20px}
+.m-edit-ft{padding:12px 20px;border-top:1px solid var(--bd);display:flex;gap:8px;flex-shrink:0;padding-bottom:34px}
+.m-edit-ft .btn{flex:1;height:44px;border-radius:var(--r4);font:600 14px/1 var(--f);border:none;cursor:pointer}
 .m-ef{margin-bottom:14px}
 .m-ef-l{font:500 11px/1 var(--f);color:var(--c5);margin-bottom:4px;display:flex;align-items:center;gap:3px}
 .m-ef-l .req{color:var(--ro)}
-.m-ef-input{width:100%;height:36px;border:1px solid var(--c2);border-radius:var(--r1);padding:0 10px;font:400 13px/1 var(--f);color:var(--c9);background:var(--sf);outline:none;transition:border .15s}
-.m-ef-input:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
+.m-ef-input{width:100%;height:40px;border:1px solid var(--c2);border-radius:var(--r1);padding:0 12px;font:400 13px/1 var(--f);color:var(--c9);background:var(--sf);outline:none;transition:border .15s}
+.m-ef-input:focus{border-color:var(--pr);box-shadow:0 0 0 3px var(--pr50)}
 .m-ef-input.num{font-family:var(--fm);text-align:right}
 .m-ef-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-.m-ef-section{font:600 12px/1 var(--f);color:var(--c8);padding:8px 0 6px;border-bottom:1px solid var(--dv);margin-bottom:10px;display:flex;align-items:center;gap:6px}
-.m-goal{cursor:pointer}
-.m-goal:active{background:var(--c0)}
+.m-ef-section{font:600 12px/1 var(--f);color:var(--c8);padding:8px 0 6px;border-bottom:1px solid var(--bd);margin-bottom:10px;display:flex;align-items:center;gap:6px}
 </style>
 </head>
 <body>
@@ -284,15 +308,75 @@ body{font-family:var(--f);background:#E8E8ED;color:var(--c7);display:flex;justif
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
     </div>
     <div class="phone-nav-t" id="navTitle">目标制定</div>
-  </div>
-
-  <div class="m-tabs">
-    <div class="m-tab active" onclick="switchTab(0)">目标制定</div>
-    <div class="m-tab" onclick="switchTab(1)">绩效评分</div>
-    <div class="m-tab" onclick="switchTab(2)">结果审定</div>
+    <div class="phone-nav-menu" onclick="toggleMega()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </div>
   </div>
 
   <div class="phone-body" id="phoneBody"></div>
+
+  <!-- Mega Menu -->
+  <div class="m-mega-ov" id="megaOv" onclick="if(event.target===this)toggleMega()">
+    <div class="m-mega">
+      <div class="m-mega-hd">
+        <span class="m-mega-hd-t">全部菜单</span>
+        <button class="m-mega-close" onclick="toggleMega()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="m-mega-bd">
+        <div class="m-mega-group">
+          <div class="m-mega-group-t">绩效考核</div>
+          <div class="m-mega-item on" onclick="megaNav(0)">
+            <div class="m-mega-item-ic" style="background:var(--pr)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+            <div class="m-mega-item-info">
+              <div class="m-mega-item-name">目标制定</div>
+              <div class="m-mega-item-desc">PBC 目标填写与提交</div>
+            </div>
+            <span class="m-mega-item-badge">AI 填写</span>
+            <span class="m-mega-item-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+          </div>
+          <div class="m-mega-item" onclick="megaNav(1)">
+            <div class="m-mega-item-ic" style="background:var(--em)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+            <div class="m-mega-item-info">
+              <div class="m-mega-item-name">绩效评分</div>
+              <div class="m-mega-item-desc">指标评分与等级确定</div>
+            </div>
+            <span class="m-mega-item-badge">AI 评分</span>
+            <span class="m-mega-item-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+          </div>
+          <div class="m-mega-item" onclick="megaNav(2)">
+            <div class="m-mega-item-ic" style="background:var(--ac)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+            <div class="m-mega-item-info">
+              <div class="m-mega-item-name">结果审定</div>
+              <div class="m-mega-item-desc">等级分配与强制分布</div>
+            </div>
+            <span class="m-mega-item-badge">AI 审定</span>
+            <span class="m-mega-item-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+          </div>
+        </div>
+        <div class="m-mega-group">
+          <div class="m-mega-group-t">其他功能</div>
+          <div class="m-mega-item" onclick="toggleMega()">
+            <div class="m-mega-item-ic" style="background:var(--c5)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+            <div class="m-mega-item-info">
+              <div class="m-mega-item-name">绩效方案</div>
+              <div class="m-mega-item-desc">方案配置与管理</div>
+            </div>
+            <span class="m-mega-item-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+          </div>
+          <div class="m-mega-item" onclick="toggleMega()">
+            <div class="m-mega-item-ic" style="background:var(--vi)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+            <div class="m-mega-item-info">
+              <div class="m-mega-item-name">指标库</div>
+              <div class="m-mega-item-desc">考核指标维护</div>
+            </div>
+            <span class="m-mega-item-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- AI FAB -->
   <button class="m-fab" onclick="toggleDrawer()">
@@ -435,7 +519,7 @@ const EVAL_MODULES=[
   {name:'能力维度',weight:25,color:'var(--em)',icon:IC.star,items:[
     {name:'专业技能',weight:10,grade:'符合预期+',aiFill:true,score:90},
     {name:'创新能力',weight:8,grade:'符合预期',score:80},
-    {name:'问题解决',weight:7,grade:'符合预期+',score:90},
+    {name:'问题解决',weight:7,grade:'符合预期+',aiFill:true,score:90},
   ]},
   {name:'态度维度',weight:10,color:'var(--ac)',icon:IC.book,items:[
     {name:'责任心',weight:5,grade:'符合预期',aiFill:false,score:80},
@@ -526,9 +610,6 @@ let chatMsgs=[JSON.parse(JSON.stringify(GOAL_MSGS)),JSON.parse(JSON.stringify(EV
 /* ========== TAB SWITCHING ========== */
 function switchTab(idx){
   currentTab=idx;
-  document.querySelectorAll('.m-tab').forEach((t,i)=>{
-    t.classList.toggle('active',i===idx);
-  });
   document.getElementById('navTitle').textContent=TABS[idx];
   const dc=DRAWER_CONFIG[idx];
   document.getElementById('drawerTitle').textContent=dc.title;
@@ -538,21 +619,37 @@ function switchTab(idx){
   render();
 }
 
+/* ========== MEGA MENU ========== */
+let megaOpen=false;
+function toggleMega(){
+  megaOpen=!megaOpen;
+  document.getElementById('megaOv').classList.toggle('on',megaOpen);
+  updateMegaHighlight();
+}
+function megaNav(idx){
+  toggleMega();
+  switchTab(idx);
+}
+function updateMegaHighlight(){
+  document.querySelectorAll('.m-mega-item').forEach((el,i)=>{
+    el.classList.toggle('on',i===currentTab);
+  });
+}
+
 function renderBottomBar(){
   const bar=document.getElementById('bottomBar');
   if(currentTab===0){
     bar.innerHTML='<button class="btn btn-s">保存草稿</button><button class="btn btn-p">提交</button>';
   }else if(currentTab===1){
-    bar.innerHTML='<button class="btn btn-ai" onclick="toggleDrawer()">AI 智能评分</button><button class="btn btn-p">提交评分</button>';
+    bar.innerHTML='<button class="btn btn-s">保存草稿</button><button class="btn btn-p">提交评分</button>';
   }else{
-    bar.innerHTML='<button class="btn btn-ai" onclick="toggleDrawer()">AI 批量填充</button><button class="btn btn-p">提交审定</button>';
+    bar.innerHTML='<button class="btn btn-s">保存草稿</button><button class="btn btn-p">提交审定</button>';
   }
 }
 
 /* ========== RENDER: TAB 1 ========== */
 function renderGoal(){
   let h='';
-  // AI Banner with action buttons
   h+=`<div class="m-ai-banner" onclick="toggleDrawer()">
     <div class="m-ai-banner-top">
       <div class="m-ai-banner-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg></div>
@@ -563,19 +660,16 @@ function renderGoal(){
       <button class="m-ai-banner-btn secondary" onclick="event.stopPropagation();toggleDrawer()">逐项审核</button>
     </div>
   </div>`;
-  // Info card
-  h+=`<div class="m-info">
-    <div class="m-info-row"><span class="m-info-l">绩效周期</span><span class="m-info-v">2026年Q2</span></div>
-    <div class="m-info-row"><span class="m-info-l">发起日期</span><span class="m-info-v">2026-04-01</span></div>
-    <div class="m-info-row"><span class="m-info-l">处理人</span><span class="m-info-v">张明 (EMP20240315)</span></div>
-    <div class="m-info-row"><span class="m-info-l">部门</span><span class="m-info-v">产品部</span></div>
-    <div class="m-info-row"><span class="m-info-l">职位</span><span class="m-info-v">高级产品经理</span></div>
-    <div class="m-info-row"><span class="m-info-l">总权重</span><span class="m-info-v" style="color:var(--em700);font-weight:600">100%</span></div>
+  h+=`<div class="m-ov">
+    <div class="m-ov-row"><span class="m-ov-l">绩效周期</span><span class="m-ov-v">2026年Q2</span></div>
+    <div class="m-ov-row"><span class="m-ov-l">发起日期</span><span class="m-ov-v">2026-04-01</span></div>
+    <div class="m-ov-row"><span class="m-ov-l">处理人</span><span class="m-ov-v">张明 (EMP20240315)</span></div>
+    <div class="m-ov-row"><span class="m-ov-l">部门</span><span class="m-ov-v">产品部</span></div>
+    <div class="m-ov-row"><span class="m-ov-l">职位</span><span class="m-ov-v">高级产品经理</span></div>
+    <div class="m-ov-row"><span class="m-ov-l">总权重</span><span class="m-ov-v" style="color:var(--em700);font-weight:600">100%</span></div>
   </div>`;
-  // Modules
-  h+=`<div class="m-sec"><div class="m-sec-t">目标模块</div>`;
+  h+=`<div class="m-sec"><div class="m-sec-hd"><div class="m-sec-t">目标模块</div><div class="m-sec-meta">合计权重 ${MODULES.reduce((s,m)=>s+m.weight,0)}%</div></div>`;
   MODULES.forEach((m,mi)=>{
-    const tw=m.goals.reduce((s,g)=>s+g.weight,0);
     const isOpen=openMods[0].has(mi);
     h+=`<div class="m-mod">
       <div class="m-mod-hd" onclick="toggleMod(0,${mi})">
@@ -591,40 +685,34 @@ function renderGoal(){
       h+=`<div style="padding:16px;text-align:center;font:400 12px/1.3 var(--f);color:var(--c4)">暂无目标，AI 可自动生成</div>`;
     }else{
       m.goals.forEach((g,gi)=>{
-        const typeLabel=g.type==='q'?'定量':'定性';
-        const typeCls=g.type==='q'?'q':'w';
+        const isQ=g.type==='q';
         h+=`<div class="m-goal" onclick="openGoalEdit(${mi},${gi})">
           <div class="m-goal-hd">
             <span class="m-goal-name">${g.name}${g.aiFill?'<span class="ai-badge">AI</span>':''}</span>
-            <span class="m-goal-type ${typeCls}">${typeLabel}</span>
             <span class="m-goal-weight">${g.weight}%</span>
-          </div>
-          <div class="m-goal-grid">
-            ${g.type==='q'?`
-              <div class="m-gd-item"><span class="m-gd-l">挑战值</span><span class="m-gd-v">${g.challenge}</span></div>
-              <div class="m-gd-item"><span class="m-gd-l">目标值</span><span class="m-gd-v">${g.target}</span></div>
-              <div class="m-gd-item"><span class="m-gd-l">保底值</span><span class="m-gd-v">${g.baseline}</span></div>
-              <div class="m-gd-item"><span class="m-gd-l">计算规则</span><span class="m-gd-v" style="font-family:var(--f)">${g.rule}</span></div>
-            `:`
-              <div class="m-gd-item"><span class="m-gd-l">衡量方式</span><span class="m-gd-v" style="font-family:var(--f)">定性评分</span></div>
-              <div class="m-gd-item"><span class="m-gd-l">目标描述</span><span class="m-gd-v" style="font-family:var(--f)">${g.name}</span></div>
-            `}
-          </div>
-          ${g.levels?`<table class="m-gt"><thead><tr><th>等级</th><th>分值</th><th>条件</th></tr></thead><tbody>
-            ${g.levels.map(l=>`<tr><td><span class="dot" style="background:${l.c}"></span>${l.l}</td><td style="font-family:var(--fm);font-weight:600">${l.s}</td><td>${l.d}</td></tr>`).join('')}
-          </tbody></table>`:''}
-        </div>`;
+            <span class="m-goal-arrow">${IC.chevron}</span>
+          </div>`;
+        if(isQ){
+          h+=`<div class="m-goal-values">
+            <span class="m-goal-val-l">挑战</span><span class="m-goal-val-v challenge">${g.challenge}</span>
+            <span class="m-goal-val-dot">·</span>
+            <span class="m-goal-val-l">目标</span><span class="m-goal-val-v target">${g.target}</span>
+            <span class="m-goal-val-dot">·</span>
+            <span class="m-goal-val-l">保底</span><span class="m-goal-val-v baseline">${g.baseline}</span>
+          </div>`;
+        }else{
+          h+=`<div class="m-goal-desc">${g.name}</div>`;
+        }
+        h+=`</div>`;
       });
     }
     h+=`</div></div>`;
   });
   h+=`</div>`;
-  // Weight warning
   const totalWeight=MODULES.reduce((s,m)=>s+m.weight,0);
   if(totalWeight!==100){
     h+=`<div class="m-warn">${IC.warn} 总权重 ${totalWeight}%，需调整至 100%</div>`;
   }
-  // Compliance
   h+=`<div class="m-comp">
     <div class="m-comp-hd">
       <div class="m-comp-t">${IC.check} AI 合规检查</div>
@@ -639,22 +727,19 @@ function renderGoal(){
 /* ========== RENDER: TAB 2 ========== */
 function renderEval(){
   let h='';
-  // AI Banner
   h+=`<div class="m-ai-banner" onclick="toggleDrawer()">
     <div class="m-ai-banner-top">
       <div class="m-ai-banner-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg></div>
       <div><div class="m-ai-banner-t">AI 已自动计算得分</div><div class="m-ai-banner-d">基于指标完成度 + 历史表现</div></div>
     </div>
   </div>`;
-  // Info card
-  h+=`<div class="m-info">
-    <div class="m-info-row"><span class="m-info-l">考核周期</span><span class="m-info-v">2026年Q2</span></div>
-    <div class="m-info-row"><span class="m-info-l">被考核人</span><span class="m-info-v">张明 (EMP20240315)</span></div>
-    <div class="m-info-row"><span class="m-info-l">部门</span><span class="m-info-v">产品部</span></div>
-    <div class="m-info-row"><span class="m-info-l">职位</span><span class="m-info-v">高级产品经理</span></div>
+  h+=`<div class="m-ov">
+    <div class="m-ov-row"><span class="m-ov-l">考核周期</span><span class="m-ov-v">2026年Q2</span></div>
+    <div class="m-ov-row"><span class="m-ov-l">被考核人</span><span class="m-ov-v">张明 (EMP20240315)</span></div>
+    <div class="m-ov-row"><span class="m-ov-l">部门</span><span class="m-ov-v">产品部</span></div>
+    <div class="m-ov-row"><span class="m-ov-l">职位</span><span class="m-ov-v">高级产品经理</span></div>
   </div>`;
-  // Module cards
-  h+=`<div class="m-sec"><div class="m-sec-t">评分维度</div>`;
+  h+=`<div class="m-sec"><div class="m-sec-hd"><div class="m-sec-t">评分维度</div><div class="m-sec-meta">${EVAL_MODULES.reduce((s,m)=>s+m.items.length,0)} 项指标</div></div>`;
   EVAL_MODULES.forEach((m,mi)=>{
     const avgScore=m.items.length?Math.round(m.items.reduce((s,it)=>s+it.score,0)/m.items.length):0;
     const isOpen=openMods[1].has(mi);
@@ -681,7 +766,6 @@ function renderEval(){
     h+=`</div></div>`;
   });
   h+=`</div>`;
-  // Score summary
   let totalW=0,totalS=0;
   EVAL_MODULES.forEach(m=>{
     m.items.forEach(it=>{
@@ -712,24 +796,18 @@ function renderRatify(){
   const pending=total-rated;
   const distOk=RAT_DISTRIBUTION.every(d=>Math.abs(d.current-d.target)<=5);
   let h='';
-
-  // AI Banner
   h+=`<div class="m-ai-banner" onclick="toggleDrawer()">
     <div class="m-ai-banner-top">
       <div class="m-ai-banner-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg></div>
       <div><div class="m-ai-banner-t">AI 已为 ${total} 人分配等级</div><div class="m-ai-banner-d">基于评分 + 强制分布规则，点击查看</div></div>
     </div>
   </div>`;
-
-  // Stats grid
   h+=`<div class="m-stats">
     <div class="m-stat pr"><div class="m-stat-t">总人数</div><div class="m-stat-v">${total}</div><div class="m-stat-d">参与考核</div></div>
     <div class="m-stat em"><div class="m-stat-t">已分配</div><div class="m-stat-v">${rated}</div><div class="m-stat-d">${Math.round(rated/total*100)}% 完成</div></div>
     <div class="m-stat ac"><div class="m-stat-t">未分配</div><div class="m-stat-v">${pending}</div><div class="m-stat-d">待处理</div></div>
     <div class="m-stat ${distOk?'em':'ro'}"><div class="m-stat-t">分布状态</div><div class="m-stat-v">${distOk?'达标':'偏离'}</div><div class="m-stat-d">${distOk?'各等级比例合理':'需调整等级配比'}</div></div>
   </div>`;
-
-  // Distribution bars
   h+=`<div class="m-dist">
     <div class="m-dist-t"><span>等级分布</span><span style="font:400 11px/1 var(--f);color:var(--c5)">目标 vs 实际</span></div>`;
   RAT_DISTRIBUTION.forEach(d=>{
@@ -748,9 +826,7 @@ function renderRatify(){
   });
   h+=`<div style="margin-top:6px;font:400 10px/1.3 var(--f);color:var(--c4)">目标：A 25% · B+ 35% · B 25% · B- 10% · C 5%</div>`;
   h+=`</div>`;
-
-  // Person cards
-  h+=`<div class="m-sec"><div class="m-sec-t">人员审定 (${rated}/${total})</div>`;
+  h+=`<div class="m-sec"><div class="m-sec-hd"><div class="m-sec-t">人员审定 (${rated}/${total})</div></div>`;
   RAT_PERSONS.forEach((p,i)=>{
     const initials=p.name.slice(0,1);
     const aiTag=p.aiMatch
@@ -837,25 +913,21 @@ function openGoalEdit(mi,gi){
   document.getElementById('editTitle').textContent='编辑 — '+g.name;
   const isQ=g.type==='q';
   let h='';
-  // 目标信息
-  h+=`<div class="m-ef-section">📋 目标信息</div>`;
+  h+=`<div class="m-ef-section">目标信息</div>`;
   h+=`<div class="m-ef"><div class="m-ef-l">目标名称 <span class="req">*</span></div><input class="m-ef-input" id="ef_name" value="${g.name}"/></div>`;
   h+=`<div class="m-ef"><div class="m-ef-l">关联指标</div><input class="m-ef-input" value="${g.indicator}" readonly style="background:var(--c0);color:var(--c6)"/></div>`;
   h+=`<div class="m-ef"><div class="m-ef-l">权重(%) <span class="req">*</span></div><input class="m-ef-input num" id="ef_weight" type="number" value="${g.weight}" min="0" max="100"/></div>`;
   if(isQ){
-    // 目标值配置
-    h+=`<div class="m-ef-section">🎯 目标值配置</div>`;
+    h+=`<div class="m-ef-section">目标值配置</div>`;
     h+=`<div class="m-ef-row">
       <div class="m-ef"><div class="m-ef-l">目标值 <span class="req">*</span></div><input class="m-ef-input num" id="ef_target" type="number" value="${g.target}"/></div>
       <div class="m-ef"><div class="m-ef-l">挑战值</div><input class="m-ef-input num" id="ef_challenge" type="number" value="${g.challenge}"/></div>
       <div class="m-ef"><div class="m-ef-l">保底值</div><input class="m-ef-input num" id="ef_baseline" type="number" value="${g.baseline}"/></div>
     </div>`;
-    // 计算规则
-    h+=`<div class="m-ef-section">📐 计算规则</div>`;
+    h+=`<div class="m-ef-section">计算规则</div>`;
     h+=`<div class="m-ef"><div class="m-ef-l">规则名称</div><input class="m-ef-input" value="${g.rule}" readonly style="background:var(--c0);color:var(--c6)"/></div>`;
-    // 等级标准
     if(g.levels&&g.levels.length){
-      h+=`<div class="m-ef-section">📊 等级标准</div>`;
+      h+=`<div class="m-ef-section">等级标准</div>`;
       h+=`<table class="m-gt"><thead><tr><th>等级</th><th>分值</th><th>条件</th></tr></thead><tbody>`;
       g.levels.forEach(l=>{
         h+=`<tr><td><span class="dot" style="background:${l.c}"></span>${l.l}</td><td style="font-family:var(--fm);font-weight:600">${l.s}</td><td>${l.d}</td></tr>`;
@@ -863,8 +935,7 @@ function openGoalEdit(mi,gi){
       h+=`</tbody></table>`;
     }
   } else {
-    // 定性目标
-    h+=`<div class="m-ef-section">📝 衡量标准</div>`;
+    h+=`<div class="m-ef-section">衡量标准</div>`;
     h+=`<div class="m-ef"><div class="m-ef-l">衡量方式</div><input class="m-ef-input" value="定性评分" readonly style="background:var(--c0);color:var(--c6)"/></div>`;
     h+=`<div class="m-ef"><div class="m-ef-l">目标描述</div><input class="m-ef-input" id="ef_desc" value="${g.name}"/></div>`;
   }
@@ -894,12 +965,7 @@ function saveGoalEdit(){
   }
   closeGoalEdit();
   render();
-  // toast
-  const t=document.createElement('div');
-  t.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--em);color:#FFF;padding:10px 20px;border-radius:8px;font:600 13px/1 var(--f);z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,.2)';
-  t.textContent='已保存';
-  document.body.appendChild(t);
-  setTimeout(()=>t.remove(),1500);
+  showToast('已保存');
 }
 
 /* ========== FILE UPLOAD ========== */
@@ -925,7 +991,6 @@ function mobileUpload(){
   desc.textContent=doc.name+' · '+doc.size;
   bar.style.width='0';
   toast.style.display='block';
-  /* Animate progress */
   setTimeout(()=>bar.style.width='40%',100);
   setTimeout(()=>bar.style.width='70%',600);
   setTimeout(()=>bar.style.width='100%',1200);
@@ -937,9 +1002,7 @@ function mobileUpload(){
   setTimeout(()=>{
     toast.style.display='none';
     bar.style.background='var(--pr)';
-    /* Apply parsed data to current tab */
     if(currentTab===0){
-      /* Goal tab: add goals from document */
       const vg=MODULES.find(m=>m.name==='价值观目标');
       if(vg&&vg.goals.length===0){
         vg.goals.push({name:'客户第一',indicator:'客户满意度',type:'q',weight:8,target:4.5,challenge:5,baseline:4,rule:'标准梯度计算',levels:[{l:'优秀',c:'var(--em)',s:'120分',d:'≥5.0'},{l:'良好',c:'var(--pr)',s:'100分',d:'≥4.5'},{l:'合格',c:'var(--ac)',s:'80分',d:'≥4.0'},{l:'不合格',c:'var(--ro)',s:'0分',d:'<4.0'}]});
@@ -947,11 +1010,9 @@ function mobileUpload(){
       }
       render();
     } else if(currentTab===1){
-      /* Eval tab: apply AI grades */
       EVAL_MODULES.forEach(m=>{m.items.forEach(it=>{it.grade=it.aiFill?'符合预期+':'符合预期';it.score=GRADE_SCORES[it.grade];});});
       render();
     } else {
-      /* Ratify tab: apply AI grades */
       RAT_PERSONS.forEach(p=>{p.grade=p.aiGrade;p.aiMatch=true;});
       recalcDistribution();
       render();
@@ -987,7 +1048,6 @@ function stopVoice(){
     showToast('语音太短');
     return;
   }
-  /* Simulate voice-to-text result */
   const phrases=[
     '帮我把产品迭代完成率的目标值调到110',
     '新增用户数的权重改成25%',
@@ -996,11 +1056,9 @@ function stopVoice(){
     '价值观目标帮我推荐两个'
   ];
   const text=phrases[currentTab]||phrases[0];
-  /* Add as user message in AI drawer */
   chatMsgs[currentTab].push({role:'user',text:'🎤 '+text,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
   if(!drawerOpen) toggleDrawer();
   else renderDrawerChat();
-  /* Bot responds */
   setTimeout(()=>{
     const responses=[
       '收到！已将产品迭代完成率目标值调整为 110，挑战值调整为 130。',
@@ -1064,7 +1122,6 @@ function drawerAction(label){
   chatMsgs[currentTab].push({role:'user',text:label});
   renderDrawerChat();
   setTimeout(()=>{
-    /* Tab 1 actions */
     if(currentTab===0){
       if(label==='确认添加'){
         const vg=MODULES.find(m=>m.name==='价值观目标');
@@ -1088,7 +1145,6 @@ function drawerAction(label){
         chatMsgs[currentTab].push({role:'bot',text:`已执行「${label}」，请在页面上查看更新结果。`,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
       }
     }
-    /* Tab 2 actions */
     else if(currentTab===1){
       if(label==='自动评分全部'){
         EVAL_MODULES.forEach(m=>{
@@ -1109,7 +1165,6 @@ function drawerAction(label){
         chatMsgs[currentTab].push({role:'bot',text:`已执行「${label}」，请在页面上查看更新结果。`,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
       }
     }
-    /* Tab 3 actions */
     else{
       if(label==='自动填充全部'||label==='确认应用'){
         RAT_PERSONS.forEach(p=>{p.grade=p.aiGrade;p.aiMatch=true;});

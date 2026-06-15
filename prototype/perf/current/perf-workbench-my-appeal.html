@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 绩效申诉</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoothing:antialiased}
+.card{background:var(--sf);border-radius:var(--r3);box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:16px}
+.card-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--dv)}
+.card-t{font:600 15px/1 var(--f);color:var(--c9)}
+.card-bd{padding:16px 20px}
+.btn{height:34px;padding:0 16px;border-radius:var(--r1);font:500 13px/1 var(--f);border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.btn-p{background:var(--pr);color:#FFF}.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c7);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3)}
+.btn-ro{background:var(--ro);color:#FFF}
+
+/* Form */
+.form-row{margin-bottom:16px}
+.form-label{font:500 13px/1 var(--f);color:var(--c8);margin-bottom:6px;display:flex;align-items:center;gap:4px}
+.form-label .req{color:var(--ro)}
+.form-input{width:100%;height:36px;border:1px solid var(--c2);border-radius:var(--r1);padding:0 12px;font:400 13px/1 var(--f);color:var(--c9);outline:none;transition:border .15s}
+.form-input:focus{border-color:var(--pr);box-shadow:0 0 0 3px var(--pr50)}
+.form-select{width:100%;height:36px;border:1px solid var(--c2);border-radius:var(--r1);padding:0 12px;font:400 13px/1 var(--f);color:var(--c9);background:var(--sf);outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='8' height='5' viewBox='0 0 8 5' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L4 4L7 1' stroke='%23A1A1AA' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.form-textarea{width:100%;min-height:100px;border:1px solid var(--c2);border-radius:var(--r1);padding:10px 12px;font:400 13px/1.6 var(--f);color:var(--c9);outline:none;resize:vertical;transition:border .15s}
+.form-textarea:focus{border-color:var(--pr);box-shadow:0 0 0 3px var(--pr50)}
+.form-hint{font:400 12px/1 var(--f);color:var(--c4);margin-top:4px}
+
+/* Appeal List */
+.appeal{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--dv);cursor:pointer}
+.appeal:last-child{border-bottom:none}
+.appeal:hover{background:var(--c0);margin:0 -20px;padding:14px 20px}
+.appeal-info{flex:1;min-width:0}
+.appeal-name{font:500 13px/1 var(--f);color:var(--c8)}
+.appeal-meta{font:400 12px/1 var(--f);color:var(--c5);margin-top:3px}
+.appeal-tag{font:500 11px/1 var(--f);padding:3px 8px;border-radius:4px;flex-shrink:0}
+.appeal-tag.pending{background:var(--ac50);color:var(--ac700)}
+.appeal-tag.processing{background:var(--pr50);color:var(--pr)}
+.appeal-tag.accepted{background:var(--em50);color:var(--em700)}
+.appeal-tag.rejected{background:var(--ro50);color:var(--ro)}
+
+/* Tabs */
+.tabs{display:flex;gap:0;background:var(--c1);border-radius:var(--r1);padding:3px;margin-bottom:16px}
+.tab{flex:1;text-align:center;padding:8px 0;font:500 13px/1 var(--f);color:var(--c5);border-radius:4px;cursor:pointer;transition:all .2s}
+.tab.active{background:var(--sf);color:var(--pr);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+</style>
+</head>
+<body>
+
+<script>
+GHR_NAV.init('workbench', '我的绩效申诉');
+</script>
+
+<div style="padding:24px">
+  <div class="tabs">
+    <div class="tab active" onclick="showTab(0)">申诉记录</div>
+    <div class="tab" onclick="showTab(1)">发起申诉</div>
+  </div>
+
+  <!-- Tab 0: Appeal List -->
+  <div id="tab0">
+    <div class="card">
+      <div class="card-hd">
+        <span class="card-t">申诉记录</span>
+        <button class="btn btn-p" onclick="showTab(1)">发起申诉</button>
+      </div>
+      <div class="card-bd">
+        <div class="appeal">
+          <div class="appeal-info">
+            <div class="appeal-name">Q1绩效等级申诉</div>
+            <div class="appeal-meta">2026-04-05 · 绩效评分维度「业绩维度」评分异议</div>
+          </div>
+          <span class="appeal-tag processing">处理中</span>
+        </div>
+        <div class="appeal">
+          <div class="appeal-info">
+            <div class="appeal-name">Q4绩效结果申诉</div>
+            <div class="appeal-meta">2025-12-20 · 等级分配结果异议</div>
+          </div>
+          <span class="appeal-tag accepted">已采纳</span>
+        </div>
+        <div class="appeal">
+          <div class="appeal-info">
+            <div class="appeal-name">Q3目标权重申诉</div>
+            <div class="appeal-meta">2025-09-15 · 目标权重分配不合理</div>
+          </div>
+          <span class="appeal-tag rejected">已驳回</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 1: New Appeal -->
+  <div id="tab1" style="display:none">
+    <div class="card">
+      <div class="card-hd"><span class="card-t">发起绩效申诉</span></div>
+      <div class="card-bd">
+        <div class="form-row">
+          <div class="form-label">申诉周期 <span class="req">*</span></div>
+          <select class="form-select">
+            <option>2026年Q1</option>
+            <option>2025年Q4</option>
+            <option>2025年Q3</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-label">申诉类型 <span class="req">*</span></div>
+          <select class="form-select">
+            <option>评分异议</option>
+            <option>等级异议</option>
+            <option>流程异议</option>
+            <option>其他</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-label">申诉标题 <span class="req">*</span></div>
+          <input class="form-input" placeholder="简要描述申诉原因"/>
+        </div>
+        <div class="form-row">
+          <div class="form-label">申诉详情 <span class="req">*</span></div>
+          <textarea class="form-textarea" placeholder="详细描述申诉内容，包括具体异议点、期望结果等…"></textarea>
+          <div class="form-hint">请详细描述，以便审批人快速了解情况</div>
+        </div>
+        <div class="form-row">
+          <div class="form-label">附件</div>
+          <div style="border:2px dashed var(--c2);border-radius:var(--r2);padding:24px;text-align:center;cursor:pointer;color:var(--c4);font:400 13px/1 var(--f)">
+            点击或拖拽上传附件（可选）
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
+          <button class="btn btn-s" onclick="showTab(0)">取消</button>
+          <button class="btn btn-p">提交申诉</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showTab(i){
+  document.querySelectorAll('.tab').forEach((t,idx)=>t.classList.toggle('active',idx===i));
+  document.getElementById('tab0').style.display=i===0?'':'none';
+  document.getElementById('tab1').style.display=i===1?'':'none';
+}
+</script>
+
+</body>
+</html>

@@ -102,17 +102,26 @@ const GHR_NAV = {
         {n:'活动详情',ic:'eye',file:'perf-activity-detail.html'},
       ]},
       {n:'绩效报表',ic:'chart',items:[
-        {n:'目标中心',ic:'target'},
-        {n:'考核进度',ic:'chart'},
-        {n:'绩效结果',ic:'chart'},
+        {n:'目标中心',ic:'target',file:'perf-result-employee.html'},
+        {n:'考核进度',ic:'chart',file:'perf-activity-progress.html'},
+        {n:'绩效结果',ic:'chart',file:'perf-result-view.html'},
+        {n:'绩效分析报表',ic:'chart',file:'perf-report-analytics.html'},
+      ]},
+      {n:'申诉管理',ic:'file',items:[
+        {n:'申诉记录',ic:'file',file:'perf-appeal-list.html'},
       ]},
       {n:'AI 智能应用',ic:'settings',items:[
         {n:'AI 表单辅助',ic:'edit',file:'perf-ai-form-assistant.html'},
         {n:'AI 绩效活动',ic:'eye',file:'perf-ai-monitor.html'},
         {n:'AI 绩效分析',ic:'chart',file:'perf-ai-analytics.html'},
-        {n:'AI 移动端',ic:'user',file:'perf-mobile.html'},
-        {n:'移动端AI表单',ic:'edit',file:'perf-mobile-ai-form.html'},
-        {n:'对话式AI助手',ic:'inbox',file:'perf-mobile-feishu-bot.html'},
+      ]},
+      {n:'移动端',ic:'user',items:[
+        {n:'目标制定',ic:'target',file:'perf-mobile-goal.html'},
+        {n:'目标审批',ic:'check',file:'perf-mobile-goal-approve.html'},
+        {n:'结果审定',ic:'chart',file:'perf-mobile-ratify.html'},
+        {n:'AI 增强表单',ic:'edit',file:'perf-mobile-ai-form.html'},
+        {n:'三合一工作台',ic:'grid',file:'perf-mobile.html'},
+        {n:'飞书机器人',ic:'inbox',file:'perf-mobile-feishu-bot.html'},
       ]},
     ]},
   },
@@ -275,7 +284,6 @@ const GHR_NAV = {
     hdr.innerHTML = `
       <div class="hdr-l">
         <div class="logo">
-          <div class="logo-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
           <span class="logo-t">HR ONE</span>
         </div>
         <button class="menu-btn" id="menuBtn" onclick="GHR_NAV.toggleMenu()">
