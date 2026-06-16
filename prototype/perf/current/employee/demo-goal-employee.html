@@ -151,9 +151,9 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .inp.num{font-family:var(--m);text-align:right}
 select.inp{-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:22px;cursor:pointer}
 textarea.inp{min-height:60px;resize:vertical;font-family:var(--f);line-height:1.5}
-.ge-linked{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--pr50);border:1px solid var(--pr200);border-radius:var(--r1);font:500 12px/1 var(--f);color:var(--pr)}
-.ge-linked svg{width:14px;height:14px;flex-shrink:0}
-.ge-linked-btn{margin-left:auto;font:500 11px/1 var(--f);color:var(--c5);background:none;border:none;cursor:pointer;padding:2px 6px;border-radius:3px;transition:all .12s}
+.ge-linked{display:flex;align-items:center;gap:4px;padding:5px 8px;background:var(--pr50);border:1px solid var(--pr200);border-radius:var(--r1);font:500 12px/1 var(--f);color:var(--pr)}
+.ge-linked svg{width:12px;height:12px;flex-shrink:0}
+.ge-linked-btn{margin-left:auto;font:500 10px/1 var(--f);color:var(--c5);background:none;border:none;cursor:pointer;padding:2px 4px;border-radius:3px;transition:all .12s}
 .ge-linked-btn:hover{color:var(--ro);background:var(--ro50)}
 
 /* ═══ MODAL ═══ */
@@ -769,10 +769,12 @@ function render(){
               ${g.type==='quant'?`
               <div class="ge-sec">
                 <div class="ge-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>目标信息</div>
-                <div class="ge-fi"><span class="ge-fi-l">权重(%) <span class="req">*</span></span><input class="inp num" id="ge_weight_${g.id}" type="number" value="${g.weight}" min="0" max="100" style="max-width:120px" oninput="syncGoalFromForm('${g.id}')"/></div>
-                <div class="ge-fi" style="margin-top:10px"><span class="ge-fi-l">关联指标</span>
-                  ${linked?`<div class="ge-linked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>${linked.name}<button class="ge-linked-btn" onclick="event.stopPropagation();unlinkIndicator('${g.id}')">解除</button></div>`
-                  :`<button class="btn btn-o btn-sm" onclick="event.stopPropagation();openIndicatorPicker('${g.id}',${mi})">${I.link} 选择指标</button>`}
+                <div class="ge-row">
+                  <div class="ge-fi"><span class="ge-fi-l">权重(%) <span class="req">*</span></span><input class="inp num" id="ge_weight_${g.id}" type="number" value="${g.weight}" min="0" max="100" style="max-width:100px" oninput="syncGoalFromForm('${g.id}')"/></div>
+                  <div class="ge-fi"><span class="ge-fi-l">关联指标</span>
+                    ${linked?`<div class="ge-linked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>${linked.name}<button class="ge-linked-btn" onclick="event.stopPropagation();unlinkIndicator('${g.id}')">解除</button></div>`
+                    :`<button class="btn btn-o btn-sm" style="height:28px;padding:0 8px;font-size:11px" onclick="event.stopPropagation();openIndicatorPicker('${g.id}',${mi})">${I.link} 选择</button>`}
+                  </div>
                 </div>
               </div>
               <div class="ge-sec">
@@ -794,7 +796,7 @@ function render(){
               `:`
               <div class="ge-sec">
                 <div class="ge-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>目标信息</div>
-                <div class="ge-fi"><span class="ge-fi-l">权重(%) <span class="req">*</span></span><input class="inp num" id="ge_weight_${g.id}" type="number" value="${g.weight}" min="0" max="100" style="max-width:120px" oninput="syncGoalFromForm('${g.id}')"/></div>
+                <div class="ge-fi"><span class="ge-fi-l">权重(%) <span class="req">*</span></span><input class="inp num" id="ge_weight_${g.id}" type="number" value="${g.weight}" min="0" max="100" style="max-width:100px" oninput="syncGoalFromForm('${g.id}')"/></div>
               </div>
               <div class="ge-sec">
                 <div class="ge-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>衡量标准</div>
