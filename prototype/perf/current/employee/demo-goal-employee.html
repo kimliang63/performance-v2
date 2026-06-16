@@ -86,7 +86,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .goal-row:last-child{border-bottom:none}
 
 .goal-summary{display:flex;align-items:center;padding:12px 20px;gap:12px;cursor:pointer}
-.goal-drag{color:var(--c3);cursor:grab;flex-shrink:0;display:flex;align-items:center}
+.goal-drag{color:var(--c3);cursor:default;flex-shrink:0;display:flex;align-items:center;opacity:.4}
 .goal-drag svg{width:14px;height:14px}
 .goal-name{flex:1;font:500 14px/1.3 var(--f);color:var(--c8)}
 .goal-meta{display:flex;align-items:center;gap:12px;flex-shrink:0}
@@ -235,6 +235,33 @@ textarea.inp{min-height:48px;resize:vertical;font-family:var(--f)}
 .validate-toast.warn{background:var(--ac);box-shadow:0 8px 24px rgba(245,158,11,.3)}
 .inp-err{border-color:var(--ro)!important;box-shadow:0 0 0 2px var(--ro50)!important}
 
+/* ═══ CONFIRM MODAL ═══ */
+.confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:5000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.confirm-overlay.open{opacity:1;pointer-events:all}
+.confirm-box{background:var(--sf);border-radius:var(--r4);box-shadow:var(--shadow-modal);width:380px;padding:24px;transform:scale(.96);transition:transform .2s ease}
+.confirm-overlay.open .confirm-box{transform:scale(1)}
+.confirm-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.confirm-icon.warn{background:var(--ac50);color:var(--ac)}
+.confirm-icon.danger{background:var(--ro50);color:var(--ro)}
+.confirm-icon svg{width:20px;height:20px}
+.confirm-title{font:600 15px/1.3 var(--f);color:var(--c9);margin-bottom:6px}
+.confirm-desc{font:400 13px/1.5 var(--f);color:var(--c6);margin-bottom:20px}
+.confirm-actions{display:flex;justify-content:flex-end;gap:8px}
+
+/* ═══ TOOLTIP ═══ */
+.field-tip{position:relative;display:inline-flex;align-items:center;margin-left:4px;cursor:help}
+.field-tip-icon{width:14px;height:14px;border-radius:50%;background:var(--c2);color:var(--c5);display:flex;align-items:center;justify-content:center;font:600 9px/1 var(--f);flex-shrink:0;transition:all .12s}
+.field-tip:hover .field-tip-icon{background:var(--pr200);color:var(--pr)}
+.field-tip-text{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--c8);color:#FFF;font:400 11px/1.4 var(--f);padding:6px 10px;border-radius:var(--r1);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:100}
+.field-tip-text::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:var(--c8)}
+.field-tip:hover .field-tip-text{opacity:1}
+
+/* ═══ MODULE WEIGHT BAR ═══ */
+.mod-weight-bar{display:flex;align-items:center;gap:6px;margin-left:auto}
+.mod-weight-track{width:80px;height:4px;background:var(--c1);border-radius:2px;overflow:hidden}
+.mod-weight-fill{height:100%;border-radius:2px;transition:width .3s ease}
+.mod-weight-label{font:500 11px/1 var(--m);color:var(--c5)}
+
 /* ═══ GLOBE / LANG ═══ */
 .field-with-lang{position:relative}
 .field-with-lang .inp{padding-right:28px}
@@ -251,12 +278,31 @@ textarea.inp{min-height:48px;resize:vertical;font-family:var(--f)}
 .kpi-card{padding:12px 14px;border:1px solid var(--c2);border-radius:var(--r2);cursor:pointer;transition:all .12s;margin-bottom:8px}
 .kpi-card:hover{border-color:var(--pr200);background:var(--pr50)}
 .kpi-card.selected{border-color:var(--pr);background:var(--pr50);box-shadow:0 0 0 2px var(--pr100)}
-.kpi-card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.kpi-card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
 .kpi-card-name{font:500 13px/1.3 var(--f);color:var(--c8)}
 .kpi-card-cat{font:400 11px/1 var(--f);color:var(--c5);padding:1px 6px;background:var(--c1);border-radius:3px}
-.kpi-card-desc{font:400 12px/1.4 var(--f);color:var(--c5);margin-bottom:6px}
-.kpi-card-meta{display:flex;gap:16px;font:400 11px/1 var(--f);color:var(--c4)}
-.kpi-card-meta span{display:flex;align-items:center;gap:3px}
+.kpi-card-desc{font:400 12px/1.4 var(--f);color:var(--c5);margin-bottom:8px}
+.kpi-card-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+.kpi-tag{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:3px;font:400 10px/1 var(--f)}
+.kpi-tag.type{background:var(--pr50);color:var(--pr)}
+.kpi-tag.nature{background:var(--vi50);color:var(--vi)}
+.kpi-tag.unit{background:var(--ac50);color:var(--ac700)}
+.kpi-tag.rule{background:var(--c1);color:var(--c6)}
+.kpi-card-dept{display:flex;align-items:center;gap:4px;font:400 11px/1 var(--f);color:var(--c5)}
+.kpi-card-dept svg{width:12px;height:12px;color:var(--c4)}
+
+/* KPI Detail Panel */
+.kpi-detail{background:var(--c0);border:1px solid var(--c2);border-radius:var(--r2);padding:14px;margin-top:12px;animation:fadeIn .2s ease}
+.kpi-detail-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.kpi-detail-name{font:600 14px/1.3 var(--f);color:var(--c9)}
+.kpi-detail-close{width:24px;height:24px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c4);background:transparent;border:none;transition:all .12s}
+.kpi-detail-close:hover{background:var(--c1);color:var(--c7)}
+.kpi-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;margin-bottom:10px}
+.kpi-detail-item{display:flex;flex-direction:column;gap:2px}
+.kpi-detail-label{font:400 10px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px}
+.kpi-detail-value{font:400 12px/1.3 var(--f);color:var(--c7)}
+.kpi-detail-desc{font:400 12px/1.5 var(--f);color:var(--c6);padding-top:8px;border-top:1px solid var(--dv)}
+.kpi-cat-count{font:400 10px/1 var(--f);color:var(--c4);margin-left:2px}
 
 /* Goal type popup */
 .goal-type-popup{display:none;flex-direction:row}
@@ -292,10 +338,13 @@ body.chat-open .ai-chat{transform:translateX(0)}
 .ai-msg-card{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);padding:12px;margin-top:8px}
 .ai-msg-card-t{font:600 12px/1.3 var(--f);color:var(--c8);margin-bottom:4px}
 .ai-msg-card-d{font:400 12px/1.5 var(--f);color:var(--c5)}
-.ai-msg-card-tag{display:inline-block;font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px;margin-top:6px}
+.ai-msg-card-ft{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.ai-msg-card-tag{display:inline-block;font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px}
 .ai-msg-card-tag.em{color:var(--em700);background:var(--em50)}
 .ai-msg-card-tag.pr{color:var(--pr);background:var(--pr50)}
 .ai-msg-card-tag.ac{color:var(--ac);background:var(--ac50)}
+.ai-msg-card-apply{font:500 11px/1 var(--f);padding:4px 8px;border-radius:var(--r1);border:1px solid var(--pr200);background:var(--pr50);color:var(--pr);cursor:pointer;transition:all .12s}
+.ai-msg-card-apply:hover{background:var(--pr);color:#FFF}
 .ai-chat-ft{padding:12px 16px;border-top:1px solid var(--dv);display:flex;gap:8px;align-items:center}
 .ai-chat-input{flex:1;height:36px;border:1px solid var(--c2);border-radius:var(--r2);padding:0 12px;font:400 13px/1 var(--f);color:var(--c8);outline:none;transition:border .15s}
 .ai-chat-input:focus{border-color:var(--pr)}
@@ -526,6 +575,7 @@ body.chat-open .ai-toggle{display:none}
     <div class="modal-body">
       <div style="margin-bottom:12px"><input class="inp" placeholder="搜索指标名称..." id="kpiSearch" oninput="filterKPI()"></div>
       <div class="kpi-cat-bar" id="kpiCatBar"></div>
+      <div id="kpiDetail"></div>
       <div id="kpiList"></div>
     </div>
     <div class="modal-footer"><span class="modal-footer-l" id="kpiSelLabel">未选择</span><div style="display:flex;gap:8px"><button class="btn btn-s" onclick="closeModal('indicatorModal')">取消</button><button class="btn btn-p" onclick="confirmIndicator()">确认选择</button></div></div>
@@ -546,6 +596,19 @@ body.chat-open .ai-toggle{display:none}
 </div>
 
 <div class="validate-toast" id="validateToast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span id="toastMsg"></span></div>
+
+<!-- ═══ CONFIRM MODAL ═══ -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-icon warn" id="confirmIcon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+    <div class="confirm-title" id="confirmTitle">确认操作</div>
+    <div class="confirm-desc" id="confirmDesc">确定要执行此操作吗？</div>
+    <div class="confirm-actions">
+      <button class="btn btn-s" id="confirmCancel">取消</button>
+      <button class="btn btn-p" id="confirmOk">确认</button>
+    </div>
+  </div>
+</div>
 
 <!-- Goal type choice popup -->
 <div id="addGoalPopup" style="position:fixed;z-index:1500;background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-dropdown);padding:8px;gap:6px" class="goal-type-popup">
@@ -650,6 +713,57 @@ let langStore={};
 let selectedKpiId=null;
 let langFieldKey=null;
 let kpiFilterCat='全部';
+let editFormSnapshot=null; // 用于检测未保存更改
+
+// ═══ CUSTOM CONFIRM MODAL ═══
+function showConfirm({title='确认操作', desc='确定要执行此操作吗？', type='warn', okText='确认', onOk}) {
+  const overlay = document.getElementById('confirmOverlay');
+  const icon = document.getElementById('confirmIcon');
+  const titleEl = document.getElementById('confirmTitle');
+  const descEl = document.getElementById('confirmDesc');
+  const okBtn = document.getElementById('confirmOk');
+  const cancelBtn = document.getElementById('confirmCancel');
+
+  icon.className = 'confirm-icon ' + type;
+  titleEl.textContent = title;
+  descEl.textContent = desc;
+  okBtn.textContent = okText;
+
+  // 更新图标
+  const icons = {
+    warn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+    danger: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>'
+  };
+  icon.innerHTML = icons[type] || icons.warn;
+
+  return new Promise(resolve => {
+    const cleanup = () => {
+      overlay.classList.remove('open');
+      okBtn.onclick = null;
+      cancelBtn.onclick = null;
+      overlay.onclick = null;
+    };
+    okBtn.onclick = () => { cleanup(); resolve(true); onOk && onOk(); };
+    cancelBtn.onclick = () => { cleanup(); resolve(false); };
+    overlay.onclick = (e) => { if (e.target === overlay) { cleanup(); resolve(false); } };
+    overlay.classList.add('open');
+  });
+}
+
+// ═══ FORM STATE SNAPSHOT ═══
+function snapshotForm() {
+  const data = {};
+  ['ef_name','ef_weight','ef_target','ef_challenge','ef_baseline','ef_desc'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) data[id] = el.value;
+  });
+  return JSON.stringify(data);
+}
+
+function hasUnsavedChanges() {
+  if (!editFormSnapshot || !editGoalId) return false;
+  return snapshotForm() !== editFormSnapshot;
+}
 
 // ═══ RENDER MODULES ═══
 function render(){
@@ -664,6 +778,10 @@ function render(){
         <div class="mod-hd-stats">
           <span>合计权重: <strong>${tw}%</strong></span>
           <span>目标数: <strong>${m.goals.length}</strong></span>
+          <div class="mod-weight-bar">
+            <div class="mod-weight-track"><div class="mod-weight-fill" style="width:${tw}%;background:${tw>m.weight?'var(--ro)':'var(--pr)'}"></div></div>
+            <span class="mod-weight-label" style="color:${tw>m.weight?'var(--ro)':'var(--c5)'}">/${m.weight}%</span>
+          </div>
         </div>
         <div class="mod-hd-sep"></div>
         <button class="mod-hd-add" onclick="event.stopPropagation();openCopyModal(${mi})" title="复制历史目标">
@@ -684,7 +802,7 @@ function render(){
         const linked=g.linkedIndicatorId?MOCK_INDICATORS.find(k=>k.id===g.linkedIndicatorId):null;
         h+=`<div class="goal-row">
           <div class="goal-summary" onclick="toggleGoal('${g.id}')">
-            <span class="goal-drag">${I.drag}</span>
+            <span class="goal-drag" title="拖拽排序（开发中）">${I.drag}</span>
             <span class="goal-name">${g.name}${linked?'<span style="font:400 11px/1 var(--f);color:var(--pr);margin-left:6px">'+linked.name+'</span>':''}</span>
             <div class="goal-meta">
               <span class="goal-type ${typeClass}">${typeLabel}</span>
@@ -748,10 +866,18 @@ function pickGoalType(type){
 function closeGoalTypePopup(){document.getElementById('addGoalPopup').classList.remove('show')}
 
 function deleteGoal(id,mi){
-  if(!confirm('确定删除该目标？'))return;
-  MODULES[mi].goals=MODULES[mi].goals.filter(g=>g.id!==id);
-  expandedGoals.delete(id);
-  render();
+  const goal=MODULES[mi].goals.find(g=>g.id===id);
+  showConfirm({
+    title:'删除目标',
+    desc:`确定要删除「${goal?goal.name:'该目标'}」吗？此操作不可撤销。`,
+    type:'danger',
+    okText:'删除',
+    onOk:()=>{
+      MODULES[mi].goals=MODULES[mi].goals.filter(g=>g.id!==id);
+      expandedGoals.delete(id);
+      render();
+    }
+  });
 }
 
 function updateTotals(){
@@ -781,6 +907,10 @@ function roField(label,value){
   return `<div class="ef-fi"><span class="ef-fi-l">${label}</span><div class="field-with-lang"><input class="inp" value="${value||''}" readonly/></div></div>`;
 }
 
+function linkedTip(){
+  return `<span class="field-tip"><span class="field-tip-icon">i</span><span class="field-tip-text">由关联指标自动填充，如需修改请先解除关联</span></span>`;
+}
+
 function openEdit(id,mi){
   editGoalId=id;editModIdx=mi;
   const d=findGoal(id);if(!d)return;
@@ -794,7 +924,7 @@ function openEdit(id,mi){
     html+=`<div class="ef-sec">
       <div class="ef-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>目标信息</div>
       <div style="display:flex;flex-direction:column;gap:10px">
-        <div class="ef-fi"><span class="ef-fi-l">目标名称<span class="req">*</span></span><div class="field-with-lang"><input class="inp" id="ef_name" value="${g.name}" ${linked?'readonly':''}/>${langBtn(g.id+'_name')}</div></div>
+        <div class="ef-fi"><span class="ef-fi-l">目标名称<span class="req">*</span>${linked?linkedTip():''}</span><div class="field-with-lang"><input class="inp" id="ef_name" value="${g.name}" ${linked?'readonly':''}/>${langBtn(g.id+'_name')}</div></div>
         <div class="ef-fi"><span class="ef-fi-l">关联指标<span class="req">*</span></span><div style="display:flex;gap:6px;align-items:center">${linked?`<span style="flex:1;font:500 12px/1 var(--f);color:var(--pr);padding:6px 8px;background:var(--pr50);border:1px solid var(--pr200);border-radius:var(--r1)">${linked.name}</span><button class="btn btn-s btn-sm" onclick="openIndicatorPicker('${g.id}',${mi})">更换</button>`:`<button class="btn btn-o btn-sm" onclick="openIndicatorPicker('${g.id}',${mi})">${I.link} 选择指标</button>`}</div></div>
         <div class="ef-fi"><span class="ef-fi-l">权重(%)<span class="req">*</span></span><input class="inp num" id="ef_weight" type="number" value="${g.weight}" min="0" max="100"/></div>
       </div>
@@ -802,9 +932,9 @@ function openEdit(id,mi){
     html+=`<div class="ef-sec">
       <div class="ef-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>衡量标准</div>
       <div style="display:flex;flex-direction:column;gap:10px">
-        <div class="ef-fi"><span class="ef-fi-l">目标值<span class="req">*</span></span><input class="inp num" id="ef_target" type="number" value="${g.target}" ${linked?'readonly':''}/></div>
-        <div class="ef-fi"><span class="ef-fi-l">挑战值</span><input class="inp num" id="ef_challenge" type="number" value="${g.challenge}" ${linked?'readonly':''}/></div>
-        <div class="ef-fi"><span class="ef-fi-l">保底值</span><input class="inp num" id="ef_baseline" type="number" value="${g.baseline}" ${linked?'readonly':''}/></div>
+        <div class="ef-fi"><span class="ef-fi-l">目标值<span class="req">*</span>${linked?linkedTip():''}</span><input class="inp num" id="ef_target" type="number" value="${g.target}" ${linked?'readonly':''}/></div>
+        <div class="ef-fi"><span class="ef-fi-l">挑战值${linked?linkedTip():''}</span><input class="inp num" id="ef_challenge" type="number" value="${g.challenge}" ${linked?'readonly':''}/></div>
+        <div class="ef-fi"><span class="ef-fi-l">保底值${linked?linkedTip():''}</span><input class="inp num" id="ef_baseline" type="number" value="${g.baseline}" ${linked?'readonly':''}/></div>
       </div>
     </div>`;
     html+=`<div class="ef-sec">
@@ -831,9 +961,25 @@ function openEdit(id,mi){
 
   document.getElementById('esbBody').innerHTML=html;
   document.body.classList.add('edit-open');
+  // 快照表单状态，用于检测未保存更改
+  setTimeout(() => { editFormSnapshot = snapshotForm(); }, 50);
 }
 
-function closeEdit(){document.body.classList.remove('edit-open');editGoalId=null}
+function closeEdit(skipCheck){
+  if(!skipCheck && hasUnsavedChanges()){
+    showConfirm({
+      title:'放弃未保存的更改？',
+      desc:'当前编辑的内容尚未保存，关闭后将丢失所有修改。',
+      type:'warn',
+      okText:'放弃更改',
+      onOk:()=>{ document.body.classList.remove('edit-open'); editGoalId=null; editFormSnapshot=null; }
+    });
+    return;
+  }
+  document.body.classList.remove('edit-open');
+  editGoalId=null;
+  editFormSnapshot=null;
+}
 
 function saveEdit(){
   if(!editGoalId)return;
@@ -867,7 +1013,7 @@ function saveEdit(){
     const descEl=document.getElementById('ef_desc');
     if(descEl) g.desc=descEl.value;
   }
-  closeEdit();
+  closeEdit(true);
   render();
 }
 
@@ -961,18 +1107,52 @@ function openIndicatorPicker(goalId,mi){
 }
 function renderKpiList(){
   const q=(document.getElementById('kpiSearch')?.value||'').toLowerCase();
-  const cats=['全部',...new Set(MOCK_INDICATORS.map(k=>k.category))];
-  document.getElementById('kpiCatBar').innerHTML=cats.map(c=>`<span class="kpi-cat ${kpiFilterCat===c?'on':''}" onclick="kpiFilterCat='${c}';renderKpiList()">${c}</span>`).join('');
+  const allCats=MOCK_INDICATORS.map(k=>k.category);
+  const cats=['全部',...new Set(allCats)];
+  document.getElementById('kpiCatBar').innerHTML=cats.map(c=>{
+    const count=c==='全部'?MOCK_INDICATORS.length:allCats.filter(x=>x===c).length;
+    return `<span class="kpi-cat ${kpiFilterCat===c?'on':''}" onclick="kpiFilterCat='${c}';renderKpiList()">${c}<span class="kpi-cat-count">(${count})</span></span>`;
+  }).join('');
   const filtered=MOCK_INDICATORS.filter(k=>{
     if(kpiFilterCat!=='全部'&&k.category!==kpiFilterCat)return false;
     if(q&&!k.name.toLowerCase().includes(q))return false;
     return true;
   });
+
+  // 显示详情面板
+  const detailEl=document.getElementById('kpiDetail');
+  if(selectedKpiId){
+    const k=MOCK_INDICATORS.find(x=>x.id===selectedKpiId);
+    if(k){
+      detailEl.innerHTML=`<div class="kpi-detail">
+        <div class="kpi-detail-hd">
+          <span class="kpi-detail-name">${k.name}</span>
+          <button class="kpi-detail-close" onclick="selectedKpiId=null;renderKpiList()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+        <div class="kpi-detail-grid">
+          <div class="kpi-detail-item"><span class="kpi-detail-label">所属部门</span><span class="kpi-detail-value">${k.dept}</span></div>
+          <div class="kpi-detail-item"><span class="kpi-detail-label">指标类型</span><span class="kpi-detail-value">${k.type}</span></div>
+          <div class="kpi-detail-item"><span class="kpi-detail-label">指标性质</span><span class="kpi-detail-value">${k.nature}</span></div>
+          <div class="kpi-detail-item"><span class="kpi-detail-label">计量单位</span><span class="kpi-detail-value">${k.unit}</span></div>
+          <div class="kpi-detail-item"><span class="kpi-detail-label">计算规则</span><span class="kpi-detail-value">${k.rule}</span></div>
+          <div class="kpi-detail-item"><span class="kpi-detail-label">发布状态</span><span class="kpi-detail-value">${k.publishStatus}</span></div>
+        </div>
+        <div class="kpi-detail-desc">${k.desc}</div>
+      </div>`;
+    }
+  }else{
+    detailEl.innerHTML='';
+  }
+
   document.getElementById('kpiList').innerHTML=filtered.map(k=>`<div class="kpi-card ${selectedKpiId===k.id?'selected':''}" onclick="selectedKpiId='${k.id}';renderKpiList()">
     <div class="kpi-card-hd"><span class="kpi-card-name">${k.name}</span><span class="kpi-card-cat">${k.category}</span></div>
-    <div class="kpi-card-meta">
-      <span>${k.dept}</span><span>${k.type}</span><span>${k.nature}</span><span>单位: ${k.unit}</span><span>${k.rule}</span>
+    <div class="kpi-card-tags">
+      <span class="kpi-tag type">${k.type}</span>
+      <span class="kpi-tag nature">${k.nature}</span>
+      <span class="kpi-tag unit">单位: ${k.unit}</span>
+      <span class="kpi-tag rule">${k.rule}</span>
     </div>
+    <div class="kpi-card-dept"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>${k.dept}</div>
     <div class="kpi-card-desc">${k.desc}</div>
   </div>`).join('');
   document.getElementById('kpiSelLabel').textContent=selectedKpiId?'已选择 1 项':'未选择';
@@ -1039,11 +1219,13 @@ const AI_MSGS=[
   {role:'bot',text:'你好，我是 AI 目标助手 👋\n\n我可以帮你：\n• 优化目标描述和衡量标准\n• 检查权重分配是否合理\n• 对标历史目标数据\n• 生成目标建议',time:'09:00',actions:['检查权重分配','优化目标描述','对标历史数据']},
   {role:'user',text:'帮我检查下当前权重分配'},
   {role:'bot',text:'当前权重分配分析：\n\n• 关键指标: 30%（3个目标）\n• 关键行动: 70%（4个目标）\n\n整体结构合理，关键行动占比偏高。建议：\n• 资源利用率权重偏低（5%），可适当提升\n• 绩效重构和AI探索各25%，单项权重较大',time:'09:01',cards:[
-    {t:'权重建议',d:'资源利用率 5% → 8%，关键行动中绩效重构 25% → 22%',tag:'建议调整',tc:'pr'},
+    {t:'权重建议',d:'资源利用率 5% → 8%，绩效重构 25% → 22%，AI探索 25% → 27%',tag:'建议调整',tc:'pr',apply:'weight'},
     {t:'历史对比',d:'上月关键指标占比 35%，本月下降 5%',tag:'关注',tc:'ac'},
   ]},
   {role:'user',text:'资源利用率的衡量标准怎么写更好'},
-  {role:'bot',text:'当前衡量标准：\n"人员的实际工作量饱和情况"\n\n建议优化为：\n\n1. 指标定义：人员当月实际投入有效工作量占可用出勤时间的比例，反映工作饱和度\n2. 计算逻辑：公式=当月实际任务工时（人天）/EHR实际出勤天数×100%\n3. 数据来源：Devops系统自动采集\n4. 目标设定依据：参考行业标准及团队历史数据',time:'09:02',actions:['采纳建议','查看其他目标']},
+  {role:'bot',text:'当前衡量标准：\n"人员的实际工作量饱和情况"\n\n建议优化为：\n\n1. 指标定义：人员当月实际投入有效工作量占可用出勤时间的比例，反映工作饱和度\n2. 计算逻辑：公式=当月实际任务工时（人天）/EHR实际出勤天数×100%\n3. 数据来源：Devops系统自动采集\n4. 目标设定依据：参考行业标准及团队历史数据',time:'09:02',cards:[
+    {t:'优化后的衡量标准',d:'1. 指标定义：人员当月实际投入有效工作量占可用出勤时间的比例\n2. 计算逻辑：实际任务工时/出勤天数×100%\n3. 数据来源：Devops系统',tag:'可应用',tc:'em',apply:'desc'},
+  ],actions:['采纳建议','查看其他目标']},
 ];
 function renderAiChat(){
   const bd=document.getElementById('chatBd');
@@ -1051,13 +1233,44 @@ function renderAiChat(){
   bd.innerHTML=AI_MSGS.map(m=>`
     <div class="ai-msg ${m.role}">
       <div class="ai-msg-bd">${m.text.replace(/\n/g,'<br/>')}</div>
-      ${m.cards?m.cards.map(c=>`<div class="ai-msg-card"><div class="ai-msg-card-t">${c.t}</div><div class="ai-msg-card-d">${c.d}</div><span class="ai-msg-card-tag ${c.tc}">${c.tag}</span></div>`).join(''):''}
+      ${m.cards?m.cards.map(c=>`<div class="ai-msg-card"><div class="ai-msg-card-t">${c.t}</div><div class="ai-msg-card-d">${c.d}</div><div class="ai-msg-card-ft"><span class="ai-msg-card-tag ${c.tc}">${c.tag}</span>${c.apply?`<button class="ai-msg-card-apply" onclick="applyAiSuggestion('${c.apply}')">应用到当前目标</button>`:''}</div></div>`).join(''):''}
       ${m.actions?`<div class="ai-msg-actions">${m.actions.map(a=>`<button class="ai-msg-btn${a.includes('确认')||a.includes('采纳')?' primary':''}">${a}</button>`).join('')}</div>`:''}
       ${m.time?`<div class="ai-msg-time">${m.time}</div>`:''}
     </div>
   `).join('');
   bd.scrollTop=bd.scrollHeight;
 }
+
+// ═══ AI SUGGESTION APPLY ═══
+function applyAiSuggestion(type){
+  if(!editGoalId){
+    showToast('请先打开目标编辑面板');
+    return;
+  }
+  const d=findGoal(editGoalId);
+  if(!d)return;
+  const g=d.goal;
+
+  if(type==='weight'){
+    // 应用权重建议：资源利用率 5→8，绩效重构 25→22，AI探索 25→27
+    const weightMap={'g1':8,'g6':22,'g7':27};
+    Object.entries(weightMap).forEach(([id,w])=>{
+      for(const m of MODULES){
+        const goal=m.goals.find(g=>g.id===id);
+        if(goal){goal.weight=w;break;}
+      }
+    });
+    render();
+    openEdit(editGoalId,editModIdx);
+    showToast('权重建议已应用','success');
+  }else if(type==='desc'){
+    // 应用衡量标准建议
+    g.desc='1. 指标定义：人员当月实际投入有效工作量占可用出勤时间的比例，反映工作饱和度\n2. 计算逻辑：公式=当月实际任务工时（人天）/EHR实际出勤天数×100%\n3. 数据来源：Devops系统自动采集\n4. 目标设定依据：参考行业标准及团队历史数据';
+    openEdit(editGoalId,editModIdx);
+    showToast('衡量标准已更新','success');
+  }
+}
+
 function sendAiMsg(){
   const input=document.getElementById('chatInput');
   const text=input.value.trim();
