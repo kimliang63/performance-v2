@@ -107,20 +107,6 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .goal-act.del:hover{color:var(--ro);background:var(--ro50)}
 .goal-act svg{width:14px;height:14px}
 
-/* Goal detail inline */
-.goal-detail{padding:0 20px 14px 46px;display:none}
-.goal-detail.open{display:block}
-.goal-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 24px}
-.gd-item{display:flex;flex-direction:column;gap:2px}
-.gd-label{font:400 11px/1 var(--f);color:var(--c4)}
-.gd-value{font:400 13px/1.4 var(--f);color:var(--c7)}
-.gd-value.mono{font-family:var(--m);font-weight:500}
-.gd-value strong{font-weight:600;color:var(--c8)}
-.gd-bar{display:flex;align-items:center;gap:6px;margin-top:4px}
-.gd-bar-track{flex:1;height:4px;background:var(--c1);border-radius:2px;overflow:hidden}
-.gd-bar-fill{height:100%;border-radius:2px}
-.gd-bar-text{font:500 11px/1 var(--m);color:var(--c5)}
-
 /* ═══ BUTTONS ═══ */
 .btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
 .btn svg{width:13px;height:13px}
@@ -143,52 +129,30 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .weight-total .v.err{color:var(--ro)}
 .goal-total{font:400 13px/1 var(--f);color:var(--c5)}
 
-/* ═══ EDIT SIDEBAR ═══ */
-.sb-overlay{position:fixed;inset:0;background:rgba(0,0,0,.25);z-index:1200;opacity:0;pointer-events:none;transition:opacity .25s}
-body.edit-open .sb-overlay{opacity:1;pointer-events:all}
-
-.edit-sidebar{position:fixed;top:52px;right:0;bottom:0;width:520px;background:var(--sf);box-shadow:-4px 0 24px rgba(0,0,0,.1);z-index:1300;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1)}
-body.edit-open .edit-sidebar{transform:translateX(0)}
-body.edit-open .ct{margin-right:0}
-body.edit-open .action-bar{right:0}
-
-.esb-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--dv);flex-shrink:0}
-.esb-hd-title{font:600 15px/1 var(--f);color:var(--c9)}
-.esb-close{width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c4);background:transparent;border:none;transition:all .12s}
-.esb-close:hover{background:var(--c1);color:var(--c7)}
-.esb-close svg{width:16px;height:16px}
-
-.esb-body{flex:1;overflow-y:auto;padding:20px}
-
-/* Edit form */
-.ef-sec{background:var(--c0);border-radius:var(--r2);padding:14px 16px;margin-bottom:12px}
-.ef-sec-title{font:600 13px/1 var(--f);color:var(--c8);margin-bottom:12px;display:flex;align-items:center;gap:6px}
-.ef-sec-title svg{width:14px;height:14px;color:var(--pr)}
-.ef-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.ef-grid.f3{grid-template-columns:1fr 1fr 1fr}
-.ef-grid .full{grid-column:1/-1}
-.ef-fi{display:flex;flex-direction:column;gap:3px}
-.ef-fi-l{font:400 11px/1 var(--f);color:var(--c5)}
-.ef-fi-l .req{color:var(--ro);margin-left:2px}
-.inp{width:100%;padding:6px 8px;border:1px solid var(--c2);border-radius:var(--r1);font:400 12px/1 var(--f);color:var(--c9);background:var(--sf);transition:all .12s;outline:none}
+/* ═══ INLINE EDIT FORM ═══ */
+.goal-edit{padding:0 20px 16px 46px;display:none}
+.goal-edit.open{display:block;animation:fadeIn .2s ease}
+.ge-form{background:var(--c0);border-radius:var(--r2);padding:16px;border:1px solid var(--c2)}
+.ge-sec{margin-bottom:14px}
+.ge-sec:last-child{margin-bottom:0}
+.ge-sec-title{font:600 12px/1 var(--f);color:var(--c6);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:6px}
+.ge-sec-title svg{width:13px;height:13px;color:var(--pr)}
+.ge-row{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px}
+.ge-row.f3{grid-template-columns:1fr 1fr 1fr}
+.ge-row .full{grid-column:1/-1}
+.ge-fi{display:flex;flex-direction:column;gap:3px}
+.ge-fi-l{font:400 11px/1 var(--f);color:var(--c5)}
+.ge-fi-l .req{color:var(--ro);margin-left:2px}
+.inp{width:100%;padding:7px 10px;border:1px solid var(--c2);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c9);background:var(--sf);transition:all .12s;outline:none}
 .inp:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .inp.num{font-family:var(--m);text-align:right}
-select.inp{-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 6px center;padding-right:20px;cursor:pointer}
-textarea.inp{min-height:48px;resize:vertical;font-family:var(--f)}
-
-/* Measure table in edit sidebar */
-.ms-tbl{width:100%;border-collapse:collapse;margin-top:6px}
-.ms-tbl th{background:var(--sf);padding:6px 8px;font:500 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv)}
-.ms-tbl td{padding:7px 8px;font:400 12px/1.3 var(--f);color:var(--c7);border-bottom:1px solid var(--dv)}
-.ms-tbl tr:last-child td{border-bottom:none}
-.ms-tbl .lv{display:inline-flex;align-items:center;gap:4px}
-.ms-tbl .lv-dot{width:7px;height:7px;border-radius:50%}
-
-.rule-box{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r1);padding:8px 10px;margin-top:6px}
-.rule-box code{font:400 11px/1.5 var(--m);color:var(--c8);white-space:pre-wrap;word-break:break-all}
-.rule-box-lbl{font:500 10px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
-
-.esb-ft{padding:12px 20px;border-top:1px solid var(--dv);display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-shrink:0}
+select.inp{-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:22px;cursor:pointer}
+textarea.inp{min-height:60px;resize:vertical;font-family:var(--f);line-height:1.5}
+.ge-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--dv)}
+.ge-linked{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--pr50);border:1px solid var(--pr200);border-radius:var(--r1);font:500 12px/1 var(--f);color:var(--pr)}
+.ge-linked svg{width:14px;height:14px;flex-shrink:0}
+.ge-linked-btn{margin-left:auto;font:500 11px/1 var(--f);color:var(--c5);background:none;border:none;cursor:pointer;padding:2px 6px;border-radius:3px;transition:all .12s}
+.ge-linked-btn:hover{color:var(--ro);background:var(--ro50)}
 
 /* ═══ MODAL ═══ */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:2000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
@@ -368,22 +332,6 @@ body.chat-open .ai-toggle{display:none}
 <body>
 
 <!-- Navigation will be injected by navigation.js -->
-
-<!-- Edit sidebar overlay -->
-<div class="sb-overlay" onclick="closeEdit()"></div>
-
-<!-- Edit sidebar -->
-<div class="edit-sidebar" id="editSidebar">
-  <div class="esb-hd">
-    <span class="esb-hd-title" id="esbTitle">编辑目标</span>
-    <button class="esb-close" onclick="closeEdit()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-  </div>
-  <div class="esb-body" id="esbBody"></div>
-  <div class="esb-ft">
-    <button class="btn btn-s" onclick="closeEdit()">取消</button>
-    <button class="btn btn-p" onclick="saveEdit()">保存</button>
-  </div>
-</div>
 
 <!-- Main content -->
 <div class="ct fade-in">
@@ -729,14 +677,12 @@ const MOCK_INDICATORS=[
 
 let expandedMods=new Set([0,1]);
 let expandedGoals=new Set();
-let editGoalId=null, editModIdx=null;
 let selectedMeasure=null, selectedRule=null;
 let histSelected=new Set();
 let langStore={};
 let selectedKpiId=null;
 let langFieldKey=null;
 let kpiFilterCat='全部';
-let editFormSnapshot=null; // 用于检测未保存更改
 
 // ═══ CUSTOM CONFIRM MODAL ═══
 function showConfirm({title='确认操作', desc='确定要执行此操作吗？', type='warn', okText='确认', onOk}) {
@@ -773,21 +719,6 @@ function showConfirm({title='确认操作', desc='确定要执行此操作吗？
   });
 }
 
-// ═══ FORM STATE SNAPSHOT ═══
-function snapshotForm() {
-  const data = {};
-  ['ef_name','ef_weight','ef_target','ef_challenge','ef_baseline','ef_desc'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) data[id] = el.value;
-  });
-  return JSON.stringify(data);
-}
-
-function hasUnsavedChanges() {
-  if (!editFormSnapshot || !editGoalId) return false;
-  return snapshotForm() !== editFormSnapshot;
-}
-
 // ═══ RENDER MODULES ═══
 function render(){
   const c=document.getElementById('moduleContainer');
@@ -822,23 +753,62 @@ function render(){
         h+=`<div class="goal-row">
           <div class="goal-summary" onclick="toggleGoal('${g.id}')">
             <span class="goal-drag" title="拖拽排序（开发中）">${I.drag}</span>
-            <span class="goal-name">${g.name}${linked?'<span style="font:400 11px/1 var(--f);color:var(--pr);margin-left:6px">'+linked.name+'</span>':''}</span>
+            <span class="goal-name">${g.name}</span>
             <div class="goal-meta">
               <span class="goal-type ${typeClass}">${typeLabel}</span>
               <span class="goal-weight">权重: ${g.weight}%</span>
               <div class="goal-actions">
-                <button class="goal-act edit" title="编辑" onclick="event.stopPropagation();openEdit('${g.id}',${mi})">${I.edit}</button>
                 <button class="goal-act del" title="删除" onclick="event.stopPropagation();deleteGoal('${g.id}',${mi})">${I.trash}</button>
               </div>
             </div>
           </div>
-          <div class="goal-detail ${isOpen?'open':''}">
-            <div class="goal-detail-grid">
+          <div class="goal-edit ${isOpen?'open':''}">
+            <div class="ge-form">
               ${g.type==='quant'?`
-              <div class="gd-item"><span class="gd-label">挑战值</span><span class="gd-value mono">${g.challenge} ${g.unit||''}</span></div>
-              <div class="gd-item"><span class="gd-label">目标值</span><span class="gd-value mono">${g.target} ${g.unit||''}</span></div>
-              <div class="gd-item"><span class="gd-label">保底值</span><span class="gd-value mono">${g.baseline} ${g.unit||''}</span></div>
-              `:`<div class="gd-item" style="grid-column:1/-1"><span class="gd-label">衡量标准</span><span class="gd-value">${g.desc||'-'}</span></div>`}
+              <div class="ge-sec">
+                <div class="ge-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>目标信息</div>
+                <div class="ge-row">
+                  <div class="ge-fi"><span class="ge-fi-l">目标名称 <span class="req">*</span></span><input class="inp" id="ge_name_${g.id}" value="${g.name}"/></div>
+                  <div class="ge-fi"><span class="ge-fi-l">权重(%) <span class="req">*</span></span><input class="inp num" id="ge_weight_${g.id}" type="number" value="${g.weight}" min="0" max="100"/></div>
+                </div>
+                <div class="ge-fi" style="margin-top:10px"><span class="ge-fi-l">关联指标</span>
+                  ${linked?`<div class="ge-linked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>${linked.name}<button class="ge-linked-btn" onclick="event.stopPropagation();unlinkIndicator('${g.id}')">解除</button></div>`
+                  :`<button class="btn btn-o btn-sm" onclick="event.stopPropagation();openIndicatorPicker('${g.id}',${mi})">${I.link} 选择指标</button>`}
+                </div>
+              </div>
+              <div class="ge-sec">
+                <div class="ge-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>衡量标准</div>
+                <div class="ge-row f3">
+                  <div class="ge-fi"><span class="ge-fi-l">目标值 <span class="req">*</span></span><input class="inp num" id="ge_target_${g.id}" type="number" value="${g.target}" ${linked?'readonly':''}/></div>
+                  <div class="ge-fi"><span class="ge-fi-l">挑战值</span><input class="inp num" id="ge_challenge_${g.id}" type="number" value="${g.challenge}" ${linked?'readonly':''}/></div>
+                  <div class="ge-fi"><span class="ge-fi-l">保底值</span><input class="inp num" id="ge_baseline_${g.id}" type="number" value="${g.baseline}" ${linked?'readonly':''}/></div>
+                </div>
+              </div>
+              <div class="ge-sec">
+                <div class="ge-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>计算规则（由指标自动带入）</div>
+                <div class="ge-row">
+                  <div class="ge-fi"><span class="ge-fi-l">衡量方式</span><input class="inp" value="${g.measure}" readonly/></div>
+                  <div class="ge-fi"><span class="ge-fi-l">计算规则</span><input class="inp" value="${g.rule||'-'}" readonly/></div>
+                </div>
+                ${g.ruleFormula?`<div style="margin-top:8px;padding:8px 10px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r1)"><div style="font:500 10px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">计算公式</div><code style="font:400 11px/1.5 var(--m);color:var(--c8);white-space:pre-wrap;word-break:break-all">${g.ruleFormula}</code></div>`:''}
+              </div>
+              `:`
+              <div class="ge-sec">
+                <div class="ge-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>目标信息</div>
+                <div class="ge-row">
+                  <div class="ge-fi"><span class="ge-fi-l">目标名称 <span class="req">*</span></span><input class="inp" id="ge_name_${g.id}" value="${g.name}"/></div>
+                  <div class="ge-fi"><span class="ge-fi-l">权重(%) <span class="req">*</span></span><input class="inp num" id="ge_weight_${g.id}" type="number" value="${g.weight}" min="0" max="100"/></div>
+                </div>
+              </div>
+              <div class="ge-sec">
+                <div class="ge-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>衡量标准</div>
+                <div class="ge-fi"><span class="ge-fi-l">衡量标准 <span class="req">*</span></span><textarea class="inp" id="ge_desc_${g.id}" rows="3" placeholder="请输入衡量标准...">${g.desc||''}</textarea></div>
+              </div>
+              `}
+              <div class="ge-actions">
+                <button class="btn btn-s" onclick="event.stopPropagation();toggleGoal('${g.id}')">取消</button>
+                <button class="btn btn-p" onclick="event.stopPropagation();saveInlineEdit('${g.id}',${mi})">保存</button>
+              </div>
             </div>
           </div>
         </div>`;
@@ -878,9 +848,8 @@ function pickGoalType(type){
   render();
   if(type==='quant'){
     openIndicatorPicker(id,mi);
-  }else{
-    openEdit(id,mi);
   }
+  // 定性目标直接展开编辑态
 }
 function closeGoalTypePopup(){document.getElementById('addGoalPopup').classList.remove('show')}
 
@@ -930,110 +899,55 @@ function linkedTip(){
   return `<span class="field-tip"><span class="field-tip-icon">i</span><span class="field-tip-text">由关联指标自动填充，如需修改请先解除关联</span></span>`;
 }
 
-function openEdit(id,mi){
-  editGoalId=id;editModIdx=mi;
+// ═══ INLINE EDIT ═══
+function saveInlineEdit(id,mi){
   const d=findGoal(id);if(!d)return;
   const g=d.goal;
-  const linked=g.linkedIndicatorId?MOCK_INDICATORS.find(k=>k.id===g.linkedIndicatorId):null;
-  const isQuant=g.type==='quant';
-  document.getElementById('esbTitle').textContent='编辑目标 — '+g.name;
+  const nameEl=document.getElementById('ge_name_'+id);
+  const weightEl=document.getElementById('ge_weight_'+id);
 
-  let html='';
-  if(isQuant){
-    html+=`<div class="ef-sec">
-      <div class="ef-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>目标信息</div>
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <div class="ef-fi"><span class="ef-fi-l">目标名称<span class="req">*</span>${linked?linkedTip():''}</span><div class="field-with-lang"><input class="inp" id="ef_name" value="${g.name}" ${linked?'readonly':''}/>${langBtn(g.id+'_name')}</div></div>
-        <div class="ef-fi"><span class="ef-fi-l">关联指标<span class="req">*</span></span><div style="display:flex;gap:6px;align-items:center">${linked?`<span style="flex:1;font:500 12px/1 var(--f);color:var(--pr);padding:6px 8px;background:var(--pr50);border:1px solid var(--pr200);border-radius:var(--r1)">${linked.name}</span><button class="btn btn-s btn-sm" onclick="openIndicatorPicker('${g.id}',${mi})">更换</button>`:`<button class="btn btn-o btn-sm" onclick="openIndicatorPicker('${g.id}',${mi})">${I.link} 选择指标</button>`}</div></div>
-        <div class="ef-fi"><span class="ef-fi-l">权重(%)<span class="req">*</span></span><input class="inp num" id="ef_weight" type="number" value="${g.weight}" min="0" max="100"/></div>
-      </div>
-    </div>`;
-    html+=`<div class="ef-sec">
-      <div class="ef-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>衡量标准</div>
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <div class="ef-fi"><span class="ef-fi-l">目标值<span class="req">*</span>${linked?linkedTip():''}</span><input class="inp num" id="ef_target" type="number" value="${g.target}" ${linked?'readonly':''}/></div>
-        <div class="ef-fi"><span class="ef-fi-l">挑战值${linked?linkedTip():''}</span><input class="inp num" id="ef_challenge" type="number" value="${g.challenge}" ${linked?'readonly':''}/></div>
-        <div class="ef-fi"><span class="ef-fi-l">保底值${linked?linkedTip():''}</span><input class="inp num" id="ef_baseline" type="number" value="${g.baseline}" ${linked?'readonly':''}/></div>
-      </div>
-    </div>`;
-    html+=`<div class="ef-sec">
-      <div class="ef-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>衡量标准与计算规则（由指标自动带入）</div>
-      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:8px">
-        <div class="ef-fi"><span class="ef-fi-l">衡量方式</span><input class="inp" value="${g.measure}" readonly/></div>
-        <div class="ef-fi"><span class="ef-fi-l">计算规则</span><input class="inp" value="${g.rule||'-'}" readonly/></div>
-      </div>
-      ${g.ruleFormula?`<div class="rule-box"><div class="rule-box-lbl">计算公式</div><code>${g.ruleFormula}</code></div>`:''}
-    </div>`;
-  }else{
-    html+=`<div class="ef-sec">
-      <div class="ef-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>目标信息</div>
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <div class="ef-fi"><span class="ef-fi-l">目标名称<span class="req">*</span></span><div class="field-with-lang"><input class="inp" id="ef_name" value="${g.name}"/>${langBtn(g.id+'_name')}</div></div>
-        <div class="ef-fi"><span class="ef-fi-l">权重(%)<span class="req">*</span></span><input class="inp num" id="ef_weight" type="number" value="${g.weight}" min="0" max="100"/></div>
-      </div>
-    </div>`;
-    html+=`<div class="ef-sec">
-      <div class="ef-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>衡量标准</div>
-      <div class="ef-fi"><span class="ef-fi-l">衡量标准<span class="req">*</span></span><div class="field-with-lang"><textarea class="inp" id="ef_desc" rows="3" placeholder="请输入衡量标准...">${g.desc||''}</textarea>${langBtn(g.id+'_desc')}</div></div>
-    </div>`;
-  }
-
-  document.getElementById('esbBody').innerHTML=html;
-  document.body.classList.add('edit-open');
-  // 快照表单状态，用于检测未保存更改
-  setTimeout(() => { editFormSnapshot = snapshotForm(); }, 50);
-}
-
-function closeEdit(skipCheck){
-  if(!skipCheck && hasUnsavedChanges()){
-    showConfirm({
-      title:'放弃未保存的更改？',
-      desc:'当前编辑的内容尚未保存，关闭后将丢失所有修改。',
-      type:'warn',
-      okText:'放弃更改',
-      onOk:()=>{ document.body.classList.remove('edit-open'); editGoalId=null; editFormSnapshot=null; }
-    });
-    return;
-  }
-  document.body.classList.remove('edit-open');
-  editGoalId=null;
-  editFormSnapshot=null;
-}
-
-function saveEdit(){
-  if(!editGoalId)return;
-  const d=findGoal(editGoalId);if(!d)return;
-  const g=d.goal;
-  const nameEl=document.getElementById('ef_name');
-  const weightEl=document.getElementById('ef_weight');
-  document.querySelectorAll('#esbBody .inp-err').forEach(el=>el.classList.remove('inp-err'));
+  // 清除错误样式
+  document.querySelectorAll('.goal-edit.open .inp-err').forEach(el=>el.classList.remove('inp-err'));
   let firstErr=null;
+
+  // 校验
   if(!nameEl||!nameEl.value.trim()){if(nameEl)nameEl.classList.add('inp-err');if(!firstErr)firstErr='请填写目标名称';}
   if(!weightEl||!weightEl.value||parseInt(weightEl.value)<=0){if(weightEl)weightEl.classList.add('inp-err');if(!firstErr)firstErr='请填写权重';}
   if(g.type==='quant'){
     if(!g.linkedIndicatorId){if(!firstErr)firstErr='请选择关联指标';}
-    const targetEl=document.getElementById('ef_target');
+    const targetEl=document.getElementById('ge_target_'+id);
     if(!targetEl||!targetEl.value){if(targetEl)targetEl.classList.add('inp-err');if(!firstErr)firstErr='请填写目标值';}
   }else{
-    const descEl=document.getElementById('ef_desc');
+    const descEl=document.getElementById('ge_desc_'+id);
     if(!descEl||!descEl.value.trim()){if(descEl)descEl.classList.add('inp-err');if(!firstErr)firstErr='请填写衡量标准';}
   }
   if(firstErr){showToast(firstErr);return}
-  if(nameEl&&!nameEl.readOnly) g.name=nameEl.value;
+
+  // 保存数据
+  if(nameEl) g.name=nameEl.value;
   if(weightEl) g.weight=parseInt(weightEl.value)||0;
   if(g.type==='quant'){
-    const targetEl=document.getElementById('ef_target');
-    const challengeEl=document.getElementById('ef_challenge');
-    const baselineEl=document.getElementById('ef_baseline');
+    const targetEl=document.getElementById('ge_target_'+id);
+    const challengeEl=document.getElementById('ge_challenge_'+id);
+    const baselineEl=document.getElementById('ge_baseline_'+id);
     if(targetEl&&!targetEl.readOnly) g.target=parseFloat(targetEl.value)||0;
     if(challengeEl&&!challengeEl.readOnly) g.challenge=parseFloat(challengeEl.value)||0;
     if(baselineEl&&!baselineEl.readOnly) g.baseline=parseFloat(baselineEl.value)||0;
   }else{
-    const descEl=document.getElementById('ef_desc');
+    const descEl=document.getElementById('ge_desc_'+id);
     if(descEl) g.desc=descEl.value;
   }
-  closeEdit(true);
+
+  expandedGoals.delete(id);
   render();
+  showToast('保存成功','success');
+}
+
+function unlinkIndicator(id){
+  const d=findGoal(id);if(!d)return;
+  d.goal.linkedIndicatorId=null;
+  render();
+  expandedGoals.add(id);
 }
 
 // ═══ COPY MODAL ═══
@@ -1186,8 +1100,8 @@ function confirmIndicator(){
   g.unit=kpi.unit;g.rule=kpi.rule;g.desc=kpi.desc;
   g.linkedIndicatorId=kpi.id;
   closeModal('indicatorModal');
+  expandedGoals.add(kpiPickerGoalId);
   render();
-  openEdit(kpiPickerGoalId,kpiPickerModIdx);
 }
 
 // ═══ LANGUAGE EDITOR ═══
@@ -1262,14 +1176,6 @@ function renderAiChat(){
 
 // ═══ AI SUGGESTION APPLY ═══
 function applyAiSuggestion(type){
-  if(!editGoalId){
-    showToast('请先打开目标编辑面板');
-    return;
-  }
-  const d=findGoal(editGoalId);
-  if(!d)return;
-  const g=d.goal;
-
   if(type==='weight'){
     // 应用权重建议：资源利用率 5→8，绩效重构 25→22，AI探索 25→27
     const weightMap={'g1':8,'g6':22,'g7':27};
@@ -1280,13 +1186,16 @@ function applyAiSuggestion(type){
       }
     });
     render();
-    openEdit(editGoalId,editModIdx);
     showToast('权重建议已应用','success');
   }else if(type==='desc'){
-    // 应用衡量标准建议
-    g.desc='1. 指标定义：人员当月实际投入有效工作量占可用出勤时间的比例，反映工作饱和度\n2. 计算逻辑：公式=当月实际任务工时（人天）/EHR实际出勤天数×100%\n3. 数据来源：Devops系统自动采集\n4. 目标设定依据：参考行业标准及团队历史数据';
-    openEdit(editGoalId,editModIdx);
-    showToast('衡量标准已更新','success');
+    // 应用衡量标准建议到第一个定量目标
+    const g=MODULES[0].goals[0];
+    if(g){
+      g.desc='1. 指标定义：人员当月实际投入有效工作量占可用出勤时间的比例，反映工作饱和度\n2. 计算逻辑：公式=当月实际任务工时（人天）/EHR实际出勤天数×100%\n3. 数据来源：Devops系统自动采集\n4. 目标设定依据：参考行业标准及团队历史数据';
+      expandedGoals.add(g.id);
+      render();
+      showToast('衡量标准已更新','success');
+    }
   }
 }
 
