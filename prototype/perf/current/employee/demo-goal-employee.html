@@ -145,12 +145,12 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .ge-fi{display:flex;flex-direction:column;gap:3px}
 .ge-fi-l{font:400 11px/1 var(--f);color:var(--c5)}
 .ge-fi-l .req{color:var(--ro);margin-left:2px}
+.ge-fi-val{font:500 13px/1.4 var(--f);color:var(--c8);padding:7px 0}
 .inp{width:100%;padding:7px 10px;border:1px solid var(--c2);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c9);background:var(--sf);transition:all .12s;outline:none}
 .inp:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .inp.num{font-family:var(--m);text-align:right}
 select.inp{-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:22px;cursor:pointer}
 textarea.inp{min-height:60px;resize:vertical;font-family:var(--f);line-height:1.5}
-.ge-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--dv)}
 .ge-linked{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--pr50);border:1px solid var(--pr200);border-radius:var(--r1);font:500 12px/1 var(--f);color:var(--pr)}
 .ge-linked svg{width:14px;height:14px;flex-shrink:0}
 .ge-linked-btn{margin-left:auto;font:500 11px/1 var(--f);color:var(--c5);background:none;border:none;cursor:pointer;padding:2px 6px;border-radius:3px;transition:all .12s}
@@ -752,10 +752,10 @@ function render(){
         const typeLabel=g.type==='quant'?'定量':'定性';
         const typeClass=g.type==='quant'?'quant':'qual';
         const linked=g.linkedIndicatorId?MOCK_INDICATORS.find(k=>k.id===g.linkedIndicatorId):null;
-        h+=`<div class="goal-row">
+        h+=`<div class="goal-row" data-goal-id="${g.id}">
           <div class="goal-summary" onclick="toggleGoal('${g.id}')">
             <span class="goal-drag" title="拖拽排序（开发中）">${I.drag}</span>
-            ${isOpen?`<input class="goal-name-input" id="ge_name_${g.id}" value="${g.name}" onclick="event.stopPropagation()" />`:`<span class="goal-name">${g.name}</span>`}
+            ${isOpen?`<input class="goal-name-input" id="ge_name_${g.id}" value="${g.name}" onclick="event.stopPropagation()" oninput="syncGoalFromForm('${g.id}')" />`:`<span class="goal-name">${g.name}</span>`}
             <div class="goal-meta">
               <span class="goal-type ${typeClass}">${typeLabel}</span>
               <span class="goal-weight">权重: ${g.weight}%</span>
@@ -769,7 +769,7 @@ function render(){
               ${g.type==='quant'?`
               <div class="ge-sec">
                 <div class="ge-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>目标信息</div>
-                <div class="ge-fi"><span class="ge-fi-l">权重(%) <span class="req">*</span></span><input class="inp num" id="ge_weight_${g.id}" type="number" value="${g.weight}" min="0" max="100" style="max-width:120px"/></div>
+                <div class="ge-fi"><span class="ge-fi-l">权重(%) <span class="req">*</span></span><input class="inp num" id="ge_weight_${g.id}" type="number" value="${g.weight}" min="0" max="100" style="max-width:120px" oninput="syncGoalFromForm('${g.id}')"/></div>
                 <div class="ge-fi" style="margin-top:10px"><span class="ge-fi-l">关联指标</span>
                   ${linked?`<div class="ge-linked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>${linked.name}<button class="ge-linked-btn" onclick="event.stopPropagation();unlinkIndicator('${g.id}')">解除</button></div>`
                   :`<button class="btn btn-o btn-sm" onclick="event.stopPropagation();openIndicatorPicker('${g.id}',${mi})">${I.link} 选择指标</button>`}
@@ -778,33 +778,29 @@ function render(){
               <div class="ge-sec">
                 <div class="ge-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>衡量标准</div>
                 <div class="ge-row f3">
-                  <div class="ge-fi"><span class="ge-fi-l">目标值 <span class="req">*</span></span><input class="inp num" id="ge_target_${g.id}" type="number" value="${g.target}" ${linked?'readonly':''}/></div>
-                  <div class="ge-fi"><span class="ge-fi-l">挑战值</span><input class="inp num" id="ge_challenge_${g.id}" type="number" value="${g.challenge}" ${linked?'readonly':''}/></div>
-                  <div class="ge-fi"><span class="ge-fi-l">保底值</span><input class="inp num" id="ge_baseline_${g.id}" type="number" value="${g.baseline}" ${linked?'readonly':''}/></div>
+                  <div class="ge-fi"><span class="ge-fi-l">目标值 <span class="req">*</span></span><input class="inp num" id="ge_target_${g.id}" type="number" value="${g.target}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')"/></div>
+                  <div class="ge-fi"><span class="ge-fi-l">挑战值</span><input class="inp num" id="ge_challenge_${g.id}" type="number" value="${g.challenge}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')"/></div>
+                  <div class="ge-fi"><span class="ge-fi-l">保底值</span><input class="inp num" id="ge_baseline_${g.id}" type="number" value="${g.baseline}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')"/></div>
                 </div>
               </div>
               <div class="ge-sec">
                 <div class="ge-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>计算规则（由指标自动带入）</div>
                 <div class="ge-row">
-                  <div class="ge-fi"><span class="ge-fi-l">衡量方式</span><input class="inp" value="${g.measure}" readonly/></div>
-                  <div class="ge-fi"><span class="ge-fi-l">计算规则</span><input class="inp" value="${g.rule||'-'}" readonly/></div>
+                  <div class="ge-fi"><span class="ge-fi-l">衡量方式</span><span class="ge-fi-val">${g.measure}</span></div>
+                  <div class="ge-fi"><span class="ge-fi-l">计算规则</span><span class="ge-fi-val">${g.rule||'-'}</span></div>
                 </div>
-                ${g.ruleFormula?`<div style="margin-top:8px;padding:8px 10px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r1)"><div style="font:500 10px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">计算公式</div><code style="font:400 11px/1.5 var(--m);color:var(--c8);white-space:pre-wrap;word-break:break-all">${g.ruleFormula}</code></div>`:''}
+                ${g.ruleFormula?`<div style="margin-top:8px;padding:8px 10px;background:var(--c0);border:1px solid var(--c2);border-radius:var(--r1)"><div style="font:500 10px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">计算公式</div><code style="font:400 11px/1.5 var(--m);color:var(--c8);white-space:pre-wrap;word-break:break-all">${g.ruleFormula}</code></div>`:''}
               </div>
               `:`
               <div class="ge-sec">
                 <div class="ge-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>目标信息</div>
-                <div class="ge-fi"><span class="ge-fi-l">权重(%) <span class="req">*</span></span><input class="inp num" id="ge_weight_${g.id}" type="number" value="${g.weight}" min="0" max="100" style="max-width:120px"/></div>
+                <div class="ge-fi"><span class="ge-fi-l">权重(%) <span class="req">*</span></span><input class="inp num" id="ge_weight_${g.id}" type="number" value="${g.weight}" min="0" max="100" style="max-width:120px" oninput="syncGoalFromForm('${g.id}')"/></div>
               </div>
               <div class="ge-sec">
                 <div class="ge-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>衡量标准</div>
                 <div class="ge-fi"><span class="ge-fi-l">衡量标准 <span class="req">*</span></span><textarea class="inp" id="ge_desc_${g.id}" rows="3" placeholder="请输入衡量标准...">${g.desc||''}</textarea></div>
               </div>
               `}
-              <div class="ge-actions">
-                <button class="btn btn-s" onclick="event.stopPropagation();toggleGoal('${g.id}')">取消</button>
-                <button class="btn btn-p" onclick="event.stopPropagation();saveInlineEdit('${g.id}',${mi})">保存</button>
-              </div>
             </div>
           </div>
         </div>`;
@@ -815,6 +811,30 @@ function render(){
 
   c.innerHTML=h;
   updateTotals();
+}
+
+// ═══ AUTO-SYNC ═══
+function syncGoalFromForm(id){
+  const d=findGoal(id);if(!d)return;
+  const g=d.goal;
+  const nameEl=document.getElementById('ge_name_'+id);
+  const weightEl=document.getElementById('ge_weight_'+id);
+  if(nameEl) g.name=nameEl.value;
+  if(weightEl) g.weight=parseInt(weightEl.value)||0;
+  if(g.type==='quant'){
+    const targetEl=document.getElementById('ge_target_'+id);
+    const challengeEl=document.getElementById('ge_challenge_'+id);
+    const baselineEl=document.getElementById('ge_baseline_'+id);
+    if(targetEl&&!targetEl.readOnly) g.target=parseFloat(targetEl.value)||0;
+    if(challengeEl&&!challengeEl.readOnly) g.challenge=parseFloat(challengeEl.value)||0;
+    if(baselineEl&&!baselineEl.readOnly) g.baseline=parseFloat(baselineEl.value)||0;
+  }else{
+    const descEl=document.getElementById('ge_desc_'+id);
+    if(descEl) g.desc=descEl.value;
+  }
+  // 更新标题行的权重显示
+  const weightSpan=document.querySelector(`[data-goal-id="${id}"] .goal-weight`);
+  if(weightSpan) weightSpan.textContent='权重: '+g.weight+'%';
 }
 
 function toggleMod(mi){expandedMods.has(mi)?expandedMods.delete(mi):expandedMods.add(mi);render()}
