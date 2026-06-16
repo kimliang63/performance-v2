@@ -58,14 +58,6 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .pg-hd-summary .sum-val{font-family:var(--m);font-weight:700;color:var(--pr)}
 .pg-hd-summary .sum-val.warn{color:var(--ro)}
 
-/* Weight distribution bar */
-.weight-dist{display:flex;align-items:center;gap:8px;margin-top:8px}
-.weight-dist-track{flex:1;height:8px;background:var(--c1);border-radius:4px;overflow:hidden;display:flex}
-.weight-dist-seg{height:100%;transition:width .3s ease}
-.weight-dist-legend{display:flex;gap:12px;font:400 11px/1 var(--f);color:var(--c5)}
-.weight-dist-legend span{display:flex;align-items:center;gap:4px}
-.weight-dist-legend .dot{width:8px;height:8px;border-radius:2px}
-
 /* ═══ MODULE SECTION ═══ */
 .mod-section{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden;border-left:3px solid var(--pr)}
 .mod-section.em{border-left-color:var(--em)}
@@ -387,15 +379,17 @@ body.chat-open .ai-toggle{display:none}
 
 <!-- Main content -->
 <div class="ct fade-in">
+  <!-- Breadcrumb -->
+  <nav style="display:flex;align-items:center;gap:4px;font:500 12px/1 var(--f);color:var(--c5);margin-bottom:12px">
+    <a href="../demo-index.html" style="color:var(--c5);text-decoration:none;transition:color .12s" onmouseover="this.style.color='var(--pr)'" onmouseout="this.style.color='var(--c5)'">绩效工作台</a>
+    <span style="color:var(--c3)">/</span>
+    <span style="color:var(--c8);font-weight:600">员工制定</span>
+  </nav>
+
   <!-- Page header -->
   <div class="pg-hd">
     <div class="pg-hd-top">
       <div style="display:flex;align-items:center;gap:10px">
-        <nav style="display:flex;align-items:center;gap:4px;font:500 12px/1 var(--f);color:var(--c5)">
-          <a href="../demo-index.html" style="color:var(--c5);text-decoration:none;transition:color .12s" onmouseover="this.style.color='var(--pr)'" onmouseout="this.style.color='var(--c5)'">绩效工作台</a>
-          <span style="color:var(--c3)">/</span>
-          <span style="color:var(--c8);font-weight:600">员工制定</span>
-        </nav>
         <div class="pg-hd-title">员工制定</div>
       </div>
       <div class="pg-hd-actions">
@@ -421,7 +415,6 @@ body.chat-open .ai-toggle{display:none}
       <span class="sum-item">总权重: <span class="sum-val" id="sumWeight">100%</span></span>
       <span class="sum-item">总目标数: <strong id="sumGoals" style="font-family:var(--m);font-weight:600;color:var(--c8)">7</strong></span>
     </div>
-    <div id="weightDist" class="weight-dist"></div>
     <div id="validSummary"></div>
   </div>
 
@@ -898,25 +891,6 @@ function updateTotals(){
   document.getElementById('sumGoals').textContent=tg;
   document.getElementById('sumWeight').textContent=tw+'%';
   document.getElementById('sumWeight').className='sum-val'+(tw===100?'':' warn');
-
-  // 权重分布条
-  const distEl=document.getElementById('weightDist');
-  if(tg>0){
-    const colors={'':'var(--pr)','em':'var(--em)','ac':'var(--ac)','vi':'var(--vi)'};
-    const segs=MODULES.filter(m=>m.goals.length>0).map(m=>{
-      const mw=m.goals.reduce((s,g)=>s+g.weight,0);
-      const color=colors[m.accent]||'var(--pr)';
-      return `<div class="weight-dist-seg" style="width:${mw}%;background:${color}"></div>`;
-    }).join('');
-    const legend=MODULES.filter(m=>m.goals.length>0).map(m=>{
-      const mw=m.goals.reduce((s,g)=>s+g.weight,0);
-      const color=colors[m.accent]||'var(--pr)';
-      return `<span><span class="dot" style="background:${color}"></span>${m.name} ${mw}%</span>`;
-    }).join('');
-    distEl.innerHTML=`<div class="weight-dist-track">${segs}</div><div class="weight-dist-legend">${legend}</div>`;
-  }else{
-    distEl.innerHTML='';
-  }
 
   const el=document.getElementById('validSummary');
   if(tw!==100){
