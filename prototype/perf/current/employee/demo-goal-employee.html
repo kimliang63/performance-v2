@@ -305,8 +305,17 @@ textarea.inp{min-height:48px;resize:vertical;font-family:var(--f)}
 .kpi-cat-count{font:400 10px/1 var(--f);color:var(--c4);margin-left:2px}
 
 /* Goal type popup */
-.goal-type-popup{display:none;flex-direction:row}
+.goal-type-popup{display:none;flex-direction:column;min-width:180px;padding:6px}
 .goal-type-popup.show{display:flex}
+.goal-type-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r1);cursor:pointer;transition:all .12s;border:1px solid transparent}
+.goal-type-item:hover{background:var(--pr50);border-color:var(--pr200)}
+.goal-type-item-icon{width:32px;height:32px;border-radius:var(--r2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.goal-type-item-icon.quant{background:var(--pr50);color:var(--pr)}
+.goal-type-item-icon.qual{background:var(--vi50);color:var(--vi)}
+.goal-type-item-icon svg{width:16px;height:16px}
+.goal-type-item-text{display:flex;flex-direction:column;gap:1px}
+.goal-type-item-name{font:500 13px/1.2 var(--f);color:var(--c8)}
+.goal-type-item-desc{font:400 11px/1.2 var(--f);color:var(--c5)}
 
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .fade-in{animation:fadeIn .2s ease forwards}
@@ -615,15 +624,25 @@ body.chat-open .ai-toggle{display:none}
 </div>
 
 <!-- Goal type choice popup -->
-<div id="addGoalPopup" style="position:fixed;z-index:1500;background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-dropdown);padding:8px;gap:6px" class="goal-type-popup">
-  <button class="btn btn-o" onclick="pickGoalType('quant')" style="flex:1;justify-content:center">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
-    定量目标
-  </button>
-  <button class="btn btn-o" onclick="pickGoalType('qual')" style="flex:1;justify-content:center">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-    定性目标
-  </button>
+<div id="addGoalPopup" style="position:fixed;z-index:1500;background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-dropdown)" class="goal-type-popup">
+  <div class="goal-type-item" onclick="pickGoalType('quant')">
+    <div class="goal-type-item-icon quant">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+    </div>
+    <div class="goal-type-item-text">
+      <span class="goal-type-item-name">定量目标</span>
+      <span class="goal-type-item-desc">可量化的指标型目标</span>
+    </div>
+  </div>
+  <div class="goal-type-item" onclick="pickGoalType('qual')">
+    <div class="goal-type-item-icon qual">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    </div>
+    <div class="goal-type-item-text">
+      <span class="goal-type-item-name">定性目标</span>
+      <span class="goal-type-item-desc">行为/能力类主观评价</span>
+    </div>
+  </div>
 </div>
 
 <script src="../navigation.js"></script>
