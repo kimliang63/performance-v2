@@ -57,6 +57,11 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .pg-hd-summary .sum-item{font:500 13px/1 var(--f);color:var(--c6)}
 .pg-hd-summary .sum-val{font-family:var(--m);font-weight:700;color:var(--pr)}
 .pg-hd-summary .sum-val.warn{color:var(--ro)}
+.pg-hd-summary #validSummary{display:inline}
+.pg-hd-summary .sum-err{display:inline-flex;align-items:center;gap:4px;font:500 11px/1 var(--f);color:var(--ro);background:var(--ro50);padding:3px 8px;border-radius:3px}
+.pg-hd-summary .sum-err svg{width:12px;height:12px}
+.pg-hd-summary .sum-ok{display:inline-flex;align-items:center;gap:4px;font:500 11px/1 var(--f);color:var(--em700);background:var(--em50);padding:3px 8px;border-radius:3px}
+.pg-hd-summary .sum-ok svg{width:12px;height:12px}
 
 /* ═══ MODULE SECTION ═══ */
 .mod-section{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden;border-left:3px solid var(--pr)}
@@ -414,8 +419,8 @@ body.chat-open .ai-toggle{display:none}
     <div class="pg-hd-summary">
       <span class="sum-item">总权重: <span class="sum-val" id="sumWeight">100%</span></span>
       <span class="sum-item">总目标数: <strong id="sumGoals" style="font-family:var(--m);font-weight:600;color:var(--c8)">7</strong></span>
+      <span id="validSummary"></span>
     </div>
-    <div id="validSummary"></div>
   </div>
 
   <!-- Module sections -->
@@ -894,9 +899,9 @@ function updateTotals(){
 
   const el=document.getElementById('validSummary');
   if(tw!==100){
-    el.innerHTML=`<div class="sum-err"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>总权重 ${tw}%，需等于 100%</div>`;
+    el.innerHTML=`<span class="sum-err"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>总权重 ${tw}%，需等于 100%</span>`;
   }else{
-    el.innerHTML=tg>0?`<div style="display:flex;align-items:center;gap:6px;font:400 12px/1 var(--f);color:var(--em700);margin-top:8px;padding:8px 12px;background:var(--em50);border-radius:var(--r1);border:1px solid var(--em100)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg>权重校验通过</div>`:'';
+    el.innerHTML=tg>0?`<span class="sum-ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>权重校验通过</span>`:'';
   }
 }
 
