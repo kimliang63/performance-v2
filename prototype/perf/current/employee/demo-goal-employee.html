@@ -49,13 +49,22 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .pg-hd-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .pg-hd-title{font:700 20px/1.2 var(--f);color:var(--c9);letter-spacing:-.3px}
 .pg-hd-actions{display:flex;gap:8px}
-.pg-hd-info{display:flex;align-items:center;gap:24px;font:400 13px/1 var(--f);color:var(--c5);margin-bottom:12px}
-.pg-hd-info span{display:flex;align-items:center;gap:4px}
-.pg-hd-info strong{font-weight:600;color:var(--c8)}
+.pg-hd-info{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 24px;font:400 13px/1 var(--f);color:var(--c5);margin-bottom:12px;padding:12px 16px;background:var(--c0);border-radius:var(--r2)}
+.pg-hd-info-item{display:flex;flex-direction:column;gap:2px}
+.pg-hd-info-label{font:400 11px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px}
+.pg-hd-info-value{font:500 13px/1.3 var(--f);color:var(--c8)}
 .pg-hd-summary{display:flex;align-items:center;gap:24px;padding-top:12px;border-top:1px solid var(--dv)}
 .pg-hd-summary .sum-item{font:500 13px/1 var(--f);color:var(--c6)}
 .pg-hd-summary .sum-val{font-family:var(--m);font-weight:700;color:var(--pr)}
 .pg-hd-summary .sum-val.warn{color:var(--ro)}
+
+/* Weight distribution bar */
+.weight-dist{display:flex;align-items:center;gap:8px;margin-top:8px}
+.weight-dist-track{flex:1;height:8px;background:var(--c1);border-radius:4px;overflow:hidden;display:flex}
+.weight-dist-seg{height:100%;transition:width .3s ease}
+.weight-dist-legend{display:flex;gap:12px;font:400 11px/1 var(--f);color:var(--c5)}
+.weight-dist-legend span{display:flex;align-items:center;gap:4px}
+.weight-dist-legend .dot{width:8px;height:8px;border-radius:2px}
 
 /* ═══ MODULE SECTION ═══ */
 .mod-section{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden;border-left:3px solid var(--pr)}
@@ -266,9 +275,9 @@ textarea.inp{min-height:48px;resize:vertical;font-family:var(--f)}
 .field-with-lang{position:relative}
 .field-with-lang .inp{padding-right:28px}
 .field-with-lang .inp[readonly]{background:var(--c0);color:var(--c6);cursor:default}
-.lang-btn{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:20px;height:20px;border-radius:3px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c3);background:transparent;border:none;transition:all .12s;padding:0}
-.lang-btn:hover{color:var(--pr);background:var(--pr50)}
-.lang-btn.has{color:var(--pr)}
+.lang-btn{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c4);background:transparent;border:1px solid transparent;transition:all .12s;padding:0}
+.lang-btn:hover{color:var(--pr);background:var(--pr50);border-color:var(--pr200)}
+.lang-btn.has{color:var(--pr);background:var(--pr50)}
 .lang-btn svg{width:14px;height:14px}
 
 /* ═══ KPI PICKER ═══ */
@@ -382,10 +391,11 @@ body.chat-open .ai-toggle{display:none}
   <div class="pg-hd">
     <div class="pg-hd-top">
       <div style="display:flex;align-items:center;gap:10px">
-        <a href="../demo-index.html" style="display:inline-flex;align-items:center;gap:4px;font:500 13px/1 var(--f);color:var(--c5);text-decoration:none;transition:color .12s" onmouseover="this.style.color='var(--pr)'" onmouseout="this.style.color='var(--c5)'">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><polyline points="15 18 9 12 15 6"/></svg>
-          返回
-        </a>
+        <nav style="display:flex;align-items:center;gap:4px;font:500 12px/1 var(--f);color:var(--c5)">
+          <a href="../demo-index.html" style="color:var(--c5);text-decoration:none;transition:color .12s" onmouseover="this.style.color='var(--pr)'" onmouseout="this.style.color='var(--c5)'">绩效工作台</a>
+          <span style="color:var(--c3)">/</span>
+          <span style="color:var(--c8);font-weight:600">目标制定</span>
+        </nav>
         <div class="pg-hd-title">目标制定</div>
       </div>
       <div class="pg-hd-actions">
@@ -400,16 +410,18 @@ body.chat-open .ai-toggle{display:none}
       </div>
     </div>
     <div class="pg-hd-info">
-      <span>考核周期: <strong>2026年6月</strong></span>
-      <span>员工: <strong>张明(EMP20240315)</strong></span>
-      <span>部门: <strong>产品部</strong></span>
-      <span>职位: <strong>高级产品经理</strong></span>
-      <span>发起日期: <strong>2026年6月</strong></span>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">考核周期</span><span class="pg-hd-info-value">2026年6月</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">员工</span><span class="pg-hd-info-value">张明 (EMP20240315)</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">部门</span><span class="pg-hd-info-value">产品部</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">职位</span><span class="pg-hd-info-value">高级产品经理</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">发起日期</span><span class="pg-hd-info-value">2026年6月</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">状态</span><span class="pg-hd-info-value" style="color:var(--pr)">● 填写中</span></div>
     </div>
     <div class="pg-hd-summary">
       <span class="sum-item">总权重: <span class="sum-val" id="sumWeight">100%</span></span>
       <span class="sum-item">总目标数: <strong id="sumGoals" style="font-family:var(--m);font-weight:600;color:var(--c8)">7</strong></span>
     </div>
+    <div id="weightDist" class="weight-dist"></div>
     <div id="validSummary"></div>
   </div>
 
@@ -886,6 +898,25 @@ function updateTotals(){
   document.getElementById('sumGoals').textContent=tg;
   document.getElementById('sumWeight').textContent=tw+'%';
   document.getElementById('sumWeight').className='sum-val'+(tw===100?'':' warn');
+
+  // 权重分布条
+  const distEl=document.getElementById('weightDist');
+  if(tg>0){
+    const colors={'':'var(--pr)','em':'var(--em)','ac':'var(--ac)','vi':'var(--vi)'};
+    const segs=MODULES.filter(m=>m.goals.length>0).map(m=>{
+      const mw=m.goals.reduce((s,g)=>s+g.weight,0);
+      const color=colors[m.accent]||'var(--pr)';
+      return `<div class="weight-dist-seg" style="width:${mw}%;background:${color}"></div>`;
+    }).join('');
+    const legend=MODULES.filter(m=>m.goals.length>0).map(m=>{
+      const mw=m.goals.reduce((s,g)=>s+g.weight,0);
+      const color=colors[m.accent]||'var(--pr)';
+      return `<span><span class="dot" style="background:${color}"></span>${m.name} ${mw}%</span>`;
+    }).join('');
+    distEl.innerHTML=`<div class="weight-dist-track">${segs}</div><div class="weight-dist-legend">${legend}</div>`;
+  }else{
+    distEl.innerHTML='';
+  }
 
   const el=document.getElementById('validSummary');
   if(tw!==100){
