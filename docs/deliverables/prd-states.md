@@ -159,14 +159,16 @@
               ┌─────────────────────────┐
               │ pending_indirect_scoring │ ← 可跳过
               └────────────┬────────────┘
-                           │
-                           ▼
-              ┌────────────────────────┐
-              │ pending_direct_scoring  │
-              └────────────┬───────────┘
                     ┌──────┴──────┐
-               submit         (无驳回)
-                    ▼
+               submit         reject
+                    ▼              ▼
+              ┌────────────────┐  ┌──────────┐
+              │ pending_direct │  │ rejected │
+              │ _scoring       │  └────┬─────┘
+              └───────┬────────┘       │ resubmit
+                 ┌────┴────┐           ▼
+            submit     (无驳回)  [回到self_scoring]
+                 ▼
               ┌──────────────┐
               │  completed   │
               └──────────────┘
@@ -181,6 +183,7 @@
 | `pending_indirect_scoring` | 等待间接上级评分 | 自评提交 | — |
 | `pending_direct_scoring` | 等待直接上级评分 | 上一节点完成/跳过 | — |
 | `completed` | 考核完成 | 直接上级提交 | 计算总评价结果，写入审定表单 |
+| `rejected` | 驳回到员工 | 间接上级驳回 | 该员工所有 active 行 voided，通知员工 |
 
 ### 3.3 转换表
 
@@ -190,7 +193,9 @@
 | `self_scoring` | `submit` | `pending_indirect_scoring` | 员工提交自评，保存完成值+评价+评语 |
 | `pending_indirect_scoring` | `submit` | `pending_direct_scoring` | 间接上级提交评分 |
 | `pending_indirect_scoring` | `submit` + `indirect为空` | `pending_direct_scoring` | 自动跳过（流程引擎） |
+| `pending_indirect_scoring` | `reject` | `rejected` | 间接上级驳回，该员工所有 active 行 voided |
 | `pending_direct_scoring` | `submit` | `completed` | 直接上级提交评分，按节点权重计算总评价结果 |
+| `rejected` | `resubmit` | `self_scoring` | 员工修改完成值后重新提交 |
 
 ### 3.4 总评价结果计算规则
 
@@ -412,7 +417,7 @@ else:
 | 流程 | 驳回目标 | 说明 |
 |------|----------|------|
 | 目标制定 | 发起人（员工/HRBP） | 间接/直接上级均可驳回 |
-| 绩效考核 | **无驳回** | 仅提交，不支持驳回 |
+| 绩效考核 | 发起人（员工） | 间接上级可驳回，该员工所有 active 行 voided，员工重新提交后全流程重来 |
 | 结果审定 | HRBP驳回 → 重新审定 | 仅HRBP可驳回 |
 | 员工确认 | **无驳回** | 不同意走HRBP知悉，不回流 |
 | 绩效面谈 | 员工 | 上级驳回 → 员工重新填写 |

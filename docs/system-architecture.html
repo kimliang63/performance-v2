@@ -332,19 +332,43 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
   <div class="section-title">职责边界与提交时序</div>
   <div class="arch-container" style="margin-bottom:24px;">
     <div style="background:#fff1f0;border-left:3px solid var(--danger);padding:12px 16px;border-radius:0 8px 8px 0;font-size:13px;margin-bottom:16px;">
-      <b>核心原则：</b>数据存储和计算是<b>绩效业务层</b>自己的事，流程引擎只管流转（待办分配、审批操作、状态推进）。<b>数据先存好，再交给流程去流转。</b>
+      <b>核心原则：</b>前端是纯展示层，不含业务逻辑。所有校验/计算/存储/流程推进<b>全部在后端 submit 接口中完成</b>，一个原子操作。AI Agent 直接调用同一个接口。
     </div>
-    <div class="flow-row" style="justify-content:center;">
-      <div class="flow-step" style="border-color:#722ed1;background:#f9f0ff;"><div class="step-title" style="color:#722ed1;">① 表单校验</div><div class="step-desc">必填/格式/业务规则<br>权重=100%...<br><b>绩效业务层</b></div></div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-step" style="border-color:#722ed1;background:#f9f0ff;"><div class="step-title" style="color:#722ed1;">② 计算</div><div class="step-desc">调用 calc_rule 公式<br>算指标得分→总分→等级<br><b>绩效业务层</b></div></div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-step" style="border-color:#722ed1;background:#f9f0ff;"><div class="step-title" style="color:#722ed1;">③ 数据持久化</div><div class="step-desc">写入明细表<br>goal_detail / eval_detail...<br><b>绩效业务层</b></div></div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-step" style="border-color:#52c41a;background:#f6ffed;"><div class="step-title" style="color:#52c41a;">④ 提交流程</div><div class="step-desc">创建/推进流程实例<br>生成下一节点待办<br><b>流程引擎</b></div></div>
+    <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;">
+      <div style="flex:0 0 200px;text-align:center;">
+        <div style="background:#f0f0f0;border-radius:8px;padding:12px;font-size:13px;font-weight:600;">🖥️ 前端 / AI Agent</div>
+        <div style="font-size:11px;color:var(--text-secondary);margin-top:4px;">渲染表单 + 收集原始输入<br>调用 submit 接口</div>
+      </div>
+      <div style="flex:0 0 30px;font-size:20px;color:var(--primary);display:flex;align-items:center;padding-top:8px;">→</div>
+      <div style="flex:1;min-width:500px;">
+        <div style="background:#f9f0ff;border:2px solid #d3adf7;border-radius:8px;padding:16px;">
+          <div style="font-weight:700;color:#722ed1;margin-bottom:8px;">🔧 后端 submit 接口（一个原子操作）</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <div style="background:#fff;border:1px solid #d3adf7;border-radius:6px;padding:8px 12px;font-size:12px;flex:1;min-width:100px;text-align:center;">
+              <div style="font-weight:600;color:#722ed1;">A 校验</div>
+              <div style="color:var(--text-secondary);font-size:11px;">必填/格式/业务</div>
+            </div>
+            <div style="color:#d3adf7;font-size:16px;display:flex;align-items:center;">→</div>
+            <div style="background:#fff;border:1px solid #d3adf7;border-radius:6px;padding:8px 12px;font-size:12px;flex:1;min-width:100px;text-align:center;">
+              <div style="font-weight:600;color:#722ed1;">B 计算</div>
+              <div style="color:var(--text-secondary);font-size:11px;">公式引擎算得分</div>
+            </div>
+            <div style="color:#d3adf7;font-size:16px;display:flex;align-items:center;">→</div>
+            <div style="background:#fff;border:1px solid #d3adf7;border-radius:6px;padding:8px 12px;font-size:12px;flex:1;min-width:100px;text-align:center;">
+              <div style="font-weight:600;color:#722ed1;">C 存储</div>
+              <div style="color:var(--text-secondary);font-size:11px;">写入明细表</div>
+            </div>
+            <div style="color:#d3adf7;font-size:16px;display:flex;align-items:center;">→</div>
+            <div style="background:#fff;border:1px solid #b7eb8f;border-radius:6px;padding:8px 12px;font-size:12px;flex:1;min-width:100px;text-align:center;">
+              <div style="font-weight:600;color:#52c41a;">D 提交流程</div>
+              <div style="color:var(--text-secondary);font-size:11px;">流程引擎推进</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div style="margin-top:12px;font-size:12px;color:var(--text-secondary);text-align:center;">
-      ①②③ 是绩效业务层处理 → ④ 才交给流程引擎。流程引擎不关心数据内容，只管"谁处理、怎么流转"。
+      A/B/C 是绩效业务层处理 → D 才交给流程引擎。前端和 Agent 都只传原始输入，不参与计算。
     </div>
   </div>
 
@@ -381,15 +405,16 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
         </ul>
       </div>
       <div class="process-box">
-        <h5>提交时序（校验→存数据→提交流程）</h5>
+        <h5>submit 接口（一个原子操作）</h5>
         <ul class="process-list">
-          <li><b>① 校验：</b>目标数≥2、总权重=100%、必填字段完整</li>
-          <li><b>② 存数据：</b>新增一行 goal_detail（submitter_role=employee, status=active）</li>
-          <li><b>③ 提交流程：</b>告诉流程引擎"员工已提交"→ 生成上级审批待办</li>
-          <li><b>上级审批：</b>新增一行 goal_detail（submitter_role=direct, approval_action=approve/reject）</li>
-          <li><b>驳回重提：</b>员工修改 → 新增一行（status=active），员工之前的行 voided</li>
-          <li><b>撤回修改：</b>员工撤回 → 当前行 voided → 修改后新增一行重新提交</li>
-          <li><b>历史追溯：</b>voided 行保留，可查看员工填过哪些历史目标</li>
+          <li><b>A 校验：</b>目标数≥2、总权重=100%、必填字段完整</li>
+          <li><b>B 计算：</b>目标环节无指标得分计算（纯数据录入）</li>
+          <li><b>C 存储：</b>新增一行 goal_detail（submitter_role=employee, status=active）</li>
+          <li><b>D 提交流程：</b>告诉流程引擎"员工已提交"→ 生成上级审批待办</li>
+          <li><b>上级审批 submit：</b>新增一行（submitter_role=direct, ref_detail_id=被审批的员工行ID, approval_action=approve/reject）</li>
+          <li><b>驳回重提：</b>员工 submit → 新增行（active），之前被驳回的行 voided；上级重新审批（ref_detail_id=新行ID）</li>
+          <li><b>有效行判定：</b>最新的 active 员工行 + 后续全部 approve = 目标生效</li>
+          <li><b>⚠️ 无保存草稿接口，只有 submit</b></li>
         </ul>
       </div>
     </div>
@@ -413,19 +438,22 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
         </ul>
       </div>
       <div class="process-box">
-        <h5>提交时序（校验→计算→存数据→提交流程）</h5>
+        <h5>submit 接口（一个原子操作）</h5>
         <ul class="process-list">
-          <li><b>① 校验：</b>必填字段（完成值+评价结果）是否完整</li>
-          <li><b>② 计算（仅直接上级节点）：</b></li>
-          <li style="padding-left:20px;">→ 调用每个指标的 calc_rule.formula → 算出各指标得分</li>
-          <li style="padding-left:20px;">→ 调用层级2总分公式 → 算出总分</li>
-          <li style="padding-left:20px;">→ 总分映射到等级 → 总评价结果</li>
-          <li><b>③ 存数据：</b></li>
+          <li><b>A 校验：</b>必填字段（完成值+评价结果）是否完整</li>
+          <li><b>B 计算：</b></li>
+          <li style="padding-left:20px;">→ 遍历每个指标：读 calc_rule.formula + grades → 执行公式 → 指标得分</li>
+          <li style="padding-left:20px;">→ 仅直接上级节点：层级2总分公式 → 总分 → 映射等级</li>
+          <li><b>C 存储：</b></li>
           <li style="padding-left:20px;">→ 自评/间接上级：新增一行 eval_detail（submitter_role, status=active）</li>
-          <li style="padding-left:20px;">→ 直接上级：新增一行 eval_detail + 写入 total_score + total_eval_result</li>
-          <li><b>④ 提交流程：</b>告诉流程引擎"处理完毕"→ 流程引擎推进到下一节点/完成</li>
-          <li><b>驳回重提：</b>间接上级驳回 → 员工修改 → 新增一行（status=active），旧行 voided</li>
-          <li><b>批量提交：</b>逐条处理（校验→计算→存储→提交），单条失败不影响其他</li>
+          <li style="padding-left:20px;">→ 直接上级：新增一行 eval_detail + total_score + total_eval_result</li>
+          <li><b>D 提交流程：</b>告诉流程引擎"处理完毕"→ 推进到下一节点</li>
+          <li><b>驳回（间接上级节点）：</b></li>
+          <li style="padding-left:20px;">→ 该员工所有 active 行全部 voided（含自评分+间接上级分+直接上级分）</li>
+          <li style="padding-left:20px;">→ 员工修改完成值 → submit → 新增一行（active）→ 重新进入考核流程</li>
+          <li style="padding-left:20px;">→ 间接上级/直接上级需重新评分（基于新的完成值）</li>
+          <li><b>批量提交：</b>逐条调用 submit，单条失败不影响其他</li>
+          <li><b>⚠️ 无保存草稿接口，只有 submit</b></li>
         </ul>
       </div>
     </div>
@@ -449,16 +477,17 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
         </ul>
       </div>
       <div class="process-box">
-        <h5>提交时序（校验→存数据→提交流程）</h5>
+        <h5>submit 接口（一个原子操作）</h5>
         <ul class="process-list">
-          <li><b>① 校验：</b>调整后等级必填 + 强制分布强控校验</li>
-          <li><b>② 存数据：</b></li>
+          <li><b>A 校验：</b>调整后等级必填 + 强制分布强控校验</li>
+          <li><b>B 计算：</b>审定环节无指标得分计算（只调整等级）</li>
+          <li><b>C 存储：</b></li>
           <li style="padding-left:20px;">→ 调整等级 → 实时更新强制分布计数（原子操作，防并发）</li>
           <li style="padding-left:20px;">→ 新增一行 ratification_detail（submitter_role, status=active）</li>
-          <li><b>③ 提交流程：</b>告诉流程引擎"处理完毕"→ 流程引擎推进到下一节点</li>
-          <li><b>逐级上级到达停止人员：</b>存数据 + 审定完成 → 触发面谈+确认环节</li>
-          <li><b>HRBP驳回：</b>当前行作废 → 回到直接上级 → 直接上级重新走①②③</li>
-          <li><b>跳过审定的员工：</b>使用方案中配置的固定等级，纳入分布分母</li>
+          <li><b>D 提交流程：</b>告诉流程引擎"处理完毕"→ 推进到下一节点</li>
+          <li><b>逐级上级到达停止人员：</b>审定完成 → 触发面谈+确认环节</li>
+          <li><b>HRBP驳回：</b>当前行作废 → 回到直接上级 → 直接上级重新 submit</li>
+          <li><b>⚠️ 无保存草稿接口，只有 submit</b></li>
         </ul>
       </div>
     </div>
@@ -480,14 +509,16 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
         </ul>
       </div>
       <div class="process-box">
-        <h5>提交时序（校验→存数据→提交流程）</h5>
+        <h5>submit 接口（一个原子操作）</h5>
         <ul class="process-list">
-          <li><b>① 校验：</b>面谈类型必填、亮点≥3项、不足≥3项、需求≥1项</li>
-          <li><b>② 存数据：</b>新增一行 interview_detail（submitter_role=employee, status=active）</li>
-          <li><b>③ 提交流程：</b>告诉流程引擎"员工已提交"→ 生成上级审批待办</li>
-          <li><b>上级审批：</b>新增一行 interview_detail（submitter_role=direct, approval_action=approve/reject）</li>
-          <li><b>驳回重提：</b>员工修改 → 新增一行（status=active），旧行 voided</li>
-          <li><b>确认表引用：</b>确认表单实时读取面谈最新 active 行数据（BR-023 直接引用不复制）</li>
+          <li><b>A 校验：</b>面谈类型必填、亮点≥3项、不足≥3项、需求≥1项</li>
+          <li><b>B 计算：</b>面谈环节无指标得分计算（纯数据录入）</li>
+          <li><b>C 存储：</b>新增一行 interview_detail（submitter_role=employee, status=active）</li>
+          <li><b>D 提交流程：</b>告诉流程引擎"员工已提交"→ 生成上级审批待办</li>
+          <li><b>上级审批 submit：</b>新增一行（submitter_role=direct, ref_detail_id=被审批的员工行ID, approval_action=approve/reject）</li>
+          <li><b>驳回重提：</b>员工 submit → 新增行（active），旧行 voided；上级重新审批（ref_detail_id=新行ID）</li>
+          <li><b>确认表引用：</b>确认表单实时读取面谈最新 active 员工行数据（BR-023）</li>
+          <li><b>⚠️ 无保存草稿接口，只有 submit</b></li>
         </ul>
       </div>
     </div>
@@ -510,15 +541,17 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
         </ul>
       </div>
       <div class="process-box">
-        <h5>提交时序（校验→存数据→提交流程）</h5>
+        <h5>submit 接口（一个原子操作）</h5>
         <ul class="process-list">
-          <li><b>① 校验：</b>员工必须选择同意或不同意</li>
-          <li><b>② 存数据：</b>确认结果写入 confirmation，状态更新</li>
-          <li><b>③ 提交流程：</b></li>
+          <li><b>A 校验：</b>员工必须选择同意或不同意</li>
+          <li><b>B 计算：</b>确认环节无计算（纯操作）</li>
+          <li><b>C 存储：</b>确认结果写入 confirmation，状态更新</li>
+          <li><b>D 提交流程：</b></li>
           <li style="padding-left:20px;">→ 同意：流程结束 → 写入 final_result，绩效结果锁定</li>
           <li style="padding-left:20px;">→ 不同意：流程引擎创建 HRBP 知悉待办 → HRBP 知悉后流程结束</li>
-          <li><b>超时自动确认：</b>系统以"同意"处理，记录自动确认标记</li>
-          <li><b>结果不可逆：</b>确认完成后终态不可逆，如需修正需发起新流程实例</li>
+          <li><b>超时自动确认：</b>系统定时任务调用同一个 submit 接口（action=agree, operator=system）</li>
+          <li><b>结果不可逆：</b>确认完成后终态不可逆</li>
+          <li><b>⚠️ 无保存草稿接口，只有 submit</b></li>
         </ul>
       </div>
     </div>
@@ -673,6 +706,7 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
           <div class="db-field"><span class="fkey">FK</span><span class="fname">employee_id</span><span class="ftype">bigint</span></div>
           <div class="db-field"><span class="fkey">FK</span><span class="fname">submitter_id</span><span class="ftype">bigint（处理人：员工/间接上级/直接上级）</span></div>
           <div class="db-field"><span class="fname">submitter_role</span><span class="ftype">enum(employee/indirect/direct) 处理人角色</span></div>
+          <div class="db-field"><span class="fkey">FK</span><span class="fname">ref_detail_id</span><span class="ftype">bigint（上级审批行引用：审批的是哪个版本的员工目标）</span></div>
           <div class="db-field"><span class="fname">status</span><span class="ftype">enum(active/voided) 有效/作废</span></div>
           <div class="db-field"><span class="fname">flow_instance_id</span><span class="ftype">bigint</span></div>
           <div class="db-field"><span class="fname">modules</span><span class="ftype">JSON（该次提交的目标数据）</span></div>
@@ -680,7 +714,7 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
           <div class="db-field"><span class="fname">approval_action</span><span class="ftype">enum(approve/reject) 审批结果（仅上级行有值）</span></div>
           <div class="db-field"><span class="fname">approval_comment</span><span class="ftype">text（审批意见）</span></div>
           <div class="db-field"><span class="fname">submitted_at</span><span class="ftype">timestamp</span></div>
-          <div class="db-field" style="background:#fff7e6;font-size:11px;">💡 每次提交/重提/撤回 = 新增一行；驳回重提 → 旧行 voided，新行 active</div>
+          <div class="db-field" style="background:#fff7e6;font-size:11px;">💡 员工行 modules=目标数据；上级行 ref_detail_id=指向被审批的员工行</div>
         </div>
       </div>
       <div class="db-entity">
@@ -726,6 +760,7 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
           <div class="db-field"><span class="fkey">FK</span><span class="fname">employee_id</span><span class="ftype">bigint</span></div>
           <div class="db-field"><span class="fkey">FK</span><span class="fname">submitter_id</span><span class="ftype">bigint（处理人：员工/直接上级）</span></div>
           <div class="db-field"><span class="fname">submitter_role</span><span class="ftype">enum(employee/direct) 处理人角色</span></div>
+          <div class="db-field"><span class="fkey">FK</span><span class="fname">ref_detail_id</span><span class="ftype">bigint（上级审批行引用：审批的是哪个版本的员工面谈）</span></div>
           <div class="db-field"><span class="fname">status</span><span class="ftype">enum(active/voided) 有效/作废</span></div>
           <div class="db-field"><span class="fname">flow_instance_id</span><span class="ftype">bigint</span></div>
           <div class="db-field"><span class="fname">interview_type</span><span class="ftype">varchar(50)</span></div>
@@ -779,36 +814,46 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
   <div class="section-title">计算引擎规格</div>
 
   <div class="arch-container" style="margin-bottom:24px;">
-    <div style="font-size:14px;font-weight:600;margin-bottom:16px;">0. 执行链路总览</div>
+    <div style="font-size:14px;font-weight:600;margin-bottom:16px;">0. 架构原则</div>
+    <div style="background:#fff1f0;border-left:3px solid var(--danger);padding:12px 16px;border-radius:0 8px 8px 0;font-size:13px;margin-bottom:16px;">
+      <b>前端是纯展示层，不含任何业务逻辑。</b><br>
+      所有校验/计算/存储/流程推进全部在后端 submit 接口中完成，一个原子操作。<br>
+      这样 AI Agent 可以直接调用同一个 submit 接口，无需重复实现业务逻辑。
+    </div>
+
+    <div style="font-size:14px;font-weight:600;margin-bottom:16px;">1. 执行链路总览</div>
     <div class="process-box">
-      <h5>指标得分 = 公式引擎(指标关联的 calc_rule.formula, grades 参考值 + 表单输入值)</h5>
+      <h5>前端只传原始输入 → 后端一个 submit 接口完成全部</h5>
       <ul class="process-list">
         <li><b>配置层（先于表单）：</b></li>
         <li style="padding-left:20px;">① COE 配衡量标准 → grades 参考值</li>
         <li style="padding-left:20px;">② COE 配指标库 → FK 衡量标准 + FK 计算规则</li>
         <li style="padding-left:20px;">③ COE 配计算规则 → 公式编辑器配置 formula（字段从②的 grades 注册）</li>
         <li style="padding-left:20px;">④ 方案环节 → 选择计算规则</li>
-        <li><b>执行层（表单填写后）：</b></li>
-        <li style="padding-left:20px;">⑤ 员工选指标 → 指标带出 FK→measure_standard → 读取 grades 渲染表单</li>
-        <li style="padding-left:20px;">⑥ 员工填完成值 → 系统执行 formula(grades + actual_value) → 算出指标得分</li>
-        <li style="padding-left:20px;">⑦ 直接上级提交 → 执行层级2总分公式 → 算出总分+等级</li>
+        <li><b>执行层（一个 submit 接口，一个原子操作）：</b></li>
+        <li style="padding-left:20px;">⑤ 前端/Agent 传原始输入 → 后端校验 → 计算 → 存储 → 提交流程</li>
       </ul>
     </div>
 
-    <div style="font-size:14px;font-weight:600;margin:20px 0 16px;">1. 层级1：单个指标得分</div>
+    <div style="font-size:14px;font-weight:600;margin:20px 0 16px;">1. submit 接口内部流程（一个原子操作）</div>
     <div class="process-box">
-      <h5>每个指标的得分 = 该指标关联的 calc_rule.formula(grades 参考值 + actual_value)</h5>
+      <h5>前端/Agent 传原始输入 → 后端校验 → 计算 → 存储 → 提交流程</h5>
       <ul class="process-list">
-        <li><b>公式来源：</b>indicator.calc_rule.formula（COE 在公式编辑器中配置，不是硬编码）</li>
-        <li><b>参考值来源：</b>indicator.measure_standard.grades（配置层数据，公式编辑器注册为变量）</li>
-        <li><b>输入值：</b>员工在考核表单填的 actual_value（完成值）</li>
-        <li><b>执行过程：</b></li>
-        <li style="padding-left:20px;">→ 系统读取 indicator.FK→calc_rule.formula</li>
-        <li style="padding-left:20px;">→ 将 grades 注入为公式变量（challenge_value/target_value/baseline_value...）</li>
-        <li style="padding-left:20px;">→ 将 actual_value 从表单数据中取出</li>
-        <li style="padding-left:20px;">→ 公式引擎执行 formula → 返回指标得分</li>
-        <li><b>精度：</b>四舍五入保留 1 位小数</li>
-        <li><b>持久化：</b>每个指标的得分写入 eval_detail.score_data（JSON 中每个指标一条记录）</li>
+        <li><b>输入：</b>前端或 AI Agent 传原始用户输入（actual_value / eval_result / weight...）</li>
+        <li><b>Step A 校验：</b></li>
+        <li style="padding-left:20px;">→ 必填校验：完成值/评价结果是否已填</li>
+        <li style="padding-left:20px;">→ 格式校验：数据类型是否正确</li>
+        <li style="padding-left:20px;">→ 业务校验：权重是否=100%等</li>
+        <li style="padding-left:20px;">→ 校验失败 → 直接返回错误，不往下走</li>
+        <li><b>Step B 计算：</b></li>
+        <li style="padding-left:20px;">→ 遍历每个指标：读 calc_rule.formula + grades → 组装变量 → 执行公式 → 得分</li>
+        <li style="padding-left:20px;">→ 层级2总分公式：各指标得分×权重 + 加减分 → 总分</li>
+        <li style="padding-left:20px;">→ 总分映射到等级（查 grade_rule）</li>
+        <li><b>Step C 存储：</b></li>
+        <li style="padding-left:20px;">→ 新增一行明细记录（eval_detail / goal_detail / ...）</li>
+        <li style="padding-left:20px;">→ score_data = 用户输入 + 计算结果 + 公式引用 + grades 参考值（全链路可追溯）</li>
+        <li><b>Step D 提交流程：</b></li>
+        <li style="padding-left:20px;">→ 调用流程引擎 API → 推进节点 → 分配下一待办</li>
       </ul>
     </div>
 
@@ -880,7 +925,7 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
         <li><b>等级数据来源：</b>方案引用的 grade_rule（V1.3 等级规则）</li>
         <li><b>边界：</b>总分恰好等于某等级上限，归入该等级（含边界）</li>
         <li><b>超出范围：</b>总分 &gt; 最高等级上限 → 归入最高等级；总分 &lt; 最低等级下限 → 归入最低等级</li>
-        <li><b>触发时机：</b>直接上级提交考核时自动计算</li>
+        <li><b>触发时机：</b>submit Step B（直接上级节点提交时计算总分+映射等级）</li>
         <li><b>持久化：</b>写入 eval_detail.total_eval_result（等级编码）</li>
       </ul>
     </div>
@@ -890,8 +935,8 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
       <h5>每次等级调整后实时更新分布计数</h5>
       <ul class="process-list">
         <li><b>触发时机：</b>审定环节每次调整等级后立即重算</li>
-        <li><b>计算公式：</b>当前某等级人数 = 该等级已审定人数 / 已审定总人数 × 100%</li>
-        <li><b>分母定义（BR-010）：</b>考核组内参与考核的总人数（含跳过审定的员工）</li>
+        <li><b>计算公式：</b>当前某等级比例 = 该等级当前人数 / 考核组总人数 × 100%</li>
+        <li><b>分母定义（BR-010）：</b>考核组内参与考核的总人数（含跳过审定的员工，含未审定的员工）</li>
         <li><b>跳过审定的员工：</b>使用方案中配置的固定等级，纳入分母</li>
         <li><b>并发控制：</b>使用数据库行级锁或乐观锁（version字段），防止分布计数不一致</li>
         <li><b>持久化：</b>写入 dist_snapshot 表（实时更新）</li>
@@ -910,33 +955,33 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
       <div class="process-box">
         <h5>1. 目标制定驳回</h5>
         <ul class="process-list">
-          <li><b>触发：</b>间接上级/直接上级点击"不同意"</li>
-          <li><b>数据处理（同一条记录）：</b></li>
-          <li style="padding-left:20px;">→ goal_detail.status = rejected（未生效）</li>
-          <li style="padding-left:20px;">→ 数据保留在同一条记录中，员工可修改</li>
-          <li style="padding-left:20px;">→ 追加审批记录到 approval_history（含驳回原因）</li>
+          <li><b>触发：</b>间接上级/直接上级 submit（approval_action=reject）</li>
+          <li><b>上级审批行：</b>新增一行（submitter_role=direct, approval_action=reject, ref_detail_id=员工目标行ID）</li>
           <li><b>员工重新提交：</b></li>
-          <li style="padding-left:20px;">→ 员工修改目标数据（更新同一条记录）</li>
-          <li style="padding-left:20px;">→ status 回到 pending，重新进入审批流</li>
-          <li style="padding-left:20px;">→ approval_history 追加新审批记录</li>
-          <li><b>目标数据可见性：</b>提交后始终可见，通过 status 标记审批状态</li>
+          <li style="padding-left:20px;">→ 员工 submit → 新增一行（submitter_role=employee, status=active）</li>
+          <li style="padding-left:20px;">→ 之前被驳回的员工行 status=voided</li>
+          <li style="padding-left:20px;">→ 间接上级重新审批 → 新增一行（ref_detail_id=新员工行ID）</li>
+          <li style="padding-left:20px;">→ 直接上级重新审批 → 新增一行</li>
+          <li><b>有效行判定：</b>最新的 active 员工行 + 后续上级行全部 approve = 目标生效</li>
+          <li><b>历史追溯：</b>voided 行保留，可查看员工填过哪些历史目标</li>
         </ul>
       </div>
 
       <div class="process-box">
-        <h5>2. 绩效考核驳回（需确认）</h5>
+        <h5>2. 绩效考核驳回（已确认方案B）</h5>
         <ul class="process-list">
-          <li><b>当前状态：</b>流程文档03写了间接上级可"驳回到发起人"，但状态机无rejected状态</li>
-          <li><b>建议方案A（不支持驳回）：</b></li>
-          <li style="padding-left:20px;">→ 绩效考核流程仅支持"提交"，不支持驳回</li>
-          <li style="padding-left:20px;">→ 间接上级/直接上级只能提交评分</li>
-          <li style="padding-left:20px;">→ 与状态机定义一致</li>
-          <li><b>建议方案B（支持驳回）：</b></li>
-          <li style="padding-left:20px;">→ 状态机增加 rejected 状态</li>
-          <li style="padding-left:20px;">→ 驳回后员工重新填写完成值</li>
-          <li style="padding-left:20px;">→ 间接上级评分数据保留</li>
-          <li style="padding-left:20px;">→ 需更新 prd-states.md</li>
-          <li><b>⚠️ 需业务确认选择方案A还是B</b></li>
+          <li><b>已确认：</b>支持驳回（间接上级可驳回到发起人）</li>
+          <li><b>触发：</b>间接上级 submit（approval_action=reject）</li>
+          <li><b>数据处理（全部作废）：</b></li>
+          <li style="padding-left:20px;">→ 该员工所有 active 行全部 voided</li>
+          <li style="padding-left:20px;">→ 含：自评分行 + 间接上级评分行 + 直接上级评分行（如有）</li>
+          <li style="padding-left:20px;">→ 间接上级/直接上级之前基于旧完成值的评分全部作废</li>
+          <li><b>员工重新提交：</b></li>
+          <li style="padding-left:20px;">→ 员工修改完成值 → submit → 新增一行（submitter_role=self, status=active）</li>
+          <li style="padding-left:20px;">→ 流程回到间接上级节点 → 间接上级重新评分（基于新完成值）</li>
+          <li style="padding-left:20px;">→ 直接上级重新评分（基于新完成值）</li>
+          <li><b>全部重来：</b>因为完成值变了，所有基于旧值的评分都失效，必须全部重新算</li>
+          <li><b>需更新 prd-states.md：Evaluation 状态机增加 rejected 状态</b></li>
         </ul>
       </div>
 

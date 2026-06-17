@@ -235,21 +235,17 @@
 
 ---
 
-### 2.2 POST /api/goals/:activityId/:employeeId/save — 保存草稿
+### 2.2 POST /api/goals/:activityId/:employeeId/submit — 提交目标
 
-**描述**：保存目标制定草稿（不触发流程）。
+**描述**：提交目标（一个原子操作：校验→存储→提交流程）。无保存草稿接口。
 
 **请求 Schema**：同 GET 响应的 `modules` 字段。
 
-**所需权限**：goal:update
-
----
-
-### 2.3 POST /api/goals/:activityId/:employeeId/submit — 提交目标
-
-**描述**：提交目标（触发审批流程）。
-
-**请求 Schema**：同保存草稿。
+**后端处理流程**：
+1. **A 校验**：目标数≥2、总权重=100%、必填字段完整
+2. **B 计算**：目标环节无指标得分计算（纯数据录入）
+3. **C 存储**：新增一行 goal_detail（submitter_role, status=active）
+4. **D 提交流程**：调用流程引擎 API → 推进节点 → 分配下一待办
 
 **校验规则**
 
@@ -452,19 +448,30 @@
 
 ---
 
-### 3.2 POST /api/evaluations/:activityId/:employeeId/save — 保存草稿
+### 3.2 POST /api/evaluations/:activityId/:employeeId/submit — 提交考核
 
-**描述**：保存考核表单草稿。
+**描述**：提交考核表单（一个原子操作：校验→计算→存储→提交流程）。无保存草稿接口。
 
-**请求 Schema**：同 GET 响应的 `modules` + `totalEvalResult` + `totalComment`。
+**请求 Schema**
 
-**所需权限**：evaluation:update
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `action` | enum | 是 | submit（提交）/ reject（驳回，仅间接上级节点可用） |
+| `modules` | array | 是（submit时） | 各指标的评分数据 |
+| `totalEvalResult` | string | 是（直接上级submit时） | 总评价结果 |
+| `totalComment` | string | 否 | 总评语 |
+| `comment` | string | 否（reject时必填） | 驳回原因 |
 
----
+**后端处理流程（action=submit）**：
+1. **A 校验**：必填字段完整
+2. **B 计算**：遍历每个指标 → 读 calc_rule.formula + grades → 执行公式 → 指标得分；直接上级节点额外算总分+等级
+3. **C 存储**：新增一行 eval_detail（submitter_role, score_data 含用户输入+计算结果+公式引用）
+4. **D 提交流程**：调用流程引擎 API → 推进节点
 
-### 3.3 POST /api/evaluations/:activityId/:employeeId/submit — 提交考核
-
-**描述**：提交考核表单。
+**后端处理流程（action=reject，仅间接上级节点）**：
+1. 该员工所有 active 行全部 voided（含自评+间接上级+直接上级）
+2. 流程回到 self_scoring 节点
+3. 员工修改后 submit → 全流程重来
 
 **校验规则**
 
@@ -472,10 +479,18 @@
 |--------|------|--------|
 | 必填字段 | 完成值+评价结果（自评节点） | 2005 |
 | 必填字段 | 总评价结果（直接上级节点） | 2006 |
+| 驳回原因 | reject 时必填 | 2014 |
 
-**状态转换**：`self_scoring` → `pending_indirect_scoring`
+**状态转换**
 
-**所需权限**：evaluation:submit
+| action | 当前状态 | 目标状态 |
+|--------|----------|----------|
+| submit | self_scoring | pending_indirect_scoring |
+| submit | pending_indirect_scoring | pending_direct_scoring |
+| submit | pending_direct_scoring | completed |
+| reject | pending_indirect_scoring | rejected |
+
+**所需权限**：evaluation:submit / evaluation:reject
 
 ---
 
@@ -589,7 +604,13 @@
 
 ### 4.3 POST /api/ratifications/:activityId/:employeeId/submit — 提交审定
 
-**描述**：提交审定结果。
+**描述**：提交审定结果（一个原子操作：校验→存储→提交流程）。
+
+**后端处理流程**：
+1. **A 校验**：调整后等级必填 + 强制分布强控校验
+2. **B 计算**：审定环节无指标得分计算（只调整等级）
+3. **C 存储**：调整等级→更新强制分布计数（原子操作）→新增一行 ratification_detail
+4. **D 提交流程**：调用流程引擎 API → 推进到下一节点
 
 **校验规则**
 
@@ -680,6 +701,12 @@
 | `action` | enum | 是 | agree/disagree |
 | `comment` | string | 否 | 员工意见 |
 
+**后端处理流程**：
+1. **A 校验**：员工必须选择同意或不同意
+2. **B 计算**：确认环节无计算（纯操作）
+3. **C 存储**：确认结果写入 confirmation
+4. **D 提交流程**：同意→流程结束→写入 final_result；不同意→创建 HRBP 知悉待办
+
 **状态转换**
 
 | action | 目标状态 |
@@ -693,7 +720,7 @@
 
 ### 5.2.1 POST /api/confirmations/:activityId/:employeeId/auto-confirm — 超时自动确认
 
-**描述**：员工确认环节超时，系统自动确认为"同意"。
+**描述**：员工确认环节超时，系统定时任务自动调用 submit（action=agree）。
 
 **触发条件**：确认环节持续超过配置天数。
 
@@ -771,19 +798,17 @@
 
 ---
 
-### 6.2 POST /api/interviews/:activityId/:employeeId/save — 保存草稿
+### 6.2 POST /api/interviews/:activityId/:employeeId/submit — 提交面谈
 
-**描述**：保存面谈表单草稿。
+**描述**：员工提交面谈记录（一个原子操作：校验→存储→提交流程）。无保存草稿接口。
 
 **请求 Schema**：同 GET 响应中的可编辑字段。
 
-**所需权限**：interview:update
-
----
-
-### 6.3 POST /api/interviews/:activityId/:employeeId/submit — 提交面谈
-
-**描述**：员工提交面谈记录。
+**后端处理流程**：
+1. **A 校验**：面谈类型必填、亮点≥3项、不足≥3项、需求≥1项
+2. **B 计算**：面谈环节无计算（纯数据录入）
+3. **C 存储**：新增一行 interview_detail（submitter_role=employee, status=active）
+4. **D 提交流程**：调用流程引擎 API → 生成上级审批待办
 
 **校验规则**
 
@@ -1022,10 +1047,10 @@
 | 分组 | 端点数 |
 |------|--------|
 | Scheme API | 7 |
-| PBC Goal API | 9 |
-| Evaluation API | 6 |
+| PBC Goal API | 8（移除 save） |
+| Evaluation API | 5（移除 save） |
 | Ratification API | 5 |
 | Confirmation API | 4 |
-| Interview API | 4 |
+| Interview API | 3（移除 save） |
 | Shared API | 5 |
-| **合计** | **40** |
+| **合计** | **37** |
