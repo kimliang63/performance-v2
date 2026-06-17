@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GHR 绩效管理系统架构设计</title>
+<style>
+:root {
+  --bg: #f5f5f5;
+  --card: #ffffff;
+  --primary: #4f6ef7;
+  --primary-light: #eef1fe;
+  --success: #52c41a;
+  --warning: #faad14;
+  --danger: #ff4d4f;
+  --text: #1a1a2e;
+  --text-secondary: #666;
+  --border: #e8e8e8;
+  --shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+/* Header */
+.header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: white; padding: 40px 0; text-align: center; }
+.header h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+.header p { font-size: 14px; opacity: 0.7; }
+
+/* Tabs */
+.tab-bar { display: flex; gap: 0; background: var(--card); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+.tab-btn { flex: 1; padding: 14px 16px; border: none; background: none; cursor: pointer; font-size: 14px; font-weight: 500; color: var(--text-secondary); border-bottom: 2px solid transparent; transition: all 0.2s; }
+.tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); background: var(--primary-light); }
+.tab-btn:hover { color: var(--primary); }
+
+/* Tab content */
+.tab-content { display: none; padding: 24px; max-width: 1400px; margin: 0 auto; }
+.tab-content.active { display: block; }
+
+/* Section */
+.section { margin-bottom: 32px; }
+.section-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; padding-left: 12px; border-left: 4px solid var(--primary); }
+
+/* Architecture diagram */
+.arch-container { background: var(--card); border-radius: 12px; padding: 32px; box-shadow: var(--shadow); overflow-x: auto; }
+
+/* Layer */
+.layer { margin-bottom: 24px; border: 2px solid var(--border); border-radius: 12px; padding: 20px; position: relative; }
+.layer-label { position: absolute; top: -12px; left: 20px; background: var(--primary); color: white; padding: 2px 16px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+.layer-label.v1 { background: #722ed1; }
+.layer-label.v2 { background: #1890ff; }
+.layer-label.v4 { background: #52c41a; }
+.layer-label.db { background: #fa8c16; }
+.layer-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; margin-top: 8px; color: var(--text); }
+
+/* Grid */
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+/* Card */
+.mod-card { background: #fafafa; border: 1px solid var(--border); border-radius: 8px; padding: 12px; font-size: 13px; }
+.mod-card.highlight { border-color: var(--primary); background: var(--primary-light); }
+.mod-card h4 { font-size: 13px; font-weight: 600; margin-bottom: 4px; color: var(--primary); }
+.mod-card p { font-size: 12px; color: var(--text-secondary); }
+.mod-card ul { font-size: 12px; color: var(--text-secondary); padding-left: 16px; margin-top: 4px; }
+
+/* Arrow between layers */
+.arrow-down { text-align: center; padding: 8px 0; font-size: 24px; color: var(--primary); }
+.arrow-label { font-size: 12px; color: var(--text-secondary); display: block; margin-top: -4px; }
+
+/* Flow diagram */
+.flow-container { background: var(--card); border-radius: 12px; padding: 32px; box-shadow: var(--shadow); }
+.flow-row { display: flex; align-items: stretch; gap: 0; margin-bottom: 16px; overflow-x: auto; padding-bottom: 8px; }
+.flow-step { flex: 0 0 auto; min-width: 160px; background: #fafafa; border: 2px solid var(--border); border-radius: 12px; padding: 16px; text-align: center; position: relative; }
+.flow-step.active { border-color: var(--primary); background: var(--primary-light); }
+.flow-step .step-num { width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: white; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 8px; }
+.flow-step .step-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.flow-step .step-desc { font-size: 12px; color: var(--text-secondary); }
+.flow-arrow { flex: 0 0 40px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--primary); }
+
+/* Data table */
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.data-table th { background: #fafafa; padding: 10px 12px; text-align: left; font-weight: 600; border-bottom: 2px solid var(--border); white-space: nowrap; }
+.data-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+.data-table tr:hover td { background: #fafafa; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+.badge-read { background: #e6f7ff; color: #1890ff; }
+.badge-write { background: #f6ffed; color: #52c41a; }
+.badge-calc { background: #fff7e6; color: #fa8c16; }
+.badge-ref { background: #f9f0ff; color: #722ed1; }
+
+/* Stage detail cards */
+.stage-card { background: var(--card); border-radius: 12px; padding: 24px; box-shadow: var(--shadow); margin-bottom: 20px; }
+.stage-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.stage-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: white; }
+.stage-icon.goal { background: linear-gradient(135deg, #4f6ef7, #6b8cff); }
+.stage-icon.eval { background: linear-gradient(135deg, #52c41a, #73d13d); }
+.stage-icon.ratify { background: linear-gradient(135deg, #fa8c16, #ffa940); }
+.stage-icon.confirm { background: linear-gradient(135deg, #722ed1, #9254de); }
+.stage-icon.interview { background: linear-gradient(135deg, #eb2f96, #f759ab); }
+.stage-name { font-size: 16px; font-weight: 700; }
+.stage-subtitle { font-size: 12px; color: var(--text-secondary); }
+
+/* Processing box */
+.process-box { background: #fafafa; border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-top: 12px; }
+.process-box h5 { font-size: 13px; font-weight: 600; color: var(--primary); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.process-box h5::before { content: ''; width: 4px; height: 14px; background: var(--primary); border-radius: 2px; }
+.process-list { list-style: none; padding: 0; }
+.process-list li { font-size: 12px; color: var(--text-secondary); padding: 4px 0; display: flex; align-items: flex-start; gap: 6px; }
+.process-list li::before { content: '▸'; color: var(--primary); flex-shrink: 0; margin-top: 1px; }
+
+/* DB diagram */
+.db-entity { background: var(--card); border: 2px solid var(--border); border-radius: 10px; overflow: hidden; }
+.db-entity-header { background: #fafafa; padding: 10px 14px; font-weight: 700; font-size: 13px; border-bottom: 1px solid var(--border); }
+.db-entity-body { padding: 0; }
+.db-field { display: flex; align-items: center; padding: 6px 14px; font-size: 12px; border-bottom: 1px solid #f0f0f0; }
+.db-field:last-child { border-bottom: none; }
+.db-field .fname { flex: 1; font-weight: 500; }
+.db-field .ftype { color: var(--text-secondary); font-size: 11px; }
+.db-field .fkey { color: var(--danger); font-size: 10px; font-weight: 700; margin-right: 4px; }
+
+/* Summary stats */
+.stat-row { display: flex; gap: 16px; margin-bottom: 24px; }
+.stat-card { flex: 1; background: var(--card); border-radius: 10px; padding: 20px; box-shadow: var(--shadow); text-align: center; }
+.stat-num { font-size: 32px; font-weight: 700; color: var(--primary); }
+.stat-label { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .grid-3, .grid-5 { grid-template-columns: 1fr; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .flow-row { flex-direction: column; }
+  .flow-arrow { transform: rotate(90deg); flex: 0 0 30px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>GHR 绩效管理系统架构设计</h1>
+  <p>基础配置 → 方案 → 活动 → 环节处理 → 数据落库 全链路</p>
+</div>
+
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('overview')">系统总览</button>
+  <button class="tab-btn" onclick="switchTab('layers')">三层架构</button>
+  <button class="tab-btn" onclick="switchTab('flow')">活动处理流程</button>
+  <button class="tab-btn" onclick="switchTab('data')">数据模型</button>
+  <button class="tab-btn" onclick="switchTab('calc')">计算引擎</button>
+  <button class="tab-btn" onclick="switchTab('reverse')">逆向场景</button>
+</div>
+
+<!-- ==================== TAB 1: 系统总览 ==================== -->
+<div id="overview" class="tab-content active">
+  <div class="stat-row">
+    <div class="stat-card"><div class="stat-num">179</div><div class="stat-label">总功能数</div></div>
+    <div class="stat-card"><div class="stat-num">40</div><div class="stat-label">API 接口</div></div>
+    <div class="stat-card"><div class="stat-num">6</div><div class="stat-label">实体状态机</div></div>
+    <div class="stat-card"><div class="stat-num">36</div><div class="stat-label">业务规则</div></div>
+  </div>
+
+  <div class="arch-container">
+    <div class="section-title">全链路数据流向</div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:20px;">
+      <!-- Layer 1 -->
+      <div style="text-align:center;">
+        <div style="background:#722ed1;color:white;padding:8px 20px;border-radius:20px;font-size:13px;font-weight:600;">基础配置层 V1</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:6px;">周期/等级/计算/指标/评价/分布</div>
+        <div style="margin-top:4px;font-size:11px;color:#999;">35项 · 已评审</div>
+      </div>
+      <div style="display:flex;align-items:center;font-size:24px;color:var(--primary);">→</div>
+      <!-- Layer 2 -->
+      <div style="text-align:center;">
+        <div style="background:#1890ff;color:white;padding:8px 20px;border-radius:20px;font-size:13px;font-weight:600;">方案配置层 V2</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:6px;">方案/考核组/环节/流程/表单</div>
+        <div style="margin-top:4px;font-size:11px;color:#999;">28项 · 已评审</div>
+      </div>
+      <div style="display:flex;align-items:center;font-size:24px;color:var(--primary);">→</div>
+      <!-- Layer 3 -->
+      <div style="text-align:center;">
+        <div style="background:#52c41a;color:white;padding:8px 20px;border-radius:20px;font-size:13px;font-weight:600;">活动执行层 V4</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:6px;">活动/流程实例/待办/干预</div>
+        <div style="margin-top:4px;font-size:11px;color:#999;">31项 · 开发中42%</div>
+      </div>
+      <div style="display:flex;align-items:center;font-size:24px;color:var(--primary);">→</div>
+      <!-- Data Layer -->
+      <div style="text-align:center;">
+        <div style="background:#fa8c16;color:white;padding:8px 20px;border-radius:20px;font-size:13px;font-weight:600;">数据落库层</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:6px;">明细表/结果表/日志表</div>
+        <div style="margin-top:4px;font-size:11px;color:#999;">待定义</div>
+      </div>
+    </div>
+
+    <div style="margin-top:32px;">
+      <div class="section-title">关键数据流</div>
+      <div class="grid-2" style="margin-top:12px;">
+        <div class="process-box">
+          <h5>正向流转（标准路径）</h5>
+          <ul class="process-list">
+            <li>HRBP 发起活动 → 从方案 copy 全部配置 → 生成活动快照</li>
+            <li>活动开启环节 → 为每个员工创建流程实例 → 生成待办</li>
+            <li>员工/上级处理待办 → 数据写入明细表 → 流转下一节点</li>
+            <li>环节所有实例完成 → 环节状态=completed → 触发下一环节</li>
+            <li>全部环节完成 → 活动状态=completed → 数据汇总到结果表</li>
+          </ul>
+        </div>
+        <div class="process-box">
+          <h5>数据级联（表单间）</h5>
+          <ul class="process-list">
+            <li>目标制定 approved → 目标数据写入考核明细表（快照）</li>
+            <li>绩效考核 completed → 考核数据写入审定明细表（快照）</li>
+            <li>结果审定 completed → 审定等级写入确认结果表（快照）</li>
+            <li>面谈 completed → 面谈数据写入面谈明细表 + 确认表引用</li>
+            <li>员工确认 completed → 绩效结果锁定，不可修改</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB 2: 三层架构 ==================== -->
+<div id="layers" class="tab-content">
+  <div class="arch-container">
+    <!-- V1 -->
+    <div class="layer">
+      <div class="layer-label v1">V1 基础配置层 · 已评审锁定</div>
+      <div class="layer-title">绩效基础配置（35项）</div>
+      <div class="grid-5">
+        <div class="mod-card"><h4>绩效周期</h4><p>FR-1.1.1~1.1.4</p><ul><li>季度/半年度/年度</li><li>起止日期</li><li>启用/停用</li></ul></div>
+        <div class="mod-card"><h4>等级规则</h4><p>FR-1.3.1~1.3.4</p><ul><li>A/B/C/D/E 五级</li><li>分数区间映射</li><li>多套规则</li></ul></div>
+        <div class="mod-card"><h4>计算规则</h4><p>FR-1.4.1~1.4.7</p><ul><li>加权求和</li><li>平均分</li><li>公式编辑器</li></ul></div>
+        <div class="mod-card"><h4>衡量标准</h4><p>FR-1.5.1~1.5.4</p><ul><li>梯度评分</li><li>线性评分</li><li>定性评分</li></ul></div>
+        <div class="mod-card"><h4>指标库</h4><p>FR-1.6.1~1.6.7</p><ul><li>分类管理</li><li>关联衡量标准</li><li>导入/导出</li></ul></div>
+        <div class="mod-card"><h4>评价规则</h4><p>FR-1.7.1~1.7.4</p><ul><li>上级评价</li><li>360评价</li><li>评价人定义</li></ul></div>
+        <div class="mod-card"><h4>强制分布</h4><p>FR-1.8.1~1.8.4</p><ul><li>等级比例</li><li>强控/弱控</li><li>起控人数</li></ul></div>
+        <div class="mod-card"><h4>单位管理</h4><p>FR-1.2.1~1.2.4</p><ul><li>组织单元</li><li>部门树</li></ul></div>
+        <div class="mod-card"><h4>公式编辑器</h4><p>V1.1 · FR-1.9.1~1.9.5</p><ul><li>数据源定义</li><li>表达式编辑</li><li>公式解析</li></ul></div>
+        <div class="mod-card" style="border-style:dashed;opacity:0.6;"><h4>流程引擎（独立模块）</h4><p>25项 · 待讨论</p><ul><li>流程设计器</li><li>流程管理</li><li>审批规则</li></ul></div>
+      </div>
+    </div>
+
+    <div class="arrow-down">⬇ <span class="arrow-label">引用配置（只读引用，不修改源数据）</span></div>
+
+    <!-- V2 -->
+    <div class="layer">
+      <div class="layer-label v2">V2 方案配置层 · 已评审</div>
+      <div class="layer-title">绩效方案设计（28项）</div>
+      <div class="grid-3">
+        <div class="mod-card highlight">
+          <h4>方案基本信息</h4>
+          <ul>
+            <li>名称/编号/版本（自动递增）</li>
+            <li>周期类型（月度/半年度/年度/自定义）</li>
+            <li>引用等级规则 → V1.3</li>
+            <li>启用状态/向下公开</li>
+            <li>动态考核开关</li>
+          </ul>
+        </div>
+        <div class="mod-card highlight">
+          <h4>考核组配置</h4>
+          <ul>
+            <li>多考核组（默认组+自定义组）</li>
+            <li>优先级排序</li>
+            <li>规则：按条件（部门/职位/职级）+ 人员交集</li>
+            <li>排除人员配置</li>
+            <li>引用评价规则 → V1.7</li>
+          </ul>
+        </div>
+        <div class="mod-card highlight">
+          <h4>配置模式</h4>
+          <ul>
+            <li>合并配置（全局共用环节）</li>
+            <li>按考核组配置（各组独立）</li>
+            <li>预置模板：月度/半年度/年度</li>
+            <li>配置进度百分比</li>
+          </ul>
+        </div>
+      </div>
+      <div style="margin-top:16px;">
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px;">5 个考核环节配置（每个环节独立配置）</div>
+        <div class="grid-5">
+          <div class="mod-card"><h4>① 目标制定</h4><ul><li>开启方式（自动/手动）</li><li>结束方式（定时/手动）</li><li>未填写→强制结束</li><li>流程模板 → 流程引擎</li></ul></div>
+          <div class="mod-card"><h4>② 绩效考核</h4><ul><li>评价规则（必填）</li><li>节点权重分配</li><li>结束处理规则</li><li>通知配置</li><li>流程模板 → 流程引擎</li></ul></div>
+          <div class="mod-card"><h4>③ 结果审定</h4><ul><li>强制分布规则 → V1.8</li><li>控制模式（强控/弱控）</li><li>起控人数</li><li>审定提交方式</li><li>审定模式（汇报线/组织架构）</li></ul></div>
+          <div class="mod-card"><h4>④ 结果确认</h4><ul><li>开启方式</li><li>通知配置</li><li>无强制结束规则</li><li>流程模板 → 流程引擎</li></ul></div>
+          <div class="mod-card"><h4>⑤ 绩效面谈</h4><ul><li>流程模板 → 流程引擎</li><li>通知配置</li><li>强制结束规则</li></ul></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow-down">⬇ <span class="arrow-label">实例化 copy（快照方案配置 → 活动不可变配置）</span></div>
+
+    <!-- V4 -->
+    <div class="layer">
+      <div class="layer-label v4">V4 活动执行层 · 开发中42%</div>
+      <div class="layer-title">考核活动管理（31项）</div>
+      <div class="grid-3">
+        <div class="mod-card">
+          <h4>活动管理（5项）</h4>
+          <ul>
+            <li>发起活动（选方案→设时间→选人员）</li>
+            <li>从考核组继承人员，可微调</li>
+            <li>活动级可覆盖：环节配置/强制分布/节点权重</li>
+          </ul>
+        </div>
+        <div class="mod-card">
+          <h4>过程管理（10项）</h4>
+          <ul>
+            <li>环节手动开启/关闭/暂停/重开</li>
+            <li>强制终止流程/流程退回/转交</li>
+            <li>催办通知/流程挂起恢复</li>
+          </ul>
+        </div>
+        <div class="mod-card">
+          <h4>数据导入导出（7项）</h4>
+          <ul>
+            <li>目标/评分/审定/面谈数据导入</li>
+            <li>结果数据导出 Excel/PDF</li>
+            <li>导入校验（必填+格式+业务）</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB 3: 活动处理流程 ==================== -->
+<div id="flow" class="tab-content">
+  <div class="section-title">活动生命周期</div>
+  <div class="flow-container" style="margin-bottom:24px;">
+    <div class="flow-row">
+      <div class="flow-step"><div class="step-num">1</div><div class="step-title">发起活动</div><div class="step-desc">HRBP选择方案<br>设置时间/人员<br>copy方案配置</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="step-num">2</div><div class="step-title">开启环节</div><div class="step-desc">按配置自动/手动开启<br>为员工创建流程实例<br>生成待办任务</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="step-num">3</div><div class="step-title">待办处理</div><div class="step-desc">员工/上级处理待办<br>填写表单→提交<br>数据写入明细表</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="step-num">4</div><div class="step-title">环节完成</div><div class="step-desc">所有实例completed<br>触发下一环节<br>数据级联到下游</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="step-num">5</div><div class="step-title">活动结束</div><div class="step-desc">全部环节完成<br>结果锁定<br>汇总到结果表</div></div>
+    </div>
+  </div>
+
+  <!-- 目标制定 -->
+  <div class="stage-card">
+    <div class="stage-header">
+      <div class="stage-icon goal">①</div>
+      <div><div class="stage-name">目标制定环节</div><div class="stage-subtitle">员工填写目标 → 审批锁定 → 数据写入考核表</div></div>
+    </div>
+    <div class="grid-2">
+      <div class="process-box">
+        <h5>待办处理逻辑</h5>
+        <ul class="process-list">
+          <li><b>员工节点：</b>填写目标名称/权重/衡量标准/目标值/挑战值/保底值，保存草稿或提交</li>
+          <li><b>提交校验：</b>目标数≥2、总权重=100%、必填字段完整</li>
+          <li><b>间接上级节点：</b>全部只读查看，同意/不同意/驳回/转交</li>
+          <li><b>直接上级节点：</b>全部只读查看，同意/不同意/驳回/转交</li>
+          <li><b>空审批人：</b>流程引擎自动跳过该节点</li>
+        </ul>
+      </div>
+      <div class="process-box">
+        <h5>提交后数据处理</h5>
+        <ul class="process-list">
+          <li><b>保存草稿：</b>数据写入 goal_draft 表，不触发流程，不锁定</li>
+          <li><b>提交：</b>数据写入 goal_detail 表，状态=pending，触发审批流程</li>
+          <li><b>审批通过（approved）：</b>目标数据锁定不可修改 → 同时写入 eval_detail 表（只读引用）</li>
+          <li><b>驳回（rejected）：</b>状态=rejected → 员工可修改后重新提交 → 旧审批记录保留</li>
+          <li><b>转交：</b>当前待办转给他人，原处理人记录保留</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 绩效考核 -->
+  <div class="stage-card">
+    <div class="stage-header">
+      <div class="stage-icon eval">②</div>
+      <div><div class="stage-name">绩效考核环节</div><div class="stage-subtitle">自评 → 上级评分 → 计算总评价结果 → 数据写入审定表</div></div>
+    </div>
+    <div class="grid-2">
+      <div class="process-box">
+        <h5>待办处理逻辑</h5>
+        <ul class="process-list">
+          <li><b>自评节点：</b>员工填写完成值 + 各指标评价结果 + 评语（目标数据只读引用自目标表）</li>
+          <li><b>间接上级节点：</b>查看完成值(只读) + 选择各指标评价 + 评语</li>
+          <li><b>直接上级节点：</b>查看+评分+填写<b>总评价结果</b>(必填)+总评语</li>
+          <li><b>批量模式：</b>同部门员工列表对比评分 + 批量导入</li>
+          <li><b>无驳回：</b>绩效考核流程仅提交，不支持驳回</li>
+        </ul>
+      </div>
+      <div class="process-box">
+        <h5>提交后数据处理</h5>
+        <ul class="process-list">
+          <li><b>自评提交：</b>完成值+评价写入 eval_detail 表，状态流转</li>
+          <li><b>间接上级提交：</b>间接上级评分写入 eval_detail 表</li>
+          <li><b>直接上级提交（completed）：</b></li>
+          <li style="padding-left:20px;">→ 计算<b>总评价结果</b>（按节点权重加权 or 取最后填写值）</li>
+          <li style="padding-left:20px;">→ 写入 ratification_detail 表（考核结果快照，只读引用）</li>
+          <li style="padding-left:20px;">→ 触发结果审定环节开启</li>
+          <li><b>批量提交：</b>逐条处理，成功则提交，失败返回错误明细</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 结果审定 -->
+  <div class="stage-card">
+    <div class="stage-header">
+      <div class="stage-icon ratify">③</div>
+      <div><div class="stage-name">结果审定环节</div><div class="stage-subtitle">逐级评级 → 强制分布校验 → HRBP审批（远超预期）→ 数据写入确认表</div></div>
+    </div>
+    <div class="grid-2">
+      <div class="process-box">
+        <h5>待办处理逻辑</h5>
+        <ul class="process-list">
+          <li><b>直接上级节点：</b>查看考核结果(只读)+调整等级(必填)+查看强制分布实时统计</li>
+          <li><b>间接上级节点：</b>同上，查看+确认或调整等级</li>
+          <li><b>逐级上级节点：</b>按汇报线/组织架构逐级流转，到停止人员结束</li>
+          <li><b>HRBP节点：</b>仅当调整后等级=A(远超预期)时触发，全部只读，同意/不同意</li>
+          <li><b>强制分布校验：</b>弱控→提示可提交；强控→禁止提交</li>
+        </ul>
+      </div>
+      <div class="process-box">
+        <h5>提交后数据处理</h5>
+        <ul class="process-list">
+          <li><b>每次调整等级：</b>实时更新强制分布计数（原子操作，防并发）</li>
+          <li><b>直接上级提交：</b>写入审定结果 + 校验分布</li>
+          <li><b>逐级上级提交+到达停止人员：</b>审定完成 → 写入 confirmation_result 表</li>
+          <li><b>HRBP驳回：</b>回到直接上级节点，强制分布计数回滚</li>
+          <li><b>跳过审定的员工：</b>使用方案中配置的固定等级，纳入分布分母</li>
+          <li><b>审定完成：</b>触发绩效面谈+结果确认环节开启</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 面谈 -->
+  <div class="stage-card">
+    <div class="stage-header">
+      <div class="stage-icon interview">⑤</div>
+      <div><div class="stage-name">绩效面谈环节</div><div class="stage-subtitle">员工填写面谈记录 → 上级审批 → 数据写入面谈表+确认表引用</div></div>
+    </div>
+    <div class="grid-2">
+      <div class="process-box">
+        <h5>待办处理逻辑</h5>
+        <ul class="process-list">
+          <li><b>员工填写节点：</b>面谈类型/亮点(≥3项)/不足(≥3项)/下阶段规划/需求(≥1项)/附件</li>
+          <li><b>直接上级审批节点：</b>查看面谈内容(只读) + 填写上级评语(必填) + 同意/驳回</li>
+          <li><b>驳回：</b>回到员工填写节点，员工修改后重新提交</li>
+        </ul>
+      </div>
+      <div class="process-box">
+        <h5>提交后数据处理</h5>
+        <ul class="process-list">
+          <li><b>员工提交：</b>面谈数据写入 interview_detail 表，状态=pending_leader_review</li>
+          <li><b>上级同意（completed）：</b>面谈数据锁定 → 写入 interview_result 表</li>
+          <li><b>确认表引用：</b>确认表单实时读取面谈数据（BR-023 直接引用不复制）</li>
+          <li><b>上级驳回：</b>状态回到 pending_employee_fill，员工可重新编辑</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 结果确认 -->
+  <div class="stage-card">
+    <div class="stage-header">
+      <div class="stage-icon confirm">④</div>
+      <div><div class="stage-name">结果确认环节</div><div class="stage-subtitle">员工查看全部结果 → 确认/不同意 → HRBP知悉（仅不同意时）</div></div>
+    </div>
+    <div class="grid-2">
+      <div class="process-box">
+        <h5>待办处理逻辑</h5>
+        <ul class="process-list">
+          <li><b>员工确认节点：</b>全部只读展示（考核结果+面谈结果+审定结果），点击同意/不同意</li>
+          <li><b>HRBP知悉节点：</b>仅员工"不同意"时触发，全部只读，点击"知悉"→流程结束</li>
+          <li><b>超时处理：</b>超过配置天数未操作 → 系统自动确认为"同意"（BR-005）</li>
+          <li><b>数据全部只读：</b>确认环节不可修改任何绩效数据</li>
+        </ul>
+      </div>
+      <div class="process-box">
+        <h5>提交后数据处理</h5>
+        <ul class="process-list">
+          <li><b>员工同意：</b>绩效结果锁定，状态=completed → 写入 final_result 表</li>
+          <li><b>员工不同意：</b>触发 HRBP 知悉 → HRBP 知悉后流程结束 → 结果仍锁定（线下处理）</li>
+          <li><b>超时自动确认：</b>系统以"同意"处理，记录自动确认标记</li>
+          <li><b>结果不可逆：</b>确认完成后终态不可逆，如需修正需发起新流程实例</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB 4: 数据模型 ==================== -->
+<div id="data" class="tab-content">
+  <div class="section-title">核心数据表设计</div>
+
+  <div class="arch-container" style="margin-bottom:24px;">
+    <div style="font-size:14px;font-weight:600;margin-bottom:16px;">配置层数据（方案+活动）</div>
+    <div class="grid-3">
+      <div class="db-entity">
+        <div class="db-entity-header" style="background:#f9f0ff;">📋 perf_scheme（绩效方案）</div>
+        <div class="db-entity-body">
+          <div class="db-field"><span class="fkey">PK</span><span class="fname">id</span><span class="ftype">bigint</span></div>
+          <div class="db-field"><span class="fname">name</span><span class="ftype">varchar(200)</span></div>
+          <div class="db-field"><span class="fname">code</span><span class="ftype">varchar(50) UNIQUE</span></div>
+          <div class="db-field"><span class="fname">version</span><span class="ftype">int（自动递增）</span></div>
+          <div class="db-field"><span class="fname">cycle_type</span><span class="ftype">enum(月度/半年度/年度/自定义)</span></div>
+          <div class="db-field"><span class="fname">status</span><span class="ftype">enum(draft/enabled/disabled)</span></div>
+          <div class="db-field"><span class="fname">grade_rule_id</span><span class="ftype">FK → grade_rule</span></div>
+          <div class="db-field"><span class="fname">dynamic_assessment</span><span class="ftype">boolean</span></div>
+          <div class="db-field"><span class="fname">config_mode</span><span class="ftype">enum(merged/per_group)</span></div>
+          <div class="db-field"><span class="fname">created_by / modified_by</span><span class="ftype">bigint FK</span></div>
+        </div>
+      </div>
+      <div class="db-entity">
+        <div class="db-entity-header" style="background:#e6f7ff;">👥 perf_assessment_group（考核组）</div>
+        <div class="db-entity-body">
+          <div class="db-field"><span class="fkey">PK</span><span class="fname">id</span><span class="ftype">bigint</span></div>
+          <div class="db-field"><span class="fkey">FK</span><span class="fname">scheme_id</span><span class="ftype">bigint → perf_scheme</span></div>
+          <div class="db-field"><span class="fname">name</span><span class="ftype">varchar(200)</span></div>
+          <div class="db-field"><span class="fname">priority</span><span class="ftype">int（数字越小优先级越高）</span></div>
+          <div class="db-field"><span class="fname">rule_type</span><span class="ftype">enum(condition/person)</span></div>
+          <div class="db-field"><span class="fname">rule_config</span><span class="ftype">JSON（条件/人员规则）</span></div>
+          <div class="db-field"><span class="fname">exclude_employees</span><span class="ftype">JSON（排除人员ID列表）</span></div>
+          <div class="db-field"><span class="fname">eval_rule_id</span><span class="ftype">FK → eval_rule（评价规则）</span></div>
+        </div>
+      </div>
+      <div class="db-entity">
+        <div class="db-entity-header" style="background:#f6ffed;">⚙️ perf_stage_config（环节配置）</div>
+        <div class="db-entity-body">
+          <div class="db-field"><span class="fkey">PK</span><span class="fname">id</span><span class="ftype">bigint</span></div>
+          <div class="db-field"><span class="fkey">FK</span><span class="fname">scheme_id</span><span class="ftype">bigint → perf_scheme</span></div>
+          <div class="db-field"><span class="fkey">FK</span><span class="fname">group_id</span><span class="ftype">bigint → group（可空=全局）</span></div>
+          <div class="db-field"><span class="fname">stage_type</span><span class="ftype">enum(goal/eval/ratify/confirm/interview)</span></div>
+          <div class="db-field"><span class="fname">enabled</span><span class="ftype">boolean</span></div>
+          <div class="db-field"><span class="fname">start_method</span><span class="ftype">enum(auto/manual)</span></div>
+          <div class="db-field"><span class="fname">end_method</span><span class="ftype">enum(timed/manual)</span></div>
+          <div class="db-field"><span class="fname">timeout_days</span><span class="ftype">int</span></div>
+          <div class="db-field"><span class="fname">flow_template_id</span><span class="ftype">FK → flow_engine</span></div>
+          <div class="db-field"><span class="fname">form_template_id</span><span class="ftype">FK → form_template</span></div>
+          <div class="db-field"><span class="fname">forced_end_grade</span><span class="ftype">varchar(10)</span></div>
+          <div class="db-field"><span class="fname">node_weights</span><span class="ftype">JSON（节点权重配置）</span></div>
+          <div class="db-field"><span class="fname">eval_rule_id</span><span class="ftype">FK（绩效考核环节专用）</span></div>
+          <div class="db-field"><span class="fname">dist_rule_id</span><span class="ftype">FK（审定环节专用）</span></div>
+          <div class="db-field"><span class="fname">control_mode</span><span class="ftype">enum(strong/weak)（审定环节专用）</span></div>
+          <div class="db-field"><span class="fname">ratify_mode</span><span class="ftype">enum(reporting_line/org_structure)</span></div>
+          <div class="db-field"><span class="fname">stop_persons</span><span class="ftype">JSON（停止人员，汇报线模式）</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-size:14px;font-weight:600;margin:20px 0 16px;">活动层数据</div>
+    <div class="grid-3">
+      <div class="db-entity">
+        <div class="db-entity-header" style="background:#fff7e6;">🚀 perf_activity（考核活动）</div>
+        <div class="db-entity-body">
+          <div class="db-field"><span class="fkey">PK</span><span class="fname">id</span><span class="ftype">bigint</span></div>
+          <div class="db-field"><span class="fkey">FK</span><span class="fname">scheme_id</span><span class="ftype">bigint → perf_scheme</span></div>
+          <div class="db-field"><span class="fname">name</span><span class="ftype">varchar(200)</span></div>
+          <div class="db-field"><span class="fname">status</span><span class="ftype">enum(draft/active/completed/terminated)</span></div>
+          <div class="db-field"><span class="fname">start_date / end_date</span><span class="ftype">date</span></div>
+          <div class="db-field"><span class="fname">scheme_snapshot</span><span class="ftype">JSON（方案配置快照）</span></div>
+          <div class="db-field"><span class="fname">participant_count</span><span class="ftype">int</span></div>
+        </div>
+      </div>
+      <div class="db-entity">
+        <div class="db-entity-header" style="background:#e6fffb;">👤 perf_activity_participant（活动参与人）</div>
+        <div class="db-entity-body">
+          <div class="db-field"><span class="fkey">PK</span><span class="fname">id</span><span class="ftype">bigint</span></div>
+          <div class="db-field"><span class="fkey">FK</span><span class="fname">activity_id</span><span class="ftype">bigint → perf_activity</span></div>
+          <div class="db-field"><span class="fkey">FK</span><span class="fname">employee_id</span><span class="ftype">bigint → employee</span></div>
+          <div class="db-field"><span class="fkey">FK</span><span class="fname">group_id</span><span class="ftype">bigint → assessment_group</span></div>
+          <div class="db-field"><span class="fname">stage_status</span><span class="ftype">JSON（各环节状态）</span></div>
+          <div class="db-field"><span class="fname">final_grade</span><span class="ftype">varchar(10)（最终等级）</span></div>
+        </div>
+      </div>
+      <div class="db-entity">
+        <div class="db-entity-header" style="background:#fff1f0;">📝 perf_operation_log（操作日志）</div>
+        <div class="db-entity-body">
+          <div class="db-field"><span class="fkey">PK</span><span class="fname">id</span><span class="ftype">bigint</span></div>
+          <div class="db-field"><span class="fkey">FK</span><span class="fname">activity_id</span><span class="ftype">bigint</span></div>
+          <div class="db-field"><span class="fname">employee_id</span><span class="ftype">bigint</span></div>
+          <div class="db-field"><span class="fname">stage_type</span><span class="ftype">enum</span></div>
+          <div class="db-field"><span class="fname">operator_id</span><span class="ftype">bigint</span></div>
+          <div class="db-field"><span class="fname">action</span><span class="ftype">varchar(50)</span></div>
+          <div class="db-field"><span class="fname">before_data / after_data</span><span class="ftype">JSON</span></div>
+          <div class="db-field"><span class="fname">created_at</span><span class="ftype">timestamp</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arch-container">
+    <div style="font-size:14px;font-weight:600;margin-bottom:16px;">环节明细表（每个员工每个环节一张明细表）</div>
+    <div class="grid-2">
+      <div class="db-entity">
+        <div class="db-entity-header" style="background:#eef1fe;">🎯 goal_detail（目标明细表）</div>
+        <div class="db-entity-body">
+          <div class="db-field"><span class="fkey">PK</span><span class="fname">id</span><span class="ftype">bigint</span></div>
+          <div class="db-field"><span class="fkey">FK</span><span class="fname">activity_id</span><span class="ftype">bigint</span></div>
+          <div class="db-field"><span class="fkey">FK</span><span class="fname">employee_id</span><span class="ftype">bigint</span></div>
+          <div class="db-field"><span class="fname">status</span><span class="ftype">enum(状态机状态)</span></div>
+          <div class="db-field"><span class="fname">flow_instance_id</span><span class="ftype">bigint（流程引擎实例）</span></div>
+          <div class="db-field"><span class="fname">modules</span><span class="ftype">JSON（模块+目标数组）</span></div>
+          <div class="db-field"><span class="fname">total_weight</span><span class="ftype">decimal(5,2)</span></div>
+          <div class="db-field"><span class="fname">submitted_at / approved_at</span><span class="ftype">timestamp</span></div>
+          <div class="db-field"><span class="fname">approval_history</span><span class="ftype">JSON（审批记录数组）</span></div>
+        </div>
+      </div>
+      <div class="db-entity">
+        <div class="db-entity-header" style="background:#f6ffed;">📊 eval_detail（考核明细表）</div>
+        <div class="db-entity-body">
+          <div class="db-field"><span class="fkey">PK</span><span class="fname">id</span><span class="ftype">bigint</span></div>
+          <div class="db-field"><span class="fkey">FK</span><span class="fname">activity_id</span><span class="ftype">bigint</span></div>
+          <div class="db-field"><span class="fkey">FK</span><span class="fname">employee_id</span><span class="ftype">bigint</span></div>
+          <div class="db-field"><span class="fname">status</span><span class="ftype">enum(状态机状态)</span></div>
+          <div class="db-field"><span class="fname">flow_instance_id</span><span class="ftype">bigint</span></div>
+          <div class="db-field"><span class="fname">goals_snapshot</span><span class="ftype">JSON（引用目标表快照）</span></div>
+          <div class="db-field"><span class="fname">self_scores</span><span class="ftype">JSON（自评数据）</span></div>
+          <div class="db-field"><span class="fname">indirect_scores</span><span class="ftype">JSON（间接上级评分）</span></div>
+          <div class="db-field"><span class="fname">direct_scores</span><span class="ftype">JSON（直接上级评分）</span></div>
+          <div class="db-field"><span class="fname">total_eval_result</span><span class="ftype">varchar(10)（总评价结果）</span></div>
+          <div class="db-field"><span class="fname">total_score</span><span class="ftype">decimal(6,2)（计算得分）</span></div>
+          <div class="db-field"><span class="fname">bonus / penalty</span><span class="ftype">decimal(4,1)</span></div>
+        </div>
+      </div>
+      <div class="db-entity">
+        <div class="db-entity-header" style="background:#fff7e6;">📋 ratification_detail（审定明细表）</div>
+        <div class="db-entity-body">
+          <div class="db-field"><span class="fkey">PK</span><span class="fname">id</span><span class="ftype">bigint</span></div>
+          <div class="db-field"><span class="fkey">FK</span><span class="fname">activity_id</span><span class="ftype">bigint</span></div>
+          <div class="db-field"><span class="fkey">FK</span><span class="fname">employee_id</span><span class="ftype">bigint</span></div>
+          <div class="db-field"><span class="fname">status</span><span class="ftype">enum(状态机状态)</span></div>
+          <div class="db-field"><span class="fname">flow_instance_id</span><span class="ftype">bigint</span></div>
+          <div class="db-field"><span class="fname">pre_score</span><span class="ftype">decimal(6,2)（审定前总分）</span></div>
+          <div class="db-field"><span class="fname">pre_grade</span><span class="ftype">varchar(10)（审定前等级）</span></div>
+          <div class="db-field"><span class="fname">adjusted_grade</span><span class="ftype">varchar(10)（调整后等级）</span></div>
+          <div class="db-field"><span class="fname">adjust_reason</span><span class="ftype">text（调整原因）</span></div>
+          <div class="db-field"><span class="fname">approval_history</span><span class="ftype">JSON（逐级审定记录）</span></div>
+        </div>
+      </div>
+      <div class="db-entity">
+        <div class="db-entity-header" style="background:#fff0f6;">💬 interview_detail（面谈明细表）</div>
+        <div class="db-entity-body">
+          <div class="db-field"><span class="fkey">PK</span><span class="fname">id</span><span class="ftype">bigint</span></div>
+          <div class="db-field"><span class="fkey">FK</span><span class="fname">activity_id</span><span class="ftype">bigint</span></div>
+          <div class="db-field"><span class="fkey">FK</span><span class="fname">employee_id</span><span class="ftype">bigint</span></div>
+          <div class="db-field"><span class="fname">status</span><span class="ftype">enum(状态机状态)</span></div>
+          <div class="db-field"><span class="fname">interview_type</span><span class="ftype">varchar(50)</span></div>
+          <div class="db-field"><span class="fname">highlights</span><span class="ftype">JSON（亮点数组）</span></div>
+          <div class="db-field"><span class="fname">shortcomings</span><span class="ftype">JSON（不足数组）</span></div>
+          <div class="db-field"><span class="fname">next_plan</span><span class="ftype">text</span></div>
+          <div class="db-field"><span class="fname">needs</span><span class="ftype">JSON（需求数组）</span></div>
+          <div class="db-field"><span class="fname">attachments</span><span class="ftype">JSON（附件列表）</span></div>
+          <div class="db-field"><span class="fname">leader_comment</span><span class="ftype">text（上级评语）</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-size:14px;font-weight:600;margin:20px 0 16px;">结果汇总表</div>
+    <div class="grid-2">
+      <div class="db-entity">
+        <div class="db-entity-header" style="background:#f9f0ff;">🏆 final_result（绩效结果表）</div>
+        <div class="db-entity-body">
+          <div class="db-field"><span class="fkey">PK</span><span class="fname">id</span><span class="ftype">bigint</span></div>
+          <div class="db-field"><span class="fkey">FK</span><span class="fname">activity_id</span><span class="ftype">bigint</span></div>
+          <div class="db-field"><span class="fkey">FK</span><span class="fname">employee_id</span><span class="ftype">bigint</span></div>
+          <div class="db-field"><span class="fname">final_grade</span><span class="ftype">varchar(10)（最终等级）</span></div>
+          <div class="db-field"><span class="fname">final_score</span><span class="ftype">decimal(6,2)（最终得分）</span></div>
+          <div class="db-field"><span class="fname">confirmed_at</span><span class="ftype">timestamp</span></div>
+          <div class="db-field"><span class="fname">confirm_action</span><span class="ftype">enum(agree/disagree/auto)</span></div>
+          <div class="db-field"><span class="fname">locked</span><span class="ftype">boolean（结果锁定）</span></div>
+        </div>
+      </div>
+      <div class="db-entity">
+        <div class="db-entity-header" style="background:#e6fffb;">📈 dist_snapshot（分布快照表）</div>
+        <div class="db-entity-body">
+          <div class="db-field"><span class="fkey">PK</span><span class="fname">id</span><span class="ftype">bigint</span></div>
+          <div class="db-field"><span class="fkey">FK</span><span class="fname">activity_id</span><span class="ftype">bigint</span></div>
+          <div class="db-field"><span class="fkey">FK</span><span class="fname">group_id</span><span class="ftype">bigint（考核组）</span></div>
+          <div class="db-field"><span class="fname">grade</span><span class="ftype">varchar(10)</span></div>
+          <div class="db-field"><span class="fname">required_pct</span><span class="ftype">decimal(5,2)（要求比例%）</span></div>
+          <div class="db-field"><span class="fname">required_count</span><span class="ftype">int（要求人数）</span></div>
+          <div class="db-field"><span class="fname">current_count</span><span class="ftype">int（当前人数）</span></div>
+          <div class="db-field"><span class="fname">updated_at</span><span class="ftype">timestamp</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB 5: 计算引擎 ==================== -->
+<div id="calc" class="tab-content">
+  <div class="section-title">计算引擎规格</div>
+
+  <div class="arch-container" style="margin-bottom:24px;">
+    <div style="font-size:14px;font-weight:600;margin-bottom:16px;">1. 指标得分计算</div>
+    <div class="grid-2">
+      <div class="process-box">
+        <h5>定量指标得分</h5>
+        <ul class="process-list">
+          <li><b>公式：</b>得分 = (实际值 - 保底值) / (挑战值 - 保底值) × 指标满分</li>
+          <li><b>精度：</b>四舍五入保留 1 位小数</li>
+          <li><b>边界处理：</b></li>
+          <li style="padding-left:20px;">保底=挑战 → 除零保护 → 得分=指标满分（或0，按业务定义）</li>
+          <li style="padding-left:20px;">实际值 &lt; 保底值 → 得分=0</li>
+          <li style="padding-left:20px;">实际值 &gt; 挑战值 → 得分=指标满分（不超上限）</li>
+          <li style="padding-left:20px;">实际值=空 → 不参与计算，标记为未完成</li>
+          <li><b>持久化：</b>每个指标的得分实时计算并写入 eval_detail.goals_snapshot</li>
+        </ul>
+      </div>
+      <div class="process-box">
+        <h5>定性指标得分</h5>
+        <ul class="process-list">
+          <li><b>映射表（BR-031）：</b></li>
+          <li style="padding-left:20px;">远超预期(A) → 115分（区间110-120中值）</li>
+          <li style="padding-left:20px;">超出预期(B) → 99.5分（区间90-109中值）</li>
+          <li style="padding-left:20px;">符合预期(C) → 79.5分（区间70-89中值）</li>
+          <li style="padding-left:20px;">需改进(D) → 59.5分（区间50-69中值）</li>
+          <li style="padding-left:20px;">远低于预期(E) → 24.5分（区间0-49中值）</li>
+          <li><b>边界：</b>恰好落在区间边界时，归入该等级（含边界）</li>
+          <li><b>映射失败：</b>未选择评价结果时，该指标不参与总分计算</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="font-size:14px;font-weight:600;margin:20px 0 16px;">2. 总分计算</div>
+    <div class="process-box">
+      <h5>总分 = Σ(各指标得分 × 指标权重 / 100) + 加分 - 减分</h5>
+      <ul class="process-list">
+        <li><b>权重归一化：</b>指标权重以百分比存储（如25表示25%），计算时除以100</li>
+        <li><b>加减分范围：</b>0-20分，超出范围校验拒绝</li>
+        <li><b>总分截断：</b>上限120分，下限0分</li>
+        <li><b>中间结果：</b>每个指标得分实时计算并持久化，总分在直接上级提交时计算</li>
+        <li><b>持久化：</b>写入 eval_detail.total_score</li>
+      </ul>
+    </div>
+
+    <div style="font-size:14px;font-weight:600;margin:20px 0 16px;">3. 总评价结果计算（节点权重）</div>
+    <div class="process-box">
+      <h5>总评价结果 = Σ(各节点评价结果 × 节点权重) / Σ(节点权重)</h5>
+      <ul class="process-list">
+        <li><b>节点权重：</b>方案配置时定义（如自评40%+间接上级60%），以百分比存储</li>
+        <li><b>归一化：</b>除以权重之和（权重之和必须=100%，不等则阻断保存）</li>
+        <li><b>未配置权重：</b>取最后一个填写节点的评价结果（BR-034 降级策略）</li>
+        <li><b>部分节点为空：</b>跳过该节点，剩余节点权重重新归一化</li>
+        <li><b>持久化：</b>写入 eval_detail.total_eval_result + 映射到等级</li>
+      </ul>
+    </div>
+
+    <div style="font-size:14px;font-weight:600;margin:20px 0 16px;">4. 总分到等级映射</div>
+    <div class="process-box">
+      <h5>等级 = grade where grade.min ≤ 总分 &lt; grade.max</h5>
+      <ul class="process-list">
+        <li><b>边界：</b>总分恰好等于某等级上限，归入该等级（含边界）</li>
+        <li><b>超出范围：</b>总分 &gt; 最高等级上限 → 归入最高等级；总分 &lt; 最低等级下限 → 归入最低等级</li>
+        <li><b>触发时机：</b>直接上级提交考核时自动计算</li>
+        <li><b>持久化：</b>写入 eval_detail.total_eval_result（等级编码）</li>
+      </ul>
+    </div>
+
+    <div style="font-size:14px;font-weight:600;margin:20px 0 16px;">5. 强制分布实时计算</div>
+    <div class="process-box">
+      <h5>每次等级调整后实时更新分布计数</h5>
+      <ul class="process-list">
+        <li><b>触发时机：</b>审定环节每次调整等级后立即重算</li>
+        <li><b>计算公式：</b>当前某等级人数 = 该等级已审定人数 / 已审定总人数 × 100%</li>
+        <li><b>分母定义（BR-010）：</b>考核组内参与考核的总人数（含跳过审定的员工）</li>
+        <li><b>跳过审定的员工：</b>使用方案中配置的固定等级，纳入分母</li>
+        <li><b>并发控制：</b>使用数据库行级锁或乐观锁（version字段），防止分布计数不一致</li>
+        <li><b>持久化：</b>写入 dist_snapshot 表（实时更新）</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB 6: 逆向场景 ==================== -->
+<div id="reverse" class="tab-content">
+  <div class="section-title">逆向场景处理规格</div>
+
+  <div class="arch-container">
+    <div class="grid-2">
+      <!-- 驳回场景 -->
+      <div class="process-box">
+        <h5>1. 目标制定驳回</h5>
+        <ul class="process-list">
+          <li><b>触发：</b>间接上级/直接上级点击"不同意"</li>
+          <li><b>数据处理：</b></li>
+          <li style="padding-left:20px;">→ goal_detail.status = rejected</li>
+          <li style="padding-left:20px;">→ 保留当前目标数据（不删除）</li>
+          <li style="padding-left:20px;">→ 追加审批记录到 approval_history</li>
+          <li><b>员工重新提交：</b></li>
+          <li style="padding-left:20px;">→ 员工修改目标数据</li>
+          <li style="padding-left:20px;">→ 重新进入审批流（间接上级→直接上级）</li>
+          <li style="padding-left:20px;">→ 旧审批记录保留，新审批记录追加</li>
+          <li><b>目标数据是否锁定：</b>驳回期间员工可修改，审批通过后锁定</li>
+        </ul>
+      </div>
+
+      <div class="process-box">
+        <h5>2. 绩效考核驳回（需确认）</h5>
+        <ul class="process-list">
+          <li><b>当前状态：</b>流程文档03写了间接上级可"驳回到发起人"，但状态机无rejected状态</li>
+          <li><b>建议方案A（不支持驳回）：</b></li>
+          <li style="padding-left:20px;">→ 绩效考核流程仅支持"提交"，不支持驳回</li>
+          <li style="padding-left:20px;">→ 间接上级/直接上级只能提交评分</li>
+          <li style="padding-left:20px;">→ 与状态机定义一致</li>
+          <li><b>建议方案B（支持驳回）：</b></li>
+          <li style="padding-left:20px;">→ 状态机增加 rejected 状态</li>
+          <li style="padding-left:20px;">→ 驳回后员工重新填写完成值</li>
+          <li style="padding-left:20px;">→ 间接上级评分数据保留</li>
+          <li style="padding-left:20px;">→ 需更新 prd-states.md</li>
+          <li><b>⚠️ 需业务确认选择方案A还是B</b></li>
+        </ul>
+      </div>
+
+      <div class="process-box">
+        <h5>3. HRBP驳回审定</h5>
+        <ul class="process-list">
+          <li><b>触发：</b>调整后等级=A时进入HRBP审批，HRBP点击"不同意"</li>
+          <li><b>数据处理：</b></li>
+          <li style="padding-left:20px;">→ ratification_detail.status = pending_direct_rate（回到直接上级）</li>
+          <li style="padding-left:20px;">→ 调整后等级恢复为审定前等级</li>
+          <li style="padding-left:20px;">→ 强制分布计数回滚（该员工从A等级移除）</li>
+          <li><b>对其他员工的影响：</b></li>
+          <li style="padding-left:20px;">→ 其他已提交的员工审定不受影响</li>
+          <li style="padding-left:20px;">→ 强制分布计数实时反映当前状态</li>
+          <li><b>重审：</b>直接上级重新调整等级，重新进入逐级审定流程</li>
+        </ul>
+      </div>
+
+      <div class="process-box">
+        <h5>4. 员工确认不同意</h5>
+        <ul class="process-list">
+          <li><b>触发：</b>员工点击"不同意"</li>
+          <li><b>数据处理：</b></li>
+          <li style="padding-left:20px;">→ confirmation.status = pending_hrbp_ack</li>
+          <li style="padding-left:20px;">→ 通知HRBP查看</li>
+          <li><b>HRBP知悉后：</b></li>
+          <li style="padding-left:20px;">→ confirmation.status = completed</li>
+          <li style="padding-left:20px;">→ 绩效结果仍锁定（不修改等级）</li>
+          <li style="padding-left:20px;">→ 线下处理，HRBP手动跟进</li>
+          <li><b>系统层面：</b>结果已锁定，不可再次发起确认</li>
+          <li><b>如需修正：</b>需发起新的流程实例（终态不可逆）</li>
+        </ul>
+      </div>
+
+      <div class="process-box">
+        <h5>5. 方案停用时进行中的流程</h5>
+        <ul class="process-list">
+          <li><b>规则（BR-052）：</b>方案停用不影响已发起的活动</li>
+          <li><b>数据快照：</b></li>
+          <li style="padding-left:20px;">→ 活动发起时已将方案配置快照到 activity.scheme_snapshot</li>
+          <li style="padding-left:20px;">→ 方案修改/停用不影响已快照的数据</li>
+          <li><b>流程实例：</b></li>
+          <li style="padding-left:20px;">→ 已创建的流程实例继续执行</li>
+          <li style="padding-left:20px;">→ 流程引用的是活动快照中的配置</li>
+          <li><b>不可发起新活动：</b>停用方案后，无法基于该方案发起新活动</li>
+        </ul>
+      </div>
+
+      <div class="process-box">
+        <h5>6. 流程超时自动处理</h5>
+        <ul class="process-list">
+          <li><b>触发：</b>环节超过配置的 timeout_days 未完成</li>
+          <li><b>目标制定超时：</b></li>
+          <li style="padding-left:20px;">→ 未填写的员工 → 按"强制结束规则"处理</li>
+          <li style="padding-left:20px;">→ forced_end_grade = 方案中配置的固定等级</li>
+          <li style="padding-left:20px;">→ 流程实例标记为 timeout，跳到下一环节</li>
+          <li><b>绩效考核超时：</b></li>
+          <li style="padding-left:20px;">→ 未评分的节点 → 系统自动以默认评价结果填充</li>
+          <li style="padding-left:20px;">→ 默认值来源：方案配置的 forced_end_grade</li>
+          <li style="padding-left:20px;">→ 计算总评价结果时纳入</li>
+          <li><b>结果确认超时（BR-005）：</b></li>
+          <li style="padding-left:20px;">→ 系统自动确认为"同意"</li>
+          <li style="padding-left:20px;">→ 记录自动确认标记</li>
+        </ul>
+      </div>
+
+      <div class="process-box">
+        <h5>7. 并发控制方案</h5>
+        <ul class="process-list">
+          <li><b>强制分布计数：</b></li>
+          <li style="padding-left:20px;">→ 使用 dist_snapshot 表的 version 字段做乐观锁</li>
+          <li style="padding-left:20px;">→ 更新时校验 version，冲突则重试</li>
+          <li style="padding-left:20px;">→ 或使用 SELECT ... FOR UPDATE 行级锁</li>
+          <li><b>批量评分提交：</b></li>
+          <li style="padding-left:20px;">→ 逐条处理（BR-047），非原子操作</li>
+          <li style="padding-left:20px;">→ 单条失败不影响其他条目</li>
+          <li style="padding-left:20px;">→ 返回成功/失败明细</li>
+          <li><b>流程引擎批量节点：</b></li>
+          <li style="padding-left:20px;">→ 为每个员工创建独立的流程实例</li>
+          <li style="padding-left:20px;">→ 各实例独立流转，互不影响</li>
+        </ul>
+      </div>
+
+      <div class="process-box">
+        <h5>8. 数据快照策略</h5>
+        <ul class="process-list">
+          <li><b>方案→活动（copy时机）：</b></li>
+          <li style="padding-left:20px;">→ HRBP发起活动时，将方案全部配置序列化为JSON</li>
+          <li style="padding-left:20px;">→ 存入 activity.scheme_snapshot 字段</li>
+          <li style="padding-left:20px;">→ 后续所有环节引用快照中的配置</li>
+          <li><b>环节间数据级联（快照时机）：</b></li>
+          <li style="padding-left:20px;">→ 目标approved时 → 目标数据快照写入eval_detail.goals_snapshot</li>
+          <li style="padding-left:20px;">→ 考核completed时 → 考核结果快照写入ratification_detail</li>
+          <li style="padding-left:20px;">→ 审定completed时 → 审定等级写入confirmation_result</li>
+          <li><b>面谈→确认（引用方式）：</b></li>
+          <li style="padding-left:20px;">→ 确认表单实时读取面谈数据（BR-023 直接引用不复制）</li>
+          <li style="padding-left:20px;">→ 面谈修改后确认表单同步变化</li>
+          <li><b>审批历史：</b></li>
+          <li style="padding-left:20px;">→ 每次审批操作追加到 approval_history JSON 数组</li>
+          <li style="padding-left:20px;">→ 记录：操作人/操作/时间/意见/变更前后值</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function switchTab(id) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>

@@ -322,6 +322,13 @@ body.chat-open .ai-chat{transform:translateX(0)}
 .ai-msg-card-tag.ac{color:var(--ac);background:var(--ac50)}
 .ai-msg-card-apply{font:500 11px/1 var(--f);padding:4px 8px;border-radius:var(--r1);border:1px solid var(--pr200);background:var(--pr50);color:var(--pr);cursor:pointer;transition:all .12s}
 .ai-msg-card-apply:hover{background:var(--pr);color:#FFF}
+.ai-shortcuts{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.ai-shortcut{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);cursor:pointer;transition:all .12s}
+.ai-shortcut:hover{border-color:var(--pr200);background:var(--pr50)}
+.ai-shortcut-icon{font-size:18px;flex-shrink:0}
+.ai-shortcut-text{flex:1;min-width:0}
+.ai-shortcut-label{font:500 13px/1.2 var(--f);color:var(--c8)}
+.ai-shortcut-desc{font:400 11px/1.3 var(--f);color:var(--c5);margin-top:2px}
 .ai-chat-ft{padding:12px 16px;border-top:1px solid var(--dv);display:flex;gap:8px;align-items:center}
 .ai-chat-input{flex:1;height:36px;border:1px solid var(--c2);border-radius:var(--r2);padding:0 12px;font:400 13px/1 var(--f);color:var(--c8);outline:none;transition:border .15s}
 .ai-chat-input:focus{border-color:var(--pr)}
@@ -1173,29 +1180,35 @@ GHR_NAV.init('perf', '员工制定·填写');
 render();
 
 // ═══ AI CHAT ═══
+const AI_SHORTCUTS=[
+  {icon:'📝',label:'优化目标描述',desc:'分析当前目标，给出描述优化建议'},
+  {icon:'📊',label:'检查权重分配',desc:'检查各模块权重是否合理'},
+  {icon:'🎯',label:'推荐指标',desc:'根据岗位推荐可关联的指标'},
+];
 const AI_MSGS=[
-  {role:'bot',text:'你好，我是 AI 目标助手 👋\n\n我可以帮你：\n• 优化目标描述和衡量标准\n• 检查权重分配是否合理\n• 推荐关联指标\n• 对标历史目标数据\n• 智能拆分目标',time:'09:00',actions:['检查权重分配','优化目标描述','推荐指标','对标历史数据','智能拆分目标']},
-  {role:'user',text:'帮我检查下当前权重分配'},
-  {role:'bot',text:'当前权重分配分析：\n\n• 关键指标: 30%（3个目标）\n• 关键行动: 70%（4个目标）\n\n整体结构合理，关键行动占比偏高。建议：\n• 资源利用率权重偏低（5%），可适当提升\n• 绩效重构和AI探索各25%，单项权重较大',time:'09:01',cards:[
-    {t:'权重建议',d:'资源利用率 5% → 8%，绩效重构 25% → 22%，AI探索 25% → 27%',tag:'建议调整',tc:'pr',apply:'weight'},
-    {t:'历史对比',d:'上月关键指标占比 35%，本月下降 5%',tag:'关注',tc:'ac'},
-  ]},
-  {role:'user',text:'资源利用率的衡量标准怎么写更好'},
-  {role:'bot',text:'当前衡量标准：\n"人员的实际工作量饱和情况"\n\n建议优化为：\n\n1. 指标定义：人员当月实际投入有效工作量占可用出勤时间的比例，反映工作饱和度\n2. 计算逻辑：公式=当月实际任务工时（人天）/EHR实际出勤天数×100%\n3. 数据来源：Devops系统自动采集\n4. 目标设定依据：参考行业标准及团队历史数据',time:'09:02',cards:[
-    {t:'优化后的衡量标准',d:'1. 指标定义：人员当月实际投入有效工作量占可用出勤时间的比例\n2. 计算逻辑：实际任务工时/出勤天数×100%\n3. 数据来源：Devops系统',tag:'可应用',tc:'em',apply:'desc'},
-  ],actions:['采纳建议','查看其他目标']},
+  {role:'bot',text:'你好，我是 AI 目标助手 👋\n\n点击下方快捷指令，我可以帮你：',time:'09:00',shortcuts:true},
 ];
 function renderAiChat(){
   const bd=document.getElementById('chatBd');
   if(!bd)return;
-  bd.innerHTML=AI_MSGS.map(m=>`
-    <div class="ai-msg ${m.role}">
-      <div class="ai-msg-bd">${m.text.replace(/\n/g,'<br/>')}</div>
-      ${m.cards?m.cards.map(c=>`<div class="ai-msg-card"><div class="ai-msg-card-t">${c.t}</div><div class="ai-msg-card-d">${c.d}</div><div class="ai-msg-card-ft"><span class="ai-msg-card-tag ${c.tc}">${c.tag}</span>${c.apply?`<button class="ai-msg-card-apply" onclick="applyAiSuggestion('${c.apply}')">应用到当前目标</button>`:''}</div></div>`).join(''):''}
-      ${m.actions?`<div class="ai-msg-actions">${m.actions.map(a=>`<button class="ai-msg-btn${a.includes('确认')||a.includes('采纳')?' primary':''}" onclick="handleAiAction('${a}')">${a}</button>`).join('')}</div>`:''}
-      ${m.time?`<div class="ai-msg-time">${m.time}</div>`:''}
-    </div>
-  `).join('');
+  bd.innerHTML=AI_MSGS.map(m=>{
+    let html=`<div class="ai-msg ${m.role}">
+      <div class="ai-msg-bd">${m.text.replace(/\n/g,'<br/>')}</div>`;
+    if(m.shortcuts){
+      html+=`<div class="ai-shortcuts">${AI_SHORTCUTS.map(s=>`<div class="ai-shortcut" onclick="handleAiAction('${s.label}')"><span class="ai-shortcut-icon">${s.icon}</span><div class="ai-shortcut-text"><div class="ai-shortcut-label">${s.label}</div><div class="ai-shortcut-desc">${s.desc}</div></div></div>`).join('')}</div>`;
+    }
+    if(m.cards){
+      html+=m.cards.map(c=>`<div class="ai-msg-card"><div class="ai-msg-card-t">${c.t}</div><div class="ai-msg-card-d">${c.d}</div><div class="ai-msg-card-ft"><span class="ai-msg-card-tag ${c.tc}">${c.tag}</span>${c.apply?`<button class="ai-msg-card-apply" onclick="applyAiSuggestion('${c.apply}')">应用到当前目标</button>`:''}</div></div>`).join('');
+    }
+    if(m.actions){
+      html+=`<div class="ai-msg-actions">${m.actions.map(a=>`<button class="ai-msg-btn${a.includes('确认')||a.includes('采纳')?' primary':''}" onclick="handleAiAction('${a}')">${a}</button>`).join('')}</div>`;
+    }
+    if(m.time){
+      html+=`<div class="ai-msg-time">${m.time}</div>`;
+    }
+    html+=`</div>`;
+    return html;
+  }).join('');
   bd.scrollTop=bd.scrollHeight;
 }
 
