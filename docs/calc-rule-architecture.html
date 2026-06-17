@@ -3,653 +3,455 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>计算规则架构 — 指标→衡量标准→计算规则→公式编辑器</title>
+<title>计算规则架构 — 指标×衡量标准×计算规则</title>
 <style>
-:root {
-  --bg: #f5f5f5; --card: #fff; --primary: #4f6ef7; --primary-light: #eef1fe;
-  --success: #52c41a; --warning: #faad14; --danger: #ff4d4f; --purple: #722ed1;
-  --text: #1a1a2e; --text-sec: #666; --border: #e8e8e8; --shadow: 0 2px 8px rgba(0,0,0,0.06);
-}
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
-
-.header { background: linear-gradient(135deg, #0f3460, #16213e); color:#fff; padding:32px 24px; text-align:center; }
-.header h1 { font-size:24px; } .header p { font-size:13px; opacity:.7; margin-top:4px; }
-
-.content { max-width:1200px; margin:0 auto; padding:24px; }
-
-/* Section */
-.sec { margin-bottom:32px; }
-.sec-title { font-size:17px; font-weight:700; margin-bottom:16px; padding-left:12px; border-left:4px solid var(--primary); }
-
-/* Card */
-.card { background:var(--card); border-radius:12px; padding:24px; box-shadow:var(--shadow); margin-bottom:20px; }
-
-/* Entity box */
-.entity { border:2px solid var(--border); border-radius:10px; overflow:hidden; }
-.entity-header { padding:12px 16px; font-weight:700; font-size:14px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:8px; }
-.entity-body { padding:12px 16px; }
-.entity-body ul { list-style:none; padding:0; }
-.entity-body li { font-size:13px; padding:4px 0; display:flex; gap:6px; }
-.entity-body li::before { content:'▸'; color:var(--primary); flex-shrink:0; }
-.entity-body li b { color:var(--text); }
-
-/* Grid */
-.g2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-.g3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
-.g4 { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:12px; }
-
-/* Arrow */
-.arrow-h { display:flex; align-items:center; justify-content:center; font-size:22px; color:var(--primary); padding:0 4px; }
-.arrow-v { text-align:center; padding:12px 0; font-size:22px; color:var(--primary); }
-.arrow-v small { display:block; font-size:12px; color:var(--text-sec); margin-top:-4px; }
-
-/* Tag */
-.tag { display:inline-block; padding:2px 10px; border-radius:12px; font-size:11px; font-weight:600; }
-.tag-blue { background:#e6f7ff; color:#1890ff; }
-.tag-green { background:#f6ffed; color:#52c41a; }
-.tag-orange { background:#fff7e6; color:#fa8c16; }
-.tag-purple { background:#f9f0ff; color:#722ed1; }
-.tag-red { background:#fff1f0; color:#ff4d4f; }
-
-/* Table */
-.ftable { width:100%; border-collapse:collapse; font-size:13px; }
-.ftable th { background:#fafafa; padding:8px 12px; text-align:left; font-weight:600; border-bottom:2px solid var(--border); }
-.ftable td { padding:8px 12px; border-bottom:1px solid #f0f0f0; }
-.ftable tr:hover td { background:#fafafa; }
-
-/* Flow row */
-.flow { display:flex; align-items:stretch; gap:0; overflow-x:auto; padding:8px 0; }
-.flow-step { flex:0 0 auto; min-width:180px; border:2px solid var(--border); border-radius:10px; padding:14px; background:#fafafa; text-align:center; }
-.flow-step.highlight { border-color:var(--primary); background:var(--primary-light); }
-.flow-step .num { width:26px; height:26px; border-radius:50%; background:var(--primary); color:#fff; font-size:12px; font-weight:700; display:inline-flex; align-items:center; justify-content:center; margin-bottom:6px; }
-.flow-step .title { font-size:13px; font-weight:600; }
-.flow-step .desc { font-size:11px; color:var(--text-sec); margin-top:4px; }
-.flow-arrow { flex:0 0 32px; display:flex; align-items:center; justify-content:center; font-size:18px; color:var(--primary); }
-
-/* Code block */
-.code { background:#1a1a2e; color:#a8e6cf; padding:16px; border-radius:8px; font-family:'Fira Code',monospace; font-size:13px; line-height:1.8; overflow-x:auto; }
-.code .kw { color:#f78c6c; }
-.code .fn { color:#82aaff; }
-.code .str { color:#c3e88d; }
-.code .cmt { color:#546e7a; }
-.code .var { color:#ffcb6b; }
-.code .op { color:#89ddff; }
-
-/* Badge */
-.badge { display:inline-block; padding:1px 6px; border-radius:4px; font-size:10px; font-weight:700; margin-left:4px; }
-.badge-required { background:#fff1f0; color:var(--danger); }
-.badge-readonly { background:#f0f0f0; color:#999; }
-.badge-calc { background:#fff7e6; color:var(--warning); }
+:root{--bg:#f5f5f5;--card:#fff;--pri:#4f6ef7;--pri-l:#eef1fe;--ok:#52c41a;--warn:#faad14;--err:#ff4d4f;--pur:#722ed1;--txt:#1a1a2e;--txt2:#666;--bd:#e8e8e8;--sh:0 2px 8px rgba(0,0,0,.06)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--txt);line-height:1.6}
+.hdr{background:linear-gradient(135deg,#0f3460,#16213e);color:#fff;padding:32px 24px;text-align:center}
+.hdr h1{font-size:24px}.hdr p{font-size:13px;opacity:.7;margin-top:4px}
+.ct{max-width:1200px;margin:0 auto;padding:24px}
+.sec{margin-bottom:32px}
+.sec-t{font-size:17px;font-weight:700;margin-bottom:16px;padding-left:12px;border-left:4px solid var(--pri)}
+.card{background:var(--card);border-radius:12px;padding:24px;box-shadow:var(--sh);margin-bottom:20px}
+.ent{border:2px solid var(--bd);border-radius:10px;overflow:hidden}
+.ent-h{padding:12px 16px;font-weight:700;font-size:14px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px}
+.ent-b{padding:12px 16px}
+.ent-b ul{list-style:none;padding:0}
+.ent-b li{font-size:13px;padding:3px 0;display:flex;gap:6px}
+.ent-b li::before{content:'▸';color:var(--pri);flex-shrink:0}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.ah{display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--pri);padding:0 4px}
+.tag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600}
+.tag-b{background:#e6f7ff;color:#1890ff}.tag-g{background:#f6ffed;color:#52c41a}.tag-p{background:#f9f0ff;color:#722ed1}.tag-o{background:#fff7e6;color:#fa8c16}.tag-r{background:#fff1f0;color:#ff4d4f}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:#fafafa;padding:8px 12px;text-align:left;font-weight:600;border-bottom:2px solid var(--bd)}
+td{padding:8px 12px;border-bottom:1px solid #f0f0f0}
+tr:hover td{background:#fafafa}
+.code{background:#1a1a2e;color:#a8e6cf;padding:16px;border-radius:8px;font-family:'Fira Code',monospace;font-size:12px;line-height:1.8;overflow-x:auto}
+.code .kw{color:#f78c6c}.code .fn{color:#82aaff}.code .str{color:#c3e88d}.code .cmt{color:#546e7a}.code .var{color:#ffcb6b}.code .op{color:#89ddff}.code .num{color:#f78c6c}
+.fl{display:flex;align-items:stretch;gap:0;overflow-x:auto;padding:8px 0}
+.fs{flex:0 0 auto;min-width:160px;border:2px solid var(--bd);border-radius:10px;padding:14px;background:#fafafa;text-align:center}
+.fs.hl{border-color:var(--pri);background:var(--pri-l)}
+.fs .t{font-size:13px;font-weight:600}.fs .d{font-size:11px;color:var(--txt2);margin-top:4px}
+.fa{flex:0 0 32px;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--pri)}
+.note{background:#fff7e6;border-left:3px solid var(--warn);padding:12px 16px;border-radius:0 8px 8px 0;font-size:13px;margin:12px 0}
+@media(max-width:768px){.g2,.g3{grid-template-columns:1fr}.fl{flex-direction:column}.fa{transform:rotate(90deg);flex:0 0 30px}}
 </style>
 </head>
 <body>
-
-<div class="header">
+<div class="hdr">
   <h1>计算规则架构设计</h1>
-  <p>指标库 × 衡量标准 × 计算规则 × 公式编辑器 — 从配置到执行的完整链路</p>
+  <p>衡量标准（参考值） × 计算规则（公式） × 指标库（绑定） — 从配置到执行</p>
 </div>
+<div class="ct">
 
-<div class="content">
-
-<!-- ==================== 第一部分：三者关系 ==================== -->
+<!-- ===== 一、核心关系 ===== -->
 <div class="sec">
-  <div class="sec-title">一、指标库 / 衡量标准 / 计算规则 的关系</div>
-
+  <div class="sec-t">一、三者关系（核心设计）</div>
   <div class="card">
-    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;">
-      <!-- 指标库 -->
-      <div class="entity" style="flex:1;min-width:240px;">
-        <div class="entity-header" style="background:#e6f7ff;">📏 指标库（Indicator）</div>
-        <div class="entity-body">
-          <p style="font-size:12px;color:var(--text-sec);margin-bottom:8px;"><b>定义"考核什么"</b> — 一个可度量的业务事项</p>
+    <div class="note">
+      <b>核心原则：</b>衡量标准<b>只存参考值数据</b>，不定义计算方式。计算规则<b>只定义公式</b>，不存参考值。指标库把两者绑定：这个指标用哪些参考值 + 用哪个公式算出得分。
+    </div>
+
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;margin-top:16px;">
+      <div class="ent" style="flex:1;min-width:220px;">
+        <div class="ent-h" style="background:#e6f7ff;">📏 指标库（Indicator）— 绑定者</div>
+        <div class="ent-b">
+          <p style="font-size:12px;color:var(--txt2);margin-bottom:8px;"><b>定义"考核什么"</b>，同时绑定参考值和公式</p>
           <ul>
-            <li><b>指标名称：</b>如"季度营收达成率"</li>
-            <li><b>指标编码：</b>KPI_001（唯一标识）</li>
-            <li><b>指标分类：</b>业务目标/团队管理/能力发展/价值观</li>
+            <li><b>指标名称：</b>季度营收达成率</li>
+            <li><b>指标编码：</b>KPI_001</li>
+            <li><b>指标分类：</b>业务目标/团队管理/能力/价值观</li>
             <li><b>计量单位：</b>万元、次、%、分</li>
-            <li><b>指标性质：</b>定量 / 定性</li>
-            <li><b>关联衡量标准：</b>→ FK 衡量标准（<span class="tag tag-orange">决定怎么评分</span>）</li>
+            <li><b>FK → 衡量标准：</b><span class="tag tag-o">参考值数据</span></li>
+            <li><b>FK → 计算规则：</b><span class="tag tag-p">计算公式</span></li>
           </ul>
         </div>
       </div>
 
-      <div class="arrow-h">→</div>
+      <div class="ah">→<br><small style="font-size:10px;">FK</small></div>
 
-      <!-- 衡量标准 -->
-      <div class="entity" style="flex:1;min-width:240px;">
-        <div class="entity-header" style="background:#fff7e6;">📐 衡量标准（MeasureStandard）</div>
-        <div class="entity-body">
-          <p style="font-size:12px;color:var(--text-sec);margin-bottom:8px;"><b>定义"怎么评分"</b> — 指标得分的计算方式</p>
+      <div class="ent" style="flex:1;min-width:220px;">
+        <div class="ent-h" style="background:#fff7e6;">📐 衡量标准（MeasureStandard）— 参考值</div>
+        <div class="ent-b">
+          <p style="font-size:12px;color:var(--txt2);margin-bottom:8px;"><b>定义"参考值"</b>，纯数据，不含计算逻辑</p>
           <ul>
-            <li><b>标准名称：</b>如"营收类梯度评分"</li>
-            <li><b>标准类型（4种）：</b></li>
-            <li style="padding-left:16px;">① <span class="tag tag-blue">梯度评分</span> 目标值/挑战值/保底值 → 分数区间</li>
-            <li style="padding-left:16px;">② <span class="tag tag-green">线性评分</span> 线性插值计算得分</li>
-            <li style="padding-left:16px;">③ <span class="tag tag-purple">定性评分</span> 评价结果(A/B/C/D/E) → 映射分数</li>
-            <li style="padding-left:16px;">④ <span class="tag tag-orange">是否达成</span> 达成=满分/未达成=0分</li>
+            <li><b>标准名称：</b>营收类参考值</li>
+            <li><b>type:</b> 百分比 / 分值 / 等级（仅分类标签）</li>
+            <li><b>grades 数组：</b></li>
+            <li style="padding-left:16px;">[{name, min, max, desc}]</li>
+            <li style="padding-left:16px;">如：挑战值120, 目标值100, 保底值80</li>
+            <li><b>⚠️ 只存数据，不定义怎么算</b></li>
           </ul>
         </div>
       </div>
 
-      <div class="arrow-h">→</div>
+      <div class="ah">←<br><small style="font-size:10px;">FK</small></div>
 
-      <!-- 计算规则 -->
-      <div class="entity" style="flex:1;min-width:240px;">
-        <div class="entity-header" style="background:#f6ffed;">🧮 计算规则（CalcRule）</div>
-        <div class="entity-body">
-          <p style="font-size:12px;color:var(--text-sec);margin-bottom:8px;"><b>定义"怎么汇总"</b> — 多个指标得分→总分的聚合方式</p>
+      <div class="ent" style="flex:1;min-width:220px;">
+        <div class="ent-h" style="background:#f6ffed;">🧮 计算规则（CalcRule）— 公式</div>
+        <div class="ent-b">
+          <p style="font-size:12px;color:var(--txt2);margin-bottom:8px;"><b>定义"怎么算"</b>，公式决定参考值→得分的映射</p>
           <ul>
-            <li><b>规则名称：</b>如"加权求和"</li>
-            <li><b>规则类型：</b></li>
-            <li style="padding-left:16px;">① <span class="tag tag-blue">加权求和</span> Σ(得分×权重/100)</li>
-            <li style="padding-left:16px;">② <span class="tag tag-green">平均分</span> Σ得分/指标数</li>
-            <li style="padding-left:16px;">③ <span class="tag tag-purple">自定义公式</span> 公式编辑器配置</li>
-            <li><b>公式表达式：</b>（自定义类型时由公式编辑器生成）</li>
+            <li><b>规则名称：</b>梯度插值计算</li>
+            <li><b>公式表达式：</b>公式编辑器配置</li>
+            <li><b>任意计算逻辑：</b></li>
+            <li style="padding-left:16px;">梯度插值、封顶、线性、是否达成...</li>
+            <li style="padding-left:16px;">同一公式可复用到不同指标</li>
           </ul>
         </div>
       </div>
     </div>
 
-    <!-- 关系箭头 -->
+    <!-- 关系图 -->
     <div style="margin-top:24px;padding:20px;background:#fafafa;border-radius:8px;">
-      <div style="font-size:14px;font-weight:700;margin-bottom:12px;">🔗 三者关系链</div>
-      <div class="flow">
-        <div class="flow-step highlight">
-          <div class="title">指标库</div>
-          <div class="desc">定义考核事项<br>"考核什么"</div>
-        </div>
-        <div class="flow-arrow">→<br><small style="font-size:10px;">FK引用</small></div>
-        <div class="flow-step highlight">
-          <div class="title">衡量标准</div>
-          <div class="desc">定义评分方式<br>"怎么评分"</div>
-        </div>
-        <div class="flow-arrow">→<br><small style="font-size:10px;">计算时调用</small></div>
-        <div class="flow-step highlight">
-          <div class="title">计算规则</div>
-          <div class="desc">定义汇总方式<br>"怎么汇总"</div>
-        </div>
-        <div class="flow-arrow">→<br><small style="font-size:10px;">方案环节引用</small></div>
-        <div class="flow-step">
-          <div class="title">绩效方案</div>
-          <div class="desc">考核组环节配置<br>"用哪套规则"</div>
-        </div>
-        <div class="flow-arrow">→<br><small style="font-size:10px;">活动copy</small></div>
-        <div class="flow-step">
-          <div class="title">考核活动</div>
-          <div class="desc">执行时计算<br>"算出结果"</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ==================== 第二部分：表单字段→公式编辑器 ==================== -->
-<div class="sec">
-  <div class="sec-title">二、表单字段 → 公式编辑器的数据来源</div>
-
-  <div class="card">
-    <div style="font-size:14px;font-weight:600;margin-bottom:16px;">公式编辑器能用哪些字段？</div>
-    <p style="font-size:13px;color:var(--text-sec);margin-bottom:16px;">公式编辑器的<b>数据源</b> = 表单字段 + 系统固定字段。配置计算规则时，从这些字段中选择构建表达式。</p>
-
-    <div class="g2">
-      <!-- 目标制定表单字段 -->
-      <div class="entity">
-        <div class="entity-header" style="background:#eef1fe;">📝 目标制定表单字段（数据源）</div>
-        <div class="entity-body">
-          <table class="ftable">
-            <tr><th>字段</th><th>类型</th><th>来源</th><th>公式可用</th></tr>
-            <tr><td>目标名称</td><td>文本</td><td>员工填写</td><td><span class="tag tag-red">否</span></td></tr>
-            <tr><td>关联指标</td><td>引用</td><td>指标库选择</td><td><span class="tag tag-red">否</span></td></tr>
-            <tr><td>权重</td><td>数字%</td><td>员工填写</td><td><span class="tag tag-green">✅</span></td></tr>
-            <tr><td>目标值</td><td>数字</td><td>员工填写</td><td><span class="tag tag-green">✅</span></td></tr>
-            <tr><td>挑战值</td><td>数字</td><td>员工填写</td><td><span class="tag tag-green">✅</span></td></tr>
-            <tr><td>保底值</td><td>数字</td><td>员工填写</td><td><span class="tag tag-green">✅</span></td></tr>
-            <tr><td>衡量方式</td><td>枚举</td><td>指标库带出</td><td><span class="tag tag-green">✅</span></td></tr>
-            <tr><td>计算规则</td><td>引用</td><td>指标库带出</td><td><span class="tag tag-red">否</span></td></tr>
-          </table>
-        </div>
-      </div>
-
-      <!-- 考核表单字段 -->
-      <div class="entity">
-        <div class="entity-header" style="background:#f6ffed;">📊 考核表单字段（数据源）</div>
-        <div class="entity-body">
-          <table class="ftable">
-            <tr><th>字段</th><th>类型</th><th>来源</th><th>公式可用</th></tr>
-            <tr><td>完成值</td><td>数字</td><td>员工填写</td><td><span class="tag tag-green">✅</span></td></tr>
-            <tr><td>评价结果</td><td>枚举</td><td>上级选择</td><td><span class="tag tag-green">✅</span></td></tr>
-            <tr><td>评语</td><td>文本</td><td>上级填写</td><td><span class="tag tag-red">否</span></td></tr>
-            <tr><td>加分</td><td>数字</td><td>上级填写</td><td><span class="tag tag-green">✅</span></td></tr>
-            <tr><td>减分</td><td>数字</td><td>上级填写</td><td><span class="tag tag-green">✅</span></td></tr>
-            <tr><td colspan="4" style="background:#fafafa;font-weight:600;">系统固定字段（自动注入）</td></tr>
-            <tr><td>指标得分</td><td>计算</td><td>衡量标准算出</td><td><span class="tag tag-green">✅</span></td></tr>
-            <tr><td>节点权重</td><td>配置</td><td>方案环节配置</td><td><span class="tag tag-green">✅</span></td></tr>
-            <tr><td>目标数</td><td>统计</td><td>系统计数</td><td><span class="tag tag-green">✅</span></td></tr>
-            <tr><td>模块权重</td><td>配置</td><td>方案配置</td><td><span class="tag tag-green">✅</span></td></tr>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ==================== 第三部分：完整配置链路 ==================== -->
-<div class="sec">
-  <div class="sec-title">三、完整配置链路：从基础配置到业务执行</div>
-
-  <div class="card">
-    <div class="flow" style="flex-wrap:nowrap;">
-      <div class="flow-step" style="min-width:140px;">
-        <div class="num">1</div>
-        <div class="title">配置衡量标准</div>
-        <div class="desc">定义评分方式<br>4种类型</div>
-      </div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-step" style="min-width:140px;">
-        <div class="num">2</div>
-        <div class="title">配置指标库</div>
-        <div class="desc">定义指标<br>关联衡量标准</div>
-      </div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-step" style="min-width:140px;">
-        <div class="num">3</div>
-        <div class="title">配置计算规则</div>
-        <div class="desc">定义汇总公式<br>加权/平均/自定义</div>
-      </div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-step highlight" style="min-width:140px;">
-        <div class="num">4</div>
-        <div class="title">方案引用</div>
-        <div class="desc">绩效方案环节<br>选择计算规则</div>
-      </div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-step" style="min-width:140px;">
-        <div class="num">5</div>
-        <div class="title">活动执行</div>
-        <div class="desc">copy方案配置<br>员工填写+评分</div>
-      </div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-step" style="min-width:140px;">
-        <div class="num">6</div>
-        <div class="title">实时计算</div>
-        <div class="desc">按规则算出<br>每个指标得分+总分</div>
+      <div style="font-size:14px;font-weight:700;margin-bottom:12px;">🔗 关系：一个指标绑定一套参考值 + 一个公式</div>
+      <div class="fl">
+        <div class="fs hl"><div class="t">衡量标准</div><div class="d">存参考值<br>挑战120/目标100/保底80</div></div>
+        <div class="fa">←</div>
+        <div class="fs hl" style="border-color:var(--pur);background:#f9f0ff;"><div class="t">指标库</div><div class="d">绑定参考值+公式<br>KPI_001</div></div>
+        <div class="fa">→</div>
+        <div class="fs hl" style="border-color:var(--ok);background:#f6ffed;"><div class="t">计算规则</div><div class="d">定义公式<br>梯度插值/封顶/线性...</div></div>
+        <div class="fa">→</div>
+        <div class="fs"><div class="t">方案引用</div><div class="d">绩效方案环节<br>选择用哪个计算规则</div></div>
+        <div class="fa">→</div>
+        <div class="fs"><div class="t">活动执行</div><div class="d">员工填值<br>系统按公式算得分</div></div>
       </div>
     </div>
 
-    <!-- 详细说明每步 -->
-    <div style="margin-top:24px;">
+    <!-- 复用示例 -->
+    <div style="margin-top:16px;">
+      <div style="font-size:14px;font-weight:700;margin-bottom:12px;">💡 复用示例：同一参考值 + 不同公式 = 不同评分结果</div>
       <div class="g2">
-        <!-- Step 1 -->
         <div style="background:#fafafa;border-radius:8px;padding:16px;">
-          <div style="font-weight:700;color:var(--primary);margin-bottom:8px;">Step 1：配置衡量标准（V1.5）</div>
-          <table class="ftable">
-            <tr><th>类型</th><th>配置项</th><th>示例</th></tr>
-            <tr><td><span class="tag tag-blue">梯度评分</span></td><td>挑战值/目标值/保底值 + 对应分数区间</td><td>挑战120万→120分，目标100万→100分，保底80万→60分</td></tr>
-            <tr><td><span class="tag tag-green">线性评分</span></td><td>满分值 + 系数</td><td>满分100万，完成80万→80分</td></tr>
-            <tr><td><span class="tag tag-purple">定性评分</span></td><td>评价结果→分数映射</td><td>A→115分，B→99.5分，C→79.5分</td></tr>
-            <tr><td><span class="tag tag-orange">是否达成</span></td><td>达成条件</td><td>完成值≥目标值→满分，否则0分</td></tr>
-          </table>
-        </div>
-        <!-- Step 2 -->
-        <div style="background:#fafafa;border-radius:8px;padding:16px;">
-          <div style="font-weight:700;color:var(--primary);margin-bottom:8px;">Step 2：配置指标库（V1.6）</div>
-          <table class="ftable">
-            <tr><th>字段</th><th>说明</th><th>示例</th></tr>
-            <tr><td>指标名称</td><td>可度量的业务事项</td><td>季度营收达成率</td></tr>
-            <tr><td>指标分类</td><td>业务目标/团队管理/能力/价值观</td><td>业务目标</td></tr>
-            <tr><td>计量单位</td><td>计算时使用的单位</td><td>万元</td></tr>
-            <tr><td>指标性质</td><td>定量/定性</td><td>定量</td></tr>
-            <tr><td><b>关联衡量标准</b></td><td><b>FK → 衡量标准（关键关联）</b></td><td><b>→ 营收类梯度评分</b></td></tr>
-          </table>
-        </div>
-      </div>
+          <div style="font-weight:600;margin-bottom:8px;">场景A：营收达成率 — 梯度插值公式</div>
+          <div class="code">
+<span class="cmt">// 衡量标准：挑战120, 目标100, 保底80</span>
+<span class="cmt">// 计算规则：梯度插值</span>
+<span class="cmt">// 员工完成值：115</span>
 
-      <div class="g2" style="margin-top:16px;">
-        <!-- Step 3 -->
-        <div style="background:#fafafa;border-radius:8px;padding:16px;">
-          <div style="font-weight:700;color:var(--primary);margin-bottom:8px;">Step 3：配置计算规则（V1.4 + V1.1公式编辑器）</div>
-          <p style="font-size:12px;color:var(--text-sec);margin-bottom:8px;">计算规则 = 选择聚合方式 + 配置公式（自定义类型时）</p>
-          <table class="ftable">
-            <tr><th>规则类型</th><th>公式</th><th>配置方式</th></tr>
-            <tr><td><span class="tag tag-blue">加权求和</span></td><td>Σ(指标得分 × 权重/100) + 加分 - 减分</td><td>系统内置，无需配置</td></tr>
-            <tr><td><span class="tag tag-green">平均分</span></td><td>Σ(指标得分) / 指标数</td><td>系统内置，无需配置</td></tr>
-            <tr><td><span class="tag tag-purple">自定义公式</span></td><td>用户在公式编辑器中构建</td><td><b>需要配置</b>（见下方）</td></tr>
-          </table>
-        </div>
-        <!-- Step 4 -->
-        <div style="background:#fafafa;border-radius:8px;padding:16px;">
-          <div style="font-weight:700;color:var(--primary);margin-bottom:8px;">Step 4：方案环节引用计算规则</div>
-          <p style="font-size:12px;color:var(--text-sec);margin-bottom:8px;">绩效方案 → 考核环节配置 → 绩效考核环节</p>
-          <table class="ftable">
-            <tr><th>配置项</th><th>说明</th></tr>
-            <tr><td>引用计算规则</td><td>下拉选择已配置的计算规则</td></tr>
-            <tr><td>引用评价规则</td><td>选择评价模式（上级评价/360等）</td></tr>
-            <tr><td>节点权重分配</td><td>自评/间接上级/直接上级各占比例</td></tr>
-            <tr><td>流程模板</td><td>关联流程引擎中的流程模型</td></tr>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ==================== 第四部分：公式编辑器详解 ==================== -->
-<div class="sec">
-  <div class="sec-title">四、公式编辑器配置详解</div>
-
-  <div class="card">
-    <div class="g2">
-      <!-- 左：数据源 -->
-      <div>
-        <div style="font-size:14px;font-weight:600;margin-bottom:12px;">📦 数据源定义（V1.1.1）</div>
-        <div class="entity">
-          <div class="entity-header" style="background:#eef1fe;">数据源 = 表单字段 + 系统字段</div>
-          <div class="entity-body">
-            <p style="font-size:12px;color:var(--text-sec);margin-bottom:8px;">公式编辑器打开时，从以下数据源中选择可用字段：</p>
-            <table class="ftable">
-              <tr><th>数据源</th><th>可用字段</th><th>取数方式</th></tr>
-              <tr>
-                <td><span class="tag tag-blue">目标制定表单</span></td>
-                <td>权重、目标值、挑战值、保底值</td>
-                <td>BOUND（绑定源字段）</td>
-              </tr>
-              <tr>
-                <td><span class="tag tag-green">考核表单</span></td>
-                <td>完成值、评价结果、加分、减分</td>
-                <td>BOUND（绑定源字段）</td>
-              </tr>
-              <tr>
-                <td><span class="tag tag-orange">系统固定字段</span></td>
-                <td>指标得分、节点权重、目标数、模块权重</td>
-                <td>DYNAMIC（动态取数规则）</td>
-              </tr>
-              <tr>
-                <td><span class="tag tag-purple">衡量标准参数</span></td>
-                <td>挑战值、目标值、保底值（来自指标库引用的标准）</td>
-                <td>DYNAMIC（通过指标FK关联取数）</td>
-              </tr>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- 右：计算科目 -->
-      <div>
-        <div style="font-size:14px;font-weight:600;margin-bottom:12px;">🔢 计算科目（V1.1.2）</div>
-        <div class="entity">
-          <div class="entity-header" style="background:#f6ffed;">科目 = 可参与公式计算的元素</div>
-          <div class="entity-body">
-            <p style="font-size:12px;color:var(--text-sec);margin-bottom:8px;">两种科目类型：</p>
-            <table class="ftable">
-              <tr><th>科目类型</th><th>说明</th><th>示例</th></tr>
-              <tr>
-                <td><span class="tag tag-blue">静态科目 BOUND</span></td>
-                <td>绑定到表单字段，值从表单数据中读取</td>
-                <td>完成值、权重、加分</td>
-              </tr>
-              <tr>
-                <td><span class="tag tag-purple">动态科目 DYNAMIC</span></td>
-                <td>配置动态取数规则，运行时计算</td>
-                <td>指标得分、总分、等级映射分</td>
-              </tr>
-            </table>
-            <p style="font-size:12px;color:var(--text-sec);margin-top:8px;"><b>可用函数：</b>SUM、AVG、MAX、MIN、WEIGHTED_SUM、GRADE_MAP、ROUND</p>
-          </div>
-        </div>
-
-        <div class="entity" style="margin-top:12px;">
-          <div class="entity-header" style="background:#fff7e6;">白名单控制（V1.1.3）</div>
-          <div class="entity-body">
-            <ul>
-              <li><b>应用白名单：</b>哪些业务模块可以使用公式编辑器</li>
-              <li><b>数据源级可见性：</b>不同业务场景看到不同的字段列表</li>
-              <li><b>取交集：</b>最终可用字段 = 白名单 ∩ 数据源可见字段</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 公式示例 -->
-  <div class="card">
-    <div style="font-size:14px;font-weight:600;margin-bottom:16px;">💡 公式配置示例</div>
-
-    <div class="g2">
-      <div>
-        <div style="font-weight:600;margin-bottom:8px;">示例1：标准加权求和（内置，无需公式编辑器）</div>
-        <div class="code">
-<span class="cmt">// 规则类型：加权求和</span>
-<span class="cmt">// 系统自动执行，无需手动配置公式</span>
-
-<span class="var">总分</span> <span class="op">=</span> <span class="fn">WEIGHTED_SUM</span>(<span class="var">指标得分</span>, <span class="var">权重</span>) <span class="op">+</span> <span class="var">加分</span> <span class="op">-</span> <span class="var">减分</span>
-
-<span class="cmt">// 展开：</span>
-<span class="var">总分</span> <span class="op">=</span> (<span class="var">指标1得分</span> <span class="op">×</span> <span class="var">指标1权重</span> <span class="op">/</span> 100)
-      <span class="op">+</span> (<span class="var">指标2得分</span> <span class="op">×</span> <span class="var">指标2权重</span> <span class="op">/</span> 100)
-      <span class="op">+</span> ...
-      <span class="op">+</span> <span class="var">加分</span> <span class="op">-</span> <span class="var">减分</span>
-        </div>
-      </div>
-
-      <div>
-        <div style="font-weight:600;margin-bottom:8px;">示例2：自定义公式（公式编辑器配置）</div>
-        <div class="code">
-<span class="cmt">// 规则类型：自定义公式</span>
-<span class="cmt">// 在公式编辑器中拖拽字段+函数构建</span>
-
-<span class="var">综合得分</span> <span class="op">=</span> <span class="fn">WEIGHTED_SUM</span>(
-    <span class="fn">GRADE_MAP</span>(<span class="var">评价结果</span>) <span class="op">×</span> <span class="var">权重</span> <span class="op">/</span> 100,
-    <span class="var">节点权重</span> <span class="op">/</span> 100
-) <span class="op">+</span> <span class="var">加分</span> <span class="op">-</span> <span class="var">减分</span>
-
-<span class="cmt">// GRADE_MAP 将定性评价映射为分数：</span>
-<span class="cmt">//   A→115, B→99.5, C→79.5, D→59.5, E→24.5</span>
-<span class="cmt">// WEIGHTED_SUM 按权重加权求和</span>
-<span class="cmt">// 最终结果 ROUND 到1位小数</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="g2" style="margin-top:16px;">
-      <div>
-        <div style="font-weight:600;margin-bottom:8px;">示例3：梯度指标得分计算（衡量标准驱动）</div>
-        <div class="code">
-<span class="cmt">// 衡量标准类型：梯度评分</span>
-<span class="cmt">// 配置：挑战值=120万, 目标值=100万, 保底值=80万</span>
-
-<span class="kw">if</span> (<span class="var">完成值</span> <span class="op">>=</span> <span class="var">挑战值</span>) <span class="kw">then</span>
-    <span class="var">指标得分</span> <span class="op">=</span> <span class="var">指标满分</span>  <span class="cmt">// 120分</span>
-<span class="kw">else if</span> (<span class="var">完成值</span> <span class="op">>=</span> <span class="var">目标值</span>) <span class="kw">then</span>
-    <span class="var">指标得分</span> <span class="op">=</span> <span class="var">目标分数</span> <span class="op">+</span> (<span class="var">完成值</span> <span class="op">-</span> <span class="var">目标值</span>) <span class="op">/</span> (<span class="var">挑战值</span> <span class="op">-</span> <span class="var">目标值</span>) <span class="op">×</span> (<span class="var">满分</span> <span class="op">-</span> <span class="var">目标分数</span>)
-<span class="kw">else if</span> (<span class="var">完成值</span> <span class="op">>=</span> <span class="var">保底值</span>) <span class="kw">then</span>
-    <span class="var">指标得分</span> <span class="op">=</span> <span class="var">保底分数</span> <span class="op">+</span> (<span class="var">完成值</span> <span class="op">-</span> <span class="var">保底值</span>) <span class="op">/</span> (<span class="var">目标值</span> <span class="op">-</span> <span class="var">保底值</span>) <span class="op">×</span> (<span class="var">目标分数</span> <span class="op">-</span> <span class="var">保底分数</span>)
-<span class="kw">else</span>
-    <span class="var">指标得分</span> <span class="op">=</span> 0  <span class="cmt">// 低于保底值</span>
-        </div>
-      </div>
-
-      <div>
-        <div style="font-weight:600;margin-bottom:8px;">示例4：定性指标得分（评价结果映射）</div>
-        <div class="code">
-<span class="cmt">// 衡量标准类型：定性评分</span>
-<span class="cmt">// 上级选择评价结果 → 系统映射为分数</span>
-
-<span class="var">指标得分</span> <span class="op">=</span> <span class="fn">GRADE_MAP</span>(<span class="var">评价结果</span>)
-
-<span class="cmt">// 映射表：</span>
-<span class="cmt">//   "远超预期" → 115分 (110-120中值)</span>
-<span class="cmt">//   "超出预期" → 99.5分 (90-109中值)</span>
-<span class="cmt">//   "符合预期" → 79.5分 (70-89中值)</span>
-<span class="cmt">//   "需改进"   → 59.5分 (50-69中值)</span>
-<span class="cmt">//   "远低于预期" → 24.5分 (0-49中值)</span>
-
-<span class="cmt">// 总评价结果 = 节点权重加权</span>
-<span class="var">总评价结果</span> <span class="op">=</span> <span class="fn">WEIGHTED_SUM</span>(
-    <span class="var">自评评价结果</span> <span class="op">×</span> <span class="var">自评节点权重</span>,
-    <span class="var">间接上级评价结果</span> <span class="op">×</span> <span class="var">间接上级节点权重</span>,
-    <span class="var">直接上级评价结果</span> <span class="op">×</span> <span class="var">直接上级节点权重</span>
+<span class="var">得分</span> <span class="op">=</span> <span class="fn">gradient_interp</span>(
+    <span class="var">actual</span>=<span class="num">115</span>, <span class="var">baseline</span>=<span class="num">80</span>,
+    <span class="var">target</span>=<span class="num">100</span>, <span class="var">challenge</span>=<span class="num">120</span>,
+    <span class="var">target_score</span>=<span class="num">100</span>, <span class="var">max_score</span>=<span class="num">120</span>
 )
+<span class="cmt">// 115 在 [100,120] 区间</span>
+<span class="cmt">// = 100 + (115-100)/(120-100) × (120-100) = 115分</span>
+          </div>
+        </div>
+        <div style="background:#fafafa;border-radius:8px;padding:16px;">
+          <div style="font-weight:600;margin-bottom:8px;">场景B：同一参考值 + 封顶公式</div>
+          <div class="code">
+<span class="cmt">// 衡量标准：挑战120, 目标100, 保底80（同上）</span>
+<span class="cmt">// 计算规则：封顶计算（超过挑战值不加分）</span>
+<span class="cmt">// 员工完成值：130</span>
+
+<span class="var">得分</span> <span class="op">=</span> <span class="fn">capped_score</span>(
+    <span class="var">actual</span>=<span class="num">130</span>, <span class="var">baseline</span>=<span class="num">80</span>,
+    <span class="var">target</span>=<span class="num">100</span>, <span class="var">challenge</span>=<span class="num">120</span>,
+    <span class="var">cap</span>=<span class="num">120</span>  <span class="cmt">// 封顶值 = 挑战值</span>
+)
+<span class="cmt">// 130 > 120（封顶） → 得分 = 120分（不超上限）</span>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ==================== 第五部分：执行时数据流 ==================== -->
+<!-- ===== 二、衡量标准：只存参考值 ===== -->
 <div class="sec">
-  <div class="sec-title">五、执行时数据流：员工填写 → 系统计算 → 结果产出</div>
-
+  <div class="sec-t">二、衡量标准 — 只存参考值，结构保持原型</div>
   <div class="card">
-    <div style="font-size:14px;font-weight:600;margin-bottom:16px;">绩效考核环节 — 一次完整的计算过程</div>
+    <div class="note">衡量标准的结构与原型一致：<code>{name, dept, type, grades:[{name, min, max, desc}]}</code>。type 仅做分类标签（百分比/分值/等级），grades 存参考值区间。<b>不包含任何计算逻辑</b>。</div>
 
-    <div class="flow" style="flex-wrap:nowrap;">
-      <div class="flow-step" style="min-width:150px;border-color:#52c41a;">
-        <div class="title" style="color:#52c41a;">员工自评</div>
-        <div class="desc">填写完成值<br>选择评价结果</div>
-      </div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-step" style="min-width:150px;border-color:#fa8c16;">
-        <div class="title" style="color:#fa8c16;">衡量标准计算</div>
-        <div class="desc">完成值→指标得分<br>（按衡量标准类型）</div>
-      </div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-step" style="min-width:150px;border-color:#1890ff;">
-        <div class="title" style="color:#1890ff;">间接上级评分</div>
-        <div class="desc">选择评价结果<br>系统算得分</div>
-      </div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-step" style="min-width:150px;border-color:#722ed1;">
-        <div class="title" style="color:#722ed1;">直接上级评分</div>
-        <div class="desc">选择评价结果<br>填写总评价结果</div>
-      </div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-step highlight" style="min-width:170px;">
-        <div class="title">计算规则执行</div>
-        <div class="desc">按配置的计算规则<br>算出总分+总评价结果</div>
-      </div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-step" style="min-width:150px;border-color:#52c41a;">
-        <div class="title" style="color:#52c41a;">结果写入</div>
-        <div class="desc">总分+等级写入<br>审定明细表</div>
-      </div>
-    </div>
-
-    <div style="margin-top:20px;background:#fafafa;border-radius:8px;padding:16px;">
-      <div style="font-weight:600;margin-bottom:8px;">计算执行时机</div>
-      <table class="ftable">
-        <tr><th>计算内容</th><th>触发时机</th><th>计算方式</th><th>持久化位置</th></tr>
-        <tr>
-          <td>单个指标得分</td>
-          <td>每次提交/保存时实时计算</td>
-          <td>根据衡量标准类型（梯度/线性/定性/是否达成）</td>
-          <td>eval_detail.score_data（每行）</td>
-        </tr>
-        <tr>
-          <td>加减分事项得分</td>
-          <td>每次提交时</td>
-          <td>直接读取加分/减分值</td>
-          <td>eval_detail.score_data</td>
-        </tr>
-        <tr>
-          <td>总分</td>
-          <td>直接上级提交时</td>
-          <td>按计算规则（加权求和/平均/自定义公式）</td>
-          <td>eval_detail.total_score</td>
-        </tr>
-        <tr>
-          <td>总评价结果</td>
-          <td>直接上级提交时</td>
-          <td>按节点权重加权 or 取最后填写值</td>
-          <td>eval_detail.total_eval_result</td>
-        </tr>
-        <tr>
-          <td>等级映射</td>
-          <td>总分计算完成后</td>
-          <td>总分 → 等级规则分数区间 → 等级</td>
-          <td>eval_detail.total_eval_result（等级编码）</td>
-        </tr>
+    <div style="margin-top:16px;">
+      <table>
+        <tr><th>字段</th><th>类型</th><th>说明</th><th>示例</th></tr>
+        <tr><td>id</td><td>bigint PK</td><td>主键</td><td>1</td></tr>
+        <tr><td>name</td><td>varchar(200)</td><td>标准名称</td><td>营收类参考值</td></tr>
+        <tr><td>dept</td><td>varchar(100)</td><td>适用部门</td><td>中国区</td></tr>
+        <tr><td><b>type</b></td><td><b>enum</b></td><td><b>分类标签（非计算方式）</b></td><td><b>百分比 / 分值 / 等级</b></td></tr>
+        <tr><td><b>grades</b></td><td><b>JSON</b></td><td><b>参考值数组（核心数据）</b></td><td><b>[{name:'卓越',min:100,max:100}, ...]</b></td></tr>
       </table>
     </div>
+
+    <div style="margin-top:16px;">
+      <div style="font-weight:600;margin-bottom:8px;">grades 数组在不同 type 下的含义</div>
+      <table>
+        <tr><th>type</th><th>grades 含义</th><th>示例</th></tr>
+        <tr>
+          <td><span class="tag tag-b">百分比</span></td>
+          <td>按完成百分比分段</td>
+          <td>[{name:'卓越',min:100,max:100}, {name:'优秀',min:90,max:99}, {name:'良好',min:75,max:89}, ...]</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-p">分值</span></td>
+          <td>按绝对分值分段</td>
+          <td>[{name:'非常满意',min:90,max:100}, {name:'满意',min:75,max:89}, ...]</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-o">等级</span></td>
+          <td>按等级名称分段</td>
+          <td>[{name:'A',min:110,max:120}, {name:'B',min:90,max:109}, ...]</td>
+        </tr>
+      </table>
+      <p style="font-size:12px;color:var(--txt2);margin-top:8px;">💡 这些 grades 只是参考值。<b>怎么用这些值算出得分，完全由计算规则的公式决定</b>。</p>
+    </div>
   </div>
 </div>
 
-<!-- ==================== 第六部分：数据模型补充 ==================== -->
+<!-- ===== 三、计算规则：只定义公式 ===== -->
 <div class="sec">
-  <div class="sec-title">六、数据模型补充（配置层）</div>
+  <div class="sec-t">三、计算规则 — 只定义公式，可实现任意计算逻辑</div>
+  <div class="card">
+    <div class="note">计算规则的核心是<b>公式表达式</b>，由公式编辑器配置。公式可以引用衡量标准的参考值（grades）+ 表单字段（完成值/权重等），通过任意计算逻辑得出得分。</div>
 
+    <div style="margin-top:16px;">
+      <table>
+        <tr><th>字段</th><th>类型</th><th>说明</th></tr>
+        <tr><td>id</td><td>bigint PK</td><td>主键</td></tr>
+        <tr><td>name</td><td>varchar(200)</td><td>规则名称（如"梯度插值"、"封顶计算"）</td></tr>
+        <tr><td><b>formula</b></td><td><b>text</b></td><td><b>公式表达式（公式编辑器生成）</b></td></tr>
+        <tr><td>formula_vars</td><td>JSON</td><td>公式引用的变量列表（字段白名单）</td></tr>
+        <tr><td>status</td><td>enum</td><td>enabled / disabled</td></tr>
+      </table>
+    </div>
+
+    <div style="margin-top:20px;">
+      <div style="font-weight:600;margin-bottom:12px;">同一套参考值，套不同公式 = 不同计算结果</div>
+      <div class="g3">
+        <div style="background:#fafafa;border-radius:8px;padding:14px;">
+          <div style="font-weight:600;color:var(--pri);margin-bottom:6px;">公式1：梯度插值</div>
+          <div class="code" style="font-size:11px;">
+<span class="cmt">// 完成值在区间内线性插值</span>
+<span class="kw">if</span> <span class="var">actual</span> <span class="op">>=</span> <span class="var">challenge</span>:
+  <span class="var">score</span> <span class="op">=</span> <span class="var">max_score</span>
+<span class="kw">elif</span> <span class="var">actual</span> <span class="op">>=</span> <span class="var">target</span>:
+  <span class="var">score</span> <span class="op">=</span> <span class="var">target_score</span> <span class="op">+</span>
+    (<span class="var">actual</span><span class="op">-</span><span class="var">target</span>)<span class="op">/</span>(<span class="var">challenge</span><span class="op">-</span><span class="var">target</span>) <span class="op">×</span>
+    (<span class="var">max_score</span><span class="op">-</span><span class="var">target_score</span>)
+<span class="kw">elif</span> <span class="var">actual</span> <span class="op">>=</span> <span class="var">baseline</span>:
+  <span class="var">score</span> <span class="op">=</span> <span class="var">baseline_score</span> <span class="op">+</span> ...
+<span class="kw">else</span>:
+  <span class="var">score</span> <span class="op">=</span> <span class="num">0</span>
+          </div>
+        </div>
+        <div style="background:#fafafa;border-radius:8px;padding:14px;">
+          <div style="font-weight:600;color:var(--ok);margin-bottom:6px;">公式2：封顶计算</div>
+          <div class="code" style="font-size:11px;">
+<span class="cmt">// 超过挑战值不加分</span>
+<span class="kw">if</span> <span class="var">actual</span> <span class="op">>=</span> <span class="var">challenge</span>:
+  <span class="var">score</span> <span class="op">=</span> <span class="var">max_score</span>  <span class="cmt">// 封顶</span>
+<span class="kw">elif</span> <span class="var">actual</span> <span class="op">>=</span> <span class="var">target</span>:
+  <span class="var">score</span> <span class="op">=</span> <span class="var">target_score</span> <span class="op">+</span>
+    (<span class="var">actual</span><span class="op">-</span><span class="var">target</span>)<span class="op">/</span>(<span class="var">challenge</span><span class="op">-</span><span class="var">target</span>) <span class="op">×</span>
+    (<span class="var">max_score</span><span class="op">-</span><span class="var">target_score</span>)
+<span class="kw">else</span>:
+  <span class="var">score</span> <span class="op">=</span> <span class="var">actual</span><span class="op">/</span><span class="var">target</span> <span class="op">×</span> <span class="var">target_score</span>
+          </div>
+        </div>
+        <div style="background:#fafafa;border-radius:8px;padding:14px;">
+          <div style="font-weight:600;color:var(--pur);margin-bottom:6px;">公式3：是否达成</div>
+          <div class="code" style="font-size:11px;">
+<span class="cmt">// 只看是否达到目标值</span>
+<span class="kw">if</span> <span class="var">actual</span> <span class="op">>=</span> <span class="var">target</span>:
+  <span class="var">score</span> <span class="op">=</span> <span class="var">max_score</span>  <span class="cmt">// 满分</span>
+<span class="kw">else</span>:
+  <span class="var">score</span> <span class="op">=</span> <span class="num">0</span>          <span class="cmt">// 零分</span>
+          </div>
+        </div>
+      </div>
+      <p style="font-size:12px;color:var(--txt2);margin-top:12px;">💡 以上三个公式都引用同一套参考值（grades），但计算结果完全不同。<b>公式决定算法，参考值提供数据</b>。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 四、公式编辑器：数据源 ===== -->
+<div class="sec">
+  <div class="sec-t">四、公式编辑器 — 数据源 = 参考值字段 + 表单字段 + 系统字段</div>
+  <div class="card">
+    <p style="font-size:13px;color:var(--txt2);margin-bottom:16px;">公式编辑器配置计算规则时，可以从以下数据源中选择字段构建表达式：</p>
+
+    <div class="g3">
+      <div class="ent">
+        <div class="ent-h" style="background:#fff7e6;">📐 衡量标准参考值（grades 中的字段）</div>
+        <div class="ent-b">
+          <table>
+            <tr><th>字段</th><th>类型</th><th>公式角色</th></tr>
+            <tr><td>挑战值 challenge</td><td>decimal</td><td><span class="tag tag-b">BOUND</span></td></tr>
+            <tr><td>目标值 target</td><td>decimal</td><td><span class="tag tag-b">BOUND</span></td></tr>
+            <tr><td>保底值 baseline</td><td>decimal</td><td><span class="tag tag-b">BOUND</span></td></tr>
+            <tr><td>等级区间 grades[n].min/max</td><td>decimal</td><td><span class="tag tag-b">BOUND</span></td></tr>
+            <tr><td>等级名称 grades[n].name</td><td>string</td><td><span class="tag tag-b">BOUND</span></td></tr>
+          </table>
+          <p style="font-size:11px;color:var(--txt2);margin-top:8px;">来源：指标关联的衡量标准 grades 数组</p>
+        </div>
+      </div>
+
+      <div class="ent">
+        <div class="ent-h" style="background:#e6f7ff;">📝 表单字段（员工/上级填写的值）</div>
+        <div class="ent-b">
+          <table>
+            <tr><th>字段</th><th>来源</th><th>公式角色</th></tr>
+            <tr><td>完成值 actual</td><td>员工填写</td><td><span class="tag tag-b">BOUND</span></td></tr>
+            <tr><td>权重 weight</td><td>员工填写</td><td><span class="tag tag-b">BOUND</span></td></tr>
+            <tr><td>评价结果 eval_result</td><td>上级选择</td><td><span class="tag tag-b">BOUND</span></td></tr>
+            <tr><td>加分 bonus</td><td>上级填写</td><td><span class="tag tag-b">BOUND</span></td></tr>
+            <tr><td>减分 penalty</td><td>上级填写</td><td><span class="tag tag-b">BOUND</span></td></tr>
+          </table>
+          <p style="font-size:11px;color:var(--txt2);margin-top:8px;">来源：目标制定表单 + 考核表单</p>
+        </div>
+      </div>
+
+      <div class="ent">
+        <div class="ent-h" style="background:#f6ffed;">⚙️ 系统字段（自动计算/注入）</div>
+        <div class="ent-b">
+          <table>
+            <tr><th>字段</th><th>来源</th><th>公式角色</th></tr>
+            <tr><td>指标得分 score</td><td>公式计算</td><td><span class="tag tag-p">DYNAMIC</span></td></tr>
+            <tr><td>节点权重</td><td>方案配置</td><td><span class="tag tag-p">DYNAMIC</span></td></tr>
+            <tr><td>目标数</td><td>系统计数</td><td><span class="tag tag-p">DYNAMIC</span></td></tr>
+            <tr><td>模块权重</td><td>方案配置</td><td><span class="tag tag-p">DYNAMIC</span></td></tr>
+          </table>
+          <p style="font-size:11px;color:var(--txt2);margin-top:8px;">来源：系统自动注入</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 五、完整配置链路 ===== -->
+<div class="sec">
+  <div class="sec-t">五、完整配置→执行链路</div>
+  <div class="card">
+    <div class="fl">
+      <div class="fs"><div class="t" style="color:var(--pur)">① 配置衡量标准</div><div class="d">COE定义参考值<br>grades数组</div></div>
+      <div class="fa">→</div>
+      <div class="fs"><div class="t" style="color:var(--warn)">② 配置计算规则</div><div class="d">COE在公式编辑器<br>中配置计算公式</div></div>
+      <div class="fa">→</div>
+      <div class="fs hl"><div class="t" style="color:var(--pri)">③ 配置指标库</div><div class="d">绑定①+②<br>选参考值+选公式</div></div>
+      <div class="fa">→</div>
+      <div class="fs"><div class="t" style="color:var(--ok)">④ 方案引用</div><div class="d">考核环节<br>选择计算规则</div></div>
+      <div class="fa">→</div>
+      <div class="fs"><div class="t">⑤ 活动执行</div><div class="d">员工填值<br>系统按公式算得分</div></div>
+    </div>
+
+    <div class="g2" style="margin-top:20px;">
+      <div style="background:#fafafa;border-radius:8px;padding:16px;">
+        <div style="font-weight:700;color:var(--pri);margin-bottom:8px;">Step ①②：COE 分别配置参考值和公式</div>
+        <table>
+          <tr><th>配置项</th><th>配置内容</th><th>谁配</th></tr>
+          <tr><td>衡量标准</td><td>grades=[{name:'卓越',min:100,max:100}, ...]</td><td>COE</td></tr>
+          <tr><td>计算规则</td><td>formula = 梯度插值公式 / 封顶公式 / ...</td><td>COE</td></tr>
+        </table>
+      </div>
+      <div style="background:#fafafa;border-radius:8px;padding:16px;">
+        <div style="font-weight:700;color:var(--pri);margin-bottom:8px;">Step ③④：指标库绑定 + 方案引用</div>
+        <table>
+          <tr><th>配置项</th><th>配置内容</th><th>谁配</th></tr>
+          <tr><td>指标库</td><td>KPI_001 → FK衡量标准 + FK计算规则</td><td>COE</td></tr>
+          <tr><td>方案环节</td><td>绩效考核环节 → 选择计算规则</td><td>COE</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div style="margin-top:16px;background:#fafafa;border-radius:8px;padding:16px;">
+      <div style="font-weight:700;color:var(--pri);margin-bottom:8px;">Step ⑤：活动执行时 — 公式引擎运行过程</div>
+      <div class="code">
+<span class="cmt">// 1. 员工选指标 → 指标带出衡量标准（grades）和计算规则（formula）</span>
+<span class="var">indicator</span> = <span class="fn">getIndicator</span>(<span class="str">"KPI_001"</span>)
+<span class="var">grades</span> = <span class="var">indicator</span>.<span class="fn">measure_standard</span>.<span class="fn">grades</span>  <span class="cmt">// 参考值</span>
+<span class="var">formula</span> = <span class="var">indicator</span>.<span class="fn">calc_rule</span>.<span class="fn">formula</span>        <span class="cmt">// 计算公式</span>
+
+<span class="cmt">// 2. 员工填写目标 → 参考值渲染到表单</span>
+<span class="cmt">// 表单显示：挑战值=grades[0].max, 目标值=grades[1].max, 保底值=grades[2].max</span>
+
+<span class="cmt">// 3. 员工填写完成值 → 系统按公式计算得分</span>
+<span class="var">actual_value</span> = <span class="num">115</span>  <span class="cmt">// 员工填的完成值</span>
+<span class="var">score</span> = <span class="fn">executeFormula</span>(<span class="var">formula</span>, {
+    <span class="var">actual</span>: <span class="num">115</span>,          <span class="cmt">// ← 来自表单</span>
+    <span class="var">challenge</span>: <span class="num">120</span>,       <span class="cmt">// ← 来自 grades[0].max</span>
+    <span class="var">target</span>: <span class="num">100</span>,          <span class="cmt">// ← 来自 grades[1].max</span>
+    <span class="var">baseline</span>: <span class="num">80</span>,         <span class="cmt">// ← 来自 grades[2].max</span>
+})
+<span class="cmt">// score = 115分（梯度插值公式计算）</span>
+
+<span class="cmt">// 4. 多个指标得分 → 按总分公式汇总</span>
+<span class="var">total_score</span> = <span class="fn">executeFormula</span>(<span class="var">total_formula</span>, {
+    <span class="var">scores</span>: [<span class="num">115</span>, <span class="num">85</span>, <span class="num">92</span>],   <span class="cmt">// 各指标得分</span>
+    <span class="var">weights</span>: [<span class="num">60</span>, <span class="num">25</span>, <span class="num">15</span>],   <span class="cmt">// 各指标权重</span>
+    <span class="var">bonus</span>: <span class="num">5</span>, <span class="var">penalty</span>: <span class="num">0</span>,    <span class="cmt">// 加减分</span>
+})
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 六、数据模型 ===== -->
+<div class="sec">
+  <div class="sec-t">六、数据模型（配置层三张表）</div>
   <div class="card">
     <div class="g3">
-      <div class="entity">
-        <div class="entity-header" style="background:#fff7e6;">📐 measure_standard（衡量标准）</div>
-        <div class="entity-body">
+      <div class="ent">
+        <div class="ent-h" style="background:#fff7e6;">📐 measure_standard</div>
+        <div class="ent-b">
           <ul>
-            <li><span class="badge badge-required">PK</span> id bigint</li>
-            <li>name varchar(200) 标准名称</li>
-            <li>type enum(gradient/linear/qualitative/passfail)</li>
-            <li>config JSON（类型相关配置）</li>
-            <li style="background:#fff7e6;font-size:11px;">梯度：{target,challenge,baseline,scores}<br>定性：{A:115,B:99.5,...}</li>
+            <li><b>PK</b> id bigint</li>
+            <li>name varchar(200)</li>
+            <li>dept varchar(100)</li>
+            <li><b>type</b> enum(百分比/分值/等级)</li>
+            <li><b>grades</b> JSON <span style="color:var(--warn)">← 只存参考值</span></li>
           </ul>
+          <div style="background:#fafafa;padding:6px;border-radius:4px;margin-top:6px;font-size:10px;font-family:monospace;">
+grades=[{name,min,max,desc}]
+          </div>
         </div>
       </div>
-
-      <div class="entity">
-        <div class="entity-header" style="background:#e6f7ff;">📏 indicator（指标库）</div>
-        <div class="entity-body">
+      <div class="ent">
+        <div class="ent-h" style="background:#e6f7ff;">📏 indicator</div>
+        <div class="ent-b">
           <ul>
-            <li><span class="badge badge-required">PK</span> id bigint</li>
+            <li><b>PK</b> id bigint</li>
             <li>code varchar(50) UNIQUE</li>
             <li>name varchar(200)</li>
-            <li>category varchar(50) 分类</li>
-            <li>unit varchar(20) 计量单位</li>
-            <li>nature enum(quantitative/qualitative)</li>
-            <li><span class="badge badge-required">FK</span> measure_std_id → measure_standard</li>
+            <li>category varchar(50)</li>
+            <li>unit varchar(20)</li>
+            <li><b>FK</b> measure_std_id → 衡量标准</li>
+            <li><b>FK</b> calc_rule_id → 计算规则 <span style="color:var(--pur)">← 绑定公式</span></li>
           </ul>
         </div>
       </div>
-
-      <div class="entity">
-        <div class="entity-header" style="background:#f6ffed;">🧮 calc_rule（计算规则）</div>
-        <div class="entity-body">
+      <div class="ent">
+        <div class="ent-h" style="background:#f6ffed;">🧮 calc_rule</div>
+        <div class="ent-b">
           <ul>
-            <li><span class="badge badge-required">PK</span> id bigint</li>
+            <li><b>PK</b> id bigint</li>
             <li>name varchar(200)</li>
-            <li>type enum(weighted_sum/avg/custom)</li>
-            <li>formula text（自定义公式表达式）</li>
-            <li>formula_vars JSON（公式引用的变量列表）</li>
+            <li><b>formula</b> text <span style="color:var(--ok)">← 只存公式</span></li>
+            <li>formula_vars JSON</li>
             <li>status enum(enabled/disabled)</li>
           </ul>
         </div>
       </div>
     </div>
 
-    <div style="margin-top:20px;">
-      <div class="entity">
-        <div class="entity-header" style="background:#f9f0ff;">🔗 关系总结</div>
-        <div class="entity-body">
-          <div class="code" style="font-size:13px;">
-<span class="cmt">-- 指标库 → 衡量标准（多对一）</span>
-<span class="var">indicator</span>.<span class="fn">measure_std_id</span> <span class="op">→</span> <span class="var">measure_standard</span>.<span class="fn">id</span>
-<span class="cmt">-- 一个衡量标准可以被多个指标引用</span>
+    <div style="margin-top:16px;background:#fafafa;border-radius:8px;padding:16px;">
+      <div style="font-weight:600;margin-bottom:8px;">SQL 关系</div>
+      <div class="code" style="font-size:12px;">
+<span class="cmt">-- 指标库 → 衡量标准（多对一：多个指标可共用同一套参考值）</span>
+<span class="var">indicator</span>.<span class="fn">measure_std_id</span> → <span class="var">measure_standard</span>.<span class="fn">id</span>
 
-<span class="cmt">-- 目标制定表单 → 指标库（多对一）</span>
-<span class="var">goal_detail</span>.modules[*].goals[*].<span class="fn">indicator_id</span> <span class="op">→</span> <span class="var">indicator</span>.<span class="fn">id</span>
-<span class="cmt">-- 员工选择指标时，自动带出衡量标准和计算规则</span>
+<span class="cmt">-- 指标库 → 计算规则（多对一：多个指标可共用同一套公式）</span>
+<span class="var">indicator</span>.<span class="fn">calc_rule_id</span> → <span class="var">calc_rule</span>.<span class="fn">id</span>
 
-<span class="cmt">-- 绩效方案环节 → 计算规则（多对一）</span>
-<span class="var">perf_stage_config</span>(stage_type=<span class="str">'eval'</span>).<span class="fn">calc_rule_id</span> <span class="op">→</span> <span class="var">calc_rule</span>.<span class="fn">id</span>
-<span class="cmt">-- 方案绩效考核环节选择用哪套计算规则</span>
+<span class="cmt">-- 目标制定表单 → 指标库（员工选指标时带出参考值+公式）</span>
+<span class="var">goal_detail</span>.modules[*].goals[*].<span class="fn">indicator_id</span> → <span class="var">indicator</span>.<span class="fn">id</span>
 
-<span class="cmt">-- 绩效方案环节 → 评价规则（多对一）</span>
-<span class="var">perf_stage_config</span>(stage_type=<span class="str">'eval'</span>).<span class="fn">eval_rule_id</span> <span class="op">→</span> <span class="var">eval_rule</span>.<span class="fn">id</span>
-<span class="cmt">-- 评价规则定义评价模式（上级评价/360等）</span>
-
-<span class="cmt">-- 公式编辑器 → 计算规则（一对一，自定义类型时）</span>
-<span class="var">calc_rule</span>(type=<span class="str">'custom'</span>).<span class="fn">formula</span> <span class="cmt">-- 由公式编辑器生成的表达式</span>
-<span class="var">calc_rule</span>.<span class="fn">formula_vars</span> <span class="cmt">-- 公式引用的变量（字段白名单）</span>
-          </div>
-        </div>
+<span class="cmt">-- 方案环节 → 计算规则（方案选择用哪套总分公式）</span>
+<span class="var">perf_stage_config</span>(stage=<span class="str">'eval'</span>).<span class="fn">calc_rule_id</span> → <span class="var">calc_rule</span>.<span class="fn">id</span>
       </div>
     </div>
   </div>
