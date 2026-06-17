@@ -207,10 +207,12 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
         <div class="process-box">
           <h5>数据级联（表单间）</h5>
           <ul class="process-list">
-            <li>目标制定 approved → 目标数据写入考核明细表（快照）</li>
-            <li>绩效考核 completed → 考核数据写入审定明细表（快照）</li>
-            <li>结果审定 completed → 审定等级写入确认结果表（快照）</li>
-            <li>面谈 completed → 面谈数据写入面谈明细表 + 确认表引用</li>
+            <li>目标提交 → 写入 goal_detail，状态=pending（审批中），数据可见</li>
+            <li>目标审批通过 → 同一条记录状态=approved（生效），不复制</li>
+            <li>目标驳回 → 同一条记录状态=rejected（未生效），员工可修改后重新提交</li>
+            <li>考核：每个节点人提交 = 新增一行 eval_detail，驳回重提 = 再新增一行，旧行标记作废</li>
+            <li>审定：每个节点人提交 = 新增一行 ratification_detail，旧行作废</li>
+            <li>面谈 completed → 写入 interview_detail，确认表实时引用面谈数据</li>
             <li>员工确认 completed → 绩效结果锁定，不可修改</li>
           </ul>
         </div>
@@ -362,11 +364,13 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
       <div class="process-box">
         <h5>提交后数据处理</h5>
         <ul class="process-list">
-          <li><b>保存草稿：</b>数据写入 goal_draft 表，不触发流程，不锁定</li>
-          <li><b>提交：</b>数据写入 goal_detail 表，状态=pending，触发审批流程</li>
-          <li><b>审批通过（approved）：</b>目标数据锁定不可修改 → 同时写入 eval_detail 表（只读引用）</li>
-          <li><b>驳回（rejected）：</b>状态=rejected → 员工可修改后重新提交 → 旧审批记录保留</li>
+          <li><b>保存草稿：</b>数据写入 goal_detail，status=draft，不触发流程，不锁定</li>
+          <li><b>提交：</b>同一条记录 status=pending，数据可见，触发审批流程</li>
+          <li><b>审批通过：</b>同一条记录 status=approved（生效），目标数据锁定不可修改</li>
+          <li><b>驳回：</b>同一条记录 status=rejected（未生效），员工可修改后重新提交</li>
+          <li><b>重新提交：</b>同一条记录 status 回到 pending，数据更新，审批记录追加</li>
           <li><b>转交：</b>当前待办转给他人，原处理人记录保留</li>
+          <li><b>关键点：</b>目标数据始终是一条记录，通过 status 区分审批状态，不复制不快照</li>
         </ul>
       </div>
     </div>
@@ -392,13 +396,15 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
       <div class="process-box">
         <h5>提交后数据处理</h5>
         <ul class="process-list">
-          <li><b>自评提交：</b>完成值+评价写入 eval_detail 表，状态流转</li>
-          <li><b>间接上级提交：</b>间接上级评分写入 eval_detail 表</li>
-          <li><b>直接上级提交（completed）：</b></li>
+          <li><b>自评提交：</b>新增一行 eval_detail（submitter_role=self, status=active）</li>
+          <li><b>间接上级提交：</b>新增一行 eval_detail（submitter_role=indirect, status=active）</li>
+          <li><b>直接上级提交：</b>新增一行 eval_detail（submitter_role=direct, status=active）</li>
           <li style="padding-left:20px;">→ 计算<b>总评价结果</b>（按节点权重加权 or 取最后填写值）</li>
-          <li style="padding-left:20px;">→ 写入 ratification_detail 表（考核结果快照，只读引用）</li>
+          <li style="padding-left:20px;">→ 总评价结果+总分写入直接上级这行</li>
           <li style="padding-left:20px;">→ 触发结果审定环节开启</li>
+          <li><b>驳回重提：</b>间接上级驳回 → 员工修改 → 新增一行自评数据（status=active），旧行标记 voided</li>
           <li><b>批量提交：</b>逐条处理，成功则提交，失败返回错误明细</li>
+          <li><b>查询时：</b>取该员工 status=active 的最新行 = 当前有效数据；status=voided 的行 = 历史记录可回溯</li>
         </ul>
       </div>
     </div>
@@ -425,11 +431,12 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
         <h5>提交后数据处理</h5>
         <ul class="process-list">
           <li><b>每次调整等级：</b>实时更新强制分布计数（原子操作，防并发）</li>
-          <li><b>直接上级提交：</b>写入审定结果 + 校验分布</li>
-          <li><b>逐级上级提交+到达停止人员：</b>审定完成 → 写入 confirmation_result 表</li>
-          <li><b>HRBP驳回：</b>回到直接上级节点，强制分布计数回滚</li>
+          <li><b>直接上级提交：</b>新增一行 ratification_detail（submitter_role=direct, status=active）</li>
+          <li><b>间接上级提交：</b>新增一行（submitter_role=indirect, status=active）</li>
+          <li><b>逐级上级提交+到达停止人员：</b>新增一行 + 审定完成 → 触发面谈+确认环节</li>
+          <li><b>HRBP驳回：</b>当前行作废 → 回到直接上级 → 直接上级重新调整 → 新增一行</li>
           <li><b>跳过审定的员工：</b>使用方案中配置的固定等级，纳入分布分母</li>
-          <li><b>审定完成：</b>触发绩效面谈+结果确认环节开启</li>
+          <li><b>查询时：</b>取 status=active 的最新行 = 当前审定结果；voided 行 = 历史回溯</li>
         </ul>
       </div>
     </div>
@@ -595,49 +602,53 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
     <div style="font-size:14px;font-weight:600;margin-bottom:16px;">环节明细表（每个员工每个环节一张明细表）</div>
     <div class="grid-2">
       <div class="db-entity">
-        <div class="db-entity-header" style="background:#eef1fe;">🎯 goal_detail（目标明细表）</div>
+        <div class="db-entity-header" style="background:#eef1fe;">🎯 goal_detail（目标明细表）— 每人一条，状态驱动</div>
         <div class="db-entity-body">
           <div class="db-field"><span class="fkey">PK</span><span class="fname">id</span><span class="ftype">bigint</span></div>
           <div class="db-field"><span class="fkey">FK</span><span class="fname">activity_id</span><span class="ftype">bigint</span></div>
           <div class="db-field"><span class="fkey">FK</span><span class="fname">employee_id</span><span class="ftype">bigint</span></div>
-          <div class="db-field"><span class="fname">status</span><span class="ftype">enum(状态机状态)</span></div>
+          <div class="db-field"><span class="fname">status</span><span class="ftype">enum(pending/approved/rejected) 审批状态</span></div>
           <div class="db-field"><span class="fname">flow_instance_id</span><span class="ftype">bigint（流程引擎实例）</span></div>
           <div class="db-field"><span class="fname">modules</span><span class="ftype">JSON（模块+目标数组）</span></div>
           <div class="db-field"><span class="fname">total_weight</span><span class="ftype">decimal(5,2)</span></div>
           <div class="db-field"><span class="fname">submitted_at / approved_at</span><span class="ftype">timestamp</span></div>
           <div class="db-field"><span class="fname">approval_history</span><span class="ftype">JSON（审批记录数组）</span></div>
+          <div class="db-field" style="background:#fff7e6;font-size:11px;">💡 提交后数据可见，审批中/通过/未通过通过 status 标记，不复制</div>
         </div>
       </div>
       <div class="db-entity">
-        <div class="db-entity-header" style="background:#f6ffed;">📊 eval_detail（考核明细表）</div>
+        <div class="db-entity-header" style="background:#f6ffed;">📊 eval_detail（考核明细表）— 每人多行，追加式</div>
         <div class="db-entity-body">
           <div class="db-field"><span class="fkey">PK</span><span class="fname">id</span><span class="ftype">bigint</span></div>
           <div class="db-field"><span class="fkey">FK</span><span class="fname">activity_id</span><span class="ftype">bigint</span></div>
           <div class="db-field"><span class="fkey">FK</span><span class="fname">employee_id</span><span class="ftype">bigint</span></div>
-          <div class="db-field"><span class="fname">status</span><span class="ftype">enum(状态机状态)</span></div>
+          <div class="db-field"><span class="fkey">FK</span><span class="fname">submitter_id</span><span class="ftype">bigint（处理人：员工/间接上级/直接上级）</span></div>
+          <div class="db-field"><span class="fname">submitter_role</span><span class="ftype">enum(self/indirect/direct) 处理人角色</span></div>
+          <div class="db-field"><span class="fname">status</span><span class="ftype">enum(active/voided) 有效/作废</span></div>
           <div class="db-field"><span class="fname">flow_instance_id</span><span class="ftype">bigint</span></div>
-          <div class="db-field"><span class="fname">goals_snapshot</span><span class="ftype">JSON（引用目标表快照）</span></div>
-          <div class="db-field"><span class="fname">self_scores</span><span class="ftype">JSON（自评数据）</span></div>
-          <div class="db-field"><span class="fname">indirect_scores</span><span class="ftype">JSON（间接上级评分）</span></div>
-          <div class="db-field"><span class="fname">direct_scores</span><span class="ftype">JSON（直接上级评分）</span></div>
-          <div class="db-field"><span class="fname">total_eval_result</span><span class="ftype">varchar(10)（总评价结果）</span></div>
-          <div class="db-field"><span class="fname">total_score</span><span class="ftype">decimal(6,2)（计算得分）</span></div>
-          <div class="db-field"><span class="fname">bonus / penalty</span><span class="ftype">decimal(4,1)</span></div>
+          <div class="db-field"><span class="fname">score_data</span><span class="ftype">JSON（该节点提交的评分数据）</span></div>
+          <div class="db-field"><span class="fname">total_eval_result</span><span class="ftype">varchar(10)（仅直接上级行有值）</span></div>
+          <div class="db-field"><span class="fname">total_score</span><span class="ftype">decimal(6,2)（仅直接上级行有值）</span></div>
+          <div class="db-field"><span class="fname">submitted_at</span><span class="ftype">timestamp</span></div>
+          <div class="db-field" style="background:#fff7e6;font-size:11px;">💡 每次提交新增一行；驳回重提 → 旧行作废(status=voided)，新行有效(status=active)</div>
         </div>
       </div>
       <div class="db-entity">
-        <div class="db-entity-header" style="background:#fff7e6;">📋 ratification_detail（审定明细表）</div>
+        <div class="db-entity-header" style="background:#fff7e6;">📋 ratification_detail（审定明细表）— 每人多行，追加式</div>
         <div class="db-entity-body">
           <div class="db-field"><span class="fkey">PK</span><span class="fname">id</span><span class="ftype">bigint</span></div>
           <div class="db-field"><span class="fkey">FK</span><span class="fname">activity_id</span><span class="ftype">bigint</span></div>
           <div class="db-field"><span class="fkey">FK</span><span class="fname">employee_id</span><span class="ftype">bigint</span></div>
-          <div class="db-field"><span class="fname">status</span><span class="ftype">enum(状态机状态)</span></div>
+          <div class="db-field"><span class="fkey">FK</span><span class="fname">submitter_id</span><span class="ftype">bigint（处理人：直接上级/间接上级/逐级上级/HRBP）</span></div>
+          <div class="db-field"><span class="fname">submitter_role</span><span class="ftype">enum(direct/indirect/hierarchy/hrbp)</span></div>
+          <div class="db-field"><span class="fname">status</span><span class="ftype">enum(active/voided) 有效/作废</span></div>
           <div class="db-field"><span class="fname">flow_instance_id</span><span class="ftype">bigint</span></div>
           <div class="db-field"><span class="fname">pre_score</span><span class="ftype">decimal(6,2)（审定前总分）</span></div>
           <div class="db-field"><span class="fname">pre_grade</span><span class="ftype">varchar(10)（审定前等级）</span></div>
           <div class="db-field"><span class="fname">adjusted_grade</span><span class="ftype">varchar(10)（调整后等级）</span></div>
           <div class="db-field"><span class="fname">adjust_reason</span><span class="ftype">text（调整原因）</span></div>
-          <div class="db-field"><span class="fname">approval_history</span><span class="ftype">JSON（逐级审定记录）</span></div>
+          <div class="db-field"><span class="fname">submitted_at</span><span class="ftype">timestamp</span></div>
+          <div class="db-field" style="background:#fff7e6;font-size:11px;">💡 每级处理人提交一行；HRBP驳回 → 旧行作废，直接上级重新审定 → 新行</div>
         </div>
       </div>
       <div class="db-entity">
@@ -786,15 +797,15 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
         <h5>1. 目标制定驳回</h5>
         <ul class="process-list">
           <li><b>触发：</b>间接上级/直接上级点击"不同意"</li>
-          <li><b>数据处理：</b></li>
-          <li style="padding-left:20px;">→ goal_detail.status = rejected</li>
-          <li style="padding-left:20px;">→ 保留当前目标数据（不删除）</li>
-          <li style="padding-left:20px;">→ 追加审批记录到 approval_history</li>
+          <li><b>数据处理（同一条记录）：</b></li>
+          <li style="padding-left:20px;">→ goal_detail.status = rejected（未生效）</li>
+          <li style="padding-left:20px;">→ 数据保留在同一条记录中，员工可修改</li>
+          <li style="padding-left:20px;">→ 追加审批记录到 approval_history（含驳回原因）</li>
           <li><b>员工重新提交：</b></li>
-          <li style="padding-left:20px;">→ 员工修改目标数据</li>
-          <li style="padding-left:20px;">→ 重新进入审批流（间接上级→直接上级）</li>
-          <li style="padding-left:20px;">→ 旧审批记录保留，新审批记录追加</li>
-          <li><b>目标数据是否锁定：</b>驳回期间员工可修改，审批通过后锁定</li>
+          <li style="padding-left:20px;">→ 员工修改目标数据（更新同一条记录）</li>
+          <li style="padding-left:20px;">→ status 回到 pending，重新进入审批流</li>
+          <li style="padding-left:20px;">→ approval_history 追加新审批记录</li>
+          <li><b>目标数据可见性：</b>提交后始终可见，通过 status 标记审批状态</li>
         </ul>
       </div>
 
@@ -819,14 +830,15 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
         <h5>3. HRBP驳回审定</h5>
         <ul class="process-list">
           <li><b>触发：</b>调整后等级=A时进入HRBP审批，HRBP点击"不同意"</li>
-          <li><b>数据处理：</b></li>
-          <li style="padding-left:20px;">→ ratification_detail.status = pending_direct_rate（回到直接上级）</li>
-          <li style="padding-left:20px;">→ 调整后等级恢复为审定前等级</li>
+          <li><b>数据处理（追加式）：</b></li>
+          <li style="padding-left:20px;">→ 当前 HRBP 行 status=voided（作废）</li>
+          <li style="padding-left:20px;">→ 流程回到直接上级节点</li>
           <li style="padding-left:20px;">→ 强制分布计数回滚（该员工从A等级移除）</li>
-          <li><b>对其他员工的影响：</b></li>
-          <li style="padding-left:20px;">→ 其他已提交的员工审定不受影响</li>
-          <li style="padding-left:20px;">→ 强制分布计数实时反映当前状态</li>
-          <li><b>重审：</b>直接上级重新调整等级，重新进入逐级审定流程</li>
+          <li><b>直接上级重新审定：</b></li>
+          <li style="padding-left:20px;">→ 新增一行 ratification_detail（direct, active）</li>
+          <li style="padding-left:20px;">→ 重新进入逐级审定流程</li>
+          <li><b>历史可追溯：</b>所有 voided 行保留，可查看每次审定的调整原因和结果</li>
+          <li><b>对其他员工的影响：</b>不受影响，强制分布计数实时反映当前状态</li>
         </ul>
       </div>
 
@@ -896,22 +908,25 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
       </div>
 
       <div class="process-box">
-        <h5>8. 数据快照策略</h5>
+        <h5>8. 数据存储策略</h5>
         <ul class="process-list">
-          <li><b>方案→活动（copy时机）：</b></li>
+          <li><b>方案→活动配置：</b></li>
           <li style="padding-left:20px;">→ HRBP发起活动时，将方案全部配置序列化为JSON</li>
-          <li style="padding-left:20px;">→ 存入 activity.scheme_snapshot 字段</li>
-          <li style="padding-left:20px;">→ 后续所有环节引用快照中的配置</li>
-          <li><b>环节间数据级联（快照时机）：</b></li>
-          <li style="padding-left:20px;">→ 目标approved时 → 目标数据快照写入eval_detail.goals_snapshot</li>
-          <li style="padding-left:20px;">→ 考核completed时 → 考核结果快照写入ratification_detail</li>
-          <li style="padding-left:20px;">→ 审定completed时 → 审定等级写入confirmation_result</li>
-          <li><b>面谈→确认（引用方式）：</b></li>
+          <li style="padding-left:20px;">→ 存入 activity.scheme_snapshot 字段（配置快照，防方案修改影响活动）</li>
+          <li><b>目标数据（状态驱动，单条记录）：</b></li>
+          <li style="padding-left:20px;">→ 每个员工每个活动只有一条 goal_detail</li>
+          <li style="padding-left:20px;">→ 提交/驳回/重提都在同一条记录上更新 status</li>
+          <li style="padding-left:20px;">→ 数据始终可见，通过 status 区分审批状态</li>
+          <li><b>考核/审定数据（追加式，每人多行）：</b></li>
+          <li style="padding-left:20px;">→ 每个节点人提交 = 新增一行，驳回重提 = 再新增一行</li>
+          <li style="padding-left:20px;">→ 旧行标记 status=voided（作废），新行 status=active</li>
+          <li style="padding-left:20px;">→ 查询取 active 最新行 = 当前数据；voided 行 = 历史回溯</li>
+          <li><b>面谈→确认（实时引用）：</b></li>
           <li style="padding-left:20px;">→ 确认表单实时读取面谈数据（BR-023 直接引用不复制）</li>
           <li style="padding-left:20px;">→ 面谈修改后确认表单同步变化</li>
           <li><b>审批历史：</b></li>
-          <li style="padding-left:20px;">→ 每次审批操作追加到 approval_history JSON 数组</li>
-          <li style="padding-left:20px;">→ 记录：操作人/操作/时间/意见/变更前后值</li>
+          <li style="padding-left:20px;">→ 目标：approval_history JSON 数组追加</li>
+          <li style="padding-left:20px;">→ 考核/审定：每行自带 submitter_id + submitted_at，天然形成历史链</li>
         </ul>
       </div>
     </div>
