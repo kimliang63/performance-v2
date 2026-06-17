@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>公式编辑器 — 两层级设计</title>
+<style>
+:root{--bg:#f5f5f5;--card:#fff;--pri:#4f6ef7;--pri-l:#eef1fe;--ok:#52c41a;--warn:#faad14;--err:#ff4d4f;--pur:#722ed1;--txt:#1a1a2e;--txt2:#666;--bd:#e8e8e8;--sh:0 2px 8px rgba(0,0,0,.06)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--txt);line-height:1.6;padding:24px;}
+.wrap{max-width:1200px;margin:0 auto;}
+h1{font-size:20px;margin-bottom:4px;}
+.sub{font-size:13px;color:var(--txt2);margin-bottom:24px;}
+
+/* Level tabs */
+.level-tabs{display:flex;gap:0;margin-bottom:0;background:var(--card);border-radius:12px 12px 0 0;box-shadow:var(--sh);overflow:hidden;}
+.level-tab{flex:1;padding:14px 16px;cursor:pointer;text-align:center;border-bottom:3px solid transparent;transition:all .2s;}
+.level-tab:hover{background:#fafafa;}
+.level-tab.active{border-bottom-color:var(--pri);background:var(--pri-l);}
+.level-tab .lt-title{font-size:14px;font-weight:700;}
+.level-tab .lt-desc{font-size:11px;color:var(--txt2);margin-top:2px;}
+
+/* Editor */
+.editor{background:var(--card);border-radius:0 0 12px 12px;box-shadow:var(--sh);overflow:hidden;display:flex;height:520px;margin-bottom:24px;}
+.sidebar{width:260px;border-right:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0;}
+.sidebar-hd{padding:12px 16px;border-bottom:1px solid var(--bd);font-weight:600;font-size:13px;background:#fafafa;display:flex;align-items:center;gap:6px;}
+.sidebar-bd{flex:1;overflow-y:auto;padding:8px;}
+.main{flex:1;display:flex;flex-direction:column;}
+
+.field-group{margin-bottom:4px;}
+.field-group-hd{padding:6px 10px;font-size:11px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;gap:4px;}
+.field-group-hd::before{content:'';width:3px;height:10px;border-radius:2px;}
+.fg-std .field-group-hd::before{background:var(--warn);}
+.fg-form .field-group-hd::before{background:var(--pri);}
+.fg-sys .field-group-hd::before{background:var(--ok);}
+.fg-fn .field-group-hd::before{background:var(--pur);}
+.fg-score .field-group-hd::before{background:var(--err);}
+
+.field-item{padding:5px 10px;font-size:12px;border-radius:4px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .1s;user-select:none;}
+.field-item:hover{background:var(--pri-l);}
+.fi-tag{font-size:10px;padding:1px 5px;border-radius:3px;font-weight:600;flex-shrink:0;}
+.fi-num{background:#e6f7ff;color:#1890ff;}
+.fi-str{background:#f9f0ff;color:#722ed1;}
+.fi-dec{background:#fff7e6;color:#d46b08;}
+.fi-name{font-weight:500;color:var(--txt);}
+.fi-desc{font-size:10px;color:var(--txt2);margin-left:auto;}
+
+.toolbar{display:flex;align-items:center;gap:6px;padding:8px 16px;border-bottom:1px solid var(--bd);background:#fafafa;flex-wrap:wrap;}
+.tb-btn{padding:4px 10px;font-size:12px;border:1px solid var(--bd);border-radius:4px;background:var(--card);cursor:pointer;font-family:inherit;transition:all .1s;}
+.tb-btn:hover{border-color:var(--pri);color:var(--pri);}
+.tb-sep{width:1px;height:20px;background:var(--bd);margin:0 4px;}
+
+.formula-area{flex:1;padding:16px;overflow-y:auto;}
+.formula-display{font-family:'Fira Code','SF Mono',monospace;font-size:13px;line-height:2;min-height:160px;padding:16px;border:2px solid var(--bd);border-radius:8px;background:#fafafa;white-space:pre-wrap;word-break:break-all;}
+.formula-display:focus-within{border-color:var(--pri);box-shadow:0 0 0 3px var(--pri-l);}
+.f-tok{display:inline;padding:2px 6px;border-radius:4px;margin:0 1px;}
+.f-var{background:#e6f7ff;color:#1890ff;border:1px solid #bae0ff;}
+.f-fn{background:#f9f0ff;color:#722ed1;border:1px solid #d3adf7;}
+.f-op{color:var(--txt);font-weight:600;}
+.f-num{background:#fff7e6;color:#d46b08;border:1px solid #ffd591;}
+.f-kw{color:var(--err);font-weight:700;}
+.f-cmt{color:#999;font-style:italic;}
+
+.status-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-top:1px solid var(--bd);background:#fafafa;font-size:12px;color:var(--txt2);}
+.status-ok{color:var(--ok);font-weight:600;}
+
+/* Level content panels */
+.level-content{display:none;}
+.level-content.active{display:block;}
+
+/* Info boxes */
+.info-box{background:var(--card);border-radius:12px;box-shadow:var(--sh);padding:20px;margin-bottom:20px;}
+.info-box h3{font-size:15px;font-weight:700;margin-bottom:12px;}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.info-card{background:#fafafa;border-radius:8px;padding:14px;border:1px solid var(--bd);}
+.info-card h4{font-size:12px;font-weight:600;color:var(--pri);margin-bottom:6px;}
+.info-card ul{font-size:12px;color:var(--txt2);padding-left:16px;}
+.info-card li{margin-bottom:2px;}
+
+/* Indicator list */
+.indicator-list{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.indicator-chip{padding:8px 14px;border-radius:8px;border:2px solid var(--bd);cursor:pointer;transition:all .2s;background:var(--card);}
+.indicator-chip:hover{border-color:var(--pri);}
+.indicator-chip.active{border-color:var(--pri);background:var(--pri-l);}
+.indicator-chip .ic-name{font-size:13px;font-weight:600;}
+.indicator-chip .ic-std{font-size:11px;color:var(--txt2);margin-top:2px;}
+.indicator-chip .ic-score{font-size:11px;color:var(--ok);margin-top:2px;}
+
+/* Result */
+.result-row{display:flex;gap:12px;margin-top:16px;}
+.result-card{flex:1;background:#fafafa;border-radius:8px;padding:14px;border:1px solid var(--bd);}
+.result-card h4{font-size:12px;color:var(--txt2);margin-bottom:6px;}
+.result-card .val{font-size:22px;font-weight:700;}
+.result-card .val.green{color:var(--ok);}
+.result-card .val.blue{color:var(--pri);}
+.result-card .val.purple{color:var(--pur);}
+
+/* Total score section */
+.total-section{background:var(--card);border-radius:12px;box-shadow:var(--sh);padding:20px;margin-top:20px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>公式编辑器 — 两层级设计</h1>
+  <div class="sub">层级1：单个指标得分（每个指标用自己的衡量标准 grades）· 层级2：总分汇总（多个指标得分 + 权重）</div>
+
+  <!-- 层级选择 -->
+  <div class="level-tabs">
+    <div class="level-tab active" onclick="switchLevel(1)">
+      <div class="lt-title">层级1：单个指标得分</div>
+      <div class="lt-desc">每个指标用自己的衡量标准 grades，公式引用该指标的参考值</div>
+    </div>
+    <div class="level-tab" onclick="switchLevel(2)">
+      <div class="lt-title">层级2：总分汇总</div>
+      <div class="lt-desc">多个指标得分 + 权重 → 加权求和 / 自定义公式</div>
+    </div>
+  </div>
+
+  <!-- ===== 层级1：单个指标得分 ===== -->
+  <div id="level1" class="level-content active">
+    <div class="info-box" style="border-radius:0 0 0 0;">
+      <h3>选择指标 → 该指标的衡量标准 grades 注入为公式变量</h3>
+      <div class="indicator-list" id="indicatorList">
+        <div class="indicator-chip active" onclick="selectIndicator(0)">
+          <div class="ic-name">📏 指标A：季度营收达成率</div>
+          <div class="ic-std">衡量标准：营收类参考值</div>
+          <div class="ic-score">grades: 挑战120 / 目标100 / 保底80</div>
+        </div>
+        <div class="indicator-chip" onclick="selectIndicator(1)">
+          <div class="ic-name">📏 指标B：客户满意度</div>
+          <div class="ic-std">衡量标准：满意度等级</div>
+          <div class="ic-score">grades: A:110-120 / B:90-109 / C:70-89</div>
+        </div>
+        <div class="indicator-chip" onclick="selectIndicator(2)">
+          <div class="ic-name">📏 指标C：项目按时交付率</div>
+          <div class="ic-std">衡量标准：交付标准</div>
+          <div class="ic-score">grades: 提前100 / 按时80 / 延期50 / 严重0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="editor">
+      <div class="sidebar">
+        <div class="sidebar-hd" id="sidebarHd1">📦 可用字段 · 指标A</div>
+        <div class="sidebar-bd" id="sidebarFields1">
+          <!-- 动态填充 -->
+        </div>
+      </div>
+      <div class="main">
+        <div class="toolbar">
+          <button class="tb-btn" onclick="insertToken('IF')">IF</button>
+          <button class="tb-btn" onclick="insertToken('ROUND')">ROUND</button>
+          <button class="tb-btn" onclick="insertToken('MIN')">MIN</button>
+          <button class="tb-btn" onclick="insertToken('MAX')">MAX</button>
+          <div class="tb-sep"></div>
+          <button class="tb-btn" onclick="insertOp('>')"> &gt; </button>
+          <button class="tb-btn" onclick="insertOp('<')"> &lt; </button>
+          <button class="tb-btn" onclick="insertOp('>=')"> &gt;= </button>
+          <button class="tb-btn" onclick="insertOp('<=')"> &lt;= </button>
+          <button class="tb-btn" onclick="insertOp('==')"> == </button>
+          <div class="tb-sep"></div>
+          <button class="tb-btn" onclick="insertOp('+')"> + </button>
+          <button class="tb-btn" onclick="insertOp('-')"> - </button>
+          <button class="tb-btn" onclick="insertOp('*')"> × </button>
+          <button class="tb-btn" onclick="insertOp('/')"> ÷ </button>
+        </div>
+        <div class="formula-area">
+          <div class="formula-display" id="formulaDisplay1" contenteditable="true" spellcheck="false"></div>
+        </div>
+        <div class="status-bar">
+          <span>💡 点击左侧字段插入 · 公式变量来自当前指标的衡量标准 grades</span>
+          <span class="status-ok">✓ 公式校验通过</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="result-row" id="resultRow1"></div>
+  </div>
+
+  <!-- ===== 层级2：总分汇总 ===== -->
+  <div id="level2" class="level-content">
+    <div class="info-box" style="border-radius:0 0 0 0;">
+      <h3>总分 = Σ(各指标得分 × 权重) + 加分 - 减分</h3>
+      <div class="info-grid">
+        <div class="info-card">
+          <h4>总分公式引用的字段</h4>
+          <ul>
+            <li><b>indicator_score_A</b> — 指标A的得分（层级1算出）</li>
+            <li><b>indicator_score_B</b> — 指标B的得分</li>
+            <li><b>indicator_score_C</b> — 指标C的得分</li>
+            <li><b>weight_A / weight_B / weight_C</b> — 各指标权重</li>
+            <li><b>bonus</b> — 加分</li>
+            <li><b>penalty</b> — 减分</li>
+          </ul>
+        </div>
+        <div class="info-card">
+          <h4>关键区别</h4>
+          <ul>
+            <li>层级1：引用的是<b>衡量标准 grades</b>（挑战值/目标值/保底值）</li>
+            <li>层级2：引用的是<b>各指标的得分结果</b>（已算出的分数）</li>
+            <li>层级2 不直接引用 grades，而是引用层级1的计算结果</li>
+            <li>两个层级的公式独立配置，层级2的输入 = 层级1的输出</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="editor">
+      <div class="sidebar">
+        <div class="sidebar-hd">📦 可用字段 · 总分汇总</div>
+        <div class="sidebar-bd">
+          <div class="field-group fg-score">
+            <div class="field-group-hd">📊 各指标得分（层级1输出）</div>
+            <div class="field-item"><span class="fi-tag fi-dec">DEC</span><span class="fi-name">indicator_score_A</span><span class="fi-desc">115.0</span></div>
+            <div class="field-item"><span class="fi-tag fi-dec">DEC</span><span class="fi-name">indicator_score_B</span><span class="fi-desc">99.5</span></div>
+            <div class="field-item"><span class="fi-tag fi-dec">DEC</span><span class="fi-name">indicator_score_C</span><span class="fi-desc">80.0</span></div>
+          </div>
+          <div class="field-group fg-form">
+            <div class="field-group-hd">⚖️ 权重（员工填写）</div>
+            <div class="field-item"><span class="fi-tag fi-num">DEC</span><span class="fi-name">weight_A</span><span class="fi-desc">60%</span></div>
+            <div class="field-item"><span class="fi-tag fi-num">DEC</span><span class="fi-name">weight_B</span><span class="fi-desc">25%</span></div>
+            <div class="field-item"><span class="fi-tag fi-num">DEC</span><span class="fi-name">weight_C</span><span class="fi-desc">15%</span></div>
+          </div>
+          <div class="field-group fg-form">
+            <div class="field-group-hd">➕ 加减分</div>
+            <div class="field-item"><span class="fi-tag fi-num">DEC</span><span class="fi-name">bonus</span><span class="fi-desc">加分</span></div>
+            <div class="field-item"><span class="fi-tag fi-num">DEC</span><span class="fi-name">penalty</span><span class="fi-desc">减分</span></div>
+          </div>
+          <div class="field-group fg-sys">
+            <div class="field-group-hd">⚙️ 系统字段</div>
+            <div class="field-item"><span class="fi-tag fi-num">INT</span><span class="fi-name">indicator_count</span><span class="fi-desc">指标数</span></div>
+          </div>
+          <div class="field-group fg-fn">
+            <div class="field-group-hd">🔧 函数</div>
+            <div class="field-item"><span class="fi-tag fi-fn">FN</span><span class="fi-name">WEIGHTED_SUM(scores, weights)</span></div>
+            <div class="field-item"><span class="fi-tag fi-fn">FN</span><span class="fi-name">SUM(array)</span></div>
+            <div class="field-item"><span class="fi-tag fi-fn">FN</span><span class="fi-name">ROUND(value, digits)</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="main">
+        <div class="toolbar">
+          <button class="tb-btn" onclick="insertToken2('WEIGHTED_SUM')">WEIGHTED_SUM</button>
+          <button class="tb-btn" onclick="insertToken2('SUM')">SUM</button>
+          <button class="tb-btn" onclick="insertToken2('ROUND')">ROUND</button>
+          <div class="tb-sep"></div>
+          <button class="tb-btn" onclick="insertOp2('+')"> + </button>
+          <button class="tb-btn" onclick="insertOp2('-')"> - </button>
+          <button class="tb-btn" onclick="insertOp2('*')"> × </button>
+          <button class="tb-btn" onclick="insertOp2('/')"> ÷ </button>
+        </div>
+        <div class="formula-area">
+          <div class="formula-display" id="formulaDisplay2" contenteditable="true" spellcheck="false">
+<span class="f-cmt">// 加权求和公式</span>
+<span class="f-kw">ROUND</span>(
+  <span class="f-tok f-var">indicator_score_A</span> <span class="f-op">*</span> <span class="f-tok f-var">weight_A</span> <span class="f-op">/</span> <span class="f-num">100</span>
+  <span class="f-op">+</span> <span class="f-tok f-var">indicator_score_B</span> <span class="f-op">*</span> <span class="f-tok f-var">weight_B</span> <span class="f-op">/</span> <span class="f-num">100</span>
+  <span class="f-op">+</span> <span class="f-tok f-var">indicator_score_C</span> <span class="f-op">*</span> <span class="f-tok f-var">weight_C</span> <span class="f-op">/</span> <span class="f-num">100</span>
+  <span class="f-op">+</span> <span class="f-tok f-var">bonus</span>
+  <span class="f-op">-</span> <span class="f-tok f-var">penalty</span>
+, <span class="f-num">1</span>)
+          </div>
+        </div>
+        <div class="status-bar">
+          <span>💡 总分公式引用各指标得分（层级1的输出）+ 权重 + 加减分</span>
+          <span class="status-ok">✓ 公式校验通过</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="result-row">
+      <div class="result-card"><h4>指标A得分 × 权重</h4><div class="val blue">115.0 × 60% = 69.0</div></div>
+      <div class="result-card"><h4>指标B得分 × 权重</h4><div class="val blue">99.5 × 25% = 24.9</div></div>
+      <div class="result-card"><h4>指标C得分 × 权重</h4><div class="val blue">80.0 × 15% = 12.0</div></div>
+    </div>
+    <div class="result-row">
+      <div class="result-card"><h4>加权小计</h4><div class="val">105.9</div></div>
+      <div class="result-card"><h4>加分 - 减分</h4><div class="val">+5 - 0 = +5</div></div>
+      <div class="result-card"><h4>最终总分</h4><div class="val green">110.9</div></div>
+    </div>
+  </div>
+
+  <!-- 数据流总结 -->
+  <div class="info-box">
+    <h3>🔗 两层级数据流</h3>
+    <div style="background:#fafafa;border-radius:8px;padding:16px;font-family:'Fira Code',monospace;font-size:13px;line-height:2;">
+<span style="color:var(--pur)">层级1：单个指标得分</span>
+┌─────────────────────────────────────────────────────────────────────┐
+│ 指标A → 衡量标准(grades:[120,100,80]) → 公式: IF(actual>120, 4, 0)  │
+│         ↓ grades 注入为变量                                        │
+│ challenge_value=120, target_value=100, baseline_value=80            │
+│         ↓ 员工填 actual_value=115                                   │
+│         ↓ 公式执行                                                  │
+│ 输出: indicator_score_A = <span style="color:var(--ok);font-weight:700">3分</span>                                       │
+└─────────────────────────────────────────────────────────────────────┘
+                              ↓ 作为输入
+<span style="color:var(--pri)">层级2：总分汇总</span>
+┌─────────────────────────────────────────────────────────────────────┐
+│ 总分 = indicator_score_A × weight_A / 100                          │
+│      + indicator_score_B × weight_B / 100                          │
+│      + indicator_score_C × weight_C / 100                          │
+│      + bonus - penalty                                             │
+│                                                                     │
+│ = 3×60/100 + 3.3×25/100 + 3×15/100 + 5 - 0                       │
+│ = <span style="color:var(--ok);font-weight:700">110.9分</span>                                                         │
+└─────────────────────────────────────────────────────────────────────┘
+    </div>
+  </div>
+</div>
+
+<script>
+const indicators = [
+  {
+    name: '指标A：季度营收达成率',
+    stdName: '营收类参考值',
+    grades: [
+      {name:'卓越', min:100, max:120, desc:'超额完成'},
+      {name:'优秀', min:80, max:100, desc:'达标'},
+      {name:'待改进', min:0, max:80, desc:'未达标'}
+    ],
+    formula: `<span class="f-cmt">// 指标A：梯度插值</span>\n<span class="f-kw">IF</span>(<span class="f-tok f-var">actual_value</span> <span class="f-op">></span> <span class="f-tok f-var">challenge_value</span>,\n   <span class="f-num">120</span>,\n<span class="f-kw">IF</span>(<span class="f-tok f-var">actual_value</span> <span class="f-op">>=</span> <span class="f-tok f-var">target_value</span>,\n   <span class="f-num">100</span> <span class="f-op">+</span> (<span class="f-tok f-var">actual_value</span> <span class="f-op">-</span> <span class="f-tok f-var">target_value</span>) <span class="f-op">/</span>\n     (<span class="f-tok f-var">challenge_value</span> <span class="f-op">-</span> <span class="f-tok f-var">target_value</span>) <span class="f-op">*</span> <span class="f-num">20</span>,\n<span class="f-kw">IF</span>(<span class="f-tok f-var">actual_value</span> <span class="f-op">>=</span> <span class="f-tok f-var">baseline_value</span>,\n   <span class="f-num">60</span> <span class="f-op">+</span> (<span class="f-tok f-var">actual_value</span> <span class="f-op">-</span> <span class="f-tok f-var">baseline_value</span>) <span class="f-op">/</span>\n     (<span class="f-tok f-var">target_value</span> <span class="f-op">-</span> <span class="f-tok f-var">baseline_value</span>) <span class="f-op">*</span> <span class="f-num">40</span>,\n   <span class="f-num">0</span>))))`,
+    result: {actual:115, score:115.0}
+  },
+  {
+    name: '指标B：客户满意度',
+    stdName: '满意度等级',
+    grades: [
+      {name:'A', min:110, max:120, desc:'非常满意'},
+      {name:'B', min:90, max:109, desc:'满意'},
+      {name:'C', min:70, max:89, desc:'一般'},
+      {name:'D', min:0, max:69, desc:'不满意'}
+    ],
+    formula: `<span class="f-cmt">// 指标B：定性评分（grades 中的区间映射）</span>\n<span class="f-kw">IF</span>(<span class="f-tok f-var">eval_result</span> <span class="f-op">==</span> <span class="str">"A"</span>, <span class="f-num">115</span>,\n<span class="f-kw">IF</span>(<span class="f-tok f-var">eval_result</span> <span class="f-op">==</span> <span class="str">"B"</span>, <span class="f-num">99.5</span>,\n<span class="f-kw">IF</span>(<span class="f-tok f-var">eval_result</span> <span class="f-op">==</span> <span class="str">"C"</span>, <span class="f-num">79.5</span>,\n<span class="f-kw">IF</span>(<span class="f-tok f-var">eval_result</span> <span class="f-op">==</span> <span class="str">"D"</span>, <span class="f-num">59.5</span>,\n   <span class="f-num">0</span>)))))`,
+    result: {actual:'B', score:99.5}
+  },
+  {
+    name: '指标C：项目按时交付率',
+    stdName: '交付标准',
+    grades: [
+      {name:'提前交付', min:100, max:100, desc:'提前≥5天'},
+      {name:'按时交付', min:80, max:99, desc:'按时完成'},
+      {name:'延期交付', min:50, max:79, desc:'延期≤3天'},
+      {name:'严重延期', min:0, max:49, desc:'延期>3天'}
+    ],
+    formula: `<span class="f-cmt">// 指标C：等级评分（grades 的区间）</span>\n<span class="f-kw">IF</span>(<span class="f-tok f-var">actual_value</span> <span class="f-op">>=</span> <span class="f-tok f-var">challenge_value</span>, <span class="f-num">100</span>,\n<span class="f-kw">IF</span>(<span class="f-tok f-var">actual_value</span> <span class="f-op">>=</span> <span class="f-tok f-var">target_value</span>, <span class="f-num">80</span>,\n<span class="f-kw">IF</span>(<span class="f-tok f-var">actual_value</span> <span class="f-op">>=</span> <span class="f-tok f-var">baseline_value</span>, <span class="f-num">50</span>,\n   <span class="f-num">0</span>)))`,
+    result: {actual:85, score:80.0}
+  }
+];
+
+let currentIndicator = 0;
+
+function selectIndicator(idx) {
+  currentIndicator = idx;
+  document.querySelectorAll('.indicator-chip').forEach((el,i) => {
+    el.classList.toggle('active', i === idx);
+  });
+  renderLevel1();
+}
+
+function renderLevel1() {
+  const ind = indicators[currentIndicator];
+  // Sidebar
+  document.getElementById('sidebarHd1').textContent = '📦 可用字段 · ' + ind.name;
+  let html = '';
+  // 衡量标准参考值
+  html += '<div class="field-group fg-std"><div class="field-group-hd">📐 衡量标准 · ' + ind.stdName + '</div>';
+  ind.grades.forEach((g,i) => {
+    html += `<div class="field-item"><span class="fi-tag fi-num">DEC</span><span class="fi-name">grade_${i}_max</span><span class="fi-desc">${g.max}</span></div>`;
+    html += `<div class="field-item"><span class="fi-tag fi-num">DEC</span><span class="fi-name">grade_${i}_min</span><span class="fi-desc">${g.min}</span></div>`;
+    html += `<div class="field-item"><span class="fi-tag fi-str">STR</span><span class="fi-name">grade_${i}_name</span><span class="fi-desc">${g.name}</span></div>`;
+  });
+  // 语义化别名
+  if (ind.grades.length >= 3) {
+    html += '<div style="margin-top:6px;padding:6px 10px;background:#fff7e6;border-radius:4px;font-size:11px;color:#92400e;">💡 别名：grade_0_max = challenge_value, grade_1_max = target_value, grade_2_max = baseline_value</div>';
+  }
+  html += '</div>';
+  // 表单字段
+  html += '<div class="field-group fg-form"><div class="field-group-hd">📝 表单字段</div>';
+  html += '<div class="field-item"><span class="fi-tag fi-num">DEC</span><span class="fi-name">actual_value</span><span class="fi-desc">完成值</span></div>';
+  html += '<div class="field-item"><span class="fi-tag fi-num">DEC</span><span class="fi-name">weight</span><span class="fi-desc">权重%</span></div>';
+  html += '<div class="field-item"><span class="fi-tag fi-str">ENUM</span><span class="fi-name">eval_result</span><span class="fi-desc">评价结果</span></div>';
+  html += '</div>';
+  // 函数
+  html += '<div class="field-group fg-fn"><div class="field-group-hd">🔧 函数</div>';
+  html += '<div class="field-item"><span class="fi-tag fi-fn">FN</span><span class="fi-name">IF(cond, then, else)</span></div>';
+  html += '<div class="field-item"><span class="fi-tag fi-fn">FN</span><span class="fi-name">ROUND(val, digits)</span></div>';
+  html += '<div class="field-item"><span class="fi-tag fi-fn">FN</span><span class="fi-name">MIN(a, b)</span></div>';
+  html += '<div class="field-item"><span class="fi-tag fi-fn">FN</span><span class="fi-name">MAX(a, b)</span></div>';
+  html += '</div>';
+  document.getElementById('sidebarFields1').innerHTML = html;
+  // Formula
+  document.getElementById('formulaDisplay1').innerHTML = ind.formula;
+  // Result
+  document.getElementById('resultRow1').innerHTML = `
+    <div class="result-card"><h4>输入：${ind.name}</h4><div class="val blue">${ind.result.actual}</div></div>
+    <div class="result-card"><h4>参考值（grades）</h4><div class="val">${ind.grades.map(g=>g.max).join(' / ')}</div></div>
+    <div class="result-card"><h4>输出：得分</h4><div class="val green">${ind.result.score}</div></div>
+  `;
+}
+
+function switchLevel(level) {
+  document.querySelectorAll('.level-tab').forEach((el,i) => el.classList.toggle('active', i===level-1));
+  document.querySelectorAll('.level-content').forEach((el,i) => el.classList.toggle('active', i===level-1));
+}
+
+function insertToken(token) {
+  const el = document.getElementById('formulaDisplay1');
+  const sel = window.getSelection();
+  const span = document.createElement('span');
+  span.className = 'f-tok f-var';
+  span.textContent = token;
+  if (sel.rangeCount) { const r = sel.getRangeAt(0); r.deleteContents(); r.insertNode(span); r.setStartAfter(span); r.setEndAfter(span); sel.removeAllRanges(); sel.addRange(r); }
+}
+function insertOp(op) {
+  const el = document.getElementById('formulaDisplay1');
+  const sel = window.getSelection();
+  const span = document.createElement('span');
+  span.className = 'f-op';
+  span.textContent = ' ' + op + ' ';
+  if (sel.rangeCount) { const r = sel.getRangeAt(0); r.deleteContents(); r.insertNode(span); r.setStartAfter(span); r.setEndAfter(span); sel.removeAllRanges(); sel.addRange(r); }
+}
+function insertToken2(token) {
+  const el = document.getElementById('formulaDisplay2');
+  const sel = window.getSelection();
+  const span = document.createElement('span');
+  span.className = 'f-tok f-fn';
+  span.textContent = token;
+  if (sel.rangeCount) { const r = sel.getRangeAt(0); r.deleteContents(); r.insertNode(span); r.setStartAfter(span); r.setEndAfter(span); sel.removeAllRanges(); sel.addRange(r); }
+}
+function insertOp2(op) {
+  const el = document.getElementById('formulaDisplay2');
+  const sel = window.getSelection();
+  const span = document.createElement('span');
+  span.className = 'f-op';
+  span.textContent = ' ' + op + ' ';
+  if (sel.rangeCount) { const r = sel.getRangeAt(0); r.deleteContents(); r.insertNode(span); r.setStartAfter(span); r.setEndAfter(span); sel.removeAllRanges(); sel.addRange(r); }
+}
+
+renderLevel1();
+</script>
+</body>
+</html>

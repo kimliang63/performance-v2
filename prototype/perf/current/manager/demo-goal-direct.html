@@ -14,179 +14,183 @@
   --vi:#8B5CF6;--vi50:#F5F3FF;
   --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
   --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
-  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
-  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
-  --fm:'JetBrains Mono','SF Mono',monospace;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --r1:6px;--r2:8px;--r3:10px;
+  --f:'Inter','Noto Sans SC',-apple-system,sans-serif;
+  --m:'JetBrains Mono','SF Mono',monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoothing:antialiased;line-height:1.5}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
 
-.btn{display:inline-flex;align-items:center;gap:5px;padding:0 16px;height:34px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
-.btn svg{width:14px;height:14px}
-.btn-p{background:var(--pr);color:#FFF}.btn-p:hover{background:var(--pr700)}
-.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3);color:var(--c8)}
-.btn-danger{background:var(--sf);color:var(--ro);border:1px solid var(--ro100)}.btn-danger:hover{background:var(--ro50);border-color:var(--ro)}
-.btn-ac{background:var(--sf);color:var(--ac700);border:1px solid var(--ac100)}.btn-ac:hover{background:var(--ac50);border-color:var(--ac)}
+/* Header */
+.hdr{height:52px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:1100}
+.hdr-l{display:flex;align-items:center;gap:14px}
+.logo{display:flex;align-items:center;gap:8px;cursor:pointer;text-decoration:none}
+.logo-i{width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center}
+.logo-i svg{width:15px;height:15px;color:#FFF}
+.logo-t{font-size:15px;font-weight:700;color:var(--c9);letter-spacing:-.3px}
+.hdr-sep{width:1px;height:20px;background:var(--c2);margin:0 2px}
+.hdr-r{margin-left:auto;display:flex;align-items:center;gap:10px}
+.avatar{width:30px;height:30px;border-radius:50%;background:var(--vi);display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--f);color:#FFF}
 
-.info-row{display:flex;align-items:center;gap:24px;flex-wrap:wrap}
-.info-item{display:flex;align-items:center;gap:6px;font:400 13px/1 var(--f);color:var(--c5)}
-.info-item strong{font-weight:600;color:var(--c8)}
+.breadcrumb{display:flex;align-items:center;gap:4px;font:500 12px/1 var(--f);color:var(--c5);margin-bottom:12px}
+.breadcrumb a{color:var(--c5);text-decoration:none;transition:color .12s}
+.breadcrumb a:hover{color:var(--pr)}
+.breadcrumb .sep{color:var(--c3)}
+.breadcrumb .cur{color:var(--c8);font-weight:600}
 
-.weight-total{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--c0);border-radius:var(--r1);font:500 13px/1 var(--f)}
-.weight-total .val{font:700 18px/1 var(--fm)}
-.weight-total.ok .val{color:var(--em700)}
-.weight-total.err .val{color:var(--ro)}
+.ct{padding:24px}
 
-.module-card{background:var(--sf);border-radius:var(--r3);box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:16px;overflow:hidden}
-.module-hd{display:flex;align-items:center;gap:10px;padding:14px 20px;border-bottom:1px solid var(--dv)}
-.module-icon{width:24px;height:24px;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.module-icon svg{width:12px;height:12px;color:#FFF}
-.module-name{font:600 14px/1 var(--f);color:var(--c9)}
-.module-weight{font:500 11px/1 var(--fm);padding:2px 7px;border-radius:3px;background:var(--pr50);color:var(--pr);margin-left:8px}
-.module-bd{padding:0}
+/* Page header */
+.pg-hd{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:16px}
+.pg-hd-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.pg-hd-title{font:700 20px/1.2 var(--f);color:var(--c9)}
+.pg-hd-actions{display:flex;gap:8px}
+.pg-hd-info{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 24px;font:400 13px/1 var(--f);color:var(--c5);padding:12px 16px;background:var(--c0);border-radius:var(--r2)}
+.pg-hd-info-item{display:flex;flex-direction:column;gap:2px}
+.pg-hd-info-label{font:400 11px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px}
+.pg-hd-info-value{font:500 13px/1.3 var(--f);color:var(--c8)}
 
-.goal-row{display:grid;grid-template-columns:140px 70px 100px 100px 1fr;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid var(--dv);font:400 13px/1.3 var(--f)}
-.goal-row:last-child{border-bottom:none}
-.goal-row-hd{font:500 11px/1 var(--f);color:var(--c5);padding:8px 20px;border-bottom:1px solid var(--dv);background:var(--c0)}
-.goal-name{font-weight:500;color:var(--c8)}
-.goal-weight-input{width:52px;height:28px;border:1px solid var(--c2);border-radius:var(--r1);text-align:center;font:500 13px/1 var(--fm);font-family:var(--fm);outline:none;padding:0 4px}
-.goal-weight-input:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr100)}
-.goal-val{font-family:var(--fm);color:var(--c7);text-align:right}
-.goal-criteria{color:var(--c6);font-size:12px}
-.empty-goal{padding:20px;text-align:center;font:400 13px/1 var(--f);color:var(--c4)}
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
+.btn svg{width:13px;height:13px}
+.btn-p{background:var(--pr);color:#FFF}
+.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}
+.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
+.btn-danger{background:var(--sf);color:var(--ro);border:1px solid var(--ro100)}
+.btn-danger:hover{background:var(--ro50);border-color:var(--ro)}
+.btn-ac{background:var(--sf);color:var(--ac700);border:1px solid var(--ac100)}
+.btn-ac:hover{background:var(--ac50);border-color:var(--ac)}
 
-.approval-box{background:var(--sf);border-radius:var(--r3);box-shadow:0 1px 3px rgba(0,0,0,.05);margin-top:16px;overflow:hidden}
-.approval-box textarea{width:100%;height:100px;border:1px solid var(--c2);border-radius:var(--r1);padding:10px 12px;font:400 13px/1.5 var(--f);resize:vertical;outline:none;font-family:inherit}
+/* Module section */
+.mod-section{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden;border-left:3px solid var(--pr)}
+.mod-section.em{border-left-color:var(--em)}
+.mod-hd{display:flex;align-items:center;padding:14px 20px;gap:12px;cursor:pointer;user-select:none;transition:background .12s}
+.mod-hd:hover{background:var(--c0)}
+.mod-hd-title{font:600 15px/1 var(--f);color:var(--c9);flex:1}
+.mod-hd-stats{display:flex;align-items:center;gap:16px;font:400 13px/1 var(--f);color:var(--c5)}
+.mod-hd-stats strong{font-family:var(--m);font-weight:600;color:var(--pr)}
+.mod-hd-chevron{width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--c4);transition:transform .25s;flex-shrink:0}
+.mod-hd-chevron.open{transform:rotate(180deg)}
+.mod-hd-chevron svg{width:14px;height:14px}
+.mod-body{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.mod-body.open{max-height:2000px}
+
+/* Goal row */
+.goal-row{border-top:1px solid var(--dv);transition:background .1s}
+.goal-row:hover{background:var(--c0)}
+.goal-summary{display:flex;align-items:center;padding:12px 20px;gap:12px;cursor:pointer}
+.goal-name{flex:1;font:500 14px/1.3 var(--f);color:var(--c8)}
+.goal-meta{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.goal-type{font:500 11px/1 var(--f);padding:2px 7px;border-radius:3px;background:var(--c1);color:var(--c6)}
+.goal-type.quant{background:var(--pr50);color:var(--pr)}
+.goal-type.qual{background:var(--vi50);color:var(--vi)}
+.goal-weight{font:500 13px/1 var(--m);color:var(--c7)}
+
+/* Goal detail - read only */
+.goal-detail{padding:0 20px 16px 46px;display:none}
+.goal-detail.open{display:block}
+.gd-form{background:var(--c0);border-radius:var(--r2);padding:16px;border:1px solid var(--c2)}
+.gd-sec{margin-bottom:14px}
+.gd-sec:last-child{margin-bottom:0}
+.gd-sec-title{font:600 12px/1 var(--f);color:var(--c6);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:6px}
+.gd-sec-title svg{width:13px;height:13px;color:var(--pr)}
+.gd-row{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px}
+.gd-row.f3{grid-template-columns:1fr 1fr 1fr}
+.gd-fi{display:flex;flex-direction:column;gap:3px}
+.gd-fi-l{font:400 11px/1 var(--f);color:var(--c5)}
+.gd-fi-v{font:500 13px/1.4 var(--f);color:var(--c8)}
+.gd-fi-v.mono{font-family:var(--m)}
+.gd-linked{display:flex;align-items:center;gap:4px;padding:5px 8px;background:var(--pr50);border:1px solid var(--pr200);border-radius:var(--r1);font:500 12px/1 var(--f);color:var(--pr)}
+.gd-linked svg{width:12px;height:12px;flex-shrink:0}
+.gd-rule-box{margin-top:8px;padding:8px 10px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r1)}
+.gd-rule-box code{font:400 11px/1.5 var(--m);color:var(--c8);white-space:pre-wrap;word-break:break-all}
+.gd-rule-lbl{font:500 10px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+
+/* Approval comment */
+.approval-box{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-top:16px;overflow:hidden}
+.approval-box textarea{width:100%;height:80px;border:1px solid var(--c2);border-radius:var(--r1);padding:10px 12px;font:400 13px/1.5 var(--f);resize:vertical;outline:none;font-family:inherit}
 .approval-box textarea:focus{border-color:var(--pr)}
 
+/* Toast */
+.toast{position:fixed;top:64px;left:50%;transform:translateX(-50%) translateY(-10px);padding:10px 20px;border-radius:var(--r2);font:500 13px/1 var(--f);box-shadow:0 8px 24px rgba(0,0,0,.15);z-index:3000;opacity:0;pointer-events:none;transition:all .25s}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.success{background:var(--em);color:#FFF}
+.toast.error{background:var(--ro);color:#FFF}
+
+/* Modal */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:2000;align-items:center;justify-content:center}
 .modal-overlay.on{display:flex}
-.modal{background:var(--sf);border-radius:var(--r3);padding:24px;width:420px;box-shadow:0 20px 60px rgba(0,0,0,.15)}
-.modal-t{font:600 16px/1 var(--f);color:var(--c9);margin-bottom:16px}
+.modal{background:var(--sf);border-radius:var(--r3);padding:24px;width:420px;box-shadow:var(--shadow-modal)}
+.modal-t{font:600 16px/1 var(--f);color:var(--c9);margin-bottom:12px}
+.modal-desc{font:400 13px/1.5 var(--f);color:var(--c6);margin-bottom:12px}
 .modal textarea{width:100%;height:80px;border:1px solid var(--c2);border-radius:var(--r1);padding:10px 12px;font:400 13px/1.5 var(--f);resize:vertical;outline:none;font-family:inherit}
-.modal textarea:focus{border-color:var(--ro)}
-.modal select{width:100%;height:34px;border:1px solid var(--c2);border-radius:var(--r1);padding:0 10px;font:400 13px/1 var(--f);outline:none;font-family:inherit;background:var(--sf)}
-.modal select:focus{border-color:var(--pr)}
+.modal textarea:focus{border-color:var(--pr)}
 .modal-btns{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
-
-.toast{position:fixed;top:70px;right:24px;padding:12px 18px;border-radius:var(--r2);font:500 13px/1.3 var(--f);box-shadow:0 10px 40px -10px rgba(0,0,0,.12);z-index:3000;transform:translateX(120%);transition:transform .25s ease}
-.toast.on{transform:translateX(0)}
-.toast.success{background:var(--em);color:#FFF}
-.toast.warning{background:var(--ac);color:#FFF}
-.toast.error{background:var(--ro);color:#FFF}
 </style>
 </head>
 <body>
 
-<div style="height:52px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:1100">
-  <div style="display:flex;align-items:center;gap:14px">
-    <a href="../demo-index.html" style="text-decoration:none;display:flex;align-items:center;gap:8px">
-      <div style="width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      </div>
-      <span style="font-size:15px;font-weight:700;color:var(--c9)">HR ONE</span>
+<div class="hdr">
+  <div class="hdr-l">
+    <a href="../demo-index.html" class="logo">
+      <div class="logo-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      <span class="logo-t">HR ONE</span>
     </a>
-    <div style="width:1px;height:20px;background:var(--c2)"></div>
-    <span style="font:500 13px/1 var(--f);color:var(--c5)">业务演示 - 管理者端</span>
-    <span style="color:var(--c3)">&#8250;</span>
-    <span style="font:600 13px/1 var(--f);color:var(--c8)">目标审批 - 直接上级</span>
+    <div class="hdr-sep"></div>
+    <span style="font:500 13px/1 var(--f);color:var(--c5)">绩效工作台</span>
   </div>
-  <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+  <div class="hdr-r">
     <span style="font:500 12px/1 var(--f);color:var(--c5)">王总 - 产品总监</span>
-    <div style="width:30px;height:30px;border-radius:50%;background:var(--vi);display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--f);color:#FFF">王</div>
+    <div class="avatar">王</div>
   </div>
 </div>
 
-<div style="display:flex;gap:16px;padding:20px 24px;min-height:calc(100vh - 52px)">
-  <div style="flex:1;min-width:0">
-    <div style="background:var(--sf);border-radius:var(--r3);box-shadow:0 1px 3px rgba(0,0,0,.05);padding:20px;margin-bottom:16px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-        <div style="display:flex;align-items:center;gap:12px">
-          <div style="width:36px;height:36px;border-radius:var(--r2);background:var(--pr);display:flex;align-items:center;justify-content:center">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
-          </div>
-          <div>
-            <div style="font:700 17px/1.2 var(--f);color:var(--c9)">目标审批</div>
-            <div style="font:400 12px/1 var(--f);color:var(--c5);margin-top:3px">2026年Q2绩效周期</div>
-          </div>
-        </div>
-        <div style="display:flex;gap:8px">
-          <button class="btn btn-ac" onclick="showDelegateModal()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            转派
-          </button>
-          <button class="btn btn-danger" onclick="showRejectModal()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            退回
-          </button>
-          <button class="btn btn-p" onclick="approveGoal()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            批准
-          </button>
-        </div>
-      </div>
-      <div class="info-row">
-        <div class="info-item">申请人：<strong>张明</strong></div>
-        <div class="info-item">部门：<strong>产品部</strong></div>
-        <div class="info-item">岗位：<strong>高级产品经理</strong></div>
-        <div class="info-item">提交时间：<strong>2026-06-10</strong></div>
+<div class="ct">
+  <nav class="breadcrumb">
+    <a href="../demo-index.html">绩效工作台</a>
+    <span class="sep">/</span>
+    <a href="demo-workbench-team-goal.html">团队目标</a>
+    <span class="sep">/</span>
+    <span class="cur">目标审批</span>
+  </nav>
+
+  <div class="pg-hd">
+    <div class="pg-hd-top">
+      <div class="pg-hd-title">目标审批</div>
+      <div class="pg-hd-actions">
+        <button class="btn btn-ac" onclick="showDelegateModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          转派
+        </button>
+        <button class="btn btn-danger" onclick="showRejectModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          退回
+        </button>
+        <button class="btn btn-p" onclick="approveGoal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          批准
+        </button>
       </div>
     </div>
-
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-      <div style="font:500 13px/1 var(--f);color:var(--c5)">直接上级可调整各目标权重，权重合计必须为100%</div>
-      <div id="weightTotal" class="weight-total ok"><span>权重合计：</span><span class="val">100%</span></div>
-    </div>
-
-    <div id="moduleCards"></div>
-
-    <div class="approval-box">
-      <div style="padding:14px 20px;border-bottom:1px solid var(--dv)">
-        <div style="font:600 14px/1 var(--f);color:var(--c8)">审批意见</div>
-      </div>
-      <div style="padding:16px 20px">
-        <textarea id="approvalComment" placeholder="请输入审批意见..."></textarea>
-      </div>
+    <div class="pg-hd-info">
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">申请人</span><span class="pg-hd-info-value">张明</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">部门</span><span class="pg-hd-info-value">产品部</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">岗位</span><span class="pg-hd-info-value">高级产品经理</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">提交时间</span><span class="pg-hd-info-value">2026-06-10</span></div>
     </div>
   </div>
 
-  <div style="width:260px;flex-shrink:0">
-    <div style="background:var(--sf);border-radius:var(--r3);box-shadow:0 1px 3px rgba(0,0,0,.05);padding:20px;position:sticky;top:80px">
-      <div style="font:600 14px/1 var(--f);color:var(--c8);margin-bottom:20px">审批流程</div>
-      <div style="position:relative;padding:0 10px">
-        <div style="display:flex;flex-direction:column;gap:0">
-          <div style="display:flex;align-items:flex-start;gap:12px;position:relative;padding-bottom:24px">
-            <div style="display:flex;flex-direction:column;align-items:center">
-              <div style="width:28px;height:28px;border-radius:50%;background:var(--pr);color:#FFF;display:flex;align-items:center;justify-content:center;font:600 11px/1 var(--f);box-shadow:0 0 0 4px var(--pr100)">1</div>
-              <div style="width:2px;flex:1;background:var(--c2);min-height:20px;margin-top:4px"></div>
-            </div>
-            <div style="padding-top:4px">
-              <div style="font:600 13px/1 var(--f);color:var(--pr)">直接上级审批</div>
-              <div style="font:400 12px/1 var(--f);color:var(--c5);margin-top:4px">王总 - 审批中</div>
-            </div>
-          </div>
-          <div style="display:flex;align-items:flex-start;gap:12px;position:relative;padding-bottom:24px">
-            <div style="display:flex;flex-direction:column;align-items:center">
-              <div style="width:28px;height:28px;border-radius:50%;background:var(--c2);color:var(--c5);display:flex;align-items:center;justify-content:center;font:600 11px/1 var(--f)">2</div>
-              <div style="width:2px;flex:1;background:var(--c2);min-height:20px;margin-top:4px"></div>
-            </div>
-            <div style="padding-top:4px">
-              <div style="font:600 13px/1 var(--f);color:var(--c4)">间接上级审批</div>
-              <div style="font:400 12px/1 var(--f);color:var(--c4);margin-top:4px">李总 - 待审批</div>
-            </div>
-          </div>
-          <div style="display:flex;align-items:flex-start;gap:12px;position:relative">
-            <div style="display:flex;flex-direction:column;align-items:center">
-              <div style="width:28px;height:28px;border-radius:50%;background:var(--c2);color:var(--c5);display:flex;align-items:center;justify-content:center;font:600 11px/1 var(--f)">3</div>
-            </div>
-            <div style="padding-top:4px">
-              <div style="font:600 13px/1 var(--f);color:var(--c4)">待完成</div>
-              <div style="font:400 12px/1 var(--f);color:var(--c4);margin-top:4px">审批流程结束</div>
-            </div>
-          </div>
-        </div>
-      </div>
+  <div id="moduleContainer"></div>
+
+  <div class="approval-box">
+    <div style="padding:14px 20px;border-bottom:1px solid var(--dv)">
+      <div style="font:600 14px/1 var(--f);color:var(--c8)">审批意见</div>
+    </div>
+    <div style="padding:16px 20px">
+      <textarea id="approvalComment" placeholder="请输入审批意见..."></textarea>
     </div>
   </div>
 </div>
@@ -194,7 +198,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoo
 <div class="modal-overlay" id="rejectModal">
   <div class="modal">
     <div class="modal-t">退回目标</div>
-    <div style="font:400 13px/1.5 var(--f);color:var(--c6);margin-bottom:12px">请填写退回原因，申请人将收到通知并需修改后重新提交。</div>
+    <div class="modal-desc">请填写退回原因，申请人将收到通知并需修改后重新提交。</div>
     <textarea id="rejectReason" placeholder="请输入退回原因..."></textarea>
     <div class="modal-btns">
       <button class="btn btn-s" onclick="closeModal('rejectModal')">取消</button>
@@ -206,17 +210,8 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoo
 <div class="modal-overlay" id="delegateModal">
   <div class="modal">
     <div class="modal-t">转派审批</div>
-    <div style="font:400 13px/1.5 var(--f);color:var(--c6);margin-bottom:12px">选择转派给其他审批人进行审批。</div>
-    <div style="margin-bottom:12px">
-      <div style="font:500 12px/1 var(--f);color:var(--c5);margin-bottom:6px">选择审批人</div>
-      <select id="delegatePerson">
-        <option value="">请选择...</option>
-        <option value="li">李总 - VP（间接上级）</option>
-        <option value="zhao">赵敏 - HRBP</option>
-        <option value="chen">陈伟 - 技术总监</option>
-      </select>
-    </div>
-    <textarea id="delegateReason" placeholder="转派说明（选填）..."></textarea>
+    <div class="modal-desc">将此审批任务转派给其他管理者。</div>
+    <textarea id="delegateReason" placeholder="请输入转派原因..."></textarea>
     <div class="modal-btns">
       <button class="btn btn-s" onclick="closeModal('delegateModal')">取消</button>
       <button class="btn btn-ac" onclick="confirmDelegate()">确认转派</button>
@@ -224,80 +219,107 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoo
   </div>
 </div>
 
-<div id="toast" class="toast"></div>
+<div class="toast" id="toast"></div>
 
+<script src="../navigation.js"></script>
 <script>
-var MODULES=[
-  {name:'业绩目标',weight:30,color:'var(--pr)',goals:[
-    {name:'完成Q2产品迭代',weight:18,target:'产品迭代完成率 >= 100%',challenge:'达成率 >= 120%',criteria:'按期完成3个核心功能模块迭代，通过验收评审'},
-    {name:'新客户拓展',weight:12,target:'新增客户 >= 5000',challenge:'新增客户 >= 7000',criteria:'Q2新增付费客户数，以签约合同为准'}
+GHR_NAV.init('perf', '目标审批');
+
+const MODULES=[
+  {name:'关键指标',weight:30,color:'var(--pr)',goals:[
+    {id:'g1',name:'资源利用率（通用）',type:'quant',weight:5,target:105,challenge:110,baseline:100,unit:'%',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',linkedIndicator:'资源利用率'},
+    {id:'g2',name:'HRASUAT用户验收首次通过率(产品)',type:'quant',weight:10,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',linkedIndicator:'UAT首次通过率'},
+    {id:'g3',name:'HRAS需求评审及时率(产品)',type:'quant',weight:15,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',linkedIndicator:'需求评审及时率'},
   ]},
-  {name:'管理目标',weight:20,color:'var(--em)',goals:[
-    {name:'团队效率提升',weight:10,target:'团队产出效率 >= 110%',challenge:'效率 >= 130%',criteria:'团队人均产出季度环比提升，以交付物数量和质量综合评估'},
-    {name:'人才培养',weight:10,target:'培养骨干 >= 2人',challenge:'培养骨干 >= 3人',criteria:'通过项目历练和专项培训，培养2名可独立负责模块的骨干成员'}
-  ]},
-  {name:'能力发展',weight:15,color:'var(--ac)',goals:[
-    {name:'云原生架构认证',weight:8,target:'完成认证 1项',challenge:'完成认证 2项',criteria:'取得云原生架构师认证证书'},
-    {name:'业务分析报告',weight:7,target:'输出报告 >= 2份',challenge:'输出报告 >= 3份',criteria:'输出高质量业务分析报告，需包含数据洞察和行动建议'}
-  ]},
-  {name:'价值观',weight:10,color:'var(--vi)',goals:[
-    {name:'价值观践行',weight:10,target:'360评估 >= 85分',challenge:'360评估 >= 95分',criteria:'通过同事、下属、协作方360度评估综合得分衡量'}
+  {name:'关键行动',weight:70,color:'var(--em)',goals:[
+    {id:'g4',name:'HRAS产品管理规范',type:'qual',weight:10,measure:'定性评分',desc:'1、需求管理流程尊从规范\n2、产品需求规范\n3、迭代火车管理规范\n4、周会/月会前事项准时完成更新'},
+    {id:'g5',name:'【产品设计】日常滚动需求响应',type:'qual',weight:10,measure:'定性评分',desc:'根据业务日会需求优先级，滚动响应日常需求，输出产品解决方案'},
+    {id:'g6',name:'【产品设计】HR ONE 绩效重构事项推进',type:'qual',weight:25,measure:'定性评分',desc:'06-10 输出AI+绩效核心用户页面原型\n06-19 完成绩效版本4需求内审\n06-24 完成绩效版本4需求评审'},
+    {id:'g7',name:'【应用探索】AI应用项目探索与落地推广',type:'qual',weight:25,measure:'定性评分',desc:'06-05 输出ASSC采购侧AI项目管理应用1.0版本\n06-12 对接LBU AI应用场景需求\n06-26 完成1.1版本'},
   ]}
 ];
 
-var goalWeights={};
-MODULES.forEach(function(mod){
-  mod.goals.forEach(function(g){goalWeights[g.name]=g.weight});
-});
+let expandedMods=new Set([0,1]);
+let expandedGoals=new Set();
 
-function getTotalWeight(){
-  var total=0;
-  for(var k in goalWeights) total+=goalWeights[k];
-  return total;
-}
-
-function updateWeightDisplay(){
-  var total=getTotalWeight();
-  var el=document.getElementById('weightTotal');
-  el.querySelector('.val').textContent=total+'%';
-  el.className='weight-total '+(total===100?'ok':'err');
-}
-
-function onWeightChange(name,val){
-  var v=parseInt(val)||0;
-  if(v<0)v=0;if(v>100)v=100;
-  goalWeights[name]=v;
-  updateWeightDisplay();
-}
-
-function renderModules(){
-  var html='';
-  MODULES.forEach(function(mod){
-    html+='<div class="module-card">';
-    html+='<div class="module-hd"><div class="module-icon" style="background:'+mod.color+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>';
-    html+='<span class="module-name">'+mod.name+'</span>';
-    html+='<span class="module-weight">'+mod.weight+'%</span></div>';
-    if(mod.goals.length===0){
-      html+='<div class="empty-goal">暂无目标</div>';
-    }else{
-      html+='<div class="goal-row goal-row-hd"><span>目标名称</span><span style="text-align:center">权重(%)</span><span style="text-align:right">目标值</span><span style="text-align:right">挑战值</span><span>衡量标准</span></div>';
-      mod.goals.forEach(function(g){
-        html+='<div class="goal-row"><span class="goal-name">'+g.name+'</span>';
-        html+='<span style="text-align:center"><input class="goal-weight-input" type="number" value="'+goalWeights[g.name]+'" min="0" max="100" onchange="onWeightChange(\''+g.name.replace(/'/g,"\\'")+'\',this.value)" oninput="onWeightChange(\''+g.name.replace(/'/g,"\\'")+'\',this.value)"></span>';
-        html+='<span class="goal-val">'+g.target+'</span><span class="goal-val">'+g.challenge+'</span><span class="goal-criteria">'+g.criteria+'</span></div>';
-      });
-    }
-    html+='</div>';
+function render(){
+  const c=document.getElementById('moduleContainer');
+  let h='';
+  MODULES.forEach((m,mi)=>{
+    const open=expandedMods.has(mi);
+    const tw=m.goals.reduce((s,g)=>s+g.weight,0);
+    h+=`<div class="mod-section ${m.color==='var(--em)'?'em':''}">
+      <div class="mod-hd" onclick="toggleMod(${mi})">
+        <div class="mod-hd-title">${m.name}</div>
+        <div class="mod-hd-stats">
+          <span>合计权重: <strong>${tw}%</strong></span>
+          <span>目标数: <strong>${m.goals.length}</strong></span>
+        </div>
+        <div class="mod-hd-chevron ${open?'open':''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="mod-body ${open?'open':''}">`;
+    m.goals.forEach((g,gi)=>{
+      const gid=mi+'_'+gi;
+      const gOpen=expandedGoals.has(gid);
+      const isQ=g.type==='quant';
+      const linked=g.linkedIndicator;
+      h+=`<div class="goal-row">
+        <div class="goal-summary" onclick="toggleGoal('${gid}')">
+          <span class="goal-name">${g.name}</span>
+          <div class="goal-meta">
+            <span class="goal-type ${isQ?'quant':'qual'}">${isQ?'定量':'定性'}</span>
+            <span class="goal-weight">${g.weight}%</span>
+            <div class="mod-hd-chevron ${gOpen?'open':''}" style="width:16px;height:16px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+          </div>
+        </div>
+        <div class="goal-detail ${gOpen?'open':''}">
+          <div class="gd-form">
+            <div class="gd-sec">
+              <div class="gd-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>目标信息</div>
+              <div style="display:flex;gap:20px;align-items:center">
+                <div class="gd-fi"><span class="gd-fi-l">权重</span><span class="gd-fi-v mono">${g.weight}%</span></div>
+                ${linked?`<div class="gd-fi"><span class="gd-fi-l">关联指标</span><div class="gd-linked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>${linked}</div></div>`:''}
+              </div>
+            </div>
+            ${isQ?`
+            <div class="gd-sec">
+              <div class="gd-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>衡量标准</div>
+              <div class="gd-row f3">
+                <div class="gd-fi"><span class="gd-fi-l">目标值</span><span class="gd-fi-v mono">${g.target} ${g.unit||''}</span></div>
+                <div class="gd-fi"><span class="gd-fi-l">挑战值</span><span class="gd-fi-v mono">${g.challenge} ${g.unit||''}</span></div>
+                <div class="gd-fi"><span class="gd-fi-l">保底值</span><span class="gd-fi-v mono">${g.baseline} ${g.unit||''}</span></div>
+              </div>
+            </div>
+            <div class="gd-sec">
+              <div class="gd-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>计算规则</div>
+              <div class="gd-row">
+                <div class="gd-fi"><span class="gd-fi-l">衡量方式</span><span class="gd-fi-v">${g.measure}</span></div>
+                <div class="gd-fi"><span class="gd-fi-l">计算规则</span><span class="gd-fi-v">${g.rule||'-'}</span></div>
+              </div>
+              ${g.ruleFormula?`<div class="gd-rule-box"><div class="gd-rule-lbl">计算公式</div><code>${g.ruleFormula}</code></div>`:''}
+            </div>
+            `:`
+            <div class="gd-sec">
+              <div class="gd-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>衡量标准</div>
+              <div class="gd-fi"><span class="gd-fi-l">衡量方式</span><span class="gd-fi-v">${g.measure}</span></div>
+              ${g.desc?`<div class="gd-fi" style="margin-top:8px"><span class="gd-fi-l">衡量标准描述</span><div style="font:400 13px/1.6 var(--f);color:var(--c7);white-space:pre-line">${g.desc}</div></div>`:''}
+            </div>
+            `}
+          </div>
+        </div>
+      </div>`;
+    });
+    h+=`</div></div>`;
   });
-  document.getElementById('moduleCards').innerHTML=html;
+  c.innerHTML=h;
 }
+
+function toggleMod(mi){expandedMods.has(mi)?expandedMods.delete(mi):expandedMods.add(mi);render()}
+function toggleGoal(id){expandedGoals.has(id)?expandedGoals.delete(id):expandedGoals.add(id);render()}
 
 function approveGoal(){
-  var total=getTotalWeight();
-  if(total!==100){showToast('权重合计必须为100%，当前为'+total+'%','error');return}
-  var c=document.getElementById('approvalComment').value.trim();
-  if(!c){showToast('请输入审批意见','warning');return}
-  showToast('目标已批准，流转至间接上级审批','success');
+  const comment=document.getElementById('approvalComment').value;
+  showToast('已批准，目标进入下一审批节点','success');
 }
 
 function showRejectModal(){document.getElementById('rejectModal').classList.add('on')}
@@ -305,32 +327,27 @@ function showDelegateModal(){document.getElementById('delegateModal').classList.
 function closeModal(id){document.getElementById(id).classList.remove('on')}
 
 function confirmReject(){
-  var r=document.getElementById('rejectReason').value.trim();
-  if(!r){showToast('请填写退回原因','warning');return}
+  const reason=document.getElementById('rejectReason').value;
+  if(!reason){showToast('请填写退回原因','error');return}
   closeModal('rejectModal');
-  showToast('目标已退回，张明将收到修改通知','warning');
+  showToast('已退回，申请人将收到通知','success');
 }
 
 function confirmDelegate(){
-  var p=document.getElementById('delegatePerson').value;
-  if(!p){showToast('请选择转派人','warning');return}
+  const reason=document.getElementById('delegateReason').value;
+  if(!reason){showToast('请填写转派原因','error');return}
   closeModal('delegateModal');
-  var names={li:'李总',zhao:'赵敏',chen:'陈伟'};
-  showToast('已转派给'+names[p]+'审批','success');
+  showToast('已转派','success');
 }
 
 function showToast(msg,type){
-  var t=document.getElementById('toast');
+  const t=document.getElementById('toast');
   t.textContent=msg;
-  t.className='toast '+(type||'success');
-  setTimeout(function(){t.classList.add('on')},10);
-  setTimeout(function(){t.classList.remove('on')},2500);
+  t.className='toast show '+(type||'success');
+  setTimeout(()=>t.classList.remove('show'),2500);
 }
 
-renderModules();
-updateWeightDisplay();
+render();
 </script>
-<script src="../navigation.js"></script>
-<script>GHR_NAV.init('perf', '目标审批');</script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>计算规则架构 — 指标×衡量标准×计算规则</title>
+<title>计算规则架构设计（已确认）</title>
 <style>
 :root{--bg:#f5f5f5;--card:#fff;--pri:#4f6ef7;--pri-l:#eef1fe;--ok:#52c41a;--warn:#faad14;--err:#ff4d4f;--pur:#722ed1;--txt:#1a1a2e;--txt2:#666;--bd:#e8e8e8;--sh:0 2px 8px rgba(0,0,0,.06)}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -29,7 +29,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}
 th{background:#fafafa;padding:8px 12px;text-align:left;font-weight:600;border-bottom:2px solid var(--bd)}
 td{padding:8px 12px;border-bottom:1px solid #f0f0f0}
 tr:hover td{background:#fafafa}
-.code{background:#1a1a2e;color:#a8e6cf;padding:16px;border-radius:8px;font-family:'Fira Code',monospace;font-size:12px;line-height:1.8;overflow-x:auto}
+.code{background:#1a1a2e;color:#a8e6cf;padding:16px;border-radius:8px;font-family:'Fira Code',monospace;font-size:12px;line-height:1.8;overflow-x:auto;white-space:pre}
 .code .kw{color:#f78c6c}.code .fn{color:#82aaff}.code .str{color:#c3e88d}.code .cmt{color:#546e7a}.code .var{color:#ffcb6b}.code .op{color:#89ddff}.code .num{color:#f78c6c}
 .fl{display:flex;align-items:stretch;gap:0;overflow-x:auto;padding:8px 0}
 .fs{flex:0 0 auto;min-width:160px;border:2px solid var(--bd);border-radius:10px;padding:14px;background:#fafafa;text-align:center}
@@ -37,22 +37,99 @@ tr:hover td{background:#fafafa}
 .fs .t{font-size:13px;font-weight:600}.fs .d{font-size:11px;color:var(--txt2);margin-top:4px}
 .fa{flex:0 0 32px;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--pri)}
 .note{background:#fff7e6;border-left:3px solid var(--warn);padding:12px 16px;border-radius:0 8px 8px 0;font-size:13px;margin:12px 0}
+.note-green{background:#f6ffed;border-left-color:var(--ok);}
+.note-red{background:#fff1f0;border-left-color:var(--err);}
+.layer-label{display:inline-block;padding:3px 12px;border-radius:12px;font-size:11px;font-weight:700;margin-bottom:8px;}
+.layer-cfg{background:#722ed1;color:#fff;}
+.layer-exec{background:#52c41a;color:#fff;}
 @media(max-width:768px){.g2,.g3{grid-template-columns:1fr}.fl{flex-direction:column}.fa{transform:rotate(90deg);flex:0 0 30px}}
 </style>
 </head>
 <body>
 <div class="hdr">
   <h1>计算规则架构设计</h1>
-  <p>衡量标准（参考值） × 计算规则（公式） × 指标库（绑定） — 从配置到执行</p>
+  <p>已确认版本 · 配置层先行 · 公式编辑器从配置层取字段 · 两层级公式</p>
 </div>
 <div class="ct">
 
-<!-- ===== 一、核心关系 ===== -->
+<!-- ===== 一、时序与分层 ===== -->
 <div class="sec">
-  <div class="sec-t">一、三者关系（核心设计）</div>
+  <div class="sec-t">一、时序与分层（核心约束）</div>
+  <div class="card">
+    <div class="note note-red">
+      <b>核心约束：</b>公式是 COE 先维护的，表单是员工后填写的。配置公式时根本没有表单数据。<br>
+      因此：<b>公式编辑器的业务字段注册来源是配置层（指标→衡量标准→grades），不是表单。</b>
+    </div>
+
+    <div style="margin-top:16px;">
+      <div style="font-size:14px;font-weight:700;margin-bottom:12px;">时序</div>
+      <div class="fl">
+        <div class="fs hl" style="border-color:#722ed1;background:#f9f0ff;">
+          <div class="t" style="color:#722ed1;">① 配置衡量标准</div>
+          <div class="d">COE 定义 grades<br>（参考值数据）</div>
+        </div>
+        <div class="fa">→</div>
+        <div class="fs hl" style="border-color:#722ed1;background:#f9f0ff;">
+          <div class="t" style="color:#722ed1;">② 配置指标库</div>
+          <div class="d">COE 创建指标<br>FK→衡量标准</div>
+        </div>
+        <div class="fa">→</div>
+        <div class="fs hl" style="border-color:#722ed1;background:#f9f0ff;">
+          <div class="t" style="color:#722ed1;">③ 配置计算规则</div>
+          <div class="d">COE 打开公式编辑器<br>从②的grades取字段</div>
+        </div>
+        <div class="fa">→</div>
+        <div class="fs hl" style="border-color:#722ed1;background:#f9f0ff;">
+          <div class="t" style="color:#722ed1;">④ 方案引用</div>
+          <div class="d">考核环节<br>选择计算规则</div>
+        </div>
+        <div class="fa">→</div>
+        <div class="fs hl" style="border-color:#52c41a;background:#f6ffed;">
+          <div class="t" style="color:#52c41a;">⑤ 员工填表单</div>
+          <div class="d">表单数据产生<br>（公式早就配好了）</div>
+        </div>
+        <div class="fa">→</div>
+        <div class="fs hl" style="border-color:#52c41a;background:#f6ffed;">
+          <div class="t" style="color:#52c41a;">⑥ 公式执行</div>
+          <div class="d">表单值套入公式<br>算出得分</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:20px;">
+      <div style="font-size:14px;font-weight:700;margin-bottom:12px;">两层分离</div>
+      <div class="g2">
+        <div style="background:#f9f0ff;border-radius:8px;padding:16px;border:1px solid #d3adf7;">
+          <div style="font-weight:700;color:#722ed1;margin-bottom:8px;">⚙️ 配置层（COE 操作）</div>
+          <ul style="font-size:13px;padding-left:16px;">
+            <li>衡量标准：定义 grades 参考值结构</li>
+            <li>指标库：绑定衡量标准 + 计算规则</li>
+            <li>计算规则：公式编辑器配置公式</li>
+            <li>方案：环节选择计算规则</li>
+          </ul>
+          <div class="note" style="margin-top:8px;font-size:12px;">公式编辑器字段来源 = 配置层的 grades</div>
+        </div>
+        <div style="background:#f6ffed;border-radius:8px;padding:16px;border:1px solid #b7eb8f;">
+          <div style="font-weight:700;color:#52c41a;margin-bottom:8px;">▶ 执行层（员工操作）</div>
+          <ul style="font-size:13px;padding-left:16px;">
+            <li>员工填表单：完成值/权重/评价结果</li>
+            <li>上级评分：选择评价结果/填写评语</li>
+            <li>系统按预配公式计算得分</li>
+            <li>结果写入明细表</li>
+          </ul>
+          <div class="note note-green" style="margin-top:8px;font-size:12px;">执行层只提供输入值，不参与公式定义</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 二、三者关系 ===== -->
+<div class="sec">
+  <div class="sec-t">二、衡量标准 / 指标库 / 计算规则 的关系</div>
   <div class="card">
     <div class="note">
-      <b>核心原则：</b>衡量标准<b>只存参考值数据</b>，不定义计算方式。计算规则<b>只定义公式</b>，不存参考值。指标库把两者绑定：这个指标用哪些参考值 + 用哪个公式算出得分。
+      <b>核心原则：</b>衡量标准<b>只存参考值数据</b>（grades），不含计算逻辑。计算规则<b>只定义公式</b>，不含参考值。指标库把两者绑定：这个指标用哪些参考值 + 用哪个公式算出得分。
     </div>
 
     <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;margin-top:16px;">
@@ -104,295 +181,173 @@ tr:hover td{background:#fafafa}
         </div>
       </div>
     </div>
-
-    <!-- 关系图 -->
-    <div style="margin-top:24px;padding:20px;background:#fafafa;border-radius:8px;">
-      <div style="font-size:14px;font-weight:700;margin-bottom:12px;">🔗 关系：一个指标绑定一套参考值 + 一个公式</div>
-      <div class="fl">
-        <div class="fs hl"><div class="t">衡量标准</div><div class="d">存参考值<br>挑战120/目标100/保底80</div></div>
-        <div class="fa">←</div>
-        <div class="fs hl" style="border-color:var(--pur);background:#f9f0ff;"><div class="t">指标库</div><div class="d">绑定参考值+公式<br>KPI_001</div></div>
-        <div class="fa">→</div>
-        <div class="fs hl" style="border-color:var(--ok);background:#f6ffed;"><div class="t">计算规则</div><div class="d">定义公式<br>梯度插值/封顶/线性...</div></div>
-        <div class="fa">→</div>
-        <div class="fs"><div class="t">方案引用</div><div class="d">绩效方案环节<br>选择用哪个计算规则</div></div>
-        <div class="fa">→</div>
-        <div class="fs"><div class="t">活动执行</div><div class="d">员工填值<br>系统按公式算得分</div></div>
-      </div>
-    </div>
-
-    <!-- 复用示例 -->
-    <div style="margin-top:16px;">
-      <div style="font-size:14px;font-weight:700;margin-bottom:12px;">💡 复用示例：同一参考值 + 不同公式 = 不同评分结果</div>
-      <div class="g2">
-        <div style="background:#fafafa;border-radius:8px;padding:16px;">
-          <div style="font-weight:600;margin-bottom:8px;">场景A：营收达成率 — 梯度插值公式</div>
-          <div class="code">
-<span class="cmt">// 衡量标准：挑战120, 目标100, 保底80</span>
-<span class="cmt">// 计算规则：梯度插值</span>
-<span class="cmt">// 员工完成值：115</span>
-
-<span class="var">得分</span> <span class="op">=</span> <span class="fn">gradient_interp</span>(
-    <span class="var">actual</span>=<span class="num">115</span>, <span class="var">baseline</span>=<span class="num">80</span>,
-    <span class="var">target</span>=<span class="num">100</span>, <span class="var">challenge</span>=<span class="num">120</span>,
-    <span class="var">target_score</span>=<span class="num">100</span>, <span class="var">max_score</span>=<span class="num">120</span>
-)
-<span class="cmt">// 115 在 [100,120] 区间</span>
-<span class="cmt">// = 100 + (115-100)/(120-100) × (120-100) = 115分</span>
-          </div>
-        </div>
-        <div style="background:#fafafa;border-radius:8px;padding:16px;">
-          <div style="font-weight:600;margin-bottom:8px;">场景B：同一参考值 + 封顶公式</div>
-          <div class="code">
-<span class="cmt">// 衡量标准：挑战120, 目标100, 保底80（同上）</span>
-<span class="cmt">// 计算规则：封顶计算（超过挑战值不加分）</span>
-<span class="cmt">// 员工完成值：130</span>
-
-<span class="var">得分</span> <span class="op">=</span> <span class="fn">capped_score</span>(
-    <span class="var">actual</span>=<span class="num">130</span>, <span class="var">baseline</span>=<span class="num">80</span>,
-    <span class="var">target</span>=<span class="num">100</span>, <span class="var">challenge</span>=<span class="num">120</span>,
-    <span class="var">cap</span>=<span class="num">120</span>  <span class="cmt">// 封顶值 = 挑战值</span>
-)
-<span class="cmt">// 130 > 120（封顶） → 得分 = 120分（不超上限）</span>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </div>
 
-<!-- ===== 二、衡量标准：只存参考值 ===== -->
+<!-- ===== 三、公式编辑器字段注册 ===== -->
 <div class="sec">
-  <div class="sec-t">二、衡量标准 — 只存参考值，结构保持原型</div>
+  <div class="sec-t">三、公式编辑器字段注册来源</div>
   <div class="card">
-    <div class="note">衡量标准的结构与原型一致：<code>{name, dept, type, grades:[{name, min, max, desc}]}</code>。type 仅做分类标签（百分比/分值/等级），grades 存参考值区间。<b>不包含任何计算逻辑</b>。</div>
-
-    <div style="margin-top:16px;">
-      <table>
-        <tr><th>字段</th><th>类型</th><th>说明</th><th>示例</th></tr>
-        <tr><td>id</td><td>bigint PK</td><td>主键</td><td>1</td></tr>
-        <tr><td>name</td><td>varchar(200)</td><td>标准名称</td><td>营收类参考值</td></tr>
-        <tr><td>dept</td><td>varchar(100)</td><td>适用部门</td><td>中国区</td></tr>
-        <tr><td><b>type</b></td><td><b>enum</b></td><td><b>分类标签（非计算方式）</b></td><td><b>百分比 / 分值 / 等级</b></td></tr>
-        <tr><td><b>grades</b></td><td><b>JSON</b></td><td><b>参考值数组（核心数据）</b></td><td><b>[{name:'卓越',min:100,max:100}, ...]</b></td></tr>
-      </table>
+    <div class="note note-red">
+      <b>公式编辑器的字段来自配置层，不来自表单。</b><br>
+      COE 打开公式编辑器 → 选择指标 → 系统读取该指标的 FK→measure_standard → 拿到 grades → 注册为公式变量。<br>
+      这时候表单数据还不存在。
     </div>
 
     <div style="margin-top:16px;">
-      <div style="font-weight:600;margin-bottom:8px;">grades 数组在不同 type 下的含义</div>
-      <table>
-        <tr><th>type</th><th>grades 含义</th><th>示例</th></tr>
-        <tr>
-          <td><span class="tag tag-b">百分比</span></td>
-          <td>按完成百分比分段</td>
-          <td>[{name:'卓越',min:100,max:100}, {name:'优秀',min:90,max:99}, {name:'良好',min:75,max:89}, ...]</td>
-        </tr>
-        <tr>
-          <td><span class="tag tag-p">分值</span></td>
-          <td>按绝对分值分段</td>
-          <td>[{name:'非常满意',min:90,max:100}, {name:'满意',min:75,max:89}, ...]</td>
-        </tr>
-        <tr>
-          <td><span class="tag tag-o">等级</span></td>
-          <td>按等级名称分段</td>
-          <td>[{name:'A',min:110,max:120}, {name:'B',min:90,max:109}, ...]</td>
-        </tr>
-      </table>
-      <p style="font-size:12px;color:var(--txt2);margin-top:8px;">💡 这些 grades 只是参考值。<b>怎么用这些值算出得分，完全由计算规则的公式决定</b>。</p>
-    </div>
-  </div>
-</div>
+      <div style="font-size:14px;font-weight:700;margin-bottom:12px;">注册链路</div>
+      <div class="code">
+<span class="cmt">// COE 打开公式编辑器，选择"指标A：季度营收达成率"</span>
 
-<!-- ===== 三、计算规则：只定义公式 ===== -->
-<div class="sec">
-  <div class="sec-t">三、计算规则 — 只定义公式，可实现任意计算逻辑</div>
-  <div class="card">
-    <div class="note">计算规则的核心是<b>公式表达式</b>，由公式编辑器配置。公式可以引用衡量标准的参考值（grades）+ 表单字段（完成值/权重等），通过任意计算逻辑得出得分。</div>
+<span class="var">indicator</span> = <span class="fn">getIndicator</span>(<span class="str">"KPI_001"</span>)
+<span class="var">measure_std</span> = <span class="var">indicator</span>.<span class="fn">measure_standard</span>   <span class="cmt">// FK → 衡量标准</span>
+<span class="var">grades</span> = <span class="var">measure_std</span>.<span class="fn">grades</span>              <span class="cmt">// 拿到参考值数组</span>
 
-    <div style="margin-top:16px;">
-      <table>
-        <tr><th>字段</th><th>类型</th><th>说明</th></tr>
-        <tr><td>id</td><td>bigint PK</td><td>主键</td></tr>
-        <tr><td>name</td><td>varchar(200)</td><td>规则名称（如"梯度插值"、"封顶计算"）</td></tr>
-        <tr><td><b>formula</b></td><td><b>text</b></td><td><b>公式表达式（公式编辑器生成）</b></td></tr>
-        <tr><td>formula_vars</td><td>JSON</td><td>公式引用的变量列表（字段白名单）</td></tr>
-        <tr><td>status</td><td>enum</td><td>enabled / disabled</td></tr>
-      </table>
+<span class="cmt">// grades 注册为公式变量：</span>
+<span class="cmt">//   grades[0].max → challenge_value  (120)</span>
+<span class="cmt">//   grades[1].max → target_value     (100)</span>
+<span class="cmt">//   grades[2].max → baseline_value   (80)</span>
+<span class="cmt">//   grades[0].name → grade_name_0    ("卓越")</span>
+<span class="cmt">//   grades[0].min → grade_min_0      (100)</span>
+<span class="cmt">//   ...</span>
+
+<span class="cmt">// 公式编辑器左侧字段面板 = grades 中的所有字段</span>
+<span class="cmt">// COE 用这些字段构建公式，如：</span>
+<span class="cmt">//   IF(actual_value > challenge_value, 120, ...)</span>
+
+<span class="cmt">// 公式保存后，员工填表单时：</span>
+<span class="cmt">//   actual_value = 员工填的完成值（表单数据）</span>
+<span class="cmt">//   challenge_value = grades[0].max（配置层数据，早就配好了）</span>
+<span class="cmt">//   系统执行公式 → 算出得分</span>
+      </div>
     </div>
 
     <div style="margin-top:20px;">
-      <div style="font-weight:600;margin-bottom:12px;">同一套参考值，套不同公式 = 不同计算结果</div>
+      <div style="font-size:14px;font-weight:700;margin-bottom:12px;">不同指标 → 不同 grades → 不同字段</div>
       <div class="g3">
-        <div style="background:#fafafa;border-radius:8px;padding:14px;">
-          <div style="font-weight:600;color:var(--pri);margin-bottom:6px;">公式1：梯度插值</div>
-          <div class="code" style="font-size:11px;">
-<span class="cmt">// 完成值在区间内线性插值</span>
-<span class="kw">if</span> <span class="var">actual</span> <span class="op">>=</span> <span class="var">challenge</span>:
-  <span class="var">score</span> <span class="op">=</span> <span class="var">max_score</span>
-<span class="kw">elif</span> <span class="var">actual</span> <span class="op">>=</span> <span class="var">target</span>:
-  <span class="var">score</span> <span class="op">=</span> <span class="var">target_score</span> <span class="op">+</span>
-    (<span class="var">actual</span><span class="op">-</span><span class="var">target</span>)<span class="op">/</span>(<span class="var">challenge</span><span class="op">-</span><span class="var">target</span>) <span class="op">×</span>
-    (<span class="var">max_score</span><span class="op">-</span><span class="var">target_score</span>)
-<span class="kw">elif</span> <span class="var">actual</span> <span class="op">>=</span> <span class="var">baseline</span>:
-  <span class="var">score</span> <span class="op">=</span> <span class="var">baseline_score</span> <span class="op">+</span> ...
-<span class="kw">else</span>:
-  <span class="var">score</span> <span class="op">=</span> <span class="num">0</span>
+        <div class="ent">
+          <div class="ent-h" style="background:#e6f7ff;">指标A：季度营收达成率</div>
+          <div class="ent-b">
+            <p style="font-size:12px;color:var(--txt2);margin-bottom:6px;">衡量标准：营收类参考值</p>
+            <table>
+              <tr><th>公式变量</th><th>值</th><th>来源</th></tr>
+              <tr><td><code>challenge_value</code></td><td>120</td><td>grades[0].max</td></tr>
+              <tr><td><code>target_value</code></td><td>100</td><td>grades[1].max</td></tr>
+              <tr><td><code>baseline_value</code></td><td>80</td><td>grades[2].max</td></tr>
+            </table>
           </div>
         </div>
-        <div style="background:#fafafa;border-radius:8px;padding:14px;">
-          <div style="font-weight:600;color:var(--ok);margin-bottom:6px;">公式2：封顶计算</div>
-          <div class="code" style="font-size:11px;">
-<span class="cmt">// 超过挑战值不加分</span>
-<span class="kw">if</span> <span class="var">actual</span> <span class="op">>=</span> <span class="var">challenge</span>:
-  <span class="var">score</span> <span class="op">=</span> <span class="var">max_score</span>  <span class="cmt">// 封顶</span>
-<span class="kw">elif</span> <span class="var">actual</span> <span class="op">>=</span> <span class="var">target</span>:
-  <span class="var">score</span> <span class="op">=</span> <span class="var">target_score</span> <span class="op">+</span>
-    (<span class="var">actual</span><span class="op">-</span><span class="var">target</span>)<span class="op">/</span>(<span class="var">challenge</span><span class="op">-</span><span class="var">target</span>) <span class="op">×</span>
-    (<span class="var">max_score</span><span class="op">-</span><span class="var">target_score</span>)
-<span class="kw">else</span>:
-  <span class="var">score</span> <span class="op">=</span> <span class="var">actual</span><span class="op">/</span><span class="var">target</span> <span class="op">×</span> <span class="var">target_score</span>
+        <div class="ent">
+          <div class="ent-h" style="background:#f9f0ff;">指标B：客户满意度</div>
+          <div class="ent-b">
+            <p style="font-size:12px;color:var(--txt2);margin-bottom:6px;">衡量标准：满意度等级</p>
+            <table>
+              <tr><th>公式变量</th><th>值</th><th>来源</th></tr>
+              <tr><td><code>grade_0_name</code></td><td>"A"</td><td>grades[0].name</td></tr>
+              <tr><td><code>grade_0_min</code></td><td>110</td><td>grades[0].min</td></tr>
+              <tr><td><code>grade_0_max</code></td><td>120</td><td>grades[0].max</td></tr>
+              <tr><td><code>grade_1_name</code></td><td>"B"</td><td>grades[1].name</td></tr>
+              <tr><td><code>grade_1_min</code></td><td>90</td><td>grades[1].min</td></tr>
+              <tr><td><code>grade_1_max</code></td><td>109</td><td>grades[1].max</td></tr>
+            </table>
           </div>
         </div>
-        <div style="background:#fafafa;border-radius:8px;padding:14px;">
-          <div style="font-weight:600;color:var(--pur);margin-bottom:6px;">公式3：是否达成</div>
-          <div class="code" style="font-size:11px;">
-<span class="cmt">// 只看是否达到目标值</span>
-<span class="kw">if</span> <span class="var">actual</span> <span class="op">>=</span> <span class="var">target</span>:
-  <span class="var">score</span> <span class="op">=</span> <span class="var">max_score</span>  <span class="cmt">// 满分</span>
-<span class="kw">else</span>:
-  <span class="var">score</span> <span class="op">=</span> <span class="num">0</span>          <span class="cmt">// 零分</span>
+        <div class="ent">
+          <div class="ent-h" style="background:#f6ffed;">指标C：项目交付率</div>
+          <div class="ent-b">
+            <p style="font-size:12px;color:var(--txt2);margin-bottom:6px;">衡量标准：交付标准</p>
+            <table>
+              <tr><th>公式变量</th><th>值</th><th>来源</th></tr>
+              <tr><td><code>grade_0_name</code></td><td>"提前交付"</td><td>grades[0].name</td></tr>
+              <tr><td><code>grade_0_max</code></td><td>100</td><td>grades[0].max</td></tr>
+              <tr><td><code>grade_1_name</code></td><td>"按时交付"</td><td>grades[1].name</td></tr>
+              <tr><td><code>grade_1_max</code></td><td>80</td><td>grades[1].max</td></tr>
+              <tr><td><code>grade_2_name</code></td><td>"延期交付"</td><td>grades[2].name</td></tr>
+              <tr><td><code>grade_2_max</code></td><td>50</td><td>grades[2].max</td></tr>
+            </table>
           </div>
         </div>
       </div>
-      <p style="font-size:12px;color:var(--txt2);margin-top:12px;">💡 以上三个公式都引用同一套参考值（grades），但计算结果完全不同。<b>公式决定算法，参考值提供数据</b>。</p>
+      <p style="font-size:12px;color:var(--txt2);margin-top:12px;">💡 每个指标的公式编辑器打开时，左侧字段面板不同，因为各自关联的衡量标准 grades 不同。</p>
     </div>
   </div>
 </div>
 
-<!-- ===== 四、公式编辑器：数据源 ===== -->
+<!-- ===== 四、两层级公式 ===== -->
 <div class="sec">
-  <div class="sec-t">四、公式编辑器 — 数据源 = 参考值字段 + 表单字段 + 系统字段</div>
+  <div class="sec-t">四、两层级公式设计</div>
   <div class="card">
-    <p style="font-size:13px;color:var(--txt2);margin-bottom:16px;">公式编辑器配置计算规则时，可以从以下数据源中选择字段构建表达式：</p>
-
-    <div class="g3">
-      <div class="ent">
-        <div class="ent-h" style="background:#fff7e6;">📐 衡量标准参考值（grades 中的字段）</div>
-        <div class="ent-b">
-          <table>
-            <tr><th>字段</th><th>类型</th><th>公式角色</th></tr>
-            <tr><td>挑战值 challenge</td><td>decimal</td><td><span class="tag tag-b">BOUND</span></td></tr>
-            <tr><td>目标值 target</td><td>decimal</td><td><span class="tag tag-b">BOUND</span></td></tr>
-            <tr><td>保底值 baseline</td><td>decimal</td><td><span class="tag tag-b">BOUND</span></td></tr>
-            <tr><td>等级区间 grades[n].min/max</td><td>decimal</td><td><span class="tag tag-b">BOUND</span></td></tr>
-            <tr><td>等级名称 grades[n].name</td><td>string</td><td><span class="tag tag-b">BOUND</span></td></tr>
-          </table>
-          <p style="font-size:11px;color:var(--txt2);margin-top:8px;">来源：指标关联的衡量标准 grades 数组</p>
-        </div>
-      </div>
-
-      <div class="ent">
-        <div class="ent-h" style="background:#e6f7ff;">📝 表单字段（员工/上级填写的值）</div>
-        <div class="ent-b">
-          <table>
-            <tr><th>字段</th><th>来源</th><th>公式角色</th></tr>
-            <tr><td>完成值 actual</td><td>员工填写</td><td><span class="tag tag-b">BOUND</span></td></tr>
-            <tr><td>权重 weight</td><td>员工填写</td><td><span class="tag tag-b">BOUND</span></td></tr>
-            <tr><td>评价结果 eval_result</td><td>上级选择</td><td><span class="tag tag-b">BOUND</span></td></tr>
-            <tr><td>加分 bonus</td><td>上级填写</td><td><span class="tag tag-b">BOUND</span></td></tr>
-            <tr><td>减分 penalty</td><td>上级填写</td><td><span class="tag tag-b">BOUND</span></td></tr>
-          </table>
-          <p style="font-size:11px;color:var(--txt2);margin-top:8px;">来源：目标制定表单 + 考核表单</p>
-        </div>
-      </div>
-
-      <div class="ent">
-        <div class="ent-h" style="background:#f6ffed;">⚙️ 系统字段（自动计算/注入）</div>
-        <div class="ent-b">
-          <table>
-            <tr><th>字段</th><th>来源</th><th>公式角色</th></tr>
-            <tr><td>指标得分 score</td><td>公式计算</td><td><span class="tag tag-p">DYNAMIC</span></td></tr>
-            <tr><td>节点权重</td><td>方案配置</td><td><span class="tag tag-p">DYNAMIC</span></td></tr>
-            <tr><td>目标数</td><td>系统计数</td><td><span class="tag tag-p">DYNAMIC</span></td></tr>
-            <tr><td>模块权重</td><td>方案配置</td><td><span class="tag tag-p">DYNAMIC</span></td></tr>
-          </table>
-          <p style="font-size:11px;color:var(--txt2);margin-top:8px;">来源：系统自动注入</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ===== 五、完整配置链路 ===== -->
-<div class="sec">
-  <div class="sec-t">五、完整配置→执行链路</div>
-  <div class="card">
-    <div class="fl">
-      <div class="fs"><div class="t" style="color:var(--pur)">① 配置衡量标准</div><div class="d">COE定义参考值<br>grades数组</div></div>
-      <div class="fa">→</div>
-      <div class="fs"><div class="t" style="color:var(--warn)">② 配置计算规则</div><div class="d">COE在公式编辑器<br>中配置计算公式</div></div>
-      <div class="fa">→</div>
-      <div class="fs hl"><div class="t" style="color:var(--pri)">③ 配置指标库</div><div class="d">绑定①+②<br>选参考值+选公式</div></div>
-      <div class="fa">→</div>
-      <div class="fs"><div class="t" style="color:var(--ok)">④ 方案引用</div><div class="d">考核环节<br>选择计算规则</div></div>
-      <div class="fa">→</div>
-      <div class="fs"><div class="t">⑤ 活动执行</div><div class="d">员工填值<br>系统按公式算得分</div></div>
-    </div>
-
-    <div class="g2" style="margin-top:20px;">
-      <div style="background:#fafafa;border-radius:8px;padding:16px;">
-        <div style="font-weight:700;color:var(--pri);margin-bottom:8px;">Step ①②：COE 分别配置参考值和公式</div>
+    <div class="g2">
+      <div style="background:#f9f0ff;border-radius:8px;padding:16px;border:1px solid #d3adf7;">
+        <div style="font-weight:700;color:#722ed1;margin-bottom:8px;">层级1：单个指标得分</div>
         <table>
-          <tr><th>配置项</th><th>配置内容</th><th>谁配</th></tr>
-          <tr><td>衡量标准</td><td>grades=[{name:'卓越',min:100,max:100}, ...]</td><td>COE</td></tr>
-          <tr><td>计算规则</td><td>formula = 梯度插值公式 / 封顶公式 / ...</td><td>COE</td></tr>
+          <tr><th>配置什么</th><td>每个指标的评分公式</td></tr>
+          <tr><th>字段来源</th><td><b>该指标的衡量标准 grades</b> + 表单字段</td></tr>
+          <tr><th>输入</th><td>grades 参考值 + 员工填的完成值</td></tr>
+          <tr><th>输出</th><td>单个指标得分</td></tr>
+          <tr><th>配置时机</th><td>COE 配指标时（配置层，先于表单）</td></tr>
         </table>
+        <div class="code" style="margin-top:8px;font-size:11px;">
+<span class="cmt">// 指标A的公式</span>
+<span class="fn">IF</span>(<span class="var">actual_value</span> > <span class="var">challenge_value</span>, <span class="num">120</span>,
+<span class="fn">IF</span>(<span class="var">actual_value</span> >= <span class="var">target_value</span>,
+   <span class="num">100</span> + (<span class="var">actual_value</span>-<span class="var">target_value</span>)/
+     (<span class="var">challenge_value</span>-<span class="var">target_value</span>)*<span class="num">20</span>,
+   <span class="num">0</span>))
+        </div>
       </div>
-      <div style="background:#fafafa;border-radius:8px;padding:16px;">
-        <div style="font-weight:700;color:var(--pri);margin-bottom:8px;">Step ③④：指标库绑定 + 方案引用</div>
+
+      <div style="background:#f6ffed;border-radius:8px;padding:16px;border:1px solid #b7eb8f;">
+        <div style="font-weight:700;color:#52c41a;margin-bottom:8px;">层级2：总分汇总</div>
         <table>
-          <tr><th>配置项</th><th>配置内容</th><th>谁配</th></tr>
-          <tr><td>指标库</td><td>KPI_001 → FK衡量标准 + FK计算规则</td><td>COE</td></tr>
-          <tr><td>方案环节</td><td>绩效考核环节 → 选择计算规则</td><td>COE</td></tr>
+          <tr><th>配置什么</th><td>总分计算公式（加权求和/自定义）</td></tr>
+          <tr><th>字段来源</th><td><b>各指标的得分结果</b> + 权重 + 加减分</td></tr>
+          <tr><th>输入</th><td>indicator_score_A, weight_A, bonus, penalty</td></tr>
+          <tr><th>输出</th><td>总分</td></tr>
+          <tr><th>配置时机</th><td>COE 配方案环节时（配置层）</td></tr>
         </table>
+        <div class="code" style="margin-top:8px;font-size:11px;">
+<span class="cmt">// 总分公式</span>
+<span class="fn">ROUND</span>(
+  <span class="var">indicator_score_A</span> * <span class="var">weight_A</span> / <span class="num">100</span>
+  + <span class="var">indicator_score_B</span> * <span class="var">weight_B</span> / <span class="num">100</span>
+  + <span class="var">indicator_score_C</span> * <span class="var">weight_C</span> / <span class="num">100</span>
+  + <span class="var">bonus</span> - <span class="var">penalty</span>
+, <span class="num">1</span>)
+        </div>
       </div>
     </div>
 
-    <div style="margin-top:16px;background:#fafafa;border-radius:8px;padding:16px;">
-      <div style="font-weight:700;color:var(--pri);margin-bottom:8px;">Step ⑤：活动执行时 — 公式引擎运行过程</div>
+    <div style="margin-top:16px;">
+      <div style="font-size:14px;font-weight:700;margin-bottom:12px;">数据流</div>
       <div class="code">
-<span class="cmt">// 1. 员工选指标 → 指标带出衡量标准（grades）和计算规则（formula）</span>
-<span class="var">indicator</span> = <span class="fn">getIndicator</span>(<span class="str">"KPI_001"</span>)
-<span class="var">grades</span> = <span class="var">indicator</span>.<span class="fn">measure_standard</span>.<span class="fn">grades</span>  <span class="cmt">// 参考值</span>
-<span class="var">formula</span> = <span class="var">indicator</span>.<span class="fn">calc_rule</span>.<span class="fn">formula</span>        <span class="cmt">// 计算公式</span>
-
-<span class="cmt">// 2. 员工填写目标 → 参考值渲染到表单</span>
-<span class="cmt">// 表单显示：挑战值=grades[0].max, 目标值=grades[1].max, 保底值=grades[2].max</span>
-
-<span class="cmt">// 3. 员工填写完成值 → 系统按公式计算得分</span>
-<span class="var">actual_value</span> = <span class="num">115</span>  <span class="cmt">// 员工填的完成值</span>
-<span class="var">score</span> = <span class="fn">executeFormula</span>(<span class="var">formula</span>, {
-    <span class="var">actual</span>: <span class="num">115</span>,          <span class="cmt">// ← 来自表单</span>
-    <span class="var">challenge</span>: <span class="num">120</span>,       <span class="cmt">// ← 来自 grades[0].max</span>
-    <span class="var">target</span>: <span class="num">100</span>,          <span class="cmt">// ← 来自 grades[1].max</span>
-    <span class="var">baseline</span>: <span class="num">80</span>,         <span class="cmt">// ← 来自 grades[2].max</span>
-})
-<span class="cmt">// score = 115分（梯度插值公式计算）</span>
-
-<span class="cmt">// 4. 多个指标得分 → 按总分公式汇总</span>
-<span class="var">total_score</span> = <span class="fn">executeFormula</span>(<span class="var">total_formula</span>, {
-    <span class="var">scores</span>: [<span class="num">115</span>, <span class="num">85</span>, <span class="num">92</span>],   <span class="cmt">// 各指标得分</span>
-    <span class="var">weights</span>: [<span class="num">60</span>, <span class="num">25</span>, <span class="num">15</span>],   <span class="cmt">// 各指标权重</span>
-    <span class="var">bonus</span>: <span class="num">5</span>, <span class="var">penalty</span>: <span class="num">0</span>,    <span class="cmt">// 加减分</span>
-})
+<span style="color:#722ed1">配置层（COE 操作，先于表单）</span>
+┌─────────────────────────────────────────────────────────────────────┐
+│ 衡量标准 grades ──FK──→ 指标 ──FK──→ 计算规则（公式）                  │
+│ [120,100,80]          KPI_001      IF(actual>120, 120, ...)         │
+└─────────────────────────────────────────────────────────────────────┘
+                                    ↓ 方案引用
+<span style="color:#52c41a">执行层（员工操作，表单填写后）</span>
+┌─────────────────────────────────────────────────────────────────────┐
+│ 员工填表单 → actual_value=115                                       │
+│             ↓                                                       │
+│ 系统执行公式: IF(115>120, 120, IF(115>=100, 100+(115-100)/(120-100)*20, 0)) │
+│             ↓                                                       │
+│ 输出: indicator_score = 115.0                                       │
+└─────────────────────────────────────────────────────────────────────┘
+                                    ↓ 层级1输出作为层级2输入
+┌─────────────────────────────────────────────────────────────────────┐
+│ 总分 = 115.0×60/100 + 99.5×25/100 + 80×15/100 + 5 - 0            │
+│     = 110.9分                                                       │
+└─────────────────────────────────────────────────────────────────────┘
       </div>
     </div>
   </div>
 </div>
 
-<!-- ===== 六、数据模型 ===== -->
+<!-- ===== 五、数据模型 ===== -->
 <div class="sec">
-  <div class="sec-t">六、数据模型（配置层三张表）</div>
+  <div class="sec-t">五、数据模型</div>
   <div class="card">
     <div class="g3">
       <div class="ent">
@@ -447,12 +402,58 @@ grades=[{name,min,max,desc}]
 <span class="cmt">-- 指标库 → 计算规则（多对一：多个指标可共用同一套公式）</span>
 <span class="var">indicator</span>.<span class="fn">calc_rule_id</span> → <span class="var">calc_rule</span>.<span class="fn">id</span>
 
-<span class="cmt">-- 目标制定表单 → 指标库（员工选指标时带出参考值+公式）</span>
-<span class="var">goal_detail</span>.modules[*].goals[*].<span class="fn">indicator_id</span> → <span class="var">indicator</span>.<span class="fn">id</span>
+<span class="cmt">-- 公式编辑器取字段（配置层，先于表单）</span>
+<span class="cmt">-- COE选指标 → 读indicator.FK→measure_standard → 取grades → 注册为公式变量</span>
+
+<span class="cmt">-- 执行时（表单填写后）</span>
+<span class="cmt">-- 员工填actual_value → 系统执行formula(challenge_value=grades[0].max, actual_value=115)</span>
 
 <span class="cmt">-- 方案环节 → 计算规则（方案选择用哪套总分公式）</span>
 <span class="var">perf_stage_config</span>(stage=<span class="str">'eval'</span>).<span class="fn">calc_rule_id</span> → <span class="var">calc_rule</span>.<span class="fn">id</span>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 六、配置→执行完整链路 ===== -->
+<div class="sec">
+  <div class="sec-t">六、配置→执行完整链路</div>
+  <div class="card">
+    <div class="fl">
+      <div class="fs hl" style="border-color:#722ed1;background:#f9f0ff;">
+        <div class="t" style="color:#722ed1;">① 配置衡量标准</div>
+        <div class="d">COE定义grades<br>参考值数据</div>
+      </div>
+      <div class="fa">→</div>
+      <div class="fs hl" style="border-color:#722ed1;background:#f9f0ff;">
+        <div class="t" style="color:#722ed1;">② 配置指标库</div>
+        <div class="d">绑定①+③<br>选参考值+选公式</div>
+      </div>
+      <div class="fa">→</div>
+      <div class="fs hl" style="border-color:#722ed1;background:#f9f0ff;">
+        <div class="t" style="color:#722ed1;">③ 配置计算规则</div>
+        <div class="d">公式编辑器<br>字段来自②的grades</div>
+      </div>
+      <div class="fa">→</div>
+      <div class="fs hl" style="border-color:#722ed1;background:#f9f0ff;">
+        <div class="t" style="color:#722ed1;">④ 方案引用</div>
+        <div class="d">考核环节<br>选择计算规则</div>
+      </div>
+      <div class="fa">→</div>
+      <div class="fs hl" style="border-color:#52c41a;background:#f6ffed;">
+        <div class="t" style="color:#52c41a;">⑤ 员工填表单</div>
+        <div class="d">完成值/权重<br>表单数据产生</div>
+      </div>
+      <div class="fa">→</div>
+      <div class="fs hl" style="border-color:#52c41a;background:#f6ffed;">
+        <div class="t" style="color:#52c41a;">⑥ 公式执行</div>
+        <div class="d">表单值套公式<br>算出得分</div>
+      </div>
+    </div>
+
+    <div class="note" style="margin-top:16px;">
+      <b>关键点：</b>步骤①②③④都是 COE 在配置层操作，先于表单。步骤⑤⑥是员工在执行层操作，后于配置。<br>
+      公式编辑器在步骤③打开，字段从步骤②的 grades 取，不依赖步骤⑤的表单数据。
     </div>
   </div>
 </div>

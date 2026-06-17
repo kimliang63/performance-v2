@@ -503,7 +503,44 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
   <div class="section-title">核心数据表设计</div>
 
   <div class="arch-container" style="margin-bottom:24px;">
-    <div style="font-size:14px;font-weight:600;margin-bottom:16px;">配置层数据（方案+活动）</div>
+    <div style="font-size:14px;font-weight:600;margin-bottom:16px;">基础配置层数据（V1）</div>
+    <div class="grid-3" style="margin-bottom:24px;">
+      <div class="db-entity">
+        <div class="db-entity-header" style="background:#fff7e6;">📐 measure_standard（衡量标准）</div>
+        <div class="db-entity-body">
+          <div class="db-field"><span class="fkey">PK</span><span class="fname">id</span><span class="ftype">bigint</span></div>
+          <div class="db-field"><span class="fname">name</span><span class="ftype">varchar(200)</span></div>
+          <div class="db-field"><span class="fname">dept</span><span class="ftype">varchar(100)</span></div>
+          <div class="db-field"><span class="fname">type</span><span class="ftype">enum(百分比/分值/等级)</span></div>
+          <div class="db-field"><span class="fname">grades</span><span class="ftype">JSON ← 只存参考值</span></div>
+          <div class="db-field" style="background:#fff7e6;font-size:11px;">grades=[{name,min,max,desc}]</div>
+        </div>
+      </div>
+      <div class="db-entity">
+        <div class="db-entity-header" style="background:#e6f7ff;">📏 indicator（指标库）</div>
+        <div class="db-entity-body">
+          <div class="db-field"><span class="fkey">PK</span><span class="fname">id</span><span class="ftype">bigint</span></div>
+          <div class="db-field"><span class="fname">code</span><span class="ftype">varchar(50) UNIQUE</span></div>
+          <div class="db-field"><span class="fname">name</span><span class="ftype">varchar(200)</span></div>
+          <div class="db-field"><span class="fname">category</span><span class="ftype">varchar(50)</span></div>
+          <div class="db-field"><span class="fname">unit</span><span class="ftype">varchar(20)</span></div>
+          <div class="db-field"><span class="fkey">FK</span><span class="fname">measure_std_id</span><span class="ftype">→ measure_standard</span></div>
+          <div class="db-field"><span class="fkey">FK</span><span class="fname">calc_rule_id</span><span class="ftype">→ calc_rule</span></div>
+        </div>
+      </div>
+      <div class="db-entity">
+        <div class="db-entity-header" style="background:#f6ffed;">🧮 calc_rule（计算规则）</div>
+        <div class="db-entity-body">
+          <div class="db-field"><span class="fkey">PK</span><span class="fname">id</span><span class="ftype">bigint</span></div>
+          <div class="db-field"><span class="fname">name</span><span class="ftype">varchar(200)</span></div>
+          <div class="db-field"><span class="fname">formula</span><span class="ftype">text ← 只存公式</span></div>
+          <div class="db-field"><span class="fname">formula_vars</span><span class="ftype">JSON</span></div>
+          <div class="db-field"><span class="fname">status</span><span class="ftype">enum(enabled/disabled)</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-size:14px;font-weight:600;margin-bottom:16px;">方案+活动层数据（V2/V4）</div>
     <div class="grid-3">
       <div class="db-entity">
         <div class="db-entity-header" style="background:#f9f0ff;">📋 perf_scheme（绩效方案）</div>
