@@ -1174,7 +1174,7 @@ render();
 
 // ═══ AI CHAT ═══
 const AI_MSGS=[
-  {role:'bot',text:'你好，我是 AI 目标助手 👋\n\n我可以帮你：\n• 优化目标描述和衡量标准\n• 检查权重分配是否合理\n• 对标历史目标数据\n• 生成目标建议',time:'09:00',actions:['检查权重分配','优化目标描述','对标历史数据']},
+  {role:'bot',text:'你好，我是 AI 目标助手 👋\n\n我可以帮你：\n• 优化目标描述和衡量标准\n• 检查权重分配是否合理\n• 推荐关联指标\n• 对标历史目标数据\n• 智能拆分目标',time:'09:00',actions:['检查权重分配','优化目标描述','推荐指标','对标历史数据','智能拆分目标']},
   {role:'user',text:'帮我检查下当前权重分配'},
   {role:'bot',text:'当前权重分配分析：\n\n• 关键指标: 30%（3个目标）\n• 关键行动: 70%（4个目标）\n\n整体结构合理，关键行动占比偏高。建议：\n• 资源利用率权重偏低（5%），可适当提升\n• 绩效重构和AI探索各25%，单项权重较大',time:'09:01',cards:[
     {t:'权重建议',d:'资源利用率 5% → 8%，绩效重构 25% → 22%，AI探索 25% → 27%',tag:'建议调整',tc:'pr',apply:'weight'},
@@ -1192,7 +1192,7 @@ function renderAiChat(){
     <div class="ai-msg ${m.role}">
       <div class="ai-msg-bd">${m.text.replace(/\n/g,'<br/>')}</div>
       ${m.cards?m.cards.map(c=>`<div class="ai-msg-card"><div class="ai-msg-card-t">${c.t}</div><div class="ai-msg-card-d">${c.d}</div><div class="ai-msg-card-ft"><span class="ai-msg-card-tag ${c.tc}">${c.tag}</span>${c.apply?`<button class="ai-msg-card-apply" onclick="applyAiSuggestion('${c.apply}')">应用到当前目标</button>`:''}</div></div>`).join(''):''}
-      ${m.actions?`<div class="ai-msg-actions">${m.actions.map(a=>`<button class="ai-msg-btn${a.includes('确认')||a.includes('采纳')?' primary':''}">${a}</button>`).join('')}</div>`:''}
+      ${m.actions?`<div class="ai-msg-actions">${m.actions.map(a=>`<button class="ai-msg-btn${a.includes('确认')||a.includes('采纳')?' primary':''}" onclick="handleAiAction('${a}')">${a}</button>`).join('')}</div>`:''}
       ${m.time?`<div class="ai-msg-time">${m.time}</div>`:''}
     </div>
   `).join('');
@@ -1233,6 +1233,53 @@ function sendAiMsg(){
   renderAiChat();
   setTimeout(()=>{
     AI_MSGS.push({role:'bot',text:'收到，正在分析目标数据…\n\n已根据你的描述生成建议，请查看更新结果。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
+    renderAiChat();
+  },800);
+}
+
+function handleAiAction(action){
+  // 添加用户消息
+  AI_MSGS.push({role:'user',text:action});
+  renderAiChat();
+
+  // 根据不同场景返回对应的AI回复
+  setTimeout(()=>{
+    let response='';
+    switch(action){
+      case '检查权重分配':
+        response='当前权重分配分析：\n\n• 关键指标: 30%（3个目标）\n• 关键行动: 70%（4个目标）\n\n整体结构合理，关键行动占比偏高。建议：\n• 资源利用率权重偏低（5%），可适当提升\n• 绩效重构和AI探索各25%，单项权重较大';
+        AI_MSGS.push({role:'bot',text:response,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
+          {t:'权重建议',d:'资源利用率 5% → 8%，绩效重构 25% → 22%，AI探索 25% → 27%',tag:'建议调整',tc:'pr',apply:'weight'},
+        ]});
+        break;
+      case '优化目标描述':
+        response='建议优化以下目标描述：\n\n• "HRAS产品管理规范" → 补充具体规范清单和验收标准\n• "日常滚动需求响应" → 明确响应时效和输出物要求\n• "绩效重构事项推进" → 细化里程碑节点和交付物';
+        AI_MSGS.push({role:'bot',text:response,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
+          {t:'优化建议',d:'为每个目标补充：1.具体任务清单 2.完成标准 3.交付时间点',tag:'可应用',tc:'em',apply:'desc'},
+        ]});
+        break;
+      case '推荐指标':
+        response='根据您的岗位（高级产品经理）和部门（产品部），推荐以下指标：\n\n• 需求交付周期（效率类）\n• 需求评审通过率（质量类）\n• 产品上线准时率（交付类）\n• 用户满意度评分（效果类）';
+        AI_MSGS.push({role:'bot',text:response,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
+          {t:'推荐指标',d:'需求交付周期、需求评审通过率、产品上线准时率',tag:'可关联',tc:'pr'},
+        ]});
+        break;
+      case '对标历史数据':
+        response='与上月（2026年5月）对比：\n\n• 目标数量: 7 → 7（持平）\n• 关键指标权重: 35% → 30%（下降5%）\n• 关键行动权重: 65% → 70%（上升5%）\n\n关注：关键指标权重下降，建议适当回调';
+        AI_MSGS.push({role:'bot',text:response,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
+          {t:'历史对比',d:'关键指标权重从35%降至30%，建议回调至33%',tag:'关注',tc:'ac'},
+        ]});
+        break;
+      case '智能拆分目标':
+        response='根据"HR ONE 绩效重构事项推进"目标，建议拆分为：\n\n1. 原型设计（权重10%）\n   - 06-10 输出AI+绩效核心用户页面原型\n   - 完成新哥、蔡老师汇报\n\n2. 需求评审（权重10%）\n   - 06-19 完成需求内审\n   - 06-24 完成需求评审\n\n3. 落地推广（权重5%）\n   - 版本发布和用户培训';
+        AI_MSGS.push({role:'bot',text:response,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
+          {t:'拆分方案',d:'将25%权重拆分为10%+10%+5%，更清晰可追踪',tag:'建议',tc:'pr'},
+        ]});
+        break;
+      default:
+        response='收到，正在分析目标数据…\n\n已根据你的描述生成建议，请查看更新结果。';
+        AI_MSGS.push({role:'bot',text:response,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
+    }
     renderAiChat();
   },800);
 }
