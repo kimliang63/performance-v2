@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 结果确认</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+.pg{background:var(--sf);border-radius:var(--r3);box-shadow:0 1px 3px rgba(0,0,0,.05);overflow:hidden;margin-bottom:16px}
+
+.result-hero{display:flex;align-items:center;gap:32px;padding:28px 32px;background:linear-gradient(135deg,var(--pr50),var(--vi50));border-bottom:1px solid var(--pr100)}
+.result-score{text-align:center}
+.result-score-num{font:700 48px/1 var(--fm);color:var(--pr)}
+.result-score-label{font:400 12px/1 var(--f);color:var(--c5);margin-top:6px}
+.result-divider{width:1px;height:64px;background:var(--pr200)}
+.result-grade{text-align:center}
+.result-grade-text{font:700 22px/1 var(--f);color:var(--em700)}
+.result-grade-label{font:400 12px/1 var(--f);color:var(--c5);margin-top:6px}
+.result-meta{flex:1;display:flex;flex-direction:column;gap:8px}
+.result-meta-row{display:flex;align-items:center;gap:8px;font:400 13px/1 var(--f);color:var(--c6)}
+.result-meta-row strong{color:var(--c8)}
+
+.results-table{width:100%;border-collapse:collapse}
+.results-table th{font:600 11px/1 var(--f);color:var(--c5);text-align:left;padding:10px 14px;background:var(--c0);border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.results-table td{font:400 13px/1.4 var(--f);color:var(--c8);padding:12px 14px;border-bottom:1px solid var(--dv);vertical-align:middle}
+.results-table tr:last-child td{border-bottom:none}
+.results-table tr:hover td{background:var(--c0)}
+.module-row td{background:var(--pr50);font:600 12px/1 var(--f);color:var(--pr);padding:8px 14px !important;border-bottom:1px solid var(--pr100) !important}
+.module-row td:first-child{border-left:3px solid var(--pr)}
+
+.score-badge{display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:24px;border-radius:var(--r1);font:600 13px/1 var(--fm)}
+.score-badge.s{background:var(--vi50);color:var(--vi)}
+.score-badge.a{background:var(--em50);color:var(--em700)}
+.score-badge.b{background:var(--pr50);color:var(--pr)}
+.score-badge.c{background:var(--ac50);color:var(--ac700)}
+
+.comment-card{padding:16px 20px;border-bottom:1px solid var(--dv)}
+.comment-card:last-child{border-bottom:none}
+.comment-hd{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.comment-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 11px/1 var(--f);color:#FFF;flex-shrink:0}
+.comment-name{font:600 13px/1 var(--f);color:var(--c8)}
+.comment-role{font:400 11px/1 var(--f);color:var(--c5)}
+.comment-text{font:400 13px/1.6 var(--f);color:var(--c7);padding-left:36px}
+
+.confirm-bar{padding:20px 24px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--dv)}
+.confirm-status{display:flex;align-items:center;gap:8px;font:500 13px/1 var(--f);color:var(--ac700)}
+.confirm-status .dot{width:8px;height:8px;border-radius:50%;background:var(--ac)}
+
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 16px;height:36px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
+.btn-p{background:var(--pr);color:#FFF}.btn-p:hover{background:var(--pr700)}
+.btn-r{background:var(--ro);color:#FFF}.btn-r:hover{background:#E11D48}
+.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3);color:var(--c8)}
+
+.appeal-modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:2000;align-items:center;justify-content:center}
+.appeal-modal.show{display:flex}
+.appeal-box{background:var(--sf);border-radius:var(--r3);width:480px;box-shadow:0 20px 60px rgba(0,0,0,.15);overflow:hidden}
+.appeal-box-hd{padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between}
+.appeal-box-t{font:600 15px/1 var(--f);color:var(--c9)}
+.appeal-box-close{width:28px;height:28px;border-radius:50%;border:none;background:var(--c1);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--c5)}
+.appeal-box-bd{padding:20px}
+.appeal-box-ft{padding:12px 20px;border-top:1px solid var(--dv);display:flex;justify-content:flex-end;gap:8px}
+.appeal-textarea{width:100%;min-height:120px;border:1px solid var(--c2);border-radius:var(--r1);padding:10px 12px;font:400 13px/1.5 var(--f);color:var(--c8);outline:none;resize:vertical}
+.appeal-textarea:focus{border-color:var(--pr)}
+.appeal-label{font:500 12px/1 var(--f);color:var(--c6);margin-bottom:8px;display:block}
+
+.toast{position:fixed;top:70px;right:24px;padding:12px 18px;border-radius:var(--r2);font:500 13px/1.3 var(--f);box-shadow:0 10px 40px -10px rgba(0,0,0,.12);z-index:3000;transform:translateX(120%);transition:transform .25s ease}
+.toast.on{transform:translateX(0)}
+.toast.success{background:var(--em);color:#FFF}
+.toast.warn{background:var(--ac);color:#FFF}
+</style>
+</head>
+<body>
+
+<div style="height:52px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:1100">
+  <div style="display:flex;align-items:center;gap:14px">
+    <a href="../demo-index.html" style="text-decoration:none;display:flex;align-items:center;gap:8px">
+      <div style="width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <span style="font-size:15px;font-weight:700;color:var(--c9)">HR ONE</span>
+    </a>
+    <div style="width:1px;height:20px;background:var(--c2)"></div>
+    <span style="font:500 13px/1 var(--f);color:var(--c5)">业务演示</span>
+    <span style="color:var(--c3)">&#8250;</span>
+    <span style="font:600 13px/1 var(--f);color:var(--c8)">结果确认</span>
+  </div>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+    <div style="width:30px;height:30px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--f);color:#FFF">张</div>
+  </div>
+</div>
+
+<div style="padding:24px">
+
+  <div class="pg">
+    <div class="result-hero">
+      <div class="result-score">
+        <div class="result-score-num">87.5</div>
+        <div class="result-score-label">加权总分</div>
+      </div>
+      <div class="result-divider"></div>
+      <div class="result-grade">
+        <div class="result-grade-text">符合预期+</div>
+        <div class="result-grade-label">综合等级</div>
+      </div>
+      <div class="result-divider"></div>
+      <div class="result-meta">
+        <div class="result-meta-row">考核周期：<strong>2026年Q2</strong></div>
+        <div class="result-meta-row">直接上级评分：<strong>88.0</strong>（王总·王建华）</div>
+        <div class="result-meta-row">间接上级评分：<strong>86.5</strong>（李总·李明辉）</div>
+        <div class="result-meta-row">HRBP：<strong>赵敏</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pg">
+    <div style="padding:14px 20px;border-bottom:1px solid var(--dv)"><span style="font:600 14px/1 var(--f);color:var(--c9)">得分明细</span></div>
+    <div style="overflow-x:auto">
+      <table class="results-table">
+        <thead>
+          <tr><th>目标名称</th><th>权重</th><th>目标值</th><th>完成值</th><th>得分</th><th>等级</th><th>评语</th></tr>
+        </thead>
+        <tbody>
+          <tr class="module-row"><td colspan="7">业绩目标（权重 50%）</td></tr>
+          <tr>
+            <td style="font-weight:500;color:var(--c9)">完成Q2产品迭代</td>
+            <td style="font-family:var(--fm)">30%</td>
+            <td style="font-family:var(--fm)">100</td>
+            <td style="font-family:var(--fm)">95</td>
+            <td><span class="score-badge a">92</span></td>
+            <td><span class="score-badge a">A</span></td>
+            <td style="max-width:200px">三大模块按时上线，Bug率0.3%，超出预期</td>
+          </tr>
+          <tr>
+            <td style="font-weight:500;color:var(--c9)">新客户拓展</td>
+            <td style="font-family:var(--fm)">20%</td>
+            <td style="font-family:var(--fm)">5000</td>
+            <td style="font-family:var(--fm)">5200</td>
+            <td><span class="score-badge a">90</span></td>
+            <td><span class="score-badge a">A</span></td>
+            <td style="max-width:200px">新增客户超额完成，获客成本达标</td>
+          </tr>
+          <tr class="module-row"><td colspan="7">管理目标（权重 25%）</td></tr>
+          <tr>
+            <td style="font-weight:500;color:var(--c9)">客户满意度</td>
+            <td style="font-family:var(--fm)">15%</td>
+            <td style="font-family:var(--fm)">90</td>
+            <td style="font-family:var(--fm)">88</td>
+            <td><span class="score-badge b">82</span></td>
+            <td><span class="score-badge b">B</span></td>
+            <td style="max-width:200px">NPS略低，已制定改进计划</td>
+          </tr>
+          <tr>
+            <td style="font-weight:500;color:var(--c9)">团队效率</td>
+            <td style="font-family:var(--fm)">10%</td>
+            <td style="font-family:var(--fm)">110</td>
+            <td style="font-family:var(--fm)">115</td>
+            <td><span class="score-badge a">93</span></td>
+            <td><span class="score-badge a">A</span></td>
+            <td style="max-width:200px">流程优化效果显著，效率超额提升</td>
+          </tr>
+          <tr class="module-row"><td colspan="7">能力发展（权重 18%）</td></tr>
+          <tr>
+            <td style="font-weight:500;color:var(--c9)">人才培养</td>
+            <td style="font-family:var(--fm)">10%</td>
+            <td style="font-family:var(--fm)">2</td>
+            <td style="font-family:var(--fm)">2</td>
+            <td><span class="score-badge b">85</span></td>
+            <td><span class="score-badge b">B</span></td>
+            <td style="max-width:200px">IDP计划执行到位，1人绩效明显提升</td>
+          </tr>
+          <tr>
+            <td style="font-weight:500;color:var(--c9)">技术认证</td>
+            <td style="font-family:var(--fm)">8%</td>
+            <td style="font-family:var(--fm)">1</td>
+            <td style="font-family:var(--fm)">1</td>
+            <td><span class="score-badge a">90</span></td>
+            <td><span class="score-badge a">A</span></td>
+            <td style="max-width:200px">已取得认证，成绩85分</td>
+          </tr>
+          <tr class="module-row"><td colspan="7">价值观（权重 7%）</td></tr>
+          <tr>
+            <td style="font-weight:500;color:var(--c9)">团队协作</td>
+            <td style="font-family:var(--fm)">7%</td>
+            <td style="font-family:var(--fm)">-</td>
+            <td style="font-family:var(--fm)">-</td>
+            <td><span class="score-badge a">88</span></td>
+            <td><span class="score-badge a">A</span></td>
+            <td style="max-width:200px">协作积极，获多方好评</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="pg">
+    <div style="padding:14px 20px;border-bottom:1px solid var(--dv)"><span style="font:600 14px/1 var(--f);color:var(--c9)">上级评语</span></div>
+    <div class="comment-card">
+      <div class="comment-hd">
+        <div class="comment-avatar" style="background:var(--pr)">王</div>
+        <span class="comment-name">王建华</span>
+        <span class="comment-role">直接上级 · 产品总监</span>
+      </div>
+      <div class="comment-text">张明本季度表现优秀，产品迭代按时高质量交付，客户拓展超额完成目标。建议在客户满意度方面持续发力，加强与客户的深度沟通。团队管理能力稳步提升，人才培养初见成效。总体评价：符合预期+。</div>
+    </div>
+    <div class="comment-card">
+      <div class="comment-hd">
+        <div class="comment-avatar" style="background:var(--vi)">李</div>
+        <span class="comment-name">李明辉</span>
+        <span class="comment-role">间接上级 · VP</span>
+      </div>
+      <div class="comment-text">张明在产品规划和执行方面展现了较强的能力，跨部门协作表现突出。建议进一步提升战略思维，关注行业趋势。认可其在团队建设和人才培养方面的努力。</div>
+    </div>
+  </div>
+
+  <div class="pg">
+    <div class="confirm-bar">
+      <div class="confirm-status"><span class="dot"></span>待确认 — 请在3个工作日内确认或发起申诉</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-r" onclick="openAppeal()">不同意，发起申诉</button>
+        <button class="btn btn-p" onclick="showToast('已确认绩效结果', 'success')">同意确认</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="appeal-modal" id="appealModal">
+  <div class="appeal-box">
+    <div class="appeal-box-hd">
+      <span class="appeal-box-t">发起申诉</span>
+      <button class="appeal-box-close" onclick="closeAppeal()">&times;</button>
+    </div>
+    <div class="appeal-box-bd">
+      <label class="appeal-label">请说明申诉原因</label>
+      <textarea class="appeal-textarea" placeholder="请输入您对绩效结果的异议及申诉理由..."></textarea>
+      <div style="margin-top:12px">
+        <label class="appeal-label">佐证材料（可选）</label>
+        <div style="border:2px dashed var(--c2);border-radius:var(--r2);padding:20px;text-align:center;cursor:pointer">
+          <div style="font:400 12px/1 var(--f);color:var(--c4)">点击或拖拽文件至此上传</div>
+        </div>
+      </div>
+    </div>
+    <div class="appeal-box-ft">
+      <button class="btn btn-s" onclick="closeAppeal()">取消</button>
+      <button class="btn btn-r" onclick="submitAppeal()">提交申诉</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function openAppeal() {
+  document.getElementById('appealModal').classList.add('show');
+}
+function closeAppeal() {
+  document.getElementById('appealModal').classList.remove('show');
+}
+function submitAppeal() {
+  closeAppeal();
+  showToast('申诉已提交，HRBP将在3个工作日内处理', 'warn');
+}
+function showToast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + (type || 'success');
+  setTimeout(function() { t.classList.add('on'); }, 10);
+  setTimeout(function() { t.classList.remove('on'); }, 2500);
+}
+</script>
+<script src="../navigation.js"></script>
+<script>GHR_NAV.init('perf', '员工确认');</script>
+</body>
+</html>

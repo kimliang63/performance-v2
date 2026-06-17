@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 业务演示</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;--vi100:#EDE9FE;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoothing:antialiased}
+
+.page{max-width:1200px;margin:0 auto;padding:40px 32px}
+
+/* Header */
+.demo-hd{text-align:center;margin-bottom:48px}
+.demo-hd-t{font:700 32px/1.2 var(--f);color:var(--c9);letter-spacing:-.5px;margin-bottom:8px}
+.demo-hd-s{font:400 15px/1.5 var(--f);color:var(--c5)}
+.demo-hd-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:var(--r1);background:var(--pr50);border:1px solid var(--pr200);font:500 12px/1 var(--f);color:var(--pr);margin-top:12px}
+.demo-hd-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--pr);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* Section */
+.demo-section{margin-bottom:40px}
+.demo-section-hd{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.demo-section-ic{width:32px;height:32px;border-radius:var(--r2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.demo-section-ic svg{width:16px;height:16px;color:#FFF}
+.demo-section-t{font:700 18px/1.2 var(--f);color:var(--c9)}
+.demo-section-s{font:400 13px/1 var(--f);color:var(--c5);margin-left:8px}
+
+/* Cards Grid */
+.demo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+
+/* Card */
+.demo-card{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);padding:20px;cursor:pointer;transition:all .15s;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:10px}
+.demo-card:hover{border-color:var(--pr200);box-shadow:0 4px 16px rgba(37,99,235,.08);transform:translateY(-1px)}
+.demo-card-hd{display:flex;align-items:flex-start;justify-content:space-between}
+.demo-card-title{font:600 14px/1.3 var(--f);color:var(--c9)}
+.demo-card-tag{font:500 10px/1 var(--f);padding:3px 8px;border-radius:4px;flex-shrink:0;white-space:nowrap}
+.demo-card-tag.emp{background:var(--pr50);color:var(--pr)}
+.demo-card-tag.mgr{background:var(--vi50);color:var(--vi)}
+.demo-card-tag.mobile{background:var(--em50);color:var(--em700)}
+.demo-card-tag.agent{background:var(--ac50);color:#92400E}
+.demo-card-desc{font:400 12px/1.5 var(--f);color:var(--c5);flex:1}
+.demo-card-flow{display:flex;align-items:center;gap:4px;font:500 11px/1 var(--f);color:var(--c4);margin-top:auto;padding-top:8px;border-top:1px solid var(--dv)}
+.demo-card-flow svg{width:12px;height:12px;flex-shrink:0}
+.demo-card-flow .step{padding:2px 6px;border-radius:3px;background:var(--c0)}
+.demo-card-flow .arrow{color:var(--c3)}
+
+/* Flow Legend */
+.flow-legend{display:flex;flex-wrap:wrap;gap:16px;padding:16px 20px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);margin-bottom:24px}
+.flow-legend-item{display:flex;align-items:center;gap:6px;font:400 12px/1 var(--f);color:var(--c6)}
+.flow-legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+
+/* Footer */
+.demo-ft{text-align:center;padding:32px 0;font:400 13px/1 var(--f);color:var(--c4)}
+</style>
+</head>
+<body>
+
+<div class="page">
+  <!-- Header -->
+  <div class="demo-hd">
+    <div class="demo-hd-t">绩效管理 · 业务流程演示</div>
+    <div class="demo-hd-s">按角色、平台拆分的完整绩效流程演示，覆盖员工端、管理者端、移动端、AI Agent端</div>
+    <div class="demo-hd-badge"><span class="dot"></span>共 35 个演示页面</div>
+  </div>
+
+  <!-- Flow Legend -->
+  <div class="flow-legend">
+    <div class="flow-legend-item"><div class="flow-legend-dot" style="background:var(--pr)"></div>员工端</div>
+    <div class="flow-legend-item"><div class="flow-legend-dot" style="background:var(--vi)"></div>管理者端</div>
+    <div class="flow-legend-item"><div class="flow-legend-dot" style="background:var(--em)"></div>移动端</div>
+    <div class="flow-legend-item"><div class="flow-legend-dot" style="background:var(--ac)"></div>AI Agent端</div>
+  </div>
+
+  <!-- Employee PC -->
+  <div class="demo-section">
+    <div class="demo-section-hd">
+      <div class="demo-section-ic" style="background:var(--pr)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+      <span class="demo-section-t">员工端 · PC</span>
+      <span class="demo-section-s">7 页 — 工作台 → 目标制定 → 考核 → 审定 → 面谈 → 确认 → 结果</span>
+    </div>
+    <div class="demo-grid">
+      <a class="demo-card" href="employee/demo-workbench-home.html">
+        <div class="demo-card-hd"><span class="demo-card-title">绩效工作台</span><span class="demo-card-tag emp">员工</span></div>
+        <div class="demo-card-desc">待办任务、目标进度、绩效结果预览</div>
+        <div class="demo-card-flow"><span class="step">首页</span></div>
+      </a>
+      <a class="demo-card" href="employee/demo-goal-employee.html">
+        <div class="demo-card-hd"><span class="demo-card-title">目标制定 · 填写</span><span class="demo-card-tag emp">员工</span></div>
+        <div class="demo-card-desc">Split布局，左侧模块目标列表 + 右侧目标详情表单，支持AI辅助填写</div>
+        <div class="demo-card-flow"><span class="step">目标制定</span><span class="arrow">→</span><span class="step">直接上级审批</span></div>
+      </a>
+      <a class="demo-card" href="employee/demo-workbench-my-goal.html">
+        <div class="demo-card-hd"><span class="demo-card-title">我的目标</span><span class="demo-card-tag emp">员工</span></div>
+        <div class="demo-card-desc">提交后的目标列表，查看审批状态</div>
+        <div class="demo-card-flow"><span class="step">目标提交后</span></div>
+      </a>
+      <a class="demo-card" href="employee/demo-eval-self.html">
+        <div class="demo-card-hd"><span class="demo-card-title">绩效考核 · 自评</span><span class="demo-card-tag emp">员工</span></div>
+        <div class="demo-card-desc">填写完成值、评价等级、评语，支持AI自动评分</div>
+        <div class="demo-card-flow"><span class="step">自评</span><span class="arrow">→</span><span class="step">上级评分</span></div>
+      </a>
+      <a class="demo-card" href="employee/demo-confirm-employee.html">
+        <div class="demo-card-hd"><span class="demo-card-title">结果确认</span><span class="demo-card-tag emp">员工</span></div>
+        <div class="demo-card-desc">只读展示绩效结果，同意/不同意确认</div>
+        <div class="demo-card-flow"><span class="step">审定完成后</span></div>
+      </a>
+      <a class="demo-card" href="employee/demo-interview-employee.html">
+        <div class="demo-card-hd"><span class="demo-card-title">绩效面谈 · 填写</span><span class="demo-card-tag emp">员工</span></div>
+        <div class="demo-card-desc">点三个赞、拍三个转、下阶段规划、需求</div>
+        <div class="demo-card-flow"><span class="step">员工填写</span><span class="arrow">→</span><span class="step">上级审批</span></div>
+      </a>
+      <a class="demo-card" href="employee/demo-workbench-my-result.html">
+        <div class="demo-card-hd"><span class="demo-card-title">我的绩效结果</span><span class="demo-card-tag emp">员工</span></div>
+        <div class="demo-card-desc">完整绩效结果详情页</div>
+        <div class="demo-card-flow"><span class="step">结果查看</span></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Manager PC -->
+  <div class="demo-section">
+    <div class="demo-section-hd">
+      <div class="demo-section-ic" style="background:var(--vi)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+      <span class="demo-section-t">管理者端 · PC</span>
+      <span class="demo-section-s">12 页 — 目标审批 → 绩效评分 → 结果审定 → 面谈审批 → HRBP确认</span>
+    </div>
+    <div class="demo-grid">
+      <a class="demo-card" href="manager/demo-workbench-team-goal.html">
+        <div class="demo-card-hd"><span class="demo-card-title">团队目标</span><span class="demo-card-tag mgr">管理者</span></div>
+        <div class="demo-card-desc">团队成员目标提交状态，支持批量催办</div>
+        <div class="demo-card-flow"><span class="step">团队目标</span></div>
+      </a>
+      <a class="demo-card" href="manager/demo-goal-indirect.html">
+        <div class="demo-card-hd"><span class="demo-card-title">目标审批 · 间接上级</span><span class="demo-card-tag mgr">管理者</span></div>
+        <div class="demo-card-desc">复用目标表单结构，字段只读，审批操作</div>
+        <div class="demo-card-flow"><span class="step">间接上级</span><span class="arrow">→</span><span class="step">直接上级</span></div>
+      </a>
+      <a class="demo-card" href="manager/demo-goal-direct.html">
+        <div class="demo-card-hd"><span class="demo-card-title">目标审批 · 直接上级</span><span class="demo-card-tag mgr">管理者</span></div>
+        <div class="demo-card-desc">复用目标表单结构，字段只读，批准/退回/转派</div>
+        <div class="demo-card-flow"><span class="step">直接上级</span></div>
+      </a>
+      <a class="demo-card" href="manager/demo-eval-indirect.html">
+        <div class="demo-card-hd"><span class="demo-card-title">绩效评分 · 间接上级</span><span class="demo-card-tag mgr">管理者</span></div>
+        <div class="demo-card-desc">复用考核表单，完成值只读，评分+评语可编辑</div>
+        <div class="demo-card-flow"><span class="step">间接评分</span><span class="arrow">→</span><span class="step">直接评分</span></div>
+      </a>
+      <a class="demo-card" href="manager/demo-eval-direct.html">
+        <div class="demo-card-hd"><span class="demo-card-title">绩效评分 · 直接上级</span><span class="demo-card-tag mgr">管理者</span></div>
+        <div class="demo-card-desc">复用考核表单，增加总评结果+总评语</div>
+        <div class="demo-card-flow"><span class="step">直接评分</span></div>
+      </a>
+      <a class="demo-card" href="manager/demo-ratify-direct.html">
+        <div class="demo-card-hd"><span class="demo-card-title">结果审定 · 直接上级</span><span class="demo-card-tag mgr">管理者</span></div>
+        <div class="demo-card-desc">分数展示+等级调整+强制分布，批量审定</div>
+        <div class="demo-card-flow"><span class="step">直接上级</span><span class="arrow">→</span><span class="step">间接上级</span></div>
+      </a>
+      <a class="demo-card" href="manager/demo-ratify-indirect.html">
+        <div class="demo-card-hd"><span class="demo-card-title">结果审定 · 间接上级</span><span class="demo-card-tag mgr">管理者</span></div>
+        <div class="demo-card-desc">复用审定结构，等级可编辑</div>
+        <div class="demo-card-flow"><span class="step">间接上级</span></div>
+      </a>
+      <a class="demo-card" href="manager/demo-ratify-hierarchy.html">
+        <div class="demo-card-hd"><span class="demo-card-title">结果审定 · 逐级上级</span><span class="demo-card-tag mgr">管理者</span></div>
+        <div class="demo-card-desc">复用审定结构，汇报线逐级审定</div>
+        <div class="demo-card-flow"><span class="step">逐级上级</span></div>
+      </a>
+      <a class="demo-card" href="manager/demo-ratify-hrbp.html">
+        <div class="demo-card-hd"><span class="demo-card-title">结果审定 · HRBP</span><span class="demo-card-tag mgr">管理者</span></div>
+        <div class="demo-card-desc">全部只读，仅审批/退回操作</div>
+        <div class="demo-card-flow"><span class="step">HRBP</span></div>
+      </a>
+      <a class="demo-card" href="manager/demo-interview-direct.html">
+        <div class="demo-card-hd"><span class="demo-card-title">面谈 · 上级审批</span><span class="demo-card-tag mgr">管理者</span></div>
+        <div class="demo-card-desc">员工字段只读，上级评语可编辑</div>
+        <div class="demo-card-flow"><span class="step">员工填写</span><span class="arrow">→</span><span class="step">上级审批</span></div>
+      </a>
+      <a class="demo-card" href="manager/demo-confirm-hrbp.html">
+        <div class="demo-card-hd"><span class="demo-card-title">结果确认 · HRBP知悉</span><span class="demo-card-tag mgr">管理者</span></div>
+        <div class="demo-card-desc">全部只读，仅"已知悉"按钮</div>
+        <div class="demo-card-flow"><span class="step">HRBP知悉</span></div>
+      </a>
+      <a class="demo-card" href="manager/demo-workbench-team-result.html">
+        <div class="demo-card-hd"><span class="demo-card-title">团队绩效结果</span><span class="demo-card-tag mgr">管理者</span></div>
+        <div class="demo-card-desc">团队成员绩效结果总览</div>
+        <div class="demo-card-flow"><span class="step">团队结果</span></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Employee Mobile -->
+  <div class="demo-section">
+    <div class="demo-section-hd">
+      <div class="demo-section-ic" style="background:var(--em)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+      <span class="demo-section-t">员工端 · 移动端</span>
+      <span class="demo-section-s">4 页 — 手机端工作台、目标、考核、确认</span>
+    </div>
+    <div class="demo-grid">
+      <a class="demo-card" href="employee-mobile/demo-mobile-home.html">
+        <div class="demo-card-hd"><span class="demo-card-title">工作台</span><span class="demo-card-tag mobile">移动端</span></div>
+        <div class="demo-card-desc">待办、进度、AI入口</div>
+      </a>
+      <a class="demo-card" href="employee-mobile/demo-mobile-goal.html">
+        <div class="demo-card-hd"><span class="demo-card-title">目标制定</span><span class="demo-card-tag mobile">移动端</span></div>
+        <div class="demo-card-desc">手机端目标填写表单</div>
+      </a>
+      <a class="demo-card" href="employee-mobile/demo-mobile-eval.html">
+        <div class="demo-card-hd"><span class="demo-card-title">绩效考核</span><span class="demo-card-tag mobile">移动端</span></div>
+        <div class="demo-card-desc">手机端自评表单</div>
+      </a>
+      <a class="demo-card" href="employee-mobile/demo-mobile-confirm.html">
+        <div class="demo-card-hd"><span class="demo-card-title">结果确认</span><span class="demo-card-tag mobile">移动端</span></div>
+        <div class="demo-card-desc">手机端结果确认</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Manager Mobile -->
+  <div class="demo-section">
+    <div class="demo-section-hd">
+      <div class="demo-section-ic" style="background:#0D9488"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+      <span class="demo-section-t">管理者端 · 移动端</span>
+      <span class="demo-section-s">5 页 — 手机端团队目标、审批、评分、审定、面谈</span>
+    </div>
+    <div class="demo-grid">
+      <a class="demo-card" href="manager-mobile/demo-mobile-team-goal.html">
+        <div class="demo-card-hd"><span class="demo-card-title">团队目标</span><span class="demo-card-tag mobile">移动端</span></div>
+        <div class="demo-card-desc">手机端团队目标管理</div>
+      </a>
+      <a class="demo-card" href="manager-mobile/demo-mobile-goal-approve.html">
+        <div class="demo-card-hd"><span class="demo-card-title">目标审批</span><span class="demo-card-tag mobile">移动端</span></div>
+        <div class="demo-card-desc">手机端目标审批</div>
+      </a>
+      <a class="demo-card" href="manager-mobile/demo-mobile-eval-score.html">
+        <div class="demo-card-hd"><span class="demo-card-title">绩效评分</span><span class="demo-card-tag mobile">移动端</span></div>
+        <div class="demo-card-desc">手机端绩效评分</div>
+      </a>
+      <a class="demo-card" href="manager-mobile/demo-mobile-ratify.html">
+        <div class="demo-card-hd"><span class="demo-card-title">结果审定</span><span class="demo-card-tag mobile">移动端</span></div>
+        <div class="demo-card-desc">手机端结果审定</div>
+      </a>
+      <a class="demo-card" href="manager-mobile/demo-mobile-interview-direct.html">
+        <div class="demo-card-hd"><span class="demo-card-title">面谈审批</span><span class="demo-card-tag mobile">移动端</span></div>
+        <div class="demo-card-desc">手机端面谈审批</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Employee Agent -->
+  <div class="demo-section">
+    <div class="demo-section-hd">
+      <div class="demo-section-ic" style="background:var(--ac)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg></div>
+      <span class="demo-section-t">员工端 · AI Agent</span>
+      <span class="demo-section-s">3 页 — AI表单辅助、绩效分析、飞书Bot</span>
+    </div>
+    <div class="demo-grid">
+      <a class="demo-card" href="employee-agent/demo-agent-form-assist.html">
+        <div class="demo-card-hd"><span class="demo-card-title">AI 表单辅助</span><span class="demo-card-tag agent">Agent</span></div>
+        <div class="demo-card-desc">AI对话式辅助填写目标、评分</div>
+      </a>
+      <a class="demo-card" href="employee-agent/demo-agent-self-analytics.html">
+        <div class="demo-card-hd"><span class="demo-card-title">AI 绩效分析 · 个人</span><span class="demo-card-tag agent">Agent</span></div>
+        <div class="demo-card-desc">个人绩效趋势、能力雷达图</div>
+      </a>
+      <a class="demo-card" href="employee-agent/demo-feishu-bot.html">
+        <div class="demo-card-hd"><span class="demo-card-title">飞书Bot</span><span class="demo-card-tag agent">Agent</span></div>
+        <div class="demo-card-desc">飞书内绩效提醒、快捷操作</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Manager Agent -->
+  <div class="demo-section">
+    <div class="demo-section-hd">
+      <div class="demo-section-ic" style="background:#DC2626"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg></div>
+      <span class="demo-section-t">管理者端 · AI Agent</span>
+      <span class="demo-section-s">4 页 — 活动监控、评分计算、绩效分析、申诉处理</span>
+    </div>
+    <div class="demo-grid">
+      <a class="demo-card" href="manager-agent/demo-agent-activity-monitor.html">
+        <div class="demo-card-hd"><span class="demo-card-title">AI 活动监控</span><span class="demo-card-tag agent">Agent</span></div>
+        <div class="demo-card-desc">实时监控绩效活动进度、异常提醒</div>
+      </a>
+      <a class="demo-card" href="manager-agent/demo-agent-score-calc.html">
+        <div class="demo-card-hd"><span class="demo-card-title">AI 评分计算</span><span class="demo-card-tag agent">Agent</span></div>
+        <div class="demo-card-desc">AI辅助批量评分、一致性校验</div>
+      </a>
+      <a class="demo-card" href="manager-agent/demo-agent-analytics.html">
+        <div class="demo-card-hd"><span class="demo-card-title">AI 绩效分析 · 团队</span><span class="demo-card-tag agent">Agent</span></div>
+        <div class="demo-card-desc">团队绩效分布、趋势分析</div>
+      </a>
+      <a class="demo-card" href="manager-agent/demo-agent-appeal-handle.html">
+        <div class="demo-card-hd"><span class="demo-card-title">AI 申诉处理</span><span class="demo-card-tag agent">Agent</span></div>
+        <div class="demo-card-desc">AI辅助分析申诉内容、建议处理方案</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="demo-ft">GHR Performance · 业务演示原型 · 2026</div>
+</div>
+
+</body>
+</html>

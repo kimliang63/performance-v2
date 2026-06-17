@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 面谈审批</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#0F172A;--c8:#1E293B;--c7:#334155;--c6:#475569;--c5:#64748B;--c4:#94A3B8;--c3:#CBD5E1;--c2:#E2E8F0;--c1:#F1F5F9;--c0:#F8FAFC;
+  --sf:#FFF;--bg:#F0F4F8;--dv:#E2E8F0;
+  --r1:10px;--r2:12px;--r3:14px;--r4:18px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+  --sx:0 1px 2px rgba(0,0,0,.04);--sm:0 2px 8px rgba(0,0,0,.06);
+  --bd:rgba(15,23,42,.06);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:#E5E7EB;color:var(--c7);display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px;-webkit-font-smoothing:antialiased}
+.phone{width:393px;height:852px;background:var(--bg);border-radius:48px;box-shadow:0 25px 50px -12px rgba(0,0,0,.25),0 0 0 1px rgba(0,0,0,.05),inset 0 0 0 1px rgba(255,255,255,.1);overflow:hidden;position:relative;display:flex;flex-direction:column}
+.phone-notch{width:126px;height:34px;background:#000;border-radius:0 0 20px 20px;position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:100}
+.phone-status{height:54px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 8px;font:600 14px/1 var(--f);color:var(--c9)}
+.phone-status-r{display:flex;gap:4px;align-items:center}
+.phone-nav{height:50px;display:flex;align-items:center;padding:0 16px;gap:10px}
+.phone-nav-back{width:32px;height:32px;border-radius:8px;background:var(--c1);display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--c7);flex-shrink:0}
+.phone-nav-back svg{width:16px;height:16px}
+.phone-nav-t{flex:1;font:600 17px/1 var(--f);color:var(--c9)}
+.phone-body{flex:1;overflow-y:auto;padding:0 16px}
+.phone-body::-webkit-scrollbar{width:0}
+
+/* Person Card */
+.person-card{background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:14px;margin-bottom:14px;display:flex;align-items:center;gap:12px}
+.person-av{width:44px;height:44px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 16px/1 var(--f);color:#FFF;flex-shrink:0}
+.person-info{flex:1}
+.person-name{font:600 15px/1 var(--f);color:var(--c9)}
+.person-dept{font:400 12px/1 var(--f);color:var(--c5);margin-top:3px}
+.person-result{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.grade-badge{font:600 13px/1 var(--f);padding:4px 12px;border-radius:10px;background:var(--em50);color:var(--em700)}
+.score-text{font:500 11px/1 var(--fm);color:var(--c5)}
+
+/* Section */
+.section{background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);margin-bottom:10px;overflow:hidden}
+.section-hd{padding:12px 14px;background:var(--c0);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px}
+.section-icon{width:20px;height:20px;border-radius:6px;display:flex;align-items:center;justify-content:center}
+.section-icon.green{background:var(--em50);color:var(--em)}
+.section-icon.blue{background:var(--pr50);color:var(--pr)}
+.section-icon.purple{background:var(--vi50);color:var(--vi)}
+.section-title{font:600 13px/1 var(--f);color:var(--c8)}
+
+/* Item */
+.item{padding:12px 14px;border-bottom:1px solid var(--bd)}
+.item:last-child{border-bottom:none}
+.item-label{font:500 11px/1 var(--f);color:var(--c5);margin-bottom:6px}
+.item-text{font:400 13px/1.5 var(--f);color:var(--c7)}
+
+/* Comment */
+.comment-section{background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:14px;margin-bottom:14px}
+.comment-label{font:600 13px/1 var(--f);color:var(--c8);margin-bottom:10px}
+.comment-input{width:100%;height:80px;border:1px solid var(--c2);border-radius:var(--r1);padding:10px;font:400 13px/1.4 var(--f);color:var(--c7);resize:none;outline:none;transition:border-color .15s}
+.comment-input:focus{border-color:var(--pr)}
+
+/* Actions */
+.actions{display:flex;gap:8px;margin-bottom:20px}
+.btn{flex:1;padding:12px;border-radius:var(--r2);font:600 14px/1 var(--f);text-align:center;cursor:pointer;border:none;transition:all .12s}
+.btn:active{transform:scale(.97)}
+.btn-reject{background:var(--ro50);color:var(--ro)}
+.btn-approve{background:var(--pr);color:#FFF;box-shadow:0 2px 8px rgba(37,99,235,.25)}
+
+.toast{position:absolute;top:70px;left:50%;transform:translateX(-50%);background:var(--c9);color:#FFF;padding:10px 22px;border-radius:22px;font:500 13px/1 var(--f);z-index:900;opacity:0;pointer-events:none;transition:opacity .2s}
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="phone-notch"></div>
+  <div class="phone-status">
+    <span>9:41</span>
+    <div class="phone-status-r">
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="var(--c9)"><rect x="0" y="6" width="3" height="6" rx="1"/><rect x="4.5" y="4" width="3" height="8" rx="1"/><rect x="9" y="1.5" width="3" height="10.5" rx="1"/><rect x="13.5" y="0" width="2.5" height="12" rx="1"/></svg>
+      <svg width="15" height="12" viewBox="0 0 15 12" fill="none" stroke="var(--c9)" stroke-width="1.2"><rect x="0.5" y="0.5" width="12" height="11" rx="2"/><line x1="13" y1="4" x2="13" y2="8"/><rect x="2" y="2.5" width="7" height="7" rx="1" fill="var(--c9)"/></svg>
+    </div>
+  </div>
+  <div class="phone-nav">
+    <a href="../demo-index.html" class="phone-nav-back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </a>
+    <span class="phone-nav-t">面谈审批</span>
+  </div>
+  <div class="phone-body" id="phoneBody"></div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+const PERSON = {name:'张明',dept:'产品部',role:'高级产品经理',score:88,grade:'A'};
+
+const INTERVIEW = {
+  praises:[
+    'Q2主导的产品路线图获得管理层高度认可',
+    '跨部门协作能力突出，推动3个P0功能按时上线',
+    '主动收集用户反馈，建立了高效的需求响应机制'
+  ],
+  turns:[
+    '需要加强数据分析能力，用数据驱动决策',
+    '项目管理可更精细化，减少临时调整',
+    '建议多参与行业交流，拓宽产品视野'
+  ],
+  plan:'Q3重点推进用户增长项目，目标月活提升20%。同时完成产品方法论体系搭建，输出内部培训材料。计划参加Q3产品经理大会，拓展行业人脉。'
+};
+
+function render(){
+  const el = document.getElementById('phoneBody');
+  let h = '';
+
+  h += `<div class="person-card">
+    <div class="person-av">${PERSON.name[0]}</div>
+    <div class="person-info">
+      <div class="person-name">${PERSON.name}</div>
+      <div class="person-dept">${PERSON.dept} · ${PERSON.role}</div>
+    </div>
+    <div class="person-result">
+      <span class="grade-badge">${PERSON.grade}</span>
+      <span class="score-text">${PERSON.score}分</span>
+    </div>
+  </div>`;
+
+  h += `<div class="section">
+    <div class="section-hd">
+      <div class="section-icon green">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+      </div>
+      <span class="section-title">三个赞</span>
+    </div>
+    ${INTERVIEW.praises.map((p,i)=>`
+      <div class="item">
+        <div class="item-label">赞 ${i+1}</div>
+        <div class="item-text">${p}</div>
+      </div>
+    `).join('')}
+  </div>`;
+
+  h += `<div class="section">
+    <div class="section-hd">
+      <div class="section-icon blue">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9"/></svg>
+      </div>
+      <span class="section-title">三个转</span>
+    </div>
+    ${INTERVIEW.turns.map((t,i)=>`
+      <div class="item">
+        <div class="item-label">转 ${i+1}</div>
+        <div class="item-text">${t}</div>
+      </div>
+    `).join('')}
+  </div>`;
+
+  h += `<div class="section">
+    <div class="section-hd">
+      <div class="section-icon purple">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      </div>
+      <span class="section-title">下阶段规划</span>
+    </div>
+    <div class="item">
+      <div class="item-text">${INTERVIEW.plan}</div>
+    </div>
+  </div>`;
+
+  h += `<div class="comment-section">
+    <div class="comment-label">上级评语</div>
+    <textarea class="comment-input" id="comment" placeholder="请输入您的评语和建议..."></textarea>
+  </div>`;
+
+  h += `<div class="actions">
+    <button class="btn btn-reject" onclick="showToast('已退回')">退回</button>
+    <button class="btn btn-approve" onclick="showToast('已批准')">批准</button>
+  </div>`;
+
+  h += '<div style="height:8px"></div>';
+  el.innerHTML = h;
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.opacity = '1';
+  setTimeout(() => { t.style.opacity = '0'; }, 2000);
+}
+
+render();
+</script>
+</body>
+</html>

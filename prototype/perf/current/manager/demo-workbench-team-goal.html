@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 团队目标工作台</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.stat{background:var(--sf);border-radius:var(--r2);padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.05);text-align:center}
+.stat-v{font:700 24px/1 var(--fm);color:var(--c9)}
+.stat-l{font:400 12px/1 var(--f);color:var(--c5);margin-top:4px}
+
+.card{background:var(--sf);border-radius:var(--r3);box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:16px}
+.card-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--dv)}
+.card-t{font:600 15px/1 var(--f);color:var(--c9)}
+.card-bd{padding:16px 20px}
+
+.filter{display:flex;gap:8px;margin-bottom:16px;align-items:center}
+.filter-tag{padding:5px 12px;border-radius:var(--r1);font:500 12px/1 var(--f);cursor:pointer;border:1px solid var(--c2);color:var(--c6);background:var(--sf);transition:all .15s;font-family:inherit}
+.filter-tag.on{background:var(--pr);color:#FFF;border-color:var(--pr)}
+.filter-tag:hover:not(.on){border-color:var(--pr);color:var(--pr)}
+.filter-search{margin-left:auto;width:200px;height:32px;border:1px solid var(--c2);border-radius:var(--r1);padding:0 10px;font:13px/1 var(--f);outline:none;font-family:inherit}
+.filter-search:focus{border-color:var(--pr)}
+
+.person{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--dv);cursor:pointer}
+.person:last-child{border-bottom:none}
+.person:hover{background:var(--c0);margin:0 -20px;padding:12px 20px}
+.person-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 13px/1 var(--f);color:#FFF;flex-shrink:0}
+.person-info{flex:1;min-width:0}
+.person-name{font:500 13px/1 var(--f);color:var(--c8)}
+.person-meta{font:400 12px/1 var(--f);color:var(--c5);margin-top:2px}
+.person-progress{width:100px}
+.person-bar{height:6px;background:var(--c1);border-radius:3px;overflow:hidden}
+.person-fill{height:100%;border-radius:3px}
+.person-pct{font:500 11px/1 var(--fm);color:var(--c5);margin-top:2px;text-align:right}
+.person-status{font:500 11px/1 var(--f);padding:3px 8px;border-radius:4px}
+.person-status.done{background:var(--em50);color:var(--em700)}
+.person-status.active{background:var(--pr50);color:var(--pr)}
+.person-status.pending{background:var(--ac50);color:var(--ac700)}
+.person-actions{display:flex;gap:4px;margin-left:8px}
+
+.btn{height:34px;padding:0 16px;border-radius:var(--r1);font:500 13px/1 var(--f);border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:inherit;transition:all .12s}
+.btn svg{width:14px;height:14px}
+.btn-s{background:var(--sf);color:var(--c7);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3)}
+.btn-p{background:var(--pr);color:#FFF}.btn-p:hover{background:var(--pr700)}
+.btn-sm{height:28px;padding:0 10px;font-size:12px}.btn-sm svg{width:12px;height:12px}
+
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);padding:10px 20px;border-radius:var(--r2);font:500 13px/1 var(--f);color:#FFF;z-index:9999;animation:fadeIn .25s ease forwards;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.toast.success{background:var(--em)}.toast.warning{background:var(--ac)}.toast.error{background:var(--ro)}.toast.info{background:var(--pr)}
+@keyframes fadeIn{from{opacity:0;transform:translateX(-50%) translateY(-10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fi{animation:fi .2s ease forwards}
+</style>
+</head>
+<body>
+
+<div style="height:52px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:1100">
+  <div style="display:flex;align-items:center;gap:14px">
+    <a href="../demo-index.html" style="text-decoration:none;display:flex;align-items:center;gap:8px">
+      <div style="width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <span style="font-size:15px;font-weight:700;color:var(--c9)">HR ONE</span>
+    </a>
+    <div style="width:1px;height:20px;background:var(--c2)"></div>
+    <span style="font:500 13px/1 var(--f);color:var(--c5)">业务演示 - 管理者端</span>
+    <span style="color:var(--c3)">&rsaquo;</span>
+    <span style="font:600 13px/1 var(--f);color:var(--c8)">团队目标工作台</span>
+  </div>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+    <span style="font:500 12px/1 var(--f);color:var(--c5)">王总 - 产品总监</span>
+    <div style="width:30px;height:30px;border-radius:50%;background:var(--vi);display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--f);color:#FFF">王</div>
+  </div>
+</div>
+
+<div style="padding:24px">
+  <div class="stats">
+    <div class="stat"><div class="stat-v">5</div><div class="stat-l">团队成员</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--em700)">2</div><div class="stat-l">已提交</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--ac700)">1</div><div class="stat-l">填写中</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--ro)">2</div><div class="stat-l">未开始</div></div>
+  </div>
+
+  <div class="filter">
+    <span class="filter-tag on" onclick="setFilter(this,'all')">全部</span>
+    <span class="filter-tag" onclick="setFilter(this,'submitted')">已提交</span>
+    <span class="filter-tag" onclick="setFilter(this,'active')">填写中</span>
+    <span class="filter-tag" onclick="setFilter(this,'pending')">未开始</span>
+    <input class="filter-search" placeholder="搜索成员..." oninput="searchMembers(this.value)"/>
+  </div>
+
+  <div class="card">
+    <div class="card-hd">
+      <span class="card-t">团队目标进度</span>
+      <button class="btn btn-p btn-sm" onclick="batchRemind()">批量催办</button>
+    </div>
+    <div class="card-bd" id="memberList"></div>
+  </div>
+</div>
+
+<script>
+const MEMBERS = [
+  {id:'EMP001',name:'张明',dept:'产品部',title:'高级产品经理',progress:100,status:'submitted',avColor:'var(--pr)'},
+  {id:'EMP002',name:'李雪',dept:'产品部',title:'产品经理',progress:100,status:'submitted',avColor:'var(--em)'},
+  {id:'EMP003',name:'王浩然',dept:'产品部',title:'产品助理',progress:60,status:'active',avColor:'var(--ac)'},
+  {id:'EMP004',name:'周婷',dept:'产品部',title:'高级产品经理',progress:0,status:'pending',avColor:'var(--vi)'},
+  {id:'EMP005',name:'吴强',dept:'技术部',title:'前端工程师',progress:0,status:'pending',avColor:'var(--ro)'},
+];
+const STATUS_LABEL = {submitted:'已提交',active:'填写中',pending:'未开始'};
+const STATUS_CLASS = {submitted:'done',active:'active',pending:'pending'};
+let currentFilter = 'all';
+let searchQuery = '';
+
+function render() {
+  const list = document.getElementById('memberList');
+  const filtered = MEMBERS.filter(m => {
+    if (currentFilter !== 'all' && m.status !== currentFilter) return false;
+    if (searchQuery && !m.name.includes(searchQuery) && !m.dept.includes(searchQuery)) return false;
+    return true;
+  });
+  list.innerHTML = filtered.map(m => `
+    <div class="person">
+      <div class="person-av" style="background:${m.avColor}">${m.name[0]}</div>
+      <div class="person-info">
+        <div class="person-name">${m.name}</div>
+        <div class="person-meta">${m.dept} - ${m.title}</div>
+      </div>
+      <div class="person-progress">
+        <div class="person-bar"><div class="person-fill" style="width:${m.progress}%;background:${m.progress===100?'var(--em)':m.progress>0?'var(--pr)':'var(--c3)'}"></div></div>
+        <div class="person-pct">${m.progress}%</div>
+      </div>
+      <span class="person-status ${STATUS_CLASS[m.status]}">${STATUS_LABEL[m.status]}</span>
+      <div class="person-actions">
+        ${m.status !== 'submitted' ? `<button class="btn btn-s btn-sm" onclick="event.stopPropagation();remind('${m.id}')">催办</button>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function setFilter(el, filter) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  render();
+}
+
+function searchMembers(q) {
+  searchQuery = q;
+  render();
+}
+
+function remind(id) {
+  const m = MEMBERS.find(x => x.id === id);
+  showToast('已向 ' + (m ? m.name : '') + ' 发送催办提醒', 'success');
+}
+
+function batchRemind() {
+  const pending = MEMBERS.filter(m => m.status !== 'submitted');
+  if (pending.length === 0) { showToast('所有成员已提交', 'info'); return; }
+  showToast('已向 ' + pending.length + ' 位成员发送催办提醒', 'success');
+}
+
+function showToast(msg, type) {
+  const t = document.createElement('div');
+  t.className = 'toast ' + (type || 'info');
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => { t.style.transition='opacity .2s'; t.style.opacity='0'; setTimeout(()=>t.remove(),200); }, 2500);
+}
+
+render();
+</script>
+<script src="../navigation.js"></script>
+<script>GHR_NAV.init('workbench', '团队目标');</script>
+</body>
+</html>

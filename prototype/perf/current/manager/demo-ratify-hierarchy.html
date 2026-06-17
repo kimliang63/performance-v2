@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>结果审定 · 逐级上级</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c9);min-height:100vh}
+.card{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);padding:20px 24px}
+.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:600;line-height:20px}
+.badge-s{background:#FEF3C7;color:#92400E}
+.badge-a{background:var(--em100);color:var(--em700)}
+.badge-b{background:var(--pr100);color:var(--pr700)}
+.badge-c{background:var(--ac100);color:var(--ac700)}
+.badge-d{background:var(--ro100);color:#BE123C}
+.badge-wait{background:var(--c1);color:var(--c5)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 20px;border-radius:var(--r2);font-size:13px;font-weight:600;font-family:var(--f);cursor:pointer;border:none;transition:all .15s}
+.btn-pri{background:var(--pr);color:#FFF}.btn-pri:hover{background:var(--pr700)}
+.btn-out{background:var(--sf);color:var(--c7);border:1px solid var(--c3)}.btn-out:hover{border-color:var(--ro);color:var(--ro)}
+.btn-ro{background:var(--ro);color:#FFF}.btn-ro:hover{background:#E11D48}
+.timeline{position:relative;padding-left:28px}
+.timeline::before{content:'';position:absolute;left:9px;top:8px;bottom:8px;width:2px;background:var(--c2)}
+.tl-item{position:relative;margin-bottom:24px}
+.tl-dot{position:absolute;left:-28px;top:2px;width:20px;height:20px;border-radius:50%;border:2px solid;display:flex;align-items:center;justify-content:center}
+.tl-dot.done{border-color:var(--em);background:var(--em50)}
+.tl-dot.active{border-color:var(--pr);background:var(--pr50)}
+.tl-dot.pending{border-color:var(--c3);background:var(--c1)}
+.tl-dot svg{width:10px;height:10px}
+.tl-title{font-size:14px;font-weight:600;margin-bottom:4px}
+.tl-desc{font-size:12px;color:var(--c5);line-height:1.5}
+.detail-row{display:flex;gap:24px}
+.detail-left{flex:0 0 320px}
+.detail-right{flex:1}
+.info-grid{display:grid;grid-template-columns:100px 1fr;gap:8px 16px;font-size:13px;margin-bottom:16px}
+.info-label{color:var(--c5);font-weight:500}
+.info-val{color:var(--c9)}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:2000;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:var(--sf);border-radius:var(--r4);padding:24px;width:420px;max-width:90vw}
+.modal h4{font-size:15px;font-weight:700;margin-bottom:12px}
+.modal textarea{width:100%;height:100px;border:1px solid var(--c3);border-radius:var(--r2);padding:10px;font-size:13px;font-family:var(--f);resize:vertical;margin-bottom:16px}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px}
+#toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-60px);padding:10px 24px;border-radius:var(--r2);font-size:13px;font-weight:600;z-index:9999;transition:transform .3s;pointer-events:none}
+#toast.success{background:var(--em);color:#FFF}
+#toast.error{background:var(--ro);color:#FFF}
+#toast.on{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div style="height:52px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:1100">
+  <div style="display:flex;align-items:center;gap:14px">
+    <a href="../demo-index.html" style="text-decoration:none;display:flex;align-items:center;gap:8px">
+      <div style="width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <span style="font-size:15px;font-weight:700;color:var(--c9)">HR ONE</span>
+    </a>
+    <div style="width:1px;height:20px;background:var(--c2)"></div>
+    <span style="font:500 13px/1 var(--f);color:var(--c5)">业务演示 - 管理者端</span>
+    <span style="color:var(--c3)">&#8250;</span>
+    <span style="font:600 13px/1 var(--f);color:var(--c8)">结果审定 · 逐级上级</span>
+  </div>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+    <span style="font:500 12px/1 var(--f);color:var(--c5)">李总 - VP</span>
+    <div style="width:30px;height:30px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--f);color:#FFF">李</div>
+  </div>
+</div>
+
+<div style="max-width:1200px;margin:0 auto;padding:24px">
+  <h2 style="font-size:18px;font-weight:700;margin-bottom:20px">逐级审定流程</h2>
+
+  <div class="detail-row">
+    <div class="detail-left">
+      <div class="card">
+        <h3 style="font-size:15px;font-weight:600;margin-bottom:20px">审批流程</h3>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-dot done"><svg viewBox="0 0 24 24" fill="none" stroke="var(--em)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="tl-title" style="color:var(--em)">直接上级审定</div>
+            <div class="tl-desc">王总（产品总监）<br>审定等级：A（符合预期+）<br>审定时间：2026-06-14 16:30</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot active"><svg viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/></svg></div>
+            <div class="tl-title" style="color:var(--pr)">间接上级审定</div>
+            <div class="tl-desc">李总（VP）<br>当前节点：等待审定</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot pending"></div>
+            <div class="tl-title" style="color:var(--c4)">HRBP确认</div>
+            <div class="tl-desc">赵敏（HRBP）<br>待前序节点完成</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-right">
+      <div class="card" style="margin-bottom:20px">
+        <h3 style="font-size:15px;font-weight:600;margin-bottom:16px">被审定人信息</h3>
+        <div class="info-grid">
+          <div class="info-label">姓名</div><div class="info-val" style="font-weight:600">张明</div>
+          <div class="info-label">岗位</div><div class="info-val">高级产品经理</div>
+          <div class="info-label">部门</div><div class="info-val">产品部</div>
+          <div class="info-label">考核周期</div><div class="info-val">2026年 Q2</div>
+          <div class="info-label">加权总分</div><div class="info-val" style="font-weight:700;color:var(--pr)">87.5</div>
+          <div class="info-label">自评分</div><div class="info-val">88</div>
+          <div class="info-label">上级评分</div><div class="info-val">87</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:20px">
+        <h3 style="font-size:15px;font-weight:600;margin-bottom:16px">各层级审定结果</h3>
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead>
+            <tr>
+              <th style="text-align:left;padding:8px 12px;background:var(--c0);border-bottom:1px solid var(--c2);font-weight:600;color:var(--c6)">审定层级</th>
+              <th style="text-align:left;padding:8px 12px;background:var(--c0);border-bottom:1px solid var(--c2);font-weight:600;color:var(--c6)">审定人</th>
+              <th style="text-align:center;padding:8px 12px;background:var(--c0);border-bottom:1px solid var(--c2);font-weight:600;color:var(--c6)">等级</th>
+              <th style="text-align:center;padding:8px 12px;background:var(--c0);border-bottom:1px solid var(--c2);font-weight:600;color:var(--c6)">状态</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--c1)">直接上级</td>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--c1)">王总</td>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--c1);text-align:center"><span class="badge badge-a">A</span></td>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--c1);text-align:center"><span class="badge badge-a">已完成</span></td>
+            </tr>
+            <tr>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--c1)">间接上级</td>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--c1)">李总</td>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--c1);text-align:center"><span class="badge badge-wait">待审定</span></td>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--c1);text-align:center"><span class="badge badge-wait">进行中</span></td>
+            </tr>
+            <tr>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--c1)">HRBP确认</td>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--c1)">赵敏</td>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--c1);text-align:center"><span class="badge badge-wait">--</span></td>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--c1);text-align:center"><span class="badge badge-wait">待前序</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card" style="margin-bottom:20px">
+        <h3 style="font-size:15px;font-weight:600;margin-bottom:16px">强制分布校验</h3>
+        <div id="distCheck"></div>
+      </div>
+
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn btn-out" onclick="openReturnModal()">退回</button>
+        <button class="btn btn-pri" onclick="showToast('已批准张明的绩效结果','success')">批准</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="returnModal">
+  <div class="modal">
+    <h4>退回审定</h4>
+    <p style="font-size:13px;color:var(--c6);margin-bottom:12px">请填写退回原因，将退回给直接上级重新审定。</p>
+    <textarea id="returnReason" placeholder="请输入退回原因..."></textarea>
+    <div class="modal-actions">
+      <button class="btn btn-out" onclick="closeReturnModal()">取消</button>
+      <button class="btn btn-ro" onclick="confirmReturn()">确认退回</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+function showToast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + (type || 'success');
+  setTimeout(function() { t.classList.add('on'); }, 10);
+  setTimeout(function() { t.classList.remove('on'); }, 2500);
+}
+
+var distData = [
+  {g:'S',cur:0,total:5,pct:0,rule:'≤10%',max:0.1,color:'#F59E0B'},
+  {g:'A',cur:1,total:5,pct:0.2,rule:'≤20%',max:0.2,color:'#10B981'},
+  {g:'B',cur:2,total:5,pct:0.4,rule:'≥50%',min:0.5,color:'#2563EB'},
+  {g:'C',cur:1,total:5,pct:0.2,rule:'≥10%',min:0.1,color:'#F97316'},
+  {g:'D',cur:0,total:5,pct:0,rule:'≤10%',max:0.1,color:'#F43F5E'}
+];
+
+function renderDist() {
+  var html = '';
+  distData.forEach(function(d) {
+    var valid = d.max !== undefined ? d.pct <= d.max : d.pct >= d.min;
+    html += '<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;font-size:13px">' +
+      '<div style="width:40px;font-weight:600;text-align:right;color:' + d.color + '">' + d.g + '</div>' +
+      '<div style="flex:1;height:22px;background:var(--c1);border-radius:11px;overflow:hidden"><div style="height:100%;width:' + Math.max(d.pct*100,2) + '%;background:' + d.color + ';border-radius:11px"></div></div>' +
+      '<div style="width:50px;font-size:12px;color:var(--c6);text-align:center">' + d.cur + '/' + d.total + '</div>' +
+      '<div style="width:80px;font-size:12px;color:var(--c5);text-align:right">' + d.rule + (valid ? ' <span style="color:var(--em)">✓</span>' : ' <span style="color:var(--ro)">✗</span>') + '</div>' +
+      '</div>';
+  });
+  document.getElementById('distCheck').innerHTML = html;
+}
+
+function openReturnModal() {
+  document.getElementById('returnReason').value = '';
+  document.getElementById('returnModal').classList.add('show');
+}
+
+function closeReturnModal() {
+  document.getElementById('returnModal').classList.remove('show');
+}
+
+function confirmReturn() {
+  var reason = document.getElementById('returnReason').value.trim();
+  if (!reason) { showToast('请填写退回原因','error'); return; }
+  closeReturnModal();
+  showToast('已退回审定结果','success');
+}
+
+renderDist();
+</script>
+<script src="../navigation.js"></script>
+<script>GHR_NAV.init('perf', '结果审定');</script>
+</body>
+</html>

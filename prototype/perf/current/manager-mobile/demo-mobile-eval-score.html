@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 绩效评分</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#0F172A;--c8:#1E293B;--c7:#334155;--c6:#475569;--c5:#64748B;--c4:#94A3B8;--c3:#CBD5E1;--c2:#E2E8F0;--c1:#F1F5F9;--c0:#F8FAFC;
+  --sf:#FFF;--bg:#F0F4F8;--dv:#E2E8F0;
+  --r1:10px;--r2:12px;--r3:14px;--r4:18px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+  --sx:0 1px 2px rgba(0,0,0,.04);--sm:0 2px 8px rgba(0,0,0,.06);
+  --bd:rgba(15,23,42,.06);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:#E5E7EB;color:var(--c7);display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px;-webkit-font-smoothing:antialiased}
+.phone{width:393px;height:852px;background:var(--bg);border-radius:48px;box-shadow:0 25px 50px -12px rgba(0,0,0,.25),0 0 0 1px rgba(0,0,0,.05),inset 0 0 0 1px rgba(255,255,255,.1);overflow:hidden;position:relative;display:flex;flex-direction:column}
+.phone-notch{width:126px;height:34px;background:#000;border-radius:0 0 20px 20px;position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:100}
+.phone-status{height:54px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 8px;font:600 14px/1 var(--f);color:var(--c9)}
+.phone-status-r{display:flex;gap:4px;align-items:center}
+.phone-nav{height:50px;display:flex;align-items:center;padding:0 16px;gap:10px}
+.phone-nav-back{width:32px;height:32px;border-radius:8px;background:var(--c1);display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--c7);flex-shrink:0}
+.phone-nav-back svg{width:16px;height:16px}
+.phone-nav-t{flex:1;font:600 17px/1 var(--f);color:var(--c9)}
+.phone-body{flex:1;overflow-y:auto;padding:0 16px}
+.phone-body::-webkit-scrollbar{width:0}
+
+/* Person Card */
+.person-card{background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:14px;margin-bottom:14px;display:flex;align-items:center;gap:12px}
+.person-av{width:44px;height:44px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 16px/1 var(--f);color:#FFF;flex-shrink:0}
+.person-info{flex:1}
+.person-name{font:600 15px/1 var(--f);color:var(--c9)}
+.person-dept{font:400 12px/1 var(--f);color:var(--c5);margin-top:3px}
+
+/* Module */
+.module{background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);margin-bottom:10px;overflow:hidden}
+.module-hd{padding:12px 14px;background:var(--c0);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.module-title{font:600 13px/1 var(--f);color:var(--c8)}
+.module-weight{font:500 11px/1 var(--f);color:var(--pr);background:var(--pr50);padding:3px 8px;border-radius:10px}
+
+/* Goal Item */
+.goal-item{padding:12px 14px;border-bottom:1px solid var(--bd)}
+.goal-item:last-child{border-bottom:none}
+.goal-title{font:500 13px/1 var(--f);color:var(--c8);margin-bottom:4px}
+.goal-desc{font:400 11px/1.4 var(--f);color:var(--c5);margin-bottom:10px}
+.score-row{display:flex;align-items:center;gap:10px}
+.score-label{font:400 12px/1 var(--f);color:var(--c6);flex-shrink:0;width:40px}
+.score-input{width:60px;height:32px;border:1px solid var(--c2);border-radius:8px;text-align:center;font:600 14px/1 var(--fm);color:var(--c9);outline:none;transition:border-color .15s}
+.score-input:focus{border-color:var(--pr)}
+.score-max{font:400 11px/1 var(--f);color:var(--c4)}
+.grade-select{height:32px;border:1px solid var(--c2);border-radius:8px;padding:0 10px;font:500 12px/1 var(--f);color:var(--c7);background:var(--sf);outline:none;cursor:pointer}
+
+/* Summary */
+.summary{background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:14px;margin-bottom:14px}
+.summary-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.summary-row:last-child{margin-bottom:0}
+.summary-label{font:400 12px/1 var(--f);color:var(--c6)}
+.summary-value{font:700 18px/1 var(--fm);color:var(--c9)}
+.summary-grade{font:600 14px/1 var(--f);color:var(--em);background:var(--em50);padding:4px 12px;border-radius:10px}
+
+/* Actions */
+.actions{display:flex;gap:8px;margin-bottom:20px}
+.btn{flex:1;padding:12px;border-radius:var(--r2);font:600 14px/1 var(--f);text-align:center;cursor:pointer;border:none;transition:all .12s}
+.btn:active{transform:scale(.97)}
+.btn-save{background:var(--c1);color:var(--c6)}
+.btn-submit{background:var(--pr);color:#FFF;box-shadow:0 2px 8px rgba(37,99,235,.25)}
+
+.toast{position:absolute;top:70px;left:50%;transform:translateX(-50%);background:var(--c9);color:#FFF;padding:10px 22px;border-radius:22px;font:500 13px/1 var(--f);z-index:900;opacity:0;pointer-events:none;transition:opacity .2s}
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="phone-notch"></div>
+  <div class="phone-status">
+    <span>9:41</span>
+    <div class="phone-status-r">
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="var(--c9)"><rect x="0" y="6" width="3" height="6" rx="1"/><rect x="4.5" y="4" width="3" height="8" rx="1"/><rect x="9" y="1.5" width="3" height="10.5" rx="1"/><rect x="13.5" y="0" width="2.5" height="12" rx="1"/></svg>
+      <svg width="15" height="12" viewBox="0 0 15 12" fill="none" stroke="var(--c9)" stroke-width="1.2"><rect x="0.5" y="0.5" width="12" height="11" rx="2"/><line x1="13" y1="4" x2="13" y2="8"/><rect x="2" y="2.5" width="7" height="7" rx="1" fill="var(--c9)"/></svg>
+    </div>
+  </div>
+  <div class="phone-nav">
+    <a href="../demo-index.html" class="phone-nav-back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </a>
+    <span class="phone-nav-t">绩效评分</span>
+  </div>
+  <div class="phone-body" id="phoneBody"></div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+const PERSON = {name:'张明',dept:'产品部',role:'高级产品经理'};
+
+const MODULES = [
+  {
+    title:'业绩目标',weight:60,
+    goals:[
+      {id:1,title:'完成产品规划方案',desc:'输出2026下半年产品路线图并通过评审',max:100,score:88,grade:'A'},
+      {id:2,title:'推动核心功能上线',desc:'主导3个P0级功能从设计到上线',max:100,score:92,grade:'A'},
+      {id:3,title:'用户增长指标',desc:'Q2月活用户增长15%',max:100,score:78,grade:'B'}
+    ]
+  },
+  {
+    title:'能力发展',weight:25,
+    goals:[
+      {id:4,title:'团队协作能力',desc:'跨部门协作项目推动效率',max:100,score:85,grade:'A'},
+      {id:5,title:'专业技能提升',desc:'完成产品方法论培训并输出分享',max:100,score:80,grade:'B'}
+    ]
+  },
+  {
+    title:'价值观',weight:15,
+    goals:[
+      {id:6,title:'客户第一',desc:'主动收集用户反馈并推动改进',max:100,score:90,grade:'A'}
+    ]
+  }
+];
+
+const GRADES = ['S','A','B','C','D'];
+
+function calcTotal(){
+  let total = 0;
+  MODULES.forEach(m => {
+    const avg = m.goals.reduce((s,g)=>s+g.score,0)/m.goals.length;
+    total += avg * m.weight / 100;
+  });
+  return Math.round(total);
+}
+
+function suggestGrade(score){
+  if(score>=90) return 'S';
+  if(score>=80) return 'A';
+  if(score>=70) return 'B';
+  if(score>=60) return 'C';
+  return 'D';
+}
+
+function render(){
+  const el = document.getElementById('phoneBody');
+  let h = '';
+
+  h += `<div class="person-card">
+    <div class="person-av">${PERSON.name[0]}</div>
+    <div class="person-info">
+      <div class="person-name">${PERSON.name}</div>
+      <div class="person-dept">${PERSON.dept} · ${PERSON.role}</div>
+    </div>
+  </div>`;
+
+  MODULES.forEach((m,mi) => {
+    h += `<div class="module">
+      <div class="module-hd">
+        <span class="module-title">${m.title}</span>
+        <span class="module-weight">权重 ${m.weight}%</span>
+      </div>`;
+    m.goals.forEach(g => {
+      h += `<div class="goal-item">
+        <div class="goal-title">${g.title}</div>
+        <div class="goal-desc">${g.desc}</div>
+        <div class="score-row">
+          <span class="score-label">评分</span>
+          <input class="score-input" type="number" value="${g.score}" min="0" max="${g.max}" onchange="updateScore(${mi},${g.id},this.value)">
+          <span class="score-max">/ ${g.max}</span>
+          <span class="score-label" style="margin-left:auto">等级</span>
+          <select class="grade-select" onchange="updateGrade(${mi},${g.id},this.value)">
+            ${GRADES.map(gr=>`<option ${gr===g.grade?'selected':''}>${gr}</option>`).join('')}
+          </select>
+        </div>
+      </div>`;
+    });
+    h += '</div>';
+  });
+
+  const total = calcTotal();
+  const grade = suggestGrade(total);
+
+  h += `<div class="summary">
+    <div class="summary-row">
+      <span class="summary-label">加权总分</span>
+      <span class="summary-value">${total}</span>
+    </div>
+    <div class="summary-row">
+      <span class="summary-label">建议等级</span>
+      <span class="summary-grade">${grade}</span>
+    </div>
+  </div>`;
+
+  h += `<div class="actions">
+    <button class="btn btn-save" onclick="showToast('已暂存')">暂存</button>
+    <button class="btn btn-submit" onclick="showToast('已提交评分')">提交</button>
+  </div>`;
+
+  h += '<div style="height:8px"></div>';
+  el.innerHTML = h;
+}
+
+function updateScore(mi,gi,val){
+  MODULES[mi].goals.find(g=>g.id===gi).score = Number(val);
+  render();
+}
+
+function updateGrade(mi,gi,val){
+  MODULES[mi].goals.find(g=>g.id===gi).grade = val;
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.opacity = '1';
+  setTimeout(() => { t.style.opacity = '0'; }, 2000);
+}
+
+render();
+</script>
+</body>
+</html>

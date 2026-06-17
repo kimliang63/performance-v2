@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>结果确认 · HRBP知悉</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c9);min-height:100vh}
+.card{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);padding:20px 24px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:var(--c0);text-align:left;padding:10px 14px;font-weight:600;color:var(--c6);border-bottom:1px solid var(--c2);white-space:nowrap}
+td{padding:10px 14px;border-bottom:1px solid var(--c1);vertical-align:middle}
+tr:hover td{background:var(--pr50)}
+.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:600;line-height:20px}
+.badge-ok{background:var(--em50);color:var(--em700)}
+.badge-wait{background:var(--c1);color:var(--c5)}
+.badge-dispute{background:var(--ro50);color:#BE123C}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 20px;border-radius:var(--r2);font-size:13px;font-weight:600;font-family:var(--f);cursor:pointer;border:none;transition:all .15s}
+.btn-pri{background:var(--pr);color:#FFF}.btn-pri:hover{background:var(--pr700)}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px}
+.stat-card{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);padding:16px 20px;text-align:center}
+.stat-val{font-size:28px;font-weight:700;line-height:1.2}
+.stat-label{font-size:12px;color:var(--c5);margin-top:4px}
+.reason-box{background:var(--ro50);border:1px solid var(--ro100);border-radius:var(--r1);padding:8px 12px;font-size:12px;color:var(--c7);line-height:1.5;margin-top:6px}
+#toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-60px);padding:10px 24px;border-radius:var(--r2);font-size:13px;font-weight:600;z-index:9999;transition:transform .3s;pointer-events:none}
+#toast.success{background:var(--em);color:#FFF}
+#toast.on{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div style="height:52px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:1100">
+  <div style="display:flex;align-items:center;gap:14px">
+    <a href="../demo-index.html" style="text-decoration:none;display:flex;align-items:center;gap:8px">
+      <div style="width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <span style="font-size:15px;font-weight:700;color:var(--c9)">HR ONE</span>
+    </a>
+    <div style="width:1px;height:20px;background:var(--c2)"></div>
+    <span style="font:500 13px/1 var(--f);color:var(--c5)">业务演示 - 管理者端</span>
+    <span style="color:var(--c3)">&#8250;</span>
+    <span style="font:600 13px/1 var(--f);color:var(--c8)">结果确认 · HRBP知悉</span>
+  </div>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+    <span style="font:500 12px/1 var(--f);color:var(--c5)">赵敏 - HRBP</span>
+    <div style="width:30px;height:30px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--f);color:#FFF">赵</div>
+  </div>
+</div>
+
+<div style="max-width:1100px;margin:0 auto;padding:24px">
+  <h2 style="font-size:18px;font-weight:700;margin-bottom:4px">绩效结果确认 · HRBP知悉</h2>
+  <p style="font-size:13px;color:var(--c5);margin-bottom:20px">查看员工对绩效结果的确认状态，全部内容只读</p>
+
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-val" style="color:var(--em)">3</div><div class="stat-label">已确认</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:var(--ac)">1</div><div class="stat-label">待确认</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:var(--ro)">1</div><div class="stat-label">有异议</div></div>
+  </div>
+
+  <div class="card" style="margin-bottom:20px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <h3 style="font-size:15px;font-weight:600">员工确认状态</h3>
+      <button class="btn btn-pri" onclick="showToast('已知悉全部确认结果','success')">已知悉</button>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>姓名</th><th>岗位</th><th>最终等级</th><th>确认状态</th><th>确认时间</th><th>备注</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:600">张明</td>
+          <td>高级产品经理</td>
+          <td style="text-align:center"><span style="display:inline-block;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:600;background:var(--em100);color:var(--em700)">A</span></td>
+          <td style="text-align:center"><span class="badge badge-ok">已确认</span></td>
+          <td style="color:var(--c5);font-size:12px">2026-06-14 18:20</td>
+          <td style="color:var(--c4);font-size:12px">--</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">李雪</td>
+          <td>产品经理</td>
+          <td style="text-align:center"><span style="display:inline-block;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:600;background:#FEF3C7;color:#92400E">S</span></td>
+          <td style="text-align:center"><span class="badge badge-ok">已确认</span></td>
+          <td style="color:var(--c5);font-size:12px">2026-06-14 17:45</td>
+          <td style="color:var(--c4);font-size:12px">--</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">王浩然</td>
+          <td>产品专员</td>
+          <td style="text-align:center"><span style="display:inline-block;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:600;background:var(--pr100);color:var(--pr700)">B</span></td>
+          <td style="text-align:center"><span class="badge badge-ok">已确认</span></td>
+          <td style="color:var(--c5);font-size:12px">2026-06-15 09:10</td>
+          <td style="color:var(--c4);font-size:12px">--</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">周婷</td>
+          <td>产品专员</td>
+          <td style="text-align:center"><span style="display:inline-block;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:600;background:var(--ac100);color:var(--ac700)">C</span></td>
+          <td style="text-align:center"><span class="badge badge-dispute">有异议</span></td>
+          <td style="color:var(--c5);font-size:12px">2026-06-15 10:30</td>
+          <td>
+            <div class="reason-box">
+              <strong>申诉原因：</strong>Q2期间承担了两个临时紧急项目（内部审计系统和数据迁移），导致常规产品需求延期，但这些临时任务未纳入绩效考核范围，认为评估维度不够全面。
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">吴强</td>
+          <td>产品经理</td>
+          <td style="text-align:center"><span style="display:inline-block;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:600;background:var(--pr100);color:var(--pr700)">B</span></td>
+          <td style="text-align:center"><span class="badge badge-wait">待确认</span></td>
+          <td style="color:var(--c4);font-size:12px">--</td>
+          <td style="color:var(--c4);font-size:12px">--</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3 style="font-size:15px;font-weight:600;margin-bottom:12px">说明</h3>
+    <ul style="font-size:13px;color:var(--c6);line-height:2;padding-left:20px">
+      <li>HRBP仅查看员工确认状态，不可修改任何绩效等级或确认结果</li>
+      <li>对于"有异议"的员工，HRBP应跟进了解情况并协调处理</li>
+      <li>点击"已知悉"按钮表示您已查看并了解全部确认状态</li>
+    </ul>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+function showToast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + (type || 'success');
+  setTimeout(function() { t.classList.add('on'); }, 10);
+  setTimeout(function() { t.classList.remove('on'); }, 2500);
+}
+</script>
+<script src="../navigation.js"></script>
+<script>GHR_NAV.init('perf', '结果确认');</script>
+</body>
+</html>

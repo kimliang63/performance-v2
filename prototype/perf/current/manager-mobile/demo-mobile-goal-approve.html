@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 目标审批</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#0F172A;--c8:#1E293B;--c7:#334155;--c6:#475569;--c5:#64748B;--c4:#94A3B8;--c3:#CBD5E1;--c2:#E2E8F0;--c1:#F1F5F9;--c0:#F8FAFC;
+  --sf:#FFF;--bg:#F0F4F8;--dv:#E2E8F0;
+  --r1:10px;--r2:12px;--r3:14px;--r4:18px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+  --sx:0 1px 2px rgba(0,0,0,.04);--sm:0 2px 8px rgba(0,0,0,.06);
+  --bd:rgba(15,23,42,.06);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:#E5E7EB;color:var(--c7);display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px;-webkit-font-smoothing:antialiased}
+.phone{width:393px;height:852px;background:var(--bg);border-radius:48px;box-shadow:0 25px 50px -12px rgba(0,0,0,.25),0 0 0 1px rgba(0,0,0,.05),inset 0 0 0 1px rgba(255,255,255,.1);overflow:hidden;position:relative;display:flex;flex-direction:column}
+.phone-notch{width:126px;height:34px;background:#000;border-radius:0 0 20px 20px;position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:100}
+.phone-status{height:54px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 8px;font:600 14px/1 var(--f);color:var(--c9)}
+.phone-status-r{display:flex;gap:4px;align-items:center}
+.phone-nav{height:50px;display:flex;align-items:center;padding:0 16px;gap:10px}
+.phone-nav-back{width:32px;height:32px;border-radius:8px;background:var(--c1);display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--c7);flex-shrink:0}
+.phone-nav-back svg{width:16px;height:16px}
+.phone-nav-t{flex:1;font:600 17px/1 var(--f);color:var(--c9)}
+.phone-body{flex:1;overflow-y:auto;padding:0 16px}
+.phone-body::-webkit-scrollbar{width:0}
+
+/* Tab */
+.tabs{display:flex;gap:0;background:var(--c1);border-radius:var(--r1);padding:3px;margin-bottom:14px}
+.tab{flex:1;text-align:center;padding:8px 0;font:500 13px/1 var(--f);color:var(--c5);border-radius:8px;cursor:pointer;transition:all .15s}
+.tab.active{background:var(--sf);color:var(--c9);box-shadow:var(--sx)}
+
+/* Approve Card */
+.approve-card{background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);margin-bottom:8px;overflow:hidden}
+.approve-header{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer}
+.approve-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 13px/1 var(--f);color:#FFF;flex-shrink:0}
+.approve-info{flex:1}
+.approve-name{font:500 13px/1 var(--f);color:var(--c8)}
+.approve-dept{font:400 11px/1 var(--f);color:var(--c5);margin-top:2px}
+.approve-count{font:500 11px/1 var(--f);color:var(--pr);background:var(--pr50);padding:3px 8px;border-radius:10px}
+.approve-arrow{width:20px;height:20px;color:var(--c4);transition:transform .2s}
+.approve-arrow.open{transform:rotate(90deg)}
+
+/* Detail */
+.approve-detail{padding:0 14px 14px;display:none}
+.approve-detail.show{display:block}
+.goal-item{background:var(--c0);border-radius:var(--r1);padding:10px 12px;margin-bottom:6px}
+.goal-item:last-child{margin-bottom:0}
+.goal-label{font:500 11px/1 var(--f);color:var(--c5);margin-bottom:4px}
+.goal-title{font:500 13px/1 var(--f);color:var(--c8);margin-bottom:6px}
+.goal-meta{display:flex;gap:12px}
+.goal-meta span{font:400 11px/1 var(--f);color:var(--c5)}
+.goal-meta strong{color:var(--c7)}
+
+/* Comment */
+.comment-area{margin-top:10px}
+.comment-label{font:500 12px/1 var(--f);color:var(--c6);margin-bottom:6px}
+.comment-input{width:100%;height:60px;border:1px solid var(--c2);border-radius:var(--r1);padding:10px;font:400 13px/1.4 var(--f);color:var(--c7);resize:none;outline:none;transition:border-color .15s}
+.comment-input:focus{border-color:var(--pr)}
+
+/* Actions */
+.approve-actions{display:flex;gap:8px;margin-top:10px}
+.btn{flex:1;padding:10px;border-radius:var(--r1);font:600 13px/1 var(--f);text-align:center;cursor:pointer;border:none;transition:all .12s}
+.btn:active{transform:scale(.97)}
+.btn-reject{background:var(--ro50);color:var(--ro)}
+.btn-approve{background:var(--pr);color:#FFF;box-shadow:0 2px 8px rgba(37,99,235,.25)}
+
+.toast{position:absolute;top:70px;left:50%;transform:translateX(-50%);background:var(--c9);color:#FFF;padding:10px 22px;border-radius:22px;font:500 13px/1 var(--f);z-index:900;opacity:0;pointer-events:none;transition:opacity .2s}
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="phone-notch"></div>
+  <div class="phone-status">
+    <span>9:41</span>
+    <div class="phone-status-r">
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="var(--c9)"><rect x="0" y="6" width="3" height="6" rx="1"/><rect x="4.5" y="4" width="3" height="8" rx="1"/><rect x="9" y="1.5" width="3" height="10.5" rx="1"/><rect x="13.5" y="0" width="2.5" height="12" rx="1"/></svg>
+      <svg width="15" height="12" viewBox="0 0 15 12" fill="none" stroke="var(--c9)" stroke-width="1.2"><rect x="0.5" y="0.5" width="12" height="11" rx="2"/><line x1="13" y1="4" x2="13" y2="8"/><rect x="2" y="2.5" width="7" height="7" rx="1" fill="var(--c9)"/></svg>
+    </div>
+  </div>
+  <div class="phone-nav">
+    <a href="../demo-index.html" class="phone-nav-back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </a>
+    <span class="phone-nav-t">目标审批</span>
+  </div>
+  <div class="phone-body" id="phoneBody"></div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+const PENDING = [
+  {
+    name:'王浩然',role:'产品设计师',color:'var(--ac)',count:3,
+    goals:[
+      {title:'完成新版设计系统搭建',weight:30,deadline:'2026-06-30'},
+      {title:'主导3个核心页面改版',weight:40,deadline:'2026-07-15'},
+      {title:'输出设计规范文档',weight:30,deadline:'2026-07-31'}
+    ]
+  },
+  {
+    name:'周婷',role:'数据分析',color:'var(--vi)',count:2,
+    goals:[
+      {title:'搭建数据监控看板',weight:50,deadline:'2026-06-30'},
+      {title:'完成Q2数据分析报告',weight:50,deadline:'2026-07-15'}
+    ]
+  }
+];
+
+const DONE = [
+  {name:'张明',role:'高级产品经理',color:'var(--pr)',count:4,status:'approved'},
+  {name:'李雪',role:'产品经理',color:'var(--em)',count:3,status:'approved'}
+];
+
+let openIdx = -1;
+let curTab = 'pending';
+
+function render(){
+  const el = document.getElementById('phoneBody');
+  let h = '';
+
+  h += '<div class="tabs">';
+  h += `<div class="tab ${curTab==='pending'?'active':''}" onclick="switchTab('pending')">待审批 (${PENDING.length})</div>`;
+  h += `<div class="tab ${curTab==='done'?'active':''}" onclick="switchTab('done')">已审批 (${DONE.length})</div>`;
+  h += '</div>';
+
+  if(curTab==='pending'){
+    PENDING.forEach((p,i) => {
+      h += `<div class="approve-card">
+        <div class="approve-header" onclick="toggleDetail(${i})">
+          <div class="approve-av" style="background:${p.color}">${p.name[0]}</div>
+          <div class="approve-info">
+            <div class="approve-name">${p.name}</div>
+            <div class="approve-dept">${p.role}</div>
+          </div>
+          <span class="approve-count">${p.count} 个目标</span>
+          <svg class="approve-arrow ${openIdx===i?'open':''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="approve-detail ${openIdx===i?'show':''}">
+          ${p.goals.map((g,j)=>`
+            <div class="goal-item">
+              <div class="goal-label">目标 ${j+1}</div>
+              <div class="goal-title">${g.title}</div>
+              <div class="goal-meta">
+                <span>权重 <strong>${g.weight}%</strong></span>
+                <span>截止 <strong>${g.deadline}</strong></span>
+              </div>
+            </div>
+          `).join('')}
+          <div class="comment-area">
+            <div class="comment-label">审批意见</div>
+            <textarea class="comment-input" id="comment${i}" placeholder="请输入审批意见（选填）"></textarea>
+          </div>
+          <div class="approve-actions">
+            <button class="btn btn-reject" onclick="handleApprove(${i},'reject')">退回</button>
+            <button class="btn btn-approve" onclick="handleApprove(${i},'approve')">批准</button>
+          </div>
+        </div>
+      </div>`;
+    });
+  } else {
+    DONE.forEach(d => {
+      h += `<div class="approve-card">
+        <div class="approve-header">
+          <div class="approve-av" style="background:${d.color}">${d.name[0]}</div>
+          <div class="approve-info">
+            <div class="approve-name">${d.name}</div>
+            <div class="approve-dept">${d.role}</div>
+          </div>
+          <span class="approve-count" style="background:var(--em50);color:var(--em700)">已批准</span>
+        </div>
+      </div>`;
+    });
+  }
+
+  h += '<div style="height:24px"></div>';
+  el.innerHTML = h;
+}
+
+function switchTab(tab){
+  curTab = tab;
+  openIdx = -1;
+  render();
+}
+
+function toggleDetail(idx){
+  openIdx = openIdx===idx?-1:idx;
+  render();
+}
+
+function handleApprove(idx,action){
+  const p = PENDING[idx];
+  const msg = action==='approve'?`已批准 ${p.name} 的目标`:`已退回 ${p.name} 的目标`;
+  PENDING.splice(idx,1);
+  openIdx = -1;
+  showToast(msg);
+  render();
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.opacity = '1';
+  setTimeout(() => { t.style.opacity = '0'; }, 2000);
+}
+
+render();
+</script>
+</body>
+</html>

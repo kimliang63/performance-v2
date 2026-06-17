@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 绩效首页</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+  /* Spacing scale: 4, 8, 12, 16, 20, 24 */
+  --sp-xs:4px;--sp-sm:8px;--sp-md:12px;--sp-lg:16px;--sp-xl:20px;--sp-2xl:24px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+/* Card System */
+.card{background:var(--sf);border-radius:var(--r3);box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:var(--sp-lg)}
+.card-hd{display:flex;align-items:center;justify-content:space-between;padding:var(--sp-lg) var(--sp-xl);border-bottom:1px solid var(--dv)}
+.card-t{font:600 15px/1 var(--f);color:var(--c9)}
+.card-action{font:500 13px/1 var(--f);color:var(--pr);cursor:pointer;display:flex;align-items:center;gap:var(--sp-xs);text-decoration:none}
+.card-action:hover{color:var(--pr700)}
+.card-action svg{width:14px;height:14px}
+.card-bd{padding:var(--sp-lg) var(--sp-xl)}
+
+/* Grid */
+.row{display:grid;gap:var(--sp-lg);align-items:stretch}
+.row-2{grid-template-columns:1fr 1fr}
+
+/* Task */
+.task{display:flex;align-items:center;gap:var(--sp-md);padding:var(--sp-md) 0;border-bottom:1px solid var(--dv);cursor:pointer}
+.task:last-child{border-bottom:none}
+.task-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.task-dot.pr{background:var(--pr)}.task-dot.ac{background:var(--ac)}.task-dot.ro{background:var(--ro)}
+.task-info{flex:1;min-width:0}
+.task-name{font:500 13px/1 var(--f);color:var(--c8);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.task-meta{font:400 12px/1 var(--f);color:var(--c5);margin-top:var(--sp-xs)}
+.task-tag{font:500 11px/1 var(--f);padding:3px 8px;border-radius:4px;flex-shrink:0}
+.task-tag.pending{background:var(--ac50);color:var(--ac700)}
+.task-tag.active{background:var(--pr50);color:var(--pr)}
+
+/* Score Layer 1 */
+.score-layer1{display:flex;align-items:center;gap:var(--sp-xl);padding-bottom:var(--sp-lg);border-bottom:1px solid var(--dv)}
+.score-left{display:flex;align-items:flex-end;gap:var(--sp-lg)}
+.score-num{font:700 36px/1 var(--f);color:var(--pr);letter-spacing:-1px}
+.score-info{padding-bottom:var(--sp-xs)}
+.score-badge{font:500 12px/1 var(--f);color:var(--pr);background:var(--pr50);padding:var(--sp-xs) var(--sp-md);border-radius:var(--r1);display:inline-block;margin-bottom:var(--sp-xs)}
+.score-period{font:400 12px/1 var(--f);color:var(--c5)}
+.score-compare{display:flex;flex-direction:column;align-items:flex-start;gap:var(--sp-xs);padding-left:var(--sp-xl);border-left:1px solid var(--dv)}
+.score-compare-row{display:flex;align-items:center;gap:var(--sp-sm)}
+.score-compare-label{font:400 12px/1 var(--f);color:var(--c5);min-width:28px}
+.score-compare-val{font:600 13px/1 var(--fm);color:var(--c8)}
+.score-compare-change{font:500 12px/1 var(--f);display:inline-flex;align-items:center;gap:2px}
+.score-compare-change.up{color:var(--em700)}
+
+/* Score Layer 2 */
+.score-layer2{padding-top:var(--sp-lg)}
+.score-layer2-title{font:600 13px/1 var(--f);color:var(--c8);margin-bottom:var(--sp-md)}
+
+/* Goal Modules */
+.mod-sec{border:1px solid var(--dv);border-radius:var(--r2);overflow:hidden}
+.mod-sec+.mod-sec{margin-top:var(--sp-md)}
+.mod-hd{display:flex;align-items:center;padding:var(--sp-md) var(--sp-lg);gap:var(--sp-sm)}
+.mod-hd-title{font:600 13px/1 var(--f);color:var(--c9);flex:1}
+.mod-hd-wt{font:500 12px/1 var(--fm);color:var(--c5);padding:2px 8px;border-radius:var(--r1);background:var(--c1)}
+.goal-row{border-top:1px solid var(--dv);padding:var(--sp-sm) var(--sp-lg);display:flex;align-items:center;gap:var(--sp-sm)}
+.goal-name{flex:1;font:500 13px/1.3 var(--f);color:var(--c8)}
+.goal-type{font:500 10px/1 var(--f);padding:2px 7px;border-radius:3px}
+.goal-type.q{background:var(--pr50);color:var(--pr)}
+.goal-type.d{background:var(--vi50);color:var(--vi)}
+.goal-wt{font:500 12px/1 var(--fm);color:var(--c6)}
+.goal-val{font:400 12px/1 var(--f);color:var(--c5);min-width:140px;text-align:right}
+
+/* Goal Footer */
+.goal-footer{display:flex;align-items:center;gap:var(--sp-lg);margin-top:var(--sp-md);padding-top:var(--sp-md);border-top:1px solid var(--dv)}
+.goal-footer-label{font:400 12px/1 var(--f);color:var(--c5)}
+.goal-footer-val{font:600 14px/1 var(--fm);color:var(--em700)}
+
+/* AI Suggest */
+.ai-suggest-item{padding:var(--sp-md);border:1px solid var(--dv);border-radius:var(--r2);cursor:pointer;transition:all .12s}
+.ai-suggest-item:hover{border-color:var(--pr200);background:var(--pr50)}
+.ai-suggest-item-t{font:500 13px/1.3 var(--f);color:var(--c8);margin-bottom:var(--sp-xs)}
+.ai-suggest-item-d{font:400 12px/1.4 var(--f);color:var(--c5)}
+.ai-suggest-item-action{margin-top:var(--sp-sm);font:500 11px/1 var(--f);color:var(--pr);display:inline-flex;align-items:center;gap:3px}
+
+/* Badge */
+.badge{font:500 11px/1 var(--f);color:var(--vi);background:var(--vi50);padding:2px 8px;border-radius:10px}
+
+.toast{position:fixed;top:70px;right:24px;padding:12px 18px;border-radius:var(--r2);font:500 13px/1.3 var(--f);box-shadow:0 10px 40px -10px rgba(0,0,0,.12);z-index:3000;transform:translateX(120%);transition:transform .25s ease}
+.toast.on{transform:translateX(0)}
+.toast.success{background:var(--em);color:#FFF}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div style="height:52px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 var(--sp-2xl);gap:var(--sp-lg);position:sticky;top:0;z-index:1100">
+  <div style="display:flex;align-items:center;gap:14px">
+    <a href="../demo-index.html" style="text-decoration:none;display:flex;align-items:center;gap:var(--sp-sm)">
+      <div style="width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <span style="font-size:15px;font-weight:700;color:var(--c9)">HR ONE</span>
+    </a>
+    <div style="width:1px;height:20px;background:var(--c2)"></div>
+    <span style="font:500 13px/1 var(--f);color:var(--c5)">业务演示</span>
+    <span style="color:var(--c3)">&#8250;</span>
+    <span style="font:600 13px/1 var(--f);color:var(--c8)">绩效首页</span>
+  </div>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+    <div style="width:30px;height:30px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--f);color:#FFF">张</div>
+  </div>
+</div>
+
+<div style="padding:var(--sp-2xl)">
+  <!-- Row 1: 待办任务 -->
+  <div class="card">
+    <div class="card-hd">
+      <span class="card-t">待办任务</span>
+      <span class="card-action" onclick="showToast('查看更多')">更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+    </div>
+    <div class="card-bd">
+      <div class="task" onclick="location.href='demo-goal-employee.html'">
+        <span class="task-dot pr"></span>
+        <div class="task-info"><div class="task-name">填写6月绩效目标</div><div class="task-meta">绩效方案 - 高级产品经理</div></div>
+        <span class="task-tag active">进行中</span>
+      </div>
+      <div class="task" onclick="location.href='demo-confirm-employee.html'">
+        <span class="task-dot ac"></span>
+        <div class="task-info"><div class="task-name">确认5月绩效结果</div><div class="task-meta">绩效方案 - 2026年5月</div></div>
+        <span class="task-tag pending">待处理</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 2: Score + Goals -->
+  <div class="row row-2">
+    <!-- 我的绩效评分 -->
+    <div class="card" style="margin-bottom:0">
+      <div class="card-hd">
+        <span class="card-t">我的绩效评分</span>
+        <span class="card-action">更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+      </div>
+      <div class="card-bd">
+        <!-- Layer 1 -->
+        <div class="score-layer1">
+          <div class="score-left">
+            <span class="score-num">4.10</span>
+            <div class="score-info">
+              <div class="score-badge">超出预期</div>
+              <div class="score-period">2026年5月 · 绩效评分</div>
+            </div>
+          </div>
+          <div class="score-compare">
+            <div class="score-compare-row">
+              <span class="score-compare-label">上期</span>
+              <span class="score-compare-val">3.85</span>
+              <span class="score-compare-change up">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 15 12 9 18 15"/></svg>
+                +0.25
+              </span>
+            </div>
+            <div class="score-compare-row">
+              <span class="score-compare-label">等级</span>
+              <span class="score-compare-val">符合预期+ → 超出预期</span>
+            </div>
+          </div>
+        </div>
+        <!-- Layer 2 -->
+        <div class="score-layer2">
+          <div class="score-layer2-title">过去半年绩效趋势</div>
+          <svg style="width:100%;display:block" viewBox="0 0 440 150" fill="none">
+            <defs>
+              <linearGradient id="ag" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#2563EB" stop-opacity=".10"/>
+                <stop offset="100%" stop-color="#2563EB" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <!-- Grid: y=20,40,60,80 (data range 20~80) -->
+            <line x1="35" y1="20" x2="405" y2="20" stroke="var(--c2)" stroke-width=".5" stroke-dasharray="3,3"/>
+            <line x1="35" y1="40" x2="405" y2="40" stroke="var(--c2)" stroke-width=".5" stroke-dasharray="3,3"/>
+            <line x1="35" y1="60" x2="405" y2="60" stroke="var(--c2)" stroke-width=".5" stroke-dasharray="3,3"/>
+            <line x1="35" y1="80" x2="405" y2="80" stroke="var(--c2)" stroke-width=".5" stroke-dasharray="3,3"/>
+            <!-- Area -->
+            <path d="M35,22 C65,22 85,30 115,30 C145,30 165,78 195,78 C225,78 245,32 275,32 C305,32 325,34 355,34 C385,34 395,24 405,24 L405,80 L35,80 Z" fill="url(#ag)"/>
+            <!-- Line -->
+            <path d="M35,22 C65,22 85,30 115,30 C145,30 165,78 195,78 C225,78 245,32 275,32 C305,32 325,34 355,34 C385,34 395,24 405,24" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+            <!-- Dots -->
+            <circle cx="35" cy="22" r="2.5" fill="#fff" stroke="#2563EB" stroke-width="1.5"/>
+            <circle cx="115" cy="30" r="2.5" fill="#fff" stroke="#2563EB" stroke-width="1.5"/>
+            <circle cx="195" cy="78" r="2.5" fill="#fff" stroke="#2563EB" stroke-width="1.5"/>
+            <circle cx="275" cy="32" r="2.5" fill="#fff" stroke="#2563EB" stroke-width="1.5"/>
+            <circle cx="355" cy="34" r="2.5" fill="#fff" stroke="#2563EB" stroke-width="1.5"/>
+            <circle cx="405" cy="24" r="2.5" fill="#fff" stroke="#2563EB" stroke-width="1.5"/>
+            <!-- Score (above dot) + Grade (below score) -->
+            <text x="35" y="8" text-anchor="middle" font-size="7" font-weight="600" fill="#2563EB" font-family="JetBrains Mono,monospace">4.10</text>
+            <text x="35" y="17" text-anchor="middle" font-size="6" fill="#A1A1AA" font-family="Inter,Noto Sans SC,sans-serif">超出预期</text>
+            <text x="115" y="16" text-anchor="middle" font-size="7" font-weight="600" fill="#2563EB" font-family="JetBrains Mono,monospace">3.85</text>
+            <text x="115" y="25" text-anchor="middle" font-size="6" fill="#A1A1AA" font-family="Inter,Noto Sans SC,sans-serif">符合预期+</text>
+            <text x="195" y="62" text-anchor="middle" font-size="7" font-weight="600" fill="#2563EB" font-family="JetBrains Mono,monospace">2.07</text>
+            <text x="195" y="71" text-anchor="middle" font-size="6" fill="#A1A1AA" font-family="Inter,Noto Sans SC,sans-serif">待改进</text>
+            <text x="275" y="18" text-anchor="middle" font-size="7" font-weight="600" fill="#2563EB" font-family="JetBrains Mono,monospace">3.95</text>
+            <text x="275" y="27" text-anchor="middle" font-size="6" fill="#A1A1AA" font-family="Inter,Noto Sans SC,sans-serif">超出预期</text>
+            <text x="355" y="20" text-anchor="middle" font-size="7" font-weight="600" fill="#2563EB" font-family="JetBrains Mono,monospace">3.82</text>
+            <text x="355" y="29" text-anchor="middle" font-size="6" fill="#A1A1AA" font-family="Inter,Noto Sans SC,sans-serif">符合预期+</text>
+            <text x="405" y="10" text-anchor="middle" font-size="7" font-weight="600" fill="#2563EB" font-family="JetBrains Mono,monospace">3.70</text>
+            <text x="405" y="19" text-anchor="middle" font-size="6" fill="#A1A1AA" font-family="Inter,Noto Sans SC,sans-serif">符合预期+</text>
+            <!-- Month x-axis -->
+            <text x="35" y="110" text-anchor="middle" font-size="8" fill="#A1A1AA" font-family="Inter,Noto Sans SC,sans-serif">1月</text>
+            <text x="115" y="110" text-anchor="middle" font-size="8" fill="#A1A1AA" font-family="Inter,Noto Sans SC,sans-serif">2月</text>
+            <text x="195" y="110" text-anchor="middle" font-size="8" fill="#A1A1AA" font-family="Inter,Noto Sans SC,sans-serif">3月</text>
+            <text x="275" y="110" text-anchor="middle" font-size="8" fill="#A1A1AA" font-family="Inter,Noto Sans SC,sans-serif">4月</text>
+            <text x="355" y="110" text-anchor="middle" font-size="8" fill="#A1A1AA" font-family="Inter,Noto Sans SC,sans-serif">5月</text>
+            <text x="405" y="110" text-anchor="middle" font-size="8" fill="#A1A1AA" font-family="Inter,Noto Sans SC,sans-serif">6月</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- 我的目标 -->
+    <div class="card" style="margin-bottom:0">
+      <div class="card-hd">
+        <span class="card-t">我的目标</span>
+        <span class="card-action">更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+      </div>
+      <div class="card-bd">
+        <div class="mod-sec">
+          <div class="mod-hd">
+            <div class="mod-hd-title">关键指标</div>
+            <div class="mod-hd-wt">60%</div>
+          </div>
+          <div class="goal-row" onclick="location.href='demo-goal-employee.html'">
+            <span class="goal-name">AI 产品迭代完成率</span>
+            <span class="goal-val">目标 100% · 挑战 120%</span>
+            <span class="goal-type q">定量</span>
+            <span class="goal-wt">25%</span>
+          </div>
+          <div class="goal-row" onclick="location.href='demo-goal-employee.html'">
+            <span class="goal-name">AI 新增用户数</span>
+            <span class="goal-val">目标 5000 · 挑战 7000</span>
+            <span class="goal-type q">定量</span>
+            <span class="goal-wt">20%</span>
+          </div>
+          <div class="goal-row" onclick="location.href='demo-goal-employee.html'">
+            <span class="goal-name">产品营收贡献</span>
+            <span class="goal-val">目标 200万 · 挑战 300万</span>
+            <span class="goal-type q">定量</span>
+            <span class="goal-wt">15%</span>
+          </div>
+        </div>
+        <div class="mod-sec">
+          <div class="mod-hd">
+            <div class="mod-hd-title">关键行动</div>
+            <div class="mod-hd-wt">40%</div>
+          </div>
+          <div class="goal-row" onclick="location.href='demo-goal-employee.html'">
+            <span class="goal-name">主导完成6月产品架构评审</span>
+            <span class="goal-val">定性</span>
+            <span class="goal-type d">定性</span>
+            <span class="goal-wt">15%</span>
+          </div>
+          <div class="goal-row" onclick="location.href='demo-goal-employee.html'">
+            <span class="goal-name">完成2名新人带教</span>
+            <span class="goal-val">定性</span>
+            <span class="goal-type d">定性</span>
+            <span class="goal-wt">10%</span>
+          </div>
+          <div class="goal-row" onclick="location.href='demo-goal-employee.html'">
+            <span class="goal-name">推动跨部门协作机制落地</span>
+            <span class="goal-val">定性</span>
+            <span class="goal-type d">定性</span>
+            <span class="goal-wt">15%</span>
+          </div>
+        </div>
+        <div class="goal-footer">
+          <span class="goal-footer-label">总权重</span>
+          <span class="goal-footer-val">100%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 3: AI建议 -->
+  <div class="card" style="margin-top:var(--sp-xl);margin-bottom:0">
+    <div class="card-hd">
+      <span class="card-t">AI 建议</span>
+      <span class="badge">3 条</span>
+    </div>
+    <div class="card-bd">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--sp-md)">
+        <div class="ai-suggest-item" onclick="showToast('已采纳建议')">
+          <div class="ai-suggest-item-t">权重分布可优化</div>
+          <div class="ai-suggest-item-d">关键行动权重仅 25%，建议提升至 35%</div>
+          <div class="ai-suggest-item-action">采纳建议 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </div>
+        <div class="ai-suggest-item" onclick="showToast('已采纳建议')">
+          <div class="ai-suggest-item-t">补充跨部门协作目标</div>
+          <div class="ai-suggest-item-d">5月自评中跨部门协作得分偏低</div>
+          <div class="ai-suggest-item-action">采纳建议 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </div>
+        <div class="ai-suggest-item" onclick="showToast('已采纳建议')">
+          <div class="ai-suggest-item-t">挑战值偏低</div>
+          <div class="ai-suggest-item-d">「新增用户数」挑战值 7000，建议上调至 8500</div>
+          <div class="ai-suggest-item-action">采纳建议 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function showToast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + (type || 'success');
+  setTimeout(function() { t.classList.add('on'); }, 10);
+  setTimeout(function() { t.classList.remove('on'); }, 2500);
+}
+</script>
+<script src="../navigation.js"></script>
+<script>GHR_NAV.init('workbench', '绩效首页');</script>
+</body>
+</html>

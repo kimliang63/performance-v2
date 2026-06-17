@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 团队绩效结果</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 16px;height:34px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
+.btn svg{width:14px;height:14px}
+.btn-p{background:var(--pr);color:#FFF}.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3);color:var(--c8)}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.stat{background:var(--sf);border-radius:var(--r2);padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.05);text-align:center}
+.stat-v{font:700 24px/1 var(--fm);color:var(--c9)}
+.stat-l{font:400 12px/1 var(--f);color:var(--c5);margin-top:4px}
+
+.filter{display:flex;gap:8px;margin-bottom:16px;align-items:center}
+.filter-tag{padding:5px 12px;border-radius:var(--r1);font:500 12px/1 var(--f);cursor:pointer;border:1px solid var(--c2);color:var(--c6);background:var(--sf);transition:all .15s;font-family:inherit}
+.filter-tag.on{background:var(--pr);color:#FFF;border-color:var(--pr)}
+.filter-tag:hover:not(.on){border-color:var(--pr);color:var(--pr)}
+.filter-search{margin-left:auto;width:200px;height:32px;border:1px solid var(--c2);border-radius:var(--r1);padding:0 10px;font:13px/1 var(--f);outline:none;font-family:inherit}
+.filter-search:focus{border-color:var(--pr)}
+
+.dist-chart{display:flex;align-items:flex-end;gap:8px;height:100px;padding:0 8px;margin-bottom:4px}
+.dist-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.dist-col-fill{width:100%;border-radius:4px 4px 0 0;transition:height .3s ease}
+.dist-col-label{font:600 12px/1 var(--f);color:var(--c6)}
+.dist-col-count{font:700 14px/1 var(--fm);color:var(--c9)}
+
+.table-card{background:var(--sf);border-radius:var(--r3);box-shadow:0 1px 3px rgba(0,0,0,.05);overflow:hidden}
+.table-card-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--dv)}
+.table-card-t{font:600 15px/1 var(--f);color:var(--c9)}
+
+.result-table{width:100%;border-collapse:collapse}
+.result-table th{background:var(--c0);padding:10px 16px;font:500 12px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);white-space:nowrap}
+.result-table td{padding:12px 16px;font:400 13px/1.3 var(--f);color:var(--c7);border-bottom:1px solid var(--dv);vertical-align:middle}
+.result-table tr:last-child td{border-bottom:none}
+.result-table tr{cursor:pointer;transition:background .1s}
+.result-table tbody tr:hover{background:var(--c0)}
+.result-table .name-cell{display:flex;align-items:center;gap:10px}
+.result-table .avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--f);color:#FFF;flex-shrink:0}
+.result-table .score{font:600 14px/1 var(--fm)}
+.result-table .grade-badge{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;font:700 13px/1 var(--f)}
+.grade-s{background:var(--ro50);color:var(--ro)}
+.grade-a{background:var(--ac50);color:var(--ac700)}
+.grade-b{background:var(--pr50);color:var(--pr)}
+.grade-c{background:var(--c1);color:var(--c6)}
+.grade-d{background:var(--c0);color:var(--c4)}
+.status-badge{font:500 11px/1 var(--f);padding:3px 8px;border-radius:4px}
+.status-badge.confirmed{background:var(--em50);color:var(--em700)}
+.status-badge.pending{background:var(--ac50);color:var(--ac700)}
+.status-badge.draft{background:var(--c1);color:var(--c5)}
+
+.detail-row td{padding:0 !important;border-bottom:1px solid var(--dv) !important;background:var(--c0)}
+.detail-inner{padding:16px 20px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.detail-mod{padding:12px;background:var(--sf);border-radius:var(--r1);border:1px solid var(--dv)}
+.detail-mod-name{font:500 12px/1 var(--f);color:var(--c5);margin-bottom:6px}
+.detail-mod-score{font:700 18px/1 var(--fm);color:var(--c9)}
+.detail-mod-grade{font:600 11px/1 var(--f);margin-top:4px;display:inline-block;padding:2px 6px;border-radius:3px}
+
+.caret{display:inline-block;transition:transform .2s;width:12px;height:12px;color:var(--c4)}
+.caret.open{transform:rotate(90deg)}
+
+.toast{position:fixed;top:70px;right:24px;padding:12px 18px;border-radius:var(--r2);font:500 13px/1.3 var(--f);box-shadow:0 10px 40px -10px rgba(0,0,0,.12);z-index:3000;transform:translateX(120%);transition:transform .25s ease}
+.toast.on{transform:translateX(0)}
+.toast.success{background:var(--em);color:#FFF}
+</style>
+</head>
+<body>
+
+<div style="height:52px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:1100">
+  <div style="display:flex;align-items:center;gap:14px">
+    <a href="../demo-index.html" style="text-decoration:none;display:flex;align-items:center;gap:8px">
+      <div style="width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <span style="font-size:15px;font-weight:700;color:var(--c9)">HR ONE</span>
+    </a>
+    <div style="width:1px;height:20px;background:var(--c2)"></div>
+    <span style="font:500 13px/1 var(--f);color:var(--c5)">业务演示 - 管理者端</span>
+    <span style="color:var(--c3)">&#8250;</span>
+    <span style="font:600 13px/1 var(--f);color:var(--c8)">团队绩效结果</span>
+  </div>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+    <span style="font:500 12px/1 var(--f);color:var(--c5)">王总 - 产品总监</span>
+    <div style="width:30px;height:30px;border-radius:50%;background:var(--vi);display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--f);color:#FFF">王</div>
+  </div>
+</div>
+
+<div style="padding:20px 24px">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+    <div>
+      <div style="font:700 20px/1.2 var(--f);color:var(--c9)">团队绩效结果</div>
+      <div style="font:400 13px/1 var(--f);color:var(--c5);margin-top:4px">2026年Q2 - 产品部</div>
+    </div>
+    <button class="btn btn-p" onclick="exportReport()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      导出报表
+    </button>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-v">5</div><div class="stat-l">团队人数</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--pr)">85.2</div><div class="stat-l">平均分</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--em700)">92.0</div><div class="stat-l">最高分</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--ro)">72.5</div><div class="stat-l">最低分</div></div>
+  </div>
+
+  <div style="display:flex;gap:16px;margin-bottom:16px">
+    <div style="flex:1;background:var(--sf);border-radius:var(--r3);box-shadow:0 1px 3px rgba(0,0,0,.05);padding:16px 20px">
+      <div style="font:600 13px/1 var(--f);color:var(--c8);margin-bottom:14px">等级分布</div>
+      <div class="dist-chart" id="distChart">
+        <div class="dist-col"><div class="dist-col-count">1</div><div class="dist-col-fill" style="height:40px;background:var(--ro)"></div><div class="dist-col-label">S</div></div>
+        <div class="dist-col"><div class="dist-col-count">2</div><div class="dist-col-fill" style="height:80px;background:var(--ac)"></div><div class="dist-col-label">A</div></div>
+        <div class="dist-col"><div class="dist-col-count">1</div><div class="dist-col-fill" style="height:40px;background:var(--pr)"></div><div class="dist-col-label">B</div></div>
+        <div class="dist-col"><div class="dist-col-count">1</div><div class="dist-col-fill" style="height:40px;background:var(--c4)"></div><div class="dist-col-label">C</div></div>
+        <div class="dist-col"><div class="dist-col-count">0</div><div class="dist-col-fill" style="height:2px;background:var(--c3)"></div><div class="dist-col-label">D</div></div>
+      </div>
+    </div>
+    <div style="width:300px;background:var(--sf);border-radius:var(--r3);box-shadow:0 1px 3px rgba(0,0,0,.05);padding:16px 20px">
+      <div style="font:600 13px/1 var(--f);color:var(--c8);margin-bottom:14px">分布参考线</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:center;gap:8px"><span style="font:500 12px/1 var(--f);color:var(--c5);width:24px">S</span><div style="flex:1;height:6px;background:var(--c1);border-radius:3px;overflow:hidden"><div style="width:10%;height:100%;background:var(--ro);border-radius:3px"></div></div><span style="font:400 11px/1 var(--fm);color:var(--c4);width:30px;text-align:right">10%</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="font:500 12px/1 var(--f);color:var(--c5);width:24px">A</span><div style="flex:1;height:6px;background:var(--c1);border-radius:3px;overflow:hidden"><div style="width:30%;height:100%;background:var(--ac);border-radius:3px"></div></div><span style="font:400 11px/1 var(--fm);color:var(--c4);width:30px;text-align:right">30%</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="font:500 12px/1 var(--f);color:var(--c5);width:24px">B</span><div style="flex:1;height:6px;background:var(--c1);border-radius:3px;overflow:hidden"><div style="width:40%;height:100%;background:var(--pr);border-radius:3px"></div></div><span style="font:400 11px/1 var(--fm);color:var(--c4);width:30px;text-align:right">40%</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="font:500 12px/1 var(--f);color:var(--c5);width:24px">C</span><div style="flex:1;height:6px;background:var(--c1);border-radius:3px;overflow:hidden"><div style="width:15%;height:100%;background:var(--c4);border-radius:3px"></div></div><span style="font:400 11px/1 var(--fm);color:var(--c4);width:30px;text-align:right">15%</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="font:500 12px/1 var(--f);color:var(--c5);width:24px">D</span><div style="flex:1;height:6px;background:var(--c1);border-radius:3px;overflow:hidden"><div style="width:5%;height:100%;background:var(--c3);border-radius:3px"></div></div><span style="font:400 11px/1 var(--fm);color:var(--c4);width:30px;text-align:right">5%</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="filter">
+    <span class="filter-tag on" onclick="setGradeFilter(this,'all')">全部等级</span>
+    <span class="filter-tag" onclick="setGradeFilter(this,'S')">S</span>
+    <span class="filter-tag" onclick="setGradeFilter(this,'A')">A</span>
+    <span class="filter-tag" onclick="setGradeFilter(this,'B')">B</span>
+    <span class="filter-tag" onclick="setGradeFilter(this,'C')">C</span>
+    <span class="filter-tag" onclick="setGradeFilter(this,'D')">D</span>
+    <span style="width:1px;height:20px;background:var(--c2);margin:0 4px"></span>
+    <span class="filter-tag" onclick="setStatusFilter(this,'all')">全部状态</span>
+    <span class="filter-tag" onclick="setStatusFilter(this,'confirmed')">已确认</span>
+    <span class="filter-tag" onclick="setStatusFilter(this,'pending')">待确认</span>
+    <input class="filter-search" placeholder="搜索成员..." oninput="searchMembers(this.value)"/>
+  </div>
+
+  <div class="table-card">
+    <div class="table-card-hd">
+      <span class="table-card-t">团队成员绩效结果</span>
+      <span style="font:400 12px/1 var(--f);color:var(--c5)" id="countLabel">共 5 人</span>
+    </div>
+    <table class="result-table">
+      <thead>
+        <tr>
+          <th style="width:36px"></th>
+          <th style="width:180px">姓名</th>
+          <th>部门</th>
+          <th>岗位</th>
+          <th style="width:80px;text-align:center">加权总分</th>
+          <th style="width:60px;text-align:center">等级</th>
+          <th style="width:80px;text-align:center">审定等级</th>
+          <th style="width:80px;text-align:center">确认状态</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+var MEMBERS=[
+  {name:'张明',dept:'产品部',title:'高级产品经理',score:89.6,grade:'A',finalGrade:'A',status:'confirmed',avColor:'var(--pr)',modules:[
+    {name:'业绩目标',score:90.2,grade:'A'},{name:'管理目标',score:86.0,grade:'A'},{name:'能力发展',score:88.5,grade:'A'},{name:'价值观',score:88.0,grade:'A'}
+  ]},
+  {name:'李雪',dept:'产品部',title:'产品经理',score:92.0,grade:'A',finalGrade:'S',status:'confirmed',avColor:'var(--em)',modules:[
+    {name:'业绩目标',score:95.0,grade:'S'},{name:'管理目标',score:90.0,grade:'A'},{name:'能力发展',score:88.0,grade:'A'},{name:'价值观',score:92.0,grade:'A'}
+  ]},
+  {name:'王浩然',dept:'产品部',title:'产品助理',score:72.5,grade:'C',finalGrade:'C',status:'pending',avColor:'var(--ac)',modules:[
+    {name:'业绩目标',score:70.0,grade:'C'},{name:'管理目标',score:75.0,grade:'B'},{name:'能力发展',score:72.0,grade:'C'},{name:'价值观',score:74.0,grade:'C'}
+  ]},
+  {name:'周婷',dept:'产品部',title:'高级产品经理',score:88.3,grade:'A',finalGrade:'A',status:'confirmed',avColor:'var(--vi)',modules:[
+    {name:'业绩目标',score:90.0,grade:'A'},{name:'管理目标',score:85.0,grade:'B'},{name:'能力发展',score:90.0,grade:'A'},{name:'价值观',score:86.0,grade:'A'}
+  ]},
+  {name:'吴强',dept:'技术部',title:'前端工程师',score:83.6,grade:'B',finalGrade:'B',status:'pending',avColor:'var(--ro)',modules:[
+    {name:'业绩目标',score:85.0,grade:'B'},{name:'管理目标',score:80.0,grade:'B'},{name:'能力发展',score:86.0,grade:'A'},{name:'价值观',score:82.0,grade:'B'}
+  ]}
+];
+
+var STATUS_LABEL={confirmed:'已确认',pending:'待确认'};
+var STATUS_CLASS={confirmed:'confirmed',pending:'pending'};
+var gradeFilter='all',statusFilter='all',searchQuery='',expandedRow=-1;
+
+function getGradeClass(g){
+  if(g==='S')return'grade-s';
+  if(g==='A')return'grade-a';
+  if(g==='B')return'grade-b';
+  if(g==='C')return'grade-c';
+  return'grade-d';
+}
+
+function render(){
+  var filtered=MEMBERS.filter(function(m){
+    if(gradeFilter!=='all'&&m.grade!==gradeFilter)return false;
+    if(statusFilter!=='all'&&m.status!==statusFilter)return false;
+    if(searchQuery&&m.name.indexOf(searchQuery)===-1&&m.dept.indexOf(searchQuery)===-1)return false;
+    return true;
+  });
+  document.getElementById('countLabel').textContent='共 '+filtered.length+' 人';
+  var html='';
+  filtered.forEach(function(m,i){
+    var mi=MEMBERS.indexOf(m);
+    var isOpen=expandedRow===mi;
+    html+='<tr onclick="toggleRow('+mi+')">';
+    html+='<td><svg class="caret'+(isOpen?' open':'')+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></td>';
+    html+='<td><div class="name-cell"><div class="avatar" style="background:'+m.avColor+'">'+m.name[0]+'</div><div><div style="font:500 13px/1 var(--f);color:var(--c8)">'+m.name+'</div></div></div></td>';
+    html+='<td>'+m.dept+'</td>';
+    html+='<td>'+m.title+'</td>';
+    html+='<td style="text-align:center"><span class="score" style="color:var(--pr)">'+m.score+'</span></td>';
+    html+='<td style="text-align:center"><span class="grade-badge '+getGradeClass(m.grade)+'">'+m.grade+'</span></td>';
+    html+='<td style="text-align:center"><span class="grade-badge '+getGradeClass(m.finalGrade)+'">'+m.finalGrade+'</span></td>';
+    html+='<td style="text-align:center"><span class="status-badge '+STATUS_CLASS[m.status]+'">'+STATUS_LABEL[m.status]+'</span></td>';
+    html+='</tr>';
+    if(isOpen){
+      html+='<tr class="detail-row"><td colspan="8"><div class="detail-inner">';
+      m.modules.forEach(function(mod){
+        html+='<div class="detail-mod"><div class="detail-mod-name">'+mod.name+'</div><div class="detail-mod-score">'+mod.score+'</div><span class="detail-mod-grade '+getGradeClass(mod.grade)+'">'+mod.grade+'</span></div>';
+      });
+      html+='</div></td></tr>';
+    }
+  });
+  document.getElementById('tableBody').innerHTML=html;
+}
+
+function toggleRow(mi){
+  expandedRow=expandedRow===mi?-1:mi;
+  render();
+}
+
+function setGradeFilter(el,f){
+  gradeFilter=f;
+  document.querySelectorAll('.filter-tag').forEach(function(t){t.classList.remove('on')});
+  el.classList.add('on');
+  render();
+}
+
+function setStatusFilter(el,f){
+  statusFilter=f;
+  render();
+}
+
+function searchMembers(q){
+  searchQuery=q;
+  render();
+}
+
+function exportReport(){showToast('报表导出中，请稍候...','success')}
+
+function showToast(msg,type){
+  var t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast '+(type||'success');
+  setTimeout(function(){t.classList.add('on')},10);
+  setTimeout(function(){t.classList.remove('on')},2500);
+}
+
+render();
+</script>
+<script src="../navigation.js"></script>
+<script>GHR_NAV.init('workbench', '团队绩效结果');</script>
+</body>
+</html>

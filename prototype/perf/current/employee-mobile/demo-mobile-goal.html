@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 员工目标制定</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;
+  --ro:#F43F5E;--ro50:#FFF1F2;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#0F172A;--c8:#1E293B;--c7:#334155;--c6:#475569;--c5:#64748B;--c4:#94A3B8;--c3:#CBD5E1;--c2:#E2E8F0;--c1:#F1F5F9;--c0:#F8FAFC;
+  --sf:#FFF;--bg:#F0F4F8;--dv:#E2E8F0;
+  --r1:10px;--r2:12px;--r3:14px;--r4:18px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+  --sx:0 1px 2px rgba(0,0,0,.04);--bd:rgba(15,23,42,.06);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:#E5E7EB;color:var(--c7);display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px;-webkit-font-smoothing:antialiased}
+.phone{width:393px;height:852px;background:var(--bg);border-radius:48px;box-shadow:0 25px 50px -12px rgba(0,0,0,.25),0 0 0 1px rgba(0,0,0,.05),inset 0 0 0 1px rgba(255,255,255,.1);overflow:hidden;position:relative;display:flex;flex-direction:column}
+.phone-notch{width:126px;height:34px;background:#000;border-radius:0 0 20px 20px;position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:100}
+.phone-status{height:54px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 8px;font:600 14px/1 var(--f);color:var(--c9)}
+.phone-status-r{display:flex;gap:4px;align-items:center}
+.phone-nav{height:50px;display:flex;align-items:center;padding:0 16px;gap:10px}
+.phone-nav-back{width:32px;height:32px;border-radius:8px;background:var(--c1);display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--c7);flex-shrink:0}
+.phone-nav-back svg{width:16px;height:16px}
+.phone-nav-t{flex:1;font:600 17px/1 var(--f);color:var(--c9)}
+.phone-body{flex:1;overflow-y:auto;padding:0 16px}
+.phone-body::-webkit-scrollbar{width:0}
+
+/* Overview */
+.ov-card{background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:16px;margin-bottom:12px}
+.ov-top{display:flex;align-items:center;gap:12px}
+.ov-avatar{width:40px;height:40px;border-radius:50%;background:var(--pr50);display:flex;align-items:center;justify-content:center;font:700 16px/1 var(--f);color:var(--pr);flex-shrink:0}
+.ov-info{flex:1}
+.ov-name{font:600 16px/1.2 var(--f);color:var(--c9)}
+.ov-role{font:400 12px/1 var(--f);color:var(--c5);margin-top:2px}
+.ov-cycle{font:600 12px/1 var(--f);color:var(--pr);background:var(--pr50);padding:4px 10px;border-radius:8px;flex-shrink:0}
+.ov-meta{display:flex;gap:16px;margin-top:12px;padding-top:12px;border-top:1px solid var(--dv)}
+.ov-meta-item{font:500 12px/1 var(--f);color:var(--c6)}
+.ov-meta-item b{font-family:var(--fm);font-weight:600;color:var(--c9)}
+
+/* Module Card */
+.mod{background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);margin-bottom:8px;overflow:hidden}
+.mod-hd{display:flex;align-items:center;padding:14px 16px;cursor:pointer;gap:10px;transition:background .1s}
+.mod-hd:active{background:var(--c0)}
+.mod-ic{width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mod-ic svg{width:14px;height:14px;color:#FFF}
+.mod-info{flex:1;min-width:0}
+.mod-name{font:600 13px/1 var(--f);color:var(--c8)}
+.mod-meta{font:400 11px/1 var(--f);color:var(--c5);margin-top:3px}
+.mod-chevron{width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--c4);transition:transform .2s}
+.mod-chevron.open{transform:rotate(180deg)}
+.mod-chevron svg{width:14px;height:14px}
+.mod-body{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.mod-body.open{max-height:2000px}
+
+/* Goal Item */
+.goal{border-top:1px solid var(--dv);padding:12px 14px}
+.goal:first-child{border-top:none}
+.goal-hd{display:flex;align-items:center;gap:8px}
+.goal-name{flex:1;font:500 13px/1.3 var(--f);color:var(--c8);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.goal-name .ai-badge{font:700 9px/1 var(--f);color:var(--vi);background:var(--vi50);padding:2px 5px;border-radius:3px;margin-left:4px}
+.goal-type{font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px}
+.goal-type.q{background:var(--pr50);color:var(--pr)}
+.goal-type.w{background:var(--vi50);color:var(--vi)}
+.goal-weight{font:500 11px/1 var(--fm);color:var(--c6)}
+.goal-val{display:flex;align-items:baseline;gap:4px;margin-top:8px;font:500 13px/1 var(--f);color:var(--c5)}
+.goal-val .v{font-family:var(--fm);font-weight:700;font-size:13px}
+.goal-val .v.challenge{color:var(--ac)}
+.goal-val .v.target{color:var(--pr)}
+.goal-val .v.baseline{color:var(--c5)}
+.goal-val .sep{color:var(--c3);font-size:11px;margin:0 2px}
+
+/* Add Goal */
+.add-goal{display:flex;align-items:center;justify-content:center;gap:6px;padding:14px;background:var(--sf);border-radius:var(--r2);border:1.5px dashed var(--c2);font:500 13px/1 var(--f);color:var(--c5);cursor:pointer;margin-bottom:12px;transition:all .15s}
+.add-goal:active{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.add-goal svg{width:16px;height:16px}
+
+/* Action Bar */
+.action-bar{position:absolute;bottom:0;left:0;right:0;background:var(--sf);border-top:1px solid var(--dv);display:flex;align-items:center;padding:12px 16px;gap:8px;padding-bottom:34px;z-index:10}
+.btn{height:44px;border-radius:var(--r2);font:600 14px/1 var(--f);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .12s;flex:1}
+.btn:active{transform:scale(.97)}
+.btn-draft{background:var(--sf);color:var(--c7);border:1px solid var(--c2)}
+.btn-submit{background:var(--pr);color:#FFF;box-shadow:0 2px 8px rgba(37,99,235,.25)}
+
+/* Toast */
+.toast{position:absolute;top:70px;left:50%;transform:translateX(-50%);background:var(--c9);color:#FFF;padding:10px 22px;border-radius:22px;font:500 13px/1 var(--f);z-index:900;opacity:0;pointer-events:none;transition:opacity .2s}
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="phone-notch"></div>
+  <div class="phone-status">
+    <span>9:41</span>
+    <div class="phone-status-r">
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="var(--c9)"><rect x="0" y="6" width="3" height="6" rx="1"/><rect x="4.5" y="4" width="3" height="8" rx="1"/><rect x="9" y="1.5" width="3" height="10.5" rx="1"/><rect x="13.5" y="0" width="2.5" height="12" rx="1"/></svg>
+      <svg width="15" height="12" viewBox="0 0 15 12" fill="none" stroke="var(--c9)" stroke-width="1.2"><rect x="0.5" y="0.5" width="12" height="11" rx="2"/><line x1="13" y1="4" x2="13" y2="8"/><rect x="2" y="2.5" width="7" height="7" rx="1" fill="var(--c9)"/></svg>
+    </div>
+  </div>
+
+  <div class="phone-nav">
+    <a href="../demo-index.html" class="phone-nav-back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </a>
+    <span class="phone-nav-t">目标制定</span>
+  </div>
+
+  <div class="phone-body" id="phoneBody"></div>
+
+  <div class="action-bar">
+    <button class="btn btn-draft" onclick="showToast('已保存草稿')">保存草稿</button>
+    <button class="btn btn-submit" onclick="showToast('已提交审批')">提交</button>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+const MOCK = {
+  employee: {name:'张明',dept:'产品部',title:'高级产品经理'},
+  cycle: '2026年Q2',
+  goals: [
+    {name:'产品迭代',weight:30,target:100,challenge:120,baseline:80,type:'q',aiFill:true},
+    {name:'新客户拓展',weight:20,target:5000,challenge:7000,baseline:3000,type:'q',aiFill:true},
+    {name:'客户满意度',weight:15,target:90,challenge:95,baseline:80,type:'q',aiFill:false},
+    {name:'团队效率',weight:10,target:110,challenge:130,baseline:100,type:'q',aiFill:true},
+    {name:'人才培养',weight:10,measure:'培养2名骨干员工',type:'w',aiFill:true},
+  ],
+};
+
+const MODULES = [
+  {name:'业绩目标',weight:50,color:'var(--pr)',goals:[0,1]},
+  {name:'管理目标',weight:20,color:'var(--em)',goals:[2,3]},
+  {name:'能力发展目标',weight:15,color:'var(--ac)',goals:[4]},
+  {name:'价值观目标',weight:15,color:'var(--vi)',goals:[]},
+];
+
+const openMods = new Set([0,1]);
+
+function render(){
+  const el = document.getElementById('phoneBody');
+  const allGoals = MOCK.goals;
+  const totalWeight = allGoals.reduce((s,g) => s + g.weight, 0);
+  let h = '';
+
+  // Overview
+  h += `<div class="ov-card">
+    <div class="ov-top">
+      <div class="ov-avatar">${MOCK.employee.name[0]}</div>
+      <div class="ov-info"><div class="ov-name">${MOCK.employee.name}</div><div class="ov-role">${MOCK.employee.title} · ${MOCK.employee.dept}</div></div>
+      <div class="ov-cycle">${MOCK.cycle}</div>
+    </div>
+    <div class="ov-meta">
+      <span class="ov-meta-item">目标 <b>${allGoals.length}</b> 个</span>
+      <span class="ov-meta-item">总权重 <b>${totalWeight}%</b></span>
+    </div>
+  </div>`;
+
+  // Modules
+  MODULES.forEach((m, mi) => {
+    const goals = m.goals.map(i => MOCK.goals[i]);
+    const tw = goals.reduce((s,g) => s + g.weight, 0);
+    const isOpen = openMods.has(mi);
+    h += `<div class="mod">
+      <div class="mod-hd" onclick="toggleMod(${mi})">
+        <div class="mod-ic" style="background:${m.color}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+        <div class="mod-info"><div class="mod-name">${m.name}</div><div class="mod-meta">权重 ${m.weight}% · ${goals.length} 条目标</div></div>
+        <div class="mod-chevron${isOpen?' open':''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="mod-body${isOpen?' open':''}">`;
+    if(!goals.length){
+      h += '<div style="padding:16px;text-align:center;font:400 12px/1.3 var(--f);color:var(--c4)">暂无目标</div>';
+    } else {
+      goals.forEach(g => {
+        h += `<div class="goal">
+          <div class="goal-hd">
+            <span class="goal-name">${g.name}${g.aiFill?'<span class="ai-badge">AI</span>':''}</span>
+            <span class="goal-type ${g.type}">${g.type==='q'?'定量':'定性'}</span>
+            <span class="goal-weight">${g.weight}%</span>
+          </div>`;
+        if(g.type === 'q'){
+          h += `<div class="goal-val">
+            <span>挑战</span><span class="v challenge">${g.challenge}</span>
+            <span class="sep">·</span>
+            <span>目标</span><span class="v target">${g.target}</span>
+            <span class="sep">·</span>
+            <span>保底</span><span class="v baseline">${g.baseline}</span>
+          </div>`;
+        } else {
+          h += `<div class="goal-val"><span class="v" style="font-family:var(--f);font-weight:400;color:var(--c5)">${g.measure||''}</span></div>`;
+        }
+        h += '</div>';
+      });
+    }
+    h += '</div></div>';
+  });
+
+  // Add goal button
+  h += `<div class="add-goal" onclick="showToast('添加目标')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    添加新目标
+  </div>`;
+
+  h += '<div style="height:100px"></div>';
+  el.innerHTML = h;
+}
+
+function toggleMod(mi){
+  if(openMods.has(mi)) openMods.delete(mi); else openMods.add(mi);
+  render();
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.opacity = '1';
+  setTimeout(() => { t.style.opacity = '0'; }, 2000);
+}
+
+render();
+</script>
+</body>
+</html>

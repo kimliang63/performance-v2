@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>面谈 · 上级审批</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c9);min-height:100vh}
+.card{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);padding:20px 24px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 20px;border-radius:var(--r2);font-size:13px;font-weight:600;font-family:var(--f);cursor:pointer;border:none;transition:all .15s}
+.btn-pri{background:var(--pr);color:#FFF}.btn-pri:hover{background:var(--pr700)}
+.btn-out{background:var(--sf);color:var(--c7);border:1px solid var(--c3)}.btn-out:hover{border-color:var(--ro);color:var(--ro)}
+.btn-ro{background:var(--ro);color:#FFF}.btn-ro:hover{background:#E11D48}
+.info-bar{display:flex;gap:24px;align-items:center;flex-wrap:wrap;margin-bottom:20px}
+.info-item{font-size:13px;display:flex;align-items:center;gap:6px}
+.info-item .label{color:var(--c5);font-weight:500}
+.info-item .val{font-weight:600;color:var(--c9)}
+.section{margin-bottom:20px}
+.section-title{font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.section-title .icon{width:24px;height:24px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#FFF}
+.item-card{background:var(--c0);border:1px solid var(--c2);border-radius:var(--r2);padding:14px 16px;margin-bottom:10px}
+.item-card .item-title{font-size:12px;color:var(--c5);margin-bottom:6px;font-weight:500}
+.item-card .item-content{font-size:13px;color:var(--c8);line-height:1.6}
+textarea{width:100%;height:120px;border:1px solid var(--c3);border-radius:var(--r2);padding:12px 14px;font-size:13px;font-family:var(--f);resize:vertical;transition:border-color .15s}
+textarea:focus{outline:none;border-color:var(--pr);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:2000;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:var(--sf);border-radius:var(--r4);padding:24px;width:420px;max-width:90vw}
+.modal h4{font-size:15px;font-weight:700;margin-bottom:12px}
+.modal textarea{height:80px;margin-bottom:16px}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px}
+#toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-60px);padding:10px 24px;border-radius:var(--r2);font-size:13px;font-weight:600;z-index:9999;transition:transform .3s;pointer-events:none}
+#toast.success{background:var(--em);color:#FFF}
+#toast.error{background:var(--ro);color:#FFF}
+#toast.on{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div style="height:52px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:1100">
+  <div style="display:flex;align-items:center;gap:14px">
+    <a href="../demo-index.html" style="text-decoration:none;display:flex;align-items:center;gap:8px">
+      <div style="width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <span style="font-size:15px;font-weight:700;color:var(--c9)">HR ONE</span>
+    </a>
+    <div style="width:1px;height:20px;background:var(--c2)"></div>
+    <span style="font:500 13px/1 var(--f);color:var(--c5)">业务演示 - 管理者端</span>
+    <span style="color:var(--c3)">&#8250;</span>
+    <span style="font:600 13px/1 var(--f);color:var(--c8)">面谈 · 上级审批</span>
+  </div>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+    <span style="font:500 12px/1 var(--f);color:var(--c5)">王总 - 产品总监</span>
+    <div style="width:30px;height:30px;border-radius:50%;background:var(--vi);display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--f);color:#FFF">王</div>
+  </div>
+</div>
+
+<div style="max-width:800px;margin:0 auto;padding:24px">
+  <h2 style="font-size:18px;font-weight:700;margin-bottom:4px">面谈审批</h2>
+  <p style="font-size:13px;color:var(--c5);margin-bottom:20px">请审阅员工面谈内容并填写上级评语</p>
+
+  <div class="card" style="margin-bottom:20px">
+    <div class="info-bar">
+      <div class="info-item"><span class="label">员工</span><span class="val">张明</span></div>
+      <div class="info-item"><span class="label">岗位</span><span class="val">高级产品经理</span></div>
+      <div class="info-item"><span class="label">考核周期</span><span class="val">2026年 Q2</span></div>
+      <div class="info-item"><span class="label">面谈类型</span><span class="val">定期面谈</span></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:20px">
+    <div class="section">
+      <div class="section-title">
+        <div class="icon" style="background:var(--em)">赞</div>
+        三个赞 — 员工对上级的肯定
+      </div>
+      <div class="item-card">
+        <div class="item-title">赞 1</div>
+        <div class="item-content">在Q2的项目推进中，王总给予了充分的信任和授权，让我能够独立负责用户增长模块的整体规划，这种放手让我成长了很多。</div>
+      </div>
+      <div class="item-card">
+        <div class="item-title">赞 2</div>
+        <div class="item-content">王总每周的一对一沟通非常有价值，不仅关注工作进展，还关心我的职业发展方向，帮我梳理了产品经理的能力模型。</div>
+      </div>
+      <div class="item-card">
+        <div class="item-title">赞 3</div>
+        <div class="item-content">跨部门协作遇到阻力时，王总及时出面协调资源，展现了很好的管理层支持，让项目没有因为外部因素停滞。</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">
+        <div class="icon" style="background:var(--ac)">转</div>
+        三个转 — 改进方面
+      </div>
+      <div class="item-card">
+        <div class="item-title">转 1</div>
+        <div class="item-content">希望能增加与技术团队的联合评审会，当前需求评审和开发评审是分开的，导致部分需求理解有偏差，增加了返工成本。</div>
+      </div>
+      <div class="item-card">
+        <div class="item-title">转 2</div>
+        <div class="item-content">建议优化绩效反馈的及时性，季度末集中反馈对日常改进的指导意义有限，希望能有更轻量的月度check-in机制。</div>
+      </div>
+      <div class="item-card">
+        <div class="item-title">转 3</div>
+        <div class="item-content">团队内部的知识沉淀还不够系统，建议建立产品决策文档库，方便后续复盘和新人上手。</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">
+        <div class="icon" style="background:var(--pr)">规</div>
+        下阶段规划
+      </div>
+      <div class="item-card">
+        <div class="item-content">Q3重点聚焦用户留存率提升，计划通过用户分层运营和个性化推荐优化，目标将次月留存率从当前45%提升至55%。同时完成产品中台V2.0的需求梳理和技术方案评审。</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">
+        <div class="icon" style="background:var(--vi)">需</div>
+        需求与支持
+      </div>
+      <div class="item-card">
+        <div class="item-content">1. 希望能获得数据分析平台的高级权限，便于自主进行用户行为分析；2. 建议安排一次与行业头部公司的产品交流，学习先进的用户增长方法论；3. 希望团队能增加一名中级产品经理分担日常工作。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:20px">
+    <h3 style="font-size:15px;font-weight:600;margin-bottom:12px">上级评语</h3>
+    <textarea id="feedback" placeholder="请输入您对面谈内容的反馈和评语...">张明在Q2表现突出，用户增长模块的独立负责体现了很好的成长。对于提出的改进建议，联合评审会和月度check-in机制值得推行，知识库建设纳入Q3团队OKR。支持数据分析权限申请，产品经理招聘已启动。</textarea>
+  </div>
+
+  <div style="display:flex;gap:8px;justify-content:flex-end">
+    <button class="btn btn-out" onclick="openReturnModal()">退回</button>
+    <button class="btn btn-pri" onclick="showToast('面谈已批准','success')">批准</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="returnModal">
+  <div class="modal">
+    <h4>退回面谈</h4>
+    <p style="font-size:13px;color:var(--c6);margin-bottom:12px">请填写退回原因，将退回给员工重新填写。</p>
+    <textarea id="returnReason" placeholder="请输入退回原因..."></textarea>
+    <div class="modal-actions">
+      <button class="btn btn-out" onclick="closeReturnModal()">取消</button>
+      <button class="btn btn-ro" onclick="confirmReturn()">确认退回</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+function showToast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + (type || 'success');
+  setTimeout(function() { t.classList.add('on'); }, 10);
+  setTimeout(function() { t.classList.remove('on'); }, 2500);
+}
+
+function openReturnModal() {
+  document.getElementById('returnReason').value = '';
+  document.getElementById('returnModal').classList.add('show');
+}
+
+function closeReturnModal() {
+  document.getElementById('returnModal').classList.remove('show');
+}
+
+function confirmReturn() {
+  var reason = document.getElementById('returnReason').value.trim();
+  if (!reason) { showToast('请填写退回原因','error'); return; }
+  closeReturnModal();
+  showToast('面谈已退回','success');
+}
+</script>
+<script src="../navigation.js"></script>
+<script>GHR_NAV.init('perf', '面谈');</script>
+</body>
+</html>

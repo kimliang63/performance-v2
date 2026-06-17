@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 结果审定</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#0F172A;--c8:#1E293B;--c7:#334155;--c6:#475569;--c5:#64748B;--c4:#94A3B8;--c3:#CBD5E1;--c2:#E2E8F0;--c1:#F1F5F9;--c0:#F8FAFC;
+  --sf:#FFF;--bg:#F0F4F8;--dv:#E2E8F0;
+  --r1:10px;--r2:12px;--r3:14px;--r4:18px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+  --sx:0 1px 2px rgba(0,0,0,.04);--sm:0 2px 8px rgba(0,0,0,.06);
+  --bd:rgba(15,23,42,.06);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:#E5E7EB;color:var(--c7);display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px;-webkit-font-smoothing:antialiased}
+.phone{width:393px;height:852px;background:var(--bg);border-radius:48px;box-shadow:0 25px 50px -12px rgba(0,0,0,.25),0 0 0 1px rgba(0,0,0,.05),inset 0 0 0 1px rgba(255,255,255,.1);overflow:hidden;position:relative;display:flex;flex-direction:column}
+.phone-notch{width:126px;height:34px;background:#000;border-radius:0 0 20px 20px;position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:100}
+.phone-status{height:54px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 8px;font:600 14px/1 var(--f);color:var(--c9)}
+.phone-status-r{display:flex;gap:4px;align-items:center}
+.phone-nav{height:50px;display:flex;align-items:center;padding:0 16px;gap:10px}
+.phone-nav-back{width:32px;height:32px;border-radius:8px;background:var(--c1);display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--c7);flex-shrink:0}
+.phone-nav-back svg{width:16px;height:16px}
+.phone-nav-t{flex:1;font:600 17px/1 var(--f);color:var(--c9)}
+.phone-body{flex:1;overflow-y:auto;padding:0 16px}
+.phone-body::-webkit-scrollbar{width:0}
+
+/* Distribution Card */
+.dist-card{background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:14px;margin-bottom:14px}
+.dist-title{font:600 13px/1 var(--f);color:var(--c8);margin-bottom:12px}
+.dist-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.dist-row:last-child{margin-bottom:0}
+.dist-label{font:500 11px/1 var(--f);color:var(--c6);width:28px;text-align:center}
+.dist-bar-wrap{flex:1;height:20px;background:var(--c1);border-radius:10px;overflow:hidden;position:relative}
+.dist-bar{height:100%;border-radius:10px;transition:width .3s}
+.dist-bar.actual{position:absolute;top:0;left:0}
+.dist-bar.target{position:absolute;top:0;left:0;opacity:.3}
+.dist-pct{font:600 11px/1 var(--fm);color:var(--c7);width:36px;text-align:right}
+
+/* Member Row */
+.member-row{background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);margin-bottom:6px;padding:12px 14px;display:flex;align-items:center;gap:10px}
+.member-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 13px/1 var(--f);color:#FFF;flex-shrink:0}
+.member-info{flex:1;min-width:0}
+.member-name{font:500 13px/1 var(--f);color:var(--c8)}
+.member-score{font:400 11px/1 var(--fm);color:var(--c5);margin-top:2px}
+.member-grade-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.grade-badge{font:600 12px/1 var(--f);padding:3px 10px;border-radius:10px}
+.grade-badge.s{background:var(--vi50);color:var(--vi)}
+.grade-badge.a{background:var(--em50);color:var(--em700)}
+.grade-badge.b{background:var(--pr50);color:var(--pr)}
+.grade-badge.c{background:var(--ac50);color:var(--ac700)}
+.grade-badge.d{background:var(--ro50);color:var(--ro)}
+.grade-select{height:28px;border:1px solid var(--c2);border-radius:8px;padding:0 8px;font:500 11px/1 var(--f);color:var(--c7);background:var(--sf);outline:none;cursor:pointer}
+
+/* Actions */
+.actions{margin-top:14px;display:flex;gap:8px;margin-bottom:20px}
+.btn{flex:1;padding:12px;border-radius:var(--r2);font:600 14px/1 var(--f);text-align:center;cursor:pointer;border:none;transition:all .12s}
+.btn:active{transform:scale(.97)}
+.btn-submit{background:var(--pr);color:#FFF;box-shadow:0 2px 8px rgba(37,99,235,.25)}
+
+.toast{position:absolute;top:70px;left:50%;transform:translateX(-50%);background:var(--c9);color:#FFF;padding:10px 22px;border-radius:22px;font:500 13px/1 var(--f);z-index:900;opacity:0;pointer-events:none;transition:opacity .2s}
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="phone-notch"></div>
+  <div class="phone-status">
+    <span>9:41</span>
+    <div class="phone-status-r">
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="var(--c9)"><rect x="0" y="6" width="3" height="6" rx="1"/><rect x="4.5" y="4" width="3" height="8" rx="1"/><rect x="9" y="1.5" width="3" height="10.5" rx="1"/><rect x="13.5" y="0" width="2.5" height="12" rx="1"/></svg>
+      <svg width="15" height="12" viewBox="0 0 15 12" fill="none" stroke="var(--c9)" stroke-width="1.2"><rect x="0.5" y="0.5" width="12" height="11" rx="2"/><line x1="13" y1="4" x2="13" y2="8"/><rect x="2" y="2.5" width="7" height="7" rx="1" fill="var(--c9)"/></svg>
+    </div>
+  </div>
+  <div class="phone-nav">
+    <a href="../demo-index.html" class="phone-nav-back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </a>
+    <span class="phone-nav-t">结果审定</span>
+  </div>
+  <div class="phone-body" id="phoneBody"></div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+const GRADES = ['S','A','B','C','D'];
+const DIST_TARGET = {S:10,A:20,B:40,C:20,D:10};
+
+const MEMBERS = [
+  {name:'张明',score:88,curGrade:'A',newGrade:'A',color:'var(--pr)'},
+  {name:'李雪',score:82,curGrade:'B',newGrade:'A',color:'var(--em)'},
+  {name:'王浩然',score:75,curGrade:'B',newGrade:'B',color:'var(--ac)'},
+  {name:'周婷',score:68,curGrade:'C',newGrade:'C',color:'var(--vi)'},
+  {name:'吴强',score:62,curGrade:'C',newGrade:'C',color:'var(--ro)'}
+];
+
+function calcDist(){
+  const dist = {S:0,A:0,B:0,C:0,D:0};
+  MEMBERS.forEach(m=>dist[m.newGrade]++);
+  const pct = {};
+  GRADES.forEach(g=>pct[g]=Math.round(dist[g]/MEMBERS.length*100));
+  return pct;
+}
+
+function render(){
+  const el = document.getElementById('phoneBody');
+  let h = '';
+
+  const dist = calcDist();
+
+  h += '<div class="dist-card"><div class="dist-title">强制分布校验</div>';
+  GRADES.forEach(g => {
+    const color = g==='S'?'var(--vi)':g==='A'?'var(--em)':g==='B'?'var(--pr)':g==='C'?'var(--ac)':'var(--ro)';
+    h += `<div class="dist-row">
+      <span class="dist-label">${g}</span>
+      <div class="dist-bar-wrap">
+        <div class="dist-bar target" style="width:${DIST_TARGET[g]}%;background:${color}"></div>
+        <div class="dist-bar actual" style="width:${dist[g]}%;background:${color}"></div>
+      </div>
+      <span class="dist-pct">${dist[g]}%</span>
+    </div>`;
+  });
+  h += '</div>';
+
+  h += `<div style="font:600 14px/1 var(--f);color:var(--c8);margin-bottom:10px">成员审定 (${MEMBERS.length}人)</div>`;
+
+  MEMBERS.forEach((m,i) => {
+    const gc = m.newGrade.toLowerCase();
+    h += `<div class="member-row">
+      <div class="member-av" style="background:${m.color}">${m.name[0]}</div>
+      <div class="member-info">
+        <div class="member-name">${m.name}</div>
+        <div class="member-score">评分: ${m.score} · 原等级: ${m.curGrade}</div>
+      </div>
+      <div class="member-grade-wrap">
+        <select class="grade-select" onchange="updateGrade(${i},this.value)">
+          ${GRADES.map(g=>`<option ${g===m.newGrade?'selected':''}>${g}</option>`).join('')}
+        </select>
+      </div>
+    </div>`;
+  });
+
+  h += `<div class="actions">
+    <button class="btn btn-submit" onclick="showToast('已批量提交审定结果')">批量提交</button>
+  </div>`;
+
+  h += '<div style="height:8px"></div>';
+  el.innerHTML = h;
+}
+
+function updateGrade(idx,val){
+  MEMBERS[idx].newGrade = val;
+  render();
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.opacity = '1';
+  setTimeout(() => { t.style.opacity = '0'; }, 2000);
+}
+
+render();
+</script>
+</body>
+</html>

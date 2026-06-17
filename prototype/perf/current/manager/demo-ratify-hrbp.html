@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>结果审定 · HRBP</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c9);min-height:100vh}
+.card{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);padding:20px 24px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:var(--c0);text-align:left;padding:10px 14px;font-weight:600;color:var(--c6);border-bottom:1px solid var(--c2);white-space:nowrap}
+td{padding:10px 14px;border-bottom:1px solid var(--c1);vertical-align:middle}
+tr:hover td{background:var(--pr50)}
+.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:600;line-height:20px}
+.badge-s{background:#FEF3C7;color:#92400E}
+.badge-a{background:var(--em100);color:var(--em700)}
+.badge-b{background:var(--pr100);color:var(--pr700)}
+.badge-c{background:var(--ac100);color:var(--ac700)}
+.badge-d{background:var(--ro100);color:#BE123C}
+.badge-done{background:var(--em50);color:var(--em700)}
+.badge-wait{background:var(--c1);color:var(--c5)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 20px;border-radius:var(--r2);font-size:13px;font-weight:600;font-family:var(--f);cursor:pointer;border:none;transition:all .15s}
+.btn-pri{background:var(--pr);color:#FFF}.btn-pri:hover{background:var(--pr700)}
+.chain{display:flex;align-items:center;gap:8px;font-size:12px;margin-bottom:6px}
+.chain-node{padding:4px 10px;border-radius:var(--r1);border:1px solid}
+.chain-arrow{color:var(--c3);font-size:16px}
+#toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-60px);padding:10px 24px;border-radius:var(--r2);font-size:13px;font-weight:600;z-index:9999;transition:transform .3s;pointer-events:none}
+#toast.success{background:var(--em);color:#FFF}
+#toast.on{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div style="height:52px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:1100">
+  <div style="display:flex;align-items:center;gap:14px">
+    <a href="../demo-index.html" style="text-decoration:none;display:flex;align-items:center;gap:8px">
+      <div style="width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <span style="font-size:15px;font-weight:700;color:var(--c9)">HR ONE</span>
+    </a>
+    <div style="width:1px;height:20px;background:var(--c2)"></div>
+    <span style="font:500 13px/1 var(--f);color:var(--c5)">业务演示 - 管理者端</span>
+    <span style="color:var(--c3)">&#8250;</span>
+    <span style="font:600 13px/1 var(--f);color:var(--c8)">结果审定 · HRBP</span>
+  </div>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+    <span style="font:500 12px/1 var(--f);color:var(--c5)">赵敏 - HRBP</span>
+    <div style="width:30px;height:30px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--f);color:#FFF">赵</div>
+  </div>
+</div>
+
+<div style="max-width:1200px;margin:0 auto;padding:24px">
+  <h2 style="font-size:18px;font-weight:700;margin-bottom:20px">HRBP审定确认</h2>
+
+  <div class="card" style="margin-bottom:20px">
+    <h3 style="font-size:15px;font-weight:600;margin-bottom:12px">审定流程概览</h3>
+    <div style="font-size:13px;color:var(--c6);margin-bottom:16px">以下为已完成全部审定流程的团队成员，请确认审定结果。</div>
+    <div class="card" style="background:var(--c0);border:none;padding:16px">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="display:flex;align-items:center;gap:4px;padding:6px 14px;border-radius:var(--r1);border:1px solid var(--em);background:var(--em50);font-size:12px;font-weight:600;color:var(--em700)">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            直接上级审定
+          </div>
+          <span style="color:var(--c3);font-size:18px">&#8594;</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="display:flex;align-items:center;gap:4px;padding:6px 14px;border-radius:var(--r1);border:1px solid var(--em);background:var(--em50);font-size:12px;font-weight:600;color:var(--em700)">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            间接上级审定
+          </div>
+          <span style="color:var(--c3);font-size:18px">&#8594;</span>
+        </div>
+        <div style="padding:6px 14px;border-radius:var(--r1);border:1px solid var(--pr);background:var(--pr50);font-size:12px;font-weight:600;color:var(--pr700)">
+          HRBP确认（当前）
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:20px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <h3 style="font-size:15px;font-weight:600">审定结果确认</h3>
+      <button class="btn btn-pri" onclick="showToast('已知悉全部审定结果','success')">全部已知悉</button>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>姓名</th><th>岗位</th><th>加权总分</th><th>直接上级</th><th>间接上级</th><th>最终等级</th><th>强制分布</th><th>操作</th>
+        </tr>
+      </thead>
+      <tbody id="memberBody"></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3 style="font-size:15px;font-weight:600;margin-bottom:16px">强制分布校验</h3>
+    <div id="distCheck"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+function showToast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + (type || 'success');
+  setTimeout(function() { t.classList.add('on'); }, 10);
+  setTimeout(function() { t.classList.remove('on'); }, 2500);
+}
+
+var members = [
+  {name:'张明',role:'高级产品经理',weight:87.5,direct:'A',indirect:'A',final:'A'},
+  {name:'李雪',role:'产品经理',weight:92.0,direct:'S',indirect:'S',final:'S'},
+  {name:'王浩然',role:'产品专员',weight:78.0,direct:'B',indirect:'B',final:'B'},
+  {name:'周婷',role:'产品专员',weight:72.5,direct:'C',indirect:'C',final:'C'},
+  {name:'吴强',role:'产品经理',weight:85.0,direct:'B',indirect:'B',final:'B'}
+];
+
+var badgeMap = {S:'badge-s',A:'badge-a',B:'badge-b',C:'badge-c',D:'badge-d'};
+var distRules = {S:{max:0.1,label:'≤10%'},A:{max:0.2,label:'≤20%'},B:{min:0.5,label:'≥50%'},C:{min:0.1,label:'≥10%'},D:{max:0.1,label:'≤10%'}};
+
+function renderTable() {
+  var html = '';
+  members.forEach(function(m, i) {
+    var distOk = checkDistSingle(m.final);
+    html += '<tr>' +
+      '<td style="font-weight:600">' + m.name + '</td>' +
+      '<td>' + m.role + '</td>' +
+      '<td style="text-align:center;font-weight:600">' + m.weight + '</td>' +
+      '<td style="text-align:center"><span class="badge ' + badgeMap[m.direct] + '">' + m.direct + '</span></td>' +
+      '<td style="text-align:center"><span class="badge ' + badgeMap[m.indirect] + '">' + m.indirect + '</span></td>' +
+      '<td style="text-align:center"><span class="badge ' + badgeMap[m.final] + '">' + m.final + '</span></td>' +
+      '<td style="text-align:center">' + (distOk ? '<span style="color:var(--em);font-size:12px;font-weight:600">✓ 合规</span>' : '<span style="color:var(--ro);font-size:12px;font-weight:600">✗ 超限</span>') + '</td>' +
+      '<td><button class="btn btn-pri" style="padding:4px 12px;font-size:12px" onclick="acknowledge(' + i + ')">已知悉</button></td>' +
+      '</tr>';
+  });
+  document.getElementById('memberBody').innerHTML = html;
+}
+
+function checkDistSingle(grade) {
+  var counts = {S:0,A:0,B:0,C:0,D:0};
+  members.forEach(function(m) { counts[m.final]++; });
+  var total = members.length;
+  var pct = counts[grade] / total;
+  var rule = distRules[grade];
+  return rule.max !== undefined ? pct <= rule.max : pct >= rule.min;
+}
+
+function renderDist() {
+  var counts = {S:0,A:0,B:0,C:0,D:0};
+  members.forEach(function(m) { counts[m.final]++; });
+  var total = members.length;
+  var colors = {S:'#F59E0B',A:'#10B981',B:'#2563EB',C:'#F97316',D:'#F43F5E'};
+  var html = '';
+  ['S','A','B','C','D'].forEach(function(g) {
+    var pct = counts[g] / total;
+    var rule = distRules[g];
+    var valid = rule.max !== undefined ? pct <= rule.max : pct >= rule.min;
+    html += '<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;font-size:13px">' +
+      '<div style="width:40px;font-weight:600;text-align:right;color:' + colors[g] + '">' + g + '</div>' +
+      '<div style="flex:1;height:22px;background:var(--c1);border-radius:11px;overflow:hidden"><div style="height:100%;width:' + Math.max(pct*100,2) + '%;background:' + colors[g] + ';border-radius:11px"></div></div>' +
+      '<div style="width:50px;font-size:12px;color:var(--c6);text-align:center">' + counts[g] + '/' + total + '</div>' +
+      '<div style="width:80px;font-size:12px;color:var(--c5);text-align:right">' + rule.label + (valid ? ' <span style="color:var(--em)">✓</span>' : ' <span style="color:var(--ro)">✗</span>') + '</div>' +
+      '</div>';
+  });
+  document.getElementById('distCheck').innerHTML = html;
+}
+
+function acknowledge(idx) {
+  showToast(members[idx].name + ' 审定结果已知悉','success');
+}
+
+renderTable();
+renderDist();
+</script>
+<script src="../navigation.js"></script>
+<script>GHR_NAV.init('perf', '结果审定');</script>
+</body>
+</html>

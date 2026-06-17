@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 绩效面谈·填写</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+.pg{background:var(--sf);border-radius:var(--r3);box-shadow:0 1px 3px rgba(0,0,0,.05);overflow:hidden;margin-bottom:16px}
+
+.info-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:20px 24px}
+.info-item{display:flex;flex-direction:column;gap:4px}
+.info-label{font:500 11px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px}
+.info-value{font:500 14px/1.3 var(--f);color:var(--c9)}
+
+.section{padding:20px 24px;border-bottom:1px solid var(--dv)}
+.section:last-child{border-bottom:none}
+.section-hd{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.section-icon{width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.section-icon svg{width:14px;height:14px;color:#FFF}
+.section-title{font:600 14px/1 var(--f);color:var(--c9)}
+.section-desc{font:400 12px/1 var(--f);color:var(--c5);margin-left:8px}
+
+.input-group{margin-bottom:12px}
+.input-group:last-child{margin-bottom:0}
+.input-label{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.input-num{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0}
+.input-field{width:100%;height:40px;border:1px solid var(--c2);border-radius:var(--r1);padding:0 14px;font:400 13px/1 var(--f);color:var(--c8);outline:none;transition:border-color .15s}
+.input-field:focus{border-color:var(--pr)}
+.textarea-field{width:100%;min-height:100px;border:1px solid var(--c2);border-radius:var(--r1);padding:12px 14px;font:400 13px/1.6 var(--f);color:var(--c8);outline:none;resize:vertical;transition:border-color .15s}
+.textarea-field:focus{border-color:var(--pr)}
+
+.tip{display:flex;align-items:flex-start;gap:8px;padding:10px 14px;background:var(--pr50);border-radius:var(--r1);margin-bottom:14px;font:400 12px/1.4 var(--f);color:var(--pr)}
+.tip svg{width:14px;height:14px;flex-shrink:0;margin-top:1px}
+
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 16px;height:36px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
+.btn-p{background:var(--pr);color:#FFF}.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3);color:var(--c8)}
+
+.bottom-bar{position:fixed;bottom:0;left:0;right:0;padding:12px 24px;background:var(--sf);border-top:1px solid var(--dv);display:flex;align-items:center;justify-content:flex-end;gap:8px;z-index:100}
+
+.char-count{font:400 11px/1 var(--fm);color:var(--c4);text-align:right;margin-top:4px}
+
+.toast{position:fixed;top:70px;right:24px;padding:12px 18px;border-radius:var(--r2);font:500 13px/1.3 var(--f);box-shadow:0 10px 40px -10px rgba(0,0,0,.12);z-index:3000;transform:translateX(120%);transition:transform .25s ease}
+.toast.on{transform:translateX(0)}
+.toast.success{background:var(--em);color:#FFF}
+</style>
+</head>
+<body>
+
+<div style="height:52px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:1100">
+  <div style="display:flex;align-items:center;gap:14px">
+    <a href="../demo-index.html" style="text-decoration:none;display:flex;align-items:center;gap:8px">
+      <div style="width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <span style="font-size:15px;font-weight:700;color:var(--c9)">HR ONE</span>
+    </a>
+    <div style="width:1px;height:20px;background:var(--c2)"></div>
+    <span style="font:500 13px/1 var(--f);color:var(--c5)">业务演示</span>
+    <span style="color:var(--c3)">&#8250;</span>
+    <span style="font:600 13px/1 var(--f);color:var(--c8)">绩效面谈·填写</span>
+  </div>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+    <div style="width:30px;height:30px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--f);color:#FFF">张</div>
+  </div>
+</div>
+
+<div style="padding:24px;padding-bottom:80px">
+
+  <div class="pg">
+    <div style="padding:16px 24px;border-bottom:1px solid var(--dv)">
+      <div style="font:700 16px/1.2 var(--f);color:var(--c9)">绩效面谈表</div>
+      <div style="font:400 12px/1 var(--f);color:var(--c5);margin-top:4px">请认真填写，帮助上级了解您的想法和需求</div>
+    </div>
+    <div class="info-grid">
+      <div class="info-item"><span class="info-label">考核周期</span><span class="info-value">2026年Q2</span></div>
+      <div class="info-item"><span class="info-label">面谈类型</span><span class="info-value">定期面谈</span></div>
+      <div class="info-item"><span class="info-label">面谈人</span><span class="info-value">王建华（直接上级）</span></div>
+      <div class="info-item"><span class="info-label">面谈时间</span><span class="info-value">2026-06-20 14:00</span></div>
+    </div>
+  </div>
+
+  <div class="pg">
+    <div class="section">
+      <div class="section-hd">
+        <div class="section-icon" style="background:var(--em)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg></div>
+        <span class="section-title">三个赞</span>
+        <span class="section-desc">对上级的肯定与感谢</span>
+      </div>
+      <div class="tip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>请写出三个您想对上级表达肯定或感谢的方面</div>
+      <div class="input-group">
+        <div class="input-label"><div class="input-num" style="background:var(--em)">1</div><span style="font:500 12px/1 var(--f);color:var(--c7)">赞一</span></div>
+        <input class="input-field" placeholder="感谢上级在XX方面的指导" value="感谢王总在产品战略方向上的清晰指导，帮助我更好地理解公司业务全局。">
+      </div>
+      <div class="input-group">
+        <div class="input-label"><div class="input-num" style="background:var(--em)">2</div><span style="font:500 12px/1 var(--f);color:var(--c7)">赞二</span></div>
+        <input class="input-field" placeholder="感谢上级在XX方面的支持" value="感谢王总在跨部门协调中的大力支持，为产品推进扫清了障碍。">
+      </div>
+      <div class="input-group">
+        <div class="input-label"><div class="input-num" style="background:var(--em)">3</div><span style="font:500 12px/1 var(--f);color:var(--c7)">赞三</span></div>
+        <input class="input-field" placeholder="感谢上级在XX方面的鼓励" value="感谢王总在团队管理方法上的分享，让我在带团队方面有了新的思路。">
+      </div>
+    </div>
+  </div>
+
+  <div class="pg">
+    <div class="section">
+      <div class="section-hd">
+        <div class="section-icon" style="background:var(--ac)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></div>
+        <span class="section-title">三个转</span>
+        <span class="section-desc">希望改进的方面</span>
+      </div>
+      <div class="tip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>请写出三个您希望在下一阶段改进或转变的方面</div>
+      <div class="input-group">
+        <div class="input-label"><div class="input-num" style="background:var(--ac)">1</div><span style="font:500 12px/1 var(--f);color:var(--c7)">转一</span></div>
+        <input class="input-field" placeholder="希望在XX方面有所改进" value="希望在需求优先级判断上更加果断，减少反复沟通的时间成本。">
+      </div>
+      <div class="input-group">
+        <div class="input-label"><div class="input-num" style="background:var(--ac)">2</div><span style="font:500 12px/1 var(--f);color:var(--c7)">转二</span></div>
+        <input class="input-field" placeholder="希望在XX方面有所突破" value="希望提升数据分析能力，用数据驱动产品决策而非仅凭经验。">
+      </div>
+      <div class="input-group">
+        <div class="input-label"><div class="input-num" style="background:var(--ac)">3</div><span style="font:500 12px/1 var(--f);color:var(--c7)">转三</span></div>
+        <input class="input-field" placeholder="希望在XX方面有所成长" value="希望加强对行业趋势的洞察，提升产品前瞻性规划能力。">
+      </div>
+    </div>
+  </div>
+
+  <div class="pg">
+    <div class="section">
+      <div class="section-hd">
+        <div class="section-icon" style="background:var(--pr)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg></div>
+        <span class="section-title">下阶段规划</span>
+      </div>
+      <textarea class="textarea-field" placeholder="请描述您下一阶段的工作计划和目标方向...">Q3核心规划：
+1. 完成智能推荐模块上线，预计提升用户活跃度15%
+2. 推动数据中台产品化，为业务团队提供自助分析能力
+3. 优化需求管理流程，建立需求优先级评估模型
+4. 完成2名产品经理的能力提升计划</textarea>
+      <div class="char-count">126 字</div>
+    </div>
+  </div>
+
+  <div class="pg">
+    <div class="section">
+      <div class="section-hd">
+        <div class="section-icon" style="background:var(--vi)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+        <span class="section-title">需求与支持</span>
+      </div>
+      <textarea class="textarea-field" placeholder="请描述您在工作中需要的支持和资源...">希望获得以下支持：
+1. 更多与高层直接沟通产品战略的机会
+2. 跨部门协作的授权支持，特别是技术团队的资源协调
+3. 参加行业峰会或培训的机会，拓宽视野</textarea>
+      <div class="char-count">72 字</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="bottom-bar">
+  <button class="btn btn-s" onclick="showToast('已暂存', 'success')">暂存</button>
+  <button class="btn btn-p" onclick="showToast('面谈表已提交', 'success')">提交</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+document.querySelectorAll('.textarea-field').forEach(function(ta) {
+  ta.addEventListener('input', function() {
+    var count = this.value.length;
+    var countEl = this.nextElementSibling;
+    if (countEl && countEl.classList.contains('char-count')) {
+      countEl.textContent = count + ' 字';
+    }
+  });
+});
+function showToast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + (type || 'success');
+  setTimeout(function() { t.classList.add('on'); }, 10);
+  setTimeout(function() { t.classList.remove('on'); }, 2500);
+}
+</script>
+<script src="../navigation.js"></script>
+<script>GHR_NAV.init('perf', '绩效面谈');</script>
+</body>
+</html>
