@@ -2,8 +2,8 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>结果审定 · 直接上级</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 结果审定·直线上级</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -14,181 +14,231 @@
   --vi:#8B5CF6;--vi50:#F5F3FF;
   --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
   --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
   --r1:6px;--r2:8px;--r3:10px;--r4:14px;
   --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
-  --fm:'JetBrains Mono','SF Mono',monospace;
+  --m:'JetBrains Mono','SF Mono',monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--f);background:var(--bg);color:var(--c9);min-height:100vh}
-.card{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);padding:20px 24px}
-.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}
-.stat-card{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);padding:16px 20px;text-align:center}
-.stat-val{font-size:28px;font-weight:700;line-height:1.2}
-.stat-label{font-size:12px;color:var(--c5);margin-top:4px}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th{background:var(--c0);text-align:left;padding:10px 14px;font-weight:600;color:var(--c6);border-bottom:1px solid var(--c2);white-space:nowrap}
-td{padding:10px 14px;border-bottom:1px solid var(--c1);vertical-align:middle}
-tr:hover td{background:var(--pr50)}
-select{border:1px solid var(--c3);border-radius:var(--r1);padding:4px 8px;font-size:13px;font-family:var(--f);background:var(--sf);cursor:pointer}
-.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:600;line-height:20px}
-.badge-s{background:#FEF3C7;color:#92400E}
-.badge-a{background:var(--em100);color:var(--em700)}
-.badge-b{background:var(--pr100);color:var(--pr700)}
-.badge-c{background:var(--ac100);color:var(--ac700)}
-.badge-d{background:var(--ro100);color:#BE123C}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 20px;border-radius:var(--r2);font-size:13px;font-weight:600;font-family:var(--f);cursor:pointer;border:none;transition:all .15s}
-.btn-pri{background:var(--pr);color:#FFF}.btn-pri:hover{background:var(--pr700)}
-.btn-out{background:var(--sf);color:var(--c7);border:1px solid var(--c3)}.btn-out:hover{border-color:var(--pr);color:var(--pr)}
-.btn-warn{background:var(--ac);color:#FFF}.btn-warn:hover{background:var(--ac700)}
-.dist-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;font-size:13px}
-.dist-label{width:40px;font-weight:600;text-align:right}
-.dist-track{flex:1;height:22px;background:var(--c1);border-radius:11px;position:relative;overflow:hidden}
-.dist-fill{height:100%;border-radius:11px;transition:width .3s}
-.dist-rule{width:80px;font-size:12px;color:var(--c5);text-align:right}
-.dist-val{width:50px;font-size:12px;color:var(--c6);text-align:center}
-#toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-60px);padding:10px 24px;border-radius:var(--r2);font-size:13px;font-weight:600;z-index:9999;transition:transform .3s;pointer-events:none}
-#toast.success{background:var(--em);color:#FFF}
-#toast.error{background:var(--ro);color:#FFF}
-#toast.on{transform:translateX(-50%) translateY(0)}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+/* ═══ PAGE HEADER ═══ */
+.pg-hd{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:16px}
+.pg-hd-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.pg-hd-title{font:700 20px/1.2 var(--f);color:var(--c9);letter-spacing:-.3px}
+.pg-hd-actions{display:flex;gap:8px}
+.pg-hd-info{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 24px;font:400 13px/1 var(--f);color:var(--c5);padding:12px 16px;background:var(--c0);border-radius:var(--r2)}
+.pg-hd-info-item{display:flex;flex-direction:column;gap:2px}
+.pg-hd-info-label{font:400 11px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px}
+.pg-hd-info-value{font:500 13px/1.3 var(--f);color:var(--c8)}
+
+/* ═══ STAT CARDS ═══ */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px}
+.stat-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px;text-align:center}
+.stat-val{font:700 28px/1.2 var(--m);color:var(--c9)}
+.stat-label{font:400 12px/1 var(--f);color:var(--c5);margin-top:4px}
+
+/* ═══ TABLE ═══ */
+.eval-list{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden}
+.eval-list table{width:100%;border-collapse:collapse}
+.eval-list th{background:var(--c0);padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.eval-list td{padding:10px 16px;font:400 13px/1.4 var(--f);color:var(--c7);border-bottom:1px solid var(--dv);vertical-align:top}
+.eval-list tr:last-child td{border-bottom:none}
+.eval-list tr:hover td{background:var(--c0)}
+
+/* ═══ INPUT ═══ */
+select.edit-cell{appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:22px;cursor:pointer;font-family:var(--f);border:1px solid var(--c2);border-radius:var(--r1);padding:6px 28px 6px 10px;font:500 12px/1 var(--f);color:var(--c8);background-color:var(--sf);transition:all .12s;outline:none}
+select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
+
+/* ═══ GRADE SELECT ═══ */
+.grade-select{position:relative;display:inline-block;width:100px}
+.grade-select select{width:100%;appearance:none;background-image:none;padding:6px 28px 6px 10px;border:1px solid var(--c2);border-radius:var(--r1);font:500 12px/1 var(--f);color:var(--c8);background-color:var(--sf);cursor:pointer;outline:none;transition:all .12s;white-space:nowrap}
+.grade-select select:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
+.grade-select::after{content:'';position:absolute;right:8px;top:50%;transform:translateY(-50%);width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid var(--c4);pointer-events:none}
+.grade-select select option{padding:8px 12px;font:400 13px/1.4 var(--f)}
+.grade-select select option[value="超出预期"]{color:var(--em700)}
+.grade-select select option[value="符合预期+"]{color:var(--pr)}
+.grade-select select option[value="符合预期"]{color:var(--c8)}
+.grade-select select option[value="符合预期-"]{color:var(--ac)}
+.grade-select select option[value="低于预期"]{color:var(--ro)}
+
+/* ═══ BUTTONS ═══ */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
+.btn svg{width:13px;height:13px}
+.btn-p{background:var(--pr);color:#FFF}
+.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}
+.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
+
+/* ═══ DISTRIBUTION BAR ═══ */
+.dist-section{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px;margin-bottom:16px}
+.dist-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.dist-label{width:40px;font:600 13px/1 var(--f);color:var(--c7);text-align:right}
+.dist-track{flex:1;height:24px;background:var(--c1);border-radius:var(--r2);position:relative;overflow:hidden}
+.dist-fill{height:100%;border-radius:var(--r2);transition:width .3s}
+.dist-rule{width:80px;font:400 12px/1 var(--f);color:var(--c5);text-align:right}
+.dist-val{width:50px;font:500 12px/1 var(--f);color:var(--c6);text-align:center}
+
+/* ═══ TOAST ═══ */
+.validate-toast{position:fixed;top:64px;left:50%;transform:translateX(-50%);background:var(--em);color:#FFF;padding:10px 20px;border-radius:var(--r2);font:500 13px/1 var(--f);box-shadow:0 8px 24px rgba(16,185,129,.3);z-index:3000;opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:center;gap:8px}
+.validate-toast.show{opacity:1;pointer-events:all}
+.validate-toast svg{width:16px;height:16px}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .2s ease forwards}
 </style>
 </head>
 <body>
-<div style="height:52px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:1100">
-  <div style="display:flex;align-items:center;gap:14px">
-    <a href="../demo-index.html" style="text-decoration:none;display:flex;align-items:center;gap:8px">
-      <div style="width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+
+<!-- Navigation will be injected by navigation.js -->
+
+<!-- Main content -->
+<div class="ct fade-in">
+  <!-- Breadcrumb -->
+  <nav style="display:flex;align-items:center;gap:4px;font:500 12px/1 var(--f);color:var(--c5);margin-bottom:12px">
+    <a href="../demo-index.html" style="color:var(--c5);text-decoration:none;transition:color .12s" onmouseover="this.style.color='var(--pr)'" onmouseout="this.style.color='var(--c5)'">绩效工作台</a>
+    <span style="color:var(--c3)">/</span>
+    <span style="color:var(--c8);font-weight:600">结果审定</span>
+  </nav>
+
+  <!-- Page header -->
+  <div class="pg-hd">
+    <div class="pg-hd-top">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="pg-hd-title">直线上级审定</div>
+        <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)">
+          <span style="width:6px;height:6px;border-radius:50%;background:var(--pr);animation:pulse 2s ease-in-out infinite"></span>
+          审定中
+        </span>
       </div>
-      <span style="font-size:15px;font-weight:700;color:var(--c9)">HR ONE</span>
-    </a>
-    <div style="width:1px;height:20px;background:var(--c2)"></div>
-    <span style="font:500 13px/1 var(--f);color:var(--c5)">业务演示 - 管理者端</span>
-    <span style="color:var(--c3)">&#8250;</span>
-    <span style="font:600 13px/1 var(--f);color:var(--c8)">结果审定 · 直接上级</span>
-  </div>
-  <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
-    <span style="font:500 12px/1 var(--f);color:var(--c5)">王总 - 产品总监</span>
-    <div style="width:30px;height:30px;border-radius:50%;background:var(--vi);display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--f);color:#FFF">王</div>
-  </div>
-</div>
-
-<div style="max-width:1200px;margin:0 auto;padding:24px">
-  <h2 style="font-size:18px;font-weight:700;margin-bottom:20px">团队绩效审定</h2>
-
-  <div class="stat-grid">
-    <div class="stat-card"><div class="stat-val" style="color:var(--c9)">5</div><div class="stat-label">团队人数</div></div>
-    <div class="stat-card"><div class="stat-val" style="color:var(--em)">5</div><div class="stat-label">已评分</div></div>
-    <div class="stat-card"><div class="stat-val" style="color:var(--ac)">3</div><div class="stat-label">待审定</div></div>
-    <div class="stat-card"><div class="stat-val" style="color:var(--pr)">2</div><div class="stat-label">已审定</div></div>
-  </div>
-
-  <div class="card" style="margin-bottom:20px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-      <h3 style="font-size:15px;font-weight:600">团队成员列表</h3>
-      <div style="display:flex;gap:8px">
-        <button class="btn btn-pri" onclick="showToast('批量审定完成','success')">批量审定</button>
-        <button class="btn btn-out" onclick="showToast('逐个审定模式已开启','success')">逐个审定</button>
-        <button class="btn btn-warn" onclick="showToast('已提交间接上级审定','success')">提交间接上级</button>
+      <div class="pg-hd-actions">
+        <button class="btn btn-s" onclick="showToast('已提交双线上级审定','success')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+          提交双线上级
+        </button>
+        <button class="btn btn-p" onclick="batchRatify()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          批量审定
+        </button>
       </div>
+    </div>
+    <div class="pg-hd-info">
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">考核方案</span><span class="pg-hd-info-value">产品部2026年Q2绩效考核</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">考核周期</span><span class="pg-hd-info-value">2026年4-6月</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">审定人</span><span class="pg-hd-info-value">王总监（直线上级）</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">团队人数</span><span class="pg-hd-info-value">5人</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">已评分</span><span class="pg-hd-info-value">5人</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">待审定</span><span class="pg-hd-info-value" style="color:var(--ac)">3人</span></div>
+    </div>
+  </div>
+
+  <!-- 强制分布 -->
+  <div class="dist-section">
+    <div style="font:600 14px/1 var(--f);color:var(--c9);margin-bottom:16px">等级分布</div>
+    <div class="dist-row">
+      <span class="dist-label" style="color:var(--em700)">S</span>
+      <div class="dist-track"><div class="dist-fill" style="width:10%;background:var(--em)"></div></div>
+      <span class="dist-rule">目标: 10%</span>
+      <span class="dist-val">0人</span>
+    </div>
+    <div class="dist-row">
+      <span class="dist-label" style="color:var(--pr)">A</span>
+      <div class="dist-track"><div class="dist-fill" style="width:30%;background:var(--pr)"></div></div>
+      <span class="dist-rule">目标: 30%</span>
+      <span class="dist-val">2人</span>
+    </div>
+    <div class="dist-row">
+      <span class="dist-label" style="color:var(--c7)">B</span>
+      <div class="dist-track"><div class="dist-fill" style="width:40%;background:var(--c4)"></div></div>
+      <span class="dist-rule">目标: 40%</span>
+      <span class="dist-val">2人</span>
+    </div>
+    <div class="dist-row">
+      <span class="dist-label" style="color:var(--ac)">C</span>
+      <div class="dist-track"><div class="dist-fill" style="width:20%;background:var(--ac)"></div></div>
+      <span class="dist-rule">目标: 20%</span>
+      <span class="dist-val">1人</span>
+    </div>
+    <div class="dist-row">
+      <span class="dist-label" style="color:var(--ro)">D</span>
+      <div class="dist-track"><div class="dist-fill" style="width:0%;background:var(--ro)"></div></div>
+      <span class="dist-rule">目标: 0%</span>
+      <span class="dist-val">0人</span>
+    </div>
+  </div>
+
+  <!-- 团队成员列表 -->
+  <div class="eval-list">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between">
+      <span style="font:600 15px/1 var(--f);color:var(--c9)">团队成员审定</span>
     </div>
     <table>
       <thead>
         <tr>
-          <th>姓名</th><th>岗位</th><th>自评分</th><th>上级评分</th><th>加权总分</th><th>当前等级</th><th>审定等级</th><th>操作</th>
+          <th style="width:100px">姓名</th>
+          <th style="width:120px">岗位</th>
+          <th style="width:80px">自评分</th>
+          <th style="width:80px">双线评分</th>
+          <th style="width:80px">直线评分</th>
+          <th style="width:80px">加权总分</th>
+          <th style="width:100px">当前等级</th>
+          <th style="width:120px">审定等级</th>
+          <th style="width:80px">操作</th>
         </tr>
       </thead>
       <tbody id="memberBody"></tbody>
     </table>
   </div>
-
-  <div class="card">
-    <h3 style="font-size:15px;font-weight:600;margin-bottom:16px">强制分布校验</h3>
-    <div id="distCheck"></div>
-  </div>
 </div>
 
-<div id="toast"></div>
+<div class="validate-toast" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span id="toastMsg"></span></div>
 
+<script src="../navigation.js"></script>
 <script>
-function showToast(msg, type) {
-  var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast ' + (type || 'success');
-  setTimeout(function() { t.classList.add('on'); }, 10);
-  setTimeout(function() { t.classList.remove('on'); }, 2500);
-}
+GHR_NAV.init('perf', '结果审定');
 
-var members = [
-  {name:'张明',role:'高级产品经理',self:88,manager:87,weight:87.5,cur:'A',status:'待审定'},
-  {name:'李雪',role:'产品经理',self:93,manager:91,weight:92.0,cur:'S',status:'待审定'},
-  {name:'王浩然',role:'产品专员',self:80,manager:76,weight:78.0,cur:'B',status:'待审定'},
-  {name:'周婷',role:'产品专员',self:75,manager:70,weight:72.5,cur:'C',status:'已审定'},
-  {name:'吴强',role:'产品经理',self:86,manager:84,weight:85.0,cur:'B',status:'已审定'}
+var MEMBERS=[
+  {name:'张明',role:'高级产品经理',selfScore:87.5,indirectScore:86.5,directScore:88.0,totalScore:87.5,grade:'A',ratifyGrade:''},
+  {name:'李华',role:'产品经理',selfScore:92.0,indirectScore:90.5,directScore:91.0,totalScore:91.0,grade:'A',ratifyGrade:''},
+  {name:'王芳',role:'产品专员',selfScore:78.0,indirectScore:76.5,directScore:77.0,totalScore:77.0,grade:'B',ratifyGrade:''},
+  {name:'赵强',role:'高级产品经理',selfScore:85.0,indirectScore:84.0,directScore:85.5,totalScore:85.0,grade:'B',ratifyGrade:''},
+  {name:'陈静',role:'产品助理',selfScore:68.0,indirectScore:65.0,directScore:66.0,totalScore:66.5,grade:'C',ratifyGrade:''}
 ];
 
-var badgeMap = {S:'badge-s',A:'badge-a',B:'badge-b',C:'badge-c',D:'badge-d'};
-var distRules = {S:{max:0.1,label:'≤10%'},A:{max:0.2,label:'≤20%'},B:{min:0.5,label:'≥50%'},C:{min:0.1,label:'≥10%'},D:{max:0.1,label:'≤10%'}};
-
-function renderTable() {
-  var html = '';
-  members.forEach(function(m, i) {
-    var gradeSelect = m.status === '已审定'
-      ? '<span class="badge ' + badgeMap[m.cur] + '">' + m.cur + '</span>'
-      : '<select onchange="updateGrade(' + i + ',this.value)">' +
-        ['S','A','B','C','D'].map(function(g) { return '<option' + (g===m.cur?' selected':'') + '>' + g + '</option>'; }).join('') +
-        '</select>';
-    html += '<tr>' +
-      '<td style="font-weight:600">' + m.name + '</td>' +
-      '<td>' + m.role + '</td>' +
-      '<td style="text-align:center">' + m.self + '</td>' +
-      '<td style="text-align:center">' + m.manager + '</td>' +
-      '<td style="text-align:center;font-weight:600">' + m.weight + '</td>' +
-      '<td style="text-align:center"><span class="badge ' + badgeMap[m.cur] + '">' + m.cur + '</span></td>' +
-      '<td style="text-align:center">' + gradeSelect + '</td>' +
-      '<td>' + (m.status === '待审定'
-        ? '<button class="btn btn-pri" style="padding:4px 12px;font-size:12px" onclick="ratify(' + i + ')">审定</button>'
-        : '<span style="color:var(--em);font-size:12px;font-weight:600">已审定</span>') +
-      '</td></tr>';
+function renderMembers(){
+  var gradeOptions=['S','A','B','C','D'];
+  var gradeColors={'S':'var(--em700)','A':'var(--pr)','B':'var(--c7)','C':'var(--ac)','D':'var(--ro)'};
+  var html='';
+  MEMBERS.forEach(function(m,i){
+    html+='<tr>'+
+      '<td><span style="font-weight:500;color:var(--c8)">'+m.name+'</span></td>'+
+      '<td style="color:var(--c6)">'+m.role+'</td>'+
+      '<td><span style="font-family:var(--m);font-weight:500">'+m.selfScore+'</span></td>'+
+      '<td><span style="font-family:var(--m);font-weight:500">'+m.indirectScore+'</span></td>'+
+      '<td><span style="font-family:var(--m);font-weight:500">'+m.directScore+'</span></td>'+
+      '<td><span style="font-family:var(--m);font-weight:600;color:var(--c9)">'+m.totalScore+'</span></td>'+
+      '<td><span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:24px;border-radius:var(--r1);font:600 12px/1 var(--m);background:'+(gradeColors[m.grade]||'var(--c1)')+';color:#FFF">'+m.grade+'</span></td>'+
+      '<td><div class="grade-select"><select onchange="updateRatify('+i+',this.value)"><option value="">请选择</option>';
+    gradeOptions.forEach(function(g){html+='<option value="'+g+'"'+(m.ratifyGrade===g?' selected':'')+'>'+g+'</option>';});
+    html+='</select></div></td>'+
+      '<td><button class="btn btn-s btn-sm" onclick="viewDetail('+i+')">查看</button></td>'+
+      '</tr>';
   });
-  document.getElementById('memberBody').innerHTML = html;
+  document.getElementById('memberBody').innerHTML=html;
 }
 
-function renderDist() {
-  var counts = {S:0,A:0,B:0,C:0,D:0};
-  members.forEach(function(m) { counts[m.cur]++; });
-  var total = members.length;
-  var colors = {S:'#F59E0B',A:'#10B981',B:'#2563EB',C:'#F97316',D:'#F43F5E'};
-  var html = '';
-  ['S','A','B','C','D'].forEach(function(g) {
-    var pct = counts[g] / total;
-    var rule = distRules[g];
-    var ruleText = rule.label;
-    var valid = rule.max !== undefined ? pct <= rule.max : pct >= rule.min;
-    html += '<div class="dist-row">' +
-      '<div class="dist-label" style="color:' + colors[g] + '">' + g + '</div>' +
-      '<div class="dist-track"><div class="dist-fill" style="width:' + Math.max(pct*100,2) + '%;background:' + colors[g] + (valid ? '' : ';opacity:0.5') + '"></div></div>' +
-      '<div class="dist-val">' + counts[g] + '/' + total + '</div>' +
-      '<div class="dist-rule">' + ruleText + (valid ? ' <span style="color:var(--em)">✓</span>' : ' <span style="color:var(--ro)">✗</span>') + '</div>' +
-      '</div>';
-  });
-  document.getElementById('distCheck').innerHTML = html;
+function updateRatify(i,grade){MEMBERS[i].ratifyGrade=grade;}
+function viewDetail(i){showToast('查看 '+MEMBERS[i].name+' 详情','success');}
+function batchRatify(){showToast('批量审定完成','success');}
+function showToast(msg,type){
+  var t=document.getElementById('toast');
+  document.getElementById('toastMsg').textContent=msg;
+  t.className='validate-toast show';
+  setTimeout(function(){t.classList.remove('show')},3000);
 }
 
-function updateGrade(idx, val) {
-  members[idx].cur = val;
-  renderDist();
-}
-
-function ratify(idx) {
-  members[idx].status = '已审定';
-  renderTable();
-  showToast(members[idx].name + ' 已审定为 ' + members[idx].cur + ' 级','success');
-}
-
-renderTable();
-renderDist();
+renderMembers();
 </script>
-<script src="../navigation.js"></script>
-<script>GHR_NAV.init('perf', '结果审定');</script>
 </body>
 </html>

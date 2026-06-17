@@ -2,8 +2,8 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>结果审定 · 逐级上级</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 结果审定·逐级上级</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -14,224 +14,222 @@
   --vi:#8B5CF6;--vi50:#F5F3FF;
   --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
   --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
   --r1:6px;--r2:8px;--r3:10px;--r4:14px;
   --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
-  --fm:'JetBrains Mono','SF Mono',monospace;
+  --m:'JetBrains Mono','SF Mono',monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--f);background:var(--bg);color:var(--c9);min-height:100vh}
-.card{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);padding:20px 24px}
-.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:600;line-height:20px}
-.badge-s{background:#FEF3C7;color:#92400E}
-.badge-a{background:var(--em100);color:var(--em700)}
-.badge-b{background:var(--pr100);color:var(--pr700)}
-.badge-c{background:var(--ac100);color:var(--ac700)}
-.badge-d{background:var(--ro100);color:#BE123C}
-.badge-wait{background:var(--c1);color:var(--c5)}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 20px;border-radius:var(--r2);font-size:13px;font-weight:600;font-family:var(--f);cursor:pointer;border:none;transition:all .15s}
-.btn-pri{background:var(--pr);color:#FFF}.btn-pri:hover{background:var(--pr700)}
-.btn-out{background:var(--sf);color:var(--c7);border:1px solid var(--c3)}.btn-out:hover{border-color:var(--ro);color:var(--ro)}
-.btn-ro{background:var(--ro);color:#FFF}.btn-ro:hover{background:#E11D48}
-.timeline{position:relative;padding-left:28px}
-.timeline::before{content:'';position:absolute;left:9px;top:8px;bottom:8px;width:2px;background:var(--c2)}
-.tl-item{position:relative;margin-bottom:24px}
-.tl-dot{position:absolute;left:-28px;top:2px;width:20px;height:20px;border-radius:50%;border:2px solid;display:flex;align-items:center;justify-content:center}
-.tl-dot.done{border-color:var(--em);background:var(--em50)}
-.tl-dot.active{border-color:var(--pr);background:var(--pr50)}
-.tl-dot.pending{border-color:var(--c3);background:var(--c1)}
-.tl-dot svg{width:10px;height:10px}
-.tl-title{font-size:14px;font-weight:600;margin-bottom:4px}
-.tl-desc{font-size:12px;color:var(--c5);line-height:1.5}
-.detail-row{display:flex;gap:24px}
-.detail-left{flex:0 0 320px}
-.detail-right{flex:1}
-.info-grid{display:grid;grid-template-columns:100px 1fr;gap:8px 16px;font-size:13px;margin-bottom:16px}
-.info-label{color:var(--c5);font-weight:500}
-.info-val{color:var(--c9)}
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:2000;align-items:center;justify-content:center}
-.modal-overlay.show{display:flex}
-.modal{background:var(--sf);border-radius:var(--r4);padding:24px;width:420px;max-width:90vw}
-.modal h4{font-size:15px;font-weight:700;margin-bottom:12px}
-.modal textarea{width:100%;height:100px;border:1px solid var(--c3);border-radius:var(--r2);padding:10px;font-size:13px;font-family:var(--f);resize:vertical;margin-bottom:16px}
-.modal-actions{display:flex;justify-content:flex-end;gap:8px}
-#toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-60px);padding:10px 24px;border-radius:var(--r2);font-size:13px;font-weight:600;z-index:9999;transition:transform .3s;pointer-events:none}
-#toast.success{background:var(--em);color:#FFF}
-#toast.error{background:var(--ro);color:#FFF}
-#toast.on{transform:translateX(-50%) translateY(0)}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+/* ═══ PAGE HEADER ═══ */
+.pg-hd{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:16px}
+.pg-hd-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.pg-hd-title{font:700 20px/1.2 var(--f);color:var(--c9);letter-spacing:-.3px}
+.pg-hd-actions{display:flex;gap:8px}
+.pg-hd-info{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 24px;font:400 13px/1 var(--f);color:var(--c5);padding:12px 16px;background:var(--c0);border-radius:var(--r2)}
+.pg-hd-info-item{display:flex;flex-direction:column;gap:2px}
+.pg-hd-info-label{font:400 11px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px}
+.pg-hd-info-value{font:500 13px/1.3 var(--f);color:var(--c8)}
+
+/* ═══ TABLE ═══ */
+.eval-list{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden}
+.eval-list table{width:100%;border-collapse:collapse}
+.eval-list th{background:var(--c0);padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.eval-list td{padding:10px 16px;font:400 13px/1.4 var(--f);color:var(--c7);border-bottom:1px solid var(--dv);vertical-align:top}
+.eval-list tr:last-child td{border-bottom:none}
+.eval-list tr:hover td{background:var(--c0)}
+
+/* ═══ BUTTONS ═══ */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
+.btn svg{width:13px;height:13px}
+.btn-p{background:var(--pr);color:#FFF}
+.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}
+.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
+
+/* ═══ TOAST ═══ */
+.validate-toast{position:fixed;top:64px;left:50%;transform:translateX(-50%);background:var(--em);color:#FFF;padding:10px 20px;border-radius:var(--r2);font:500 13px/1 var(--f);box-shadow:0 8px 24px rgba(16,185,129,.3);z-index:3000;opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:center;gap:8px}
+.validate-toast.show{opacity:1;pointer-events:all}
+.validate-toast svg{width:16px;height:16px}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .2s ease forwards}
 </style>
 </head>
 <body>
-<div style="height:52px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:1100">
-  <div style="display:flex;align-items:center;gap:14px">
-    <a href="../demo-index.html" style="text-decoration:none;display:flex;align-items:center;gap:8px">
-      <div style="width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+
+<!-- Navigation will be injected by navigation.js -->
+
+<!-- Main content -->
+<div class="ct fade-in">
+  <!-- Breadcrumb -->
+  <nav style="display:flex;align-items:center;gap:4px;font:500 12px/1 var(--f);color:var(--c5);margin-bottom:12px">
+    <a href="../demo-index.html" style="color:var(--c5);text-decoration:none;transition:color .12s" onmouseover="this.style.color='var(--pr)'" onmouseout="this.style.color='var(--c5)'">绩效工作台</a>
+    <span style="color:var(--c3)">/</span>
+    <span style="color:var(--c8);font-weight:600">结果审定</span>
+  </nav>
+
+  <!-- Page header -->
+  <div class="pg-hd">
+    <div class="pg-hd-top">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="pg-hd-title">逐级上级审定</div>
+        <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)">
+          <span style="width:6px;height:6px;border-radius:50%;background:var(--pr);animation:pulse 2s ease-in-out infinite"></span>
+          审定中
+        </span>
       </div>
-      <span style="font-size:15px;font-weight:700;color:var(--c9)">HR ONE</span>
-    </a>
-    <div style="width:1px;height:20px;background:var(--c2)"></div>
-    <span style="font:500 13px/1 var(--f);color:var(--c5)">业务演示 - 管理者端</span>
-    <span style="color:var(--c3)">&#8250;</span>
-    <span style="font:600 13px/1 var(--f);color:var(--c8)">结果审定 · 逐级上级</span>
+      <div class="pg-hd-actions">
+        <button class="btn btn-s" onclick="showToast('已驳回，退回上级重新审定','warn')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          驳回
+        </button>
+        <button class="btn btn-p" onclick="confirmRatify()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          确认审定
+        </button>
+      </div>
+    </div>
+    <div class="pg-hd-info">
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">考核方案</span><span class="pg-hd-info-value">产品部2026年Q2绩效考核</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">考核周期</span><span class="pg-hd-info-value">2026年4-6月</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">审定人</span><span class="pg-hd-info-value">赵VP（逐级上级）</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">汇报线</span><span class="pg-hd-info-value">张明→王总监→刘VP→赵VP</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">已审定</span><span class="pg-hd-info-value">4人</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">待确认</span><span class="pg-hd-info-value" style="color:var(--ac)">1人</span></div>
+    </div>
   </div>
-  <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
-    <span style="font:500 12px/1 var(--f);color:var(--c5)">李总 - VP</span>
-    <div style="width:30px;height:30px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--f);color:#FFF">李</div>
+
+  <!-- 审定流程 -->
+  <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between">
+      <span style="font:600 15px/1 var(--f);color:var(--c9)">审定流程</span>
+    </div>
+    <div style="padding:0">
+      <table style="width:100%;border-collapse:collapse">
+        <thead>
+          <tr style="background:var(--c0)">
+            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">节点</th>
+            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">处理人</th>
+            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">状态</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background:var(--em50)">
+            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c8);border-bottom:1px solid var(--dv)"><div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--em);flex-shrink:0"></span>直线上级审定</div></td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><div style="display:flex;align-items:center;gap:6px"><span style="width:22px;height:22px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">王</span><span style="font:400 13px/1 var(--f);color:var(--c8)">王总监</span></div></td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">✓ 已完成</span></td>
+          </tr>
+          <tr style="background:var(--em50)">
+            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c8);border-bottom:1px solid var(--dv)"><div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--em);flex-shrink:0"></span>双线上级审定</div></td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><div style="display:flex;align-items:center;gap:6px"><span style="width:22px;height:22px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">刘</span><span style="font:400 13px/1 var(--f);color:var(--c8)">刘VP</span></div></td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">✓ 已完成</span></td>
+          </tr>
+          <tr style="background:var(--pr50)">
+            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c8)"><div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--pr);flex-shrink:0"></span>逐级上级确认</div></td>
+            <td style="padding:12px 16px"><div style="display:flex;align-items:center;gap:6px"><span style="width:22px;height:22px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">赵</span><span style="font:400 13px/1 var(--f);color:var(--c8)">赵VP</span></div></td>
+            <td style="padding:12px 16px"><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)"><span style="width:6px;height:6px;border-radius:50%;background:var(--pr);animation:pulse 2s ease-in-out infinite"></span>处理中</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 团队成员列表 -->
+  <div class="eval-list">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between">
+      <span style="font:600 15px/1 var(--f);color:var(--c9)">团队成员审定</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:100px">姓名</th>
+          <th style="width:120px">岗位</th>
+          <th style="width:80px">自评分</th>
+          <th style="width:80px">双线评分</th>
+          <th style="width:80px">直线评分</th>
+          <th style="width:80px">加权总分</th>
+          <th style="width:100px">直线审定</th>
+          <th style="width:100px">双线审定</th>
+          <th style="width:80px">最终等级</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span style="font-weight:500;color:var(--c8)">张明</span></td>
+          <td style="color:var(--c6)">高级产品经理</td>
+          <td><span style="font-family:var(--m);font-weight:500">87.5</span></td>
+          <td><span style="font-family:var(--m);font-weight:500">86.5</span></td>
+          <td><span style="font-family:var(--m);font-weight:500">88.0</span></td>
+          <td><span style="font-family:var(--m);font-weight:600;color:var(--c9)">87.5</span></td>
+          <td><span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:24px;border-radius:var(--r1);font:600 12px/1 var(--m);background:var(--pr);color:#FFF">A</span></td>
+          <td><span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:24px;border-radius:var(--r1);font:600 12px/1 var(--m);background:var(--pr);color:#FFF">A</span></td>
+          <td><span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:24px;border-radius:var(--r1);font:600 12px/1 var(--m);background:var(--pr);color:#FFF">A</span></td>
+        </tr>
+        <tr>
+          <td><span style="font-weight:500;color:var(--c8)">李华</span></td>
+          <td style="color:var(--c6)">产品经理</td>
+          <td><span style="font-family:var(--m);font-weight:500">92.0</span></td>
+          <td><span style="font-family:var(--m);font-weight:500">90.5</span></td>
+          <td><span style="font-family:var(--m);font-weight:500">91.0</span></td>
+          <td><span style="font-family:var(--m);font-weight:600;color:var(--c9)">91.0</span></td>
+          <td><span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:24px;border-radius:var(--r1);font:600 12px/1 var(--m);background:var(--pr);color:#FFF">A</span></td>
+          <td><span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:24px;border-radius:var(--r1);font:600 12px/1 var(--m);background:var(--pr);color:#FFF">A</span></td>
+          <td><span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:24px;border-radius:var(--r1);font:600 12px/1 var(--m);background:var(--pr);color:#FFF">A</span></td>
+        </tr>
+        <tr>
+          <td><span style="font-weight:500;color:var(--c8)">王芳</span></td>
+          <td style="color:var(--c6)">产品专员</td>
+          <td><span style="font-family:var(--m);font-weight:500">78.0</span></td>
+          <td><span style="font-family:var(--m);font-weight:500">76.5</span></td>
+          <td><span style="font-family:var(--m);font-weight:500">77.0</span></td>
+          <td><span style="font-family:var(--m);font-weight:600;color:var(--c9)">77.0</span></td>
+          <td><span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:24px;border-radius:var(--r1);font:600 12px/1 var(--m);background:var(--c7);color:#FFF">B</span></td>
+          <td><span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:24px;border-radius:var(--r1);font:600 12px/1 var(--m);background:var(--c7);color:#FFF">B</span></td>
+          <td><span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:24px;border-radius:var(--r1);font:600 12px/1 var(--m);background:var(--c7);color:#FFF">B</span></td>
+        </tr>
+        <tr>
+          <td><span style="font-weight:500;color:var(--c8)">赵强</span></td>
+          <td style="color:var(--c6)">高级产品经理</td>
+          <td><span style="font-family:var(--m);font-weight:500">85.0</span></td>
+          <td><span style="font-family:var(--m);font-weight:500">84.0</span></td>
+          <td><span style="font-family:var(--m);font-weight:500">85.5</span></td>
+          <td><span style="font-family:var(--m);font-weight:600;color:var(--c9)">85.0</span></td>
+          <td><span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:24px;border-radius:var(--r1);font:600 12px/1 var(--m);background:var(--c7);color:#FFF">B</span></td>
+          <td><span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:24px;border-radius:var(--r1);font:600 12px/1 var(--m);background:var(--c7);color:#FFF">B</span></td>
+          <td><span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:24px;border-radius:var(--r1);font:600 12px/1 var(--m);background:var(--c7);color:#FFF">B</span></td>
+        </tr>
+        <tr>
+          <td><span style="font-weight:500;color:var(--c8)">陈静</span></td>
+          <td style="color:var(--c6)">产品助理</td>
+          <td><span style="font-family:var(--m);font-weight:500">68.0</span></td>
+          <td><span style="font-family:var(--m);font-weight:500">65.0</span></td>
+          <td><span style="font-family:var(--m);font-weight:500">66.0</span></td>
+          <td><span style="font-family:var(--m);font-weight:600;color:var(--c9)">66.5</span></td>
+          <td><span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:24px;border-radius:var(--r1);font:600 12px/1 var(--m);background:var(--ac);color:#FFF">C</span></td>
+          <td><span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:24px;border-radius:var(--r1);font:600 12px/1 var(--m);background:var(--ac);color:#FFF">C</span></td>
+          <td><span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:24px;border-radius:var(--r1);font:600 12px/1 var(--m);background:var(--ac);color:#FFF">C</span></td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>
 
-<div style="max-width:1200px;margin:0 auto;padding:24px">
-  <h2 style="font-size:18px;font-weight:700;margin-bottom:20px">逐级审定流程</h2>
+<div class="validate-toast" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span id="toastMsg"></span></div>
 
-  <div class="detail-row">
-    <div class="detail-left">
-      <div class="card">
-        <h3 style="font-size:15px;font-weight:600;margin-bottom:20px">审批流程</h3>
-        <div class="timeline">
-          <div class="tl-item">
-            <div class="tl-dot done"><svg viewBox="0 0 24 24" fill="none" stroke="var(--em)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-            <div class="tl-title" style="color:var(--em)">直接上级审定</div>
-            <div class="tl-desc">王总（产品总监）<br>审定等级：A（符合预期+）<br>审定时间：2026-06-14 16:30</div>
-          </div>
-          <div class="tl-item">
-            <div class="tl-dot active"><svg viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/></svg></div>
-            <div class="tl-title" style="color:var(--pr)">间接上级审定</div>
-            <div class="tl-desc">李总（VP）<br>当前节点：等待审定</div>
-          </div>
-          <div class="tl-item">
-            <div class="tl-dot pending"></div>
-            <div class="tl-title" style="color:var(--c4)">HRBP确认</div>
-            <div class="tl-desc">赵敏（HRBP）<br>待前序节点完成</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="detail-right">
-      <div class="card" style="margin-bottom:20px">
-        <h3 style="font-size:15px;font-weight:600;margin-bottom:16px">被审定人信息</h3>
-        <div class="info-grid">
-          <div class="info-label">姓名</div><div class="info-val" style="font-weight:600">张明</div>
-          <div class="info-label">岗位</div><div class="info-val">高级产品经理</div>
-          <div class="info-label">部门</div><div class="info-val">产品部</div>
-          <div class="info-label">考核周期</div><div class="info-val">2026年 Q2</div>
-          <div class="info-label">加权总分</div><div class="info-val" style="font-weight:700;color:var(--pr)">87.5</div>
-          <div class="info-label">自评分</div><div class="info-val">88</div>
-          <div class="info-label">上级评分</div><div class="info-val">87</div>
-        </div>
-      </div>
-
-      <div class="card" style="margin-bottom:20px">
-        <h3 style="font-size:15px;font-weight:600;margin-bottom:16px">各层级审定结果</h3>
-        <table style="width:100%;border-collapse:collapse;font-size:13px">
-          <thead>
-            <tr>
-              <th style="text-align:left;padding:8px 12px;background:var(--c0);border-bottom:1px solid var(--c2);font-weight:600;color:var(--c6)">审定层级</th>
-              <th style="text-align:left;padding:8px 12px;background:var(--c0);border-bottom:1px solid var(--c2);font-weight:600;color:var(--c6)">审定人</th>
-              <th style="text-align:center;padding:8px 12px;background:var(--c0);border-bottom:1px solid var(--c2);font-weight:600;color:var(--c6)">等级</th>
-              <th style="text-align:center;padding:8px 12px;background:var(--c0);border-bottom:1px solid var(--c2);font-weight:600;color:var(--c6)">状态</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td style="padding:10px 12px;border-bottom:1px solid var(--c1)">直接上级</td>
-              <td style="padding:10px 12px;border-bottom:1px solid var(--c1)">王总</td>
-              <td style="padding:10px 12px;border-bottom:1px solid var(--c1);text-align:center"><span class="badge badge-a">A</span></td>
-              <td style="padding:10px 12px;border-bottom:1px solid var(--c1);text-align:center"><span class="badge badge-a">已完成</span></td>
-            </tr>
-            <tr>
-              <td style="padding:10px 12px;border-bottom:1px solid var(--c1)">间接上级</td>
-              <td style="padding:10px 12px;border-bottom:1px solid var(--c1)">李总</td>
-              <td style="padding:10px 12px;border-bottom:1px solid var(--c1);text-align:center"><span class="badge badge-wait">待审定</span></td>
-              <td style="padding:10px 12px;border-bottom:1px solid var(--c1);text-align:center"><span class="badge badge-wait">进行中</span></td>
-            </tr>
-            <tr>
-              <td style="padding:10px 12px;border-bottom:1px solid var(--c1)">HRBP确认</td>
-              <td style="padding:10px 12px;border-bottom:1px solid var(--c1)">赵敏</td>
-              <td style="padding:10px 12px;border-bottom:1px solid var(--c1);text-align:center"><span class="badge badge-wait">--</span></td>
-              <td style="padding:10px 12px;border-bottom:1px solid var(--c1);text-align:center"><span class="badge badge-wait">待前序</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="card" style="margin-bottom:20px">
-        <h3 style="font-size:15px;font-weight:600;margin-bottom:16px">强制分布校验</h3>
-        <div id="distCheck"></div>
-      </div>
-
-      <div style="display:flex;gap:8px;justify-content:flex-end">
-        <button class="btn btn-out" onclick="openReturnModal()">退回</button>
-        <button class="btn btn-pri" onclick="showToast('已批准张明的绩效结果','success')">批准</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="returnModal">
-  <div class="modal">
-    <h4>退回审定</h4>
-    <p style="font-size:13px;color:var(--c6);margin-bottom:12px">请填写退回原因，将退回给直接上级重新审定。</p>
-    <textarea id="returnReason" placeholder="请输入退回原因..."></textarea>
-    <div class="modal-actions">
-      <button class="btn btn-out" onclick="closeReturnModal()">取消</button>
-      <button class="btn btn-ro" onclick="confirmReturn()">确认退回</button>
-    </div>
-  </div>
-</div>
-
-<div id="toast"></div>
-
-<script>
-function showToast(msg, type) {
-  var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast ' + (type || 'success');
-  setTimeout(function() { t.classList.add('on'); }, 10);
-  setTimeout(function() { t.classList.remove('on'); }, 2500);
-}
-
-var distData = [
-  {g:'S',cur:0,total:5,pct:0,rule:'≤10%',max:0.1,color:'#F59E0B'},
-  {g:'A',cur:1,total:5,pct:0.2,rule:'≤20%',max:0.2,color:'#10B981'},
-  {g:'B',cur:2,total:5,pct:0.4,rule:'≥50%',min:0.5,color:'#2563EB'},
-  {g:'C',cur:1,total:5,pct:0.2,rule:'≥10%',min:0.1,color:'#F97316'},
-  {g:'D',cur:0,total:5,pct:0,rule:'≤10%',max:0.1,color:'#F43F5E'}
-];
-
-function renderDist() {
-  var html = '';
-  distData.forEach(function(d) {
-    var valid = d.max !== undefined ? d.pct <= d.max : d.pct >= d.min;
-    html += '<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;font-size:13px">' +
-      '<div style="width:40px;font-weight:600;text-align:right;color:' + d.color + '">' + d.g + '</div>' +
-      '<div style="flex:1;height:22px;background:var(--c1);border-radius:11px;overflow:hidden"><div style="height:100%;width:' + Math.max(d.pct*100,2) + '%;background:' + d.color + ';border-radius:11px"></div></div>' +
-      '<div style="width:50px;font-size:12px;color:var(--c6);text-align:center">' + d.cur + '/' + d.total + '</div>' +
-      '<div style="width:80px;font-size:12px;color:var(--c5);text-align:right">' + d.rule + (valid ? ' <span style="color:var(--em)">✓</span>' : ' <span style="color:var(--ro)">✗</span>') + '</div>' +
-      '</div>';
-  });
-  document.getElementById('distCheck').innerHTML = html;
-}
-
-function openReturnModal() {
-  document.getElementById('returnReason').value = '';
-  document.getElementById('returnModal').classList.add('show');
-}
-
-function closeReturnModal() {
-  document.getElementById('returnModal').classList.remove('show');
-}
-
-function confirmReturn() {
-  var reason = document.getElementById('returnReason').value.trim();
-  if (!reason) { showToast('请填写退回原因','error'); return; }
-  closeReturnModal();
-  showToast('已退回审定结果','success');
-}
-
-renderDist();
-</script>
 <script src="../navigation.js"></script>
-<script>GHR_NAV.init('perf', '结果审定');</script>
+<script>
+GHR_NAV.init('perf', '结果审定');
+
+function confirmRatify(){showToast('逐级审定已确认','success');}
+function showToast(msg,type){
+  var t=document.getElementById('toast');
+  document.getElementById('toastMsg').textContent=msg;
+  t.className='validate-toast show';
+  setTimeout(function(){t.classList.remove('show')},3000);
+}
+</script>
 </body>
 </html>
