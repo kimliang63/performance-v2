@@ -1294,6 +1294,30 @@ function handleAiAction(action){
           {name:'需求评审通过率',cat:'质量',unit:'%',nature:'结果型',desc:'首次评审通过的需求数量占比',weight:7,suggestion:'建议权重 7%，目标值可设为 90%'},
           {name:'产品上线准时率',cat:'交付',unit:'%',nature:'过程型',desc:'按计划上线的迭代占比',weight:5,suggestion:'建议权重 5%，与现有资源利用率合并考虑'},
           {name:'客户满意度评分',cat:'效果',unit:'分',nature:'结果型',desc:'产品使用满意度评分（1-5分）',weight:5,suggestion:'建议权重 5%，可替代部分定性指标'},
+        ],actions:['采纳全部推荐','选择性采纳','查看指标详情']});
+        break;
+      case '采纳全部推荐':
+        response='已将 4 个推荐指标添加到目标列表：\n\n✓ 需求交付周期（8%）\n✓ 需求评审通过率（7%）\n✓ 产品上线准时率（5%）\n✓ 客户满意度评分（5%）\n\n总权重增加 25%，请调整其他目标权重使总权重为 100%。';
+        AI_MSGS.push({role:'bot',text:response,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
+          {t:'权重调整建议',d:'关键指标 30% → 55%，关键行动 70% → 45%，保持合理配比',tag:'已应用',tc:'em',apply:'weight'},
+        ]});
+        break;
+      case '选择性采纳':
+        response='请选择要采纳的指标（点击选择）：';
+        AI_MSGS.push({role:'bot',text:response,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),selectable:true,indicators:[
+          {name:'需求交付周期',cat:'效率',unit:'天',weight:8,selected:true},
+          {name:'需求评审通过率',cat:'质量',unit:'%',weight:7,selected:true},
+          {name:'产品上线准时率',cat:'交付',unit:'%',weight:5,selected:false},
+          {name:'客户满意度评分',cat:'效果',unit:'分',weight:5,selected:false},
+        ],actions:['确认选择']});
+        break;
+      case '查看指标详情':
+        response='以下是各指标的详细说明：';
+        AI_MSGS.push({role:'bot',text:response,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),indicators:[
+          {name:'需求交付周期',cat:'效率',unit:'天',nature:'过程型',desc:'从需求确认到上线的平均周期，衡量研发交付效率',weight:8,suggestion:'数据来源：Jira/Devops，计算公式：(上线日期-需求确认日期)的平均值'},
+          {name:'需求评审通过率',cat:'质量',unit:'%',nature:'结果型',desc:'首次评审通过的需求数量占比，衡量需求质量',weight:7,suggestion:'数据来源：评审系统，计算公式：首次通过需求数/总需求数×100%'},
+          {name:'产品上线准时率',cat:'交付',unit:'%',nature:'过程型',desc:'按计划上线的迭代占比，衡量交付准时性',weight:5,suggestion:'数据来源：迭代管理系统，计算公式：按时上线迭代数/计划迭代数×100%'},
+          {name:'客户满意度评分',cat:'效果',unit:'分',nature:'结果型',desc:'产品使用满意度评分（1-5分），衡量用户满意度',weight:5,suggestion:'数据来源：用户调研，每季度一次，取平均分'},
         ]});
         break;
       case '对标历史数据':
