@@ -195,38 +195,83 @@ body.chat-open .ai-toggle{display:none}
     </div>
   </div>
 
-  <!-- 强制分布 -->
+  <!-- 统计卡片 -->
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-val" style="color:var(--c9)">5</div>
+      <div class="stat-label">团队总人数</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:var(--em)">3</div>
+      <div class="stat-label">已到达</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:var(--ac)">2</div>
+      <div class="stat-label">未到达</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:var(--pr)">0</div>
+      <div class="stat-label">待调整</div>
+    </div>
+  </div>
+
+  <!-- 等级分布 -->
   <div class="dist-section">
-    <div style="font:600 14px/1 var(--f);color:var(--c9);margin-bottom:16px">等级分布</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <span style="font:600 14px/1 var(--f);color:var(--c9)">等级分布</span>
+      <span style="font:400 12px/1 var(--f);color:var(--c5)">产品部 · 强制分布规则</span>
+    </div>
     <div class="dist-row">
       <span class="dist-label" style="color:var(--em700)">S</span>
       <div class="dist-track"><div class="dist-fill" style="width:10%;background:var(--em)"></div></div>
-      <span class="dist-rule">目标: 10%</span>
+      <span class="dist-rule">目标: 10% (1人)</span>
       <span class="dist-val">0人</span>
+      <span style="font:500 11px/1 var(--f);color:var(--ro);background:var(--ro50);padding:2px 6px;border-radius:3px">还需1人</span>
     </div>
     <div class="dist-row">
       <span class="dist-label" style="color:var(--pr)">A</span>
       <div class="dist-track"><div class="dist-fill" style="width:30%;background:var(--pr)"></div></div>
-      <span class="dist-rule">目标: 30%</span>
+      <span class="dist-rule">目标: 30% (2人)</span>
       <span class="dist-val">2人</span>
+      <span style="font:500 11px/1 var(--f);color:var(--em700);background:var(--em50);padding:2px 6px;border-radius:3px">已达标</span>
     </div>
     <div class="dist-row">
       <span class="dist-label" style="color:var(--c7)">B</span>
       <div class="dist-track"><div class="dist-fill" style="width:40%;background:var(--c4)"></div></div>
-      <span class="dist-rule">目标: 40%</span>
-      <span class="dist-val">2人</span>
+      <span class="dist-rule">目标: 40% (2人)</span>
+      <span class="dist-val">1人</span>
+      <span style="font:500 11px/1 var(--f);color:var(--ro);background:var(--ro50);padding:2px 6px;border-radius:3px">还需1人</span>
     </div>
     <div class="dist-row">
       <span class="dist-label" style="color:var(--ac)">C</span>
       <div class="dist-track"><div class="dist-fill" style="width:20%;background:var(--ac)"></div></div>
-      <span class="dist-rule">目标: 20%</span>
-      <span class="dist-val">1人</span>
+      <span class="dist-rule">目标: 20% (1人)</span>
+      <span class="dist-val">0人</span>
+      <span style="font:500 11px/1 var(--f);color:var(--ro);background:var(--ro50);padding:2px 6px;border-radius:3px">还需1人</span>
     </div>
     <div class="dist-row">
       <span class="dist-label" style="color:var(--ro)">D</span>
       <div class="dist-track"><div class="dist-fill" style="width:0%;background:var(--ro)"></div></div>
-      <span class="dist-rule">目标: 0%</span>
+      <span class="dist-rule">目标: 0% (0人)</span>
       <span class="dist-val">0人</span>
+      <span style="font:500 11px/1 var(--f);color:var(--em700);background:var(--em50);padding:2px 6px;border-radius:3px">已达标</span>
+    </div>
+  </div>
+
+  <!-- 考核组筛选 -->
+  <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;padding:12px 20px;display:flex;align-items:center;gap:16px">
+    <span style="font:500 13px/1 var(--f);color:var(--c6)">考核组:</span>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-s btn-sm" onclick="filterGroup('全部')" style="background:var(--pr50);color:var(--pr);border-color:var(--pr200)">全部</button>
+      <button class="btn btn-s btn-sm" onclick="filterGroup('产品组')">产品组</button>
+      <button class="btn btn-s btn-sm" onclick="filterGroup('技术组')">技术组</button>
+    </div>
+    <div style="width:1px;height:20px;background:var(--c2)"></div>
+    <span style="font:500 13px/1 var(--f);color:var(--c6)">到达状态:</span>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-s btn-sm" onclick="filterStatus('全部')" style="background:var(--pr50);color:var(--pr);border-color:var(--pr200)">全部</button>
+      <button class="btn btn-s btn-sm" onclick="filterStatus('已到达')">已到达</button>
+      <button class="btn btn-s btn-sm" onclick="filterStatus('未到达')">未到达</button>
     </div>
   </div>
 
@@ -234,6 +279,7 @@ body.chat-open .ai-toggle{display:none}
   <div class="eval-list">
     <div style="padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between">
       <span style="font:600 15px/1 var(--f);color:var(--c9)">团队成员审定</span>
+      <span style="font:400 12px/1 var(--f);color:var(--c5)">已到达 3人 · 未到达 2人</span>
     </div>
     <table>
       <thead>
@@ -241,9 +287,11 @@ body.chat-open .ai-toggle{display:none}
           <th style="width:100px">被考核人</th>
           <th style="width:100px">部门</th>
           <th style="width:120px">职位</th>
+          <th style="width:80px">考核组</th>
           <th style="width:80px">审定前总分</th>
           <th style="width:80px">审定前等级</th>
           <th style="width:120px">调整等级</th>
+          <th style="width:80px">状态</th>
         </tr>
       </thead>
       <tbody id="memberBody"></tbody>
@@ -299,32 +347,48 @@ body.chat-open .ai-toggle{display:none}
 GHR_NAV.init('perf', '结果审定');
 
 var MEMBERS=[
-  {name:'张明',dept:'产品部',role:'高级产品经理',totalScore:87.5,grade:'A',ratifyGrade:''},
-  {name:'李华',dept:'产品部',role:'产品经理',totalScore:91.0,grade:'A',ratifyGrade:''},
-  {name:'王芳',dept:'产品部',role:'产品专员',totalScore:77.0,grade:'B',ratifyGrade:''},
-  {name:'赵强',dept:'产品部',role:'高级产品经理',totalScore:85.0,grade:'B',ratifyGrade:''},
-  {name:'陈静',dept:'产品部',role:'产品助理',totalScore:66.5,grade:'C',ratifyGrade:''}
+  {name:'张明',dept:'产品部',role:'高级产品经理',group:'产品组',totalScore:87.5,grade:'A',ratifyGrade:'',reached:true},
+  {name:'李华',dept:'产品部',role:'产品经理',group:'产品组',totalScore:91.0,grade:'A',ratifyGrade:'',reached:true},
+  {name:'王芳',dept:'产品部',role:'产品专员',group:'产品组',totalScore:77.0,grade:'B',ratifyGrade:'',reached:true},
+  {name:'赵强',dept:'产品部',role:'高级产品经理',group:'技术组',totalScore:85.0,grade:'B',ratifyGrade:'',reached:false},
+  {name:'陈静',dept:'产品部',role:'产品助理',group:'技术组',totalScore:66.5,grade:'C',ratifyGrade:'',reached:false}
 ];
+
+var currentGroup='全部';
+var currentStatus='全部';
 
 function renderMembers(){
   var gradeOptions=['S','A','B','C','D'];
   var gradeColors={'S':'var(--em700)','A':'var(--pr)','B':'var(--c7)','C':'var(--ac)','D':'var(--ro)'};
   var html='';
   MEMBERS.forEach(function(m,i){
+    var show=true;
+    if(currentGroup!=='全部'&&m.group!==currentGroup)show=false;
+    if(currentStatus==='已到达'&&!m.reached)show=false;
+    if(currentStatus==='未到达'&&m.reached)show=false;
+    if(!show)return;
     html+='<tr>'+
       '<td><span style="font-weight:500;color:var(--c8)">'+m.name+'</span></td>'+
       '<td style="color:var(--c6)">'+m.dept+'</td>'+
       '<td style="color:var(--c6)">'+m.role+'</td>'+
+      '<td><span style="font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px;background:var(--c1);color:var(--c6)">'+m.group+'</span></td>'+
       '<td><span style="font-family:var(--m);font-weight:600;color:var(--c9)">'+m.totalScore+'</span></td>'+
-      '<td><span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:24px;border-radius:var(--r1);font:600 12px/1 var(--m);background:'+(gradeColors[m.grade]||'var(--c1)')+';color:#FFF">'+m.grade+'</span></td>'+
-      '<td><div class="grade-select"><select onchange="updateRatify('+i+',this.value)"><option value="">请选择</option>';
-    gradeOptions.forEach(function(g){html+='<option value="'+g+'"'+(m.ratifyGrade===g?' selected':'')+'>'+g+'</option>';});
-    html+='</select></div></td>'+
+      '<td><span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:24px;border-radius:var(--r1);font:600 12px/1 var(--m);background:'+(gradeColors[m.grade]||'var(--c1)')+';color:#FFF">'+m.grade+'</span></td>';
+    if(m.reached){
+      html+='<td><div class="grade-select"><select onchange="updateRatify('+i+',this.value)"><option value="">请选择</option>';
+      gradeOptions.forEach(function(g){html+='<option value="'+g+'"'+(m.ratifyGrade===g?' selected':'')+'>'+g+'</option>';});
+      html+='</select></div></td>';
+    }else{
+      html+='<td><span style="font:400 12px/1 var(--f);color:var(--c4)">未到达</span></td>';
+    }
+    html+='<td><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:'+(m.reached?'var(--em50)':'var(--ac50)')+';color:'+(m.reached?'var(--em700)':'var(--ac700)')+'">'+(m.reached?'已到达':'未到达')+'</span></td>'+
       '</tr>';
   });
   document.getElementById('memberBody').innerHTML=html;
 }
 
+function filterGroup(group){currentGroup=group;renderMembers();}
+function filterStatus(status){currentStatus=status;renderMembers();}
 function updateRatify(i,grade){MEMBERS[i].ratifyGrade=grade;}
 function batchRatify(){showToast('批量审定完成','success');}
 function showToast(msg,type){
