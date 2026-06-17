@@ -384,13 +384,12 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
         <h5>提交时序（校验→存数据→提交流程）</h5>
         <ul class="process-list">
           <li><b>① 校验：</b>目标数≥2、总权重=100%、必填字段完整</li>
-          <li><b>② 存数据：</b></li>
-          <li style="padding-left:20px;">→ 保存草稿：写入 goal_detail，status=draft，不触发流程</li>
-          <li style="padding-left:20px;">→ 提交：同一条记录 status=pending，数据可见</li>
-          <li><b>③ 提交流程：</b>告诉流程引擎"员工已提交"→ 流程引擎创建审批待办</li>
-          <li><b>审批通过：</b>同一条记录 status=approved（生效），目标锁定</li>
-          <li><b>驳回：</b>同一条记录 status=rejected，员工可修改后重新提交（①→②→③ 重新走一遍）</li>
-          <li><b>关键点：</b>目标数据始终一条记录，通过 status 区分审批状态，不复制不快照</li>
+          <li><b>② 存数据：</b>新增一行 goal_detail（submitter_role=employee, status=active）</li>
+          <li><b>③ 提交流程：</b>告诉流程引擎"员工已提交"→ 生成上级审批待办</li>
+          <li><b>上级审批：</b>新增一行 goal_detail（submitter_role=direct, approval_action=approve/reject）</li>
+          <li><b>驳回重提：</b>员工修改 → 新增一行（status=active），员工之前的行 voided</li>
+          <li><b>撤回修改：</b>员工撤回 → 当前行 voided → 修改后新增一行重新提交</li>
+          <li><b>历史追溯：</b>voided 行保留，可查看员工填过哪些历史目标</li>
         </ul>
       </div>
     </div>
@@ -484,11 +483,11 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
         <h5>提交时序（校验→存数据→提交流程）</h5>
         <ul class="process-list">
           <li><b>① 校验：</b>面谈类型必填、亮点≥3项、不足≥3项、需求≥1项</li>
-          <li><b>② 存数据：</b>面谈数据写入 interview_detail，状态=pending_leader_review</li>
+          <li><b>② 存数据：</b>新增一行 interview_detail（submitter_role=employee, status=active）</li>
           <li><b>③ 提交流程：</b>告诉流程引擎"员工已提交"→ 生成上级审批待办</li>
-          <li><b>上级同意（completed）：</b>面谈数据锁定</li>
-          <li><b>确认表引用：</b>确认表单实时读取面谈数据（BR-023 直接引用不复制）</li>
-          <li><b>上级驳回：</b>状态回到 pending_employee_fill，员工重新走①②③</li>
+          <li><b>上级审批：</b>新增一行 interview_detail（submitter_role=direct, approval_action=approve/reject）</li>
+          <li><b>驳回重提：</b>员工修改 → 新增一行（status=active），旧行 voided</li>
+          <li><b>确认表引用：</b>确认表单实时读取面谈最新 active 行数据（BR-023 直接引用不复制）</li>
         </ul>
       </div>
     </div>
@@ -667,18 +666,21 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
     <div style="font-size:14px;font-weight:600;margin-bottom:16px;">环节明细表（每个员工每个环节一张明细表）</div>
     <div class="grid-2">
       <div class="db-entity">
-        <div class="db-entity-header" style="background:#eef1fe;">🎯 goal_detail（目标明细表）— 每人一条，状态驱动</div>
+        <div class="db-entity-header" style="background:#eef1fe;">🎯 goal_detail（目标明细表）— 每人多行，追加式</div>
         <div class="db-entity-body">
           <div class="db-field"><span class="fkey">PK</span><span class="fname">id</span><span class="ftype">bigint</span></div>
           <div class="db-field"><span class="fkey">FK</span><span class="fname">activity_id</span><span class="ftype">bigint</span></div>
           <div class="db-field"><span class="fkey">FK</span><span class="fname">employee_id</span><span class="ftype">bigint</span></div>
-          <div class="db-field"><span class="fname">status</span><span class="ftype">enum(pending/approved/rejected) 审批状态</span></div>
-          <div class="db-field"><span class="fname">flow_instance_id</span><span class="ftype">bigint（流程引擎实例）</span></div>
-          <div class="db-field"><span class="fname">modules</span><span class="ftype">JSON（模块+目标数组）</span></div>
+          <div class="db-field"><span class="fkey">FK</span><span class="fname">submitter_id</span><span class="ftype">bigint（处理人：员工/间接上级/直接上级）</span></div>
+          <div class="db-field"><span class="fname">submitter_role</span><span class="ftype">enum(employee/indirect/direct) 处理人角色</span></div>
+          <div class="db-field"><span class="fname">status</span><span class="ftype">enum(active/voided) 有效/作废</span></div>
+          <div class="db-field"><span class="fname">flow_instance_id</span><span class="ftype">bigint</span></div>
+          <div class="db-field"><span class="fname">modules</span><span class="ftype">JSON（该次提交的目标数据）</span></div>
           <div class="db-field"><span class="fname">total_weight</span><span class="ftype">decimal(5,2)</span></div>
-          <div class="db-field"><span class="fname">submitted_at / approved_at</span><span class="ftype">timestamp</span></div>
-          <div class="db-field"><span class="fname">approval_history</span><span class="ftype">JSON（审批记录数组）</span></div>
-          <div class="db-field" style="background:#fff7e6;font-size:11px;">💡 提交后数据可见，审批中/通过/未通过通过 status 标记，不复制</div>
+          <div class="db-field"><span class="fname">approval_action</span><span class="ftype">enum(approve/reject) 审批结果（仅上级行有值）</span></div>
+          <div class="db-field"><span class="fname">approval_comment</span><span class="ftype">text（审批意见）</span></div>
+          <div class="db-field"><span class="fname">submitted_at</span><span class="ftype">timestamp</span></div>
+          <div class="db-field" style="background:#fff7e6;font-size:11px;">💡 每次提交/重提/撤回 = 新增一行；驳回重提 → 旧行 voided，新行 active</div>
         </div>
       </div>
       <div class="db-entity">
@@ -717,19 +719,25 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
         </div>
       </div>
       <div class="db-entity">
-        <div class="db-entity-header" style="background:#fff0f6;">💬 interview_detail（面谈明细表）</div>
+        <div class="db-entity-header" style="background:#fff0f6;">💬 interview_detail（面谈明细表）— 每人多行，追加式</div>
         <div class="db-entity-body">
           <div class="db-field"><span class="fkey">PK</span><span class="fname">id</span><span class="ftype">bigint</span></div>
           <div class="db-field"><span class="fkey">FK</span><span class="fname">activity_id</span><span class="ftype">bigint</span></div>
           <div class="db-field"><span class="fkey">FK</span><span class="fname">employee_id</span><span class="ftype">bigint</span></div>
-          <div class="db-field"><span class="fname">status</span><span class="ftype">enum(状态机状态)</span></div>
+          <div class="db-field"><span class="fkey">FK</span><span class="fname">submitter_id</span><span class="ftype">bigint（处理人：员工/直接上级）</span></div>
+          <div class="db-field"><span class="fname">submitter_role</span><span class="ftype">enum(employee/direct) 处理人角色</span></div>
+          <div class="db-field"><span class="fname">status</span><span class="ftype">enum(active/voided) 有效/作废</span></div>
+          <div class="db-field"><span class="fname">flow_instance_id</span><span class="ftype">bigint</span></div>
           <div class="db-field"><span class="fname">interview_type</span><span class="ftype">varchar(50)</span></div>
           <div class="db-field"><span class="fname">highlights</span><span class="ftype">JSON（亮点数组）</span></div>
           <div class="db-field"><span class="fname">shortcomings</span><span class="ftype">JSON（不足数组）</span></div>
           <div class="db-field"><span class="fname">next_plan</span><span class="ftype">text</span></div>
           <div class="db-field"><span class="fname">needs</span><span class="ftype">JSON（需求数组）</span></div>
           <div class="db-field"><span class="fname">attachments</span><span class="ftype">JSON（附件列表）</span></div>
-          <div class="db-field"><span class="fname">leader_comment</span><span class="ftype">text（上级评语）</span></div>
+          <div class="db-field"><span class="fname">leader_comment</span><span class="ftype">text（上级评语，仅上级行有值）</span></div>
+          <div class="db-field"><span class="fname">approval_action</span><span class="ftype">enum(approve/reject)</span></div>
+          <div class="db-field"><span class="fname">submitted_at</span><span class="ftype">timestamp</span></div>
+          <div class="db-field" style="background:#fff7e6;font-size:11px;">💡 与目标同模式：每次提交/驳回重提 = 新增一行</div>
         </div>
       </div>
     </div>
@@ -1016,23 +1024,18 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
       <div class="process-box">
         <h5>8. 数据存储策略</h5>
         <ul class="process-list">
+          <li><b>统一模式：追加式（4个环节）</b></li>
+          <li style="padding-left:20px;">→ 目标/考核/审定/面谈：每次提交 = 新增一行，驳回重提 = 再新增一行</li>
+          <li style="padding-left:20px;">→ 旧行 status=voided，新行 status=active</li>
+          <li style="padding-left:20px;">→ 查询取 active 最新行 = 当前数据；voided 行 = 历史可追溯</li>
+          <li><b>特殊模式：状态驱动（确认环节）</b></li>
+          <li style="padding-left:20px;">→ 确认环节每人一条记录，员工只有一次操作（同意/不同意）</li>
+          <li style="padding-left:20px;">→ 不同意后流程走 HRBP 知悉就结束，不回到员工重新确认</li>
           <li><b>方案→活动配置：</b></li>
           <li style="padding-left:20px;">→ HRBP发起活动时，将方案全部配置序列化为JSON</li>
           <li style="padding-left:20px;">→ 存入 activity.scheme_snapshot 字段（配置快照，防方案修改影响活动）</li>
-          <li><b>目标数据（状态驱动，单条记录）：</b></li>
-          <li style="padding-left:20px;">→ 每个员工每个活动只有一条 goal_detail</li>
-          <li style="padding-left:20px;">→ 提交/驳回/重提都在同一条记录上更新 status</li>
-          <li style="padding-left:20px;">→ 数据始终可见，通过 status 区分审批状态</li>
-          <li><b>考核/审定数据（追加式，每人多行）：</b></li>
-          <li style="padding-left:20px;">→ 每个节点人提交 = 新增一行，驳回重提 = 再新增一行</li>
-          <li style="padding-left:20px;">→ 旧行标记 status=voided（作废），新行 status=active</li>
-          <li style="padding-left:20px;">→ 查询取 active 最新行 = 当前数据；voided 行 = 历史回溯</li>
           <li><b>面谈→确认（实时引用）：</b></li>
-          <li style="padding-left:20px;">→ 确认表单实时读取面谈数据（BR-023 直接引用不复制）</li>
-          <li style="padding-left:20px;">→ 面谈修改后确认表单同步变化</li>
-          <li><b>审批历史：</b></li>
-          <li style="padding-left:20px;">→ 目标：approval_history JSON 数组追加</li>
-          <li style="padding-left:20px;">→ 考核/审定：每行自带 submitter_id + submitted_at，天然形成历史链</li>
+          <li style="padding-left:20px;">→ 确认表单实时读取面谈最新 active 行数据（BR-023 直接引用不复制）</li>
         </ul>
       </div>
     </div>

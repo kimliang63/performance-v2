@@ -157,88 +157,147 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
     <span class="cur">目标审批</span>
   </nav>
 
-  <div style="display:flex;gap:16px">
-    <div style="flex:1;min-width:0">
-      <div class="pg-hd">
-        <div class="pg-hd-top">
-          <div class="pg-hd-title">目标审批</div>
-          <div class="pg-hd-actions">
-            <button class="btn btn-ac" onclick="showDelegateModal()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-              转派
-            </button>
-            <button class="btn btn-danger" onclick="showRejectModal()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              退回
-            </button>
-            <button class="btn btn-p" onclick="approveGoal()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              批准
-            </button>
-          </div>
-        </div>
-        <div class="pg-hd-info">
-          <div class="pg-hd-info-item"><span class="pg-hd-info-label">申请人</span><span class="pg-hd-info-value">张明</span></div>
-          <div class="pg-hd-info-item"><span class="pg-hd-info-label">部门</span><span class="pg-hd-info-value">产品部</span></div>
-          <div class="pg-hd-info-item"><span class="pg-hd-info-label">岗位</span><span class="pg-hd-info-value">高级产品经理</span></div>
-          <div class="pg-hd-info-item"><span class="pg-hd-info-label">提交时间</span><span class="pg-hd-info-value">2026-06-10</span></div>
-        </div>
-      </div>
-
-      <div id="moduleContainer"></div>
-
-      <div class="approval-box">
-        <div style="padding:14px 20px;border-bottom:1px solid var(--dv)">
-          <div style="font:600 14px/1 var(--f);color:var(--c8)">审批意见</div>
-        </div>
-        <div style="padding:16px 20px">
-          <textarea id="approvalComment" placeholder="请输入审批意见..."></textarea>
-        </div>
+  <div class="pg-hd">
+    <div class="pg-hd-top">
+      <div class="pg-hd-title">目标审批</div>
+      <div class="pg-hd-actions">
+        <button class="btn btn-ac" onclick="showDelegateModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          转派
+        </button>
+        <button class="btn btn-danger" onclick="showRejectModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          退回
+        </button>
+        <button class="btn btn-p" onclick="approveGoal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          批准
+        </button>
       </div>
     </div>
+    <div class="pg-hd-info">
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">申请人</span><span class="pg-hd-info-value">张明</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">部门</span><span class="pg-hd-info-value">产品部</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">岗位</span><span class="pg-hd-info-value">高级产品经理</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">提交时间</span><span class="pg-hd-info-value">2026-06-10</span></div>
+    </div>
+  </div>
 
-    <div style="width:260px;flex-shrink:0">
-      <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden;position:sticky;top:80px">
-        <div style="padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between">
-          <span style="font:600 14px/1 var(--f);color:var(--c9)">审批流程</span>
-          <span style="font:400 11px/1 var(--f);color:var(--c5)">员工制定流程</span>
-        </div>
-        <div style="padding:0">
-          <div style="padding:12px 16px;border-bottom:1px solid var(--dv);background:var(--pr50)">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-              <span style="width:8px;height:8px;border-radius:50%;background:var(--pr);flex-shrink:0"></span>
-              <span style="font:500 13px/1 var(--f);color:var(--c8)">直接上级审批</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:6px;padding-left:16px">
-              <span style="width:20px;height:20px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 9px/1 var(--f);color:#FFF;flex-shrink:0">李</span>
-              <span style="font:400 12px/1 var(--f);color:var(--c7)">李总</span>
-              <span style="margin-left:auto;font:500 11px/1 var(--f);color:var(--pr);background:var(--pr50);padding:2px 8px;border-radius:3px">审批中</span>
-            </div>
-          </div>
-          <div style="padding:12px 16px;border-bottom:1px solid var(--dv)">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-              <span style="width:8px;height:8px;border-radius:50%;background:var(--c3);flex-shrink:0"></span>
-              <span style="font:500 13px/1 var(--f);color:var(--c6)">间接上级审批</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:6px;padding-left:16px">
-              <span style="width:20px;height:20px;border-radius:50%;background:var(--c1);display:flex;align-items:center;justify-content:center;font:600 9px/1 var(--f);color:var(--c5);flex-shrink:0">李</span>
-              <span style="font:400 12px/1 var(--f);color:var(--c6)">李总</span>
-              <span style="margin-left:auto;font:500 11px/1 var(--f);color:var(--c5);background:var(--c1);padding:2px 8px;border-radius:3px">待处理</span>
-            </div>
-          </div>
-          <div style="padding:12px 16px">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-              <span style="width:8px;height:8px;border-radius:50%;background:var(--c3);flex-shrink:0"></span>
-              <span style="font:500 13px/1 var(--f);color:var(--c6)">HR确认</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:6px;padding-left:16px">
-              <span style="width:20px;height:20px;border-radius:50%;background:var(--c1);display:flex;align-items:center;justify-content:center;font:600 9px/1 var(--f);color:var(--c5);flex-shrink:0">赵</span>
-              <span style="font:400 12px/1 var(--f);color:var(--c6)">赵HR</span>
-              <span style="margin-left:auto;font:500 11px/1 var(--f);color:var(--c5);background:var(--c1);padding:2px 8px;border-radius:3px">待处理</span>
-            </div>
-          </div>
-        </div>
-      </div>
+  <div id="moduleContainer"></div>
+
+  <div class="approval-box">
+    <div style="padding:14px 20px;border-bottom:1px solid var(--dv)">
+      <div style="font:600 14px/1 var(--f);color:var(--c8)">审批意见</div>
+    </div>
+    <div style="padding:16px 20px">
+      <textarea id="approvalComment" placeholder="请输入审批意见..."></textarea>
+    </div>
+  </div>
+
+  <!-- 审批流程 -->
+  <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-top:16px;overflow:hidden">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between">
+      <span style="font:600 15px/1 var(--f);color:var(--c9)">审批流程</span>
+      <span style="font:400 12px/1 var(--f);color:var(--c5)">员工制定流程</span>
+    </div>
+    <div style="padding:0">
+      <table style="width:100%;border-collapse:collapse">
+        <thead>
+          <tr style="background:var(--c0)">
+            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">节点</th>
+            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">处理人</th>
+            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">流入时间</th>
+            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">流出时间</th>
+            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">状态</th>
+            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">原因/备注</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background:var(--pr50)">
+            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c8);border-bottom:1px solid var(--dv)">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="width:8px;height:8px;border-radius:50%;background:var(--pr);flex-shrink:0"></span>
+                目标填写
+              </div>
+            </td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="width:22px;height:22px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">张</span>
+                <span style="font:400 13px/1 var(--f);color:var(--c8)">张明</span>
+              </div>
+            </td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c7);border-bottom:1px solid var(--dv)">2026-06-01 09:00</td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)">
+              <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)">
+                <span style="width:6px;height:6px;border-radius:50%;background:var(--pr);animation:pulse 2s ease-in-out infinite"></span>
+                处理中
+              </span>
+            </td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c5);border-bottom:1px solid var(--dv)">当前节点</td>
+          </tr>
+          <tr>
+            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c6);border-bottom:1px solid var(--dv)">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="width:8px;height:8px;border-radius:50%;background:var(--c3);flex-shrink:0"></span>
+                直属上级审批
+              </div>
+            </td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="width:22px;height:22px;border-radius:50%;background:var(--c1);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:var(--c5);flex-shrink:0">李</span>
+                <span style="font:400 13px/1 var(--f);color:var(--c6)">李总</span>
+              </div>
+            </td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)">
+              <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--c1);color:var(--c5)">待处理</span>
+            </td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
+          </tr>
+          <tr>
+            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c6);border-bottom:1px solid var(--dv)">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="width:8px;height:8px;border-radius:50%;background:var(--c3);flex-shrink:0"></span>
+                间接上级审批
+              </div>
+            </td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="width:22px;height:22px;border-radius:50%;background:var(--c1);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:var(--c5);flex-shrink:0">李</span>
+                <span style="font:400 13px/1 var(--f);color:var(--c6)">李总</span>
+              </div>
+            </td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)">
+              <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--c1);color:var(--c5)">待处理</span>
+            </td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
+          </tr>
+          <tr>
+            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c6)">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="width:8px;height:8px;border-radius:50%;background:var(--c3);flex-shrink:0"></span>
+                HR确认
+              </div>
+            </td>
+            <td style="padding:12px 16px">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="width:22px;height:22px;border-radius:50%;background:var(--c1);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:var(--c5);flex-shrink:0">赵</span>
+                <span style="font:400 13px/1 var(--f);color:var(--c6)">赵HR</span>
+              </div>
+            </td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4)">—</td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4)">—</td>
+            <td style="padding:12px 16px">
+              <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--c1);color:var(--c5)">待处理</span>
+            </td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4)">—</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
