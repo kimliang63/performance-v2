@@ -157,40 +157,83 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
     <span class="cur">目标审批</span>
   </nav>
 
-  <div class="pg-hd">
-    <div class="pg-hd-top">
-      <div class="pg-hd-title">目标审批</div>
-      <div class="pg-hd-actions">
-        <button class="btn btn-ac" onclick="showDelegateModal()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          转派
-        </button>
-        <button class="btn btn-danger" onclick="showRejectModal()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          退回
-        </button>
-        <button class="btn btn-p" onclick="approveGoal()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          批准
-        </button>
+  <div style="display:flex;gap:16px">
+    <div style="flex:1;min-width:0">
+      <div class="pg-hd">
+        <div class="pg-hd-top">
+          <div class="pg-hd-title">目标审批</div>
+          <div class="pg-hd-actions">
+            <button class="btn btn-ac" onclick="showDelegateModal()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              转派
+            </button>
+            <button class="btn btn-danger" onclick="showRejectModal()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              退回
+            </button>
+            <button class="btn btn-p" onclick="approveGoal()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              批准
+            </button>
+          </div>
+        </div>
+        <div class="pg-hd-info">
+          <div class="pg-hd-info-item"><span class="pg-hd-info-label">申请人</span><span class="pg-hd-info-value">张明</span></div>
+          <div class="pg-hd-info-item"><span class="pg-hd-info-label">部门</span><span class="pg-hd-info-value">产品部</span></div>
+          <div class="pg-hd-info-item"><span class="pg-hd-info-label">岗位</span><span class="pg-hd-info-value">高级产品经理</span></div>
+          <div class="pg-hd-info-item"><span class="pg-hd-info-label">提交时间</span><span class="pg-hd-info-value">2026-06-10</span></div>
+        </div>
+      </div>
+
+      <div id="moduleContainer"></div>
+
+      <div class="approval-box">
+        <div style="padding:14px 20px;border-bottom:1px solid var(--dv)">
+          <div style="font:600 14px/1 var(--f);color:var(--c8)">审批意见</div>
+        </div>
+        <div style="padding:16px 20px">
+          <textarea id="approvalComment" placeholder="请输入审批意见..."></textarea>
+        </div>
       </div>
     </div>
-    <div class="pg-hd-info">
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">申请人</span><span class="pg-hd-info-value">张明</span></div>
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">部门</span><span class="pg-hd-info-value">产品部</span></div>
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">岗位</span><span class="pg-hd-info-value">高级产品经理</span></div>
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">提交时间</span><span class="pg-hd-info-value">2026-06-10</span></div>
-    </div>
-  </div>
 
-  <div id="moduleContainer"></div>
-
-  <div class="approval-box">
-    <div style="padding:14px 20px;border-bottom:1px solid var(--dv)">
-      <div style="font:600 14px/1 var(--f);color:var(--c8)">审批意见</div>
-    </div>
-    <div style="padding:16px 20px">
-      <textarea id="approvalComment" placeholder="请输入审批意见..."></textarea>
+    <div style="width:260px;flex-shrink:0">
+      <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px;position:sticky;top:80px">
+        <div style="font:600 14px/1 var(--f);color:var(--c8);margin-bottom:20px">审批流程</div>
+        <div style="position:relative;padding:0 10px">
+          <div style="display:flex;flex-direction:column;gap:0">
+            <div style="display:flex;align-items:flex-start;gap:12px;position:relative;padding-bottom:24px">
+              <div style="display:flex;flex-direction:column;align-items:center">
+                <div style="width:28px;height:28px;border-radius:50%;background:var(--pr);color:#FFF;display:flex;align-items:center;justify-content:center;font:600 11px/1 var(--f);box-shadow:0 0 0 4px var(--pr100)">1</div>
+                <div style="width:2px;flex:1;background:var(--c2);min-height:20px;margin-top:4px"></div>
+              </div>
+              <div style="padding-top:4px">
+                <div style="font:600 13px/1 var(--f);color:var(--pr)">直接上级审批</div>
+                <div style="font:400 12px/1 var(--f);color:var(--c5);margin-top:4px">王总 - 审批中</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:12px;position:relative;padding-bottom:24px">
+              <div style="display:flex;flex-direction:column;align-items:center">
+                <div style="width:28px;height:28px;border-radius:50%;background:var(--c2);color:var(--c5);display:flex;align-items:center;justify-content:center;font:600 11px/1 var(--f)">2</div>
+                <div style="width:2px;flex:1;background:var(--c2);min-height:20px;margin-top:4px"></div>
+              </div>
+              <div style="padding-top:4px">
+                <div style="font:600 13px/1 var(--f);color:var(--c4)">间接上级审批</div>
+                <div style="font:400 12px/1 var(--f);color:var(--c4);margin-top:4px">李总 - 待审批</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:12px;position:relative">
+              <div style="display:flex;flex-direction:column;align-items:center">
+                <div style="width:28px;height:28px;border-radius:50%;background:var(--c2);color:var(--c5);display:flex;align-items:center;justify-content:center;font:600 11px/1 var(--f)">3</div>
+              </div>
+              <div style="padding-top:4px">
+                <div style="font:600 13px/1 var(--f);color:var(--c4)">HR确认</div>
+                <div style="font:400 12px/1 var(--f);color:var(--c4);margin-top:4px">赵HR - 待审批</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

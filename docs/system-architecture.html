@@ -329,6 +329,25 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
 
 <!-- ==================== TAB 3: 活动处理流程 ==================== -->
 <div id="flow" class="tab-content">
+  <div class="section-title">职责边界与提交时序</div>
+  <div class="arch-container" style="margin-bottom:24px;">
+    <div style="background:#fff1f0;border-left:3px solid var(--danger);padding:12px 16px;border-radius:0 8px 8px 0;font-size:13px;margin-bottom:16px;">
+      <b>核心原则：</b>数据存储和计算是<b>绩效业务层</b>自己的事，流程引擎只管流转（待办分配、审批操作、状态推进）。<b>数据先存好，再交给流程去流转。</b>
+    </div>
+    <div class="flow-row" style="justify-content:center;">
+      <div class="flow-step" style="border-color:#722ed1;background:#f9f0ff;"><div class="step-title" style="color:#722ed1;">① 表单校验</div><div class="step-desc">必填/格式/业务规则<br>权重=100%...<br><b>绩效业务层</b></div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" style="border-color:#722ed1;background:#f9f0ff;"><div class="step-title" style="color:#722ed1;">② 计算</div><div class="step-desc">调用 calc_rule 公式<br>算指标得分→总分→等级<br><b>绩效业务层</b></div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" style="border-color:#722ed1;background:#f9f0ff;"><div class="step-title" style="color:#722ed1;">③ 数据持久化</div><div class="step-desc">写入明细表<br>goal_detail / eval_detail...<br><b>绩效业务层</b></div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" style="border-color:#52c41a;background:#f6ffed;"><div class="step-title" style="color:#52c41a;">④ 提交流程</div><div class="step-desc">创建/推进流程实例<br>生成下一节点待办<br><b>流程引擎</b></div></div>
+    </div>
+    <div style="margin-top:12px;font-size:12px;color:var(--text-secondary);text-align:center;">
+      ①②③ 是绩效业务层处理 → ④ 才交给流程引擎。流程引擎不关心数据内容，只管"谁处理、怎么流转"。
+    </div>
+  </div>
+
   <div class="section-title">活动生命周期</div>
   <div class="flow-container" style="margin-bottom:24px;">
     <div class="flow-row">
@@ -336,7 +355,7 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
       <div class="flow-arrow">→</div>
       <div class="flow-step"><div class="step-num">2</div><div class="step-title">开启环节</div><div class="step-desc">按配置自动/手动开启<br>为员工创建流程实例<br>生成待办任务</div></div>
       <div class="flow-arrow">→</div>
-      <div class="flow-step"><div class="step-num">3</div><div class="step-title">待办处理</div><div class="step-desc">员工/上级处理待办<br>填写表单→提交<br>数据写入明细表</div></div>
+      <div class="flow-step"><div class="step-num">3</div><div class="step-title">待办处理</div><div class="step-desc">员工/上级处理待办<br>校验→计算→存数据<br>→提交流程引擎</div></div>
       <div class="flow-arrow">→</div>
       <div class="flow-step"><div class="step-num">4</div><div class="step-title">环节完成</div><div class="step-desc">所有实例completed<br>触发下一环节<br>数据级联到下游</div></div>
       <div class="flow-arrow">→</div>
@@ -362,15 +381,16 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
         </ul>
       </div>
       <div class="process-box">
-        <h5>提交后数据处理</h5>
+        <h5>提交时序（校验→存数据→提交流程）</h5>
         <ul class="process-list">
-          <li><b>保存草稿：</b>数据写入 goal_detail，status=draft，不触发流程，不锁定</li>
-          <li><b>提交：</b>同一条记录 status=pending，数据可见，触发审批流程</li>
-          <li><b>审批通过：</b>同一条记录 status=approved（生效），目标数据锁定不可修改</li>
-          <li><b>驳回：</b>同一条记录 status=rejected（未生效），员工可修改后重新提交</li>
-          <li><b>重新提交：</b>同一条记录 status 回到 pending，数据更新，审批记录追加</li>
-          <li><b>转交：</b>当前待办转给他人，原处理人记录保留</li>
-          <li><b>关键点：</b>目标数据始终是一条记录，通过 status 区分审批状态，不复制不快照</li>
+          <li><b>① 校验：</b>目标数≥2、总权重=100%、必填字段完整</li>
+          <li><b>② 存数据：</b></li>
+          <li style="padding-left:20px;">→ 保存草稿：写入 goal_detail，status=draft，不触发流程</li>
+          <li style="padding-left:20px;">→ 提交：同一条记录 status=pending，数据可见</li>
+          <li><b>③ 提交流程：</b>告诉流程引擎"员工已提交"→ 流程引擎创建审批待办</li>
+          <li><b>审批通过：</b>同一条记录 status=approved（生效），目标锁定</li>
+          <li><b>驳回：</b>同一条记录 status=rejected，员工可修改后重新提交（①→②→③ 重新走一遍）</li>
+          <li><b>关键点：</b>目标数据始终一条记录，通过 status 区分审批状态，不复制不快照</li>
         </ul>
       </div>
     </div>
@@ -380,7 +400,7 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
   <div class="stage-card">
     <div class="stage-header">
       <div class="stage-icon eval">②</div>
-      <div><div class="stage-name">绩效考核环节</div><div class="stage-subtitle">自评 → 上级评分 → 计算总评价结果 → 数据写入审定表</div></div>
+      <div><div class="stage-name">绩效考核环节</div><div class="stage-subtitle">自评 → 上级评分 → 校验→计算→存数据 → 提交流程引擎 → 数据级联到审定表</div></div>
     </div>
     <div class="grid-2">
       <div class="process-box">
@@ -394,17 +414,19 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
         </ul>
       </div>
       <div class="process-box">
-        <h5>提交后数据处理</h5>
+        <h5>提交时序（校验→计算→存数据→提交流程）</h5>
         <ul class="process-list">
-          <li><b>自评提交：</b>新增一行 eval_detail（submitter_role=self, status=active）</li>
-          <li><b>间接上级提交：</b>新增一行 eval_detail（submitter_role=indirect, status=active）</li>
-          <li><b>直接上级提交：</b>新增一行 eval_detail（submitter_role=direct, status=active）</li>
-          <li style="padding-left:20px;">→ 计算<b>总评价结果</b>（按节点权重加权 or 取最后填写值）</li>
-          <li style="padding-left:20px;">→ 总评价结果+总分写入直接上级这行</li>
-          <li style="padding-left:20px;">→ 触发结果审定环节开启</li>
-          <li><b>驳回重提：</b>间接上级驳回 → 员工修改 → 新增一行自评数据（status=active），旧行标记 voided</li>
-          <li><b>批量提交：</b>逐条处理，成功则提交，失败返回错误明细</li>
-          <li><b>查询时：</b>取该员工 status=active 的最新行 = 当前有效数据；status=voided 的行 = 历史记录可回溯</li>
+          <li><b>① 校验：</b>必填字段（完成值+评价结果）是否完整</li>
+          <li><b>② 计算（仅直接上级节点）：</b></li>
+          <li style="padding-left:20px;">→ 调用每个指标的 calc_rule.formula → 算出各指标得分</li>
+          <li style="padding-left:20px;">→ 调用层级2总分公式 → 算出总分</li>
+          <li style="padding-left:20px;">→ 总分映射到等级 → 总评价结果</li>
+          <li><b>③ 存数据：</b></li>
+          <li style="padding-left:20px;">→ 自评/间接上级：新增一行 eval_detail（submitter_role, status=active）</li>
+          <li style="padding-left:20px;">→ 直接上级：新增一行 eval_detail + 写入 total_score + total_eval_result</li>
+          <li><b>④ 提交流程：</b>告诉流程引擎"处理完毕"→ 流程引擎推进到下一节点/完成</li>
+          <li><b>驳回重提：</b>间接上级驳回 → 员工修改 → 新增一行（status=active），旧行 voided</li>
+          <li><b>批量提交：</b>逐条处理（校验→计算→存储→提交），单条失败不影响其他</li>
         </ul>
       </div>
     </div>
@@ -428,15 +450,16 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
         </ul>
       </div>
       <div class="process-box">
-        <h5>提交后数据处理</h5>
+        <h5>提交时序（校验→存数据→提交流程）</h5>
         <ul class="process-list">
-          <li><b>每次调整等级：</b>实时更新强制分布计数（原子操作，防并发）</li>
-          <li><b>直接上级提交：</b>新增一行 ratification_detail（submitter_role=direct, status=active）</li>
-          <li><b>间接上级提交：</b>新增一行（submitter_role=indirect, status=active）</li>
-          <li><b>逐级上级提交+到达停止人员：</b>新增一行 + 审定完成 → 触发面谈+确认环节</li>
-          <li><b>HRBP驳回：</b>当前行作废 → 回到直接上级 → 直接上级重新调整 → 新增一行</li>
+          <li><b>① 校验：</b>调整后等级必填 + 强制分布强控校验</li>
+          <li><b>② 存数据：</b></li>
+          <li style="padding-left:20px;">→ 调整等级 → 实时更新强制分布计数（原子操作，防并发）</li>
+          <li style="padding-left:20px;">→ 新增一行 ratification_detail（submitter_role, status=active）</li>
+          <li><b>③ 提交流程：</b>告诉流程引擎"处理完毕"→ 流程引擎推进到下一节点</li>
+          <li><b>逐级上级到达停止人员：</b>存数据 + 审定完成 → 触发面谈+确认环节</li>
+          <li><b>HRBP驳回：</b>当前行作废 → 回到直接上级 → 直接上级重新走①②③</li>
           <li><b>跳过审定的员工：</b>使用方案中配置的固定等级，纳入分布分母</li>
-          <li><b>查询时：</b>取 status=active 的最新行 = 当前审定结果；voided 行 = 历史回溯</li>
         </ul>
       </div>
     </div>
@@ -458,12 +481,14 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
         </ul>
       </div>
       <div class="process-box">
-        <h5>提交后数据处理</h5>
+        <h5>提交时序（校验→存数据→提交流程）</h5>
         <ul class="process-list">
-          <li><b>员工提交：</b>面谈数据写入 interview_detail 表，状态=pending_leader_review</li>
-          <li><b>上级同意（completed）：</b>面谈数据锁定 → 写入 interview_result 表</li>
+          <li><b>① 校验：</b>面谈类型必填、亮点≥3项、不足≥3项、需求≥1项</li>
+          <li><b>② 存数据：</b>面谈数据写入 interview_detail，状态=pending_leader_review</li>
+          <li><b>③ 提交流程：</b>告诉流程引擎"员工已提交"→ 生成上级审批待办</li>
+          <li><b>上级同意（completed）：</b>面谈数据锁定</li>
           <li><b>确认表引用：</b>确认表单实时读取面谈数据（BR-023 直接引用不复制）</li>
-          <li><b>上级驳回：</b>状态回到 pending_employee_fill，员工可重新编辑</li>
+          <li><b>上级驳回：</b>状态回到 pending_employee_fill，员工重新走①②③</li>
         </ul>
       </div>
     </div>
@@ -486,10 +511,13 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
         </ul>
       </div>
       <div class="process-box">
-        <h5>提交后数据处理</h5>
+        <h5>提交时序（校验→存数据→提交流程）</h5>
         <ul class="process-list">
-          <li><b>员工同意：</b>绩效结果锁定，状态=completed → 写入 final_result 表</li>
-          <li><b>员工不同意：</b>触发 HRBP 知悉 → HRBP 知悉后流程结束 → 结果仍锁定（线下处理）</li>
+          <li><b>① 校验：</b>员工必须选择同意或不同意</li>
+          <li><b>② 存数据：</b>确认结果写入 confirmation，状态更新</li>
+          <li><b>③ 提交流程：</b></li>
+          <li style="padding-left:20px;">→ 同意：流程结束 → 写入 final_result，绩效结果锁定</li>
+          <li style="padding-left:20px;">→ 不同意：流程引擎创建 HRBP 知悉待办 → HRBP 知悉后流程结束</li>
           <li><b>超时自动确认：</b>系统以"同意"处理，记录自动确认标记</li>
           <li><b>结果不可逆：</b>确认完成后终态不可逆，如需修正需发起新流程实例</li>
         </ul>
@@ -663,7 +691,7 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
           <div class="db-field"><span class="fname">submitter_role</span><span class="ftype">enum(self/indirect/direct) 处理人角色</span></div>
           <div class="db-field"><span class="fname">status</span><span class="ftype">enum(active/voided) 有效/作废</span></div>
           <div class="db-field"><span class="fname">flow_instance_id</span><span class="ftype">bigint</span></div>
-          <div class="db-field"><span class="fname">score_data</span><span class="ftype">JSON（该节点提交的评分数据）</span></div>
+          <div class="db-field"><span class="fname">score_data</span><span class="ftype">JSON（含每个指标的得分明细：indicator_id/actual_value/grades_ref/calc_rule_id/formula/score）</span></div>
           <div class="db-field"><span class="fname">total_eval_result</span><span class="ftype">varchar(10)（仅直接上级行有值）</span></div>
           <div class="db-field"><span class="fname">total_score</span><span class="ftype">decimal(6,2)（仅直接上级行有值）</span></div>
           <div class="db-field"><span class="fname">submitted_at</span><span class="ftype">timestamp</span></div>
@@ -743,44 +771,84 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
   <div class="section-title">计算引擎规格</div>
 
   <div class="arch-container" style="margin-bottom:24px;">
-    <div style="font-size:14px;font-weight:600;margin-bottom:16px;">1. 指标得分计算</div>
-    <div class="grid-2">
-      <div class="process-box">
-        <h5>定量指标得分</h5>
-        <ul class="process-list">
-          <li><b>公式：</b>得分 = (实际值 - 保底值) / (挑战值 - 保底值) × 指标满分</li>
-          <li><b>精度：</b>四舍五入保留 1 位小数</li>
-          <li><b>边界处理：</b></li>
-          <li style="padding-left:20px;">保底=挑战 → 除零保护 → 得分=指标满分（或0，按业务定义）</li>
-          <li style="padding-left:20px;">实际值 &lt; 保底值 → 得分=0</li>
-          <li style="padding-left:20px;">实际值 &gt; 挑战值 → 得分=指标满分（不超上限）</li>
-          <li style="padding-left:20px;">实际值=空 → 不参与计算，标记为未完成</li>
-          <li><b>持久化：</b>每个指标的得分实时计算并写入 eval_detail.goals_snapshot</li>
-        </ul>
-      </div>
-      <div class="process-box">
-        <h5>定性指标得分</h5>
-        <ul class="process-list">
-          <li><b>映射表（BR-031）：</b></li>
-          <li style="padding-left:20px;">远超预期(A) → 115分（区间110-120中值）</li>
-          <li style="padding-left:20px;">超出预期(B) → 99.5分（区间90-109中值）</li>
-          <li style="padding-left:20px;">符合预期(C) → 79.5分（区间70-89中值）</li>
-          <li style="padding-left:20px;">需改进(D) → 59.5分（区间50-69中值）</li>
-          <li style="padding-left:20px;">远低于预期(E) → 24.5分（区间0-49中值）</li>
-          <li><b>边界：</b>恰好落在区间边界时，归入该等级（含边界）</li>
-          <li><b>映射失败：</b>未选择评价结果时，该指标不参与总分计算</li>
-        </ul>
-      </div>
+    <div style="font-size:14px;font-weight:600;margin-bottom:16px;">0. 执行链路总览</div>
+    <div class="process-box">
+      <h5>指标得分 = 公式引擎(指标关联的 calc_rule.formula, grades 参考值 + 表单输入值)</h5>
+      <ul class="process-list">
+        <li><b>配置层（先于表单）：</b></li>
+        <li style="padding-left:20px;">① COE 配衡量标准 → grades 参考值</li>
+        <li style="padding-left:20px;">② COE 配指标库 → FK 衡量标准 + FK 计算规则</li>
+        <li style="padding-left:20px;">③ COE 配计算规则 → 公式编辑器配置 formula（字段从②的 grades 注册）</li>
+        <li style="padding-left:20px;">④ 方案环节 → 选择计算规则</li>
+        <li><b>执行层（表单填写后）：</b></li>
+        <li style="padding-left:20px;">⑤ 员工选指标 → 指标带出 FK→measure_standard → 读取 grades 渲染表单</li>
+        <li style="padding-left:20px;">⑥ 员工填完成值 → 系统执行 formula(grades + actual_value) → 算出指标得分</li>
+        <li style="padding-left:20px;">⑦ 直接上级提交 → 执行层级2总分公式 → 算出总分+等级</li>
+      </ul>
     </div>
 
-    <div style="font-size:14px;font-weight:600;margin:20px 0 16px;">2. 总分计算</div>
+    <div style="font-size:14px;font-weight:600;margin:20px 0 16px;">1. 层级1：单个指标得分</div>
     <div class="process-box">
-      <h5>总分 = Σ(各指标得分 × 指标权重 / 100) + 加分 - 减分</h5>
+      <h5>每个指标的得分 = 该指标关联的 calc_rule.formula(grades 参考值 + actual_value)</h5>
       <ul class="process-list">
-        <li><b>权重归一化：</b>指标权重以百分比存储（如25表示25%），计算时除以100</li>
+        <li><b>公式来源：</b>indicator.calc_rule.formula（COE 在公式编辑器中配置，不是硬编码）</li>
+        <li><b>参考值来源：</b>indicator.measure_standard.grades（配置层数据，公式编辑器注册为变量）</li>
+        <li><b>输入值：</b>员工在考核表单填的 actual_value（完成值）</li>
+        <li><b>执行过程：</b></li>
+        <li style="padding-left:20px;">→ 系统读取 indicator.FK→calc_rule.formula</li>
+        <li style="padding-left:20px;">→ 将 grades 注入为公式变量（challenge_value/target_value/baseline_value...）</li>
+        <li style="padding-left:20px;">→ 将 actual_value 从表单数据中取出</li>
+        <li style="padding-left:20px;">→ 公式引擎执行 formula → 返回指标得分</li>
+        <li><b>精度：</b>四舍五入保留 1 位小数</li>
+        <li><b>持久化：</b>每个指标的得分写入 eval_detail.score_data（JSON 中每个指标一条记录）</li>
+      </ul>
+    </div>
+
+    <div style="margin:16px 0;">
+      <div style="font-weight:600;margin-bottom:8px;">score_data JSON 结构示例</div>
+      <div style="background:#1a1a2e;color:#a8e6cf;padding:16px;border-radius:8px;font-family:'Fira Code',monospace;font-size:12px;line-height:1.8;overflow-x:auto;">
+{
+  <span style="color:#c3e88d">"indicator_scores"</span>: [
+    {
+      <span style="color:#c3e88d">"indicator_id"</span>: <span style="color:#f78c6c">"KPI_001"</span>,
+      <span style="color:#c3e88d">"indicator_name"</span>: <span style="color:#f78c6c">"季度营收达成率"</span>,
+      <span style="color:#c3e88d">"actual_value"</span>: <span style="color:#f78c6c">115</span>,
+      <span style="color:#c3e88d">"weight"</span>: <span style="color:#f78c6c">60</span>,
+      <span style="color:#c3e88d">"grades_ref"</span>: { <span style="color:#c3e88d">"challenge"</span>: <span style="color:#f78c6c">120</span>, <span style="color:#c3e88d">"target"</span>: <span style="color:#f78c6c">100</span>, <span style="color:#c3e88d">"baseline"</span>: <span style="color:#f78c6c">80</span> },
+      <span style="color:#c3e88d">"calc_rule_id"</span>: <span style="color:#f78c6c">"CR_001"</span>,
+      <span style="color:#c3e88d">"formula"</span>: <span style="color:#f78c6c">"IF(actual>challenge,120,IF(actual>=target,100+(actual-target)/(challenge-target)*20,0))"</span>,
+      <span style="color:#c3e88d">"score"</span>: <span style="color:#f78c6c">115.0</span>
+    },
+    {
+      <span style="color:#c3e88d">"indicator_id"</span>: <span style="color:#f78c6c">"KPI_002"</span>,
+      <span style="color:#c3e88d">"indicator_name"</span>: <span style="color:#f78c6c">"客户满意度"</span>,
+      <span style="color:#c3e88d">"actual_value"</span>: <span style="color:#f78c6c">null</span>,
+      <span style="color:#c3e88d">"eval_result"</span>: <span style="color:#f78c6c">"B"</span>,
+      <span style="color:#c3e88d">"weight"</span>: <span style="color:#f78c6c">25</span>,
+      <span style="color:#c3e88d">"grades_ref"</span>: { <span style="color:#c3e88d">"A"</span>: <span style="color:#f78c6c">115</span>, <span style="color:#c3e88d">"B"</span>: <span style="color:#f78c6c">99.5</span>, <span style="color:#c3e88d">"C"</span>: <span style="color:#f78c6c">79.5</span> },
+      <span style="color:#c3e88d">"calc_rule_id"</span>: <span style="color:#f78c6c">"CR_002"</span>,
+      <span style="color:#c3e88d">"formula"</span>: <span style="color:#f78c6c">"IF(eval_result=='A',115,IF(eval_result=='B',99.5,...))"</span>,
+      <span style="color:#c3e88d">"score"</span>: <span style="color:#f78c6c">99.5</span>
+    }
+  ],
+  <span style="color:#c3e88d">"bonus"</span>: <span style="color:#f78c6c">5</span>,
+  <span style="color:#c3e88d">"penalty"</span>: <span style="color:#f78c6c">0</span>
+}
+      </div>
+      <p style="font-size:12px;color:var(--text-secondary);margin-top:8px;">每个指标记录：用了哪个 calc_rule、公式是什么、grades 参考值是什么、算出的得分是多少。全部可追溯。</p>
+    </div>
+
+    <div style="font-size:14px;font-weight:600;margin:20px 0 16px;">2. 层级2：总分计算</div>
+    <div class="process-box">
+      <h5>总分 = 层级2总分公式(各指标得分 + 权重 + 加减分)</h5>
+      <ul class="process-list">
+        <li><b>公式来源：</b>方案环节配置的 calc_rule.formula（COE 在方案配置时选择）</li>
+        <li><b>输入值：</b>层级1输出的各指标 score + weight + bonus + penalty</li>
+        <li><b>默认公式：</b>ROUND(Σ(score × weight / 100) + bonus - penalty, 1)</li>
+        <li><b>自定义公式：</b>COE 可在公式编辑器中配置任意总分公式</li>
         <li><b>加减分范围：</b>0-20分，超出范围校验拒绝</li>
         <li><b>总分截断：</b>上限120分，下限0分</li>
-        <li><b>中间结果：</b>每个指标得分实时计算并持久化，总分在直接上级提交时计算</li>
+        <li><b>触发时机：</b>直接上级提交考核时计算</li>
         <li><b>持久化：</b>写入 eval_detail.total_score</li>
       </ul>
     </div>
@@ -801,6 +869,7 @@ body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
     <div class="process-box">
       <h5>等级 = grade where grade.min ≤ 总分 &lt; grade.max</h5>
       <ul class="process-list">
+        <li><b>等级数据来源：</b>方案引用的 grade_rule（V1.3 等级规则）</li>
         <li><b>边界：</b>总分恰好等于某等级上限，归入该等级（含边界）</li>
         <li><b>超出范围：</b>总分 &gt; 最高等级上限 → 归入最高等级；总分 &lt; 最低等级下限 → 归入最低等级</li>
         <li><b>触发时机：</b>直接上级提交考核时自动计算</li>
