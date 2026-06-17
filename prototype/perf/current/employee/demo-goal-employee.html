@@ -143,9 +143,11 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .ge-row.f3{grid-template-columns:1fr 1fr 1fr}
 .ge-row .full{grid-column:1/-1}
 .ge-fi{display:flex;flex-direction:column;gap:3px}
-.ge-fi-l{font:400 11px/1 var(--f);color:var(--c5)}
+.ge-fi-l{font:400 11px/1 var(--f);color:var(--c5);display:flex;align-items:center;gap:4px}
 .ge-fi-l .req{color:var(--ro);margin-left:2px}
 .ge-fi-val{font:500 13px/1.4 var(--f);color:var(--c8);padding:7px 0}
+.ai-tag{display:inline-flex;align-items:center;gap:2px;padding:1px 5px;border-radius:3px;font:500 9px/1 var(--f);background:linear-gradient(135deg,#8B5CF6 0%,#6366F1 100%);color:#FFF;flex-shrink:0}
+.ai-tag svg{width:8px;height:8px}
 .inp{width:100%;padding:7px 10px;border:1px solid var(--c2);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c9);background:var(--sf);transition:all .12s;outline:none}
 .inp:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .inp.num{font-family:var(--m);text-align:right}
@@ -610,6 +612,7 @@ const I={
   book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
   chart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
   globe:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
+  ai:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg>',
 };
 
 const MODULES=[
@@ -780,9 +783,9 @@ function render(){
               <div class="ge-sec">
                 <div class="ge-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>衡量标准</div>
                 <div class="ge-row f3">
-                  <div class="ge-fi"><span class="ge-fi-l">目标值 <span class="req">*</span></span><input class="inp num" id="ge_target_${g.id}" type="number" value="${g.target}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')"/></div>
-                  <div class="ge-fi"><span class="ge-fi-l">挑战值</span><input class="inp num" id="ge_challenge_${g.id}" type="number" value="${g.challenge}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')"/></div>
-                  <div class="ge-fi"><span class="ge-fi-l">保底值</span><input class="inp num" id="ge_baseline_${g.id}" type="number" value="${g.baseline}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')"/></div>
+                  <div class="ge-fi"><span class="ge-fi-l">目标值 <span class="req">*</span>${linked?aiTag():''}</span><input class="inp num" id="ge_target_${g.id}" type="number" value="${g.target}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')"/></div>
+                  <div class="ge-fi"><span class="ge-fi-l">挑战值${linked?aiTag():''}</span><input class="inp num" id="ge_challenge_${g.id}" type="number" value="${g.challenge}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')"/></div>
+                  <div class="ge-fi"><span class="ge-fi-l">保底值${linked?aiTag():''}</span><input class="inp num" id="ge_baseline_${g.id}" type="number" value="${g.baseline}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')"/></div>
                 </div>
               </div>
               <div class="ge-sec">
@@ -800,7 +803,7 @@ function render(){
               </div>
               <div class="ge-sec">
                 <div class="ge-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>衡量标准</div>
-                <div class="ge-fi"><span class="ge-fi-l">衡量标准 <span class="req">*</span></span><textarea class="inp" id="ge_desc_${g.id}" rows="3" placeholder="请输入衡量标准...">${g.desc||''}</textarea></div>
+                <div class="ge-fi"><span class="ge-fi-l">衡量标准 <span class="req">*</span>${aiTag()}</span><textarea class="inp" id="ge_desc_${g.id}" rows="3" placeholder="请输入衡量标准...">${g.desc||''}</textarea></div>
               </div>
               `}
             </div>
@@ -915,6 +918,10 @@ function roField(label,value){
 
 function linkedTip(){
   return `<span class="field-tip"><span class="field-tip-icon">i</span><span class="field-tip-text">由关联指标自动填充，如需修改请先解除关联</span></span>`;
+}
+
+function aiTag(){
+  return `<span class="ai-tag">${I.ai} AI</span>`;
 }
 
 // ═══ INLINE EDIT ═══
