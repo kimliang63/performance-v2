@@ -58,8 +58,8 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 
 .form-status{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:var(--r1);font:500 12px/1 var(--f)}
 .form-status .dot{width:7px;height:7px;border-radius:50%}
-.form-status.draft{background:var(--c1);color:var(--c5)}
-.form-status.draft .dot{background:var(--c4)}
+.form-status.active{background:var(--em50);color:var(--em700)}
+.form-status.active .dot{background:var(--em);animation:pulse 2s ease-in-out infinite}
 .form-status.submitted{background:var(--pr50);color:var(--pr)}
 .form-status.submitted .dot{background:var(--pr);animation:pulse 2s ease-in-out infinite}
 .form-status.approved{background:var(--em50);color:var(--em700)}
@@ -167,11 +167,11 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
           </a>
         </div>
       </div>
-      <div class="pg-hd-sub">张明 (EMP20240315) · 产品部 · 高级产品经理 · 考核周期 2026年Q2</div>
+      <div class="pg-hd-sub">张明 (EMP20240315) · 产品部 · 高级产品经理 · 考核周期 <span id="cycleLabel">2026年6月</span></div>
       <div class="cycle-tabs">
-        <div class="cycle-tab on" onclick="switchCycle(this,'2026Q2')">2026年Q2</div>
-        <div class="cycle-tab" onclick="switchCycle(this,'2026Q1')">2026年Q1</div>
-        <div class="cycle-tab" onclick="switchCycle(this,'2025Q4')">2025年Q4</div>
+        <div class="cycle-tab on" onclick="switchCycle(this,'202606')">2026年6月</div>
+        <div class="cycle-tab" onclick="switchCycle(this,'202605')">2026年5月</div>
+        <div class="cycle-tab" onclick="switchCycle(this,'202604')">2026年4月</div>
       </div>
     </div>
 
@@ -184,8 +184,8 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 
 <script>
 const DATA = {
-  '2026Q2': {
-    status:'draft', statusLabel:'草稿',
+  '202606': {
+    status:'active', statusLabel:'生效中',
     modules: [
       {name:'关键指标',color:'var(--pr)',goals:[
         {name:'资源利用率（通用）',type:'quant',weight:5,target:105,challenge:110,baseline:100,unit:'%',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',linkedIndicator:'资源利用率'},
@@ -200,7 +200,7 @@ const DATA = {
       ]}
     ]
   },
-  '2026Q1': {
+  '202605': {
     status:'approved', statusLabel:'已审批',
     modules: [
       {name:'关键指标',color:'var(--pr)',goals:[
@@ -216,7 +216,7 @@ const DATA = {
       ]}
     ]
   },
-  '2025Q4': {
+  '202604': {
     status:'approved', statusLabel:'已审批',
     modules: [
       {name:'关键指标',color:'var(--pr)',goals:[
@@ -234,8 +234,8 @@ const DATA = {
   }
 };
 
-const STATUS_CFG={draft:{label:'草稿',cls:'draft'},submitted:{label:'已提交',cls:'submitted'},approved:{label:'已审批',cls:'approved'}};
-let currentCycle='2026Q2';
+const STATUS_CFG={active:{label:'生效中',cls:'active'},submitted:{label:'已提交',cls:'submitted'},approved:{label:'已审批',cls:'approved'}};
+let currentCycle='202606';
 let expandedMods=new Set([0,1]);
 let expandedGoals=new Set();
 
@@ -279,9 +279,11 @@ function render(){
               <div class="gd-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>目标信息</div>
               <div class="gd-row">
                 <div class="gd-fi"><span class="gd-fi-l">目标名称</span><span class="gd-fi-v">${g.name}</span></div>
-                <div class="gd-fi"><span class="gd-fi-l">权重</span><span class="gd-fi-v mono">${g.weight}%</span></div>
+                <div class="gd-fi" style="display:flex;flex-direction:row;gap:16px;align-items:center">
+                  <div><span class="gd-fi-l">权重</span><div class="gd-fi-v mono">${g.weight}%</div></div>
+                  ${g.linkedIndicator?`<div><span class="gd-fi-l">关联指标</span><div class="gd-linked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>${g.linkedIndicator}</div></div>`:''}
+                </div>
               </div>
-              ${g.linkedIndicator?`<div class="gd-fi" style="margin-top:10px"><span class="gd-fi-l">关联指标</span><div class="gd-linked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>${g.linkedIndicator}</div></div>`:''}
             </div>
             ${isQ?`
             <div class="gd-sec">
@@ -322,6 +324,7 @@ function switchCycle(el,cycle){
   document.querySelectorAll('.cycle-tab').forEach(t=>t.classList.remove('on'));
   el.classList.add('on');
   currentCycle=cycle;
+  document.getElementById('cycleLabel').textContent=el.textContent;
   expandedMods=new Set([0,1]);
   expandedGoals.clear();
   render();
