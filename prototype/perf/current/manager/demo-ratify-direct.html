@@ -238,15 +238,12 @@ body.chat-open .ai-toggle{display:none}
     <table>
       <thead>
         <tr>
-          <th style="width:100px">姓名</th>
-          <th style="width:120px">岗位</th>
-          <th style="width:80px">自评分</th>
-          <th style="width:80px">双线评分</th>
-          <th style="width:80px">直线评分</th>
-          <th style="width:80px">加权总分</th>
-          <th style="width:100px">当前等级</th>
-          <th style="width:120px">审定等级</th>
-          <th style="width:80px">操作</th>
+          <th style="width:100px">被考核人</th>
+          <th style="width:100px">部门</th>
+          <th style="width:120px">职位</th>
+          <th style="width:80px">审定前总分</th>
+          <th style="width:80px">审定前等级</th>
+          <th style="width:120px">调整等级</th>
         </tr>
       </thead>
       <tbody id="memberBody"></tbody>
@@ -296,11 +293,11 @@ body.chat-open .ai-toggle{display:none}
 GHR_NAV.init('perf', '结果审定');
 
 var MEMBERS=[
-  {name:'张明',role:'高级产品经理',selfScore:87.5,indirectScore:86.5,directScore:88.0,totalScore:87.5,grade:'A',ratifyGrade:''},
-  {name:'李华',role:'产品经理',selfScore:92.0,indirectScore:90.5,directScore:91.0,totalScore:91.0,grade:'A',ratifyGrade:''},
-  {name:'王芳',role:'产品专员',selfScore:78.0,indirectScore:76.5,directScore:77.0,totalScore:77.0,grade:'B',ratifyGrade:''},
-  {name:'赵强',role:'高级产品经理',selfScore:85.0,indirectScore:84.0,directScore:85.5,totalScore:85.0,grade:'B',ratifyGrade:''},
-  {name:'陈静',role:'产品助理',selfScore:68.0,indirectScore:65.0,directScore:66.0,totalScore:66.5,grade:'C',ratifyGrade:''}
+  {name:'张明',dept:'产品部',role:'高级产品经理',totalScore:87.5,grade:'A',ratifyGrade:''},
+  {name:'李华',dept:'产品部',role:'产品经理',totalScore:91.0,grade:'A',ratifyGrade:''},
+  {name:'王芳',dept:'产品部',role:'产品专员',totalScore:77.0,grade:'B',ratifyGrade:''},
+  {name:'赵强',dept:'产品部',role:'高级产品经理',totalScore:85.0,grade:'B',ratifyGrade:''},
+  {name:'陈静',dept:'产品部',role:'产品助理',totalScore:66.5,grade:'C',ratifyGrade:''}
 ];
 
 function renderMembers(){
@@ -310,23 +307,19 @@ function renderMembers(){
   MEMBERS.forEach(function(m,i){
     html+='<tr>'+
       '<td><span style="font-weight:500;color:var(--c8)">'+m.name+'</span></td>'+
+      '<td style="color:var(--c6)">'+m.dept+'</td>'+
       '<td style="color:var(--c6)">'+m.role+'</td>'+
-      '<td><span style="font-family:var(--m);font-weight:500">'+m.selfScore+'</span></td>'+
-      '<td><span style="font-family:var(--m);font-weight:500">'+m.indirectScore+'</span></td>'+
-      '<td><span style="font-family:var(--m);font-weight:500">'+m.directScore+'</span></td>'+
       '<td><span style="font-family:var(--m);font-weight:600;color:var(--c9)">'+m.totalScore+'</span></td>'+
       '<td><span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:24px;border-radius:var(--r1);font:600 12px/1 var(--m);background:'+(gradeColors[m.grade]||'var(--c1)')+';color:#FFF">'+m.grade+'</span></td>'+
       '<td><div class="grade-select"><select onchange="updateRatify('+i+',this.value)"><option value="">请选择</option>';
     gradeOptions.forEach(function(g){html+='<option value="'+g+'"'+(m.ratifyGrade===g?' selected':'')+'>'+g+'</option>';});
     html+='</select></div></td>'+
-      '<td><button class="btn btn-s btn-sm" onclick="viewDetail('+i+')">查看</button></td>'+
       '</tr>';
   });
   document.getElementById('memberBody').innerHTML=html;
 }
 
 function updateRatify(i,grade){MEMBERS[i].ratifyGrade=grade;}
-function viewDetail(i){showToast('查看 '+MEMBERS[i].name+' 详情','success');}
 function batchRatify(){showToast('批量审定完成','success');}
 function showToast(msg,type){
   var t=document.getElementById('toast');
