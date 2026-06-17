@@ -165,7 +165,7 @@ textarea.edit-cell::placeholder{color:var(--c4)}
           </tr>
           <tr style="background:var(--pr50)">
             <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c8);border-bottom:1px solid var(--dv)">
-              <div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--pr);flex-shrink:0"></span>间接上级评分</div>
+              <div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--pr);flex-shrink:0"></span>双线上级评分</div>
             </td>
             <td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><div style="display:flex;align-items:center;gap:6px"><span style="width:22px;height:22px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">刘</span><span style="font:400 13px/1 var(--f);color:var(--c8)">刘VP</span></div></td>
             <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c7);border-bottom:1px solid var(--dv)">2026-06-15 14:30</td>
@@ -193,16 +193,18 @@ textarea.edit-cell::placeholder{color:var(--c4)}
 <script>
 GHR_NAV.init('perf', '绩效评分');
 
-// ═══ MOCK DATA — 间接上级评分范围：能力发展、价值观 ═══
+// ═══ MOCK DATA — 双线上级评分范围：能力发展、价值观 ═══
 var MODULES=[
   {name:'能力发展',weight:18,color:'var(--ac)',goals:[
-    {id:'g6',name:'人才培养',indicator:'下属成长指标',type:'qual',weight:10,measureDesc:'已完成2名下属的IDP计划制定和跟踪',completed:'',grade:'',comment:''},
-    {id:'g7',name:'技术认证',indicator:'云原生认证',type:'qual',weight:8,measureDesc:'已取得阿里云云原生架构师认证',completed:'',grade:'',comment:''}
+    {id:'g6',name:'人才培养',indicator:'下属成长指标',type:'qual',weight:10,measureDesc:'已完成2名下属的IDP计划制定和跟踪',completed:'2人完成IDP',employeeGrade:'符合预期'},
+    {id:'g7',name:'技术认证',indicator:'云原生认证',type:'qual',weight:8,measureDesc:'已取得阿里云云原生架构师认证',completed:'已取得认证',employeeGrade:'符合预期+'}
   ]},
   {name:'价值观',weight:7,color:'var(--vi)',goals:[
-    {id:'g8',name:'团队协作',indicator:'协作评价',type:'qual',weight:7,measureDesc:'积极参与跨部门协作，主动分享产品经验',completed:'',grade:'',comment:''}
+    {id:'g8',name:'团队协作',indicator:'协作评价',type:'qual',weight:7,measureDesc:'积极参与跨部门协作，主动分享产品经验',completed:'优秀',employeeGrade:'符合预期+'}
   ]}
 ];
+var employeeComment='本季度整体工作完成情况良好。关键指标方面，资源利用率达标，UAT通过率和需求评审及时率略低于目标，已制定改进措施。关键行动方面，产品管理规范落地执行，日常需求响应及时，绩效重构和AI应用项目均按里程碑计划推进完成。';
+var indirectComment='';
 
 function renderModuleContainer(){
   var gradeOptions=['超出预期','符合预期+','符合预期','符合预期-','低于预期'];
@@ -210,9 +212,9 @@ function renderModuleContainer(){
     '<th style="width:180px">名称</th>'+
     '<th style="width:55px">权重</th>'+
     '<th style="min-width:200px">衡量标准</th>'+
-    '<th style="min-width:200px">完成情况</th>'+
-    '<th style="width:120px">评价</th>'+
-    '<th style="min-width:200px">评语</th>'+
+    '<th style="min-width:180px">完成情况</th>'+
+    '<th style="width:100px">员工评价</th>'+
+    '<th style="width:120px">双线上级评价</th>'+
     '</tr></thead><tbody>';
   MODULES.forEach(function(mod,mi){
     html+='<tr class="mod-row"><td colspan="6"><div class="eval-mod">'+
@@ -225,19 +227,38 @@ function renderModuleContainer(){
         '<td><span style="font-weight:500;color:var(--c8)">'+g.name+'</span></td>'+
         '<td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">'+g.weight+'%</span></td>'+
         '<td style="font:400 12px/1.6 var(--f);color:var(--c6)">'+g.measureDesc+'</td>'+
-        '<td><textarea class="edit-cell" id="completed_'+mi+'_'+gi+'" placeholder="描述完成情况…" oninput="updateCompleted('+mi+','+gi+')">'+g.completed+'</textarea></td>'+
+        '<td style="font:400 13px/1.4 var(--f);color:var(--c7)">'+g.completed+'</td>'+
+        '<td><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--c1);color:var(--c6)">'+g.employeeGrade+'</span></td>'+
         '<td><div class="grade-select"><select id="grade_'+mi+'_'+gi+'" onchange="updateGrade('+mi+','+gi+')"><option value="">请选择</option>';
       gradeOptions.forEach(function(opt){html+='<option value="'+opt+'">'+opt+'</option>';});
       html+='</select></div></td>'+
-        '<td><textarea class="edit-cell" id="comment_'+mi+'_'+gi+'" placeholder="填写评语…" oninput="updateComment('+mi+','+gi+')">'+g.comment+'</textarea></td>'+
         '</tr>';
     });
   });
   html+='</tbody></table></div>';
+
+  // 总评语区域
+  html+='<div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-top:16px;overflow:hidden">'+
+    '<div style="padding:16px 20px;border-bottom:1px solid var(--dv)"><span style="font:600 15px/1 var(--f);color:var(--c9)">总评语</span></div>'+
+    '<div style="padding:16px 20px;border-bottom:1px solid var(--dv)">'+
+      '<div style="font:500 13px/1 var(--f);color:var(--c8);margin-bottom:8px;display:flex;align-items:center;gap:6px">'+
+        '<span style="width:22px;height:22px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">张</span>'+
+        '员工评语'+
+      '</div>'+
+      '<div style="font:400 13px/1.6 var(--f);color:var(--c7);padding-left:28px">'+employeeComment+'</div>'+
+    '</div>'+
+    '<div style="padding:16px 20px">'+
+      '<div style="font:500 13px/1 var(--f);color:var(--c8);margin-bottom:8px;display:flex;align-items:center;gap:6px">'+
+        '<span style="width:22px;height:22px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">刘</span>'+
+        '双线上级评语'+
+      '</div>'+
+      '<textarea class="edit-cell" id="indirectComment" placeholder="填写双线上级评语…" oninput="indirectComment=this.value" style="margin-left:28px;width:calc(100% - 28px)">'+indirectComment+'</textarea>'+
+    '</div>'+
+  '</div>';
+
   document.getElementById('moduleContainer').innerHTML=html;
 }
 
-function updateCompleted(mi,gi){MODULES[mi].goals[gi].completed=document.getElementById('completed_'+mi+'_'+gi).value;}
 function updateGrade(mi,gi){
   var val=document.getElementById('grade_'+mi+'_'+gi).value;
   MODULES[mi].goals[gi].grade=val;
@@ -245,7 +266,6 @@ function updateGrade(mi,gi){
   var colors={'超出预期':'var(--em700)','符合预期+':'var(--pr)','符合预期':'var(--c8)','符合预期-':'var(--ac)','低于预期':'var(--ro)'};
   select.style.color=colors[val]||'var(--c8)';
 }
-function updateComment(mi,gi){MODULES[mi].goals[gi].comment=document.getElementById('comment_'+mi+'_'+gi).value;}
 
 function submitEval(){showToast('评分已提交','success');}
 function showToast(msg,type){
