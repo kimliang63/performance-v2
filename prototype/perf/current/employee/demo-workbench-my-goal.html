@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 我的目标</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --r1:6px;--r2:8px;--r3:10px;
+  --f:'Inter','Noto Sans SC',-apple-system,sans-serif;
+  --m:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+/* Header */
+.hdr{height:52px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:1100}
+.hdr-l{display:flex;align-items:center;gap:14px}
+.logo{display:flex;align-items:center;gap:8px;cursor:pointer;text-decoration:none}
+.logo-i{width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center}
+.logo-i svg{width:15px;height:15px;color:#FFF}
+.logo-t{font-size:15px;font-weight:700;color:var(--c9);letter-spacing:-.3px}
+.hdr-sep{width:1px;height:20px;background:var(--c2);margin:0 2px}
+.hdr-r{margin-left:auto;display:flex;align-items:center;gap:10px}
+.avatar{width:30px;height:30px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--f);color:#FFF}
+
+/* Breadcrumb */
+.breadcrumb{display:flex;align-items:center;gap:4px;font:500 12px/1 var(--f);color:var(--c5);margin-bottom:12px}
+.breadcrumb a{color:var(--c5);text-decoration:none;transition:color .12s}
+.breadcrumb a:hover{color:var(--pr)}
+.breadcrumb .sep{color:var(--c3)}
+.breadcrumb .cur{color:var(--c8);font-weight:600}
+
+/* Container */
+.ct{padding:24px;max-width:960px;margin:0 auto}
+
+/* Page card */
+.pg{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden}
+.pg-hd{padding:20px 24px;border-bottom:1px solid var(--dv)}
+.pg-hd-top{display:flex;align-items:center;justify-content:space-between}
+.pg-hd-title{font:700 20px/1.2 var(--f);color:var(--c9)}
+.pg-hd-sub{font:400 13px/1 var(--f);color:var(--c5);margin-top:4px}
+
+/* Cycle tabs */
+.cycle-tabs{display:flex;gap:6px;margin-top:14px}
+.cycle-tab{padding:6px 16px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:1px solid var(--c2);color:var(--c6);background:var(--sf)}
+.cycle-tab.on{background:var(--pr);color:#FFF;border-color:var(--pr)}
+.cycle-tab:hover:not(.on){border-color:var(--pr);color:var(--pr)}
+
+/* Summary */
+.summary{display:flex;gap:24px;padding:14px 24px;background:var(--c0);border-bottom:1px solid var(--dv)}
+.sum-item{font:500 13px/1 var(--f);color:var(--c6)}
+.sum-item strong{font-family:var(--m);font-weight:700;color:var(--pr);margin-left:4px}
+
+/* Module section */
+.mod{border-bottom:1px solid var(--dv)}
+.mod:last-child{border-bottom:none}
+.mod-hd{display:flex;align-items:center;padding:14px 24px;gap:10px;cursor:pointer;transition:background .12s}
+.mod-hd:hover{background:var(--c0)}
+.mod-icon{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.mod-name{font:600 14px/1 var(--f);color:var(--c9);flex:1}
+.mod-stats{font:400 12px/1 var(--f);color:var(--c5)}
+.mod-stats strong{font-family:var(--m);font-weight:600;color:var(--c7)}
+.mod-chevron{width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:var(--c4);transition:transform .2s}
+.mod-chevron.open{transform:rotate(180deg)}
+.mod-chevron svg{width:14px;height:14px}
+.mod-body{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.mod-body.open{max-height:1000px}
+
+/* Goal row */
+.goal{border-top:1px solid var(--dv);padding:14px 24px 14px 42px;transition:background .12s}
+.goal:hover{background:var(--c0)}
+.goal-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.goal-name{flex:1;font:500 14px/1.3 var(--f);color:var(--c8)}
+.goal-tag{font:500 11px/1 var(--f);padding:2px 8px;border-radius:3px}
+.goal-tag.quant{background:var(--pr50);color:var(--pr)}
+.goal-tag.qual{background:#F5F3FF;color:#8B5CF6}
+.goal-weight{font:500 12px/1 var(--m);color:var(--c6)}
+.goal-status{font:500 11px/1 var(--f);padding:3px 10px;border-radius:var(--r1)}
+.goal-status.draft{background:var(--c1);color:var(--c5)}
+.goal-status.submitted{background:var(--pr50);color:var(--pr)}
+.goal-status.approving{background:var(--ac50);color:var(--ac700)}
+.goal-status.approved{background:var(--em50);color:var(--em700)}
+
+.goal-body{display:flex;gap:20px;font:400 12px/1 var(--f);color:var(--c5)}
+.goal-body span{display:flex;align-items:center;gap:4px}
+.goal-body strong{font-family:var(--m);font-weight:500;color:var(--c7)}
+
+/* Approval chain */
+.chain{margin-top:10px;padding-top:10px;border-top:1px solid var(--dv);display:none}
+.chain.show{display:block}
+.chain-step{display:flex;align-items:center;gap:8px;padding:5px 0;font:400 12px/1 var(--f)}
+.chain-dot{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 9px/1 var(--f);color:#FFF;flex-shrink:0}
+.chain-name{color:var(--c7);min-width:50px}
+.chain-status{font:500 11px/1 var(--f)}
+.chain-time{color:var(--c4);margin-left:auto;font-family:var(--m);font-size:11px}
+
+/* Link */
+.goal-link{display:inline-flex;align-items:center;gap:3px;font:500 12px/1 var(--f);color:var(--pr);text-decoration:none;margin-left:auto}
+.goal-link:hover{text-decoration:underline}
+.goal-link svg{width:12px;height:12px}
+
+/* Toast */
+.toast{position:fixed;top:64px;left:50%;transform:translateX(-50%) translateY(-10px);padding:10px 20px;border-radius:var(--r2);font:500 13px/1 var(--f);background:var(--em);color:#FFF;box-shadow:0 8px 24px rgba(16,185,129,.3);z-index:3000;opacity:0;pointer-events:none;transition:all .25s}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="hdr">
+  <div class="hdr-l">
+    <a href="../demo-index.html" class="logo">
+      <div class="logo-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      <span class="logo-t">HR ONE</span>
+    </a>
+    <div class="hdr-sep"></div>
+    <span style="font:500 13px/1 var(--f);color:var(--c5)">绩效工作台</span>
+  </div>
+  <div class="hdr-r">
+    <div class="avatar">张</div>
+  </div>
+</div>
+
+<div class="ct">
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb">
+    <a href="../demo-index.html">绩效工作台</a>
+    <span class="sep">/</span>
+    <span class="cur">我的目标</span>
+  </nav>
+
+  <div class="pg">
+    <div class="pg-hd">
+      <div class="pg-hd-top">
+        <div>
+          <div class="pg-hd-title">我的目标</div>
+          <div class="pg-hd-sub">张明 · 产品部 · 高级产品经理</div>
+        </div>
+        <a href="demo-goal-employee.html" style="font:500 13px/1 var(--f);color:var(--pr);text-decoration:none;display:flex;align-items:center;gap:4px">
+          编辑目标
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+      </div>
+      <div class="cycle-tabs" id="cycleTabs">
+        <div class="cycle-tab on" onclick="switchCycle(this,'q2')">2026年Q2</div>
+        <div class="cycle-tab" onclick="switchCycle(this,'q1')">2026年Q1</div>
+        <div class="cycle-tab" onclick="switchCycle(this,'q4')">2025年Q4</div>
+      </div>
+    </div>
+
+    <div class="summary" id="summary">
+      <div class="sum-item">目标数量<strong id="sumCount">7</strong></div>
+      <div class="sum-item">权重合计<strong id="sumWeight">100%</strong></div>
+      <div class="sum-item">已通过<strong id="sumApproved" style="color:var(--em700)">2</strong></div>
+      <div class="sum-item">审批中<strong id="sumApproving" style="color:var(--ac700)">3</strong></div>
+      <div class="sum-item">待提交<strong id="sumDraft" style="color:var(--c5)">2</strong></div>
+    </div>
+
+    <div id="goalList"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const DATA = {
+  q2: {
+    modules: [
+      {name:'关键指标',color:'var(--pr)',goals:[
+        {name:'资源利用率（通用）',type:'quant',weight:5,target:105,challenge:110,baseline:100,unit:'%',measure:'梯度评分',status:'approved',chain:[
+          {name:'张明',status:'已提交',time:'2026-06-01 09:00',done:true},
+          {name:'李总',status:'已通过',time:'2026-06-02 14:20',done:true},
+          {name:'王总',status:'已通过',time:'2026-06-03 10:15',done:true}
+        ]},
+        {name:'HRASUAT用户验收首次通过率',type:'quant',weight:10,target:98,challenge:100,baseline:95,unit:'%',measure:'梯度评分',status:'approved',chain:[
+          {name:'张明',status:'已提交',time:'2026-06-01 09:00',done:true},
+          {name:'李总',status:'已通过',time:'2026-06-02 14:20',done:true},
+          {name:'王总',status:'已通过',time:'2026-06-03 10:15',done:true}
+        ]},
+        {name:'HRAS需求评审及时率',type:'quant',weight:15,target:98,challenge:100,baseline:95,unit:'%',measure:'梯度评分',status:'approving',chain:[
+          {name:'张明',status:'已提交',time:'2026-06-01 09:00',done:true},
+          {name:'李总',status:'已通过',time:'2026-06-02 16:00',done:true},
+          {name:'王总',status:'审批中',time:'-',done:false}
+        ]}
+      ]},
+      {name:'关键行动',color:'var(--em)',goals:[
+        {name:'HRAS产品管理规范',type:'qual',weight:10,status:'submitted',chain:[
+          {name:'张明',status:'已提交',time:'2026-06-01 09:00',done:true},
+          {name:'李总',status:'待审批',time:'-',done:false},
+          {name:'王总',status:'待审批',time:'-',done:false}
+        ]},
+        {name:'【产品设计】日常滚动需求响应',type:'qual',weight:10,status:'submitted',chain:[
+          {name:'张明',status:'已提交',time:'2026-06-01 09:00',done:true},
+          {name:'李总',status:'待审批',time:'-',done:false},
+          {name:'王总',status:'待审批',time:'-',done:false}
+        ]},
+        {name:'【产品设计】HR ONE 绩效重构推进',type:'qual',weight:25,status:'approving',chain:[
+          {name:'张明',status:'已提交',time:'2026-06-01 09:00',done:true},
+          {name:'李总',status:'审批中',time:'-',done:false},
+          {name:'王总',status:'待审批',time:'-',done:false}
+        ]},
+        {name:'【应用探索】AI应用项目探索与落地',type:'qual',weight:25,status:'draft',chain:[]}
+      ]}
+    ]
+  },
+  q1: {
+    modules: [
+      {name:'关键指标',color:'var(--pr)',goals:[
+        {name:'资源利用率（通用）',type:'quant',weight:5,target:100,challenge:110,baseline:90,unit:'%',measure:'梯度评分',status:'approved',chain:[
+          {name:'张明',status:'已提交',time:'2026-03-01 09:00',done:true},
+          {name:'李总',status:'已通过',time:'2026-03-02 14:20',done:true},
+          {name:'王总',status:'已通过',time:'2026-03-03 10:15',done:true}
+        ]},
+        {name:'UAT首次通过率',type:'quant',weight:10,target:95,challenge:100,baseline:90,unit:'%',measure:'梯度评分',status:'approved',chain:[
+          {name:'张明',status:'已提交',time:'2026-03-01 09:00',done:true},
+          {name:'李总',status:'已通过',time:'2026-03-02 14:20',done:true},
+          {name:'王总',status:'已通过',time:'2026-03-03 10:15',done:true}
+        ]},
+        {name:'需求评审及时率',type:'quant',weight:15,target:95,challenge:100,baseline:90,unit:'%',measure:'梯度评分',status:'approved',chain:[
+          {name:'张明',status:'已提交',time:'2026-03-01 09:00',done:true},
+          {name:'李总',status:'已通过',time:'2026-03-02 14:20',done:true},
+          {name:'王总',status:'已通过',time:'2026-03-03 10:15',done:true}
+        ]}
+      ]},
+      {name:'关键行动',color:'var(--em)',goals:[
+        {name:'产品管理规范',type:'qual',weight:10,status:'approved',chain:[
+          {name:'张明',status:'已提交',time:'2026-03-01 09:00',done:true},
+          {name:'李总',status:'已通过',time:'2026-03-02 14:20',done:true},
+          {name:'王总',status:'已通过',time:'2026-03-03 10:15',done:true}
+        ]},
+        {name:'日常需求响应',type:'qual',weight:10,status:'approved',chain:[
+          {name:'张明',status:'已提交',time:'2026-03-01 09:00',done:true},
+          {name:'李总',status:'已通过',time:'2026-03-02 14:20',done:true},
+          {name:'王总',status:'已通过',time:'2026-03-03 10:15',done:true}
+        ]},
+        {name:'绩效重构推进',type:'qual',weight:25,status:'approved',chain:[
+          {name:'张明',status:'已提交',time:'2026-03-01 09:00',done:true},
+          {name:'李总',status:'已通过',time:'2026-03-02 14:20',done:true},
+          {name:'王总',status:'已通过',time:'2026-03-03 10:15',done:true}
+        ]},
+        {name:'AI应用探索',type:'qual',weight:25,status:'approved',chain:[
+          {name:'张明',status:'已提交',time:'2026-03-01 09:00',done:true},
+          {name:'李总',status:'已通过',time:'2026-03-02 14:20',done:true},
+          {name:'王总',status:'已通过',time:'2026-03-03 10:15',done:true}
+        ]}
+      ]}
+    ]
+  },
+  q4: {
+    modules: [
+      {name:'关键指标',color:'var(--pr)',goals:[
+        {name:'资源利用率',type:'quant',weight:5,target:95,challenge:105,baseline:85,unit:'%',measure:'梯度评分',status:'approved',chain:[
+          {name:'张明',status:'已提交',time:'2025-12-01 09:00',done:true},
+          {name:'李总',status:'已通过',time:'2025-12-02 14:20',done:true},
+          {name:'王总',status:'已通过',time:'2025-12-03 10:15',done:true}
+        ]},
+        {name:'UAT通过率',type:'quant',weight:10,target:90,challenge:95,baseline:85,unit:'%',measure:'梯度评分',status:'approved',chain:[
+          {name:'张明',status:'已提交',time:'2025-12-01 09:00',done:true},
+          {name:'李总',status:'已通过',time:'2025-12-02 14:20',done:true},
+          {name:'王总',status:'已通过',time:'2025-12-03 10:15',done:true}
+        ]},
+        {name:'评审及时率',type:'quant',weight:15,target:90,challenge:95,baseline:85,unit:'%',measure:'梯度评分',status:'approved',chain:[
+          {name:'张明',status:'已提交',time:'2025-12-01 09:00',done:true},
+          {name:'李总',status:'已通过',time:'2025-12-02 14:20',done:true},
+          {name:'王总',status:'已通过',time:'2025-12-03 10:15',done:true}
+        ]}
+      ]},
+      {name:'关键行动',color:'var(--em)',goals:[
+        {name:'产品管理规范',type:'qual',weight:10,status:'approved',chain:[
+          {name:'张明',status:'已提交',time:'2025-12-01 09:00',done:true},
+          {name:'李总',status:'已通过',time:'2025-12-02 14:20',done:true},
+          {name:'王总',status:'已通过',time:'2025-12-03 10:15',done:true}
+        ]},
+        {name:'需求响应',type:'qual',weight:10,status:'approved',chain:[
+          {name:'张明',status:'已提交',time:'2025-12-01 09:00',done:true},
+          {name:'李总',status:'已通过',time:'2025-12-02 14:20',done:true},
+          {name:'王总',status:'已通过',time:'2025-12-03 10:15',done:true}
+        ]},
+        {name:'绩效重构',type:'qual',weight:25,status:'approved',chain:[
+          {name:'张明',status:'已提交',time:'2025-12-01 09:00',done:true},
+          {name:'李总',status:'已通过',time:'2025-12-02 14:20',done:true},
+          {name:'王总',status:'已通过',time:'2025-12-03 10:15',done:true}
+        ]},
+        {name:'AI探索',type:'qual',weight:25,status:'approved',chain:[
+          {name:'张明',status:'已提交',time:'2025-12-01 09:00',done:true},
+          {name:'李总',status:'已通过',time:'2025-12-02 14:20',done:true},
+          {name:'王总',status:'已通过',time:'2025-12-03 10:15',done:true}
+        ]}
+      ]}
+    ]
+  }
+};
+
+let currentCycle = 'q2';
+let expandedMods = new Set([0,1]);
+
+const STATUS_MAP = {
+  draft: {label:'待提交',cls:'draft'},
+  submitted: {label:'已提交',cls:'submitted'},
+  approving: {label:'审批中',cls:'approving'},
+  approved: {label:'已通过',cls:'approved'}
+};
+
+function render() {
+  const data = DATA[currentCycle];
+  const list = document.getElementById('goalList');
+  let h = '';
+
+  data.modules.forEach((m, mi) => {
+    const open = expandedMods.has(mi);
+    const tw = m.goals.reduce((s,g) => s + (g.weight||0), 0);
+    h += `<div class="mod">
+      <div class="mod-hd" onclick="toggleMod(${mi})">
+        <div class="mod-icon" style="background:${m.color}"></div>
+        <span class="mod-name">${m.name}</span>
+        <span class="mod-stats">合计 <strong>${tw}%</strong> · ${m.goals.length}个目标</span>
+        <div class="mod-chevron ${open?'open':''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="mod-body ${open?'open':''}">`;
+
+    m.goals.forEach((g, gi) => {
+      const st = STATUS_MAP[g.status] || STATUS_MAP.draft;
+      const isQuant = g.type === 'quant';
+      h += `<div class="goal" onclick="toggleChain(this)">
+        <div class="goal-top">
+          <span class="goal-name">${g.name}</span>
+          <span class="goal-tag ${isQuant?'quant':'qual'}">${isQuant?'定量':'定性'}</span>
+          <span class="goal-weight">${g.weight}%</span>
+          <span class="goal-status ${st.cls}">${st.label}</span>
+        </div>
+        <div class="goal-body">
+          ${isQuant?`<span>目标值 <strong>${g.target}${g.unit||''}</strong></span>
+          <span>挑战值 <strong>${g.challenge}${g.unit||''}</strong></span>
+          <span>保底值 <strong>${g.baseline}${g.unit||''}</strong></span>`:''}
+          <span>衡量方式 <strong>${g.measure||'-'}</strong></span>
+        </div>`;
+
+      if (g.chain && g.chain.length) {
+        h += `<div class="chain">`;
+        g.chain.forEach((c, ci) => {
+          const dotColor = c.done ? 'var(--em)' : (c.status==='审批中'?'var(--ac)':'var(--c3)');
+          h += `<div class="chain-step">
+            <div class="chain-dot" style="background:${dotColor}">${ci+1}</div>
+            <span class="chain-name">${c.name}</span>
+            <span class="chain-status" style="color:${c.done?'var(--em700)':c.status==='审批中'?'var(--ac700)':'var(--c4)'}">${c.status}</span>
+            <span class="chain-time">${c.time}</span>
+          </div>`;
+        });
+        h += `</div>`;
+      }
+
+      h += `</div>`;
+    });
+
+    h += `</div></div>`;
+  });
+
+  list.innerHTML = h;
+  updateSummary();
+}
+
+function updateSummary() {
+  const data = DATA[currentCycle];
+  let count=0, weight=0, approved=0, approving=0, draft=0;
+  data.modules.forEach(m => {
+    m.goals.forEach(g => {
+      count++;
+      weight += g.weight||0;
+      if(g.status==='approved') approved++;
+      else if(g.status==='approving') approving++;
+      else if(g.status==='draft') draft++;
+      else approved++; // submitted counted as approved for display
+    });
+  });
+  document.getElementById('sumCount').textContent = count;
+  document.getElementById('sumWeight').textContent = weight + '%';
+  document.getElementById('sumApproved').textContent = approved;
+  document.getElementById('sumApproving').textContent = approving;
+  document.getElementById('sumDraft').textContent = draft;
+}
+
+function toggleMod(mi) {
+  expandedMods.has(mi) ? expandedMods.delete(mi) : expandedMods.add(mi);
+  render();
+}
+
+function toggleChain(el) {
+  const chain = el.querySelector('.chain');
+  if(chain) chain.classList.toggle('show');
+}
+
+function switchCycle(el, cycle) {
+  document.querySelectorAll('.cycle-tab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  currentCycle = cycle;
+  expandedMods = new Set([0,1]);
+  render();
+  showToast('已切换到 ' + el.textContent);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+render();
+</script>
+</body>
+</html>
