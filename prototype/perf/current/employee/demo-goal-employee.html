@@ -343,6 +343,24 @@ body.chat-open .ai-chat{transform:translateX(0)}
 .ai-chat-input:focus{border-color:var(--pr)}
 .ai-chat-send{width:36px;height:36px;border-radius:var(--r2);background:var(--pr);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#FFF;transition:all .12s}
 .ai-chat-send:hover{background:var(--pr700)}
+.ai-chat-upload{width:36px;height:36px;border-radius:var(--r2);background:var(--sf);border:1px solid var(--c2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c5);transition:all .12s;position:relative}
+.ai-chat-upload:hover{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-chat-upload input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.ai-upload{border:2px dashed var(--c3);border-radius:var(--r2);padding:16px;text-align:center;cursor:pointer;transition:all .12s;margin-top:8px}
+.ai-upload:hover{border-color:var(--pr);background:var(--pr50)}
+.ai-upload.dragover{border-color:var(--pr);background:var(--pr50)}
+.ai-upload-icon{font-size:24px;margin-bottom:6px}
+.ai-upload-text{font:500 12px/1.3 var(--f);color:var(--c6)}
+.ai-upload-hint{font:400 11px/1.3 var(--f);color:var(--c4);margin-top:4px}
+.ai-upload-input{display:none}
+.ai-file-list{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.ai-file{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r1);font:400 12px/1 var(--f)}
+.ai-file-icon{font-size:14px}
+.ai-file-name{flex:1;color:var(--c8);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ai-file-size{color:var(--c4);font-family:var(--m);font-size:11px}
+.ai-file-status{font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px}
+.ai-file-status.parsed{color:var(--em700);background:var(--em50)}
+.ai-file-status.parsing{color:var(--pr);background:var(--pr50)}
 .ai-toggle{position:fixed;bottom:80px;right:24px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--pr) 0%,var(--vi) 100%);border:none;box-shadow:0 4px 16px rgba(37,99,235,.3);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:950;transition:all .2s}
 .ai-toggle:hover{transform:scale(1.08);box-shadow:0 6px 20px rgba(37,99,235,.4)}
 .ai-toggle svg{width:22px;height:22px;color:#FFF}
@@ -1190,12 +1208,13 @@ render();
 
 // ═══ AI CHAT ═══
 const AI_SHORTCUTS=[
+  {icon:'📄',label:'解析文件生成目标',desc:'上传周报/工作计划，AI自动提取并生成目标'},
   {icon:'📝',label:'优化目标描述',desc:'分析当前目标，给出描述优化建议'},
   {icon:'📊',label:'检查权重分配',desc:'检查各模块权重是否合理'},
   {icon:'🎯',label:'推荐指标',desc:'根据岗位推荐可关联的指标'},
 ];
 const AI_MSGS=[
-  {role:'bot',text:'你好，我是 AI 目标助手 👋\n\n点击下方快捷指令，我可以帮你：',time:'09:00',shortcuts:true},
+  {role:'bot',text:'你好，我是 AI 目标助手 👋\n\n点击下方快捷指令，我可以帮你：\n• 上传文件，AI自动生成目标\n• 优化目标描述\n• 检查权重分配\n• 推荐关联指标',time:'09:00',shortcuts:true},
 ];
 function renderAiChat(){
   const bd=document.getElementById('chatBd');
@@ -1205,6 +1224,9 @@ function renderAiChat(){
       <div class="ai-msg-bd">${m.text.replace(/\n/g,'<br/>')}</div>`;
     if(m.shortcuts){
       html+=`<div class="ai-shortcuts">${AI_SHORTCUTS.map(s=>`<div class="ai-shortcut" onclick="handleAiAction('${s.label}')"><span class="ai-shortcut-icon">${s.icon}</span><div class="ai-shortcut-text"><div class="ai-shortcut-label">${s.label}</div><div class="ai-shortcut-desc">${s.desc}</div></div></div>`).join('')}</div>`;
+    }
+    if(m.files){
+      html+=`<div class="ai-file-list">${m.files.map(f=>`<div class="ai-file"><span class="ai-file-icon">📄</span><span class="ai-file-name">${f.name}</span><span class="ai-file-size">${f.size}</span><span class="ai-file-status parsed">已解析</span></div>`).join('')}</div>`;
     }
     if(m.cards){
       html+=m.cards.map(c=>`<div class="ai-msg-card"><div class="ai-msg-card-t">${c.t}</div><div class="ai-msg-card-d">${c.d}</div><div class="ai-msg-card-ft"><span class="ai-msg-card-tag ${c.tc}">${c.tag}</span>${c.apply?`<button class="ai-msg-card-apply" onclick="applyAiSuggestion('${c.apply}')">应用到当前目标</button>`:''}</div></div>`).join('');
@@ -1250,7 +1272,34 @@ function applyAiSuggestion(type){
       render();
       showToast('衡量标准已更新','success');
     }
+  }else if(type==='file-goals'){
+    showToast('文件解析目标已应用','success');
   }
+}
+
+// 文件处理
+function handleChatFileSelect(e){
+  const files=Array.from(e.target.files);
+  if(!files.length)return;
+  processGoalFiles(files);
+  e.target.value='';
+}
+
+function processGoalFiles(files){
+  const fileList=files.map(f=>{
+    const size=f.size>1024*1024?(f.size/(1024*1024)).toFixed(1)+'MB':(f.size/1024).toFixed(0)+'KB';
+    return {name:f.name,size:size};
+  });
+  AI_MSGS.push({role:'user',text:'已上传 '+files.length+' 个文件：\n'+files.map(f=>'• '+f.name).join('\n')});
+  AI_MSGS.push({role:'bot',text:'正在解析文件内容，提取工作目标和关键成果…',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),files:fileList});
+  renderAiChat();
+
+  setTimeout(()=>{
+    AI_MSGS.push({role:'bot',text:'文件解析完成！已从文档中提取以下目标建议：\n\n📄 周报_张明_06月.docx:\n• 资源利用率目标: 105%\n• UAT通过率目标: 98%\n• 需求评审及时率: 98%\n\n📊 Q2工作计划.xlsx:\n• 产品管理规范: 4项规范落地\n• 日常需求响应: 完成GOFO迭代\n• 绩效重构: 3个里程碑\n• AI应用: 3个版本交付\n\n点击「应用到目标」一键填入。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
+      {t:'解析完成',d:'已提取 7 项目标建议，基于文档内容自动生成',tag:'AI 解析',tc:'pr',apply:'file-goals'}
+    ]});
+    renderAiChat();
+  },1500);
 }
 
 function sendAiMsg(){
@@ -1275,6 +1324,9 @@ function handleAiAction(action){
   setTimeout(()=>{
     let response='';
     switch(action){
+      case '解析文件生成目标':
+        AI_MSGS.push({role:'bot',text:'请上传你的工作文档，AI 将自动解析并生成目标建议。\n\n支持的文件类型：\n• 周报/日报/月报（Word、TXT）\n• 工作计划（Excel）\n• 项目文档（PDF）\n\n上传后点击「应用到目标」即可自动填入。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),upload:true});
+        break;
       case '检查权重分配':
         response='当前权重分配分析：\n\n• 关键指标: 30%（3个目标）\n• 关键行动: 70%（4个目标）\n\n整体结构合理，关键行动占比偏高。建议：\n• 资源利用率权重偏低（5%），可适当提升\n• 绩效重构和AI探索各25%，单项权重较大';
         AI_MSGS.push({role:'bot',text:response,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
@@ -1345,6 +1397,7 @@ document.body.insertAdjacentHTML('beforeend',`
   </div>
   <div class="ai-chat-bd" id="chatBd"></div>
   <div class="ai-chat-ft">
+    <label class="ai-chat-upload" title="上传文件"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg><input type="file" multiple accept=".doc,.docx,.xls,.xlsx,.pdf,.txt" onchange="handleChatFileSelect(event)"/></label>
     <input class="ai-chat-input" id="chatInput" placeholder="输入指令，如「优化衡量标准」「检查权重」…" onkeydown="if(event.key==='Enter')sendAiMsg()"/>
     <button class="ai-chat-send" onclick="sendAiMsg()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
