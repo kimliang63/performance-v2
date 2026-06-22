@@ -45,6 +45,8 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .toast{position:fixed;top:64px;left:50%;transform:translateX(-50%);padding:10px 20px;border-radius:var(--r2);font:500 13px/1 var(--f);color:#FFF;z-index:3000;opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:center;gap:8px}
 .toast.show{opacity:1;pointer-events:all}
 .toast.success{background:var(--em);box-shadow:0 8px 24px rgba(16,185,129,.3)}
+.btn-sm{height:28px;padding:0 10px;font-size:12px}
+.btn-s.btn-active{background:var(--pr50);color:var(--pr);border-color:var(--pr200)}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .fade-in{animation:fadeIn .2s ease forwards}
 </style>
@@ -96,6 +98,15 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
     <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleImport(event)">
   </div>
 
+  <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;padding:12px 20px;display:flex;align-items:center;gap:16px">
+    <span style="font:500 13px/1 var(--f);color:var(--c6)">到达状态:</span>
+    <div id="statusFilter" style="display:flex;gap:8px">
+      <button class="btn btn-s btn-sm btn-active" onclick="filterStatus('全部',this)">全部</button>
+      <button class="btn btn-s btn-sm" onclick="filterStatus('已到达',this)">已到达</button>
+      <button class="btn btn-s btn-sm" onclick="filterStatus('未到达',this)">未到达</button>
+    </div>
+  </div>
+
   <div class="eval-list">
     <div style="padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between">
       <span style="font:600 15px/1 var(--f);color:var(--c9)">员工考核结果列表</span>
@@ -143,10 +154,9 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 <script src="../navigation.js"></script>
 <script>
 GHR_NAV.init('perf', '考核结果批量导入');
-var currentPage=1;var PAGE_SIZE=8;
 
 var EMPLOYEES=[
-  {name:'张明',goals:[
+  {name:'张明',reached:true,goals:[
     {name:'资源利用率（通用）',type:'quant',weight:5,completed:'',score:null,grade:'',filled:false},
     {name:'HRAS UAT用户验收首次通过率',type:'quant',weight:10,completed:'',score:null,grade:'',filled:false},
     {name:'HRAS需求评审及时率',type:'quant',weight:15,completed:'',score:null,grade:'',filled:false},
@@ -155,26 +165,66 @@ var EMPLOYEES=[
     {name:'HR ONE 绩效重构事项推进',type:'qual',weight:25,completed:'',score:null,grade:'',filled:false},
     {name:'AI应用项目探索与落地推广',type:'qual',weight:25,completed:'',score:null,grade:'',filled:false}
   ]},
-  {name:'李华',goals:[
+  {name:'李华',reached:true,goals:[
     {name:'产品迭代完成率',type:'quant',weight:20,completed:'',score:null,grade:'',filled:false},
     {name:'客户需求响应及时率',type:'quant',weight:15,completed:'',score:null,grade:'',filled:false},
     {name:'产品规划文档输出',type:'qual',weight:30,completed:'',score:null,grade:'',filled:false},
     {name:'跨部门协作项目推进',type:'qual',weight:20,completed:'',score:null,grade:'',filled:false},
     {name:'团队知识分享',type:'qual',weight:15,completed:'',score:null,grade:'',filled:false}
   ]},
-  {name:'王芳',goals:[
+  {name:'王芳',reached:true,goals:[
     {name:'需求处理量',type:'quant',weight:20,completed:'',score:null,grade:'',filled:false},
     {name:'用户反馈跟进',type:'qual',weight:30,completed:'',score:null,grade:'',filled:false},
     {name:'文档规范执行',type:'qual',weight:20,completed:'',score:null,grade:'',filled:false}
   ]},
-  {name:'赵强',goals:[
+  {name:'赵强',reached:false,goals:[
     {name:'项目按时交付率',type:'quant',weight:25,completed:'',score:null,grade:'',filled:false},
     {name:'技术方案评审',type:'qual',weight:30,completed:'',score:null,grade:'',filled:false},
     {name:'团队效能提升',type:'qual',weight:25,completed:'',score:null,grade:'',filled:false}
   ]},
-  {name:'陈静',goals:[
+  {name:'陈静',reached:false,goals:[
     {name:'设计任务完成率',type:'quant',weight:20,completed:'',score:null,grade:'',filled:false},
     {name:'设计规范建设',type:'qual',weight:30,completed:'',score:null,grade:'',filled:false}
+  ]},
+  {name:'刘洋',reached:true,goals:[
+    {name:'需求评审通过率',type:'quant',weight:15,completed:'',score:null,grade:'',filled:false},
+    {name:'产品方案输出',type:'qual',weight:25,completed:'',score:null,grade:'',filled:false}
+  ]},
+  {name:'孙丽',reached:true,goals:[
+    {name:'客户满意度评分',type:'quant',weight:20,completed:'',score:null,grade:'',filled:false},
+    {name:'客户关系维护',type:'qual',weight:30,completed:'',score:null,grade:'',filled:false}
+  ]},
+  {name:'周磊',reached:true,goals:[
+    {name:'产品上线准时率',type:'quant',weight:20,completed:'',score:null,grade:'',filled:false},
+    {name:'迭代评审组织',type:'qual',weight:20,completed:'',score:null,grade:'',filled:false}
+  ]},
+  {name:'吴涛',reached:true,goals:[
+    {name:'技术架构评审通过率',type:'quant',weight:20,completed:'',score:null,grade:'',filled:false},
+    {name:'技术方案输出',type:'qual',weight:30,completed:'',score:null,grade:'',filled:false}
+  ]},
+  {name:'郑洁',reached:true,goals:[
+    {name:'代码审查覆盖率',type:'quant',weight:15,completed:'',score:null,grade:'',filled:false},
+    {name:'技术文档编写',type:'qual',weight:25,completed:'',score:null,grade:'',filled:false}
+  ]},
+  {name:'黄鹏',reached:false,goals:[
+    {name:'测试用例通过率',type:'quant',weight:20,completed:'',score:null,grade:'',filled:false},
+    {name:'自动化测试建设',type:'qual',weight:25,completed:'',score:null,grade:'',filled:false}
+  ]},
+  {name:'林敏',reached:true,goals:[
+    {name:'需求响应时效',type:'quant',weight:15,completed:'',score:null,grade:'',filled:false},
+    {name:'竞品分析报告',type:'qual',weight:20,completed:'',score:null,grade:'',filled:false}
+  ]},
+  {name:'何杰',reached:true,goals:[
+    {name:'接口响应时间',type:'quant',weight:15,completed:'',score:null,grade:'',filled:false},
+    {name:'系统优化方案',type:'qual',weight:25,completed:'',score:null,grade:'',filled:false}
+  ]},
+  {name:'马超',reached:false,goals:[
+    {name:'UI设计稿交付率',type:'quant',weight:20,completed:'',score:null,grade:'',filled:false},
+    {name:'设计规范维护',type:'qual',weight:20,completed:'',score:null,grade:'',filled:false}
+  ]},
+  {name:'胡蝶',reached:false,goals:[
+    {name:'Bug修复及时率',type:'quant',weight:20,completed:'',score:null,grade:'',filled:false},
+    {name:'代码质量提升',type:'qual',weight:25,completed:'',score:null,grade:'',filled:false}
   ]},
 ];
 
@@ -183,11 +233,22 @@ var MOCK_IMPORT=[
   {emp:'李华',items:[{name:'产品迭代完成率',completed:'92%',score:100,grade:'超出预期'},{name:'客户需求响应及时率',completed:'88%',score:80,grade:'符合预期'},{name:'产品规划文档输出',completed:'完成Q3路线图',score:null,grade:'符合预期+'},{name:'跨部门协作项目推进',completed:'主导2个项目',score:null,grade:'符合预期'},{name:'团队知识分享',completed:'每月1次分享',score:null,grade:'符合预期'}]},
 ];
 
-var currentPage=1;var PAGE_SIZE=8;
+var currentPage=1;var PAGE_SIZE=8;var currentStatus='全部';
+
+function filterStatus(status,btn){
+  currentStatus=status;currentPage=1;
+  var container=document.getElementById('statusFilter');
+  container.querySelectorAll('.btn').forEach(function(b){b.classList.remove('btn-active');});
+  if(btn)btn.classList.add('btn-active');
+  render();
+}
 
 function getFiltered(){
-  if(currentGroup==='全部')return EMPLOYEES;
-  return EMPLOYEES;
+  return EMPLOYEES.filter(function(e){
+    if(currentStatus==='已到达'&&!e.reached)return false;
+    if(currentStatus==='未到达'&&e.reached)return false;
+    return true;
+  });
 }
 
 function render(){
@@ -201,7 +262,7 @@ function render(){
   pageData.forEach(function(emp){
     var filledCount=emp.goals.filter(function(g){return g.filled;}).length;
     var allFilled=filledCount===emp.goals.length;
-    html+='<tr class="emp-row"><td colspan="8"><div style="display:flex;align-items:center;gap:8px">👤 '+emp.name+'<span style="font:400 11px/1 var(--f);color:'+(allFilled?'var(--em700)':'var(--c5)')+'">'+filledCount+'/'+emp.goals.length+' 已导入</span>'+(allFilled?'<span style="font:500 11px/1 var(--f);color:var(--em700);background:var(--em50);padding:2px 6px;border-radius:3px">✓ 完成</span>':'')+'</div></td></tr>';
+    html+='<tr class="emp-row"><td colspan="8"><div style="display:flex;align-items:center;gap:8px">👤 '+emp.name+'<span style="font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px;background:'+(emp.reached?'var(--em50)':'var(--ac50)')+';color:'+(emp.reached?'var(--em700)':'var(--ac700)')+'">'+(emp.reached?'已到达':'未到达')+'</span><span style="font:400 11px/1 var(--f);color:'+(allFilled?'var(--em700)':'var(--c5)')+'">'+filledCount+'/'+emp.goals.length+' 已导入</span>'+(allFilled?'<span style="font:500 11px/1 var(--f);color:var(--em700);background:var(--em50);padding:2px 6px;border-radius:3px">✓ 完成</span>':'')+'</div></td></tr>';
     emp.goals.forEach(function(g){
       html+='<tr>'+
         '<td></td>'+
