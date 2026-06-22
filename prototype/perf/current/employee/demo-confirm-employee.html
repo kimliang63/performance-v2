@@ -120,6 +120,53 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .eval-tag.good{background:var(--pr50);color:var(--pr)}
 .eval-tag.normal{background:var(--c1);color:var(--c6)}
 .eval-tag.poor{background:var(--ro50);color:var(--ro)}
+
+/* ═══ AI CHAT ═══ */
+.ai-chat{position:fixed;top:52px;right:0;width:380px;height:calc(100vh - 52px);background:var(--sf);border-left:1px solid var(--dv);z-index:900;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s ease}
+body.chat-open .ai-chat{transform:translateX(0)}
+.ai-chat-hd{padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:10px}
+.ai-chat-hd-ic{width:32px;height:32px;border-radius:var(--r2);background:linear-gradient(135deg,var(--pr),var(--vi));display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ai-chat-hd-ic svg{width:16px;height:16px;color:#FFF}
+.ai-chat-hd-t{font:600 14px/1.2 var(--f);color:var(--c9)}
+.ai-chat-hd-s{font:400 11px/1 var(--f);color:var(--c5)}
+.ai-chat-close{margin-left:auto;width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:transparent;color:var(--c5);transition:all .12s}
+.ai-chat-close:hover{background:var(--c1);color:var(--c7)}
+.ai-chat-bd{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:16px}
+.ai-msg{max-width:92%;animation:aiMsgIn .3s ease}
+@keyframes aiMsgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.ai-msg.bot{align-self:flex-start}
+.ai-msg.user{align-self:flex-end}
+.ai-msg-bd{padding:12px 16px;border-radius:var(--r3);font:400 13px/1.6 var(--f)}
+.ai-msg.bot .ai-msg-bd{background:var(--c0);color:var(--c8);border-bottom-left-radius:4px}
+.ai-msg.user .ai-msg-bd{background:var(--pr);color:#FFF;border-bottom-right-radius:4px}
+.ai-msg-time{font:400 10px/1 var(--f);color:var(--c4);margin-top:4px}
+.ai-msg-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.ai-msg-btn{font:500 11px/1 var(--f);padding:5px 10px;border-radius:var(--r1);border:1px solid var(--c2);background:var(--sf);color:var(--c6);cursor:pointer;transition:all .12s}
+.ai-msg-btn:hover{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-msg-card{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);padding:12px;margin-top:8px}
+.ai-msg-card-t{font:600 12px/1.3 var(--f);color:var(--c8);margin-bottom:4px}
+.ai-msg-card-d{font:400 12px/1.5 var(--f);color:var(--c5)}
+.ai-msg-card-ft{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.ai-msg-card-tag{display:inline-block;font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px}
+.ai-msg-card-tag.em{color:var(--em700);background:var(--em50)}
+.ai-msg-card-tag.pr{color:var(--pr);background:var(--pr50)}
+.ai-msg-card-tag.ac{color:var(--ac700);background:var(--ac50)}
+.ai-shortcuts{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.ai-shortcut{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);cursor:pointer;transition:all .12s}
+.ai-shortcut:hover{border-color:var(--pr200);background:var(--pr50)}
+.ai-shortcut-icon{font-size:18px;flex-shrink:0}
+.ai-shortcut-text{flex:1;min-width:0}
+.ai-shortcut-label{font:500 13px/1.2 var(--f);color:var(--c8)}
+.ai-shortcut-desc{font:400 11px/1.3 var(--f);color:var(--c5);margin-top:2px}
+.ai-chat-ft{padding:12px 16px;border-top:1px solid var(--dv);display:flex;gap:8px;align-items:center}
+.ai-chat-input{flex:1;height:36px;border:1px solid var(--c2);border-radius:var(--r2);padding:0 12px;font:400 13px/1 var(--f);color:var(--c8);outline:none;transition:border .15s}
+.ai-chat-input:focus{border-color:var(--pr)}
+.ai-chat-send{width:36px;height:36px;border-radius:var(--r2);background:var(--pr);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#FFF;transition:all .12s}
+.ai-chat-send:hover{background:var(--pr700)}
+.ai-toggle{position:fixed;bottom:80px;right:24px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--pr),var(--vi));border:none;box-shadow:0 4px 16px rgba(37,99,235,.3);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:950;transition:all .2s}
+.ai-toggle:hover{transform:scale(1.08);box-shadow:0 6px 20px rgba(37,99,235,.4)}
+.ai-toggle svg{width:22px;height:22px;color:#FFF}
+body.chat-open .ai-toggle{display:none}
 </style>
 </head>
 <body>
@@ -431,6 +478,77 @@ function submitDisagree(){
   closeDisagree();
   showToast('已提交不同意见，HRBP将在3个工作日内处理','warn');
 }
+
+// ═══ AI CHAT ═══
+var AI_SHORTCUTS=[
+  {icon:'📊',label:'分析我的绩效',desc:'查看各指标得分和等级详情'},
+  {icon:'📈',label:'查看成长趋势',desc:'对比近期绩效变化'},
+  {icon:'❓',label:'有异议怎么办',desc:'了解申诉流程和注意事项'}
+];
+var AI_MSGS=[
+  {role:'bot',text:'你好，我是 AI 确认助手 👋\n\n我可以帮你：\n• 分析绩效结果的合理性\n• 查看成长趋势和历史对比\n• 了解申诉流程',time:'15:00',shortcuts:true}
+];
+
+function aiNow(){return new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});}
+
+function renderAiChat(){
+  var bd=document.getElementById('chatBd');
+  if(!bd)return;
+  bd.innerHTML=AI_MSGS.map(function(m){
+    var html='<div class="ai-msg '+m.role+'"><div class="ai-msg-bd">'+m.text.replace(/\n/g,'<br/>')+'</div>';
+    if(m.shortcuts){html+='<div class="ai-shortcuts">'+AI_SHORTCUTS.map(function(s){return '<div class="ai-shortcut" onclick="handleAiAction(\''+s.label+'\')"><span class="ai-shortcut-icon">'+s.icon+'</span><div class="ai-shortcut-text"><div class="ai-shortcut-label">'+s.label+'</div><div class="ai-shortcut-desc">'+s.desc+'</div></div></div>';}).join('')+'</div>';}
+    if(m.cards){html+=m.cards.map(function(c){return '<div class="ai-msg-card"><div class="ai-msg-card-t">'+c.t+'</div><div class="ai-msg-card-d">'+c.d+'</div><div class="ai-msg-card-ft"><span class="ai-msg-card-tag '+c.tc+'">'+c.tag+'</span></div></div>';}).join('');}
+    if(m.actions){html+='<div class="ai-msg-actions">'+m.actions.map(function(a){return '<button class="ai-msg-btn" onclick="handleAiAction(\''+a+'\')">'+a+'</button>';}).join('')+'</div>';}
+    if(m.time){html+='<div class="ai-msg-time">'+m.time+'</div>';}
+    html+='</div>';
+    return html;
+  }).join('');
+  bd.scrollTop=bd.scrollHeight;
+}
+
+function sendAiMsg(){
+  var input=document.getElementById('chatInput');
+  var text=input.value.trim();
+  if(!text)return;
+  AI_MSGS.push({role:'user',text:text});
+  input.value='';
+  renderAiChat();
+  setTimeout(function(){
+    AI_MSGS.push({role:'bot',text:'收到，正在分析你的绩效数据…\n\n已根据你的描述生成建议，请查看更新结果。',time:aiNow(),actions:['分析我的绩效','查看成长趋势','有异议怎么办']});
+    renderAiChat();
+  },800);
+}
+
+function handleAiAction(action){
+  AI_MSGS.push({role:'user',text:action});
+  renderAiChat();
+  setTimeout(function(){
+    switch(action){
+      case '分析我的绩效':
+        AI_MSGS.push({role:'bot',text:'📊 你的Q2绩效分析：\n\n综合得分：87.5分 → 符合预期+\n\n各维度表现：\n• 关键指标（30%）：资源利用率108%优秀，UAT通过率97%略低，评审及时率96%需改进\n• 关键行动（70%）：产品管理规范、需求响应、绩效重构、AI应用均表现良好\n\n💡 总结：整体表现优秀，关键行动板块是主要得分来源。',time:aiNow(),cards:[
+          {t:'绩效分析',d:'综合87.5分，符合预期+',tag:'整体优秀',tc:'em'}
+        ],actions:['查看成长趋势','有异议怎么办']});
+        break;
+      case '查看成长趋势':
+        AI_MSGS.push({role:'bot',text:'📈 近期绩效趋势：\n\n• 2026年Q2：3.82 → 3.70 → 3.95（上升）\n• 2025年H2：3.50 → 3.80 → 4.10（持续上升）\n\n同比去年Q2：+10%\n环比上季度：+5%\n\n趋势向好，你的绩效在持续改善。',time:aiNow(),cards:[
+          {t:'趋势分析',d:'同比+10%，环比+5%',tag:'趋势向好',tc:'em'}
+        ],actions:['分析我的绩效','有异议怎么办']});
+        break;
+      case '有异议怎么办':
+        AI_MSGS.push({role:'bot',text:'❓ 如果你对绩效结果有异议：\n\n1. 点击页面右上角「不同意」按钮\n2. 填写异议原因（越具体越好）\n3. 可上传佐证材料\n4. HRBP将在3个工作日内处理\n\n💡 建议：\n• 先冷静分析，确认是否有误解\n• 准备具体数据或事实依据\n• 异议不影响后续绩效改进计划',time:aiNow(),cards:[
+          {t:'申诉指引',d:'3个工作日内HRBP处理',tag:'流程说明',tc:'pr'}
+        ],actions:['分析我的绩效','查看成长趋势']});
+        break;
+      default:
+        AI_MSGS.push({role:'bot',text:'收到，正在分析你的绩效数据…\n\n已根据你的描述生成建议，请查看更新结果。',time:aiNow(),actions:['分析我的绩效','查看成长趋势','有异议怎么办']});
+    }
+    renderAiChat();
+  },800);
+}
+
+function toggleAiChat(){document.body.classList.toggle('chat-open');}
+
+renderAiChat();
 function showToast(msg,type){
   var t=document.getElementById('toast');
   document.getElementById('toastMsg').textContent=msg;
@@ -438,5 +556,20 @@ function showToast(msg,type){
   setTimeout(function(){t.classList.remove('show')},3000);
 }
 </script>
+
+<!-- AI Chat Panel -->
+<div class="ai-chat" id="aiChat">
+  <div class="ai-chat-hd">
+    <div class="ai-chat-hd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg></div>
+    <div><div class="ai-chat-hd-t">AI 确认助手</div><div class="ai-chat-hd-s">绩效分析 · 趋势对比 · 申诉指引</div></div>
+    <button class="ai-chat-close" onclick="toggleAiChat()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+  <div class="ai-chat-bd" id="chatBd"></div>
+  <div class="ai-chat-ft">
+    <input class="ai-chat-input" id="chatInput" placeholder="输入问题，如「分析我的绩效」…" onkeydown="if(event.key==='Enter')sendAiMsg()"/>
+    <button class="ai-chat-send" onclick="sendAiMsg()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+  </div>
+</div>
+<button class="ai-toggle" onclick="toggleAiChat()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg></button>
 </body>
 </html>
