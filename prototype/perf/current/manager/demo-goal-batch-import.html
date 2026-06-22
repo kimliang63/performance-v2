@@ -9,62 +9,44 @@
 :root{--pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--em:#10B981;--em50:#ECFDF5;--em700:#047857;--ac:#F59E0B;--ac50:#FFFBEB;--ac700:#B45309;--ro:#F43F5E;--ro50:#FFF1F2;--vi:#8B5CF6;--vi50:#F5F3FF;--c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;--sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;--shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);--r1:6px;--r2:8px;--r3:10px;--r4:14px;--f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;--m:'JetBrains Mono','SF Mono',monospace}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
-.ct{max-width:1060px;margin:0 auto;padding:24px}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
 
-.steps{display:flex;align-items:center;margin-bottom:24px;background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:16px 24px}
-.step{display:flex;align-items:center;gap:8px;flex:1}
-.step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--f);color:var(--c4);background:var(--c1);border:2px solid var(--c2);flex-shrink:0;transition:all .2s}
-.step.active .step-num{background:var(--pr);color:#FFF;border-color:var(--pr)}
-.step.done .step-num{background:var(--em);color:#FFF;border-color:var(--em)}
-.step-text{font:500 13px/1 var(--f);color:var(--c5)}
-.step.active .step-text{color:var(--c9);font-weight:600}
-.step.done .step-text{color:var(--em700)}
-.step-line{width:40px;height:2px;background:var(--c2);flex-shrink:0;margin:0 8px}
-.step-line.done{background:var(--em)}
+.pg-hd{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:16px}
+.pg-hd-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.pg-hd-title{font:700 20px/1.2 var(--f);color:var(--c9);letter-spacing:-.3px}
+.pg-hd-actions{display:flex;gap:8px}
+.pg-hd-info{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 24px;font:400 13px/1 var(--f);color:var(--c5);padding:12px 16px;background:var(--c0);border-radius:var(--r2)}
+.pg-hd-info-item{display:flex;flex-direction:column;gap:2px}
+.pg-hd-info-label{font:400 11px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px}
+.pg-hd-info-value{font:500 13px/1.3 var(--f);color:var(--c8)}
 
-.card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:24px;margin-bottom:16px}
-.card-title{font:600 15px/1 var(--f);color:var(--c9);margin-bottom:4px}
-.card-desc{font:400 13px/1 var(--f);color:var(--c5);margin-bottom:16px}
-
-.upload-zone{border:2px dashed var(--c2);border-radius:var(--r3);padding:48px 24px;text-align:center;cursor:pointer;transition:all .15s;background:var(--c0)}
-.upload-zone:hover{border-color:var(--pr);background:var(--pr50)}
-.upload-zone.dragover{border-color:var(--pr);background:var(--pr50);box-shadow:0 0 0 4px var(--pr100)}
-.upload-icon{font-size:40px;margin-bottom:12px;opacity:.6}
-.upload-text{font:500 14px/1 var(--f);color:var(--c8);margin-bottom:6px}
-.upload-hint{font:400 12px/1 var(--f);color:var(--c5)}
-
-.file-preview{background:var(--c0);border:1px solid var(--c2);border-radius:var(--r2);padding:14px 16px;display:flex;align-items:center;gap:12px;margin-top:16px}
-.file-icon{width:40px;height:40px;border-radius:var(--r1);background:var(--em50);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.file-info{flex:1}
-.file-name{font:500 13px/1 var(--f);color:var(--c8)}
-.file-meta{font:400 12px/1 var(--f);color:var(--c5);margin-top:2px}
-.file-remove{width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c4);background:transparent;border:none}
-.file-remove:hover{background:var(--ro50);color:var(--ro)}
-
-.preview-table{width:100%;border-collapse:collapse}
-.preview-table th{background:var(--c0);padding:10px 12px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;position:sticky;top:0}
-.preview-table td{padding:10px 12px;font:400 13px/1.3 var(--f);color:var(--c7);border-bottom:1px solid var(--dv)}
-.preview-table tr:hover td{background:var(--c0)}
-.preview-table .err td{background:var(--ro50)}
-.emp-group{background:var(--c0);font:600 13px/1 var(--f);color:var(--c8);padding:10px 12px;border-bottom:1px solid var(--c2)}
-.emp-group td{padding:0}
-
-.stats-bar{display:flex;gap:16px;padding:12px 0;border-bottom:1px solid var(--dv);margin-bottom:16px}
-.stat-item{display:flex;align-items:center;gap:6px;font:400 13px/1 var(--f)}
-.stat-dot{width:8px;height:8px;border-radius:50%}
-.stat-dot.ok{background:var(--em)}.stat-dot.err{background:var(--ro)}.stat-dot.warn{background:var(--ac)}
-
-.btn{display:inline-flex;align-items:center;gap:5px;padding:0 16px;height:36px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
-.btn svg{width:14px;height:14px}
-.btn-p{background:var(--pr);color:#FFF}.btn-p:hover{background:var(--pr700)}.btn-p:disabled{opacity:.5;cursor:not-allowed}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
+.btn svg{width:13px;height:13px}
+.btn-p{background:var(--pr);color:#FFF}.btn-p:hover{background:var(--pr700)}
 .btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3);color:var(--c8)}
 .btn-o{background:var(--sf);color:var(--pr);border:1px solid var(--pr200)}.btn-o:hover{background:var(--pr50)}
-.actions{display:flex;justify-content:space-between;align-items:center;margin-top:16px}
 
+.eval-list{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden;margin-bottom:16px}
+.eval-list table{width:100%;border-collapse:collapse}
+.eval-list th{background:var(--c0);padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.eval-list td{padding:10px 16px;font:400 13px/1.4 var(--f);color:var(--c7);border-bottom:1px solid var(--dv);vertical-align:top}
+.eval-list tr:last-child td{border-bottom:none}
+.eval-list tr:hover td{background:var(--c0)}
+.emp-row td{background:var(--c0);font:600 13px/1 var(--f);color:var(--c8);padding:10px 16px !important}
+.emp-row:hover td{background:var(--c0) !important}
+.mod-tag{display:inline-block;padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--c1);color:var(--c6)}
+.type-tag{display:inline-block;padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f)}
+.type-tag.quant{background:var(--pr50);color:var(--pr)}
+.type-tag.qual{background:var(--vi50);color:var(--vi)}
+.score-badge{font:600 13px/1 var(--m)}
+.upload-bar{display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--pr50);border-radius:var(--r2);margin-bottom:16px;border:1px dashed var(--pr200)}
+.upload-bar-text{flex:1;font:400 13px/1 var(--f);color:var(--c6)}
+.upload-bar-text b{color:var(--pr)}
+.filled{color:var(--em700);font-weight:500}
+.unfilled{color:var(--c4)}
 .toast{position:fixed;top:64px;left:50%;transform:translateX(-50%);padding:10px 20px;border-radius:var(--r2);font:500 13px/1 var(--f);color:#FFF;z-index:3000;opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:center;gap:8px}
 .toast.show{opacity:1;pointer-events:all}
 .toast.success{background:var(--em);box-shadow:0 8px 24px rgba(16,185,129,.3)}
-.toast.error{background:var(--ro);box-shadow:0 8px 24px rgba(244,63,94,.3)}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .fade-in{animation:fadeIn .2s ease forwards}
 </style>
@@ -77,163 +59,206 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
     <span style="color:var(--c8);font-weight:600">目标批量导入</span>
   </nav>
 
-  <div class="steps">
-    <div class="step active" id="step1"><div class="step-num">1</div><span class="step-text">上传文件</span></div>
-    <div class="step-line" id="line1"></div>
-    <div class="step" id="step2"><div class="step-num">2</div><span class="step-text">数据预览</span></div>
-    <div class="step-line" id="line2"></div>
-    <div class="step" id="step3"><div class="step-num">3</div><span class="step-text">导入完成</span></div>
-  </div>
-
-  <!-- Step 1 -->
-  <div id="panel1" class="card fade-in">
-    <div class="card-title">上传目标分配文件</div>
-    <div class="card-desc">HRBP 批量为员工导入目标，文件需包含员工信息和目标详情</div>
-    <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
-      <button class="btn btn-o" onclick="showToast('模板已下载','success')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        下载导入模板
-      </button>
-      <span style="font:400 12px/1 var(--f);color:var(--c4)">模板字段：员工姓名 | 部门 | 模块 | 目标名称 | 类型 | 权重 | 目标值 | 挑战值 | 保底值 | 衡量标准</span>
+  <div class="pg-hd">
+    <div class="pg-hd-top">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="pg-hd-title">目标批量导入</div>
+        <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)">
+          <span style="width:6px;height:6px;border-radius:50%;background:var(--pr);animation:pulse 2s ease-in-out infinite"></span>填写中
+        </span>
+      </div>
+      <div class="pg-hd-actions">
+        <button class="btn btn-s" onclick="showToast('草稿已保存','success')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          保存草稿
+        </button>
+        <button class="btn btn-p" onclick="showToast('已提交审定','success')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          提交审定
+        </button>
+      </div>
     </div>
-    <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
-      <div class="upload-icon">📁</div>
-      <div class="upload-text">点击或拖拽文件至此上传</div>
-      <div class="upload-hint">支持 .xlsx .xls .csv，单文件不超过 10MB</div>
-    </div>
-    <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleFile(event)">
-    <div id="filePreview"></div>
-    <div class="actions">
-      <span style="font:400 12px/1 var(--f);color:var(--c4)">💡 一个文件可包含多名员工的目标，系统将按员工姓名自动分组</span>
-      <button class="btn btn-p" id="btnNext1" disabled onclick="goStep(2)">下一步：预览数据</button>
+    <div class="pg-hd-info">
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">考核方案</span><span class="pg-hd-info-value">产品部2026年Q2绩效考核</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">考核周期</span><span class="pg-hd-info-value">2026年4-6月</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">操作人</span><span class="pg-hd-info-value">李HR（HRBP）</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">导入范围</span><span class="pg-hd-info-value">产品部 · 15人</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">已导入</span><span class="pg-hd-info-value" id="hdImported" style="color:var(--ac)">0人</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">待导入</span><span class="pg-hd-info-value" id="hdPending" style="color:var(--ac)">15人</span></div>
     </div>
   </div>
 
-  <!-- Step 2 -->
-  <div id="panel2" class="card fade-in" style="display:none">
-    <div class="card-title">数据预览</div>
-    <div class="card-desc">按员工分组展示，红色行存在错误需修正</div>
-    <div class="stats-bar" id="previewStats"></div>
-    <div style="max-height:480px;overflow-y:auto;border:1px solid var(--c2);border-radius:var(--r2)">
-      <table class="preview-table" id="previewTable"></table>
-    </div>
-    <div class="actions">
-      <button class="btn btn-s" onclick="goStep(1)">← 返回修改</button>
-      <button class="btn btn-p" onclick="doImport()">确认导入</button>
-    </div>
+  <!-- 导入操作栏 -->
+  <div class="upload-bar" id="uploadBar">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+    <div class="upload-bar-text">上传 Excel 文件批量导入目标 · <a href="#" style="color:var(--pr)" onclick="showToast('模板已下载','success');return false">下载导入模板</a></div>
+    <button class="btn btn-o" onclick="document.getElementById('fileInput').click()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      选择文件
+    </button>
+    <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleImport(event)">
   </div>
 
-  <!-- Step 3 -->
-  <div id="panel3" class="card fade-in" style="display:none;text-align:center;padding:48px 24px">
-    <div style="font-size:48px;margin-bottom:16px">✅</div>
-    <div class="card-title" style="font-size:18px;margin-bottom:8px">导入成功</div>
-    <div class="card-desc" style="margin-bottom:24px" id="doneSummary"></div>
-    <div style="display:flex;gap:12px;justify-content:center">
-      <a href="../demo-index.html" class="btn btn-p">返回工作台</a>
-      <button class="btn btn-s" onclick="resetImport()">继续导入</button>
+  <!-- 员工目标列表 -->
+  <div class="eval-list">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between">
+      <span style="font:600 15px/1 var(--f);color:var(--c9)">员工目标列表</span>
+      <span id="listSummary" style="font:400 12px/1 var(--f);color:var(--c5)"></span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:100px">被考核人</th>
+          <th style="width:80px">部门</th>
+          <th style="width:100px">模块</th>
+          <th>目标名称</th>
+          <th style="width:60px">类型</th>
+          <th style="width:60px">权重</th>
+          <th style="width:80px">目标值</th>
+          <th style="width:80px">挑战值</th>
+          <th style="width:80px">保底值</th>
+          <th style="width:80px">状态</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+    <div class="pager" id="pager"></div>
+  </div>
+
+  <!-- 审批流程 -->
+  <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-top:16px;margin-bottom:16px;overflow:hidden">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between">
+      <span style="font:600 15px/1 var(--f);color:var(--c9)">审批流程</span>
+    </div>
+    <div style="padding:0">
+      <table style="width:100%;border-collapse:collapse">
+        <thead><tr style="background:var(--c0)">
+          <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">节点</th>
+          <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">处理人</th>
+          <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">状态</th>
+        </tr></thead>
+        <tbody>
+          <tr style="background:var(--em50)"><td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c8);border-bottom:1px solid var(--dv)"><div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--em);flex-shrink:0"></span>HRBP批量导入</div></td><td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><div style="display:flex;align-items:center;gap:6px"><span style="width:22px;height:22px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">李</span><span style="font:400 13px/1 var(--f);color:var(--c8)">李HR</span></div></td><td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)"><span style="width:6px;height:6px;border-radius:50%;background:var(--pr);animation:pulse 2s ease-in-out infinite"></span>处理中</span></td></tr>
+          <tr><td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c6);border-bottom:1px solid var(--dv)"><div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--c3);flex-shrink:0"></span>员工确认</div></td><td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><div style="display:flex;align-items:center;gap:6px"><span style="width:22px;height:22px;border-radius:50%;background:var(--c1);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:var(--c5);flex-shrink:0">全</span><span style="font:400 13px/1 var(--f);color:var(--c6)">相关人员</span></div></td><td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--c1);color:var(--c5)">待处理</span></td></tr>
+          <tr><td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c4)"><div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--c3);flex-shrink:0"></span>上级审批</div></td><td style="padding:12px 16px"><div style="display:flex;align-items:center;gap:6px"><span style="width:22px;height:22px;border-radius:50%;background:var(--c1);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:var(--c5);flex-shrink:0">王</span><span style="font:400 13px/1 var(--f);color:var(--c4)">王总监</span></div></td><td style="padding:12px 16px"><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--c1);color:var(--c4)">待处理</span></td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
 <div class="toast" id="toast"></div>
-
+<script src="../navigation.js"></script>
 <script>
 GHR_NAV.init('perf', '目标批量导入');
-var currentStep=1,uploadedFile=null;
+var currentPage=1;var PAGE_SIZE=8;
 
-var MOCK_DATA=[
-  {emp:'张明',dept:'产品部',mod:'关键指标',name:'资源利用率（通用）',type:'定量',weight:5,target:105,challenge:110,baseline:100,unit:'%',desc:'',errors:[]},
-  {emp:'张明',dept:'产品部',mod:'关键指标',name:'HRAS UAT用户验收首次通过率',type:'定量',weight:10,target:98,challenge:100,baseline:95,unit:'%',desc:'',errors:[]},
-  {emp:'张明',dept:'产品部',mod:'关键指标',name:'HRAS需求评审及时率',type:'定量',weight:15,target:98,challenge:100,baseline:95,unit:'%',desc:'',errors:[]},
-  {emp:'张明',dept:'产品部',mod:'关键行动',name:'HRAS产品管理规范',type:'定性',weight:10,target:'',challenge:'',baseline:'',unit:'',desc:'需求管理流程规范等4项',errors:[]},
-  {emp:'张明',dept:'产品部',mod:'关键行动',name:'日常滚动需求响应',type:'定性',weight:10,target:'',challenge:'',baseline:'',unit:'',desc:'滚动响应日常需求',errors:[]},
-  {emp:'张明',dept:'产品部',mod:'关键行动',name:'HR ONE 绩效重构事项推进',type:'定性',weight:25,target:'',challenge:'',baseline:'',unit:'',desc:'3个里程碑按时交付',errors:[]},
-  {emp:'张明',dept:'产品部',mod:'关键行动',name:'AI应用项目探索与落地推广',type:'定性',weight:25,target:'',challenge:'',baseline:'',unit:'',desc:'3个版本按时发布',errors:[]},
-  {emp:'李华',dept:'产品部',mod:'关键指标',name:'产品迭代完成率',type:'定量',weight:20,target:95,challenge:100,baseline:90,unit:'%',desc:'',errors:[]},
-  {emp:'李华',dept:'产品部',mod:'关键指标',name:'客户需求响应及时率',type:'定量',weight:15,target:90,challenge:95,baseline:85,unit:'%',desc:'',errors:[]},
-  {emp:'李华',dept:'产品部',mod:'关键行动',name:'产品规划文档输出',type:'定性',weight:30,target:'',challenge:'',baseline:'',unit:'',desc:'完成Q3产品路线图',errors:[]},
-  {emp:'李华',dept:'产品部',mod:'关键行动',name:'跨部门协作项目推进',type:'定性',weight:20,target:'',challenge:'',baseline:'',unit:'',desc:'主导2个跨部门项目',errors:[]},
-  {emp:'李华',dept:'产品部',mod:'关键行动',name:'团队知识分享',type:'定性',weight:15,target:'',challenge:'',baseline:'',unit:'',desc:'每月1次技术分享',errors:[]},
-  {emp:'赵强',dept:'产品部',mod:'关键指标',name:'项目按时交付率',type:'定量',weight:25,target:90,challenge:95,baseline:85,unit:'%',desc:'',errors:[]},
-  {emp:'赵强',dept:'产品部',mod:'关键行动',name:'技术方案评审',type:'定性',weight:30,target:'',challenge:'',baseline:'',unit:'',desc:'完成3次技术方案评审',errors:[]},
-  {emp:'赵强',dept:'产品部',mod:'关键行动',name:'团队效能提升',type:'定性',weight:25,target:'',challenge:'',baseline:'',unit:'',desc:'团队代码质量提升20%',errors:[]},
+var EMPLOYEES=[
+  {name:'张明',dept:'产品部',goals:[
+    {mod:'关键指标',name:'资源利用率（通用）',type:'quant',weight:5,target:'',challenge:'',baseline:'',filled:false},
+    {mod:'关键指标',name:'HRAS UAT用户验收首次通过率',type:'quant',weight:10,target:'',challenge:'',baseline:'',filled:false},
+    {mod:'关键指标',name:'HRAS需求评审及时率',type:'quant',weight:15,target:'',challenge:'',baseline:'',filled:false},
+    {mod:'关键行动',name:'HRAS产品管理规范',type:'qual',weight:10,target:'',challenge:'',baseline:'',filled:false},
+    {mod:'关键行动',name:'日常滚动需求响应',type:'qual',weight:10,target:'',challenge:'',baseline:'',filled:false},
+    {mod:'关键行动',name:'HR ONE 绩效重构事项推进',type:'qual',weight:25,target:'',challenge:'',baseline:'',filled:false},
+    {mod:'关键行动',name:'AI应用项目探索与落地推广',type:'qual',weight:25,target:'',challenge:'',baseline:'',filled:false}
+  ]},
+  {name:'李华',dept:'产品部',goals:[
+    {mod:'关键指标',name:'产品迭代完成率',type:'quant',weight:20,target:'',challenge:'',baseline:'',filled:false},
+    {mod:'关键指标',name:'客户需求响应及时率',type:'quant',weight:15,target:'',challenge:'',baseline:'',filled:false},
+    {mod:'关键行动',name:'产品规划文档输出',type:'qual',weight:30,target:'',challenge:'',baseline:'',filled:false},
+    {mod:'关键行动',name:'跨部门协作项目推进',type:'qual',weight:20,target:'',challenge:'',baseline:'',filled:false},
+    {mod:'关键行动',name:'团队知识分享',type:'qual',weight:15,target:'',challenge:'',baseline:'',filled:false}
+  ]},
+  {name:'王芳',dept:'产品部',goals:[
+    {mod:'关键指标',name:'需求处理量',type:'quant',weight:20,target:'',challenge:'',baseline:'',filled:false},
+    {mod:'关键行动',name:'用户反馈跟进',type:'qual',weight:30,target:'',challenge:'',baseline:'',filled:false},
+    {mod:'关键行动',name:'文档规范执行',type:'qual',weight:20,target:'',challenge:'',baseline:'',filled:false}
+  ]},
+  {name:'赵强',dept:'产品部',goals:[
+    {mod:'关键指标',name:'项目按时交付率',type:'quant',weight:25,target:'',challenge:'',baseline:'',filled:false},
+    {mod:'关键行动',name:'技术方案评审',type:'qual',weight:30,target:'',challenge:'',baseline:'',filled:false},
+    {mod:'关键行动',name:'团队效能提升',type:'qual',weight:25,target:'',challenge:'',baseline:'',filled:false}
+  ]},
+  {name:'陈静',dept:'产品部',goals:[
+    {mod:'关键指标',name:'设计任务完成率',type:'quant',weight:20,target:'',challenge:'',baseline:'',filled:false},
+    {mod:'关键行动',name:'设计规范建设',type:'qual',weight:30,target:'',challenge:'',baseline:'',filled:false}
+  ]},
 ];
 
-function goStep(n){
-  if(n===2&&!MOCK_DATA.length){showToast('请先上传文件','error');return;}
-  currentStep=n;
-  [1,2,3].forEach(function(i){
-    document.getElementById('panel'+i).style.display=i===n?'':'none';
-    document.getElementById('step'+i).className='step'+(i===n?' active':i<n?' done':'');
-  });
-  document.getElementById('line1').className='step-line'+(n>1?' done':'');
-  document.getElementById('line2').className='step-line'+(n>2?' done':'');
-  if(n===2)renderPreview();
-  if(n===3){
-    var empCount=new Set(MOCK_DATA.map(function(r){return r.emp})).size;
-    document.getElementById('doneSummary').textContent='已为 '+empCount+' 名员工导入 '+MOCK_DATA.length+' 个目标';
-  }
+var MOCK_IMPORT=[
+  {emp:'张明',goals:[{name:'资源利用率（通用）',target:105,challenge:110,baseline:100},{name:'HRAS UAT用户验收首次通过率',target:98,challenge:100,baseline:95},{name:'HRAS需求评审及时率',target:98,challenge:100,baseline:95},{name:'HRAS产品管理规范',desc:'需求管理流程规范等4项'},{name:'日常滚动需求响应',desc:'滚动响应日常需求'},{name:'HR ONE 绩效重构事项推进',desc:'3个里程碑按时交付'},{name:'AI应用项目探索与落地推广',desc:'3个版本按时发布'}]},
+  {emp:'李华',goals:[{name:'产品迭代完成率',target:95,challenge:100,baseline:90},{name:'客户需求响应及时率',target:90,challenge:95,baseline:85},{name:'产品规划文档输出',desc:'完成Q3产品路线图'},{name:'跨部门协作项目推进',desc:'主导2个跨部门项目'},{name:'团队知识分享',desc:'每月1次技术分享'}]},
+];
+
+var currentGroup='全部';
+function getFiltered(){
+  if(currentGroup==='全部')return EMPLOYEES;
+  return EMPLOYEES.filter(function(e){return e.name===currentGroup;});
 }
 
-function handleFile(e){
-  var file=e.target.files[0];if(!file)return;
-  uploadedFile=file;
-  var size=file.size>1024*1024?(file.size/(1024*1024)).toFixed(1)+'MB':(file.size/1024).toFixed(0)+'KB';
-  document.getElementById('filePreview').innerHTML='<div class="file-preview"><div class="file-icon">📊</div><div class="file-info"><div class="file-name">'+file.name+'</div><div class="file-meta">'+size+'</div></div><button class="file-remove" onclick="removeFile()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>';
-  document.getElementById('btnNext1').disabled=false;
-}
+function render(){
+  var filtered=getFiltered();
+  var totalPages=Math.ceil(filtered.length/PAGE_SIZE)||1;
+  if(currentPage>totalPages)currentPage=totalPages;
+  var start=(currentPage-1)*PAGE_SIZE;
+  var pageData=filtered.slice(start,start+PAGE_SIZE);
 
-function removeFile(){
-  uploadedFile=null;document.getElementById('filePreview').innerHTML='';
-  document.getElementById('fileInput').value='';document.getElementById('btnNext1').disabled=true;
-}
-
-function renderPreview(){
-  var errCount=MOCK_DATA.filter(function(r){return r.errors.length>0;}).length;
-  var empCount=new Set(MOCK_DATA.map(function(r){return r.emp})).size;
-  document.getElementById('previewStats').innerHTML=
-    '<div class="stat-item"><span class="stat-dot ok"></span>覆盖 <b style="color:var(--c8)">'+empCount+'</b> 名员工，<b style="color:var(--c8)">'+MOCK_DATA.length+'</b> 个目标</div>'+
-    (errCount?'<div class="stat-item"><span class="stat-dot err"></span>错误 <b style="color:var(--ro)">'+errCount+'</b> 条</div>':'')
-
-  var groups={};
-  MOCK_DATA.forEach(function(r){
-    if(!groups[r.emp])groups[r.emp]={dept:r.dept,goals:[]};
-    groups[r.emp].goals.push(r);
-  });
-
-  var h='<thead><tr><th>目标名称</th><th>类型</th><th>权重</th><th>目标值</th><th>挑战值</th><th>保底值</th><th>衡量标准</th><th>状态</th></tr></thead><tbody>';
-  Object.keys(groups).forEach(function(emp){
-    var g=groups[emp];
-    h+='<tr class="emp-group"><td colspan="8">👤 '+emp+'（'+g.dept+'）— '+g.goals.length+' 个目标，权重合计 '+g.goals.reduce(function(s,r){return s+r.weight},0)+'%</td></tr>';
-    g.goals.forEach(function(r){
-      var hasErr=r.errors.length>0;
-      h+='<tr'+(hasErr?' class="err"':'')+'>'+
-        '<td style="font-weight:500;color:var(--c8)">'+r.name+'</td>'+
-        '<td><span style="padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:'+(r.type==='定量'?'var(--pr50);color:var(--pr)':'var(--vi50);color:var(--vi)')+'">'+r.type+'</span></td>'+
-        '<td style="font-family:var(--m)">'+r.weight+'%</td>'+
-        '<td style="font-family:var(--m)">'+(r.target||'—')+'</td>'+
-        '<td style="font-family:var(--m)">'+(r.challenge||'—')+'</td>'+
-        '<td style="font-family:var(--m)">'+(r.baseline||'—')+'</td>'+
-        '<td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+r.desc+'">'+(r.desc||'—')+'</td>'+
-        '<td>'+(hasErr?'<span style="color:var(--ro)">❌ '+r.errors[0]+'</span>':'<span style="color:var(--em700)">✓</span>')+'</td></tr>';
+  var html='';
+  pageData.forEach(function(emp){
+    var filledCount=emp.goals.filter(function(g){return g.filled;}).length;
+    var allFilled=filledCount===emp.goals.length;
+    html+='<tr class="emp-row"><td colspan="10"><div style="display:flex;align-items:center;gap:8px">👤 '+emp.name+'（'+emp.dept+'）<span style="font:400 11px/1 var(--f);color:'+(allFilled?'var(--em700)':'var(--c5)')+'">'+filledCount+'/'+emp.goals.length+' 已导入</span>'+(allFilled?'<span style="font:500 11px/1 var(--f);color:var(--em700);background:var(--em50);padding:2px 6px;border-radius:3px">✓ 完成</span>':'')+'</div></td></tr>';
+    emp.goals.forEach(function(g){
+      html+='<tr>'+
+        '<td></td>'+
+        '<td></td>'+
+        '<td><span class="mod-tag">'+g.mod+'</span></td>'+
+        '<td style="font-weight:500;color:var(--c8)">'+g.name+'</td>'+
+        '<td><span class="type-tag '+g.type+'">'+(g.type==='quant'?'定量':'定性')+'</span></td>'+
+        '<td style="font-family:var(--m)">'+g.weight+'%</td>'+
+        '<td'+(g.filled?'':' class="unfilled"')+'>'+(g.target||'—')+'</td>'+
+        '<td'+(g.filled?'':' class="unfilled"')+'>'+(g.challenge||'—')+'</td>'+
+        '<td'+(g.filled?'':' class="unfilled"')+'>'+(g.baseline||'—')+'</td>'+
+        '<td>'+(g.filled?'<span class="filled">✓ 已导入</span>':'<span class="unfilled">待导入</span>')+'</td>'+
+        '</tr>';
     });
   });
-  h+='</tbody>';
-  document.getElementById('previewTable').innerHTML=h;
+  document.getElementById('tableBody').innerHTML=html;
+
+  // 统计
+  var imported=EMPLOYEES.filter(function(e){return e.goals.every(function(g){return g.filled;});}).length;
+  document.getElementById('hdImported').textContent=imported+'人';
+  document.getElementById('hdPending').textContent=(EMPLOYEES.length-imported)+'人';
+  document.getElementById('listSummary').textContent='已导入 '+imported+' 人 · 待导入 '+(EMPLOYEES.length-imported)+' 人';
+
+  // 分页
+  var ph='<span style="font:400 12px/1 var(--f);color:var(--c5)">共 '+filtered.length+' 人，第 '+Math.min(start+1,filtered.length)+'-'+Math.min(start+PAGE_SIZE,filtered.length)+' 条</span><div style="display:flex;gap:4px">';
+  for(var p=1;p<=totalPages;p++){
+    ph+='<button style="width:28px;height:28px;border-radius:var(--r1);border:1px solid '+(p===currentPage?'var(--pr)':'var(--c2)')+';background:'+(p===currentPage?'var(--pr)':'var(--sf)')+';color:'+(p===currentPage?'#FFF':'var(--c6)')+';font:500 12px/1 var(--f);cursor:pointer;display:flex;align-items:center;justify-content:center" onclick="goPage('+p+')">'+p+'</button>';
+  }
+  ph+='</div>';
+  document.getElementById('pager').innerHTML=ph;
 }
 
-function doImport(){goStep(3);}
-function resetImport(){
-  uploadedFile=null;currentStep=1;
-  document.getElementById('filePreview').innerHTML='';
-  document.getElementById('fileInput').value='';
-  document.getElementById('btnNext1').disabled=true;
-  goStep(1);
+function goPage(p){currentPage=p;render();}
+
+function handleImport(e){
+  var file=e.target.files[0];if(!file)return;
+  MOCK_IMPORT.forEach(function(mi){
+    var emp=EMPLOYEES.find(function(e){return e.name===mi.emp;});
+    if(!emp)return;
+    mi.goals.forEach(function(ig){
+      var g=emp.goals.find(function(g){return g.name===ig.name;});
+      if(g){g.target=ig.target||'';g.challenge=ig.challenge||'';g.baseline=ig.baseline||'';g.desc=ig.desc||'';g.filled=true;}
+    });
+  });
+  render();
+  showToast('已导入 '+MOCK_IMPORT.length+' 名员工的目标数据','success');
+  e.target.value='';
 }
+
 function showToast(msg,type){var t=document.getElementById('toast');t.textContent=msg;t.className='toast '+(type||'success')+' show';setTimeout(function(){t.classList.remove('show')},3000);}
-var uz=document.getElementById('uploadZone');
-uz.addEventListener('dragover',function(e){e.preventDefault();uz.classList.add('dragover')});
-uz.addEventListener('dragleave',function(){uz.classList.remove('dragover')});
-uz.addEventListener('drop',function(e){e.preventDefault();uz.classList.remove('dragover');if(e.dataTransfer.files.length)handleFile({target:{files:e.dataTransfer.files}});});
+render();
 </script>
 </body>
 </html>
