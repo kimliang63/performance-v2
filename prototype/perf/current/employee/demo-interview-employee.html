@@ -73,6 +73,32 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .fade-in{animation:fadeIn .2s ease forwards}
+
+/* ═══ MONTHLY RESULTS ═══ */
+.mp-year{margin-bottom:14px}
+.mp-year:last-child{margin-bottom:0}
+.mp-year-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.mp-year-label{font:600 13px/1 var(--f);color:var(--c8)}
+.mp-year-range{font:400 12px/1 var(--f);color:var(--c5);background:var(--c0);padding:3px 10px;border-radius:var(--r1);cursor:pointer;border:1px solid var(--c2);transition:all .12s}
+.mp-year-range:hover{border-color:var(--pr);color:var(--pr)}
+.mp-year-select{appearance:none;-webkit-appearance:none;border:1px solid var(--c2);border-radius:var(--r1);padding:4px 24px 4px 10px;font:500 12px/1 var(--f);color:var(--c8);background:var(--c0);cursor:pointer;outline:none;background-image:url("data:image/svg+xml,%3Csvg width='8' height='5' viewBox='0 0 8 5' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L4 4L7 1' stroke='%2394A3B8' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
+.mp-year-select:focus{border-color:var(--pr)}
+.mp-months{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+.mp-months::-webkit-scrollbar{height:3px}
+.mp-months::-webkit-scrollbar-thumb{background:var(--c3);border-radius:2px}
+.mp-card{min-width:160px;flex-shrink:0;border:1px solid var(--c2);border-radius:var(--r2);padding:12px;transition:all .12s}
+.mp-card:hover{border-color:var(--pr200);box-shadow:0 2px 8px rgba(37,99,235,.08)}
+.mp-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.mp-card-month{font:600 12px/1 var(--f);color:var(--c6)}
+.mp-card-score{font:700 16px/1 var(--m);color:var(--pr)}
+.mp-card-grade{display:inline-block;padding:2px 8px;border-radius:4px;font:500 11px/1 var(--f)}
+.mp-card-grade.excellent{background:var(--em50);color:var(--em700)}
+.mp-card-grade.good{background:var(--pr50);color:var(--pr)}
+.mp-card-grade.normal{background:var(--c1);color:var(--c6)}
+.mp-card-grade.poor{background:var(--ac50);color:var(--ac700)}
+.mp-card-grade.bad{background:var(--ro50);color:var(--ro)}
+.mp-card-bar{height:3px;background:var(--c1);border-radius:2px;margin-top:8px;overflow:hidden}
+.mp-card-bar-fill{height:100%;border-radius:2px}
 </style>
 </head>
 <body>
@@ -119,27 +145,50 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
     </div>
   </div>
 
+  <!-- 是否面谈 -->
+  <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden">
+    <div class="section">
+      <div class="section-hd">
+        <div class="section-icon" style="background:var(--ac)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <span class="section-title">面谈确认</span>
+      </div>
+      <div class="input-group">
+        <div class="input-label"><span style="font:500 13px/1 var(--f);color:var(--c7)">您的直线上级是否有跟您进行过年度绩效面谈？</span><span style="color:var(--ro);font-size:12px">*</span></div>
+        <select class="input-field" style="cursor:pointer">
+          <option value="">请选择</option>
+          <option value="one_on_one">是，一对一面谈</option>
+          <option value="phone">是，电话面谈</option>
+          <option value="other">是，其他形式面谈</option>
+          <option value="no">否</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- 月度绩效结果展示 -->
+  <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden">
+    <div class="section">
+      <div class="section-hd">
+        <div class="section-icon" style="background:var(--pr)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+        <span class="section-title">月度绩效结果展示</span>
+      </div>
+      <div id="monthlyResults"></div>
+    </div>
+  </div>
+
   <!-- 三个赞 -->
   <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden">
     <div class="section">
       <div class="section-hd">
         <div class="section-icon" style="background:var(--em)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg></div>
-        <span class="section-title">三个赞</span>
+        <span class="section-title">点三个赞</span>
         <span class="section-desc">对上级的肯定与感谢</span>
       </div>
-      <div class="tip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>请写出三个您想对上级表达肯定或感谢的方面</div>
-      <div class="input-group">
-        <div class="input-label"><div class="input-num" style="background:var(--em)">1</div><span style="font:500 12px/1 var(--f);color:var(--c7)">赞一</span></div>
-        <input class="input-field" placeholder="感谢上级在XX方面的指导" value="感谢王总在产品战略方向上的清晰指导，帮助我更好地理解公司业务全局。">
-      </div>
-      <div class="input-group">
-        <div class="input-label"><div class="input-num" style="background:var(--em)">2</div><span style="font:500 12px/1 var(--f);color:var(--c7)">赞二</span></div>
-        <input class="input-field" placeholder="感谢上级在XX方面的支持" value="感谢王总在跨部门协调中的大力支持，为产品推进扫清了障碍。">
-      </div>
-      <div class="input-group">
-        <div class="input-label"><div class="input-num" style="background:var(--em)">3</div><span style="font:500 12px/1 var(--f);color:var(--c7)">赞三</span></div>
-        <input class="input-field" placeholder="感谢上级在XX方面的鼓励" value="感谢王总在团队管理方法上的分享，让我在带团队方面有了新的思路。">
-      </div>
+      <div class="tip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>双方共同回顾工作后，对工作中的亮点进行总结，每行一项，不少于三个</div>
+      <textarea class="textarea-field" placeholder="每行一项，至少填写3项&#10;如：&#10;1. 感谢上级在XX方面的指导&#10;2. 感谢上级在XX方面的支持&#10;3. 感谢上级在XX方面的鼓励">感谢王总在产品战略方向上的清晰指导，帮助我更好地理解公司业务全局。
+感谢王总在跨部门协调中的大力支持，为产品推进扫清了障碍。
+感谢王总在团队管理方法上的分享，让我在带团队方面有了新的思路。</textarea>
+      <div style="font:400 12px/1 var(--f);color:var(--c5);margin-top:6px">每行一项，至少填写3项</div>
     </div>
   </div>
 
@@ -148,22 +197,14 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
     <div class="section">
       <div class="section-hd">
         <div class="section-icon" style="background:var(--ac)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></div>
-        <span class="section-title">三个转</span>
+        <span class="section-title">拍三个转</span>
         <span class="section-desc">希望改进的方面</span>
       </div>
-      <div class="tip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>请写出三个您希望在下一阶段改进或转变的方面</div>
-      <div class="input-group">
-        <div class="input-label"><div class="input-num" style="background:var(--ac)">1</div><span style="font:500 12px/1 var(--f);color:var(--c7)">转一</span></div>
-        <input class="input-field" placeholder="希望在XX方面有所改进" value="希望在需求优先级判断上更加果断，减少反复沟通的时间成本。">
-      </div>
-      <div class="input-group">
-        <div class="input-label"><div class="input-num" style="background:var(--ac)">2</div><span style="font:500 12px/1 var(--f);color:var(--c7)">转二</span></div>
-        <input class="input-field" placeholder="希望在XX方面有所突破" value="希望提升数据分析能力，用数据驱动产品决策而非仅凭经验。">
-      </div>
-      <div class="input-group">
-        <div class="input-label"><div class="input-num" style="background:var(--ac)">3</div><span style="font:500 12px/1 var(--f);color:var(--c7)">转三</span></div>
-        <input class="input-field" placeholder="希望在XX方面有所成长" value="希望加强对行业趋势的洞察，提升产品前瞻性规划能力。">
-      </div>
+      <div class="tip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>双方共同回顾工作后，对工作中的不足进行总结，每行一项，不少于三个</div>
+      <textarea class="textarea-field" placeholder="每行一项，至少填写3项&#10;如：&#10;1. 希望在XX方面有所改进&#10;2. 希望在XX方面有所突破&#10;3. 希望在XX方面有所成长">希望在需求优先级判断上更加果断，减少反复沟通的时间成本。
+希望提升数据分析能力，用数据驱动产品决策而非仅凭经验。
+希望加强对行业趋势的洞察，提升产品前瞻性规划能力。</textarea>
+      <div style="font:400 12px/1 var(--f);color:var(--c5);margin-top:6px">每行一项，至少填写3项</div>
     </div>
   </div>
 
@@ -199,6 +240,33 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 3. 希望上级在绩效重构项目上给予更多指导和反馈</textarea>
     </div>
   </div>
+
+  <!-- 附件 -->
+  <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden">
+    <div class="section">
+      <div class="section-hd">
+        <div class="section-icon" style="background:var(--c5)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></div>
+        <span class="section-title">附件</span>
+        <span class="section-desc">可选</span>
+      </div>
+      <div style="border:2px dashed var(--c2);border-radius:var(--r2);padding:24px;text-align:center;cursor:pointer;transition:all .12s" onmouseover="this.style.borderColor='var(--pr)';this.style.background='var(--pr50)'" onmouseout="this.style.borderColor='var(--c2)';this.style.background='transparent'">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--c4)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:8px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <div style="font:500 13px/1 var(--f);color:var(--c6)">点击或拖拽文件至此上传</div>
+        <div style="font:400 12px/1 var(--f);color:var(--c4);margin-top:4px">支持 .doc .docx .xls .xlsx .pdf .txt</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 审批流程 -->
+  <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden">
+    <div class="section">
+      <div class="section-hd">
+        <div class="section-icon" style="background:var(--c6)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+        <span class="section-title">审批流程</span>
+      </div>
+      <div id="approvalFlow"></div>
+    </div>
+  </div>
 </div>
 
 <div class="validate-toast" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span id="toastMsg"></span></div>
@@ -206,6 +274,89 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 <script src="../navigation.js"></script>
 <script>
 GHR_NAV.init('perf', '绩效面谈·填写');
+
+var MONTH_NAMES=['','1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+var GRADE_CLS={'超出预期':'excellent','符合预期+':'good','符合预期':'normal','符合预期-':'poor','低于预期':'bad'};
+var GRADE_BAR={'超出预期':'var(--em)','符合预期+':'var(--pr)','符合预期':'var(--c4)','符合预期-':'var(--ac)','低于预期':'var(--ro)'};
+
+var MONTHLY_DATA={
+  '2026':{months:[4,5,6],data:{4:{score:3.82,grade:'符合预期+'},5:{score:3.70,grade:'超出预期'},6:{score:3.95,grade:'超出预期'}}},
+  '2025':{months:[1,2,3,4,5,6,7,8,9,10,11,12],data:{1:{score:3.50,grade:'符合预期'},2:{score:3.40,grade:'符合预期'},3:{score:3.65,grade:'符合预期+'},4:{score:2.07,grade:'符合预期+'},5:{score:3.60,grade:'符合预期+'},6:{score:3.85,grade:'符合预期+'},7:{score:3.70,grade:'符合预期+'},8:{score:3.50,grade:'符合预期'},9:{score:3.55,grade:'符合预期'},10:{score:3.80,grade:'符合预期+'},11:{score:3.70,grade:'符合预期+'},12:{score:4.10,grade:'符合预期+'}}}
+};
+var monthRanges={};
+var currentYear='2026';
+
+function renderMonthly(){
+  var el=document.getElementById('monthlyResults');
+  if(!el)return;
+  var years=Object.keys(MONTHLY_DATA).sort(function(a,b){return b-a;});
+  var yd=MONTHLY_DATA[currentYear];
+  if(!yd)return;
+  var months=monthRanges[currentYear]||yd.months;
+
+  var h='<div class="mp-year-hd"><span class="mp-year-label">绩效趋势</span><div style="display:flex;align-items:center;gap:8px">';
+  h+='<select class="mp-year-select" onchange="switchYear(this.value)">';
+  years.forEach(function(y){h+='<option value="'+y+'"'+(y===currentYear?' selected':'')+'>'+y+'年'+(y==='2026'?' (当前)':'')+'</option>';});
+  h+='</select>';
+  h+='<span class="mp-year-range" onclick="cycleRange(this)">'+months.length+'个月</span>';
+  h+='</div></div>';
+
+  h+='<div class="mp-months" style="margin-top:10px">';
+  months.forEach(function(m){
+    var d=yd.data[m];
+    if(!d)return;
+    var gc=GRADE_CLS[d.grade]||'normal';
+    var bc=GRADE_BAR[d.grade]||'var(--c4)';
+    var bw=Math.min(d.score,5)/5*100;
+    h+='<div class="mp-card"><div class="mp-card-top"><span class="mp-card-month">'+MONTH_NAMES[m]+'</span><span class="mp-card-score">'+d.score+'</span></div><span class="mp-card-grade '+gc+'">'+d.grade+'</span><div class="mp-card-bar"><div class="mp-card-bar-fill" style="width:'+bw+'%;background:'+bc+'"></div></div></div>';
+  });
+  h+='</div>';
+
+  el.innerHTML=h;
+}
+
+function switchYear(year){
+  currentYear=year;
+  renderMonthly();
+}
+
+function cycleRange(el){
+  var full=[1,2,3,4,5,6,7,8,9,10,11,12];
+  var q1=[1,2,3],q2=[4,5,6],q3=[7,8,9],q4=[10,11,12];
+  var ranges=[full,q1,q2,q3,q4];
+  var labels=['12个月','Q1 (1-3月)','Q2 (4-6月)','Q3 (7-9月)','Q4 (10-12月)'];
+  var cur=monthRanges[currentYear]?monthRanges[currentYear].length:12;
+  var idx=0;
+  if(cur===12)idx=1;else if(cur===3&&monthRanges[currentYear][0]===1)idx=2;else if(cur===3&&monthRanges[currentYear][0]===4)idx=3;else if(cur===3&&monthRanges[currentYear][0]===7)idx=4;
+  monthRanges[currentYear]=ranges[idx];
+  renderMonthly();
+}
+
+renderMonthly();
+
+// 审批流程
+(function(){
+  var flow=[
+    {node:'员工填写',person:'张明',color:'var(--em)',status:'已完成',statusBg:'var(--em50)',statusColor:'var(--em700)',time:'2026-06-20 14:30'},
+    {node:'上级审批',person:'王总监',color:'var(--pr)',status:'处理中',statusBg:'var(--pr50)',statusColor:'var(--pr)',time:''},
+    {node:'HRBP确认',person:'李HR',color:'var(--c4)',status:'待处理',statusBg:'var(--c1)',statusColor:'var(--c5)',time:''}
+  ];
+  var h='';
+  flow.forEach(function(f,i){
+    h+='<div style="display:flex;align-items:flex-start;gap:12px;padding:12px 0;'+(i<flow.length-1?'border-bottom:1px solid var(--dv)':'')+'">';
+    h+='<div style="width:32px;height:32px;border-radius:50%;background:'+f.color+';display:flex;align-items:center;justify-content:center;flex-shrink:0">';
+    if(f.status==='已完成') h+='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>';
+    else h+='<span style="font:600 11px/1 var(--f);color:#FFF">'+f.person[0]+'</span>';
+    h+='</div>';
+    h+='<div style="flex:1;min-width:0">';
+    h+='<div style="font:500 13px/1 var(--f);color:var(--c8)">'+f.node+'</div>';
+    h+='<div style="font:400 12px/1 var(--f);color:var(--c5);margin-top:2px">'+f.person+(f.time?' · '+f.time:'')+'</div>';
+    h+='</div>';
+    h+='<span style="font:500 11px/1 var(--f);padding:3px 10px;border-radius:var(--r1);background:'+f.statusBg+';color:'+f.statusColor+'">'+f.status+'</span>';
+    h+='</div>';
+  });
+  document.getElementById('approvalFlow').innerHTML=h;
+})();
 
 function submitInterview(){
   showToast('面谈记录已提交','success');

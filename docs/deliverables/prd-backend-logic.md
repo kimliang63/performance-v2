@@ -69,22 +69,24 @@ submit Step B（考核环节）:
   所有指标得分算完
 ```
 
-### 3.4 总分计算（仅直接上级节点）
+### 3.4 最终得分计算（直接上级节点）
 
 ```
 submit Step B（直接上级节点）:
-  1. 层级1: 各指标得分（已算出）
-  2. 层级2: 总分公式(score_A×weight_A/100 + ... + bonus - penalty)
-  3. 总分映射到等级（查 grade_rule）
+  1. 层级1: 各节点表单总分（已由各节点算出）
+  2. 层级2: 最终得分 = Σ(各节点表单总分 × 方案配置的节点权重 / 100)
+  3. 最终得分映射到等级（查 grade_rule）
 ```
 
-### 3.5 总评价结果计算（节点权重）
+**注意**：等级仅用于展示和强制分布，不参与任何计算。等级映射在最终得分算出后执行。
+
+### 3.5 最终得分计算（节点权重）
 
 ```
 if 节点权重已配置:
-    总评价结果 = Σ(各节点评价结果 × 节点权重) / Σ(节点权重)
+    最终得分 = Σ(各节点表单总分 × 节点权重) / Σ(节点权重)
 else:
-    总评价结果 = 最后一个填写节点的评价结果（BR-034）
+    最终得分 = 最后一个填写节点的表单总分（BR-034）
 ```
 
 ### 3.6 强制分布实时计算
@@ -180,25 +182,36 @@ else:
 ```
 自评 submit:
   A. 校验: 完成值+评价结果必填
-  B. 计算: 遍历指标 → calc_rule.formula → 指标得分
-  C. 存储: 新增 eval_detail (submitter_role=self, status=active)
+  B. 计算:
+    → 遍历每个指标:
+      定量指标: calc_rule.formula(actual_value, grades) → 指标得分
+      定性指标: eval_rule.grades[选择的等级].score → 指标得分
+    → 单表单总分 = Σ(指标得分 × 指标权重 / 100) + 加分 - 减分
+  C. 存储: 新增 eval_detail (submitter_role=self, status=active, score_data, total_score=单表单总分)
   D. 流程: 生成间接上级评分待办
 
 间接上级 submit:
   A. 校验: 评价结果必填
-  B. 计算: 遍历指标 → 指标得分
-  C. 存储: 新增 eval_detail (submitter_role=indirect, status=active)
+  B. 计算:
+    → 遍历每个指标:
+      定量指标: calc_rule.formula(员工填的actual_value, grades) → 指标得分
+      定性指标: eval_rule.grades[间接上级选择的等级].score → 指标得分（基于间接上级的评价重新计算）
+    → 单表单总分 = Σ(指标得分 × 指标权重 / 100) + 加分 - 减分
+  C. 存储: 新增 eval_detail (submitter_role=indirect, status=active, score_data, total_score=单表单总分)
   D. 流程: 推进到直接上级
 
-间接上级 reject:
+间接上级/直接上级 reject:
   该员工所有 active 行全部 voided
   流程回到 self_scoring
   员工修改后 submit → 全流程重来
 
 直接上级 submit:
   A. 校验: 总评价结果必填
-  B. 计算: 指标得分 + 层级2总分 + 等级映射
-  C. 存储: 新增 eval_detail (submitter_role=direct, total_score, total_eval_result)
+  B. 计算:
+    → 同上计算各指标得分 + 单表单总分
+    → 层级2: 最终得分 = Σ(各节点表单总分 × 方案配置的节点权重 / 100)
+    → 最终得分映射到等级（查 grade_rule）
+  C. 存储: 新增 eval_detail (submitter_role=direct, total_score=最终得分, total_eval_result=等级)
   D. 流程: 考核完成 → 触发结果审定
 ```
 
@@ -211,12 +224,15 @@ else:
   C. 存储: 更新强制分布计数(原子操作) + 新增 ratification_detail
   D. 流程: 推进到下一节点
 
+间接上级/逐级上级 reject:
+  当前行 voided + 强制分布计数回滚
+  流程回到直接上级 → 直接上级重新 submit
+
 逐级上级到达停止人员:
   审定完成 → 触发面谈+确认环节
 
 HRBP reject:
-  当前 HRBP 行 voided
-  强制分布计数回滚
+  当前 HRBP 行 voided + 强制分布计数回滚
   回到直接上级 → 直接上级重新 submit
 ```
 
@@ -263,13 +279,14 @@ HRBP reject:
 - 上级重新审批 → ref_detail_id 指向新行
 
 ### 6.2 绩效考核驳回（已确认方案B）
-- 间接上级 reject → 该员工所有 active 行全部 voided
+- 间接/直接上级 reject → 该员工所有 active 行全部 voided
 - 员工修改完成值 → submit → 新增行 → 间接上级重新评分 → 直接上级重新评分
 - 全部重来（完成值变了，旧评分失效）
 
-### 6.3 HRBP驳回审定
-- HRBP reject → 当前行 voided + 强制分布计数回滚
-- 回到直接上级 → 直接上级重新 submit → 新增行
+### 6.3 审定驳回
+- 间接/逐级上级 reject → 当前行 voided + 强制分布计数回滚 → 回到直接上级
+- HRBP reject → 当前行 voided + 强制分布计数回滚 → 回到直接上级
+- 直接上级重新 submit → 新增行 → 重新进入逐级审定流程
 
 ### 6.4 面谈驳回
 - 上级 reject → 员工 submit → 新增行(active)，旧行(voided)
@@ -304,7 +321,7 @@ HRBP reject:
 | 变更 | 说明 |
 |------|------|
 | 移除 save 接口 | goal/evaluation/interview 的 save 端点全部移除 |
-| 考核 submit 增加 reject | action=submit / reject，reject 仅间接上级节点可用 |
+| 考核 submit 增加 reject | action=submit / reject，reject 除发起人外任意节点可用 |
 | 确认超时走 submit | auto-confirm 调用同一个 submit 接口 |
 | API 总数 | 40 → 37（移除3个save） |
 
@@ -317,4 +334,4 @@ HRBP reject:
 | 1 | 目标制定环节，空审批人跳过后，目标数据是否直接 approved？ | 目标状态机 | 待确认 |
 | 2 | 考核环节间接上级驳回后，直接上级之前的评分是否需要保留作废？ | 已确认全部作废 | ✅ |
 | 3 | 审定环节跳过审定的员工，其强制分布等级来源 | 方案配置的固定等级（BR-014） | ✅ |
-| 4 | 面谈数据引用到确认表单，月度考核无面谈环节时确认表如何展示 | 显示"无面谈记录" | 待确认 |
+| 4 | 面谈数据引用到确认表单，月度考核无面谈环节时确认表如何展示 | 确认表单面谈字段无数据传入即隐藏 | ✅ |

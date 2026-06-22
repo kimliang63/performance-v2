@@ -167,11 +167,11 @@
               │ _scoring       │  └────┬─────┘
               └───────┬────────┘       │ resubmit
                  ┌────┴────┐           ▼
-            submit     (无驳回)  [回到self_scoring]
-                 ▼
-              ┌──────────────┐
-              │  completed   │
-              └──────────────┘
+            submit     reject    [回到self_scoring]
+                 ▼         ▼
+              ┌──────────────┐  ┌──────────┐
+              │  completed   │  │ rejected │
+              └──────────────┘  └──────────┘
 ```
 
 ### 3.2 状态表
@@ -195,6 +195,7 @@
 | `pending_indirect_scoring` | `submit` + `indirect为空` | `pending_direct_scoring` | 自动跳过（流程引擎） |
 | `pending_indirect_scoring` | `reject` | `rejected` | 间接上级驳回，该员工所有 active 行 voided |
 | `pending_direct_scoring` | `submit` | `completed` | 直接上级提交评分，按节点权重计算总评价结果 |
+| `pending_direct_scoring` | `reject` | `rejected` | 直接上级驳回，该员工所有 active 行 voided，通知员工 |
 | `rejected` | `resubmit` | `self_scoring` | 员工修改完成值后重新提交 |
 
 ### 3.4 总评价结果计算规则
@@ -228,27 +229,36 @@ else:
                 ┌────────────────────────┐
                 │ pending_indirect_rate  │ ← 可跳过
                 └───────────┬────────────┘
-                            │
-                            ▼
+                       ┌────┴────┐
+                  submit     reject
+                       │         │
+                       │         ▼
+                       │  ┌──────────────┐
+                       │  │ 回到 direct  │
+                       │  └──────────────┘
+                       ▼
                 ┌────────────────────────┐
                 │ pending_hierarchy_rate │
                 └───────────┬────────────┘
                        ┌────┴────┐
-                  (grade≠A)   (grade=A)
+                  submit     reject
                        │         │
-                       │         ▼
-                       │  ┌─────────────────────┐
-                       │  │ pending_hrbp_approval│
-                       │  └──────────┬──────────┘
-                       │        ┌────┴────┐
-                       │   approve    reject
-                       │        ▼         ▼
-                       │  [completed]  [回到direct_rate]
-                       │
-                       ▼
-                 ┌──────────────┐
-                 │  completed   │
-                 └──────────────┘
+                  ┌────┴────┐    ▼
+             (grade≠A)  (grade=A)  ┌──────────────┐
+                  │         │      │ 回到 direct  │
+                  │         ▼      └──────────────┘
+                  │  ┌─────────────────────┐
+                  │  │ pending_hrbp_approval│
+                  │  └──────────┬──────────┘
+                  │        ┌────┴────┐
+                  │   approve    reject
+                  │        ▼         ▼
+                  │  [completed]  [回到direct_rate]
+                  │
+                  ▼
+            ┌──────────────┐
+            │  completed   │
+            └──────────────┘
 ```
 
 ### 4.2 状态表
@@ -272,6 +282,8 @@ else:
 | `pending_direct_rate` | `submit` + `校验通过` | `pending_indirect_rate` | 直接上级评级完成 |
 | `pending_indirect_rate` | `submit` | `pending_hierarchy_rate` | 间接上级评级完成 |
 | `pending_indirect_rate` | `submit` + `indirect为空` | `pending_hierarchy_rate` | 自动跳过（流程引擎） |
+| `pending_indirect_rate` | `reject` | `pending_direct_rate` | 间接上级驳回，当前行 voided + 强制分布计数回滚，回到直接上级 |
+| `pending_hierarchy_rate` | `reject` | `pending_direct_rate` | 逐级上级驳回，当前行 voided + 强制分布计数回滚，回到直接上级 |
 | `pending_hierarchy_rate` | `submit` + `到达停止人员` | `completed` | 汇报线模式：到特定高管结束 |
 | `pending_hierarchy_rate` | `submit` + `到达顶层` | `completed` | 组织架构模式：到顶层组织结束 |
 | `pending_hierarchy_rate` | `submit` + `调整后等级=A` | `pending_hrbp_approval` | 触发HRBP审批 |
@@ -337,6 +349,7 @@ else:
 - 员工不同意 → **不驳回**，不重新确认，线下处理
 - HRBP角色仅为"知悉"，不审批不驳回
 - 确认表单数据全部只读：审定结果 + 面谈结果 + 考核结果
+- 月度考核无面谈环节时，确认表单中面谈相关字段不显示（无数据传入即隐藏）
 
 ---
 

@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HROne 绩效管理系统 - 设计文档总览</title>
+<style>
+:root {
+  --bg: #f5f5f5;
+  --card: #ffffff;
+  --primary: #2563EB;
+  --primary-light: #EFF6FF;
+  --success: #10B981;
+  --warning: #F59E0B;
+  --danger: #F43F5E;
+  --text: #0F172A;
+  --text-secondary: #64748B;
+  --border: #E2E8F0;
+  --shadow: 0 1px 3px rgba(0,0,0,.05), 0 1px 2px rgba(0,0,0,.03);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', 'Noto Sans SC', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+/* Header */
+.header { background: linear-gradient(135deg, #1E3A8A 0%, #2563EB 100%); color: white; padding: 48px 0; text-align: center; }
+.header h1 { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+.header p { font-size: 16px; opacity: 0.9; }
+.header .update-time { font-size: 14px; opacity: 0.7; margin-top: 12px; }
+
+/* Container */
+.container { max-width: 1400px; margin: 0 auto; padding: 32px 24px; }
+
+/* Section */
+.section { margin-bottom: 40px; }
+.section-title {
+  font-size: 20px; font-weight: 700; margin-bottom: 20px;
+  padding-left: 12px; border-left: 4px solid var(--primary);
+  display: flex; align-items: center; gap: 10px;
+}
+.section-title .badge {
+  font-size: 12px; padding: 4px 10px; border-radius: 20px;
+  background: var(--primary-light); color: var(--primary);
+}
+
+/* Cards Grid */
+.cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+
+/* Card */
+.card {
+  background: var(--card); border-radius: 12px; padding: 24px;
+  box-shadow: var(--shadow); border: 1px solid var(--border);
+  transition: all 0.2s;
+}
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -4px rgba(0,0,0,.08), 0 2px 6px -2px rgba(0,0,0,.04);
+}
+.card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.card-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; color: white;
+}
+.card-icon.blue { background: linear-gradient(135deg, #2563EB, #3B82F6); }
+.card-icon.green { background: linear-gradient(135deg, #10B981, #34D399); }
+.card-icon.orange { background: linear-gradient(135deg, #F59E0B, #FBBF24); }
+.card-icon.purple { background: linear-gradient(135deg, #8B5CF6, #A78BFA); }
+.card-icon.red { background: linear-gradient(135deg, #F43F5E, #FB7185); }
+.card-title { font-size: 16px; font-weight: 600; color: var(--text); }
+.card-desc { font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; }
+
+/* Tags */
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.tag {
+  font-size: 11px; padding: 4px 8px; border-radius: 6px;
+  font-weight: 500;
+}
+.tag-blue { background: #EFF6FF; color: #2563EB; }
+.tag-green { background: #ECFDF5; color: #047857; }
+.tag-orange { background: #FFFBEB; color: #B45309; }
+.tag-purple { background: #F5F3FF; color: #7C3AED; }
+
+/* List */
+.card-list { list-style: none; }
+.card-list li {
+  padding: 8px 0; border-bottom: 1px solid var(--border);
+  font-size: 13px; color: var(--text-secondary);
+  display: flex; align-items: center; gap: 8px;
+}
+.card-list li:last-child { border-bottom: none; }
+.card-list li::before { content: '•'; color: var(--primary); font-weight: bold; }
+
+/* Button */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: 500;
+  text-decoration: none; transition: all 0.15s;
+}
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: #1D4ED8; }
+.btn-outline { background: transparent; color: var(--primary); border: 1px solid var(--primary); }
+.btn-outline:hover { background: var(--primary-light); }
+
+/* Stats */
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+.stat-card {
+  background: var(--card); border-radius: 12px; padding: 20px;
+  box-shadow: var(--shadow); text-align: center;
+}
+.stat-value { font-size: 28px; font-weight: 700; color: var(--primary); font-family: 'JetBrains Mono', monospace; }
+.stat-label { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+
+/* Architecture Diagram */
+.arch-diagram {
+  background: var(--card); border-radius: 12px; padding: 32px;
+  box-shadow: var(--shadow); margin-bottom: 24px;
+}
+.arch-layer {
+  border: 2px solid var(--border); border-radius: 12px; padding: 20px;
+  margin-bottom: 16px; position: relative;
+}
+.arch-layer:last-child { margin-bottom: 0; }
+.arch-label {
+  position: absolute; top: -12px; left: 20px; background: var(--primary);
+  color: white; padding: 4px 16px; border-radius: 20px; font-size: 12px; font-weight: 600;
+}
+.arch-label.v1 { background: #8B5CF6; }
+.arch-label.v2 { background: #2563EB; }
+.arch-label.v4 { background: #10B981; }
+.arch-content { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
+.arch-item {
+  background: #F8FAFC; border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px 16px; font-size: 13px; flex: 1; min-width: 150px;
+}
+.arch-item h4 { font-size: 13px; font-weight: 600; color: var(--primary); margin-bottom: 4px; }
+.arch-item p { font-size: 12px; color: var(--text-secondary); }
+.arch-arrow { text-align: center; padding: 12px 0; color: var(--primary); font-size: 20px; }
+
+/* Table */
+.table-container { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { background: #F8FAFC; padding: 12px; text-align: left; font-weight: 600; border-bottom: 2px solid var(--border); }
+td { padding: 12px; border-bottom: 1px solid var(--border); }
+tr:hover td { background: #F8FAFC; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .cards-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>HROne 绩效管理系统</h1>
+  <p>设计文档总览 · Design Document Overview</p>
+  <div class="update-time">最后更新：2026-06-18 | 版本：v2</div>
+</div>
+
+<div class="container">
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat-card">
+      <div class="stat-value">9</div>
+      <div class="stat-label">PRD 文档</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">36</div>
+      <div class="stat-label">业务规则</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">25+</div>
+      <div class="stat-label">数据库表</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">179</div>
+      <div class="stat-label">功能项</div>
+    </div>
+  </div>
+
+  <!-- Page Relationship -->
+  <div class="section">
+    <h2 class="section-title">页面关系说明</h2>
+    <div style="background: var(--card); border-radius: 12px; padding: 24px; box-shadow: var(--shadow);">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+        <div style="padding: 20px; background: #F8FAFC; border-radius: 8px; border: 1px solid var(--border);">
+          <h3 style="font-size: 16px; font-weight: 600; color: var(--primary); margin-bottom: 12px;">📍 design-overview.html（当前页面）</h3>
+          <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px;">
+            <strong>定位</strong>：设计文档导航中心
+          </p>
+          <ul style="font-size: 13px; color: var(--text-secondary); padding-left: 20px;">
+            <li>文档索引与快速导航</li>
+            <li>架构概览（简化版）</li>
+            <li>版本状态总览</li>
+            <li>核心数据库表概览</li>
+          </ul>
+        </div>
+        <div style="padding: 20px; background: #F8FAFC; border-radius: 8px; border: 1px solid var(--border);">
+          <h3 style="font-size: 16px; font-weight: 600; color: var(--primary); margin-bottom: 12px;">🔧 system-architecture.html</h3>
+          <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px;">
+            <strong>定位</strong>：技术架构详情
+          </p>
+          <ul style="font-size: 13px; color: var(--text-secondary); padding-left: 20px;">
+            <li>6个Tab详细内容</li>
+            <li>完整架构图与数据模型</li>
+            <li>计算引擎规格</li>
+            <li>执行链路与逆向场景</li>
+          </ul>
+        </div>
+      </div>
+      <div style="margin-top: 20px; padding: 16px; background: var(--primary-light); border-radius: 8px; text-align: center;">
+        <p style="font-size: 13px; color: var(--primary);">
+          <strong>导航流程</strong>：design-overview.html（总览） → system-architecture.html（技术详情） → 各PRD文档（业务细节）
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Architecture -->
+  <div class="section">
+    <h2 class="section-title">三层配置架构 <span class="badge">核心设计</span></h2>
+    <div class="arch-diagram">
+      <div class="arch-layer">
+        <div class="arch-label v1">V1 基础配置层</div>
+        <div class="arch-content">
+          <div class="arch-item"><h4>绩效周期</h4><p>月度/半年度/年度</p></div>
+          <div class="arch-item"><h4>等级规则</h4><p>等级定义+分数区间</p></div>
+          <div class="arch-item"><h4>计算规则</h4><p>公式配置</p></div>
+          <div class="arch-item"><h4>衡量标准</h4><p>目标值/挑战值/保底值</p></div>
+          <div class="arch-item"><h4>指标库</h4><p>指标+衡量标准+计算规则</p></div>
+          <div class="arch-item"><h4>评价规则</h4><p>评价等级定义</p></div>
+          <div class="arch-item"><h4>强制分布</h4><p>分布比例+控制模式</p></div>
+        </div>
+      </div>
+
+      <div class="arch-arrow">⬇ FK 引用（只读）</div>
+
+      <div class="arch-layer">
+        <div class="arch-label v2">V2 方案配置层</div>
+        <div class="arch-content">
+          <div class="arch-item"><h4>绩效方案</h4><p>方案模板，COE维护</p></div>
+          <div class="arch-item"><h4>考核组</h4><p>人员匹配规则</p></div>
+          <div class="arch-item"><h4>环节配置</h4><p>开启/结束方式+流程模板</p></div>
+          <div class="arch-item"><h4>强制分布</h4><p>活动级分布参数</p></div>
+        </div>
+      </div>
+
+      <div class="arch-arrow">⬇ 快照 copy（不可变）</div>
+
+      <div class="arch-layer">
+        <div class="arch-label v4">V4 活动层</div>
+        <div class="arch-content">
+          <div class="arch-item"><h4>考核活动</h4><p>方案快照+活动级覆盖</p></div>
+          <div class="arch-item"><h4>参与者</h4><p>员工+考核组分配</p></div>
+          <div class="arch-item"><h4>环节状态</h4><p>各环节进度跟踪</p></div>
+          <div class="arch-item"><h4>操作日志</h4><p>全链路审计</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 20px; padding: 16px; background: #EFF6FF; border-radius: 8px; border-left: 4px solid var(--primary);">
+      <strong>📄 技术架构详情</strong>
+      <p style="margin-top: 8px; font-size: 13px; color: var(--text-secondary);">
+        查看完整的系统架构设计（含6个Tab：系统总览、三层架构、活动处理流程、数据模型、计算引擎、逆向场景）
+      </p>
+      <a href="system-architecture.html" class="btn btn-primary" style="margin-top: 12px;">打开系统架构设计 →</a>
+    </div>
+  </div>
+
+  <!-- Core Documents -->
+  <div class="section">
+    <h2 class="section-title">核心设计文档</h2>
+    <div class="cards-grid">
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon blue">📋</div>
+          <div class="card-title">配置与方案更新逻辑</div>
+        </div>
+        <div class="card-desc">配置层级关系、版本管理、快照机制、配置继承与覆盖规则</div>
+        <div class="tags">
+          <span class="tag tag-blue">版本管理</span>
+          <span class="tag tag-green">快照机制</span>
+        </div>
+        <ul class="card-list">
+          <li>三层配置架构（基础→方案→活动）</li>
+          <li>方案版本自动递增</li>
+          <li>活动快照不可变</li>
+          <li>活动级配置覆盖优先</li>
+        </ul>
+        <div style="margin-top: 16px;">
+          <a href="deliverables/prd-config-scheme-update.md" class="btn btn-primary">查看文档</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon green">🚀</div>
+          <div class="card-title">活动处理逻辑</div>
+        </div>
+        <div class="card-desc">活动生命周期、状态机、执行流程、环节处理逻辑、监控管理</div>
+        <div class="tags">
+          <span class="tag tag-green">生命周期</span>
+          <span class="tag tag-orange">状态机</span>
+        </div>
+        <ul class="card-list">
+          <li>活动状态：draft → active → completed/terminated</li>
+          <li>环节状态：per participant 独立管理</li>
+          <li>待办任务分配逻辑</li>
+          <li>超时处理规则</li>
+        </ul>
+        <div style="margin-top: 16px;">
+          <a href="deliverables/prd-activity-processing.md" class="btn btn-primary">查看文档</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon orange">⚠️</div>
+          <div class="card-title">配置变更影响范围</div>
+        </div>
+        <div class="card-desc">变更影响矩阵、审批流程、通知机制、回滚机制</div>
+        <div class="tags">
+          <span class="tag tag-orange">影响评估</span>
+          <span class="tag tag-purple">审批流程</span>
+        </div>
+        <ul class="card-list">
+          <li>基础配置变更影响矩阵</li>
+          <li>方案配置变更影响矩阵</li>
+          <li>活动配置变更影响矩阵</li>
+          <li>配置变更审批流程</li>
+        </ul>
+        <div style="margin-top: 16px;">
+          <a href="deliverables/prd-config-change-impact.md" class="btn btn-primary">查看文档</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon purple">🔄</div>
+          <div class="card-title">实时更新 vs 版本管理</div>
+        </div>
+        <div class="card-desc">信息分类、更新机制、决策树、配置更新流程</div>
+        <div class="tags">
+          <span class="tag tag-blue">实时更新</span>
+          <span class="tag tag-green">版本管理</span>
+        </div>
+        <ul class="card-list">
+          <li>实时更新：草稿方案、基础配置</li>
+          <li>版本管理：已启用方案、活动快照</li>
+          <li>快照不可变：活动执行配置</li>
+          <li>配置更新决策树</li>
+        </ul>
+        <div style="margin-top: 16px;">
+          <a href="deliverables/prd-realtime-vs-version.md" class="btn btn-primary">查看文档</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon blue">🗄️</div>
+          <div class="card-title">数据库设计</div>
+        </div>
+        <div class="card-desc">数据模型、表结构、索引设计、ER图、触发器</div>
+        <div class="tags">
+          <span class="tag tag-blue">表结构</span>
+          <span class="tag tag-green">索引设计</span>
+        </div>
+        <ul class="card-list">
+          <li>新增表：版本历史、配置覆盖</li>
+          <li>变更字段：version、scheme_snapshot</li>
+          <li>索引策略：B-tree、复合索引</li>
+          <li>触发器：版本历史自动记录</li>
+        </ul>
+        <div style="margin-top: 16px;">
+          <a href="deliverables/prd-database-design.md" class="btn btn-primary">查看文档</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon red">⚙️</div>
+          <div class="card-title">后端处理逻辑</div>
+        </div>
+        <div class="card-desc">submit接口通用流程、计算引擎、数据存储模式、逆向场景</div>
+        <div class="tags">
+          <span class="tag tag-orange">计算引擎</span>
+          <span class="tag tag-purple">数据存储</span>
+        </div>
+        <ul class="card-list">
+          <li>submit原子操作4步流水线</li>
+          <li>两层级公式计算</li>
+          <li>追加式数据存储</li>
+          <li>逆向场景处理</li>
+        </ul>
+        <div style="margin-top: 16px;">
+          <a href="deliverables/prd-backend-logic.md" class="btn btn-primary">查看文档</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon orange">🔄</div>
+          <div class="card-title">更新特殊场景</div>
+        </div>
+        <div class="card-desc">配置/方案/活动更新场景、并发处理、数据一致性保障</div>
+        <div class="tags">
+          <span class="tag tag-orange">场景处理</span>
+          <span class="tag tag-purple">并发控制</span>
+        </div>
+        <ul class="card-list">
+          <li>配置更新影响范围</li>
+          <li>方案更新处理规则</li>
+          <li>活动配置覆盖逻辑</li>
+          <li>并发更新乐观锁</li>
+          <li>数据一致性保障</li>
+        </ul>
+        <div style="margin-top: 16px;">
+          <a href="deliverables/prd-update-scenarios.md" class="btn btn-primary">查看文档</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Status Documents -->
+  <div class="section">
+    <h2 class="section-title">状态机与API文档</h2>
+    <div class="cards-grid">
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon green">📊</div>
+          <div class="card-title">实体状态机定义</div>
+        </div>
+        <div class="card-desc">各实体状态机定义、转换表、跨实体联动</div>
+        <div class="tags">
+          <span class="tag tag-green">状态机</span>
+        </div>
+        <ul class="card-list">
+          <li>Scheme（绩效方案）状态机</li>
+          <li>PBC Goal（目标制定）状态机</li>
+          <li>Evaluation（绩效考核）状态机</li>
+          <li>Ratification（结果审定）状态机</li>
+          <li>Confirmation（员工确认）状态机</li>
+          <li>Interview（绩效面谈）状态机</li>
+        </ul>
+        <div style="margin-top: 16px;">
+          <a href="deliverables/prd-states.md" class="btn btn-primary">查看文档</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon purple">🔌</div>
+          <div class="card-title">API 定义</div>
+        </div>
+        <div class="card-desc">接口清单、请求/响应Schema、权限、错误码</div>
+        <div class="tags">
+          <span class="tag tag-purple">API</span>
+        </div>
+        <ul class="card-list">
+          <li>Scheme API（方案管理）</li>
+          <li>PBC Goal API（目标制定）</li>
+          <li>Evaluation API（绩效考核）</li>
+          <li>Ratification API（结果审定）</li>
+          <li>Confirmation API（员工确认）</li>
+          <li>Interview API（绩效面谈）</li>
+        </ul>
+        <div style="margin-top: 16px;">
+          <a href="deliverables/prd-api.md" class="btn btn-primary">查看文档</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon orange">📜</div>
+          <div class="card-title">业务规则目录</div>
+        </div>
+        <div class="card-desc">36项业务规则定义、规则统计</div>
+        <div class="tags">
+          <span class="tag tag-orange">业务规则</span>
+        </div>
+        <ul class="card-list">
+          <li>权重规则（4项）</li>
+          <li>等级分布规则（5项）</li>
+          <li>跨阶段数据流规则（5项）</li>
+          <li>分数计算规则（5项）</li>
+          <li>审批链规则（7项）</li>
+          <li>方案-活动继承规则（3项）</li>
+        </ul>
+        <div style="margin-top: 16px;">
+          <a href="deliverables/prd-rules-business.md" class="btn btn-primary">查看文档</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Database Tables -->
+  <div class="section">
+    <h2 class="section-title">核心数据库表</h2>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>表名</th>
+            <th>说明</th>
+            <th>层级</th>
+            <th>关键字段</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>perf_scheme</strong></td>
+            <td>绩效方案</td>
+            <td>V2 方案</td>
+            <td>version, status, grade_rule_id</td>
+          </tr>
+          <tr>
+            <td><strong>perf_assessment_group</strong></td>
+            <td>考核组</td>
+            <td>V2 方案</td>
+            <td>scheme_id, rule_type, rule_config</td>
+          </tr>
+          <tr>
+            <td><strong>perf_stage_config</strong></td>
+            <td>环节配置</td>
+            <td>V2 方案</td>
+            <td>stage_type, flow_template_id, form_template_id</td>
+          </tr>
+          <tr>
+            <td><strong>perf_activity</strong></td>
+            <td>考核活动</td>
+            <td>V4 活动</td>
+            <td>scheme_version, scheme_snapshot (JSON)</td>
+          </tr>
+          <tr>
+            <td><strong>perf_activity_participant</strong></td>
+            <td>活动参与人</td>
+            <td>V4 活动</td>
+            <td>stage_status (JSON), final_grade</td>
+          </tr>
+          <tr>
+            <td><strong>perf_scheme_version</strong></td>
+            <td>方案版本历史</td>
+            <td>版本管理</td>
+            <td>scheme_id, version, snapshot (JSON)</td>
+          </tr>
+          <tr>
+            <td><strong>perf_activity_config_override</strong></td>
+            <td>活动配置覆盖</td>
+            <td>配置覆盖</td>
+            <td>config_type, config_key, config_value (JSON)</td>
+          </tr>
+          <tr>
+            <td><strong>goal_detail</strong></td>
+            <td>目标明细表</td>
+            <td>环节数据</td>
+            <td>status (active/voided), modules (JSON)</td>
+          </tr>
+          <tr>
+            <td><strong>eval_detail</strong></td>
+            <td>考核明细表</td>
+            <td>环节数据</td>
+            <td>score_data (JSON), total_score</td>
+          </tr>
+          <tr>
+            <td><strong>ratification_detail</strong></td>
+            <td>审定明细表</td>
+            <td>环节数据</td>
+            <td>adjusted_grade, adjust_reason</td>
+          </tr>
+          <tr>
+            <td><strong>final_result</strong></td>
+            <td>绩效结果表</td>
+            <td>结果汇总</td>
+            <td>final_grade, final_score, locked</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Version Status -->
+  <div class="section">
+    <h2 class="section-title">版本状态</h2>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>版本</th>
+            <th>内容</th>
+            <th>功能数</th>
+            <th>状态</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>V1 基础配置</strong></td>
+            <td>绩效周期/单位/等级/计算规则/衡量标准/指标库/评价规则/强制分布</td>
+            <td>30</td>
+            <td><span class="tag tag-green">已评审，配置锁定</span></td>
+          </tr>
+          <tr>
+            <td><strong>V1.1 公式编辑器</strong></td>
+            <td>数据源/计算元素/表达式/解析执行/错误校验</td>
+            <td>5</td>
+            <td><span class="tag tag-orange">未评审</span></td>
+          </tr>
+          <tr>
+            <td><strong>V2 方案设计</strong></td>
+            <td>绩效方案/考核组/考核环节/表单/强制分布</td>
+            <td>28</td>
+            <td><span class="tag tag-green">已评审（2026-06-11）</span></td>
+          </tr>
+          <tr>
+            <td><strong>V3 考核表单+流程引擎</strong></td>
+            <td>5类表单(28项) + 流程引擎(25项)</td>
+            <td>53</td>
+            <td><span class="tag tag-green">已评审（2026-06-11）</span></td>
+          </tr>
+          <tr>
+            <td><strong>V4 考核活动</strong></td>
+            <td>活动管理/过程管理/数据导入导出/监控/异常提醒/操作日志</td>
+            <td>31</td>
+            <td><span class="tag tag-blue">开发中（42%已完成）</span></td>
+          </tr>
+          <tr>
+            <td><strong>V5 员工工作台+绩效报表</strong></td>
+            <td>PC端工作台/移动端工作台/分析报表</td>
+            <td>10</td>
+            <td><span class="tag tag-orange">预留</span></td>
+          </tr>
+          <tr>
+            <td><strong>V6 AI智能应用</strong></td>
+            <td>AI表单辅助/AI活动监控/AI绩效分析/AI移动端</td>
+            <td>22</td>
+            <td><span class="tag tag-purple">原型已完成</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div style="text-align: center; padding: 32px 0; color: var(--text-secondary); font-size: 13px;">
+    <p>HROne 绩效管理系统设计文档 · 最后更新：2026-06-18</p>
+    <p style="margin-top: 8px;">文档位置：docs/deliverables/ | 原型位置：prototype/perf/current/</p>
+  </div>
+
+</div>
+
+</body>
+</html>

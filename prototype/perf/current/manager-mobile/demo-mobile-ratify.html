@@ -58,7 +58,8 @@ body{font-family:var(--f);background:#E5E7EB;color:var(--c7);display:flex;justif
 .grade-badge.b{background:var(--pr50);color:var(--pr)}
 .grade-badge.c{background:var(--ac50);color:var(--ac700)}
 .grade-badge.d{background:var(--ro50);color:var(--ro)}
-.grade-select{height:28px;border:1px solid var(--c2);border-radius:8px;padding:0 8px;font:500 11px/1 var(--f);color:var(--c7);background:var(--sf);outline:none;cursor:pointer}
+.grade-select{height:28px;border:1px solid var(--c2);border-radius:8px;padding:0 8px;font:500 11px/1 var(--f);color:var(--c7);background:var(--sf);outline:none;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='8' height='5' viewBox='0 0 8 5' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L4 4L7 1' stroke='%2394A3B8' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 6px center;padding-right:20px}
+.grade-tag{font:500 10px/1 var(--f);padding:2px 6px;border-radius:4px;white-space:nowrap}
 
 /* Actions */
 .actions{margin-top:14px;display:flex;gap:8px;margin-bottom:20px}
@@ -91,59 +92,92 @@ body{font-family:var(--f);background:#E5E7EB;color:var(--c7);display:flex;justif
 </div>
 
 <script>
-const GRADES = ['S','A','B','C','D'];
-const DIST_TARGET = {S:10,A:20,B:40,C:20,D:10};
+const GRADES = ['超出预期','符合预期+','符合预期','符合预期-','低于预期'];
+const GRADE_COLORS = {'超出预期':'var(--em700)','符合预期+':'var(--pr)','符合预期':'var(--c7)','符合预期-':'var(--ac)','低于预期':'var(--ro)'};
+const GRADE_BG = {'超出预期':'var(--em50)','符合预期+':'var(--pr50)','符合预期':'var(--c1)','符合预期-':'var(--ac50)','低于预期':'var(--ro50)'};
+const DIST_TARGET = {'超出预期':10,'符合预期+':30,'符合预期':40,'符合预期-':20,'低于预期':0};
 
 const MEMBERS = [
-  {name:'张明',score:88,curGrade:'A',newGrade:'A',color:'var(--pr)'},
-  {name:'李雪',score:82,curGrade:'B',newGrade:'A',color:'var(--em)'},
-  {name:'王浩然',score:75,curGrade:'B',newGrade:'B',color:'var(--ac)'},
-  {name:'周婷',score:68,curGrade:'C',newGrade:'C',color:'var(--vi)'},
-  {name:'吴强',score:62,curGrade:'C',newGrade:'C',color:'var(--ro)'}
+  {name:'张明',dept:'产品部',role:'高级产品经理',group:'产品组',score:87.5,curGrade:'符合预期+',directGrade:'符合预期+',newGrade:'',reached:true},
+  {name:'李华',dept:'产品部',role:'产品经理',group:'产品组',score:91.0,curGrade:'超出预期',directGrade:'超出预期',newGrade:'',reached:true},
+  {name:'王芳',dept:'产品部',role:'产品专员',group:'产品组',score:77.0,curGrade:'符合预期',directGrade:'符合预期',newGrade:'',reached:true},
+  {name:'赵强',dept:'产品部',role:'高级产品经理',group:'技术组',score:85.0,curGrade:'符合预期',directGrade:'符合预期',newGrade:'',reached:false},
+  {name:'陈静',dept:'产品部',role:'产品助理',group:'技术组',score:66.5,curGrade:'符合预期-',directGrade:'符合预期-',newGrade:'',reached:false},
+  {name:'刘洋',dept:'产品部',role:'产品经理',group:'产品组',score:82.0,curGrade:'符合预期',directGrade:'符合预期',newGrade:'',reached:true},
+  {name:'孙丽',dept:'产品部',role:'高级产品经理',group:'产品组',score:93.5,curGrade:'超出预期',directGrade:'超出预期',newGrade:'',reached:true},
+  {name:'周磊',dept:'产品部',role:'产品经理',group:'产品组',score:79.0,curGrade:'符合预期',directGrade:'符合预期',newGrade:'',reached:true},
+  {name:'吴涛',dept:'产品部',role:'技术总监',group:'技术组',score:88.0,curGrade:'符合预期+',directGrade:'符合预期+',newGrade:'',reached:true},
+  {name:'郑洁',dept:'产品部',role:'高级工程师',group:'技术组',score:74.5,curGrade:'符合预期',directGrade:'符合预期',newGrade:'',reached:true},
+  {name:'黄鹏',dept:'产品部',role:'工程师',group:'技术组',score:70.0,curGrade:'符合预期-',directGrade:'符合预期-',newGrade:'',reached:false},
+  {name:'林敏',dept:'产品部',role:'产品经理',group:'产品组',score:81.0,curGrade:'符合预期',directGrade:'符合预期',newGrade:'',reached:true},
+  {name:'何杰',dept:'产品部',role:'高级工程师',group:'技术组',score:86.5,curGrade:'符合预期+',directGrade:'符合预期+',newGrade:'',reached:true},
+  {name:'马超',dept:'产品部',role:'产品助理',group:'产品组',score:68.0,curGrade:'符合预期-',directGrade:'符合预期-',newGrade:'',reached:false},
+  {name:'胡蝶',dept:'产品部',role:'工程师',group:'技术组',score:62.0,curGrade:'低于预期',directGrade:'低于预期',newGrade:'',reached:false}
 ];
 
 function calcDist(){
-  const dist = {S:0,A:0,B:0,C:0,D:0};
-  MEMBERS.forEach(m=>dist[m.newGrade]++);
-  const pct = {};
-  GRADES.forEach(g=>pct[g]=Math.round(dist[g]/MEMBERS.length*100));
-  return pct;
+  const dist = {};
+  GRADES.forEach(g=>dist[g]=0);
+  MEMBERS.forEach(m=>{if(m.reached&&m.newGrade)dist[m.newGrade]++});
+  return dist;
 }
 
 function render(){
   const el = document.getElementById('phoneBody');
   let h = '';
-
   const dist = calcDist();
+  const reached = MEMBERS.filter(m=>m.reached).length;
 
-  h += '<div class="dist-card"><div class="dist-title">强制分布校验</div>';
+  // Header stats
+  h += `<div style="display:flex;gap:8px;margin-bottom:12px">
+    <div style="flex:1;background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:12px;text-align:center">
+      <div style="font:700 20px/1 var(--fm);color:var(--c9)">${MEMBERS.length}</div>
+      <div style="font:400 11px/1 var(--f);color:var(--c5);margin-top:3px">总人数</div>
+    </div>
+    <div style="flex:1;background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:12px;text-align:center">
+      <div style="font:700 20px/1 var(--fm);color:var(--em)">${reached}</div>
+      <div style="font:400 11px/1 var(--f);color:var(--c5);margin-top:3px">已到达</div>
+    </div>
+    <div style="flex:1;background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:12px;text-align:center">
+      <div style="font:700 20px/1 var(--fm);color:var(--ac)">${MEMBERS.length-reached}</div>
+      <div style="font:400 11px/1 var(--f);color:var(--c5);margin-top:3px">未到达</div>
+    </div>
+  </div>`;
+
+  // Distribution
+  h += '<div class="dist-card"><div class="dist-title">等级分布 · 强制分布规则</div>';
   GRADES.forEach(g => {
-    const color = g==='S'?'var(--vi)':g==='A'?'var(--em)':g==='B'?'var(--pr)':g==='C'?'var(--ac)':'var(--ro)';
+    const color = GRADE_COLORS[g];
+    const count = dist[g]||0;
+    const target = Math.ceil(MEMBERS.length*DIST_TARGET[g]/100);
     h += `<div class="dist-row">
-      <span class="dist-label">${g}</span>
+      <span class="dist-label" style="color:${color}">${g.replace('符合预期','符合').replace('超出预期','超出').replace('低于预期','低于')}</span>
       <div class="dist-bar-wrap">
         <div class="dist-bar target" style="width:${DIST_TARGET[g]}%;background:${color}"></div>
-        <div class="dist-bar actual" style="width:${dist[g]}%;background:${color}"></div>
+        <div class="dist-bar actual" style="width:${Math.round(count/MEMBERS.length*100)}%;background:${color}"></div>
       </div>
-      <span class="dist-pct">${dist[g]}%</span>
+      <span class="dist-pct">${count}人</span>
     </div>`;
   });
   h += '</div>';
 
+  // Member list
   h += `<div style="font:600 14px/1 var(--f);color:var(--c8);margin-bottom:10px">成员审定 (${MEMBERS.length}人)</div>`;
 
   MEMBERS.forEach((m,i) => {
-    const gc = m.newGrade.toLowerCase();
-    h += `<div class="member-row">
-      <div class="member-av" style="background:${m.color}">${m.name[0]}</div>
+    const gc = GRADE_COLORS[m.curGrade]||'var(--c5)';
+    const bgc = GRADE_BG[m.curGrade]||'var(--c1)';
+    h += `<div class="member-row" style="${!m.reached?'opacity:.55':''}">
+      <div class="member-av" style="background:${gc}">${m.name[0]}</div>
       <div class="member-info">
-        <div class="member-name">${m.name}</div>
-        <div class="member-score">评分: ${m.score} · 原等级: ${m.curGrade}</div>
+        <div class="member-name">${m.name} <span style="font:400 10px/1 var(--f);color:var(--c5)">${m.role}</span></div>
+        <div class="member-score">${m.score}分 · 审定前 <span class="grade-tag" style="background:${bgc};color:${gc}">${m.curGrade}</span> → 直线上级 <span class="grade-tag" style="background:${GRADE_BG[m.directGrade]||'var(--c1)'};color:${GRADE_COLORS[m.directGrade]||'var(--c5)'}">${m.directGrade}</span></div>
       </div>
       <div class="member-grade-wrap">
-        <select class="grade-select" onchange="updateGrade(${i},this.value)">
-          ${GRADES.map(g=>`<option ${g===m.newGrade?'selected':''}>${g}</option>`).join('')}
-        </select>
+        ${m.reached?`<select class="grade-select" onchange="updateGrade(${i},this.value)">
+          <option value="">请选择</option>
+          ${GRADES.map(g=>`<option value="${g}" ${g===m.newGrade?'selected':''}>${g}</option>`).join('')}
+        </select>`:'<span style="font:400 11px/1 var(--f);color:var(--c4)">未到达</span>'}
       </div>
     </div>`;
   });

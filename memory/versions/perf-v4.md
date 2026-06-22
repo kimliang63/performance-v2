@@ -9,6 +9,7 @@
 | 原型页面 | perf-activity.html, perf-activity-detail.html, perf-ai-monitor.html |
 | 原型状态 | 基础框架已建立（2026-06-04），待完善交互细节 |
 | 依赖 | V2 方案设计（已评审）、V3 考核表单+流程引擎（已评审） |
+| 逻辑规格 | prd-config-scheme-update.md, prd-activity-processing.md, prd-config-change-impact.md, prd-realtime-vs-version.md |
 
 ---
 

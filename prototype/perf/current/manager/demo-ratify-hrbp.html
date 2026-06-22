@@ -33,13 +33,35 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .pg-hd-info-label{font:400 11px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px}
 .pg-hd-info-value{font:500 13px/1.3 var(--f);color:var(--c8)}
 
+/* ═══ STAT CARDS ═══ */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px}
+.stat-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px;text-align:center}
+.stat-val{font:700 28px/1.2 var(--m);color:var(--c9)}
+.stat-label{font:400 12px/1 var(--f);color:var(--c5);margin-top:4px}
+
 /* ═══ TABLE ═══ */
-.eval-list{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden}
+.eval-list{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden;margin-bottom:16px}
 .eval-list table{width:100%;border-collapse:collapse}
 .eval-list th{background:var(--c0);padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
 .eval-list td{padding:10px 16px;font:400 13px/1.4 var(--f);color:var(--c7);border-bottom:1px solid var(--dv);vertical-align:top}
 .eval-list tr:last-child td{border-bottom:none}
 .eval-list tr:hover td{background:var(--c0)}
+
+/* ═══ INPUT ═══ */
+select.edit-cell{appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:22px;cursor:pointer;font-family:var(--f);border:1px solid var(--c2);border-radius:var(--r1);padding:6px 28px 6px 10px;font:500 12px/1 var(--f);color:var(--c8);background-color:var(--sf);transition:all .12s;outline:none}
+select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
+
+/* ═══ GRADE SELECT ═══ */
+.grade-select{position:relative;display:inline-block;width:110px}
+.grade-select select{width:100%;appearance:none;background-image:none;padding:6px 28px 6px 10px;border:1px solid var(--c2);border-radius:var(--r1);font:500 12px/1 var(--f);color:var(--c8);background-color:var(--sf);cursor:pointer;outline:none;transition:all .12s;white-space:nowrap}
+.grade-select select:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
+.grade-select::after{content:'';position:absolute;right:8px;top:50%;transform:translateY(-50%);width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid var(--c4);pointer-events:none}
+.grade-select select option{padding:8px 12px;font:400 13px/1.4 var(--f)}
+.grade-select select option[value="超出预期"]{color:var(--em700)}
+.grade-select select option[value="符合预期+"]{color:var(--pr)}
+.grade-select select option[value="符合预期"]{color:var(--c8)}
+.grade-select select option[value="符合预期-"]{color:var(--ac)}
+.grade-select select option[value="低于预期"]{color:var(--ro)}
 
 /* ═══ BUTTONS ═══ */
 .btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
@@ -48,6 +70,82 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .btn-p:hover{background:var(--pr700)}
 .btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}
 .btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
+.btn-s.btn-active{background:var(--pr50);color:var(--pr);border-color:var(--pr200)}
+
+/* ═══ PAGINATION ═══ */
+.pager{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-top:1px solid var(--dv);font:400 12px/1 var(--f);color:var(--c5)}
+.pager-info{display:flex;align-items:center;gap:4px}
+.pager-btns{display:flex;align-items:center;gap:4px}
+.pager-btn{width:28px;height:28px;border-radius:var(--r1);border:1px solid var(--c2);background:var(--sf);color:var(--c6);font:500 12px/1 var(--f);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.pager-btn:hover{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.pager-btn.active{background:var(--pr);color:#FFF;border-color:var(--pr)}
+.pager-btn:disabled{opacity:.4;cursor:default;border-color:var(--c2);color:var(--c4);background:var(--sf)}
+.pager-btn svg{width:14px;height:14px}
+
+/* ═══ DISTRIBUTION BAR ═══ */
+.dist-section{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px;margin-bottom:16px}
+.dist-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;cursor:pointer;padding:4px 0;border-radius:var(--r1);transition:background .12s}
+.dist-row:hover{background:var(--c0)}
+.dist-row.active{background:var(--pr50)}
+.dist-label{min-width:72px;font:600 12px/1 var(--f);color:var(--c7);text-align:right;white-space:nowrap}
+.dist-track{flex:1;height:24px;background:var(--c1);border-radius:var(--r2);position:relative;overflow:hidden}
+.dist-fill{height:100%;border-radius:var(--r2);transition:width .3s}
+.dist-rule{min-width:110px;font:400 12px/1 var(--f);color:var(--c5);text-align:right;white-space:nowrap}
+.dist-val{width:50px;font:500 12px/1 var(--f);color:var(--c6);text-align:center}
+
+/* ═══ AI CHAT ═══ */
+.ai-chat{position:fixed;top:52px;right:0;width:380px;height:calc(100vh - 52px);background:var(--sf);border-left:1px solid var(--dv);z-index:900;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s ease}
+body.chat-open .ai-chat{transform:translateX(0)}
+.ai-chat-hd{padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:10px}
+.ai-chat-hd-ic{width:32px;height:32px;border-radius:var(--r2);background:linear-gradient(135deg,var(--pr) 0%,var(--vi) 100%);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ai-chat-hd-ic svg{width:16px;height:16px;color:#FFF}
+.ai-chat-hd-t{font:600 14px/1.2 var(--f);color:var(--c9)}
+.ai-chat-hd-s{font:400 11px/1 var(--f);color:var(--c5)}
+.ai-chat-close{margin-left:auto;width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:transparent;color:var(--c5);transition:all .12s}
+.ai-chat-close:hover{background:var(--c1);color:var(--c7)}
+.ai-chat-bd{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:16px}
+.ai-msg{max-width:92%;animation:aiMsgIn .3s ease}
+@keyframes aiMsgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.ai-msg.bot{align-self:flex-start}
+.ai-msg.user{align-self:flex-end}
+.ai-msg-bd{padding:12px 16px;border-radius:var(--r3);font:400 13px/1.6 var(--f)}
+.ai-msg.bot .ai-msg-bd{background:var(--c0);color:var(--c8);border-bottom-left-radius:4px}
+.ai-msg.user .ai-msg-bd{background:var(--pr);color:#FFF;border-bottom-right-radius:4px}
+.ai-msg-time{font:400 10px/1 var(--f);color:var(--c4);margin-top:4px}
+.ai-msg.user .ai-msg-time{text-align:right}
+.ai-msg-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.ai-msg-btn{font:500 11px/1 var(--f);padding:5px 10px;border-radius:var(--r1);border:1px solid var(--c2);background:var(--sf);color:var(--c6);cursor:pointer;transition:all .12s}
+.ai-msg-btn:hover{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-msg-btn.primary{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-msg-card{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);padding:12px;margin-top:8px}
+.ai-msg-card-t{font:600 12px/1.3 var(--f);color:var(--c8);margin-bottom:4px}
+.ai-msg-card-d{font:400 12px/1.5 var(--f);color:var(--c5)}
+.ai-msg-card-ft{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.ai-msg-card-tag{display:inline-block;font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px}
+.ai-msg-card-tag.em{color:var(--em700);background:var(--em50)}
+.ai-msg-card-tag.pr{color:var(--pr);background:var(--pr50)}
+.ai-msg-card-tag.ac{color:var(--ac);background:var(--ac50)}
+.ai-msg-card-apply{font:500 11px/1 var(--f);padding:4px 8px;border-radius:var(--r1);border:1px solid var(--pr200);background:var(--pr50);color:var(--pr);cursor:pointer;transition:all .12s}
+.ai-msg-card-apply:hover{background:var(--pr);color:#FFF}
+.ai-shortcuts{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.ai-shortcut{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);cursor:pointer;transition:all .12s}
+.ai-shortcut:hover{border-color:var(--pr200);background:var(--pr50)}
+.ai-shortcut-icon{font-size:18px;flex-shrink:0}
+.ai-shortcut-text{flex:1;min-width:0}
+.ai-shortcut-label{font:500 13px/1.2 var(--f);color:var(--c8)}
+.ai-shortcut-desc{font:400 11px/1.3 var(--f);color:var(--c5);margin-top:2px}
+.ai-chat-ft{padding:12px 16px;border-top:1px solid var(--dv);display:flex;gap:8px;align-items:center}
+.ai-chat-input{flex:1;height:36px;border:1px solid var(--c2);border-radius:var(--r2);padding:0 12px;font:400 13px/1 var(--f);color:var(--c8);outline:none;transition:border .15s}
+.ai-chat-input:focus{border-color:var(--pr)}
+.ai-chat-send{width:36px;height:36px;border-radius:var(--r2);background:var(--pr);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#FFF;transition:all .12s}
+.ai-chat-send:hover{background:var(--pr700)}
+.ai-chat-upload{width:36px;height:36px;border-radius:var(--r2);background:var(--sf);border:1px solid var(--c2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c5);transition:all .12s;position:relative}
+.ai-chat-upload:hover{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-chat-upload input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.ai-toggle{position:fixed;bottom:80px;right:24px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--pr) 0%,var(--vi) 100%);border:none;box-shadow:0 4px 16px rgba(37,99,235,.3);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:950;transition:all .2s}
+.ai-toggle:hover{transform:scale(1.08);box-shadow:0 6px 20px rgba(37,99,235,.4)}
+.ai-toggle svg{width:22px;height:22px;color:#FFF}
+body.chat-open .ai-toggle{display:none}
 
 /* ═══ TOAST ═══ */
 .validate-toast{position:fixed;top:64px;left:50%;transform:translateX(-50%);background:var(--em);color:#FFF;padding:10px 20px;border-radius:var(--r2);font:500 13px/1 var(--f);box-shadow:0 8px 24px rgba(16,185,129,.3);z-index:3000;opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:center;gap:8px}
@@ -94,7 +192,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
           转交
         </button>
-        <button class="btn btn-p" onclick="confirmRatify()">
+        <button class="btn btn-p" onclick="batchRatify()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
           提交审定
         </button>
@@ -103,10 +201,10 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
     <div class="pg-hd-info">
       <div class="pg-hd-info-item"><span class="pg-hd-info-label">考核方案</span><span class="pg-hd-info-value">产品部2026年Q2绩效考核</span></div>
       <div class="pg-hd-info-item"><span class="pg-hd-info-label">考核周期</span><span class="pg-hd-info-value">2026年4-6月</span></div>
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">HRBP</span><span class="pg-hd-info-value">李HR</span></div>
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">团队人数</span><span class="pg-hd-info-value">5人</span></div>
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">上级已审定</span><span class="pg-hd-info-value">5人</span></div>
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">待确认</span><span class="pg-hd-info-value" style="color:var(--ac)">5人</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">HRBP</span><span class="pg-hd-info-value">李HR（HRBP）</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">团队人数</span><span class="pg-hd-info-value" id="hdTotal">—</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">上级已审定</span><span class="pg-hd-info-value" id="hdReached">—</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">待确认</span><span class="pg-hd-info-value" id="hdPending" style="color:var(--ac)">—</span></div>
     </div>
   </div>
 
@@ -117,67 +215,27 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
       <div class="stat-label">团队总人数</div>
     </div>
     <div class="stat-card">
-      <div class="stat-val" style="color:var(--em)">5</div>
+      <div class="stat-val" style="color:var(--em)">3</div>
       <div class="stat-label">已到达</div>
     </div>
     <div class="stat-card">
-      <div class="stat-val" style="color:var(--ac)">0</div>
+      <div class="stat-val" style="color:var(--ac)">2</div>
       <div class="stat-label">未到达</div>
     </div>
     <div class="stat-card">
       <div class="stat-val" style="color:var(--pr)">0</div>
-      <div class="stat-label">待确认</div>
+      <div class="stat-label">待调整</div>
     </div>
   </div>
 
   <!-- 等级分布 -->
-  <div class="dist-section">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-      <span style="font:600 14px/1 var(--f);color:var(--c9)">等级分布</span>
-      <span style="font:400 12px/1 var(--f);color:var(--c5)">产品部 · 强制分布规则</span>
-    </div>
-    <div class="dist-row">
-      <span class="dist-label" style="color:var(--em700)">S</span>
-      <div class="dist-track"><div class="dist-fill" style="width:10%;background:var(--em)"></div></div>
-      <span class="dist-rule">目标: 10% (1人)</span>
-      <span class="dist-val">0人</span>
-      <span style="font:500 11px/1 var(--f);color:var(--ro);background:var(--ro50);padding:2px 6px;border-radius:3px">还需1人</span>
-    </div>
-    <div class="dist-row">
-      <span class="dist-label" style="color:var(--pr)">A</span>
-      <div class="dist-track"><div class="dist-fill" style="width:30%;background:var(--pr)"></div></div>
-      <span class="dist-rule">目标: 30% (2人)</span>
-      <span class="dist-val">2人</span>
-      <span style="font:500 11px/1 var(--f);color:var(--em700);background:var(--em50);padding:2px 6px;border-radius:3px">已达标</span>
-    </div>
-    <div class="dist-row">
-      <span class="dist-label" style="color:var(--c7)">B</span>
-      <div class="dist-track"><div class="dist-fill" style="width:40%;background:var(--c4)"></div></div>
-      <span class="dist-rule">目标: 40% (2人)</span>
-      <span class="dist-val">2人</span>
-      <span style="font:500 11px/1 var(--f);color:var(--em700);background:var(--em50);padding:2px 6px;border-radius:3px">已达标</span>
-    </div>
-    <div class="dist-row">
-      <span class="dist-label" style="color:var(--ac)">C</span>
-      <div class="dist-track"><div class="dist-fill" style="width:20%;background:var(--ac)"></div></div>
-      <span class="dist-rule">目标: 20% (1人)</span>
-      <span class="dist-val">1人</span>
-      <span style="font:500 11px/1 var(--f);color:var(--em700);background:var(--em50);padding:2px 6px;border-radius:3px">已达标</span>
-    </div>
-    <div class="dist-row">
-      <span class="dist-label" style="color:var(--ro)">D</span>
-      <div class="dist-track"><div class="dist-fill" style="width:0%;background:var(--ro)"></div></div>
-      <span class="dist-rule">目标: 0% (0人)</span>
-      <span class="dist-val">0人</span>
-      <span style="font:500 11px/1 var(--f);color:var(--em700);background:var(--em50);padding:2px 6px;border-radius:3px">已达标</span>
-    </div>
-  </div>
+  <div id="distSection" class="dist-section"></div>
 
   <!-- 团队成员列表 -->
   <div class="eval-list">
     <div style="padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between">
       <span style="font:600 15px/1 var(--f);color:var(--c9)">团队成员审定</span>
-      <span style="font:400 12px/1 var(--f);color:var(--c5)">全部只读，仅审批/退回操作</span>
+      <span id="listSummary" style="font:400 12px/1 var(--f);color:var(--c5)">全部只读，仅审批/退回操作</span>
     </div>
     <table>
       <thead>
@@ -187,58 +245,14 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
           <th style="width:120px">职位</th>
           <th style="width:80px">审定前总分</th>
           <th style="width:80px">审定前等级</th>
-          <th style="width:80px">调整等级</th>
+          <th style="width:110px">逐级上级调整等级</th>
+          <th style="width:110px">调整等级</th>
           <th style="width:80px">状态</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td><span style="font-weight:500;color:var(--c8)">张明</span></td>
-          <td style="color:var(--c6)">产品部</td>
-          <td style="color:var(--c6)">高级产品经理</td>
-          <td><span style="font-family:var(--m);font-weight:600;color:var(--c9)">87.5</span></td>
-          <td><span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:24px;border-radius:var(--r1);font:600 12px/1 var(--m);background:var(--pr);color:#FFF">A</span></td>
-          <td><span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:24px;border-radius:var(--r1);font:600 12px/1 var(--m);background:var(--pr);color:#FFF">A</span></td>
-          <td><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">✓ 已确认</span></td>
-        </tr>
-        <tr>
-          <td><span style="font-weight:500;color:var(--c8)">李华</span></td>
-          <td style="color:var(--c6)">产品部</td>
-          <td style="color:var(--c6)">产品经理</td>
-          <td><span style="font-family:var(--m);font-weight:600;color:var(--c9)">91.0</span></td>
-          <td><span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:24px;border-radius:var(--r1);font:600 12px/1 var(--m);background:var(--pr);color:#FFF">A</span></td>
-          <td><span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:24px;border-radius:var(--r1);font:600 12px/1 var(--m);background:var(--pr);color:#FFF">A</span></td>
-          <td><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">✓ 已确认</span></td>
-        </tr>
-        <tr>
-          <td><span style="font-weight:500;color:var(--c8)">王芳</span></td>
-          <td style="color:var(--c6)">产品部</td>
-          <td style="color:var(--c6)">产品专员</td>
-          <td><span style="font-family:var(--m);font-weight:600;color:var(--c9)">77.0</span></td>
-          <td><span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:24px;border-radius:var(--r1);font:600 12px/1 var(--m);background:var(--c7);color:#FFF">B</span></td>
-          <td><span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:24px;border-radius:var(--r1);font:600 12px/1 var(--m);background:var(--c7);color:#FFF">B</span></td>
-          <td><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">✓ 已确认</span></td>
-        </tr>
-        <tr>
-          <td><span style="font-weight:500;color:var(--c8)">赵强</span></td>
-          <td style="color:var(--c6)">产品部</td>
-          <td style="color:var(--c6)">高级产品经理</td>
-          <td><span style="font-family:var(--m);font-weight:600;color:var(--c9)">85.0</span></td>
-          <td><span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:24px;border-radius:var(--r1);font:600 12px/1 var(--m);background:var(--c7);color:#FFF">B</span></td>
-          <td><span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:24px;border-radius:var(--r1);font:600 12px/1 var(--m);background:var(--c7);color:#FFF">B</span></td>
-          <td><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">✓ 已确认</span></td>
-        </tr>
-        <tr>
-          <td><span style="font-weight:500;color:var(--c8)">陈静</span></td>
-          <td style="color:var(--c6)">产品部</td>
-          <td style="color:var(--c6)">产品助理</td>
-          <td><span style="font-family:var(--m);font-weight:600;color:var(--c9)">66.5</span></td>
-          <td><span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:24px;border-radius:var(--r1);font:600 12px/1 var(--m);background:var(--ac);color:#FFF">C</span></td>
-          <td><span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:24px;border-radius:var(--r1);font:600 12px/1 var(--m);background:var(--ac);color:#FFF">C</span></td>
-          <td><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">✓ 已确认</span></td>
-        </tr>
-      </tbody>
+      <tbody id="memberBody"></tbody>
     </table>
+    <div class="pager" id="pager"></div>
   </div>
 </div>
 
@@ -248,13 +262,442 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 <script>
 GHR_NAV.init('perf', '结果审定');
 
-function confirmRatify(){showToast('HRBP审定已确认','success');}
+var GRADE_OPTIONS=['超出预期','符合预期+','符合预期','符合预期-','低于预期'];
+var GRADE_COLORS={'超出预期':'var(--em700)','符合预期+':'var(--pr)','符合预期':'var(--c7)','符合预期-':'var(--ac)','低于预期':'var(--ro)'};
+var GRADE_BG={'超出预期':'var(--em)','符合预期+':'var(--pr)','符合预期':'var(--c4)','符合预期-':'var(--ac)','低于预期':'var(--ro)'};
+
+var DIST_RULES={
+  '全部':[
+    {grade:'超出预期',pct:10,color:'var(--em700)',bg:'var(--em)'},
+    {grade:'符合预期+',pct:30,color:'var(--pr)',bg:'var(--pr)'},
+    {grade:'符合预期',pct:40,color:'var(--c7)',bg:'var(--c4)'},
+    {grade:'符合预期-',pct:20,color:'var(--ac)',bg:'var(--ac)'},
+    {grade:'低于预期',pct:0,color:'var(--ro)',bg:'var(--ro)'}
+  ],
+  '产品组':[
+    {grade:'超出预期',pct:10,color:'var(--em700)',bg:'var(--em)'},
+    {grade:'符合预期+',pct:20,color:'var(--pr)',bg:'var(--pr)'},
+    {grade:'符合预期',pct:50,color:'var(--c7)',bg:'var(--c4)'},
+    {grade:'符合预期-',pct:15,color:'var(--ac)',bg:'var(--ac)'},
+    {grade:'低于预期',pct:5,color:'var(--ro)',bg:'var(--ro)'}
+  ],
+  '技术组':[
+    {grade:'超出预期',pct:15,color:'var(--em700)',bg:'var(--em)'},
+    {grade:'符合预期+',pct:35,color:'var(--pr)',bg:'var(--pr)'},
+    {grade:'符合预期',pct:30,color:'var(--c7)',bg:'var(--c4)'},
+    {grade:'符合预期-',pct:15,color:'var(--ac)',bg:'var(--ac)'},
+    {grade:'低于预期',pct:5,color:'var(--ro)',bg:'var(--ro)'}
+  ]
+};
+
+var MEMBERS=[
+  {name:'张明',dept:'产品部',role:'高级产品经理',group:'产品组',totalScore:87.5,grade:'符合预期+',hierarchyGrade:'符合预期+',ratifyGrade:'符合预期+',reached:true},
+  {name:'李华',dept:'产品部',role:'产品经理',group:'产品组',totalScore:91.0,grade:'超出预期',hierarchyGrade:'超出预期',ratifyGrade:'超出预期',reached:true},
+  {name:'王芳',dept:'产品部',role:'产品专员',group:'产品组',totalScore:77.0,grade:'符合预期',hierarchyGrade:'符合预期',ratifyGrade:'符合预期',reached:true},
+  {name:'赵强',dept:'产品部',role:'高级产品经理',group:'技术组',totalScore:85.0,grade:'符合预期',hierarchyGrade:'符合预期',ratifyGrade:'符合预期',reached:true},
+  {name:'陈静',dept:'产品部',role:'产品助理',group:'技术组',totalScore:66.5,grade:'符合预期-',hierarchyGrade:'符合预期-',ratifyGrade:'符合预期-',reached:true},
+  {name:'刘洋',dept:'产品部',role:'产品经理',group:'产品组',totalScore:82.0,grade:'符合预期',hierarchyGrade:'符合预期',ratifyGrade:'符合预期',reached:true},
+  {name:'孙丽',dept:'产品部',role:'高级产品经理',group:'产品组',totalScore:93.5,grade:'超出预期',hierarchyGrade:'超出预期',ratifyGrade:'超出预期',reached:true},
+  {name:'周磊',dept:'产品部',role:'产品经理',group:'产品组',totalScore:79.0,grade:'符合预期',hierarchyGrade:'符合预期',ratifyGrade:'符合预期',reached:true},
+  {name:'吴涛',dept:'产品部',role:'技术总监',group:'技术组',totalScore:88.0,grade:'符合预期+',hierarchyGrade:'符合预期+',ratifyGrade:'符合预期+',reached:true},
+  {name:'郑洁',dept:'产品部',role:'高级工程师',group:'技术组',totalScore:74.5,grade:'符合预期',hierarchyGrade:'符合预期',ratifyGrade:'符合预期',reached:true},
+  {name:'黄鹏',dept:'产品部',role:'工程师',group:'技术组',totalScore:70.0,grade:'符合预期-',hierarchyGrade:'符合预期-',ratifyGrade:'',reached:true},
+  {name:'林敏',dept:'产品部',role:'产品经理',group:'产品组',totalScore:81.0,grade:'符合预期',hierarchyGrade:'符合预期',ratifyGrade:'',reached:true},
+  {name:'何杰',dept:'产品部',role:'高级工程师',group:'技术组',totalScore:86.5,grade:'符合预期+',hierarchyGrade:'符合预期+',ratifyGrade:'',reached:true},
+  {name:'马超',dept:'产品部',role:'产品助理',group:'产品组',totalScore:68.0,grade:'符合预期-',hierarchyGrade:'符合预期-',ratifyGrade:'',reached:true},
+  {name:'胡蝶',dept:'产品部',role:'工程师',group:'技术组',totalScore:62.0,grade:'低于预期',hierarchyGrade:'低于预期',ratifyGrade:'',reached:true}
+];
+
+var currentGroup='全部';
+var currentStatus='全部';
+var currentGrade=null;
+var currentPage=1;
+var PAGE_SIZE=10;
+
+function getFilteredMembers(){
+  return MEMBERS.filter(function(m){
+    if(currentGrade&&m.grade!==currentGrade)return false;
+    return true;
+  });
+}
+
+function renderDist(){
+  var rules=DIST_RULES[currentGroup]||DIST_RULES['全部'];
+  var filtered=getFilteredMembers();
+  var groupLabel=currentGroup==='全部'?'全部考核组':currentGroup;
+  var html='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">'+
+    '<span style="font:600 14px/1 var(--f);color:var(--c9)">等级分布</span>'+
+    '<span style="font:400 12px/1 var(--f);color:var(--c5)">'+groupLabel+' · 强制分布规则</span></div>';
+  rules.forEach(function(r){
+    var count=filtered.filter(function(m){return m.grade===r.grade;}).length;
+    var targetCount=Math.ceil(filtered.length*r.pct/100);
+    var diff=count-targetCount;
+    var tag='';
+    if(r.pct===0&&count===0){tag='<span style="font:500 11px/1 var(--f);color:var(--em700);background:var(--em50);padding:2px 6px;border-radius:3px">已达标</span>';}
+    else if(diff>=0){tag='<span style="font:500 11px/1 var(--f);color:var(--em700);background:var(--em50);padding:2px 6px;border-radius:3px">已达标</span>';}
+    else{tag='<span style="font:500 11px/1 var(--f);color:var(--ro);background:var(--ro50);padding:2px 6px;border-radius:3px">还需'+Math.abs(diff)+'人</span>';}
+    var activeClass=currentGrade===r.grade?' active':'';
+    html+='<div class="dist-row'+activeClass+'" data-grade="'+r.grade+'" onclick="filterByGrade(\''+r.grade+'\')">'+
+      '<span class="dist-label" style="color:'+r.color+'">'+r.grade+'</span>'+
+      '<div class="dist-track"><div class="dist-fill" style="width:'+r.pct+'%;background:'+r.bg+'"></div></div>'+
+      '<span class="dist-rule">目标: '+r.pct+'% ('+targetCount+'人)</span>'+
+      '<span class="dist-val">'+count+'人</span>'+
+      tag+'</div>';
+  });
+  document.getElementById('distSection').innerHTML=html;
+}
+
+function renderMembers(){
+  var filtered=getFilteredMembers();
+  var totalPages=Math.ceil(filtered.length/PAGE_SIZE)||1;
+  if(currentPage>totalPages)currentPage=totalPages;
+  var start=(currentPage-1)*PAGE_SIZE;
+  var pageData=filtered.slice(start,start+PAGE_SIZE);
+  var html='';
+  pageData.forEach(function(m){
+    html+='<tr>'+
+      '<td><span style="font-weight:500;color:var(--c8)">'+m.name+'</span></td>'+
+      '<td style="color:var(--c6)">'+m.dept+'</td>'+
+      '<td style="color:var(--c6)">'+m.role+'</td>'+
+      '<td><span style="font-family:var(--m);font-weight:600;color:var(--c9)">'+m.totalScore+'</span></td>'+
+      '<td><span style="display:inline-flex;align-items:center;justify-content:center;height:24px;border-radius:var(--r1);font:500 11px/1 var(--f);padding:0 8px;background:'+(GRADE_COLORS[m.grade]||'var(--c1)')+';color:#FFF">'+m.grade+'</span></td>'+
+      '<td><span style="display:inline-flex;align-items:center;justify-content:center;height:24px;border-radius:var(--r1);font:500 11px/1 var(--f);padding:0 8px;background:'+(GRADE_COLORS[m.hierarchyGrade]||'var(--c1)')+';color:#FFF">'+m.hierarchyGrade+'</span></td>';
+    if(m.ratifyGrade){
+      html+='<td><span style="display:inline-flex;align-items:center;justify-content:center;height:24px;border-radius:var(--r1);font:500 11px/1 var(--f);padding:0 8px;background:'+(GRADE_COLORS[m.ratifyGrade]||'var(--c1)')+';color:#FFF">'+m.ratifyGrade+'</span></td>';
+    }else{
+      html+='<td><span style="font:400 12px/1 var(--f);color:var(--c4)">待确认</span></td>';
+    }
+    html+='<td><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">✓ 已确认</span></td>'+
+      '</tr>';
+  });
+  document.getElementById('memberBody').innerHTML=html;
+  renderPager(filtered.length,totalPages);
+  renderDist();
+  updateStats(filtered);
+}
+
+function renderPager(total,totalPages){
+  var start=Math.min((currentPage-1)*PAGE_SIZE+1,total);
+  var end=Math.min(currentPage*PAGE_SIZE,total);
+  var html='<span class="pager-info">共 <b style="color:var(--c8)">'+total+'</b> 条，第 '+start+'-'+end+' 条</span><div class="pager-btns">';
+  html+='<button class="pager-btn" onclick="goPage('+(currentPage-1)+')"'+(currentPage<=1?' disabled':'')+'><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>';
+  for(var p=1;p<=totalPages;p++){
+    html+='<button class="pager-btn'+(p===currentPage?' active':'')+'" onclick="goPage('+p+')">'+p+'</button>';
+  }
+  html+='<button class="pager-btn" onclick="goPage('+(currentPage+1)+')"'+(currentPage>=totalPages?' disabled':'')+'><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>';
+  html+='</div>';
+  document.getElementById('pager').innerHTML=html;
+}
+
+function updateStats(filtered){
+  var total=filtered.length;
+  var reached=filtered.filter(function(m){return m.reached;}).length;
+  var unreached=total-reached;
+  var pending=filtered.filter(function(m){return m.reached&&!m.ratifyGrade;}).length;
+  var cards=document.querySelectorAll('.stat-card');
+  if(cards.length>=4){
+    cards[0].querySelector('.stat-val').textContent=total;
+    cards[1].querySelector('.stat-val').textContent=reached;
+    cards[2].querySelector('.stat-val').textContent=unreached;
+    cards[3].querySelector('.stat-val').textContent=pending;
+  }
+  var hdTotal=document.getElementById('hdTotal');
+  var hdReached=document.getElementById('hdReached');
+  var hdPending=document.getElementById('hdPending');
+  if(hdTotal)hdTotal.textContent=total+'人';
+  if(hdReached)hdReached.textContent=reached+'人';
+  if(hdPending)hdPending.textContent=pending+'人';
+  var summary=document.getElementById('listSummary');
+  if(summary)summary.textContent='已到达 '+reached+'人 · 未到达 '+unreached+'人';
+}
+
+function setActiveBtn(containerId,btn){}
+
+function filterByGrade(grade){
+  if(currentGrade===grade){currentGrade=null;}else{currentGrade=grade;}
+  currentPage=1;
+  renderMembers();
+}
+function goPage(p){
+  var filtered=getFilteredMembers();
+  var totalPages=Math.ceil(filtered.length/PAGE_SIZE)||1;
+  if(p<1||p>totalPages)return;
+  currentPage=p;
+  renderMembers();
+  document.querySelector('.eval-list').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function updateRatify(i,grade){MEMBERS[i].ratifyGrade=grade;renderMembers();}
+function batchRatify(){showToast('HRBP审定已确认','success');}
 function showToast(msg,type){
   var t=document.getElementById('toast');
   document.getElementById('toastMsg').textContent=msg;
   t.className='validate-toast show';
   setTimeout(function(){t.classList.remove('show')},3000);
 }
+
+renderMembers();
+
+// ═══ AI CHAT ═══
+var AI_SHORTCUTS=[
+  {icon:'📊',label:'分析等级分布',desc:'检查团队等级分布是否符合强制分布要求'},
+  {icon:'📝',label:'批量调整建议',desc:'根据评分数据，AI推荐审定等级'},
+  {icon:'⚠️',label:'异常检测',desc:'检测评分异常，提醒关注低分员工'},
+  {icon:'🔍',label:'校验强制分布',desc:'自动校验当前等级分配是否满足强制分布约束'}
+];
+var AI_MSGS=[
+  {role:'bot',text:'你好，我是 AI 审定助手 👋\n\n我可以帮你完成结果审定：\n• 分析等级分布是否合理\n• 批量推荐审定等级\n• 检测评分异常\n• 校验强制分布合规性',time:'09:30',shortcuts:true}
+];
+
+function getFiltered(){return getFilteredMembers();}
+function now(){return new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});}
+
+function renderAiChat(){
+  var bd=document.getElementById('chatBd');
+  if(!bd)return;
+  bd.innerHTML=AI_MSGS.map(function(m){
+    var html='<div class="ai-msg '+m.role+'"><div class="ai-msg-bd">'+m.text.replace(/\n/g,'<br/>')+'</div>';
+    if(m.shortcuts){html+='<div class="ai-shortcuts">'+AI_SHORTCUTS.map(function(s){return '<div class="ai-shortcut" onclick="handleAiAction(\''+s.label+'\')"><span class="ai-shortcut-icon">'+s.icon+'</span><div class="ai-shortcut-text"><div class="ai-shortcut-label">'+s.label+'</div><div class="ai-shortcut-desc">'+s.desc+'</div></div></div>';}).join('')+'</div>';}
+    if(m.cards){html+=m.cards.map(function(c){return '<div class="ai-msg-card"><div class="ai-msg-card-t">'+c.t+'</div><div class="ai-msg-card-d">'+c.d+'</div><div class="ai-msg-card-ft"><span class="ai-msg-card-tag '+c.tc+'">'+c.tag+'</span>'+(c.apply?'<button class="ai-msg-card-apply" onclick="applyAiSuggestion(\''+c.apply+'\')">应用到表格</button>':'')+'</div></div>';}).join('');}
+    if(m.actions){html+='<div class="ai-msg-actions">'+m.actions.map(function(a){return '<button class="ai-msg-btn'+(a.indexOf('确认')>=0||a.indexOf('应用')>=0?' primary':'')+'" onclick="handleAiAction(\''+a+'\')">'+a+'</button>';}).join('')+'</div>';}
+    if(m.time){html+='<div class="ai-msg-time">'+m.time+'</div>';}
+    html+='</div>';
+    return html;
+  }).join('');
+  bd.scrollTop=bd.scrollHeight;
+}
+
+function applyAiSuggestion(type){
+  if(type==='batch'){
+    var filtered=getFiltered();
+    var applied=0;
+    filtered.forEach(function(m){
+      if(m.reached&&!m.ratifyGrade){m.ratifyGrade=m.grade;applied++;}
+    });
+    renderMembers();
+    showToast('已批量填入 '+applied+' 项推荐等级','success');
+  }else if(type==='batch-reach'){
+    var filtered=getFiltered();
+    var applied=0;
+    filtered.forEach(function(m){
+      if(m.reached&&!m.ratifyGrade){m.ratifyGrade=m.grade;applied++;}
+    });
+    renderMembers();
+    showToast('已自动填充 '+applied+' 名已到达员工','success');
+  }else if(type==='fix-dist'){
+    applyAiSuggestion('batch');
+    showToast('分布已校正，当前符合强制分布要求','success');
+  }
+}
+
+function sendAiMsg(){
+  var input=document.getElementById('chatInput');
+  var text=input.value.trim();
+  if(!text)return;
+  AI_MSGS.push({role:'user',text:text});
+  input.value='';
+  renderAiChat();
+  setTimeout(function(){
+    AI_MSGS.push({role:'bot',text:'收到，正在分析审定数据…\n\n已根据你的描述生成建议，请查看更新结果。',time:now(),actions:['查看分布分析','批量调整建议','异常检测','校验强制分布']});
+    renderAiChat();
+  },800);
+}
+
+function handleAiAction(action){
+  AI_MSGS.push({role:'user',text:action});
+  renderAiChat();
+
+  setTimeout(function(){
+    var filtered=getFiltered();
+    var total=filtered.length;
+    var reached=filtered.filter(function(m){return m.reached;}).length;
+    var pending=filtered.filter(function(m){return m.reached&&!m.ratifyGrade;}).length;
+    var rules=DIST_RULES[currentGroup]||DIST_RULES['全部'];
+
+    switch(action){
+
+      // ─── 分析等级分布 ───
+      case '分析等级分布':
+        var lines=rules.map(function(r){
+          var count=filtered.filter(function(m){return m.grade===r.grade;}).length;
+          var target=Math.ceil(total*r.pct/100);
+          var status=count>=target?'✅ 符合':'⚠️ 偏低（差'+(target-count)+'人）';
+          return '• '+r.grade+': '+count+'人 (目标'+target+'人) → '+status;
+        });
+        var advice='';
+        var lowGrades=rules.filter(function(r){var c=filtered.filter(function(m){return m.grade===r.grade;}).length;return c<Math.ceil(total*r.pct/100);});
+        if(lowGrades.length>0){
+          var g=lowGrades[0];
+          var candidates=filtered.filter(function(m){return GRADE_OPTIONS.indexOf(m.grade)<GRADE_OPTIONS.indexOf(g.grade)&&m.reached;});
+          if(candidates.length>0){
+            advice='\n\n💡 建议：将「'+candidates[0].name+'」从'+candidates[0].grade+'提升至'+g.grade+'，可使分布更均衡。';
+          }else{
+            advice='\n\n💡 建议：当前无合适候选人可调整，建议与HRBP沟通放宽该等级分布。';
+          }
+        }else{
+          advice='\n\n✅ 所有等级均已达标，分布健康。';
+        }
+        AI_MSGS.push({role:'bot',text:'📊 当前等级分布分析（'+currentGroup+'）：\n\n'+lines.join('\n')+advice,time:now(),cards:[
+          {t:'分布分析',d:currentGroup+' 整体'+(lowGrades.length===0?'达标':'存在'+lowGrades.length+'项偏差'),tag:lowGrades.length===0?'已达标':'建议调整',tc:lowGrades.length===0?'em':'pr'}
+        ],actions:['批量调整建议','校验强制分布']});
+        break;
+
+      // ─── 批量调整建议 ───
+      case '批量调整建议':
+        AI_MSGS.push({role:'bot',text:'⚠️ HRBP为审批角色，不可调整等级。\n\n如需调整，请退回上级重新审定。',time:now(),actions:['校验强制分布','查看偏离人员']});
+        break;
+
+      // ─── 异常检测 ───
+      case '异常检测':
+        var sorted=filtered.slice().sort(function(a,b){return a.totalScore-b.totalScore;});
+        var low=sorted.slice(0,2);
+        var high=sorted.slice(-2).reverse();
+        var anomalyLines=low.map(function(m){return '• '+m.name+': '+m.totalScore+'分 ('+m.grade+')\n  建议关注绩效改进计划';});
+        var highLines=high.map(function(m){return '• '+m.name+': '+m.totalScore+'分 ('+m.grade+')\n  表现突出，建议确认超出预期';});
+        AI_MSGS.push({role:'bot',text:'⚠️ 评分异常检测：\n\n📌 需关注员工：\n'+anomalyLines.join('\n')+'\n\n📌 表现突出员工：\n'+highLines.join('\n')+'\n\n💡 建议对低分员工制定绩效改进计划（PIP），高分员工确认等级是否匹配。',time:now(),cards:[
+          {t:'异常检测',d:'发现 '+low.length+' 名低分员工需关注',tag:'需关注',tc:'ac'}
+        ],actions:['查看偏离人员','批量调整建议']});
+        break;
+
+      // ─── 校验强制分布 ───
+      case '校验强制分布':
+        var violations=[];
+        rules.forEach(function(r){
+          var count=filtered.filter(function(m){return m.reached&&m.ratifyGrade===r.grade;}).length;
+          var filled=filtered.filter(function(m){return m.reached&&m.ratifyGrade;}).length;
+          if(filled===0)return;
+          var actualPct=Math.round(count/filled*100);
+          if(r.pct>0&&actualPct<r.pct-10)violations.push({grade:r.grade,current:actualPct,target:r.pct,count:count});
+        });
+        var unfilled=filtered.filter(function(m){return m.reached&&!m.ratifyGrade;}).length;
+        if(unfilled>0){
+          AI_MSGS.push({role:'bot',text:'🔍 强制分布校验：\n\n⚠️ 尚有 '+unfilled+' 名已到达员工未填写审定等级，无法完成分布校验。\n\n请先填写所有审定等级后再校验。',time:now(),cards:[
+            {t:'待完成',d:unfilled+' 项等级待填入',tag:'未完成',tc:'ac'}
+          ],actions:['自动填充全部','批量调整建议']});
+        }else if(violations.length===0){
+          AI_MSGS.push({role:'bot',text:'✅ 强制分布校验通过！\n\n所有等级分配均在目标范围内，当前审定结果合规。',time:now(),cards:[
+            {t:'校验通过',d:'分布合规，可提交审定',tag:'已达标',tc:'em'}
+          ],actions:['提交审定','查看通知模板']});
+        }else{
+          var vLines=violations.map(function(v){return '• '+v.grade+': 实际'+v.current+'%，目标'+v.target+'%（'+v.count+'人）';});
+          AI_MSGS.push({role:'bot',text:'🔍 强制分布校验结果：\n\n❌ 发现 '+violations.length+' 项分布偏差：\n'+vLines.join('\n')+'\n\n💡 建议调整上述等级的人数分配，或与HRBP沟通放宽规则。',time:now(),cards:[
+            {t:'分布偏差',d:violations.length+' 项未达标',tag:'需调整',tc:'ac'}
+          ],actions:['微调分布','查看偏离人员']});
+        }
+        break;
+
+      // ─── 自动填充全部 ───
+      case '自动填充全部':
+        AI_MSGS.push({role:'bot',text:'⚠️ HRBP为审批角色，不可调整等级。\n\n如需调整，请退回上级重新审定。',time:now(),actions:['校验强制分布','查看偏离人员']});
+        break;
+
+      // ─── 查看偏离人员 ───
+      case '查看偏离人员':
+        var deviations=[];
+        filtered.forEach(function(m){
+          if(!m.reached||!m.ratifyGrade)return;
+          var gradeIdx=GRADE_OPTIONS.indexOf(m.grade);
+          var ratifyIdx=GRADE_OPTIONS.indexOf(m.ratifyGrade);
+          if(gradeIdx!==ratifyIdx){
+            var dir=ratifyIdx<gradeIdx?'↑ 提升':'↓ 降低';
+            deviations.push({name:m.name,from:m.grade,to:m.ratifyGrade,dir:dir,score:m.totalScore});
+          }
+        });
+        if(deviations.length===0){
+          AI_MSGS.push({role:'bot',text:'✅ 当前无等级偏离人员。\n\n所有已审定员工的等级均与原始评级一致。',time:now(),actions:['校验强制分布','批量调整建议']});
+        }else{
+          var dLines=deviations.map(function(d){return '• '+d.name+' ('+d.score+'分): '+d.from+' → '+d.to+' '+d.dir;});
+          AI_MSGS.push({role:'bot',text:'🔍 等级偏离分析（共 '+deviations.length+' 人）：\n\n'+dLines.join('\n')+'\n\n💡 请确认这些调整是否合理，是否会影响团队分布均衡。',time:now(),cards:[
+            {t:'偏离人员',d:deviations.length+' 人等级已调整',tag:'需确认',tc:'ac'}
+          ],actions:['校验强制分布','确认应用']});
+        }
+        break;
+
+      // ─── 确认应用 ───
+      case '确认应用':
+        AI_MSGS.push({role:'bot',text:'✅ HRBP审批通过，结果已锁定。\n\n当前 '+total+' 人已全部审定。\n\n审批通过后将自动通知所有被考核人。',time:now(),cards:[
+          {t:'已确认',d:total+' 人等级已锁定',tag:'已完成',tc:'em'}
+        ],actions:['生成通知模板','导出审定表']});
+        break;
+
+      // ─── 微调分布 ───
+      case '微调分布':
+        var adjustments=[];
+        rules.forEach(function(r){
+          var count=filtered.filter(function(m){return m.reached&&m.ratifyGrade===r.grade;}).length;
+          var target=Math.ceil(total*r.pct/100);
+          if(r.pct>0&&count<target)adjustments.push({grade:r.grade,need:target-count});
+        });
+        if(adjustments.length===0){
+          AI_MSGS.push({role:'bot',text:'✅ 当前分布已达标，无需微调。',time:now(),actions:['提交审定']});
+        }else{
+          var aLines=adjustments.map(function(a){return '• '+a.grade+': 需增加 '+a.need+' 人';});
+          AI_MSGS.push({role:'bot',text:'🔧 分布微调建议：\n\n'+aLines.join('\n')+'\n\n💡 可从盈余等级中调整人员至上述不足等级。\n点击等级分布图表可快速筛选对应等级人员。',time:now(),cards:[
+            {t:'微调建议',d:adjustments.length+' 个等级需调整',tag:'建议调整',tc:'pr'}
+          ],actions:['查看偏离人员','校验强制分布']});
+        }
+        break;
+
+      // ─── 查看通知模板 ───
+      case '生成通知模板':
+      case '查看通知模板':
+        AI_MSGS.push({role:'bot',text:'📋 审定结果通知模板：\n\n---\n【绩效审定结果通知】\n\nDear {员工姓名}，\n\n你2026年Q2绩效考核结果已审定：\n• 原始评级：{审定前等级}\n• 审定等级：{审定等级}\n• 审定人：各直线上级\n\n如有异议，请在5个工作日内联系HRBP。\n---\n\n当前团队 '+reached+' 人已到达，可批量发送。',time:now(),cards:[
+          {t:'通知模板',d:'已生成标准通知格式',tag:'可预览',tc:'pr'}
+        ],actions:['导出审定表','提交审定']});
+        break;
+
+      // ─── 导出审定表 ───
+      case '导出审定表':
+        AI_MSGS.push({role:'bot',text:'📥 审定表导出：\n\n已生成《产品部2026年Q2绩效审定表》\n\n包含字段：\n• 被考核人 / 部门 / 职位 / 考核组\n• 审定前总分 / 审定前等级\n• 审定等级 / 审定人 / 审定时间\n\n共 '+total+' 条记录，格式为 .xlsx。',time:now(),cards:[
+          {t:'审定表',d:total+' 条记录，已生成Excel',tag:'已导出',tc:'em'}
+        ],actions:['提交审定','查看通知模板']});
+        break;
+
+      // ─── 提交审定 ───
+      case '提交审定':
+        AI_MSGS.push({role:'bot',text:'✅ HRBP审批通过！\n\n审定结果已生效，将自动通知所有被考核人。\n\n共 '+total+' 人审定完成。',time:now(),cards:[
+          {t:'审批通过',d:total+' 人审定已生效',tag:'已完成',tc:'em'}
+        ],actions:['生成通知模板','导出审定表']});
+        break;
+
+      // ─── 确认提交 ───
+      case '确认提交':
+        AI_MSGS.push({role:'bot',text:'🎉 HRBP审批已完成！\n\n所有被考核人将在1个工作日内收到审定结果通知。',time:now(),cards:[
+          {t:'已完成',d:total+' 人审定已生效',tag:'已完成',tc:'em'}
+        ],actions:['查看通知模板']});
+        break;
+
+      // ─── 返回修改 ───
+      case '返回修改':
+        AI_MSGS.push({role:'bot',text:'好的，已返回修改模式。\n\n你可以继续调整审定等级，完成后再提交。',time:now(),actions:['批量调整建议','校验强制分布','异常检测']});
+        break;
+
+      // ─── 默认 ───
+      default:
+        AI_MSGS.push({role:'bot',text:'收到，正在分析审定数据…\n\n已根据你的描述生成建议，请查看更新结果。',time:now(),actions:['分析等级分布','批量调整建议','异常检测','校验强制分布']});
+    }
+    renderAiChat();
+  },800);
+}
+
+function toggleAiChat(){document.body.classList.toggle('chat-open');}
+
 </script>
+
+<!-- AI Chat Panel -->
+<div class="ai-chat" id="aiChat">
+  <div class="ai-chat-hd">
+    <div class="ai-chat-hd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg></div>
+    <div><div class="ai-chat-hd-t">AI 审定助手</div><div class="ai-chat-hd-s">分布分析 · 等级推荐 · 校验合规 · 异常检测</div></div>
+    <button class="ai-chat-close" onclick="toggleAiChat()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+  <div class="ai-chat-bd" id="chatBd"></div>
+  <div class="ai-chat-ft">
+    <label class="ai-chat-upload" title="上传文件"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg><input type="file" multiple accept=".doc,.docx,.xls,.xlsx,.pdf,.txt" onchange="handleChatFileSelect(event)"/></label>
+    <input class="ai-chat-input" id="chatInput" placeholder="输入指令，如「分析分布」「批量建议」…" onkeydown="if(event.key==='Enter')sendAiMsg()"/>
+    <button class="ai-chat-send" onclick="sendAiMsg()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+  </div>
+</div>
+<button class="ai-toggle" onclick="toggleAiChat()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg></button>
+
 </body>
 </html>

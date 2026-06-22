@@ -113,6 +113,13 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .fade-in{animation:fadeIn .2s ease forwards}
+
+/* ═══ EVAL TAG ═══ */
+.eval-tag{display:inline-block;padding:2px 8px;border-radius:3px;font:500 11px/1 var(--f)}
+.eval-tag.excellent{background:var(--em50);color:var(--em700)}
+.eval-tag.good{background:var(--pr50);color:var(--pr)}
+.eval-tag.normal{background:var(--c1);color:var(--c6)}
+.eval-tag.poor{background:var(--ro50);color:var(--ro)}
 </style>
 </head>
 <body>
@@ -139,9 +146,9 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
         </span>
       </div>
       <div class="pg-hd-actions">
-        <button class="btn btn-r" onclick="openAppeal()">
+        <button class="btn btn-r" onclick="openDisagree()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-          发起申诉
+          不同意
         </button>
         <button class="btn btn-p" onclick="showToast('已确认绩效结果','success')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
@@ -160,22 +167,50 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
   </div>
 
   <!-- Result Hero -->
-  <div class="pg-hd" style="padding:0;margin-bottom:16px">
-    <div class="result-hero">
+  <div class="pg-hd" style="padding:0;margin-bottom:16px;overflow:hidden">
+    <div class="result-hero" style="padding:24px 32px;gap:24px">
       <div class="result-score">
         <div class="result-score-num">87.5</div>
         <div class="result-score-label">加权总分</div>
       </div>
-      <div class="result-divider"></div>
+      <div class="result-divider" style="height:48px"></div>
       <div class="result-grade">
         <div class="result-grade-text">符合预期+</div>
         <div class="result-grade-label">综合等级</div>
       </div>
-      <div class="result-divider"></div>
-      <div class="result-meta">
-        <div class="result-meta-row">直线上级评分：<strong>88.0</strong>（王总监）</div>
-        <div class="result-meta-row">双线上级评分：<strong>86.5</strong>（刘VP）</div>
-        <div class="result-meta-row">HRBP：<strong>李HR</strong></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:0;padding:14px 32px;border-top:1px solid var(--pr100);overflow-x:auto">
+      <div style="text-align:center;min-width:100px">
+        <div style="font:400 11px/1 var(--f);color:var(--c5);margin-bottom:6px">审定前等级</div>
+        <span style="display:inline-flex;align-items:center;justify-content:center;height:28px;border-radius:var(--r1);font:500 12px/1 var(--f);padding:0 10px;background:var(--c1);color:var(--c6)">符合预期+</span>
+      </div>
+      <div style="display:flex;align-items:center;color:var(--c3);padding:0 6px;margin-top:14px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <div style="text-align:center;min-width:100px">
+        <div style="font:400 11px/1 var(--f);color:var(--c5);margin-bottom:6px">直线上级</div>
+        <span style="display:inline-flex;align-items:center;justify-content:center;height:28px;border-radius:var(--r1);font:500 12px/1 var(--f);padding:0 10px;background:var(--pr50);color:var(--pr)">符合预期+</span>
+      </div>
+      <div style="display:flex;align-items:center;color:var(--c3);padding:0 6px;margin-top:14px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <div style="text-align:center;min-width:100px">
+        <div style="font:400 11px/1 var(--f);color:var(--c5);margin-bottom:6px">间接上级</div>
+        <span style="display:inline-flex;align-items:center;justify-content:center;height:28px;border-radius:var(--r1);font:500 12px/1 var(--f);padding:0 10px;background:var(--pr50);color:var(--pr)">符合预期+</span>
+      </div>
+      <div style="display:flex;align-items:center;color:var(--c3);padding:0 6px;margin-top:14px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <div style="text-align:center;min-width:100px">
+        <div style="font:400 11px/1 var(--f);color:var(--c5);margin-bottom:6px">逐级上级</div>
+        <span style="display:inline-flex;align-items:center;justify-content:center;height:28px;border-radius:var(--r1);font:500 12px/1 var(--f);padding:0 10px;background:var(--pr50);color:var(--pr)">符合预期+</span>
+      </div>
+      <div style="display:flex;align-items:center;color:var(--c3);padding:0 6px;margin-top:14px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <div style="text-align:center;min-width:100px">
+        <div style="font:400 11px/1 var(--f);color:var(--c5);margin-bottom:6px">HRBP审批</div>
+        <span style="display:inline-flex;align-items:center;gap:4px;height:28px;border-radius:var(--r1);font:500 12px/1 var(--f);padding:0 10px;background:var(--em50);color:var(--em700)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>已通过</span>
       </div>
     </div>
   </div>
@@ -190,10 +225,10 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
         <tr>
           <th style="width:180px">名称</th>
           <th style="width:55px">权重</th>
+          <th style="width:80px">类型</th>
           <th style="min-width:180px">衡量标准</th>
-          <th style="width:100px">完成值</th>
-          <th style="width:80px">得分</th>
-          <th style="width:100px">评价</th>
+          <th style="min-width:160px">完成值/完成情况</th>
+          <th style="width:120px">评价/得分</th>
         </tr>
       </thead>
       <tbody>
@@ -205,26 +240,26 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
         <tr>
           <td><span style="font-weight:500;color:var(--c8)">资源利用率（通用）</span></td>
           <td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">5%</span></td>
+          <td><span style="display:inline-block;padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)">定量</span></td>
           <td style="font:400 12px/1.6 var(--f);color:var(--c6)">人员实际工作量饱和情况<br>挑战值: <span style="font-family:var(--m);color:var(--c7)">110%</span> / 目标值: <span style="font-family:var(--m);color:var(--c7)">105%</span></td>
           <td style="font-family:var(--m);font-weight:500;color:var(--c8)">108%</td>
           <td><span class="score-badge high">100</span></td>
-          <td><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">符合预期+</span></td>
         </tr>
         <tr>
           <td><span style="font-weight:500;color:var(--c8)">HRAS UAT用户验收首次通过率</span></td>
           <td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">10%</span></td>
+          <td><span style="display:inline-block;padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)">定量</span></td>
           <td style="font:400 12px/1.6 var(--f);color:var(--c6)">需求首次业务验收通过的概率<br>挑战值: <span style="font-family:var(--m);color:var(--c7)">100%</span> / 目标值: <span style="font-family:var(--m);color:var(--c7)">98%</span></td>
           <td style="font-family:var(--m);font-weight:500;color:var(--c8)">97%</td>
           <td><span class="score-badge mid">80</span></td>
-          <td><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)">符合预期</span></td>
         </tr>
         <tr>
           <td><span style="font-weight:500;color:var(--c8)">HRAS需求评审及时率</span></td>
           <td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">15%</span></td>
+          <td><span style="display:inline-block;padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)">定量</span></td>
           <td style="font:400 12px/1.6 var(--f);color:var(--c6)">迭代版本评审的及时性情况<br>挑战值: <span style="font-family:var(--m);color:var(--c7)">100%</span> / 目标值: <span style="font-family:var(--m);color:var(--c7)">98%</span></td>
           <td style="font-family:var(--m);font-weight:500;color:var(--c8)">96%</td>
           <td><span class="score-badge mid">80</span></td>
-          <td><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)">符合预期</span></td>
         </tr>
         <tr class="mod-row"><td colspan="6"><div class="results-mod">
           <div class="results-mod-dot" style="background:var(--em)"></div>
@@ -234,34 +269,34 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
         <tr>
           <td><span style="font-weight:500;color:var(--c8)">HRAS产品管理规范</span></td>
           <td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">10%</span></td>
+          <td><span style="display:inline-block;padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">定性</span></td>
           <td style="font:400 12px/1.6 var(--f);color:var(--c6)">需求管理流程规范、产品需求规范、迭代火车管理规范、周会/月会准时完成</td>
-          <td style="font:400 12px/1.6 var(--f);color:var(--c7)">4项规范全部符合，团队遵从度95%以上</td>
-          <td><span class="score-badge high">100</span></td>
-          <td><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">符合预期</span></td>
+          <td style="font:400 13px/1.5 var(--f);color:var(--c8)">4项规范全部符合，团队遵从度95%以上</td>
+          <td><span class="eval-tag excellent">符合预期+</span></td>
         </tr>
         <tr>
           <td><span style="font-weight:500;color:var(--c8)">日常滚动需求响应</span></td>
           <td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">10%</span></td>
+          <td><span style="display:inline-block;padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">定性</span></td>
           <td style="font:400 12px/1.6 var(--f);color:var(--c6)">根据业务日会需求优先级，滚动响应日常需求，输出产品解决方案</td>
-          <td style="font:400 12px/1.6 var(--f);color:var(--c7)">按时完成GOFO 6月迭代需求评审和验收</td>
-          <td><span class="score-badge high">100</span></td>
-          <td><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">符合预期</span></td>
+          <td style="font:400 13px/1.5 var(--f);color:var(--c8)">按时完成GOFO 6月迭代需求评审和验收</td>
+          <td><span class="eval-tag excellent">符合预期+</span></td>
         </tr>
         <tr>
           <td><span style="font-weight:500;color:var(--c8)">HR ONE 绩效重构事项推进</span></td>
           <td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">25%</span></td>
+          <td><span style="display:inline-block;padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">定性</span></td>
           <td style="font:400 12px/1.6 var(--f);color:var(--c6)">06-10 输出AI+绩效核心页面原型；06-19 完成绩效版本4需求内审；06-24 完成需求评审</td>
-          <td style="font:400 12px/1.6 var(--f);color:var(--c7)">3个里程碑按时交付，无延期</td>
-          <td><span class="score-badge high">100</span></td>
-          <td><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">符合预期+</span></td>
+          <td style="font:400 13px/1.5 var(--f);color:var(--c8)">3个里程碑按时交付，无延期</td>
+          <td><span class="eval-tag excellent">符合预期+</span></td>
         </tr>
         <tr>
           <td><span style="font-weight:500;color:var(--c8)">AI应用项目探索与落地推广</span></td>
           <td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">25%</span></td>
+          <td><span style="display:inline-block;padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">定性</span></td>
           <td style="font:400 12px/1.6 var(--f);color:var(--c6)">06-05 完成ASSC采购侧AI应用1.0版本；06-12 对接LBU试点应用；06-26 完成1.1版本</td>
-          <td style="font:400 12px/1.6 var(--f);color:var(--c7)">3个版本按时发布，1个试点应用已落地</td>
-          <td><span class="score-badge high">100</span></td>
-          <td><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">符合预期+</span></td>
+          <td style="font:400 13px/1.5 var(--f);color:var(--c8)">3个版本按时发布，1个试点应用已落地</td>
+          <td><span class="eval-tag excellent">符合预期+</span></td>
         </tr>
       </tbody>
     </table>
@@ -309,64 +344,44 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
         </thead>
         <tbody>
           <tr style="background:var(--em50)">
-            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c8);border-bottom:1px solid var(--dv)">
-              <div style="display:flex;align-items:center;gap:6px">
-                <span style="width:8px;height:8px;border-radius:50%;background:var(--em);flex-shrink:0"></span>
-                被考核人自评分
-              </div>
-            </td>
-            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)">
-              <div style="display:flex;align-items:center;gap:6px">
-                <span style="width:22px;height:22px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">张</span>
-                <span style="font:400 13px/1 var(--f);color:var(--c8)">张明</span>
-              </div>
-            </td>
+            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c8);border-bottom:1px solid var(--dv)"><div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--em);flex-shrink:0"></span>被考核人自评</div></td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><div style="display:flex;align-items:center;gap:6px"><span style="width:22px;height:22px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">张</span><span style="font:400 13px/1 var(--f);color:var(--c8)">张明</span></div></td>
             <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c7);border-bottom:1px solid var(--dv)">2026-06-15 09:00</td>
             <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--em700);border-bottom:1px solid var(--dv)">2026-06-15 14:30</td>
-            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)">
-              <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">✓ 已完成</span>
-            </td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">✓ 已完成</span></td>
             <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c5);border-bottom:1px solid var(--dv)">自评已提交</td>
           </tr>
           <tr style="background:var(--em50)">
-            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c8);border-bottom:1px solid var(--dv)">
-              <div style="display:flex;align-items:center;gap:6px">
-                <span style="width:8px;height:8px;border-radius:50%;background:var(--em);flex-shrink:0"></span>
-                双线上级评分
-              </div>
-            </td>
-            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)">
-              <div style="display:flex;align-items:center;gap:6px">
-                <span style="width:22px;height:22px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">刘</span>
-                <span style="font:400 13px/1 var(--f);color:var(--c8)">刘VP</span>
-              </div>
-            </td>
+            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c8);border-bottom:1px solid var(--dv)"><div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--em);flex-shrink:0"></span>直接上级评级</div></td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><div style="display:flex;align-items:center;gap:6px"><span style="width:22px;height:22px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">王</span><span style="font:400 13px/1 var(--f);color:var(--c8)">王总监</span></div></td>
             <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c7);border-bottom:1px solid var(--dv)">2026-06-15 14:30</td>
             <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--em700);border-bottom:1px solid var(--dv)">2026-06-16 10:00</td>
-            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)">
-              <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">✓ 已完成</span>
-            </td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c5);border-bottom:1px solid var(--dv)">评分86.5分</td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">✓ 已完成</span></td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c5);border-bottom:1px solid var(--dv)">评分88.0分，等级符合预期+</td>
           </tr>
           <tr style="background:var(--em50)">
-            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c8)">
-              <div style="display:flex;align-items:center;gap:6px">
-                <span style="width:8px;height:8px;border-radius:50%;background:var(--em);flex-shrink:0"></span>
-                直线上级评分
-              </div>
-            </td>
-            <td style="padding:12px 16px">
-              <div style="display:flex;align-items:center;gap:6px">
-                <span style="width:22px;height:22px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">王</span>
-                <span style="font:400 13px/1 var(--f);color:var(--c8)">王总监</span>
-              </div>
-            </td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c7)">2026-06-16 10:00</td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--em700)">2026-06-17 15:00</td>
-            <td style="padding:12px 16px">
-              <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">✓ 已完成</span>
-            </td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c5)">评分88.0分</td>
+            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c8);border-bottom:1px solid var(--dv)"><div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--em);flex-shrink:0"></span>间接上级评级</div></td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><div style="display:flex;align-items:center;gap:6px"><span style="width:22px;height:22px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">刘</span><span style="font:400 13px/1 var(--f);color:var(--c8)">刘VP</span></div></td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c7);border-bottom:1px solid var(--dv)">2026-06-16 10:00</td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--em700);border-bottom:1px solid var(--dv)">2026-06-16 14:00</td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">✓ 已完成</span></td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c5);border-bottom:1px solid var(--dv)">确认等级符合预期+</td>
+          </tr>
+          <tr style="background:var(--em50)">
+            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c8);border-bottom:1px solid var(--dv)"><div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--em);flex-shrink:0"></span>逐级上级评级</div></td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><div style="display:flex;align-items:center;gap:6px"><span style="width:22px;height:22px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">赵</span><span style="font:400 13px/1 var(--f);color:var(--c8)">赵VP</span></div></td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c7);border-bottom:1px solid var(--dv)">2026-06-16 14:00</td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--em700);border-bottom:1px solid var(--dv)">2026-06-17 09:00</td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">✓ 已完成</span></td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c5);border-bottom:1px solid var(--dv)">确认等级符合预期+</td>
+          </tr>
+          <tr style="background:var(--em50)">
+            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c8)"><div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--em);flex-shrink:0"></span>HRBP审批</div></td>
+            <td style="padding:12px 16px"><div style="display:flex;align-items:center;gap:6px"><span style="width:22px;height:22px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">李</span><span style="font:400 13px/1 var(--f);color:var(--c8)">李HR</span></div></td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c7)">2026-06-17 09:00</td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--em700)">2026-06-17 11:00</td>
+            <td style="padding:12px 16px"><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">✓ 已完成</span></td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c5)">审批通过，结果已生效</td>
           </tr>
         </tbody>
       </table>
@@ -378,14 +393,14 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 <div class="appeal-overlay" id="appealOverlay">
   <div class="appeal-box">
     <div class="appeal-box-hd">
-      <span class="appeal-box-t">发起申诉</span>
-      <button class="appeal-box-close" onclick="closeAppeal()">
+      <span class="appeal-box-t">不同意绩效结果</span>
+      <button class="appeal-box-close" onclick="closeDisagree()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
     <div class="appeal-box-bd">
-      <label class="appeal-label">请说明申诉原因</label>
-      <textarea class="appeal-textarea" placeholder="请输入您对绩效结果的异议及申诉理由..."></textarea>
+      <label class="appeal-label">不同意原因</label>
+      <textarea class="appeal-textarea" placeholder="请说明不同意的原因，HRBP将在3个工作日内处理..."></textarea>
       <div style="margin-top:12px">
         <label class="appeal-label">佐证材料（可选）</label>
         <div style="border:2px dashed var(--c2);border-radius:var(--r2);padding:20px;text-align:center;cursor:pointer">
@@ -394,8 +409,8 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
       </div>
     </div>
     <div class="appeal-box-ft">
-      <button class="btn btn-s" onclick="closeAppeal()">取消</button>
-      <button class="btn btn-r" onclick="submitAppeal()">提交申诉</button>
+      <button class="btn btn-s" onclick="closeDisagree()">取消</button>
+      <button class="btn btn-r" onclick="submitDisagree()">提交</button>
     </div>
   </div>
 </div>
@@ -406,15 +421,15 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 <script>
 GHR_NAV.init('perf', '结果确认');
 
-function openAppeal(){
+function openDisagree(){
   document.getElementById('appealOverlay').classList.add('open');
 }
-function closeAppeal(){
+function closeDisagree(){
   document.getElementById('appealOverlay').classList.remove('open');
 }
-function submitAppeal(){
-  closeAppeal();
-  showToast('申诉已提交，HRBP将在3个工作日内处理','warn');
+function submitDisagree(){
+  closeDisagree();
+  showToast('已提交不同意见，HRBP将在3个工作日内处理','warn');
 }
 function showToast(msg,type){
   var t=document.getElementById('toast');

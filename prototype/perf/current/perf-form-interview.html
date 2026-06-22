@@ -123,6 +123,30 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .fi{animation:fadeIn .25s ease forwards}
+
+/* ═══ MONTHLY PERFORMANCE ═══ */
+.mp-year{margin-bottom:16px}
+.mp-year-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;cursor:pointer;padding:6px 0}
+.mp-year-hd:hover{opacity:.8}
+.mp-year-label{font:600 14px/1 var(--f);color:var(--c9)}
+.mp-year-range{font:400 12px/1 var(--f);color:var(--c5);background:var(--c0);padding:3px 10px;border-radius:var(--r1);cursor:pointer;border:1px solid var(--c2);transition:all .12s}
+.mp-year-range:hover{border-color:var(--pr);color:var(--pr)}
+.mp-months{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+.mp-months::-webkit-scrollbar{height:3px}
+.mp-months::-webkit-scrollbar-thumb{background:var(--c3);border-radius:2px}
+.mp-card{min-width:220px;flex-shrink:0;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);padding:14px;transition:all .12s}
+.mp-card:hover{border-color:var(--pr200);box-shadow:0 2px 8px rgba(37,99,235,.08)}
+.mp-card-month{font:600 13px/1 var(--f);color:var(--c8);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.mp-card-score{font:700 18px/1 var(--m);color:var(--pr)}
+.mp-card-grade{display:inline-block;padding:2px 8px;border-radius:4px;font:500 11px/1 var(--f);margin-top:4px}
+.mp-card-grade.excellent{background:var(--em50);color:var(--em700)}
+.mp-card-grade.good{background:var(--pr50);color:var(--pr)}
+.mp-card-grade.normal{background:var(--c1);color:var(--c6)}
+.mp-card-grade.poor{background:var(--ac50);color:var(--ac700)}
+.mp-card-grade.bad{background:var(--ro50);color:var(--ro)}
+.mp-card-bar{height:4px;background:var(--c1);border-radius:2px;margin-top:8px;overflow:hidden}
+.mp-card-bar-fill{height:100%;border-radius:2px;transition:width .3s}
+.mp-empty{padding:24px;text-align:center;font:400 13px/1 var(--f);color:var(--c4)}
 </style>
 </head>
 <body>
@@ -153,9 +177,23 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 // 本人填写模式：只显示当前员工，不显示其他员工
 // 通过 EMPLOYEE_IDX 切换查看不同状态（原型演示用）
 const EMPLOYEES = [
-  {id:'EMP001', name:'张三', dept:'技术部', title:'高级工程师', leader:'李四', status:'pending_employee_fill', cycle:'2026年度', startDate:'2026-05-28'},
-  {id:'EMP002', name:'王五', dept:'产品部', title:'产品经理', leader:'赵六', status:'pending_leader_review', cycle:'2026年度', startDate:'2026-05-27'},
-  {id:'EMP003', name:'陈七', dept:'设计部', title:'UI设计师', leader:'李四', status:'completed', cycle:'2026年度', startDate:'2026-05-20'},
+  {id:'EMP001', name:'张三', dept:'技术部', title:'高级工程师', leader:'李四', status:'pending_employee_fill', cycle:'2026年度', startDate:'2026-05-28',
+    monthlyResults:{
+      '2026':{months:[4,5,6],data:{4:{score:88,grade:'符合预期+'},5:{score:85,grade:'符合预期+'},6:{score:90,grade:'超出预期'}}},
+      '2025':{months:[1,2,3,4,5,6,7,8,9,10,11,12],data:{1:{score:82,grade:'符合预期'},2:{score:80,grade:'符合预期'},3:{score:85,grade:'符合预期+'},4:{score:78,grade:'符合预期'},5:{score:83,grade:'符合预期+'},6:{score:87,grade:'符合预期+'},7:{score:85,grade:'符合预期+'},8:{score:80,grade:'符合预期'},9:{score:82,grade:'符合预期'},10:{score:88,grade:'符合预期+'},11:{score:84,grade:'符合预期+'},12:{score:86,grade:'符合预期+'}}}
+    }
+  },
+  {id:'EMP002', name:'王五', dept:'产品部', title:'产品经理', leader:'赵六', status:'pending_leader_review', cycle:'2026年度', startDate:'2026-05-27',
+    monthlyResults:{
+      '2026':{months:[4,5,6],data:{4:{score:91,grade:'超出预期'},5:{score:88,grade:'符合预期+'},6:{score:93,grade:'超出预期'}}},
+      '2025':{months:[7,8,9,10,11,12],data:{7:{score:80,grade:'符合预期'},8:{score:82,grade:'符合预期'},9:{score:85,grade:'符合预期+'},10:{score:88,grade:'符合预期+'},11:{score:90,grade:'超出预期'},12:{score:87,grade:'符合预期+'}}}
+    }
+  },
+  {id:'EMP003', name:'陈七', dept:'设计部', title:'UI设计师', leader:'李四', status:'completed', cycle:'2026年度', startDate:'2026-05-20',
+    monthlyResults:{
+      '2026':{months:[4,5,6],data:{4:{score:77,grade:'符合预期'},5:{score:75,grade:'符合预期'},6:{score:78,grade:'符合预期'}}}
+    }
+  },
 ];
 
 // 原型演示：通过 URL 参数 ?idx=1 切换员工，默认显示第一个
@@ -226,6 +264,15 @@ function renderForm() {
           <div class="info-value readonly">${emp.leader}</div>
         </div>
       </div>
+    </div>
+
+    <!-- 月度绩效结果展示 -->
+    <div class="section">
+      <div class="section-hd">
+        <div class="section-hd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+        <span class="section-hd-t">月度绩效结果展示</span>
+      </div>
+      ${renderMonthlyResults(emp)}
     </div>
 
     <!-- 面谈内容 -->
@@ -361,6 +408,60 @@ function renderFileUpload() {
 
 function renderFileListReadonly() {
   return `<div style="font:400 13px/1 var(--f);color:var(--c5)">无附件</div>`;
+}
+
+const MONTH_NAMES=['','1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+const GRADE_CLASS_MAP={'超出预期':'excellent','符合预期+':'good','符合预期':'normal','符合预期-':'poor','低于预期':'bad'};
+const GRADE_BAR_COLOR={'超出预期':'var(--em)','符合预期+':'var(--pr)','符合预期':'var(--c4)','符合预期-':'var(--ac)','低于预期':'var(--ro)'};
+
+function renderMonthlyResults(emp) {
+  const mr = emp.monthlyResults;
+  if (!mr || !Object.keys(mr).length) return '<div class="mp-empty">暂无月度绩效数据</div>';
+  const years = Object.keys(mr).sort((a,b) => b-a);
+  let h = '';
+  years.forEach(year => {
+    const yearData = mr[year];
+    const months = yearData.months || Object.keys(yearData.data).map(Number).sort((a,b)=>a-b);
+    const monthCount = months.length;
+    h += `<div class="mp-year">
+      <div class="mp-year-hd">
+        <span class="mp-year-label">${year}年</span>
+        <span class="mp-year-range" onclick="cycleMonthRange('${emp.id}','${year}',this)" title="点击切换月份范围">${monthCount}个月</span>
+      </div>
+      <div class="mp-months">`;
+    months.forEach(m => {
+      const d = yearData.data[m];
+      if (!d) return;
+      const gc = GRADE_CLASS_MAP[d.grade] || 'normal';
+      const barColor = GRADE_BAR_COLOR[d.grade] || 'var(--c4)';
+      const barWidth = Math.min(d.score, 120) / 120 * 100;
+      h += `<div class="mp-card">
+        <div class="mp-card-month"><span>${MONTH_NAMES[m]}</span><span class="mp-card-score">${d.score}</span></div>
+        <span class="mp-card-grade ${gc}">${d.grade}</span>
+        <div class="mp-card-bar"><div class="mp-card-bar-fill" style="width:${barWidth}%;background:${barColor}"></div></div>
+      </div>`;
+    });
+    h += '</div></div>';
+  });
+  return h;
+}
+
+const monthRanges = {};
+function cycleMonthRange(empId, year, el) {
+  const fullMonths = [1,2,3,4,5,6,7,8,9,10,11,12];
+  const q1 = [1,2,3], q2 = [4,5,6], q3 = [7,8,9], q4 = [10,11,12];
+  const ranges = [fullMonths, q1, q2, q3, q4];
+  const labels = ['12个月','Q1 (1-3月)','Q2 (4-6月)','Q3 (7-9月)','Q4 (10-12月)'];
+  const key = empId + '_' + year;
+  const cur = monthRanges[key] || 0;
+  const next = (cur + 1) % ranges.length;
+  monthRanges[key] = next;
+  const emp = EMPLOYEES.find(e => e.id === empId);
+  if (emp && emp.monthlyResults && emp.monthlyResults[year]) {
+    emp.monthlyResults[year].months = ranges[next];
+    el.textContent = labels[next];
+    renderForm();
+  }
 }
 
 function handleFileSelect(e) {

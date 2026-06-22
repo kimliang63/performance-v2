@@ -108,20 +108,34 @@ const MOCK = {
   cycle: '2026年Q2',
   totalScore: 87.5,
   grade: '符合预期+',
-  goals: [
-    {name:'产品迭代',weight:30,score:108,grade:'符合预期+'},
-    {name:'新客户拓展',weight:20,score:110,grade:'符合预期+'},
-    {name:'客户满意度',weight:15,score:92,grade:'符合预期'},
-    {name:'团队效率',weight:10,score:100,grade:'符合预期'},
-    {name:'人才培养',weight:10,score:100,grade:'符合预期'},
+  gradeChain: [
+    {node:'审定前等级',grade:'符合预期+',type:'base'},
+    {node:'直线上级',grade:'符合预期+',type:'done'},
+    {node:'间接上级',grade:'符合预期+',type:'done'},
+    {node:'逐级上级',grade:'符合预期+',type:'done'},
+    {node:'HRBP审批',grade:'已通过',type:'hrbp'}
   ],
+  goals: [
+    {name:'资源利用率（通用）',weight:5,type:'定量',standard:'人员实际工作量饱和情况',target:'105%',challenge:'110%',result:'108%',progress:'108%',score:100,grade:'符合预期+'},
+    {name:'HRAS UAT用户验收首次通过率',weight:10,type:'定量',standard:'需求首次业务验收通过的概率',target:'98%',challenge:'100%',result:'97%',progress:'97%',score:80,grade:'符合预期'},
+    {name:'HRAS需求评审及时率',weight:15,type:'定量',standard:'迭代版本评审的及时性',target:'98%',challenge:'100%',result:'96%',progress:'96%',score:80,grade:'符合预期'},
+    {name:'HRAS产品管理规范',weight:10,type:'定性',standard:'需求管理流程规范等',result:'4项规范全部符合，遵从度95%+',progress:'100%',score:null,grade:'符合预期+'},
+    {name:'日常滚动需求响应',weight:10,type:'定性',standard:'滚动响应日常需求',result:'按时完成GOFO 6月迭代',progress:'100%',score:null,grade:'符合预期+'},
+    {name:'HR ONE 绩效重构事项推进',weight:25,type:'定性',standard:'AI+绩效核心页面原型',result:'3个里程碑按时交付',progress:'100%',score:null,grade:'符合预期+'},
+    {name:'AI应用项目探索与落地推广',weight:25,type:'定性',standard:'ASSC采购侧AI应用',result:'3个版本按时发布',progress:'100%',score:null,grade:'符合预期+'},
+  ],
+  comments: [
+    {name:'王总监',role:'直线上级',color:'var(--pr)',text:'Q2完成3个核心功能上线，产品迭代目标达成率高。管理能力和业务理解有待提升。'},
+    {name:'刘VP',role:'双线上级',color:'var(--vi)',text:'整体表现良好，产品交付质量稳定。建议重点关注团队协作和业务视野拓展。'}
+  ],
+  deadline: '2026-06-25 18:00'
 };
 
 function getGradeClass(grade){
-  if(grade.includes('远超')) return 'grade-exceed';
-  if(grade.includes('+')) return 'grade-meet';
-  if(grade.includes('-')) return 'grade-meet-minus';
-  if(grade.includes('未达')) return 'grade-below';
+  if(grade==='超出预期') return 'grade-exceed';
+  if(grade==='符合预期+') return 'grade-meet';
+  if(grade==='符合预期-') return 'grade-meet-minus';
+  if(grade==='低于预期') return 'grade-below';
   return 'grade-meet';
 }
 
@@ -143,16 +157,54 @@ function render(){
     <div class="result-grade"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>${MOCK.grade}</div>
   </div>`;
 
+  // Grade chain
+  h += '<div class="sec-hd"><span class="sec-name">等级流转</span></div>';
+  h += '<div style="background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:12px;margin-bottom:12px;display:flex;align-items:center;gap:4px;overflow-x:auto">';
+  MOCK.gradeChain.forEach((c,i) => {
+    const bg = c.type==='hrbp'?'var(--em50)':c.type==='base'?'var(--c1)':'var(--pr50)';
+    const color = c.type==='hrbp'?'var(--em700)':c.type==='base'?'var(--c6)':'var(--pr)';
+    h += `<div style="text-align:center;min-width:60px;flex-shrink:0">
+      <div style="font:400 10px/1 var(--f);color:var(--c5);margin-bottom:4px">${c.node}</div>
+      <span style="display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:6px;font:500 11px/1 var(--f);background:${bg};color:${color}">${c.type==='hrbp'?'✓ ':''}${c.grade}</span>
+    </div>`;
+    if(i<MOCK.gradeChain.length-1) h += '<span style="color:var(--c3);flex-shrink:0;font-size:10px">→</span>';
+  });
+  h += '</div>';
+
   // Goal scores
-  h += '<div class="sec-hd"><span class="sec-name">各指标得分</span></div>';
+  h += '<div class="sec-hd"><span class="sec-name">得分明细</span></div>';
   MOCK.goals.forEach(g => {
-    h += `<div class="goal-row">
-      <span class="goal-row-name">${g.name}</span>
-      <span class="goal-row-wt">${g.weight}%</span>
-      <span class="goal-row-score">${g.score}</span>
-      <span class="goal-row-grade ${getGradeClass(g.grade)}">${g.grade}</span>
+    const isQuant = g.type==='定量';
+    h += `<div class="goal-row" style="flex-wrap:wrap">
+      <div style="flex:1;min-width:0">
+        <div style="font:500 13px/1.3 var(--f);color:var(--c8)">${g.name}</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
+          <span style="font:500 10px/1 var(--f);padding:2px 5px;border-radius:3px;background:${isQuant?'var(--pr50)':'var(--em50)'};color:${isQuant?'var(--pr)':'var(--em700)'}">${g.type}</span>
+          <span style="font:400 11px/1 var(--f);color:var(--c5)">${g.weight}%</span>
+          <span style="font:400 11px/1 var(--f);color:var(--c6)">${g.result}</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        ${isQuant?`<span style="font:700 14px/1 var(--fm);color:var(--pr)">${g.score}</span>`:''}
+        <span class="goal-row-grade ${getGradeClass(g.grade)}">${g.grade}</span>
+      </div>
     </div>`;
   });
+
+  // Comments
+  h += '<div class="sec-hd"><span class="sec-name">上级评语</span></div>';
+  MOCK.comments.forEach(c => {
+    h += `<div style="background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:12px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <div style="width:24px;height:24px;border-radius:50%;background:${c.color};display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF">${c.name[0]}</div>
+        <div><span style="font:500 12px/1 var(--f);color:var(--c8)">${c.name}</span> <span style="font:400 11px/1 var(--f);color:var(--c5)">${c.role}</span></div>
+      </div>
+      <div style="font:400 13px/1.6 var(--f);color:var(--c7)">${c.text}</div>
+    </div>`;
+  });
+
+  // Deadline
+  h += `<div style="text-align:center;padding:12px;font:400 12px/1 var(--f);color:var(--ac700)">确认截止：${MOCK.deadline}</div>`;
 
   h += '<div style="height:100px"></div>';
   el.innerHTML = h;
