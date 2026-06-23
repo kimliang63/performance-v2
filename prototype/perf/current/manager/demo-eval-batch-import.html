@@ -98,12 +98,17 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
     <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleImport(event)">
   </div>
 
-  <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;padding:12px 20px;display:flex;align-items:center;gap:16px">
+  <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;padding:12px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
     <span style="font:500 13px/1 var(--f);color:var(--c6)">到达状态:</span>
     <div id="statusFilter" style="display:flex;gap:8px">
       <button class="btn btn-s btn-sm btn-active" onclick="filterStatus('全部',this)">全部</button>
       <button class="btn btn-s btn-sm" onclick="filterStatus('已到达',this)">已到达</button>
       <button class="btn btn-s btn-sm" onclick="filterStatus('未到达',this)">未到达</button>
+    </div>
+    <div style="width:1px;height:20px;background:var(--c2)"></div>
+    <div style="position:relative;flex:1;min-width:180px;max-width:280px">
+      <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);pointer-events:none" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--c4)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="inp" style="padding-left:32px;height:32px;width:100%" placeholder="搜索员工姓名/工号" id="searchInput" oninput="handleSearch()">
     </div>
   </div>
 
@@ -121,7 +126,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
           <th style="width:56px">定量/性</th>
           <th style="width:48px">权重</th>
           <th style="width:50px">得分</th>
-          <th style="width:90px;white-space:nowrap">评价结果</th>
+          <th style="min-width:100px;white-space:nowrap">评价结果</th>
           <th style="width:64px">状态</th>
         </tr>
       </thead>
@@ -244,11 +249,18 @@ function filterStatus(status,btn){
 }
 
 function getFiltered(){
+  var q=(document.getElementById('searchInput').value||'').trim().toLowerCase();
   return EMPLOYEES.filter(function(e){
     if(currentStatus==='已到达'&&!e.reached)return false;
     if(currentStatus==='未到达'&&e.reached)return false;
+    if(q&&e.name.toLowerCase().indexOf(q)<0)return false;
     return true;
   });
+}
+
+function handleSearch(){
+  currentPage=1;
+  render();
 }
 
 function render(){
