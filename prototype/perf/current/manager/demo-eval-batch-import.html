@@ -47,6 +47,17 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .toast.success{background:var(--em);box-shadow:0 8px 24px rgba(16,185,129,.3)}
 .btn-sm{height:28px;padding:0 10px;font-size:12px}
 .btn-s.btn-active{background:var(--pr50);color:var(--pr);border-color:var(--pr200)}
+.search-input{height:32px;border:1px solid var(--c2);border-radius:var(--r1);padding:0 10px 0 32px;font:400 13px/1 var(--f);color:var(--c8);outline:none;background:var(--sf);transition:border .15s;width:100%}
+.search-input:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
+.search-input::placeholder{color:var(--c4)}
+.pager{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-top:1px solid var(--dv);font:400 12px/1 var(--f);color:var(--c5)}
+.pager-info{display:flex;align-items:center;gap:4px}
+.pager-btns{display:flex;align-items:center;gap:4px}
+.pager-btn{width:28px;height:28px;border-radius:var(--r1);border:1px solid var(--c2);background:var(--sf);color:var(--c6);font:500 12px/1 var(--f);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.pager-btn:hover{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.pager-btn.active{background:var(--pr);color:#FFF;border-color:var(--pr)}
+.pager-btn:disabled{opacity:.4;cursor:default}
+.pager-btn svg{width:14px;height:14px}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .fade-in{animation:fadeIn .2s ease forwards}
 </style>
@@ -106,9 +117,9 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
       <button class="btn btn-s btn-sm" onclick="filterStatus('未到达',this)">未到达</button>
     </div>
     <div style="width:1px;height:20px;background:var(--c2)"></div>
-    <div style="position:relative;flex:1;min-width:180px;max-width:280px">
+    <div style="position:relative;flex:1;min-width:180px;max-width:260px">
       <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);pointer-events:none" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--c4)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input class="inp" style="padding-left:32px;height:32px;width:100%" placeholder="搜索员工姓名/工号" id="searchInput" oninput="handleSearch()">
+      <input class="search-input" placeholder="搜索员工姓名" id="searchInput" oninput="handleSearch()">
     </div>
   </div>
 
@@ -273,14 +284,15 @@ function render(){
   var html='';
   pageData.forEach(function(emp){
     emp.goals.forEach(function(g){
+      var unreached=!emp.reached;
       html+='<tr>'+
         '<td style="font-weight:500;color:var(--c8)">'+emp.name+'</td>'+
         '<td style="font-weight:500;color:var(--c8)">'+g.name+'</td>'+
-        '<td>'+(g.completed||'<span style="color:var(--c4)">—</span>')+'</td>'+
+        '<td>'+(unreached?'—':(g.completed||'<span style="color:var(--c4)">—</span>'))+'</td>'+
         '<td><span class="type-tag '+g.type+'">'+(g.type==='quant'?'定量':'定性')+'</span></td>'+
         '<td style="font-family:var(--m)">'+g.weight+'%</td>'+
-        '<td style="font-family:var(--m);font-weight:600">'+(g.score!==null?g.score:'—')+'</td>'+
-        '<td>'+(g.grade?'<span style="padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">'+g.grade+'</span>':'—')+'</td>'+
+        '<td style="font-family:var(--m);font-weight:600">'+(unreached?'—':(g.score!==null?g.score:'—'))+'</td>'+
+        '<td style="white-space:nowrap">'+(unreached?'—':(g.grade?'<span style="padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">'+g.grade+'</span>':'—'))+'</td>'+
         '<td style="white-space:nowrap"><span style="font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px;background:'+(emp.reached?'var(--em50)':'var(--ac50)')+';color:'+(emp.reached?'var(--em700)':'var(--ac700)')+'">'+(emp.reached?'已到达':'未到达')+'</span></td>'+
         '</tr>';
     });
@@ -293,10 +305,12 @@ function render(){
   document.getElementById('hdPending').textContent=unreachedCount+'人';
   document.getElementById('listSummary').textContent='已到达 '+reachedCount+'人 · 未到达 '+unreachedCount+'人';
 
-  var ph='<span style="font:400 12px/1 var(--f);color:var(--c5)">共 '+filtered.length+' 人，第 '+Math.min(start+1,filtered.length)+'-'+Math.min(start+PAGE_SIZE,filtered.length)+' 条</span><div style="display:flex;gap:4px">';
+  var ph='<span class="pager-info">共 <b style="color:var(--c8)">'+filtered.length+'</b> 人，第 '+Math.min(start+1,filtered.length)+'-'+Math.min(start+PAGE_SIZE,filtered.length)+' 条</span><div class="pager-btns">';
+  ph+='<button class="pager-btn" onclick="goPage('+(currentPage-1)+')"'+(currentPage<=1?' disabled':'')+'><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>';
   for(var p=1;p<=totalPages;p++){
-    ph+='<button style="width:28px;height:28px;border-radius:var(--r1);border:1px solid '+(p===currentPage?'var(--pr)':'var(--c2)')+';background:'+(p===currentPage?'var(--pr)':'var(--sf)')+';color:'+(p===currentPage?'#FFF':'var(--c6)')+';font:500 12px/1 var(--f);cursor:pointer;display:flex;align-items:center;justify-content:center" onclick="goPage('+p+')">'+p+'</button>';
+    ph+='<button class="pager-btn'+(p===currentPage?' active':'')+'" onclick="goPage('+p+')">'+p+'</button>';
   }
+  ph+='<button class="pager-btn" onclick="goPage('+(currentPage+1)+')"'+(currentPage>=totalPages?' disabled':'')+'><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>';
   ph+='</div>';
   document.getElementById('pager').innerHTML=ph;
 }
