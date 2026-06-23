@@ -71,6 +71,43 @@ body{font-family:var(--f);background:#E5E7EB;color:var(--c7);display:flex;justif
 .btn-confirm{background:var(--em);color:#FFF;box-shadow:0 2px 8px rgba(16,185,129,.25)}
 
 .toast{position:absolute;top:70px;left:50%;transform:translateX(-50%);background:var(--c9);color:#FFF;padding:10px 22px;border-radius:22px;font:500 13px/1 var(--f);z-index:900;opacity:0;pointer-events:none;transition:opacity .2s}
+
+/* Mobile AI Bottom Sheet */
+.ai-sheet{position:fixed;bottom:0;left:0;right:0;height:70vh;background:var(--sf);border-radius:16px 16px 0 0;box-shadow:0 -4px 20px rgba(0,0,0,.15);z-index:950;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .3s ease}
+.ai-sheet.open{transform:translateY(0)}
+.ai-sheet-hd{padding:14px 16px;border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.ai-sheet-hd-ic{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--pr),var(--vi));display:flex;align-items:center;justify-content:center}
+.ai-sheet-hd-ic svg{width:14px;height:14px;color:#FFF}
+.ai-sheet-hd-t{flex:1;font:600 14px/1 var(--f);color:var(--c9)}
+.ai-sheet-close{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;border:none;background:transparent;color:var(--c5);cursor:pointer}
+.ai-sheet-bd{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:10px}
+.ai-msg{max-width:88%;animation:fadeIn .2s ease}
+.ai-msg.bot{align-self:flex-start}
+.ai-msg.user{align-self:flex-end}
+.ai-msg-bd{padding:10px 14px;border-radius:12px;font:400 13px/1.5 var(--f);word-break:break-word}
+.ai-msg.bot .ai-msg-bd{background:var(--c0);color:var(--c8);border-bottom-left-radius:4px}
+.ai-msg.user .ai-msg-bd{background:var(--pr);color:#FFF;border-bottom-right-radius:4px}
+.ai-msg-time{font:400 10px/1 var(--f);color:var(--c4);margin-top:3px}
+.ai-msg-actions{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap}
+.ai-msg-btn{font:500 11px/1 var(--f);padding:5px 10px;border-radius:8px;border:1px solid var(--c2);background:var(--sf);color:var(--c6);cursor:pointer}
+.ai-msg-btn:active{background:var(--pr50);border-color:var(--pr)}
+.ai-msg-card{background:var(--sf);border:1px solid var(--c2);border-radius:8px;padding:10px;margin-top:6px}
+.ai-msg-card-t{font:600 12px/1 var(--f);color:var(--c8);margin-bottom:3px}
+.ai-msg-card-d{font:400 11px/1.4 var(--f);color:var(--c5)}
+.ai-msg-card-tag{display:inline-block;font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px;margin-top:4px}
+.ai-shortcuts{display:flex;flex-direction:column;gap:5px;margin-top:8px}
+.ai-shortcut{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--sf);border:1px solid var(--c2);border-radius:8px;cursor:pointer}
+.ai-shortcut:active{background:var(--pr50);border-color:var(--pr200)}
+.ai-shortcut-icon{font-size:16px;flex-shrink:0}
+.ai-shortcut-label{font:500 12px/1.2 var(--f);color:var(--c8)}
+.ai-sheet-ft{padding:10px 12px;border-top:1px solid var(--dv);display:flex;gap:6px;flex-shrink:0}
+.ai-sheet-input{flex:1;height:36px;border:1px solid var(--c2);border-radius:18px;padding:0 14px;font:400 13px/1 var(--f);color:var(--c8);outline:none}
+.ai-sheet-input:focus{border-color:var(--pr)}
+.ai-sheet-send{width:36px;height:36px;border-radius:50%;background:var(--pr);border:none;display:flex;align-items:center;justify-content:center;color:#FFF}
+.ai-fab{position:fixed;bottom:80px;right:16px;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--pr),var(--vi));border:none;box-shadow:0 4px 12px rgba(37,99,235,.3);display:flex;align-items:center;justify-content:center;z-index:940}
+.ai-fab svg{width:20px;height:20px;color:#FFF}
+.ai-sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:940;opacity:0;pointer-events:none;transition:opacity .2s}
+.ai-sheet-overlay.open{opacity:1;pointer-events:all}
 </style>
 </head>
 <body>
@@ -218,6 +255,62 @@ function showToast(msg){
 }
 
 render();
+
+// ═══ MOBILE AI ═══
+var AI_S={open:false,msgs:[{role:'bot',text:'👋 AI确认助手\n\n• 分析你的绩效\n• 查看成长趋势\n• 了解申诉流程',time:'刚刚',shortcuts:true}]};
+var AI_S_SHORTCUTS=[
+  {icon:'📊',label:'分析我的绩效'},
+  {icon:'📈',label:'查看成长趋势'},
+  {icon:'❓',label:'有异议怎么办'}
+];
+
+function toggleAI(){AI_S.open=!AI_S.open;document.getElementById('aiSheet').classList.toggle('open',AI_S.open);document.getElementById('aiOverlay').classList.toggle('open',AI_S.open);if(AI_S.open)renderAI();}
+function closeAI(){AI_S.open=false;document.getElementById('aiSheet').classList.remove('open');document.getElementById('aiOverlay').classList.remove('open');}
+
+function renderAI(){
+  var bd=document.getElementById('aiSheetBd');
+  bd.innerHTML=AI_S.msgs.map(function(m){
+    var h='<div class="ai-msg '+m.role+'"><div class="ai-msg-bd">'+m.text.replace(/\n/g,'<br/>')+'</div>';
+    if(m.shortcuts){h+='<div class="ai-shortcuts">'+AI_S_SHORTCUTS.map(function(s){return '<div class="ai-shortcut" onclick="aiAction(\''+s.label+'\')"><span class="ai-shortcut-icon">'+s.icon+'</span><span class="ai-shortcut-label">'+s.label+'</span></div>';}).join('')+'</div>';}
+    if(m.card){h+='<div class="ai-msg-card"><div class="ai-msg-card-t">'+m.card.t+'</div><div class="ai-msg-card-d">'+m.card.d+'</div><span class="ai-msg-card-tag" style="background:var(--em50);color:var(--em700)">'+m.card.tag+'</span></div>';}
+    if(m.acts){h+='<div class="ai-msg-actions">'+m.acts.map(function(a){return '<button class="ai-msg-btn" onclick="aiAction(\''+a+'\')">'+a+'</button>';}).join('')+'</div>';}
+    if(m.time){h+='<div class="ai-msg-time">'+m.time+'</div>';}
+    return h+'</div>';
+  }).join('');
+  bd.scrollTop=bd.scrollHeight;
+}
+
+function aiSend(){
+  var inp=document.getElementById('aiInp');var t=inp.value.trim();if(!t)return;
+  AI_S.msgs.push({role:'user',text:t});inp.value='';renderAI();
+  setTimeout(function(){AI_S.msgs.push({role:'bot',text:'收到，正在分析…',time:'刚刚',acts:['分析我的绩效','查看成长趋势','有异议怎么办']});renderAI();},600);
+}
+
+function aiAction(a){
+  AI_S.msgs.push({role:'user',text:a});
+  setTimeout(function(){
+    if(a==='分析我的绩效'){AI_S.msgs.push({role:'bot',text:'📊 Q2绩效分析：\n综合得分 87.5分\n等级：符合预期+\n关键指标30%优秀，关键行动70%良好',time:'刚刚',card:{t:'绩效分析',d:'整体表现优秀',tag:'符合预期+'}});}
+    else if(a==='查看成长趋势'){AI_S.msgs.push({role:'bot',text:'📈 近期趋势：\nQ2: 3.82→3.70→3.95 ↑\n同比去年Q2: +10%',time:'刚刚',card:{t:'趋势',d:'同比+10%，持续改善',tag:'趋势向好'}});}
+    else if(a==='有异议怎么办'){AI_S.msgs.push({role:'bot',text:'❓ 异议流程：\n1. 点击「不同意」\n2. 填写原因\n3. HRBP 3个工作日内处理',time:'刚刚',card:{t:'流程说明',d:'3日内HRBP处理',tag:'流程'}});}
+    else{AI_S.msgs.push({role:'bot',text:'收到，正在分析…',time:'刚刚'});}
+    renderAI();
+  },600);
+}
 </script>
+
+<div class="ai-sheet-overlay" id="aiOverlay" onclick="closeAI()"></div>
+<button class="ai-fab" onclick="toggleAI()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg></button>
+<div class="ai-sheet" id="aiSheet">
+  <div class="ai-sheet-hd">
+    <div class="ai-sheet-hd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg></div>
+    <span class="ai-sheet-hd-t">AI 确认助手</span>
+    <button class="ai-sheet-close" onclick="closeAI()">✕</button>
+  </div>
+  <div class="ai-sheet-bd" id="aiSheetBd"></div>
+  <div class="ai-sheet-ft">
+    <input class="ai-sheet-input" id="aiInp" placeholder="输入问题…" onkeydown="if(event.key==='Enter')aiSend()">
+    <button class="ai-sheet-send" onclick="aiSend()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+  </div>
+</div>
 </body>
 </html>
