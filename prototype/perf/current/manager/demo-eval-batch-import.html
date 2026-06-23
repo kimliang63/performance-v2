@@ -115,14 +115,14 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
     <table>
       <thead>
         <tr>
-          <th style="width:80px">被考核人</th>
-          <th>目标/指标名称</th>
-          <th style="width:60px">定量/性</th>
-          <th style="width:55px">权重</th>
-          <th style="min-width:140px">完成值/完成情况</th>
-          <th style="width:60px">得分</th>
-          <th style="width:90px">评价结果</th>
-          <th style="width:70px">状态</th>
+          <th style="width:70px">被考核人</th>
+          <th style="min-width:200px">目标/指标名称</th>
+          <th style="width:56px">定量/性</th>
+          <th style="width:48px">权重</th>
+          <th style="min-width:160px">完成值/完成情况</th>
+          <th style="width:50px">得分</th>
+          <th style="width:80px">评价结果</th>
+          <th style="width:56px">状态</th>
         </tr>
       </thead>
       <tbody id="tableBody"></tbody>
@@ -260,10 +260,9 @@ function render(){
 
   var html='';
   pageData.forEach(function(emp){
-    html+='<tr class="emp-row"><td colspan="8"><div style="display:flex;align-items:center;gap:8px">👤 '+emp.name+'<span style="font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px;background:'+(emp.reached?'var(--em50)':'var(--ac50)')+';color:'+(emp.reached?'var(--em700)':'var(--ac700)')+'">'+(emp.reached?'已到达':'未到达')+'</span><span style="font:400 11px/1 var(--f);color:var(--c5)">'+emp.goals.length+' 项指标</span></div></td></tr>';
-    emp.goals.forEach(function(g){
+    emp.goals.forEach(function(g,gi){
       html+='<tr>'+
-        '<td></td>'+
+        '<td style="font-weight:500;color:var(--c8)">'+(gi===0?emp.name:'')+'</td>'+
         '<td style="font-weight:500;color:var(--c8)">'+g.name+'</td>'+
         '<td><span class="type-tag '+g.type+'">'+(g.type==='quant'?'定量':'定性')+'</span></td>'+
         '<td style="font-family:var(--m)">'+g.weight+'%</td>'+
