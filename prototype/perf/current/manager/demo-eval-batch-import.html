@@ -116,13 +116,13 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
       <thead>
         <tr>
           <th style="width:70px">被考核人</th>
-          <th style="min-width:200px">目标/指标名称</th>
+          <th style="min-width:180px">目标/指标名称</th>
+          <th style="min-width:140px">完成值/完成情况</th>
           <th style="width:56px">定量/性</th>
           <th style="width:48px">权重</th>
-          <th style="min-width:160px">完成值/完成情况</th>
           <th style="width:50px">得分</th>
           <th style="width:80px">评价结果</th>
-          <th style="width:56px">状态</th>
+          <th style="width:64px">状态</th>
         </tr>
       </thead>
       <tbody id="tableBody"></tbody>
@@ -260,13 +260,13 @@ function render(){
 
   var html='';
   pageData.forEach(function(emp){
-    emp.goals.forEach(function(g,gi){
+    emp.goals.forEach(function(g){
       html+='<tr>'+
-        '<td style="font-weight:500;color:var(--c8)">'+(gi===0?emp.name:'')+'</td>'+
+        '<td style="font-weight:500;color:var(--c8)">'+emp.name+'</td>'+
         '<td style="font-weight:500;color:var(--c8)">'+g.name+'</td>'+
+        '<td>'+(g.completed||'<span style="color:var(--c4)">—</span>')+'</td>'+
         '<td><span class="type-tag '+g.type+'">'+(g.type==='quant'?'定量':'定性')+'</span></td>'+
         '<td style="font-family:var(--m)">'+g.weight+'%</td>'+
-        '<td>'+(g.completed||'<span style="color:var(--c4)">—</span>')+'</td>'+
         '<td style="font-family:var(--m);font-weight:600">'+(g.score!==null?g.score:'—')+'</td>'+
         '<td>'+(g.grade?'<span style="padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">'+g.grade+'</span>':'—')+'</td>'+
         '<td><span style="font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px;background:'+(emp.reached?'var(--em50)':'var(--ac50)')+';color:'+(emp.reached?'var(--em700)':'var(--ac700)')+'">'+(emp.reached?'已到达':'未到达')+'</span></td>'+
