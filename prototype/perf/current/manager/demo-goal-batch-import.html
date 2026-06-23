@@ -197,10 +197,7 @@ function getFiltered(){
   });
 }
 
-function handleSearch(){
-  currentPage=1;
-  render();
-}
+function handleSearch(){currentPage=1;render();}
 
 var EMPLOYEES=[
   {name:'张明',dept:'产品部',reached:true,goals:[
@@ -272,7 +269,7 @@ var EMPLOYEES=[
   {name:'胡蝶',dept:'产品部',reached:false,goals:[
     {mod:'关键指标',name:'Bug修复及时率',type:'quant',weight:20,target:85,challenge:92,baseline:80},
     {mod:'关键行动',name:'代码质量提升',type:'qual',weight:25,target:'',challenge:'',baseline:''}
-  ]},
+  ]}
 ];
 
 var MOCK_IMPORT=[
@@ -285,7 +282,7 @@ var MOCK_IMPORT=[
   {emp:'吴涛',goals:[{name:'技术架构评审通过率',target:95,challenge:100,baseline:90}]},
   {emp:'郑洁',goals:[{name:'代码审查覆盖率',target:90,challenge:95,baseline:85}]},
   {emp:'林敏',goals:[{name:'需求响应时效',target:4,challenge:3,baseline:6}]},
-  {emp:'何杰',goals:[{name:'接口响应时间',target:200,challenge:150,baseline:300}]},
+  {emp:'何杰',goals:[{name:'接口响应时间',target:200,challenge:150,baseline:300}]}
 ];
 
 function render(){
@@ -294,33 +291,29 @@ function render(){
   if(currentPage>totalPages)currentPage=totalPages;
   var start=(currentPage-1)*PAGE_SIZE;
   var pageData=filtered.slice(start,start+PAGE_SIZE);
-
   var html='';
   pageData.forEach(function(emp){
     emp.goals.forEach(function(g){
-      var unreached=!emp.reached;
-      html+='<tr>'+
-        '<td style="font-weight:500;color:var(--c8)">'+emp.name+'</td>'+
-        '<td style="font-weight:500;color:var(--c8)">'+g.name+'</td>'+
-        '<td><span class="mod-tag">'+g.mod+'</span></td>'+
-        '<td><span class="type-tag '+g.type+'">'+(g.type==='quant'?'定量':'定性')+'</span></td>'+
-        '<td style="font-family:var(--m)">'+g.weight+'%</td>'+
-        '<td'+(unreached?'':' class="unfilled"')+'>'+(unreached?'—':(g.target||'—'))+'</td>'+
-        '<td'+(unreached?'':' class="unfilled"')+'>'+(unreached?'—':(g.challenge||'—'))+'</td>'+
-        '<td'+(unreached?'':' class="unfilled"')+'>'+(unreached?'—':(g.baseline||'—'))+'</td>'+
-        '<td><span style="font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px;background:'+(emp.reached?'var(--em50)':'var(--ac50)')+';color:'+(emp.reached?'var(--em700)':'var(--ac700)')+'">'+(emp.reached?'已到达':'未到达')+'</span></td>'+
-        '</tr>';
+      var u=!emp.reached;
+      html+='<tr>';
+      html+='<td style="font-weight:500;color:var(--c8)">'+emp.name+'</td>';
+      html+='<td style="font-weight:500;color:var(--c8)">'+g.name+'</td>';
+      html+='<td><span class="mod-tag">'+g.mod+'</span></td>';
+      html+='<td><span class="type-tag '+g.type+'">'+(g.type==='quant'?'定量':'定性')+'</span></td>';
+      html+='<td style="font-family:var(--m)">'+g.weight+'%</td>';
+      html+='<td'+(u?'':' class="unfilled"')+'>'+(u?'—':(g.target||'—'))+'</td>';
+      html+='<td'+(u?'':' class="unfilled"')+'>'+(u?'—':(g.challenge||'—'))+'</td>';
+      html+='<td'+(u?'':' class="unfilled"')+'>'+(u?'—':(g.baseline||'—'))+'</td>';
+      html+='<td style="white-space:nowrap"><span style="font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px;background:'+(emp.reached?'var(--em50)':'var(--ac50)')+';color:'+(emp.reached?'var(--em700)':'var(--ac700)')+'">'+(emp.reached?'已到达':'未到达')+'</span></td>';
+      html+='</tr>';
+    });
   });
   document.getElementById('tableBody').innerHTML=html;
-
-  // 统计
-  var reachedCount=filtered.filter(function(e){return e.reached;}).length;
-  var unreachedCount=filtered.length-reachedCount;
-  document.getElementById('hdImported').textContent=reachedCount+'人';
-  document.getElementById('hdPending').textContent=unreachedCount+'人';
-  document.getElementById('listSummary').textContent='已到达 '+reachedCount+'人 · 未到达 '+unreachedCount+'人';
-
-  // 分页
+  var rc=filtered.filter(function(e){return e.reached;}).length;
+  var uc=filtered.length-rc;
+  document.getElementById('hdImported').textContent=rc+'人';
+  document.getElementById('hdPending').textContent=uc+'人';
+  document.getElementById('listSummary').textContent='已到达 '+rc+'人 · 未到达 '+uc+'人';
   var ph='<span class="pager-info">共 <b style="color:var(--c8)">'+filtered.length+'</b> 人，第 '+Math.min(start+1,filtered.length)+'-'+Math.min(start+PAGE_SIZE,filtered.length)+' 条</span><div class="pager-btns">';
   ph+='<button class="pager-btn" onclick="goPage('+(currentPage-1)+')"'+(currentPage<=1?' disabled':'')+'><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>';
   for(var p=1;p<=totalPages;p++){
@@ -330,9 +323,7 @@ function render(){
   ph+='</div>';
   document.getElementById('pager').innerHTML=ph;
 }
-
 function goPage(p){currentPage=p;render();}
-
 function handleImport(e){
   var file=e.target.files[0];if(!file)return;
   MOCK_IMPORT.forEach(function(mi){
@@ -340,15 +331,19 @@ function handleImport(e){
     if(!emp)return;
     mi.goals.forEach(function(ig){
       var g=emp.goals.find(function(g){return g.name===ig.name;});
-      if(g){g.target=ig.target||'';g.challenge=ig.challenge||'';g.baseline=ig.baseline||'';g.desc=ig.desc||'';g.filled=true;}
+      if(g){g.target=ig.target||'';g.challenge=ig.challenge||'';g.baseline=ig.baseline||'';}
     });
   });
   render();
   showToast('已导入 '+MOCK_IMPORT.length+' 名员工的目标数据','success');
   e.target.value='';
 }
-
-function showToast(msg,type){var t=document.getElementById('toast');t.textContent=msg;t.className='toast '+(type||'success')+' show';setTimeout(function(){t.classList.remove('show')},3000);}
+function showToast(msg,type){
+  var t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast '+(type||'success')+' show';
+  setTimeout(function(){t.classList.remove('show')},3000);
+}
 render();
 </script>
 </body>
