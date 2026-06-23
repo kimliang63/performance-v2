@@ -115,14 +115,14 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
     <table>
       <thead>
         <tr>
-          <th style="width:100px">被考核人</th>
-          <th>指标名称</th>
-          <th style="width:60px">类型</th>
-          <th style="width:60px">权重</th>
+          <th style="width:80px">被考核人</th>
+          <th>目标/指标名称</th>
+          <th style="width:60px">定量/性</th>
+          <th style="width:55px">权重</th>
           <th style="min-width:140px">完成值/完成情况</th>
-          <th style="width:70px">得分</th>
-          <th style="width:90px">等级</th>
-          <th style="width:80px">状态</th>
+          <th style="width:60px">得分</th>
+          <th style="width:90px">评价结果</th>
+          <th style="width:70px">状态</th>
         </tr>
       </thead>
       <tbody id="tableBody"></tbody>
@@ -260,28 +260,27 @@ function render(){
 
   var html='';
   pageData.forEach(function(emp){
-    var filledCount=emp.goals.filter(function(g){return g.filled;}).length;
-    var allFilled=filledCount===emp.goals.length;
-    html+='<tr class="emp-row"><td colspan="8"><div style="display:flex;align-items:center;gap:8px">👤 '+emp.name+'<span style="font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px;background:'+(emp.reached?'var(--em50)':'var(--ac50)')+';color:'+(emp.reached?'var(--em700)':'var(--ac700)')+'">'+(emp.reached?'已到达':'未到达')+'</span><span style="font:400 11px/1 var(--f);color:'+(allFilled?'var(--em700)':'var(--c5)')+'">'+filledCount+'/'+emp.goals.length+' 已导入</span>'+(allFilled?'<span style="font:500 11px/1 var(--f);color:var(--em700);background:var(--em50);padding:2px 6px;border-radius:3px">✓ 完成</span>':'')+'</div></td></tr>';
+    html+='<tr class="emp-row"><td colspan="8"><div style="display:flex;align-items:center;gap:8px">👤 '+emp.name+'<span style="font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px;background:'+(emp.reached?'var(--em50)':'var(--ac50)')+';color:'+(emp.reached?'var(--em700)':'var(--ac700)')+'">'+(emp.reached?'已到达':'未到达')+'</span><span style="font:400 11px/1 var(--f);color:var(--c5)">'+emp.goals.length+' 项指标</span></div></td></tr>';
     emp.goals.forEach(function(g){
       html+='<tr>'+
         '<td></td>'+
         '<td style="font-weight:500;color:var(--c8)">'+g.name+'</td>'+
         '<td><span class="type-tag '+g.type+'">'+(g.type==='quant'?'定量':'定性')+'</span></td>'+
         '<td style="font-family:var(--m)">'+g.weight+'%</td>'+
-        '<td'+(g.filled?'':' class="unfilled"')+'>'+(g.completed||'—')+'</td>'+
-        '<td'+(g.filled?'':' class="unfilled"')+' style="font-family:var(--m);font-weight:600">'+(g.score!==null?g.score:'—')+'</td>'+
-        '<td>'+(g.grade?'<span style="padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">'+g.grade+'</span>':'<span class="unfilled">—</span>')+'</td>'+
-        '<td>'+(g.filled?'<span class="filled">✓ 已导入</span>':'<span class="unfilled">待导入</span>')+'</td>'+
+        '<td>'+(g.completed||'<span style="color:var(--c4)">—</span>')+'</td>'+
+        '<td style="font-family:var(--m);font-weight:600">'+(g.score!==null?g.score:'—')+'</td>'+
+        '<td>'+(g.grade?'<span style="padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">'+g.grade+'</span>':'—')+'</td>'+
+        '<td><span style="font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px;background:'+(emp.reached?'var(--em50)':'var(--ac50)')+';color:'+(emp.reached?'var(--em700)':'var(--ac700)')+'">'+(emp.reached?'已到达':'未到达')+'</span></td>'+
         '</tr>';
     });
   });
   document.getElementById('tableBody').innerHTML=html;
 
-  var imported=EMPLOYEES.filter(function(e){return e.goals.every(function(g){return g.filled;});}).length;
-  document.getElementById('hdImported').textContent=imported+'人';
-  document.getElementById('hdPending').textContent=(EMPLOYEES.length-imported)+'人';
-  document.getElementById('listSummary').textContent='已导入 '+imported+' 人 · 待导入 '+(EMPLOYEES.length-imported)+' 人';
+  var reachedCount=filtered.filter(function(e){return e.reached;}).length;
+  var unreachedCount=filtered.length-reachedCount;
+  document.getElementById('hdImported').textContent=reachedCount+'人';
+  document.getElementById('hdPending').textContent=unreachedCount+'人';
+  document.getElementById('listSummary').textContent='已到达 '+reachedCount+'人 · 未到达 '+unreachedCount+'人';
 
   var ph='<span style="font:400 12px/1 var(--f);color:var(--c5)">共 '+filtered.length+' 人，第 '+Math.min(start+1,filtered.length)+'-'+Math.min(start+PAGE_SIZE,filtered.length)+' 条</span><div style="display:flex;gap:4px">';
   for(var p=1;p<=totalPages;p++){
