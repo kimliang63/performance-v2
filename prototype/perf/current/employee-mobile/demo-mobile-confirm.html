@@ -72,42 +72,61 @@ body{font-family:var(--f);background:#E5E7EB;color:var(--c7);display:flex;justif
 
 .toast{position:absolute;top:70px;left:50%;transform:translateX(-50%);background:var(--c9);color:#FFF;padding:10px 22px;border-radius:22px;font:500 13px/1 var(--f);z-index:900;opacity:0;pointer-events:none;transition:opacity .2s}
 
-/* Mobile AI Bottom Sheet */
-.ai-sheet{position:fixed;bottom:0;left:0;right:0;height:70vh;background:var(--sf);border-radius:16px 16px 0 0;box-shadow:0 -4px 20px rgba(0,0,0,.15);z-index:950;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .3s ease}
-.ai-sheet.open{transform:translateY(0)}
-.ai-sheet-hd{padding:14px 16px;border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:10px;flex-shrink:0}
-.ai-sheet-hd-ic{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--pr),var(--vi));display:flex;align-items:center;justify-content:center}
-.ai-sheet-hd-ic svg{width:14px;height:14px;color:#FFF}
-.ai-sheet-hd-t{flex:1;font:600 14px/1 var(--f);color:var(--c9)}
-.ai-sheet-close{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;border:none;background:transparent;color:var(--c5);cursor:pointer}
-.ai-sheet-bd{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:10px}
-.ai-msg{max-width:88%;animation:fadeIn .2s ease}
+
+
+
+
+
+/* ═══ MOBILE AI — 对齐 PC Agent 设计规范 ═══ */
+.ai-panel{position:fixed;bottom:0;left:0;right:0;height:70%;background:var(--sf);border-radius:16px 16px 0 0;box-shadow:0 -4px 24px rgba(0,0,0,.18);z-index:9999;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1)}
+.ai-panel.open{transform:translateY(0)}
+.ai-hd{padding:14px 16px;border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.ai-hd-ic{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--pr),var(--vi));display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0}
+.ai-hd-ic svg{width:16px;height:16px}
+.ai-hd-info{flex:1}
+.ai-hd-t{font:600 14px/1.2 var(--f);color:var(--c9)}
+.ai-hd-s{font:400 11px/1 var(--f);color:var(--c5)}
+.ai-hd-close{width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;border:none;background:transparent;color:var(--c5);cursor:pointer;flex-shrink:0}
+.ai-hd-close:active{background:var(--c1)}
+.ai-bd{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:12px}
+.ai-msg{max-width:88%;animation:msgIn .25s ease}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .ai-msg.bot{align-self:flex-start}
 .ai-msg.user{align-self:flex-end}
-.ai-msg-bd{padding:10px 14px;border-radius:12px;font:400 13px/1.5 var(--f);word-break:break-word}
+.ai-msg-bd{padding:10px 14px;border-radius:var(--r3);font:400 13px/1.6 var(--f);word-break:break-word}
 .ai-msg.bot .ai-msg-bd{background:var(--c0);color:var(--c8);border-bottom-left-radius:4px}
-.ai-msg.user .ai-msg-bd{background:var(--pr);color:#FFF;border-bottom-right-radius:4px}
-.ai-msg-time{font:400 10px/1 var(--f);color:var(--c4);margin-top:3px}
-.ai-msg-actions{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap}
-.ai-msg-btn{font:500 11px/1 var(--f);padding:5px 10px;border-radius:8px;border:1px solid var(--c2);background:var(--sf);color:var(--c6);cursor:pointer}
-.ai-msg-btn:active{background:var(--pr50);border-color:var(--pr)}
-.ai-msg-card{background:var(--sf);border:1px solid var(--c2);border-radius:8px;padding:10px;margin-top:6px}
-.ai-msg-card-t{font:600 12px/1 var(--f);color:var(--c8);margin-bottom:3px}
-.ai-msg-card-d{font:400 11px/1.4 var(--f);color:var(--c5)}
-.ai-msg-card-tag{display:inline-block;font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px;margin-top:4px}
-.ai-shortcuts{display:flex;flex-direction:column;gap:5px;margin-top:8px}
-.ai-shortcut{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--sf);border:1px solid var(--c2);border-radius:8px;cursor:pointer}
-.ai-shortcut:active{background:var(--pr50);border-color:var(--pr200)}
-.ai-shortcut-icon{font-size:16px;flex-shrink:0}
-.ai-shortcut-label{font:500 12px/1.2 var(--f);color:var(--c8)}
-.ai-sheet-ft{padding:10px 12px;border-top:1px solid var(--dv);display:flex;gap:6px;flex-shrink:0}
-.ai-sheet-input{flex:1;height:36px;border:1px solid var(--c2);border-radius:18px;padding:0 14px;font:400 13px/1 var(--f);color:var(--c8);outline:none}
-.ai-sheet-input:focus{border-color:var(--pr)}
-.ai-sheet-send{width:36px;height:36px;border-radius:50%;background:var(--pr);border:none;display:flex;align-items:center;justify-content:center;color:#FFF}
-.ai-fab{position:fixed;bottom:80px;right:16px;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--pr),var(--vi));border:none;box-shadow:0 4px 12px rgba(37,99,235,.3);display:flex;align-items:center;justify-content:center;z-index:940}
-.ai-fab svg{width:20px;height:20px;color:#FFF}
-.ai-sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:940;opacity:0;pointer-events:none;transition:opacity .2s}
-.ai-sheet-overlay.open{opacity:1;pointer-events:all}
+.ai-msg.user .ai-msg-bd{background:var(--pr);color:#fff;border-bottom-right-radius:4px}
+.ai-msg-time{font:400 10px/1 var(--f);color:var(--c4);margin-top:4px}
+.ai-msg.user .ai-msg-time{text-align:right}
+.ai-msg-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.ai-msg-btn{font:500 11px/1 var(--f);padding:5px 10px;border-radius:var(--r1);border:1px solid var(--c2);background:var(--sf);color:var(--c6);cursor:pointer;transition:all .12s}
+.ai-msg-btn:active{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-msg-card{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);padding:12px;margin-top:8px}
+.ai-msg-card-t{font:600 12px/1.3 var(--f);color:var(--c8);margin-bottom:6px}
+.ai-msg-card-d{font:400 12px/1.5 var(--f);color:var(--c5)}
+.ai-msg-card-ft{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.ai-msg-card-tag{display:inline-block;font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px}
+.ai-msg-card-tag.em{color:var(--em700);background:var(--em50)}
+.ai-msg-card-tag.pr{color:var(--pr);background:var(--pr50)}
+.ai-msg-card-tag.ac{color:var(--ac700);background:var(--ac50)}
+.ai-shortcuts{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.ai-shortcut{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);cursor:pointer;transition:all .12s}
+.ai-shortcut:active{border-color:var(--pr200);background:var(--pr50)}
+.ai-shortcut-icon{font-size:18px;flex-shrink:0}
+.ai-shortcut-text{flex:1;min-width:0}
+.ai-shortcut-label{font:500 13px/1.2 var(--f);color:var(--c8)}
+.ai-shortcut-desc{font:400 11px/1.3 var(--f);color:var(--c5);margin-top:2px}
+.ai-ft{padding:12px 16px;border-top:1px solid var(--dv);display:flex;gap:8px;align-items:center;flex-shrink:0}
+.ai-input{flex:1;height:36px;border:1px solid var(--c2);border-radius:var(--r2);padding:0 12px;font:400 13px/1 var(--f);color:var(--c8);outline:none;transition:border .15s}
+.ai-input:focus{border-color:var(--pr)}
+.ai-send{width:36px;height:36px;border-radius:var(--r2);background:var(--pr);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#FFF;transition:all .12s}
+.ai-send:active{background:var(--pr700)}
+.ai-fab{position:fixed;bottom:100px;right:calc(50% - 180px);width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--pr),var(--vi));border:none;box-shadow:0 4px 16px rgba(37,99,235,.35);display:flex;align-items:center;justify-content:center;z-index:960;transition:transform .2s}
+.ai-fab:active{transform:scale(.92)}
+.ai-fab svg{width:22px;height:22px;color:#FFF}
+.ai-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:9998;opacity:0;pointer-events:none;transition:opacity .25s}
+.ai-overlay.open{opacity:1;pointer-events:all}
+
 </style>
 </head>
 <body>
@@ -240,6 +259,22 @@ function render(){
     </div>`;
   });
 
+  // Approval flow
+  const flow=[
+    {node:'员工填写',person:'张明',color:'var(--em)',status:'已完成',statusBg:'var(--em50)',statusColor:'var(--em700)'},
+    {node:'上级审批',person:'王总监',color:'var(--pr)',status:'处理中',statusBg:'var(--pr50)',statusColor:'var(--pr)'},
+    {node:'HRBP确认',person:'李HR',color:'var(--c4)',status:'待处理',statusBg:'var(--c1)',statusColor:'var(--c5)'}
+  ];
+  h += '<div class="card" style="margin-bottom:10px"><div class="card-hd"><span class="card-title">审批流程</span></div>';
+  flow.forEach(a=>{
+    h += `<div class="flow-node">
+      <div class="flow-dot" style="background:${a.color}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="flow-info"><div class="flow-name">${a.node}</div><div class="flow-person">${a.person}</div></div>
+      <span class="flow-status" style="background:${a.statusBg};color:${a.statusColor}">${a.status}</span>
+    </div>`;
+  });
+  h += '</div>';
+
   // Deadline
   h += `<div style="text-align:center;padding:12px;font:400 12px/1 var(--f);color:var(--ac700)">确认截止：${MOCK.deadline}</div>`;
 
@@ -264,11 +299,11 @@ var AI_S_SHORTCUTS=[
   {icon:'❓',label:'有异议怎么办'}
 ];
 
-function toggleAI(){AI_S.open=!AI_S.open;document.getElementById('aiSheet').classList.toggle('open',AI_S.open);document.getElementById('aiOverlay').classList.toggle('open',AI_S.open);if(AI_S.open)renderAI();}
-function closeAI(){AI_S.open=false;document.getElementById('aiSheet').classList.remove('open');document.getElementById('aiOverlay').classList.remove('open');}
+function toggleAI(){AI_S.open=!AI_S.open;document.getElementById('aiPanel').classList.toggle('open',AI_S.open);document.getElementById('aiOverlay').classList.toggle('open',AI_S.open);if(AI_S.open)renderAI();}
+function closeAI(){AI_S.open=false;document.getElementById('aiPanel').classList.remove('open');document.getElementById('aiOverlay').classList.remove('open');}
 
 function renderAI(){
-  var bd=document.getElementById('aiSheetBd');
+  var bd=document.getElementById('aiBd');
   bd.innerHTML=AI_S.msgs.map(function(m){
     var h='<div class="ai-msg '+m.role+'"><div class="ai-msg-bd">'+m.text.replace(/\n/g,'<br/>')+'</div>';
     if(m.shortcuts){h+='<div class="ai-shortcuts">'+AI_S_SHORTCUTS.map(function(s){return '<div class="ai-shortcut" onclick="aiAction(\''+s.label+'\')"><span class="ai-shortcut-icon">'+s.icon+'</span><span class="ai-shortcut-label">'+s.label+'</span></div>';}).join('')+'</div>';}
@@ -281,7 +316,7 @@ function renderAI(){
 }
 
 function aiSend(){
-  var inp=document.getElementById('aiInp');var t=inp.value.trim();if(!t)return;
+  var inp=document.getElementById('aiInput');var t=inp.value.trim();if(!t)return;
   AI_S.msgs.push({role:'user',text:t});inp.value='';renderAI();
   setTimeout(function(){AI_S.msgs.push({role:'bot',text:'收到，正在分析…',time:'刚刚',acts:['分析我的绩效','查看成长趋势','有异议怎么办']});renderAI();},600);
 }
@@ -298,19 +333,23 @@ function aiAction(a){
 }
 </script>
 
-<div class="ai-sheet-overlay" id="aiOverlay" onclick="closeAI()"></div>
+
+
+<!-- AI FAB + Panel -->
+<div class="ai-overlay" id="aiOverlay" onclick="closeAI()"></div>
 <button class="ai-fab" onclick="toggleAI()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg></button>
-<div class="ai-sheet" id="aiSheet">
-  <div class="ai-sheet-hd">
-    <div class="ai-sheet-hd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg></div>
-    <span class="ai-sheet-hd-t">AI 确认助手</span>
-    <button class="ai-sheet-close" onclick="closeAI()">✕</button>
+<div class="ai-panel" id="aiPanel">
+  <div class="ai-hd">
+    <div class="ai-hd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg></div>
+    <div class="ai-hd-info"><div class="ai-hd-t">AI 确认助手</div><div class="ai-hd-s">绩效分析 · 趋势对比 · 申诉指引</div></div>
+    <button class="ai-hd-close" onclick="closeAI()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
   </div>
-  <div class="ai-sheet-bd" id="aiSheetBd"></div>
-  <div class="ai-sheet-ft">
-    <input class="ai-sheet-input" id="aiInp" placeholder="输入问题…" onkeydown="if(event.key==='Enter')aiSend()">
-    <button class="ai-sheet-send" onclick="aiSend()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+  <div class="ai-bd" id="aiBd"></div>
+  <div class="ai-ft">
+    <input class="ai-input" id="aiInput" placeholder="输入指令…" onkeydown="if(event.key==='Enter')aiSend()">
+    <button class="ai-send" onclick="aiSend()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
   </div>
 </div>
+
 </body>
 </html>
