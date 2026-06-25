@@ -202,6 +202,10 @@ textarea.form-input{height:auto;padding:8px 10px;resize:vertical;min-height:60px
       <div class="wiz-sb-ft-t">配置完成度</div>
       <div class="wiz-sb-ft-bar"><div class="wiz-sb-ft-fill" id="progressFill" style="width:50%"></div></div>
       <div class="wiz-sb-ft-pct" id="progressPct">50%</div>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="btn btn-s" style="flex:1;justify-content:center" onclick="cancelEdit()">取消</button>
+        <button class="btn btn-p" style="flex:1;justify-content:center" onclick="saveScheme()">保存</button>
+      </div>
     </div>
   </aside>
   <div class="wiz-ct" id="content"></div>
@@ -745,6 +749,18 @@ function toggleTimeout(stageId,value){
 function selSection(id){activeSection=id;render()}
 function toggleSec(el){el.closest('.form-sec').classList.toggle('open')}
 function submit(){if(!form.name){alert('请填写方案名称');activeSection='basic';render();return}alert('方案已提交：'+form.name)}
+
+function cancelEdit(){
+  if(confirm('确定要取消编辑吗？未保存的更改将丢失。')){
+    window.location.href='perf-scheme-list.html';
+  }
+}
+
+function saveScheme(){
+  if(!form.name){alert('请填写方案名称');activeSection='basic';render();return}
+  alert('方案「'+form.name+'」保存成功');
+  window.location.href='perf-scheme-list.html';
+}
 
 // Initialize navigation first to create the content container
 GHR_NAV.init('perf', '绩效方案');
