@@ -81,6 +81,39 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .grade-select select option[value="符合预期-"]{color:var(--ac)}
 .grade-select select option[value="低于预期"]{color:var(--ro)}
 
+/* ═══ GRADE BUTTON GROUP ═══ */
+.grade-btn-group{display:flex;flex-wrap:wrap;gap:4px}
+.grade-btn{padding:4px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);border:1px solid transparent;cursor:pointer;transition:all .12s;background:transparent;line-height:1.3}
+.grade-btn[data-grade="超出预期"]{color:var(--em700);background:var(--em50)}
+.grade-btn[data-grade="符合预期+"]{color:var(--pr);background:var(--pr50)}
+.grade-btn[data-grade="符合预期"]{color:var(--c8);background:var(--c1)}
+.grade-btn[data-grade="符合预期-"]{color:var(--ac700);background:var(--ac50)}
+.grade-btn[data-grade="低于预期"]{color:var(--ro);background:var(--ro50)}
+.grade-btn.active[data-grade="超出预期"]{border-color:var(--em700);font-weight:600}
+.grade-btn.active[data-grade="符合预期+"]{border-color:var(--pr);font-weight:600}
+.grade-btn.active[data-grade="符合预期"]{border-color:var(--c8);font-weight:600}
+.grade-btn.active[data-grade="符合预期-"]{border-color:var(--ac700);font-weight:600}
+.grade-btn.active[data-grade="低于预期"]{border-color:var(--ro);font-weight:600}
+
+/* ═══ HISTORY CARD ═══ */
+.hist-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:16px}
+.hist-hd{font:600 14px/1 var(--f);color:var(--c9);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.hist-hd svg{width:16px;height:16px;color:var(--pr)}
+.hist-body{display:flex;gap:20px;align-items:stretch}
+.hist-annual{min-width:160px;padding:16px 20px;background:linear-gradient(135deg,var(--pr50),var(--vi50));border-radius:var(--r2);display:flex;flex-direction:column;justify-content:center;align-items:center;border:1px solid var(--pr100)}
+.hist-annual-label{font:500 11px/1 var(--f);color:var(--c5);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.hist-annual-grade{font:700 28px/1 var(--f);color:var(--pr)}
+.hist-divider{width:1px;background:var(--c2);flex-shrink:0}
+.hist-monthly{flex:1;display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.hist-month{padding:10px 8px;border:1px solid var(--c2);border-radius:var(--r2);text-align:center;transition:all .12s}
+.hist-month:hover{border-color:var(--pr200);box-shadow:0 2px 8px rgba(37,99,235,.06)}
+.hist-month-label{font:500 11px/1 var(--f);color:var(--c5);margin-bottom:6px}
+.hist-month-grade{font:600 13px/1 var(--f);padding:3px 8px;border-radius:4px;display:inline-block}
+.hist-month-grade.excellent{background:var(--em50);color:var(--em700)}
+.hist-month-grade.good{background:var(--pr50);color:var(--pr)}
+.hist-month-grade.normal{background:var(--c1);color:var(--c6)}
+.hist-month-grade.pending{color:var(--c4)}
+
 .ai-tag{display:inline-flex;align-items:center;gap:2px;padding:1px 5px;border-radius:3px;font:500 9px/1 var(--f);background:linear-gradient(135deg,#8B5CF6 0%,#6366F1 100%);color:#FFF;flex-shrink:0}
 .ai-tag svg{width:8px;height:8px}
 
@@ -341,7 +374,7 @@ function renderModuleContainer(){
     '<th style="width:55px">权重</th>'+
     '<th style="min-width:200px">衡量标准</th>'+
     '<th style="min-width:200px">完成值/完成情况</th>'+
-    '<th style="min-width:140px">评价/得分</th>'+
+    '<th style="min-width:180px">评价/得分</th>'+
     '</tr></thead><tbody>';
   MODULES.forEach(function(mod,mi){
     html+='<tr class="mod-row"><td colspan="5"><div class="eval-mod">'+
@@ -361,9 +394,11 @@ function renderModuleContainer(){
       }else{
         html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">'+g.measureDesc+'</td>';
         html+='<td><textarea class="edit-cell-sm" id="completed_'+mi+'_'+gi+'" placeholder="描述完成情况…" oninput="updateCompleted('+mi+','+gi+')">'+g.completed+'</textarea></td>';
-        html+='<td><div class="grade-select"><select id="grade_'+mi+'_'+gi+'" onchange="updateGrade('+mi+','+gi+')"><option value="">请选择</option>';
-        gradeOptions.forEach(function(opt){html+='<option value="'+opt+'">'+opt+'</option>';});
-        html+='</select></div></td>';
+        html+='<td><div class="grade-btn-group">';
+        gradeOptions.forEach(function(opt){
+          html+='<button type="button" class="grade-btn'+(g.grade===opt?' active':'')+'" data-grade="'+opt+'" onclick="updateGrade('+mi+','+gi+',this)">'+opt+'</button>';
+        });
+        html+='<input type="hidden" id="grade_'+mi+'_'+gi+'" value="'+(g.grade||'')+'"></div></td>';
       }
       html+='</tr>';
     });
@@ -405,13 +440,13 @@ function updateCompleted(mi,gi){
   }
 }
 
-function updateGrade(mi,gi){
-  var val=document.getElementById('grade_'+mi+'_'+gi).value;
+function updateGrade(mi,gi,btn){
+  var group=btn.closest('.grade-btn-group');
+  group.querySelectorAll('.grade-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  var val=btn.getAttribute('data-grade');
+  document.getElementById('grade_'+mi+'_'+gi).value=val;
   MODULES[mi].goals[gi].grade=val;
-  var select=document.getElementById('grade_'+mi+'_'+gi);
-  var colors={'超出预期':'var(--em700)','符合预期+':'var(--pr)','符合预期':'var(--c8)','符合预期-':'var(--ac)','低于预期':'var(--ro)'};
-  select.style.color=colors[val]||'var(--c8)';
-  select.parentElement.style.borderColor=colors[val]||'var(--c2)';
 }
 
 function updateCompleted(mi,gi){
@@ -517,8 +552,8 @@ function applyAiSuggestion(type){
           comp.textContent=c.completed;
           var gr=document.getElementById('grade_'+c.mi+'_'+c.gi);
           if(gr){
-            gr.value=c.grade;
-            updateGrade(c.mi,c.gi);
+            var btn=gr.parentElement.querySelector('.grade-btn[data-grade="'+c.grade+'"]');
+            if(btn){updateGrade(c.mi,c.gi,btn);}
           }
         }
       }

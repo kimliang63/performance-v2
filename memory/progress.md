@@ -5,6 +5,7 @@
 - 已建立产品架构理解
 - 已梳理版本规划和功能清单
 - 输出格式规范已确认
+- **项目回顾已写入 second brain**（2026-06-24）：最新回顾位于 `memory/reviews/latest-review.md`，结论是项目已从原型/文档搭建转入 PRD、原型、功能清单、记忆一致性治理阶段。
 - 绩效V1（基础配置）已评审，配置项锁定不可修改
 - 已读取历史项目交接文档（138项功能清单、PRD v2.3、流程引擎25项功能、需求复核9个问题）
 - **HRMS-PM 已合并至此项目**（2026-05-26）：Axure原型→prototype/perf/axure-reference/，参考文档→input/，产出物→prototype/perf/current/

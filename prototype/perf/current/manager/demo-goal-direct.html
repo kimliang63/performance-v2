@@ -369,13 +369,13 @@ function render(){
       const gid=mi+'_'+gi;
       const gOpen=expandedGoals.has(gid);
       const isQ=g.type==='quant';
-      const linked=g.linkedIndicator;
       h+=`<div class="goal-row">
         <div class="goal-summary" onclick="toggleGoal('${gid}')">
+          <div class="goal-icon" style="background:var(--pr50);color:var(--pr);font:700 12px/1 var(--m);width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0">${gi+1}</div>
+          <span class="goal-weight" style="font:700 14px/1 var(--m);color:var(--pr);background:var(--pr50);padding:3px 8px;border-radius:var(--r1);flex-shrink:0">${g.weight}%</span>
           <span class="goal-name">${g.name}</span>
           <div class="goal-meta">
             <span class="goal-type ${isQ?'quant':'qual'}">${isQ?'定量':'定性'}</span>
-            <span class="goal-weight">${g.weight}%</span>
             <div class="mod-hd-chevron ${gOpen?'open':''}" style="width:16px;height:16px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
           </div>
         </div>
@@ -383,10 +383,7 @@ function render(){
           <div class="gd-form">
             <div class="gd-sec">
               <div class="gd-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>目标信息</div>
-              <div style="display:flex;gap:20px;align-items:center">
-                <div class="gd-fi"><span class="gd-fi-l">权重</span><span class="gd-fi-v mono">${g.weight}%</span></div>
-                ${linked?`<div class="gd-fi"><span class="gd-fi-l">关联指标</span><div class="gd-linked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>${linked}</div></div>`:''}
-              </div>
+              <div class="gd-fi"><span class="gd-fi-l">权重</span><span class="gd-fi-v mono">${g.weight}%</span></div>
             </div>
             ${isQ?`
             <div class="gd-sec">

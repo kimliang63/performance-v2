@@ -308,22 +308,21 @@ const I={
 
 // ═══ 模拟数据 ═══
 const SCHEMES=[
-  {id:'S001',name:'2026年度绩效考核方案',code:'PERF-2026-001',cycle:'年度',status:'enabled',version:3,groups:3,activities:2,progress:85,creator:'王管理',modified:'2026-05-20 14:30'},
-  {id:'S002',name:'2026年半年度绩效考核',code:'PERF-2026-002',cycle:'半年度',status:'enabled',version:1,groups:2,activities:1,progress:100,creator:'王管理',modified:'2026-05-18 09:15'},
-  {id:'S003',name:'月度绩效考核-仓储',code:'PERF-2026-003',cycle:'月度',status:'disabled',version:5,groups:1,activities:0,progress:60,creator:'李HR',modified:'2026-05-10 16:45'},
-  {id:'S004',name:'2025年度绩效考核方案',code:'PERF-2025-001',cycle:'年度',status:'draft',version:1,groups:3,activities:0,progress:100,creator:'王管理',modified:'2025-12-15 11:00'},
-  {id:'S005',name:'试用期考核方案',code:'PERF-2026-004',cycle:'自定义',status:'draft',version:2,groups:1,activities:0,progress:30,creator:'李HR',modified:'2026-05-22 08:30'},
-  {id:'S006',name:'特殊岗位考核方案',code:'PERF-2026-005',cycle:'半年度',status:'enabled',version:1,groups:2,activities:0,progress:70,creator:'王管理',modified:'2026-05-25 10:20'},
+  {id:'S001',name:'2026年度绩效考核方案',code:'PERF-2026-001',desc:'适用于全公司正式员工的年度绩效考核',status:'enabled',version:3,groups:3,activities:2,modifier:'王管理',modified:'2026-05-20 14:30'},
+  {id:'S002',name:'2026年半年度绩效考核',code:'PERF-2026-002',desc:'适用于管理层及核心岗位的半年度考核',status:'enabled',version:1,groups:2,activities:1,modifier:'王管理',modified:'2026-05-18 09:15'},
+  {id:'S003',name:'月度绩效考核-仓储',code:'PERF-2026-003',desc:'仓储部门月度绩效考核专用方案',status:'disabled',version:5,groups:1,activities:0,modifier:'李HR',modified:'2026-05-10 16:45'},
+  {id:'S004',name:'2025年度绩效考核方案',code:'PERF-2025-001',desc:'2025年度全公司绩效考核方案',status:'disabled',version:1,groups:3,activities:0,modifier:'王管理',modified:'2025-12-15 11:00'},
+  {id:'S005',name:'试用期考核方案',code:'PERF-2026-004',desc:'新员工试用期考核专用',status:'disabled',version:2,groups:1,activities:0,modifier:'李HR',modified:'2026-05-22 08:30'},
+  {id:'S006',name:'特殊岗位考核方案',code:'PERF-2026-005',desc:'技术序列及特殊岗位定制考核',status:'enabled',version:1,groups:2,activities:0,modifier:'王管理',modified:'2026-05-25 10:20'},
 ];
 
 const STATUS_MAP={
   enabled:{label:'已启用',cls:'enabled'},
   disabled:{label:'已停用',cls:'disabled'},
-  draft:{label:'草稿',cls:'draft'},
 };
 
 // ═══ 状态 ═══
-let filter={search:'',cycle:'',status:''};
+let filter={search:'',status:''};
 let modalState={type:null,data:null};
 
 // ═══ 渲染主入口 ═══
@@ -340,7 +339,6 @@ function renderHeader(){
 function getFiltered(){
   return SCHEMES.filter(s=>{
     if(filter.search && !s.name.toLowerCase().includes(filter.search.toLowerCase()) && !s.code.toLowerCase().includes(filter.search.toLowerCase())) return false;
-    if(filter.cycle && s.cycle!==filter.cycle) return false;
     if(filter.status && s.status!==filter.status) return false;
     return true;
   });
@@ -361,7 +359,6 @@ function renderApp(){
           <p style="font:400 13px/1 var(--f);color:var(--c5)">管理绩效考核方案配置</p>
         </div>
         <div style="display:flex;gap:8px">
-          <button class="btn btn-s" onclick="createFromTemplate()">${I.file} 从模板创建</button>
           <button class="btn btn-p" onclick="createNew()">${I.plus} 新建方案</button>
         </div>
       </div>
@@ -378,18 +375,10 @@ function renderFilterBar(){
       ${I.search}
       <input id="flSearch" placeholder="搜索方案名称或编号…" value="${filter.search}" oninput="onSearchInput(this.value)" />
     </div>
-    <select class="fl-sel" id="flCycle" onchange="onCycleChange(this.value)">
-      <option value=""${filter.cycle===''?' selected':''}>全部周期</option>
-      <option value="月度"${filter.cycle==='月度'?' selected':''}>月度</option>
-      <option value="半年度"${filter.cycle==='半年度'?' selected':''}>半年度</option>
-      <option value="年度"${filter.cycle==='年度'?' selected':''}>年度</option>
-      <option value="自定义"${filter.cycle==='自定义'?' selected':''}>自定义</option>
-    </select>
     <select class="fl-sel" id="flStatus" onchange="onStatusChange(this.value)">
       <option value=""${filter.status===''?' selected':''}>全部状态</option>
       <option value="enabled"${filter.status==='enabled'?' selected':''}>已启用</option>
       <option value="disabled"${filter.status==='disabled'?' selected':''}>已停用</option>
-      <option value="draft"${filter.status==='draft'?' selected':''}>草稿</option>
     </select>
     <div class="fl-actions">
       <button class="btn btn-s" onclick="resetFilters()">${I.x} 重置</button>
@@ -400,30 +389,23 @@ function renderFilterBar(){
 function renderTable(data){
   const rows=data.map(s=>{
     const st=STATUS_MAP[s.status];
-    const progCls=s.progress>=80?'high':s.progress>=50?'mid':'low';
     const toggleLabel=s.status==='enabled'?'停用':'启用';
     return `<tr>
       <td class="cell-name">${s.name}</td>
       <td class="cell-code">${s.code}</td>
       <td><span style="font-family:var(--m);font-size:11px;color:var(--c5);padding:2px 6px;background:var(--c1);border-radius:3px">v${s.version}</span></td>
-      <td><span class="cell-cycle">${s.cycle}</span></td>
+      <td style="font:400 12px/1.4 var(--f);color:var(--c6);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.desc}</td>
       <td><span class="cell-status ${st.cls}">${st.label}</span></td>
       <td class="cell-act"><span class="cell-act-count">${s.activities}</span> 个活动</td>
-      <td>
-        <div class="cell-progress">
-          <div class="progress-bar"><div class="progress-fill ${progCls}" style="width:${s.progress}%"></div></div>
-          <span class="progress-text">${s.progress}%</span>
-        </div>
-      </td>
-      <td class="cell-creator">${s.creator}</td>
+      <td class="cell-creator">${s.modifier}</td>
       <td class="cell-date">${s.modified}</td>
       <td>
         <div class="cell-actions">
-          <button class="btn btn-t" onclick="editScheme('${s.id}')" title="编辑">${I.edit}</button>
-          <button class="btn btn-t" onclick="copyScheme('${s.id}')" title="复制">${I.copy}</button>
-          <button class="btn btn-t" onclick="viewDetail('${s.id}')" title="详情">${I.eye}</button>
-          <button class="btn btn-t${s.status==='enabled'?' danger':''}" onclick="toggleStatus('${s.id}')" title="${toggleLabel}">${s.status==='enabled'?I.toggleOn:I.toggleOff}</button>
-          <button class="btn btn-t danger" onclick="deleteScheme('${s.id}')" title="删除">${I.trash}</button>
+          <button class="btn btn-t" onclick="editScheme('${s.id}')">编辑</button>
+          <button class="btn btn-t" onclick="copyScheme('${s.id}')">复制</button>
+          <button class="btn btn-t" onclick="viewDetail('${s.id}')">详情</button>
+          <button class="btn btn-t${s.status==='enabled'?' danger':''}" onclick="toggleStatus('${s.id}')">${toggleLabel}</button>
+          ${s.status==='disabled'?`<button class="btn btn-t danger" onclick="deleteScheme('${s.id}')">删除</button>`:''}
         </div>
       </td>
     </tr>`;
@@ -439,16 +421,15 @@ function renderTable(data){
             <th>方案名称</th>
             <th>方案编号</th>
             <th>版本</th>
-            <th>周期类型</th>
+            <th>描述</th>
             <th>状态</th>
             <th>关联活动</th>
-            <th>配置进度</th>
-            <th>创建人</th>
+            <th>修改人</th>
             <th>最近修改</th>
             <th>操作</th>
           </tr>
         </thead>
-        <tbody>${rows.length?rows:`<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--c4);font-size:13px">暂无匹配的绩效方案</td></tr>`}</tbody>
+        <tbody>${rows.length?rows:`<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--c4);font-size:13px">暂无匹配的绩效方案</td></tr>`}</tbody>
       </table>
     </div>
     <div class="pg-bar">
@@ -534,24 +515,14 @@ function onSearchInput(val){
   if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length)}
 }
 
-function onCycleChange(val){
-  filter.cycle=val;
-  renderApp();
-}
-
 function onStatusChange(val){
   filter.status=val;
   renderApp();
 }
 
 function resetFilters(){
-  filter={search:'',cycle:'',status:''};
+  filter={search:'',status:''};
   renderApp();
-}
-
-function createFromTemplate(){
-  console.log('[绩效方案] 从模板创建');
-  alert('从模板创建功能开发中');
 }
 
 function createNew(){
@@ -588,11 +559,6 @@ function confirmCopy(){
 }
 
 function deleteScheme(id){
-  const s=SCHEMES.find(x=>x.id===id);
-  if(s&&s.status==='enabled'){
-    showToast('已启用方案不可删除，请先停用','error');
-    return;
-  }
   modalState={type:'delete',data:id};
   renderApp();
 }

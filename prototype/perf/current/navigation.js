@@ -62,18 +62,13 @@ const GHR_NAV = {
       ]},
       {n:'我的绩效',ic:'target',items:[
         {n:'绩效首页',ic:'target'},
-        {n:'我的目标',ic:'target'},
-        {n:'我的绩效结果',ic:'chart'},
-        {n:'我的绩效申诉',ic:'file'},
       ]},
       {n:'我的薪酬',ic:'dollar',items:[
         {n:'我的工资条',ic:'dollar'},
         {n:'我的薪酬申诉',ic:'file'},
       ]},
       {n:'我的团队',ic:'users',items:[
-        {n:'团队档案',ic:'users'},
-        {n:'团队目标',ic:'target'},
-        {n:'团队绩效结果',ic:'chart'},
+        {n:'团队绩效工作台',ic:'target',file:'employee/demo-workbench-team.html'},
       ]},
     ]},
     perf:{n:'绩效管理',l:'Performance',ic:'target',groups:[
@@ -89,17 +84,13 @@ const GHR_NAV = {
       ]},
       {n:'绩效方案',ic:'file',items:[
         {n:'绩效方案',ic:'file',file:'perf-scheme-list.html'},
-        {n:'绩效表单',ic:'file',file:null,children:[
-          {n:'PBC目标制定',ic:'target',file:'perf-form-pbc.html'},
-          {n:'绩效考核',ic:'check',file:'perf-form-evaluation.html'},
-          {n:'结果审定',ic:'chart',file:'perf-form-ratification.html'},
-          {n:'员工确认',ic:'user',file:'perf-form-confirmation.html'},
-          {n:'绩效面谈',ic:'check',file:'perf-form-interview.html'},
-        ]},
       ]},
       {n:'绩效活动',ic:'calendar',items:[
         {n:'活动管理',ic:'grid',file:'perf-activity.html'},
         {n:'活动详情',ic:'eye',file:'perf-activity-detail.html'},
+      ]},
+      {n:'工作台',ic:'home',items:[
+        {n:'绩效首页',ic:'target',file:'perf-workbench-perf-home.html'},
       ]},
       {n:'绩效报表',ic:'chart',items:[
         {n:'目标中心',ic:'target',file:'perf-result-employee.html'},
@@ -107,21 +98,8 @@ const GHR_NAV = {
         {n:'绩效结果',ic:'chart',file:'perf-result-view.html'},
         {n:'绩效分析报表',ic:'chart',file:'perf-report-analytics.html'},
       ]},
-      {n:'申诉管理',ic:'file',items:[
-        {n:'申诉记录',ic:'file',file:'perf-appeal-list.html'},
-      ]},
-      {n:'AI 智能应用',ic:'settings',items:[
-        {n:'AI 表单辅助',ic:'edit',file:'perf-ai-form-assistant.html'},
-        {n:'AI 绩效活动',ic:'eye',file:'perf-ai-monitor.html'},
-        {n:'AI 绩效分析',ic:'chart',file:'perf-ai-analytics.html'},
-      ]},
-      {n:'移动端',ic:'user',items:[
-        {n:'目标制定',ic:'target',file:'perf-mobile-goal.html'},
-        {n:'目标审批',ic:'check',file:'perf-mobile-goal-approve.html'},
-        {n:'结果审定',ic:'chart',file:'perf-mobile-ratify.html'},
-        {n:'AI 增强表单',ic:'edit',file:'perf-mobile-ai-form.html'},
-        {n:'三合一工作台',ic:'grid',file:'perf-mobile.html'},
-        {n:'飞书机器人',ic:'inbox',file:'perf-mobile-feishu-bot.html'},
+      {n:'绩效表单',ic:'file',items:[
+        {n:'业务流程演示',ic:'eye',file:'demo-index.html'},
       ]},
     ]},
   },

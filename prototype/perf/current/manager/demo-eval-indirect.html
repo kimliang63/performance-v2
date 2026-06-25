@@ -71,6 +71,34 @@ textarea.edit-cell::placeholder{color:var(--c4)}
 .grade-select select option[value="符合预期-"]{color:var(--ac)}
 .grade-select select option[value="低于预期"]{color:var(--ro)}
 
+/* ═══ GRADE BUTTON GROUP ═══ */
+.grade-btn-group{display:flex;flex-wrap:wrap;gap:4px}
+.grade-btn{padding:4px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);border:1px solid transparent;cursor:pointer;transition:all .12s;background:transparent;line-height:1.3}
+.grade-btn[data-grade="超出预期"]{color:var(--em700);background:var(--em50)}
+.grade-btn[data-grade="符合预期+"]{color:var(--pr);background:var(--pr50)}
+.grade-btn[data-grade="符合预期"]{color:var(--c8);background:var(--c1)}
+.grade-btn[data-grade="符合预期-"]{color:var(--ac700);background:var(--ac50)}
+.grade-btn[data-grade="低于预期"]{color:var(--ro);background:var(--ro50)}
+.grade-btn.active[data-grade="超出预期"]{border-color:var(--em700);font-weight:600}
+.grade-btn.active[data-grade="符合预期+"]{border-color:var(--pr);font-weight:600}
+.grade-btn.active[data-grade="符合预期"]{border-color:var(--c8);font-weight:600}
+.grade-btn.active[data-grade="符合预期-"]{border-color:var(--ac700);font-weight:600}
+.grade-btn.active[data-grade="低于预期"]{border-color:var(--ro);font-weight:600}
+
+/* ═══ HISTORY CARD ═══ */
+.hist-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:16px 24px;margin-bottom:16px}
+.hist-card-title{font:600 14px/1 var(--f);color:var(--c9);margin-bottom:12px}
+.hist-row{display:flex;align-items:center;gap:6px;margin-bottom:10px;font:400 13px/1.4 var(--f);color:var(--c7)}
+.hist-months{display:flex;flex-wrap:wrap;gap:8px}
+.hist-month{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;background:var(--c0);border-radius:var(--r2);min-width:64px}
+.hist-month-label{font:500 11px/1 var(--f);color:var(--c5)}
+.hist-month-badge{font:500 11px/1 var(--f);padding:2px 8px;border-radius:3px}
+
+/* ═══ INITIAL GRADE CARD ═══ */
+.init-grade-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:16px 24px;margin-bottom:16px}
+.init-grade-card-title{font:600 14px/1 var(--f);color:var(--c9);margin-bottom:4px}
+.init-grade-card-desc{font:400 12px/1.4 var(--f);color:var(--c5);margin-bottom:12px}
+
 /* ═══ BUTTONS ═══ */
 .btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
 .btn svg{width:13px;height:13px}
@@ -209,6 +237,21 @@ body.chat-open .ai-toggle{display:none}
     </div>
   </div>
 
+  <!-- 历史绩效统计 -->
+  <div class="hist-card">
+    <div class="hist-card-title">历史绩效统计</div>
+    <div class="hist-row">上年年度绩效结果：<span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:3px;font:500 12px/1 var(--f);color:var(--pr);background:var(--pr50)">2025年度 符合预期+</span></div>
+    <div style="font:500 12px/1 var(--f);color:var(--c6);margin-bottom:8px">今年月度绩效结果</div>
+    <div class="hist-months">
+      <div class="hist-month"><span class="hist-month-label">2026年1月</span><span class="hist-month-badge" style="color:var(--c8);background:var(--c1)">符合预期</span></div>
+      <div class="hist-month"><span class="hist-month-label">2026年2月</span><span class="hist-month-badge" style="color:var(--c8);background:var(--c1)">符合预期</span></div>
+      <div class="hist-month"><span class="hist-month-label">2026年3月</span><span class="hist-month-badge" style="color:var(--pr);background:var(--pr50)">符合预期+</span></div>
+      <div class="hist-month"><span class="hist-month-label">2026年4月</span><span class="hist-month-badge" style="color:var(--pr);background:var(--pr50)">符合预期+</span></div>
+      <div class="hist-month"><span class="hist-month-label">2026年5月</span><span class="hist-month-badge" style="color:var(--em700);background:var(--em50)">超出预期</span></div>
+      <div class="hist-month"><span class="hist-month-label">2026年6月</span><span class="hist-month-badge" style="color:var(--c4);background:var(--c1)">当前，未出</span></div>
+    </div>
+  </div>
+
   <!-- Module sections -->
   <div id="moduleContainer"></div>
 
@@ -289,9 +332,9 @@ function renderModuleContainer(){
     '<th style="width:180px">名称</th>'+
     '<th style="width:55px">权重</th>'+
     '<th style="min-width:200px">衡量标准</th>'+
-    '<th style="min-width:180px">完成情况</th>'+
+    '<th style="min-width:200px">完成情况</th>'+
     '<th style="width:100px">员工评价</th>'+
-    '<th style="width:120px">双线上级评价</th>'+
+    '<th style="min-width:180px">双线上级评价</th>'+
     '</tr></thead><tbody>';
   MODULES.forEach(function(mod,mi){
     html+='<tr class="mod-row"><td colspan="6"><div class="eval-mod">'+
@@ -306,13 +349,29 @@ function renderModuleContainer(){
         '<td style="font:400 12px/1.6 var(--f);color:var(--c6)">'+g.measureDesc+'</td>'+
         '<td style="font:400 13px/1.4 var(--f);color:var(--c7)">'+g.completed+'</td>'+
         '<td><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--c1);color:var(--c6)">'+g.employeeGrade+'</span></td>'+
-        '<td><div class="grade-select"><select id="grade_'+mi+'_'+gi+'" onchange="updateGrade('+mi+','+gi+')"><option value="">请选择</option>';
-      gradeOptions.forEach(function(opt){html+='<option value="'+opt+'">'+opt+'</option>';});
-      html+='</select></div></td>'+
+        '<td><div class="grade-btn-group">';
+      gradeOptions.forEach(function(opt){
+        html+='<button type="button" class="grade-btn'+(g.grade===opt?' active':'')+'" data-grade="'+opt+'" onclick="updateGrade('+mi+','+gi+',this)">'+opt+'</button>';
+      });
+      html+='<input type="hidden" id="grade_'+mi+'_'+gi+'" value="'+(g.grade||'')+'"></div></td>'+
         '</tr>';
     });
   });
   html+='</tbody></table></div>';
+
+  // 初评等级
+  html+='<div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-top:16px;padding:20px 24px">'+
+    '<div style="font:600 14px/1 var(--f);color:var(--c9);margin-bottom:6px">初评等级</div>'+
+    '<div style="font:400 12px/1 var(--f);color:var(--c5);margin-bottom:12px">请根据被考核人表现选择初评等级</div>'+
+    '<div class="grade-btn-group" id="initGradeGroup">'+
+      '<button type="button" class="grade-btn" data-grade="超出预期" onclick="selectInitGrade(this)">超出预期</button>'+
+      '<button type="button" class="grade-btn" data-grade="符合预期+" onclick="selectInitGrade(this)">符合预期+</button>'+
+      '<button type="button" class="grade-btn" data-grade="符合预期" onclick="selectInitGrade(this)">符合预期</button>'+
+      '<button type="button" class="grade-btn" data-grade="符合预期-" onclick="selectInitGrade(this)">符合预期-</button>'+
+      '<button type="button" class="grade-btn" data-grade="低于预期" onclick="selectInitGrade(this)">低于预期</button>'+
+    '</div>'+
+    '<input type="hidden" id="initGradeValue" value="">'+
+  '</div>';
 
   // 总评语区域
   html+='<div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-top:16px;overflow:hidden">'+
@@ -336,12 +395,20 @@ function renderModuleContainer(){
   document.getElementById('moduleContainer').innerHTML=html;
 }
 
-function updateGrade(mi,gi){
-  var val=document.getElementById('grade_'+mi+'_'+gi).value;
+function updateGrade(mi,gi,btn){
+  var group=btn.closest('.grade-btn-group');
+  group.querySelectorAll('.grade-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  var val=btn.getAttribute('data-grade');
+  document.getElementById('grade_'+mi+'_'+gi).value=val;
   MODULES[mi].goals[gi].grade=val;
-  var select=document.getElementById('grade_'+mi+'_'+gi);
-  var colors={'超出预期':'var(--em700)','符合预期+':'var(--pr)','符合预期':'var(--c8)','符合预期-':'var(--ac)','低于预期':'var(--ro)'};
-  select.style.color=colors[val]||'var(--c8)';
+}
+
+function selectInitGrade(btn){
+  var group=document.getElementById('initGradeGroup');
+  group.querySelectorAll('.grade-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  document.getElementById('initGradeValue').value=btn.getAttribute('data-grade');
 }
 
 function submitEval(){showToast('评分已提交','success');}
@@ -429,8 +496,8 @@ function applyAiSuggestion(type){
       MODULES[g.mi].goals[g.gi].grade=g.grade;
       var gr=document.getElementById('grade_'+g.mi+'_'+g.gi);
       if(gr){
-        gr.value=g.grade;
-        updateGrade(g.mi,g.gi);
+        var btn=gr.parentElement.querySelector('.grade-btn[data-grade="'+g.grade+'"]');
+        if(btn){updateGrade(g.mi,g.gi,btn);}
       }
     });
     indirectComment='张明在能力发展和价值观方面表现良好。人才培养工作扎实，技术认证按时完成，团队协作获得好评。建议继续保持跨部门协作优势。';

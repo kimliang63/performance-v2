@@ -109,7 +109,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .goal-type{font:500 11px/1 var(--f);padding:2px 7px;border-radius:3px;background:var(--c1);color:var(--c6)}
 .goal-type.quant{background:var(--pr50);color:var(--pr)}
 .goal-type.qual{background:var(--vi50);color:var(--vi)}
-.goal-weight{font:600 13px/1 var(--m);color:var(--c8)}
+.goal-weight{font:700 14px/1 var(--m);color:var(--pr);background:var(--pr50);padding:3px 8px;border-radius:var(--r1);flex-shrink:0}
 .goal-actions{display:flex;align-items:center;gap:4px}
 .goal-act{width:26px;height:26px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c4);background:transparent;border:none;transition:all .12s}
 .goal-act:hover{background:var(--c1);color:var(--c7)}
@@ -148,7 +148,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .ge-sec-title{font:600 12px/1 var(--f);color:var(--c6);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:6px}
 .ge-sec-title svg{width:13px;height:13px;color:var(--pr)}
 .ge-row{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px}
-.ge-row.f3{grid-template-columns:1fr 1fr 1fr}
+.ge-row.f3{grid-template-columns:100px 100px 100px}
 .ge-row .full{grid-column:1/-1}
 .ge-fi{display:flex;flex-direction:column;gap:3px}
 .ge-fi-l{font:400 11px/1 var(--f);color:var(--c5);display:flex;align-items:center;gap:4px}
@@ -713,12 +713,20 @@ const RULES=[
 ];
 
 const MOCK_INDICATORS=[
-  {id:'kpi1',name:'资源利用率（通用）',dept:'产品部',publicDown:true,publishStatus:'已发布',type:'定量',nature:'过程型',category:'效率',unit:'%',rule:'标准梯度计算',desc:'人员的实际工作量饱和情况，数据来源：Devops'},
-  {id:'kpi2',name:'HRASUAT用户验收首次通过率(产品)',dept:'产品部',publicDown:true,publishStatus:'已发布',type:'定量',nature:'结果型',category:'质量',unit:'百分比',rule:'标准梯度计算',desc:'需求首次业务验收通过的概率'},
-  {id:'kpi3',name:'HRAS需求评审及时率(产品)',dept:'产品部',publicDown:true,publishStatus:'已发布',type:'定量',nature:'过程型',category:'效率',unit:'百分比',rule:'标准梯度计算',desc:'迭代版本评审的及时性情况'},
-  {id:'kpi4',name:'项目按时交付率',dept:'项目管理部',publicDown:false,publishStatus:'已发布',type:'定量',nature:'过程型',category:'效率',unit:'%',rule:'标准梯度计算',desc:'衡量项目按时交付情况'},
-  {id:'kpi5',name:'客户满意度评分',dept:'客户成功部',publicDown:false,publishStatus:'已发布',type:'定量',nature:'结果型',category:'质量',unit:'分',rule:'标准梯度计算',desc:'衡量客户满意度指标'},
-  {id:'kpi6',name:'产品迭代完成率',dept:'产品部',publicDown:true,publishStatus:'已发布',type:'定量',nature:'过程型',category:'效率',unit:'%',rule:'标准梯度计算',desc:'衡量产品迭代计划完成率'},
+  {id:'kpi1',name:'资源利用率（通用）',type:'定量',nature:'正向',category:'效率',unit:'%',desc:'人员的实际工作量饱和情况，数据来源：Devops'},
+  {id:'kpi2',name:'HRASUAT用户验收首次通过率(产品)',type:'定量',nature:'正向',category:'质量',unit:'百分比',desc:'需求首次业务验收通过的概率'},
+  {id:'kpi3',name:'HRAS需求评审及时率(产品)',type:'定量',nature:'正向',category:'效率',unit:'百分比',desc:'迭代版本评审的及时性情况'},
+  {id:'kpi4',name:'项目按时交付率',type:'定量',nature:'正向',category:'效率',unit:'%',desc:'衡量项目按时交付情况'},
+  {id:'kpi5',name:'客户满意度评分',type:'定量',nature:'正向',category:'质量',unit:'分',desc:'衡量客户满意度指标'},
+  {id:'kpi6',name:'产品迭代完成率',type:'定量',nature:'正向',category:'效率',unit:'%',desc:'衡量产品迭代计划完成率'},
+  {id:'kpi7',name:'代码缺陷密度',type:'定量',nature:'负向',category:'质量',unit:'个/千行',desc:'每千行代码的缺陷数量，越低越好'},
+  {id:'kpi8',name:'运营成本节约率',type:'定量',nature:'正向',category:'成本',unit:'%',desc:'实际成本相对预算的节约比例'},
+  {id:'kpi9',name:'产品管理规范',type:'定性',nature:'正向',category:'协作',unit:'-',desc:'需求管理流程规范性和文档完整性'},
+  {id:'kpi10',name:'创新方案提交数',type:'定量',nature:'正向',category:'创新',unit:'个',desc:'期内提交的创新方案或改进建议数量'},
+  {id:'kpi11',name:'跨部门协作评分',type:'定性',nature:'正向',category:'协作',unit:'分',desc:'由协作部门对协作响应速度和质量的综合评价'},
+  {id:'kpi12',name:'会议迟到次数',type:'加减分',nature:'负向',category:'协作',unit:'次',desc:'会议迟到或无故缺席次数，按次扣分'},
+  {id:'kpi13',name:'流程优化提案采纳数',type:'加减分',nature:'正向',category:'创新',unit:'个',desc:'提出的流程优化建议被采纳实施的数量'},
+  {id:'kpi14',name:'培训授课时长',type:'加减分',nature:'正向',category:'协作',unit:'小时',desc:'期内为团队进行内部培训的累计时长'},
 ];
 
 let expandedMods=new Set([0,1]);
@@ -728,7 +736,7 @@ let histSelected=new Set();
 let langStore={};
 let selectedKpiId=null;
 let langFieldKey=null;
-let kpiFilterCat='全部';
+let kpiFilterCat='全部', kpiFilterType='全部', kpiFilterNature='全部';
 
 // ═══ CUSTOM CONFIRM MODAL ═══
 function showConfirm({title='确认操作', desc='确定要执行此操作吗？', type='warn', okText='确认', onOk}) {
@@ -781,6 +789,10 @@ function render(){
           <span>${m.goals.length} 个目标</span>
         </div>
         <div class="mod-hd-sep"></div>
+        <button class="mod-hd-add" onclick="event.stopPropagation();openIndicatorPicker(null,${mi})" title="从指标库选择">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          指标库选择
+        </button>
         <button class="mod-hd-add" onclick="event.stopPropagation();openCopyModal(${mi})" title="复制历史目标">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           复制历史
@@ -800,11 +812,11 @@ function render(){
         const isFilled=g.type==='quant'?(g.target>0&&g.challenge>0&&g.baseline>0):(g.desc&&g.desc.trim().length>0);
         h+=`<div class="goal-row" data-goal-id="${g.id}">
           <div class="goal-summary" onclick="toggleGoal('${g.id}')">
-            <div class="goal-icon ${isFilled?'filled':'pending'}">${isFilled?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>'}</div>
+            <div class="goal-icon" style="background:var(--pr50);color:var(--pr);font:700 12px/1 var(--m)">${gi+1}</div>
+            ${isOpen?`<input type="number" min="0" max="100" value="${g.weight}" onclick="event.stopPropagation()" oninput="syncGoalFromForm('${g.id}')" id="ge_weight_${g.id}" style="width:50px;font:700 13px/1 var(--m);color:var(--pr);border:1px solid var(--pr200);border-radius:var(--r1);padding:2px 4px;text-align:center;background:var(--pr50);outline:none;flex-shrink:0" />`:`<span class="goal-weight" onclick="event.stopPropagation();editWeightInline('${g.id}')" style="cursor:pointer" title="点击编辑权重">${g.weight}%</span>`}
             ${isOpen?`<input class="goal-name-input" id="ge_name_${g.id}" value="${g.name}" onclick="event.stopPropagation()" oninput="syncGoalFromForm('${g.id}')" />`:`<span class="goal-name">${g.name}${g.aiFilled?aiTag():''}</span>`}
             <div class="goal-meta">
               <span class="goal-type ${typeClass}">${typeLabel}</span>
-              <span class="goal-weight">权重: ${g.weight}%</span>
               <div class="goal-actions">
                 <button class="goal-act del" title="删除" onclick="event.stopPropagation();deleteGoal('${g.id}',${mi})">${I.trash}</button>
               </div>
@@ -813,16 +825,6 @@ function render(){
           <div class="goal-edit ${isOpen?'open':''}">
             <div class="ge-form">
               ${g.type==='quant'?`
-              <div class="ge-sec">
-                <div class="ge-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>目标信息</div>
-                <div class="ge-row">
-                  <div class="ge-fi"><span class="ge-fi-l">权重(%) <span class="req">*</span></span><input class="inp num" id="ge_weight_${g.id}" type="number" value="${g.weight}" min="0" max="100" style="max-width:100px" oninput="syncGoalFromForm('${g.id}')"/></div>
-                  <div class="ge-fi"><span class="ge-fi-l">关联指标</span>
-                    ${linked?`<div class="ge-linked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>${linked.name}<button class="ge-linked-btn" onclick="event.stopPropagation();unlinkIndicator('${g.id}')">解除</button></div>`
-                    :`<button class="btn btn-o btn-sm" style="height:28px;padding:0 8px;font-size:11px" onclick="event.stopPropagation();openIndicatorPicker('${g.id}',${mi})">${I.link} 选择</button>`}
-                  </div>
-                </div>
-              </div>
               <div class="ge-sec">
                 <div class="ge-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>衡量标准</div>
                 <div class="ge-row f3">
@@ -840,10 +842,6 @@ function render(){
                 ${g.ruleFormula?`<div style="margin-top:8px;padding:8px 10px;background:var(--c0);border:1px solid var(--c2);border-radius:var(--r1)"><div style="font:500 10px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">计算公式</div><code style="font:400 11px/1.5 var(--m);color:var(--c8);white-space:pre-wrap;word-break:break-all">${g.ruleFormula}</code></div>`:''}
               </div>
               `:`
-              <div class="ge-sec">
-                <div class="ge-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>目标信息</div>
-                <div class="ge-fi"><span class="ge-fi-l">权重(%) <span class="req">*</span></span><input class="inp num" id="ge_weight_${g.id}" type="number" value="${g.weight}" min="0" max="100" style="max-width:100px" oninput="syncGoalFromForm('${g.id}')"/></div>
-              </div>
               <div class="ge-sec">
                 <div class="ge-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>衡量标准</div>
                 <div class="ge-fi"><span class="ge-fi-l">衡量标准 <span class="req">*</span>${g.aiFilled?aiTag():''}</span><textarea class="inp" id="ge_desc_${g.id}" rows="3" placeholder="请输入衡量标准...">${g.desc||''}</textarea></div>
@@ -968,6 +966,31 @@ function aiTag(){
 }
 
 // ═══ INLINE EDIT ═══
+function editWeightInline(goalId){
+  const d=findGoal(goalId);if(!d)return;
+  const g=d.goal;
+  const el=document.querySelector(`[data-goal-id="${goalId}"] .goal-weight`);
+  if(!el)return;
+  const input=document.createElement('input');
+  input.className='goal-name-input';
+  input.type='number';
+  input.value=g.weight;
+  input.min=0;input.max=100;
+  input.style.width='60px';input.style.textAlign='center';
+  input.style.fontFamily='var(--m)';
+  input.style.fontWeight='700';
+  input.style.fontSize='13px';
+  el.replaceWith(input);
+  input.focus();input.select();
+  const save=()=>{
+    const v=parseInt(input.value)||0;
+    g.weight=Math.max(0,Math.min(100,v));
+    render();
+  };
+  input.addEventListener('blur',save);
+  input.addEventListener('keydown',e=>{if(e.key==='Enter')save();if(e.key==='Escape')render()});
+}
+
 function saveInlineEdit(id,mi){
   const d=findGoal(id);if(!d)return;
   const g=d.goal;
@@ -1102,7 +1125,7 @@ document.addEventListener('click',e=>{const p=document.getElementById('addGoalPo
 let kpiPickerGoalId=null, kpiPickerModIdx=null;
 function openIndicatorPicker(goalId,mi){
   kpiPickerGoalId=goalId;kpiPickerModIdx=mi;
-  selectedKpiId=null;kpiFilterCat='全部';
+  selectedKpiId=null;kpiFilterCat='全部';kpiFilterType='全部';kpiFilterNature='全部';
   renderKpiList();
   openModal('indicatorModal');
 }
@@ -1110,12 +1133,34 @@ function renderKpiList(){
   const q=(document.getElementById('kpiSearch')?.value||'').toLowerCase();
   const allCats=MOCK_INDICATORS.map(k=>k.category);
   const cats=['全部',...new Set(allCats)];
-  document.getElementById('kpiCatBar').innerHTML=cats.map(c=>{
+  const types=['全部','定量','定性','加减分'];
+  const natures=['全部','正向','负向'];
+
+  // Filter bar
+  let filterHtml='';
+  filterHtml+='<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;align-items:center">';
+  filterHtml+='<span style="font:500 12px/1 var(--f);color:var(--c5);min-width:32px">分类:</span>';
+  filterHtml+=cats.map(c=>{
     const count=c==='全部'?MOCK_INDICATORS.length:allCats.filter(x=>x===c).length;
     return `<span class="kpi-cat ${kpiFilterCat===c?'on':''}" onclick="kpiFilterCat='${c}';renderKpiList()">${c}<span class="kpi-cat-count">(${count})</span></span>`;
   }).join('');
+  filterHtml+='</div>';
+  filterHtml+='<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;align-items:center">';
+  filterHtml+='<span style="font:500 12px/1 var(--f);color:var(--c5);min-width:32px">类型:</span>';
+  filterHtml+=types.map(t=>{
+    return `<span class="kpi-cat ${kpiFilterType===t?'on':''}" onclick="kpiFilterType='${t}';renderKpiList()">${t}</span>`;
+  }).join('');
+  filterHtml+='<span style="font:500 12px/1 var(--f);color:var(--c5);min-width:32px;margin-left:8px">性质:</span>';
+  filterHtml+=natures.map(n=>{
+    return `<span class="kpi-cat ${kpiFilterNature===n?'on':''}" onclick="kpiFilterNature='${n}';renderKpiList()">${n}</span>`;
+  }).join('');
+  filterHtml+='</div>';
+  document.getElementById('kpiCatBar').innerHTML=filterHtml;
+
   const filtered=MOCK_INDICATORS.filter(k=>{
     if(kpiFilterCat!=='全部'&&k.category!==kpiFilterCat)return false;
+    if(kpiFilterType!=='全部'&&k.type!==kpiFilterType)return false;
+    if(kpiFilterNature!=='全部'&&k.nature!==kpiFilterNature)return false;
     if(q&&!k.name.toLowerCase().includes(q))return false;
     return true;
   });
@@ -1131,12 +1176,10 @@ function renderKpiList(){
           <button class="kpi-detail-close" onclick="selectedKpiId=null;renderKpiList()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
         </div>
         <div class="kpi-detail-grid">
-          <div class="kpi-detail-item"><span class="kpi-detail-label">所属部门</span><span class="kpi-detail-value">${k.dept}</span></div>
           <div class="kpi-detail-item"><span class="kpi-detail-label">指标类型</span><span class="kpi-detail-value">${k.type}</span></div>
           <div class="kpi-detail-item"><span class="kpi-detail-label">指标性质</span><span class="kpi-detail-value">${k.nature}</span></div>
+          <div class="kpi-detail-item"><span class="kpi-detail-label">指标分类</span><span class="kpi-detail-value">${k.category}</span></div>
           <div class="kpi-detail-item"><span class="kpi-detail-label">计量单位</span><span class="kpi-detail-value">${k.unit}</span></div>
-          <div class="kpi-detail-item"><span class="kpi-detail-label">计算规则</span><span class="kpi-detail-value">${k.rule}</span></div>
-          <div class="kpi-detail-item"><span class="kpi-detail-label">发布状态</span><span class="kpi-detail-value">${k.publishStatus}</span></div>
         </div>
         <div class="kpi-detail-desc">${k.desc}</div>
       </div>`;
@@ -1151,24 +1194,40 @@ function renderKpiList(){
       <span class="kpi-tag type">${k.type}</span>
       <span class="kpi-tag nature">${k.nature}</span>
       <span class="kpi-tag unit">单位: ${k.unit}</span>
-      <span class="kpi-tag rule">${k.rule}</span>
     </div>
-    <div class="kpi-card-dept"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>${k.dept}</div>
     <div class="kpi-card-desc">${k.desc}</div>
   </div>`).join('');
   document.getElementById('kpiSelLabel').textContent=selectedKpiId?'已选择 1 项':'未选择';
 }
 function filterKPI(){renderKpiList()}
 function confirmIndicator(){
-  if(!selectedKpiId||!kpiPickerGoalId){showToast('请选择一个指标');return}
-  const d=findGoal(kpiPickerGoalId);if(!d)return;
-  const g=d.goal;
+  if(!selectedKpiId){showToast('请选择一个指标');return}
   const kpi=MOCK_INDICATORS.find(k=>k.id===selectedKpiId);
-  g.name=kpi.name;g.indicator=kpi.name;g.type=kpi.type==='定量'?'quant':'qual';
-  g.unit=kpi.unit;g.rule=kpi.rule;g.desc=kpi.desc;
-  g.linkedIndicatorId=kpi.id;
-  closeModal('indicatorModal');
-  expandedGoals.add(kpiPickerGoalId);
+  if(!kpi)return;
+  if(kpiPickerGoalId){
+    // 更新已有目标
+    const d=findGoal(kpiPickerGoalId);if(!d)return;
+    const g=d.goal;
+    g.name=kpi.name;g.indicator=kpi.name;g.type=kpi.type==='定量'?'quant':'qual';
+    g.unit=kpi.unit;g.rule=kpi.rule;g.desc=kpi.desc;
+    g.linkedIndicatorId=kpi.id;
+    closeModal('indicatorModal');
+    expandedGoals.add(kpiPickerGoalId);
+  }else{
+    // 新增目标（从模块头的指标库选择按钮）
+    const mi=kpiPickerModIdx;
+    const id='g'+Date.now();
+    const isQuant=kpi.type==='定量';
+    MODULES[mi].goals.push({
+      id,name:kpi.name,indicator:kpi.name,type:isQuant?'quant':'qual',
+      weight:10,desc:kpi.desc,measure:isQuant?'梯度评分':'定性评分',
+      target:0,challenge:0,baseline:0,unit:kpi.unit,
+      rule:kpi.rule,ruleFormula:'',msLevels:[],linkedIndicatorId:kpi.id,aiFilled:false
+    });
+    expandedMods.add(mi);
+    expandedGoals.add(id);
+    closeModal('indicatorModal');
+  }
   render();
 }
 

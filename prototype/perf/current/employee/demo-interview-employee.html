@@ -66,6 +66,12 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}
 .btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
 
+/* ═══ OPTION BUTTONS ═══ */
+.opt-btn-group{display:flex;flex-wrap:wrap;gap:8px}
+.opt-btn{padding:8px 16px;border:1px solid var(--c2);border-radius:var(--r2);font:500 13px/1 var(--f);color:var(--c6);background:var(--sf);cursor:pointer;transition:all .12s}
+.opt-btn:hover{border-color:var(--pr200);background:var(--pr50);color:var(--pr)}
+.opt-btn.active{border-color:var(--pr);background:var(--pr50);color:var(--pr);font-weight:600}
+
 /* ═══ TOAST ═══ */
 .validate-toast{position:fixed;top:64px;left:50%;transform:translateX(-50%);background:var(--em);color:#FFF;padding:10px 20px;border-radius:var(--r2);font:500 13px/1 var(--f);box-shadow:0 8px 24px rgba(16,185,129,.3);z-index:3000;opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:center;gap:8px}
 .validate-toast.show{opacity:1;pointer-events:all}
@@ -124,30 +130,18 @@ body.chat-open .ai-chat{transform:translateX(0)}
 body.chat-open .ai-toggle{display:none}
 
 /* ═══ MONTHLY RESULTS ═══ */
-.mp-year{margin-bottom:14px}
-.mp-year:last-child{margin-bottom:0}
-.mp-year-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.mp-year-label{font:600 13px/1 var(--f);color:var(--c8)}
-.mp-year-range{font:400 12px/1 var(--f);color:var(--c5);background:var(--c0);padding:3px 10px;border-radius:var(--r1);cursor:pointer;border:1px solid var(--c2);transition:all .12s}
-.mp-year-range:hover{border-color:var(--pr);color:var(--pr)}
-.mp-year-select{appearance:none;-webkit-appearance:none;border:1px solid var(--c2);border-radius:var(--r1);padding:4px 24px 4px 10px;font:500 12px/1 var(--f);color:var(--c8);background:var(--c0);cursor:pointer;outline:none;background-image:url("data:image/svg+xml,%3Csvg width='8' height='5' viewBox='0 0 8 5' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L4 4L7 1' stroke='%2394A3B8' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
-.mp-year-select:focus{border-color:var(--pr)}
 .mp-months{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
 .mp-months::-webkit-scrollbar{height:3px}
 .mp-months::-webkit-scrollbar-thumb{background:var(--c3);border-radius:2px}
-.mp-card{min-width:160px;flex-shrink:0;border:1px solid var(--c2);border-radius:var(--r2);padding:12px;transition:all .12s}
+.mp-card{min-width:140px;flex-shrink:0;border:1px solid var(--c2);border-radius:var(--r2);padding:14px 12px;text-align:center;transition:all .12s}
 .mp-card:hover{border-color:var(--pr200);box-shadow:0 2px 8px rgba(37,99,235,.08)}
-.mp-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
-.mp-card-month{font:600 12px/1 var(--f);color:var(--c6)}
-.mp-card-score{font:700 16px/1 var(--m);color:var(--pr)}
-.mp-card-grade{display:inline-block;padding:2px 8px;border-radius:4px;font:500 11px/1 var(--f)}
+.mp-card-month{font:500 12px/1 var(--f);color:var(--c5);margin-bottom:10px}
+.mp-card-grade{display:inline-block;padding:6px 14px;border-radius:var(--r1);font:600 14px/1 var(--f)}
 .mp-card-grade.excellent{background:var(--em50);color:var(--em700)}
 .mp-card-grade.good{background:var(--pr50);color:var(--pr)}
 .mp-card-grade.normal{background:var(--c1);color:var(--c6)}
 .mp-card-grade.poor{background:var(--ac50);color:var(--ac700)}
 .mp-card-grade.bad{background:var(--ro50);color:var(--ro)}
-.mp-card-bar{height:3px;background:var(--c1);border-radius:2px;margin-top:8px;overflow:hidden}
-.mp-card-bar-fill{height:100%;border-radius:2px}
 </style>
 </head>
 <body>
@@ -203,13 +197,12 @@ body.chat-open .ai-toggle{display:none}
       </div>
       <div class="input-group">
         <div class="input-label"><span style="font:500 13px/1 var(--f);color:var(--c7)">您的直线上级是否有跟您进行过年度绩效面谈？</span><span style="color:var(--ro);font-size:12px">*</span></div>
-        <select class="input-field" style="cursor:pointer">
-          <option value="">请选择</option>
-          <option value="one_on_one">是，一对一面谈</option>
-          <option value="phone">是，电话面谈</option>
-          <option value="other">是，其他形式面谈</option>
-          <option value="no">否</option>
-        </select>
+        <div class="opt-btn-group" id="interviewOpts">
+          <button class="opt-btn" onclick="selectInterviewOpt(this)" data-val="one_on_one">是，一对面上谈</button>
+          <button class="opt-btn" onclick="selectInterviewOpt(this)" data-val="phone">是，电话面谈</button>
+          <button class="opt-btn" onclick="selectInterviewOpt(this)" data-val="other">是，其他形式面谈</button>
+          <button class="opt-btn" onclick="selectInterviewOpt(this)" data-val="no">否</button>
+        </div>
       </div>
     </div>
   </div>
@@ -343,57 +336,31 @@ var MONTH_NAMES=['','1月','2月','3月','4月','5月','6月','7月','8月','9�
 var GRADE_CLS={'超出预期':'excellent','符合预期+':'good','符合预期':'normal','符合预期-':'poor','低于预期':'bad'};
 var GRADE_BAR={'超出预期':'var(--em)','符合预期+':'var(--pr)','符合预期':'var(--c4)','符合预期-':'var(--ac)','低于预期':'var(--ro)'};
 
-var MONTHLY_DATA={
-  '2026':{months:[4,5,6],data:{4:{score:3.82,grade:'符合预期+'},5:{score:3.70,grade:'超出预期'},6:{score:3.95,grade:'超出预期'}}},
-  '2025':{months:[1,2,3,4,5,6,7,8,9,10,11,12],data:{1:{score:3.50,grade:'符合预期'},2:{score:3.40,grade:'符合预期'},3:{score:3.65,grade:'符合预期+'},4:{score:2.07,grade:'符合预期+'},5:{score:3.60,grade:'符合预期+'},6:{score:3.85,grade:'符合预期+'},7:{score:3.70,grade:'符合预期+'},8:{score:3.50,grade:'符合预期'},9:{score:3.55,grade:'符合预期'},10:{score:3.80,grade:'符合预期+'},11:{score:3.70,grade:'符合预期+'},12:{score:4.10,grade:'符合预期+'}}}
-};
-var monthRanges={};
-var currentYear='2026';
+var MONTHLY_DATA=[
+  {year:2025,month:7,grade:'符合预期+'},
+  {year:2025,month:8,grade:'符合预期'},
+  {year:2025,month:9,grade:'符合预期'},
+  {year:2025,month:10,grade:'符合预期+'},
+  {year:2025,month:11,grade:'符合预期+'},
+  {year:2025,month:12,grade:'符合预期+'},
+  {year:2026,month:1,grade:'符合预期'},
+  {year:2026,month:2,grade:'符合预期'},
+  {year:2026,month:3,grade:'符合预期+'},
+  {year:2026,month:4,grade:'符合预期+'},
+  {year:2026,month:5,grade:'超出预期'},
+  {year:2026,month:6,grade:'超出预期'}
+];
 
 function renderMonthly(){
   var el=document.getElementById('monthlyResults');
   if(!el)return;
-  var years=Object.keys(MONTHLY_DATA).sort(function(a,b){return b-a;});
-  var yd=MONTHLY_DATA[currentYear];
-  if(!yd)return;
-  var months=monthRanges[currentYear]||yd.months;
-
-  var h='<div class="mp-year-hd"><span class="mp-year-label">绩效趋势</span><div style="display:flex;align-items:center;gap:8px">';
-  h+='<select class="mp-year-select" onchange="switchYear(this.value)">';
-  years.forEach(function(y){h+='<option value="'+y+'"'+(y===currentYear?' selected':'')+'>'+y+'年'+(y==='2026'?' (当前)':'')+'</option>';});
-  h+='</select>';
-  h+='<span class="mp-year-range" onclick="cycleRange(this)">'+months.length+'个月</span>';
-  h+='</div></div>';
-
-  h+='<div class="mp-months" style="margin-top:10px">';
-  months.forEach(function(m){
-    var d=yd.data[m];
-    if(!d)return;
+  var h='<div class="mp-months">';
+  MONTHLY_DATA.forEach(function(d){
     var gc=GRADE_CLS[d.grade]||'normal';
-    var bc=GRADE_BAR[d.grade]||'var(--c4)';
-    var bw=Math.min(d.score,5)/5*100;
-    h+='<div class="mp-card"><div class="mp-card-top"><span class="mp-card-month">'+MONTH_NAMES[m]+'</span><span class="mp-card-score">'+d.score+'</span></div><span class="mp-card-grade '+gc+'">'+d.grade+'</span><div class="mp-card-bar"><div class="mp-card-bar-fill" style="width:'+bw+'%;background:'+bc+'"></div></div></div>';
+    h+='<div class="mp-card"><div class="mp-card-month">'+d.year+'年'+d.month+'月</div><span class="mp-card-grade '+gc+'">'+d.grade+'</span></div>';
   });
   h+='</div>';
-
   el.innerHTML=h;
-}
-
-function switchYear(year){
-  currentYear=year;
-  renderMonthly();
-}
-
-function cycleRange(el){
-  var full=[1,2,3,4,5,6,7,8,9,10,11,12];
-  var q1=[1,2,3],q2=[4,5,6],q3=[7,8,9],q4=[10,11,12];
-  var ranges=[full,q1,q2,q3,q4];
-  var labels=['12个月','Q1 (1-3月)','Q2 (4-6月)','Q3 (7-9月)','Q4 (10-12月)'];
-  var cur=monthRanges[currentYear]?monthRanges[currentYear].length:12;
-  var idx=0;
-  if(cur===12)idx=1;else if(cur===3&&monthRanges[currentYear][0]===1)idx=2;else if(cur===3&&monthRanges[currentYear][0]===4)idx=3;else if(cur===3&&monthRanges[currentYear][0]===7)idx=4;
-  monthRanges[currentYear]=ranges[idx];
-  renderMonthly();
 }
 
 renderMonthly();
@@ -430,6 +397,11 @@ function showToast(msg,type){
   document.getElementById('toastMsg').textContent=msg;
   t.className='validate-toast show';
   setTimeout(function(){t.classList.remove('show')},3000);
+}
+function selectInterviewOpt(btn){
+  var siblings=btn.parentNode.querySelectorAll('.opt-btn');
+  for(var i=0;i<siblings.length;i++){siblings[i].classList.remove('active')}
+  btn.classList.add('active');
 }
 
 // ═══ AI CHAT ═══

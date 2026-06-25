@@ -256,8 +256,8 @@ const STAGES=[
 ];
 
 const GROUPS=[
-  {id:'g1',name:'默认考核组',rules:[{field:'部门',op:'属于',val:'产品部,技术部,市场部'}],excluded:[],evalRule:'通用评价规则'},
-  {id:'g2',name:'仓储特殊组',rules:[{field:'部门',op:'等于',val:'仓储部'},{field:'职级',op:'属于',val:'L5,L6'}],excluded:['张三'],evalRule:'仓储评价规则'},
+  {id:'g1',name:'默认考核组',rules:[{field:'部门',op:'属于',val:'产品部,技术部,市场部'}],excluded:[],evalRule:'通用评价规则',isDefault:true},
+  {id:'g2',name:'仓储特殊组',rules:[{field:'部门',op:'等于',val:'仓储部'},{field:'职级',op:'属于',val:'L5,L6'}],excluded:['张三'],evalRule:'仓储评价规则',isDefault:false},
 ];
 
 const FLOW_MODELS={
@@ -273,9 +273,9 @@ let activeSection='basic', activeGroup='g1';
 let stageConfigMode='merged'; // merged | perGroup
 let activeGroupTab={};
 let form={
-  name:'',code:'PERF-2026-'+String(Math.floor(Math.random()*900)+100),cycle:'年度',enabled:true,downward:true,desc:'',
+  name:'',code:'PERF-2026-'+String(Math.floor(Math.random()*900)+100),enabled:true,downward:true,desc:'',
   dept:'',
-  gradeRule:'标准五级', // 引用的等级规则名称
+  gradeRule:'标准五级',
   version:1,
   forcedDistRule:'标准强制分布',
   grades:JSON.parse(JSON.stringify(GRADES)),
@@ -306,10 +306,12 @@ const TEMPLATES={
   '年度':{label:'年度绩效',stages:['interview','ratify','confirm']},
 };
 
-function applyTemplate(cycle){
-  const tpl=TEMPLATES[cycle];
+let curTemplate='年度';
+
+function applyTemplate(tplKey){
+  const tpl=TEMPLATES[tplKey];
   if(!tpl)return;
-  form.cycle=cycle;
+  curTemplate=tplKey;
   form.stages.forEach(s=>{
     s.enabled=tpl.stages.includes(s.id);
   });
@@ -318,13 +320,6 @@ function applyTemplate(cycle){
 
 function toggleStage(i){
   form.stages[i].enabled=!form.stages[i].enabled;
-  // 手动切换 → 变为自定义模板
-  if(TEMPLATES[form.cycle]){
-    const tpl=TEMPLATES[form.cycle];
-    const currentEnabled=form.stages.filter(s=>s.enabled).map(s=>s.id).sort().join(',');
-    const tplEnabled=tpl.stages.slice().sort().join(',');
-    if(currentEnabled!==tplEnabled) form.cycle='自定义';
-  }
   renderSettingsModal();
 }
 
@@ -346,13 +341,13 @@ function closeSettings(){
 function renderSettingsModal(){
   const body=document.getElementById('settingsBody');
   if(!body)return;
-  const tpl=TEMPLATES[form.cycle];
+  const tpl=TEMPLATES[curTemplate];
   const tplKeys=Object.keys(TEMPLATES);
   body.innerHTML=`
     <div style="margin-bottom:14px">
       <div style="font:500 12px/1 var(--f);color:var(--c7);margin-bottom:8px">选择模板</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        ${tplKeys.map(k=>`<button onclick="applyTemplate('${k}')" style="padding:6px 14px;border-radius:var(--r1);font:500 12px/1 var(--f);cursor:pointer;transition:all .12s;font-family:inherit;border:1px solid ${form.cycle===k?'var(--pr)':'var(--c2)'};background:${form.cycle===k?'var(--pr50)':'var(--sf)'};color:${form.cycle===k?'var(--pr)':'var(--c6)'}">${TEMPLATES[k].label}</button>`).join('')}
+        ${tplKeys.map(k=>`<button onclick="applyTemplate('${k}')" style="padding:6px 14px;border-radius:var(--r1);font:500 12px/1 var(--f);cursor:pointer;transition:all .12s;font-family:inherit;border:1px solid ${curTemplate===k?'var(--pr)':'var(--c2)'};background:${curTemplate===k?'var(--pr50)':'var(--sf)'};color:${curTemplate===k?'var(--pr)':'var(--c6)'}">${TEMPLATES[k].label}</button>`).join('')}
       </div>
     </div>
     <div style="margin-bottom:12px;padding:8px 12px;background:var(--c0);border-radius:var(--r1);font:400 12px/1.4 var(--f);color:var(--c5)">
@@ -426,33 +421,18 @@ function renderBasicInfo(ct){
       <div class="form-sec-bd">
         <div class="form-row">
           <div class="form-grp"><label class="form-lb">名称 <span class="req">*</span></label><input class="form-input" value="${form.name}" placeholder="请输入" oninput="form.name=this.value"></div>
-          <div class="form-grp"><label class="form-lb">是否启用 <span class="req">*</span></label>
-            <div class="radio-group"><label class="radio ${form.enabled?'on':''}" onclick="form.enabled=true;render()"><div class="radio-dot"></div>启用</label><label class="radio ${!form.enabled?'on':''}" onclick="form.enabled=false;render()"><div class="radio-dot"></div>停用</label></div>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-grp"><label class="form-lb">部门 <span class="req">*</span></label>
-            <select class="form-input" onchange="form.dept=this.value"><option value="">请选择</option><option>产品部</option><option>技术部</option><option>市场部</option><option>仓储部</option><option>全部门</option></select>
-          </div>
-          <div class="form-grp"><label class="form-lb">向下公开 <span class="req">*</span></label>
-            <div class="radio-group"><label class="radio ${form.downward?'on':''}" onclick="form.downward=true;render()"><div class="radio-dot"></div>是</label><label class="radio ${!form.downward?'on':''}" onclick="form.downward=false;render()"><div class="radio-dot"></div>否</label></div>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-grp"><label class="form-lb">周期类型 <span class="req">*</span></label>
-            <select class="form-input" onchange="form.cycle=this.value;applyTemplate(this.value)"><option ${form.cycle==='月度'?'selected':''}>月度</option><option ${form.cycle==='半年度'?'selected':''}>半年度</option><option ${form.cycle==='年度'?'selected':''}>年度</option></select>
-            <div class="form-hint">选择周期类型将自动配置考核阶段</div>
-          </div>
           <div class="form-grp"><label class="form-lb">方案编号</label><input class="form-input" value="${form.code}" disabled></div>
         </div>
         <div class="form-row">
+          <div class="form-grp"><label class="form-lb">是否启用 <span class="req">*</span></label>
+            <div class="radio-group"><label class="radio ${form.enabled?'on':''}" onclick="form.enabled=true;render()"><div class="radio-dot"></div>启用</label><label class="radio ${!form.enabled?'on':''}" onclick="form.enabled=false;render()"><div class="radio-dot"></div>停用</label></div>
+          </div>
           <div class="form-grp"><label class="form-lb">方案版本</label>
             <input class="form-input" value="v${form.version}" disabled style="width:80px">
           </div>
-          <div class="form-grp"></div>
         </div>
         <div class="form-row" style="grid-template-columns:1fr">
-          <div class="form-grp"><label class="form-lb">规则描述</label><textarea class="form-input" placeholder="请输入" maxlength="100" oninput="form.desc=this.value">${form.desc}</textarea><div class="form-hint">${form.desc.length}/100</div></div>
+          <div class="form-grp"><label class="form-lb">描述</label><textarea class="form-input" placeholder="请输入" maxlength="100" oninput="form.desc=this.value">${form.desc}</textarea><div class="form-hint">${form.desc.length}/100</div></div>
         </div>
       </div>
     </div>
@@ -487,6 +467,7 @@ function renderBasicInfo(ct){
 
 // ═══ 考核组 ═══
 function renderGroups(ct){
+  const RULE_FIELDS=['部门','职位','职级','划分区域','人员类型','人员状态','手动选择人员'];
   ct.innerHTML=`<div class="fi">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
       <span style="font:600 15px/1 var(--f);color:var(--c9)">考核组配置</span>
@@ -497,22 +478,24 @@ function renderGroups(ct){
       <div class="form-sec-hd" onclick="toggleSec(this)">
         <div class="form-sec-hd-l">
           <span class="form-sec-t">${grp.name}</span>
-          <span style="font:400 12px/1 var(--f);color:var(--c4)">${grp.rules.length} 条适用规则</span>
+          ${grp.isDefault?'<span style="font:500 10px/1 var(--f);padding:2px 8px;border-radius:3px;background:var(--pr50);color:var(--pr);margin-left:8px">默认</span>':''}
+          <span style="font:400 12px/1 var(--f);color:var(--c4);margin-left:8px">${grp.rules.length} 条适用规则</span>
         </div>
         <div style="display:flex;align-items:center;gap:8px">
-          <button class="btn btn-s btn-sm" onclick="event.stopPropagation();form.groups.splice(${gi},1);render()" style="color:var(--ro)">删除</button>
+          ${!grp.isDefault?`<button class="btn btn-s btn-sm" onclick="event.stopPropagation();form.groups.splice(${gi},1);render()" style="color:var(--ro)">删除</button>`:''}
           ${I.chevDown}
         </div>
       </div>
       <div class="form-sec-bd">
         <div class="form-row"><div class="form-grp"><label class="form-lb">考核组名称 <span class="req">*</span></label><input class="form-input" value="${grp.name}" oninput="form.groups[${gi}].name=this.value;renderSidebar()"></div></div>
         <div style="margin-bottom:16px"><label class="form-lb" style="margin-bottom:8px;display:block">适用规则</label>
-          ${grp.rules.map((r,ri)=>`<div class="rule-row">
-            <select onchange="form.groups[${gi}].rules[${ri}].field=this.value"><option ${r.field==='部门'?'selected':''}>部门</option><option ${r.field==='职位'?'selected':''}>职位</option><option ${r.field==='职级'?'selected':''}>职级</option><option ${r.field==='人员'?'selected':''}>人员</option><option ${r.field==='入职时间'?'selected':''}>入职时间</option><option ${r.field==='用工类型'?'selected':''}>用工类型</option></select>
-            <select onchange="form.groups[${gi}].rules[${ri}].op=this.value"><option ${r.op==='等于'?'selected':''}>等于</option><option ${r.op==='不等于'?'selected':''}>不等于</option><option ${r.op==='包含'?'selected':''}>包含</option><option ${r.op==='属于'?'selected':''}>属于</option></select>
-            <input value="${r.val}" style="flex:1;min-width:120px" oninput="form.groups[${gi}].rules[${ri}].val=this.value">
+          ${grp.rules.map((r,ri)=>{
+            const isManual=r.field==='手动选择人员';
+            return `<div class="rule-row">
+            <select onchange="form.groups[${gi}].rules[${ri}].field=this.value;form.groups[${gi}].rules[${ri}].val='';render()"><option ${r.field==='部门'?'selected':''}>部门</option><option ${r.field==='职位'?'selected':''}>职位</option><option ${r.field==='职级'?'selected':''}>职级</option><option ${r.field==='划分区域'?'selected':''}>划分区域</option><option ${r.field==='人员类型'?'selected':''}>人员类型</option><option ${r.field==='人员状态'?'selected':''}>人员状态</option><option ${r.field==='手动选择人员'?'selected':''}>手动选择人员</option></select>
+            <input value="${r.val}" style="flex:1;min-width:${isManual?'200':'120'}px" placeholder="${isManual?'搜索并选择人员…':'请输入'}" oninput="form.groups[${gi}].rules[${ri}].val=this.value">
             <button class="btn btn-s btn-sm" style="color:var(--ro)" onclick="form.groups[${gi}].rules.splice(${ri},1);render()">${I.trash}</button>
-          </div>`).join('')}
+          </div>`}).join('')}
           <button class="btn btn-s btn-sm" onclick="form.groups[${gi}].rules.push({field:'部门',op:'等于',val:''});render()">${I.plus} 添加规则</button>
         </div>
         <div class="form-row">
@@ -619,8 +602,8 @@ function renderEvalCfg(s){
   const models=FLOW_MODELS[s.id]||[];
   const grades=getSelectedRule().grades;
   const FLOW_NODES={
-    '通用绩效考核流程':[{name:'员工自评',type:'填写',weight:20},{name:'直接上级评分',type:'评分',weight:50},{name:'隔级上级评分',type:'评分',weight:30}],
-    '简化绩效考核流程':[{name:'员工自评',type:'填写',weight:30},{name:'直接上级评分',type:'评分',weight:70}],
+    '通用绩效考核流程':[{name:'员工自评',type:'处理',weight:20},{name:'直接上级评分',type:'处理',weight:50},{name:'隔级上级评分',type:'审批',weight:0}],
+    '简化绩效考核流程':[{name:'员工自评',type:'处理',weight:30},{name:'直接上级评分',type:'处理',weight:70}],
   };
   const nodes=FLOW_NODES[s.flow]||FLOW_NODES['通用绩效考核流程'];
   const EVAL_RULES=['通用评价规则','仓储评价规则','销售评价规则','研发评价规则'];
@@ -640,10 +623,10 @@ function renderEvalCfg(s){
       <div style="display:flex;align-items:center;gap:6px"><label style="font:400 12px/1 var(--f);color:var(--c7)">超时天数</label><input class="form-input" type="number" value="7" min="1" max="90" style="width:70px"><span style="font:400 12px/1 var(--f);color:var(--c5)">天</span></div>
     </div>
   </div>
-  <div style="margin-top:16px"><label class="form-lb" style="margin-bottom:8px;display:block">节点权重分配 <span style="font:400 11px/1 var(--f);color:var(--c4)">（节点由流程模型「${s.flow}」决定）</span></label>
+  <div style="margin-top:16px"><label class="form-lb" style="margin-bottom:8px;display:block">节点权重分配 <span style="font:400 11px/1 var(--f);color:var(--c4)">（节点由流程模型「${s.flow}」决定，仅处理节点可配置权重）</span></label>
     <table class="tbl"><thead><tr><th>节点名称</th><th>节点类型</th><th>权重(%)</th></tr></thead>
-    <tbody>${nodes.map(n=>`<tr><td>${n.name}</td><td><span style="font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px;background:var(--pr50);color:var(--pr)">${n.type}</span></td><td><input class="form-input" type="number" value="${n.weight}" style="width:60px"> %</td></tr>`).join('')}</tbody></table>
-    <div class="wt-sum"><span>总权重：</span><span class="${nodes.reduce((s,n)=>s+n.weight,0)===100?'ok':'err'}">${nodes.reduce((s,n)=>s+n.weight,0)}%</span><span style="color:var(--c4)">（需等于 100%）</span></div>
+    <tbody>${nodes.map(n=>`<tr><td>${n.name}</td><td><span style="font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px;${n.type==='处理'?'background:var(--pr50);color:var(--pr)':'background:var(--c1);color:var(--c5)'}">${n.type}</span></td><td>${n.type==='处理'?`<input class="form-input" type="number" value="${n.weight}" style="width:60px"> %`:'<span style="font:400 12px/1 var(--f);color:var(--c4)">—</span>'}</td></tr>`).join('')}</tbody></table>
+    <div class="wt-sum"><span>总权重：</span><span class="${nodes.filter(n=>n.type==='处理').reduce((s,n)=>s+n.weight,0)===100?'ok':'err'}">${nodes.filter(n=>n.type==='处理').reduce((s,n)=>s+n.weight,0)}%</span><span style="color:var(--c4)">（处理节点需等于 100%）</span></div>
   </div>
   <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
     <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制结束规则</div>

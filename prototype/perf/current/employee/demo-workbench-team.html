@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 团队绩效工作台</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+  --sp-xs:4px;--sp-sm:8px;--sp-md:12px;--sp-lg:16px;--sp-xl:20px;--sp-2xl:24px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+.card{background:var(--sf);border-radius:var(--r3);box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:var(--sp-lg)}
+.card-hd{display:flex;align-items:center;justify-content:space-between;padding:var(--sp-lg) var(--sp-xl);border-bottom:1px solid var(--dv)}
+.card-t{font:600 15px/1 var(--f);color:var(--c9)}
+.card-action{font:500 13px/1 var(--f);color:var(--pr);cursor:pointer;display:flex;align-items:center;gap:var(--sp-xs);text-decoration:none}
+.card-action:hover{color:var(--pr700)}
+.card-action svg{width:14px;height:14px}
+.card-bd{padding:var(--sp-lg) var(--sp-xl)}
+
+.task{display:flex;align-items:center;gap:var(--sp-md);padding:var(--sp-md) 0;border-bottom:1px solid var(--dv);cursor:pointer}
+.task:last-child{border-bottom:none}
+.task-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.task-dot.pr{background:var(--pr)}.task-dot.ac{background:var(--ac)}.task-dot.ro{background:var(--ro)}
+.task-info{flex:1;min-width:0}
+.task-name{font:500 13px/1 var(--f);color:var(--c8);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.task-meta{font:400 12px/1 var(--f);color:var(--c5);margin-top:var(--sp-xs)}
+.task-tag{font:500 11px/1 var(--f);padding:3px 8px;border-radius:4px;flex-shrink:0}
+.task-tag.pending{background:var(--ac50);color:var(--ac700)}
+.task-tag.active{background:var(--pr50);color:var(--pr)}
+.task-tag.ro{background:var(--ro50);color:var(--ro)}
+
+/* Member selector tabs */
+.mem-tabs{display:flex;gap:6px;margin-bottom:var(--sp-lg);flex-wrap:wrap}
+.mem-tab{display:flex;align-items:center;gap:6px;padding:6px 14px;border:1px solid var(--c2);border-radius:20px;font:500 13px/1 var(--f);color:var(--c6);background:var(--sf);cursor:pointer;transition:all .12s}
+.mem-tab:hover{border-color:var(--pr200);color:var(--pr)}
+.mem-tab.active{border-color:var(--pr);background:var(--pr50);color:var(--pr);font-weight:600}
+.mem-tab-av{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0}
+
+/* Matrix table */
+.matrix{width:100%;border-collapse:collapse;font:400 13px/1 var(--f)}
+.matrix th{background:var(--c0);padding:10px 12px;font:600 11px/1 var(--f);color:var(--c5);text-align:center;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.matrix th:first-child{text-align:left;padding-left:16px}
+.matrix td{padding:10px 12px;text-align:center;border-bottom:1px solid var(--dv);vertical-align:middle}
+.matrix td:first-child{text-align:left;padding-left:16px}
+.matrix tr:hover td{background:var(--c0)}
+.matrix .name-cell{display:flex;align-items:center;gap:8px}
+.matrix .av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0}
+.grade-badge{display:inline-block;padding:2px 8px;border-radius:4px;font:500 11px/1 var(--f);white-space:nowrap}
+.grade-badge.excellent{background:var(--em50);color:var(--em700)}
+.grade-badge.good{background:var(--pr50);color:var(--pr)}
+.grade-badge.normal{background:var(--c1);color:var(--c6)}
+.grade-badge.poor{background:var(--ac50);color:var(--ac700)}
+.grade-badge.bad{background:var(--ro50);color:var(--ro)}
+.grade-badge.empty{color:var(--c4)}
+
+/* Goal section */
+.mod-sec{border:1px solid var(--dv);border-radius:var(--r2);overflow:hidden}
+.mod-sec+.mod-sec{margin-top:var(--sp-md)}
+.mod-hd{display:flex;align-items:center;padding:var(--sp-md) var(--sp-lg);gap:var(--sp-sm)}
+.mod-hd-title{font:600 13px/1 var(--f);color:var(--c9);flex:1}
+.mod-hd-wt{font:500 12px/1 var(--fm);color:var(--c5);padding:2px 8px;border-radius:var(--r1);background:var(--c1)}
+.goal-row{border-top:1px solid var(--dv);padding:var(--sp-sm) var(--sp-lg);display:flex;align-items:center;gap:var(--sp-sm)}
+.goal-name{flex:1;font:500 13px/1.3 var(--f);color:var(--c8)}
+.goal-type{font:500 10px/1 var(--f);padding:2px 7px;border-radius:3px}
+.goal-type.q{background:var(--pr50);color:var(--pr)}
+.goal-type.d{background:var(--vi50);color:var(--vi)}
+.goal-wt{font:500 12px/1 var(--fm);color:var(--c6)}
+.goal-val{font:400 12px/1 var(--f);color:var(--c5);min-width:140px;text-align:right}
+.goal-footer{display:flex;align-items:center;gap:var(--sp-lg);margin-top:var(--sp-md);padding-top:var(--sp-md);border-top:1px solid var(--dv)}
+.goal-footer-label{font:400 12px/1 var(--f);color:var(--c5)}
+.goal-footer-val{font:600 14px/1 var(--fm);color:var(--em700)}
+
+.toast{position:fixed;top:70px;right:24px;padding:12px 18px;border-radius:var(--r2);font:500 13px/1.3 var(--f);box-shadow:0 10px 40px -10px rgba(0,0,0,.12);z-index:3000;transform:translateX(120%);transition:transform .25s ease}
+.toast.on{transform:translateX(0)}
+.toast.success{background:var(--em);color:#FFF}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div style="height:52px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 var(--sp-2xl);gap:var(--sp-lg);position:sticky;top:0;z-index:1100">
+  <div style="display:flex;align-items:center;gap:14px">
+    <a href="../demo-index.html" style="text-decoration:none;display:flex;align-items:center;gap:var(--sp-sm)">
+      <div style="width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <span style="font-size:15px;font-weight:700;color:var(--c9)">HR ONE</span>
+    </a>
+    <div style="width:1px;height:20px;background:var(--c2)"></div>
+    <span style="font:500 13px/1 var(--f);color:var(--c5)">绩效工作台</span>
+    <span style="color:var(--c3)">&#8250;</span>
+    <span style="font:600 13px/1 var(--f);color:var(--c8)">团队绩效工作台</span>
+  </div>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+    <div style="width:30px;height:30px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--f);color:#FFF">张</div>
+  </div>
+</div>
+
+<!-- Filter Bar -->
+<div style="display:flex;align-items:center;gap:var(--sp-md);padding:var(--sp-lg) var(--sp-2xl);background:var(--sf);border-bottom:1px solid var(--dv)">
+  <span style="font:500 13px/1 var(--f);color:var(--c6)">考核周期</span>
+  <select style="font:500 13px/1 var(--f);color:var(--c9);background:var(--c1);border:1px solid var(--c2);border-radius:var(--r2);padding:var(--sp-sm) var(--sp-lg) var(--sp-sm) var(--sp-md);outline:none;cursor:pointer;appearance:none;background-image:url(&quot;data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2371717A' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 10px center;padding-right:28px">
+    <option>2026年6月</option><option>2026年5月</option><option>2026年4月</option>
+  </select>
+</div>
+
+<div style="padding:var(--sp-2xl)">
+
+  <!-- 待办任务 -->
+  <div class="card">
+    <div class="card-hd">
+      <span class="card-t">待办任务</span>
+    </div>
+    <div class="card-bd">
+      <div class="task" onclick="showToast('跳转至目标填写审核')">
+        <span class="task-dot pr"></span>
+        <div class="task-info"><div class="task-name">3人待填写目标</div><div class="task-meta">张明、王芳、赵强 — 绩效方案 2026年6月</div></div>
+        <span class="task-tag active">进行中</span>
+      </div>
+      <div class="task" onclick="showToast('跳转至结果确认')">
+        <span class="task-dot ac"></span>
+        <div class="task-info"><div class="task-name">2人待确认结果</div><div class="task-meta">李华、王芳 — 绩效方案 2026年5月</div></div>
+        <span class="task-tag pending">待处理</span>
+      </div>
+      <div class="task" onclick="showToast('跳转至评分审批')">
+        <span class="task-dot ro"></span>
+        <div class="task-info"><div class="task-name">1人评分待审批</div><div class="task-meta">赵强 — 绩效方案 2026年5月</div></div>
+        <span class="task-tag ro">待审批</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 团队绩效评分矩阵 -->
+  <div class="card">
+    <div class="card-hd">
+      <span class="card-t">团队绩效评分</span>
+      <span class="card-action" onclick="showToast('导出团队评分')">导出 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+    </div>
+    <div class="card-bd" style="padding:0;overflow-x:auto">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th style="min-width:140px">员工</th>
+            <th>25年7月</th><th>25年8月</th><th>25年9月</th><th>25年10月</th><th>25年11月</th><th>25年12月</th>
+            <th>26年1月</th><th>26年2月</th><th>26年3月</th><th>26年4月</th><th>26年5月</th><th>26年6月</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div class="name-cell"><div class="av" style="background:var(--pr)">张</div><span style="font:500 13px/1 var(--f);color:var(--c8)">张明</span></div></td>
+            <td><span class="grade-badge good">符合预期+</span></td>
+            <td><span class="grade-badge normal">符合预期</span></td>
+            <td><span class="grade-badge normal">符合预期</span></td>
+            <td><span class="grade-badge good">符合预期+</span></td>
+            <td><span class="grade-badge good">符合预期+</span></td>
+            <td><span class="grade-badge good">符合预期+</span></td>
+            <td><span class="grade-badge normal">符合预期</span></td>
+            <td><span class="grade-badge normal">符合预期</span></td>
+            <td><span class="grade-badge good">符合预期+</span></td>
+            <td><span class="grade-badge good">符合预期+</span></td>
+            <td><span class="grade-badge excellent">超出预期</span></td>
+            <td><span class="grade-badge excellent">超出预期</span></td>
+          </tr>
+          <tr>
+            <td><div class="name-cell"><div class="av" style="background:var(--em)">李</div><span style="font:500 13px/1 var(--f);color:var(--c8)">李华</span></div></td>
+            <td><span class="grade-badge normal">符合预期</span></td>
+            <td><span class="grade-badge normal">符合预期</span></td>
+            <td><span class="grade-badge good">符合预期+</span></td>
+            <td><span class="grade-badge good">符合预期+</span></td>
+            <td><span class="grade-badge normal">符合预期</span></td>
+            <td><span class="grade-badge good">符合预期+</span></td>
+            <td><span class="grade-badge good">符合预期+</span></td>
+            <td><span class="grade-badge normal">符合预期</span></td>
+            <td><span class="grade-badge good">符合预期+</span></td>
+            <td><span class="grade-badge good">符合预期+</span></td>
+            <td><span class="grade-badge good">符合预期+</span></td>
+            <td><span class="grade-badge good">符合预期+</span></td>
+          </tr>
+          <tr>
+            <td><div class="name-cell"><div class="av" style="background:var(--vi)">王</div><span style="font:500 13px/1 var(--f);color:var(--c8)">王芳</span></div></td>
+            <td><span class="grade-badge normal">符合预期</span></td>
+            <td><span class="grade-badge normal">符合预期</span></td>
+            <td><span class="grade-badge normal">符合预期</span></td>
+            <td><span class="grade-badge normal">符合预期</span></td>
+            <td><span class="grade-badge good">符合预期+</span></td>
+            <td><span class="grade-badge normal">符合预期</span></td>
+            <td><span class="grade-badge normal">符合预期</span></td>
+            <td><span class="grade-badge normal">符合预期</span></td>
+            <td><span class="grade-badge normal">符合预期</span></td>
+            <td><span class="grade-badge good">符合预期+</span></td>
+            <td><span class="grade-badge normal">符合预期</span></td>
+            <td><span class="grade-badge normal">符合预期</span></td>
+          </tr>
+          <tr>
+            <td><div class="name-cell"><div class="av" style="background:var(--ac)">赵</div><span style="font:500 13px/1 var(--f);color:var(--c8)">赵强</span></div></td>
+            <td><span class="grade-badge normal">符合预期</span></td>
+            <td><span class="grade-badge poor">符合预期-</span></td>
+            <td><span class="grade-badge normal">符合预期</span></td>
+            <td><span class="grade-badge normal">符合预期</span></td>
+            <td><span class="grade-badge normal">符合预期</span></td>
+            <td><span class="grade-badge good">符合预期+</span></td>
+            <td><span class="grade-badge normal">符合预期</span></td>
+            <td><span class="grade-badge normal">符合预期</span></td>
+            <td><span class="grade-badge poor">符合预期-</span></td>
+            <td><span class="grade-badge normal">符合预期</span></td>
+            <td><span class="grade-badge normal">符合预期</span></td>
+            <td><span class="grade-badge normal">符合预期</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 团队目标概览（按人筛选） -->
+  <div class="card">
+    <div class="card-hd">
+      <span class="card-t">团队目标概览</span>
+    </div>
+    <div class="card-bd">
+      <div class="mem-tabs" id="goalMemTabs">
+        <div class="mem-tab active" onclick="switchGoalMember('zm',this)"><div class="mem-tab-av" style="background:var(--pr)">张</div>张明</div>
+        <div class="mem-tab" onclick="switchGoalMember('lh',this)"><div class="mem-tab-av" style="background:var(--em)">李</div>李华</div>
+        <div class="mem-tab" onclick="switchGoalMember('wf',this)"><div class="mem-tab-av" style="background:var(--vi)">王</div>王芳</div>
+        <div class="mem-tab" onclick="switchGoalMember('zq',this)"><div class="mem-tab-av" style="background:var(--ac)">赵</div>赵强</div>
+      </div>
+      <div id="goalContent"></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function showToast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + (type || 'success');
+  setTimeout(function() { t.classList.add('on'); }, 10);
+  setTimeout(function() { t.classList.remove('on'); }, 2500);
+}
+
+// 团队目标概览 - 按人筛选
+var GOAL_DATA = {
+  zm: {
+    name: '张明', dept: '产品部 · 高级产品经理',
+    modules: [
+      {name: '关键指标', weight: 60, goals: [
+        {name: 'AI 产品迭代完成率', type: 'q', weight: 25, target: '100%', challenge: '120%', completion: 92},
+        {name: 'AI 新增用户数', type: 'q', weight: 20, target: '5000', challenge: '7000', completion: 85},
+        {name: '产品营收贡献', type: 'q', weight: 15, target: '200万', challenge: '300万', completion: 78}
+      ]},
+      {name: '关键行动', weight: 40, goals: [
+        {name: '主导完成6月产品架构评审', type: 'd', weight: 15, completion: 90},
+        {name: '完成2名新人带教', type: 'd', weight: 10, completion: 100},
+        {name: '推动跨部门协作机制落地', type: 'd', weight: 15, completion: 75}
+      ]}
+    ]
+  },
+  lh: {
+    name: '李华', dept: '技术部 · 前端工程师',
+    modules: [
+      {name: '关键指标', weight: 60, goals: [
+        {name: '前端代码质量评分', type: 'q', weight: 20, target: '90分', challenge: '95分', completion: 88},
+        {name: '需求按时交付率', type: 'q', weight: 25, target: '95%', challenge: '100%', completion: 82},
+        {name: 'Bug修复及时率', type: 'q', weight: 15, target: '90%', challenge: '98%', completion: 75}
+      ]},
+      {name: '关键行动', weight: 40, goals: [
+        {name: '完成前端组件库升级', type: 'd', weight: 20, completion: 70},
+        {name: '技术分享2次', type: 'd', weight: 10, completion: 100},
+        {name: '新人代码Review', type: 'd', weight: 10, completion: 80}
+      ]}
+    ]
+  },
+  wf: {
+    name: '王芳', dept: '设计部 · UI设计师',
+    modules: [
+      {name: '关键指标', weight: 60, goals: [
+        {name: '设计稿按时交付率', type: 'q', weight: 20, target: '95%', challenge: '100%', completion: 72},
+        {name: '设计评审通过率', type: 'q', weight: 20, target: '90%', challenge: '95%', completion: 68},
+        {name: '用户体验满意度', type: 'q', weight: 20, target: '85分', challenge: '90分', completion: 60}
+      ]},
+      {name: '关键行动', weight: 40, goals: [
+        {name: '完成HR ONE UI规范制定', type: 'd', weight: 20, completion: 65},
+        {name: '设计系统组件库建设', type: 'd', weight: 15, completion: 55},
+        {name: '竞品分析报告', type: 'd', weight: 5, completion: 80}
+      ]}
+    ]
+  },
+  zq: {
+    name: '赵强', dept: '产品部 · 产品经理',
+    modules: [
+      {name: '关键指标', weight: 60, goals: [
+        {name: '需求评审及时率', type: 'q', weight: 20, target: '95%', challenge: '100%', completion: 65},
+        {name: '产品上线准时率', type: 'q', weight: 20, target: '90%', challenge: '95%', completion: 55},
+        {name: '客户满意度', type: 'q', weight: 20, target: '85分', challenge: '90分', completion: 50}
+      ]},
+      {name: '关键行动', weight: 40, goals: [
+        {name: '完成采购系统需求文档', type: 'd', weight: 15, completion: 60},
+        {name: '参与产品评审会', type: 'd', weight: 10, completion: 70},
+        {name: '跨部门需求对接', type: 'd', weight: 15, completion: 45}
+      ]}
+    ]
+  }
+};
+
+function switchGoalMember(key, el) {
+  document.querySelectorAll('.mem-tab').forEach(function(t) { t.classList.remove('active'); });
+  el.classList.add('active');
+  renderGoalContent(key);
+}
+
+function renderGoalContent(key) {
+  var d = GOAL_DATA[key];
+  if (!d) return;
+  var h = '';
+  d.modules.forEach(function(m) {
+    h += '<div class="mod-sec">';
+    h += '<div class="mod-hd"><div class="mod-hd-title">' + m.name + '</div><div class="mod-hd-wt">' + m.weight + '%</div></div>';
+    m.goals.forEach(function(g) {
+      var barColor = g.completion >= 85 ? 'var(--em)' : g.completion >= 65 ? 'var(--pr)' : 'var(--ac)';
+      h += '<div class="goal-row">';
+      h += '<span class="goal-name">' + g.name + '</span>';
+      h += '<span class="goal-type ' + g.type + '">' + (g.type === 'q' ? '定量' : '定性') + '</span>';
+      h += '<span class="goal-wt">' + g.weight + '%</span>';
+      h += '<div style="display:flex;align-items:center;gap:6px;min-width:120px;justify-content:flex-end">';
+      h += '<div style="flex:1;max-width:60px;height:5px;background:var(--c1);border-radius:3px;overflow:hidden"><div style="height:100%;width:' + g.completion + '%;background:' + barColor + ';border-radius:3px"></div></div>';
+      h += '<span style="font:600 12px/1 var(--fm);color:var(--c8);min-width:32px;text-align:right">' + g.completion + '%</span>';
+      h += '</div>';
+      h += '</div>';
+    });
+    h += '</div>';
+  });
+  document.getElementById('goalContent').innerHTML = h;
+}
+
+// 默认选中第一个人
+renderGoalContent('zm');
+</script>
+<script src="../navigation.js"></script>
+<script>GHR_NAV.init('workbench', '团队绩效工作台');</script>
+</body>
+</html>

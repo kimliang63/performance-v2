@@ -41,7 +41,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 
 /* ═══ TABLE ═══ */
 .eval-list{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden;margin-bottom:16px}
-.eval-list table{width:100%;border-collapse:collapse}
+.eval-list table{width:100%;border-collapse:collapse;table-layout:fixed}
 .eval-list th{background:var(--c0);padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
 .eval-list td{padding:10px 16px;font:400 13px/1.4 var(--f);color:var(--c7);border-bottom:1px solid var(--dv);vertical-align:top}
 .eval-list tr:last-child td{border-bottom:none}
@@ -92,6 +92,26 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .dist-fill{height:100%;border-radius:var(--r2);transition:width .3s}
 .dist-rule{min-width:110px;font:400 12px/1 var(--f);color:var(--c5);text-align:right;white-space:nowrap}
 .dist-val{width:50px;font:500 12px/1 var(--f);color:var(--c6);text-align:center}
+
+/* ═══ GRADE BTN GROUP ═══ */
+.grade-btn-group{display:inline-flex;gap:3px;flex-wrap:nowrap}
+.grade-btn{padding:3px 8px;border-radius:var(--r1);font:500 11px/1 var(--f);border:1px solid transparent;cursor:pointer;transition:all .12s;white-space:nowrap}
+.grade-btn:hover{opacity:.8}
+.grade-btn[data-g="超出预期"]{color:var(--em700);background:var(--em50)}
+.grade-btn[data-g="超出预期"].sel{border-color:var(--em700);font-weight:600}
+.grade-btn[data-g="符合预期+"]{color:var(--pr);background:var(--pr50)}
+.grade-btn[data-g="符合预期+"].sel{border-color:var(--pr);font-weight:600}
+.grade-btn[data-g="符合预期"]{color:var(--c8);background:var(--c1)}
+.grade-btn[data-g="符合预期"].sel{border-color:var(--c8);font-weight:600}
+.grade-btn[data-g="符合预期-"]{color:var(--ac700);background:var(--ac50)}
+.grade-btn[data-g="符合预期-"].sel{border-color:var(--ac700);font-weight:600}
+.grade-btn[data-g="低于预期"]{color:var(--ro);background:var(--ro50)}
+.grade-btn[data-g="低于预期"].sel{border-color:var(--ro);font-weight:600}
+
+/* ═══ DIST CHART GRID ═══ */
+.dist-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.dist-chart{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px}
+.dist-chart-title{font:600 14px/1 var(--f);color:var(--c9);margin-bottom:12px}
 
 /* ═══ AI CHAT ═══ */
 .ai-chat{position:fixed;top:52px;right:0;width:380px;height:calc(100vh - 52px);background:var(--sf);border-left:1px solid var(--dv);z-index:900;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s ease}
@@ -229,7 +249,49 @@ body.chat-open .ai-toggle{display:none}
   </div>
 
   <!-- 等级分布 -->
-  <div id="distSection" class="dist-section"></div>
+  <div class="dist-grid">
+    <div class="dist-chart">
+      <div class="dist-chart-title">调整前等级分布</div>
+      <div id="chartBefore"></div>
+    </div>
+    <div class="dist-chart">
+      <div class="dist-chart-title">调整后等级分布</div>
+      <div id="chartAfter"></div>
+    </div>
+  </div>
+
+  <!-- 强制分布规则 -->
+  <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px;margin-bottom:16px">
+    <div style="font:600 14px/1 var(--f);color:var(--c9);margin-bottom:12px">强制分布规则</div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:var(--r1);background:var(--em50)">
+        <span style="width:8px;height:8px;border-radius:50%;background:var(--em700)"></span>
+        <span style="font:500 12px/1 var(--f);color:var(--c7)">超出预期</span>
+        <span style="font:600 12px/1 var(--f);color:var(--em700)">10-15%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:var(--r1);background:var(--pr50)">
+        <span style="width:8px;height:8px;border-radius:50%;background:var(--pr)"></span>
+        <span style="font:500 12px/1 var(--f);color:var(--c7)">符合预期+</span>
+        <span style="font:600 12px/1 var(--f);color:var(--pr)">20-25%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:var(--r1);background:var(--c1)">
+        <span style="width:8px;height:8px;border-radius:50%;background:var(--c5)"></span>
+        <span style="font:500 12px/1 var(--f);color:var(--c7)">符合预期</span>
+        <span style="font:600 12px/1 var(--f);color:var(--c5)">40-50%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:var(--r1);background:var(--ac50)">
+        <span style="width:8px;height:8px;border-radius:50%;background:var(--ac)"></span>
+        <span style="font:500 12px/1 var(--f);color:var(--c7)">符合预期-</span>
+        <span style="font:600 12px/1 var(--f);color:var(--ac)">10-15%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:var(--r1);background:var(--ro50)">
+        <span style="width:8px;height:8px;border-radius:50%;background:var(--ro)"></span>
+        <span style="font:500 12px/1 var(--f);color:var(--c7)">低于预期</span>
+        <span style="font:600 12px/1 var(--f);color:var(--ro)">5-10%</span>
+      </div>
+    </div>
+    <div id="distCompliance"></div>
+  </div>
 
   <!-- 考核组筛选 -->
   <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;padding:12px 20px;display:flex;align-items:center;gap:16px">
@@ -257,15 +319,15 @@ body.chat-open .ai-toggle{display:none}
     <table>
       <thead>
         <tr>
-          <th style="width:100px">被考核人</th>
-          <th style="width:100px">部门</th>
-          <th style="width:120px">职位</th>
-          <th style="width:80px">考核组</th>
-          <th style="width:80px">审定前总分</th>
-          <th style="width:80px">审定前等级</th>
-          <th style="width:110px">间接上级调整等级</th>
-          <th style="width:110px">调整等级</th>
-          <th style="width:80px">状态</th>
+          <th style="width:90px">被考核人</th>
+          <th style="width:80px">部门</th>
+          <th style="width:90px">职位</th>
+          <th style="width:70px">考核组</th>
+          <th style="width:90px">审定前总分</th>
+          <th style="width:100px">审定前等级</th>
+          <th style="width:100px">间接上级调整等级</th>
+          <th>调整等级</th>
+          <th style="width:100px">状态</th>
         </tr>
       </thead>
       <tbody id="memberBody"></tbody>
@@ -388,30 +450,91 @@ function getFilteredMembers(){
   });
 }
 
-function renderDist(){
-  var rules=DIST_RULES[currentGroup]||DIST_RULES['全部'];
-  var filtered=getFilteredMembers();
-  var groupLabel=currentGroup==='全部'?'全部考核组':currentGroup;
-  var html='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">'+
-    '<span style="font:600 14px/1 var(--f);color:var(--c9)">等级分布</span>'+
-    '<span style="font:400 12px/1 var(--f);color:var(--c5)">'+groupLabel+' · 强制分布规则</span></div>';
-  rules.forEach(function(r){
-    var count=filtered.filter(function(m){return m.grade===r.grade;}).length;
-    var targetCount=Math.ceil(filtered.length*r.pct/100);
-    var diff=count-targetCount;
-    var tag='';
-    if(r.pct===0&&count===0){tag='<span style="font:500 11px/1 var(--f);color:var(--em700);background:var(--em50);padding:2px 6px;border-radius:3px">已达标</span>';}
-    else if(diff>=0){tag='<span style="font:500 11px/1 var(--f);color:var(--em700);background:var(--em50);padding:2px 6px;border-radius:3px">已达标</span>';}
-    else{tag='<span style="font:500 11px/1 var(--f);color:var(--ro);background:var(--ro50);padding:2px 6px;border-radius:3px">还需'+Math.abs(diff)+'人</span>';}
-    var activeClass=currentGrade===r.grade?' active':'';
-    html+='<div class="dist-row'+activeClass+'" data-grade="'+r.grade+'" onclick="filterByGrade(\''+r.grade+'\')">'+
-      '<span class="dist-label" style="color:'+r.color+'">'+r.grade+'</span>'+
-      '<div class="dist-track"><div class="dist-fill" style="width:'+r.pct+'%;background:'+r.bg+'"></div></div>'+
-      '<span class="dist-rule">目标: '+r.pct+'% ('+targetCount+'人)</span>'+
-      '<span class="dist-val">'+count+'人</span>'+
-      tag+'</div>';
+function smoothPath(pts){
+  if(pts.length<2)return '';
+  var d='M'+pts[0].x.toFixed(1)+','+pts[0].y.toFixed(1);
+  for(var i=0;i<pts.length-1;i++){
+    var p0=pts[Math.max(0,i-1)];
+    var p1=pts[i];
+    var p2=pts[i+1];
+    var p3=pts[Math.min(pts.length-1,i+2)];
+    var cp1x=p1.x+(p2.x-p0.x)/6;
+    var cp1y=p1.y+(p2.y-p0.y)/6;
+    var cp2x=p2.x-(p3.x-p1.x)/6;
+    var cp2y=p2.y-(p3.y-p1.y)/6;
+    d+=' C'+cp1x.toFixed(1)+','+cp1y.toFixed(1)+' '+cp2x.toFixed(1)+','+cp2y.toFixed(1)+' '+p2.x.toFixed(1)+','+p2.y.toFixed(1);
+  }
+  return d;
+}
+
+function renderChart(containerId,data,strokeColor,gradId){
+  var maxVal=Math.max.apply(null,data);
+  if(maxVal<5)maxVal=5;
+  var L=50,R=480,T=20,B=170,W=R-L,H=B-T;
+  var step=W/4;
+  var pts=data.map(function(v,i){return{x:L+i*step,y:B-(v/maxVal)*H};});
+  var linePath=smoothPath(pts);
+  var areaPath=linePath+' L'+pts[4].x.toFixed(1)+','+B+' L'+pts[0].x.toFixed(1)+','+B+' Z';
+  var svg='<svg viewBox="0 0 500 200" style="width:100%;height:auto">';
+  svg+='<defs><linearGradient id="'+gradId+'" x1="0" y1="0" x2="0" y2="1">';
+  svg+='<stop offset="0%" stop-color="'+strokeColor+'" stop-opacity="0.18"/>';
+  svg+='<stop offset="100%" stop-color="'+strokeColor+'" stop-opacity="0.02"/>';
+  svg+='</linearGradient></defs>';
+  for(var i=0;i<=4;i++){
+    var y=T+(H/4)*i;
+    var val=Math.round(maxVal-(maxVal/4)*i);
+    svg+='<line x1="'+L+'" y1="'+y.toFixed(1)+'" x2="'+R+'" y2="'+y.toFixed(1)+'" stroke="var(--c2)" stroke-width="1"/>';
+    svg+='<text x="'+(L-8)+'" y="'+(y+4).toFixed(1)+'" text-anchor="end" style="font:400 10px/1 var(--f);fill:var(--c4)">'+val+'</text>';
+  }
+  svg+='<path d="'+areaPath+'" fill="url(#'+gradId+')"/>';
+  svg+='<path d="'+linePath+'" fill="none" stroke="'+strokeColor+'" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>';
+  pts.forEach(function(p,i){
+    svg+='<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="4" fill="var(--sf)" stroke="'+strokeColor+'" stroke-width="2"/>';
+    svg+='<text x="'+p.x.toFixed(1)+'" y="'+(p.y-10).toFixed(1)+'" text-anchor="middle" style="font:500 10px/1 var(--f);fill:'+strokeColor+'">'+data[i]+'</text>';
   });
-  document.getElementById('distSection').innerHTML=html;
+  var labels=['超出预期','符合预期+','符合预期','符合预期-','低于预期'];
+  labels.forEach(function(l,i){
+    svg+='<text x="'+(L+i*step).toFixed(1)+'" y="'+(B+16)+'" text-anchor="middle" style="font:400 10px/1 var(--f);fill:var(--c5)">'+l+'</text>';
+  });
+  svg+='<line x1="'+L+'" y1="'+T+'" x2="'+L+'" y2="'+B+'" stroke="var(--c3)" stroke-width="1"/>';
+  svg+='<line x1="'+L+'" y1="'+B+'" x2="'+R+'" y2="'+B+'" stroke="var(--c3)" stroke-width="1"/>';
+  svg+='</svg>';
+  document.getElementById(containerId).innerHTML=svg;
+}
+
+function renderDist(){
+  var filtered=getFilteredMembers();
+  var beforeData=GRADE_OPTIONS.map(function(g){return filtered.filter(function(m){return m.grade===g;}).length;});
+  var afterData=GRADE_OPTIONS.map(function(g){return filtered.filter(function(m){return(m.ratifyGrade||m.grade)===g;}).length;});
+  renderChart('chartBefore',beforeData,'var(--c4)','gradBefore');
+  renderChart('chartAfter',afterData,'var(--pr)','gradAfter');
+  renderDistRules();
+}
+
+function renderDistRules(){
+  var filtered=getFilteredMembers();
+  var total=filtered.length;
+  var rules=[
+    {grade:'超出预期',min:10,max:15},
+    {grade:'符合预期+',min:20,max:25},
+    {grade:'符合预期',min:40,max:50},
+    {grade:'符合预期-',min:10,max:15},
+    {grade:'低于预期',min:5,max:10}
+  ];
+  var violations=[];
+  rules.forEach(function(r){
+    var count=filtered.filter(function(m){return(m.ratifyGrade||m.grade)===r.grade;}).length;
+    var pct=total>0?Math.round(count/total*100):0;
+    if(pct<r.min||pct>r.max)violations.push({grade:r.grade,pct:pct,min:r.min,max:r.max});
+  });
+  var el=document.getElementById('distCompliance');
+  if(!el)return;
+  if(violations.length===0){
+    el.innerHTML='<div style="background:var(--em50);border:1px solid var(--em100);border-radius:var(--r2);padding:12px 16px;display:flex;align-items:center;gap:8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--em700)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span style="font:500 13px/1 var(--f);color:var(--em700)">&#10003; 当前等级分布符合强制分布规则</span></div>';
+  }else{
+    var details=violations.map(function(v){return v.grade+'('+v.pct+'%,要求'+v.min+'-'+v.max+'%)';}).join('、');
+    el.innerHTML='<div style="background:var(--ac50);border:1px solid var(--ac100);border-radius:var(--r2);padding:12px 16px;display:flex;align-items:center;gap:8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ac700)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span style="font:500 13px/1 var(--f);color:var(--ac700)">分布不符合规则：'+details+'，建议调整等级分配</span></div>';
+  }
 }
 
 function renderMembers(){
@@ -432,9 +555,12 @@ function renderMembers(){
       '<td><span style="display:inline-flex;align-items:center;justify-content:center;height:24px;border-radius:var(--r1);font:500 11px/1 var(--f);padding:0 8px;background:'+(GRADE_COLORS[m.grade]||'var(--c1)')+';color:#FFF">'+m.grade+'</span></td>'+
       '<td><span style="display:inline-flex;align-items:center;justify-content:center;height:24px;border-radius:var(--r1);font:500 11px/1 var(--f);padding:0 8px;background:'+(GRADE_COLORS[m.indirectGrade]||'var(--c1)')+';color:#FFF">'+m.indirectGrade+'</span></td>';
     if(m.reached){
-      html+='<td><div class="grade-select"><select onchange="updateRatify('+idx+',this.value)"><option value="">请选择</option>';
-      GRADE_OPTIONS.forEach(function(g){html+='<option value="'+g+'"'+(m.ratifyGrade===g?' selected':'')+'>'+g+'</option>';});
-      html+='</select></div></td>';
+      html+='<td><div class="grade-btn-group">';
+      GRADE_OPTIONS.forEach(function(g){
+        var sel=m.ratifyGrade===g?' sel':'';
+        html+='<button class="grade-btn'+sel+'" data-g="'+g+'" onclick="updateRatify('+idx+',\''+g+'\')">'+g+'</button>';
+      });
+      html+='</div></td>';
     }else{
       html+='<td><span style="font:400 12px/1 var(--f);color:var(--c4)">未到达</span></td>';
     }
@@ -512,7 +638,7 @@ function goPage(p){
   renderMembers();
   document.querySelector('.eval-list').scrollIntoView({behavior:'smooth',block:'start'});
 }
-function updateRatify(i,grade){MEMBERS[i].ratifyGrade=grade;renderMembers();}
+function updateRatify(i,grade){MEMBERS[i].ratifyGrade=MEMBERS[i].ratifyGrade===grade?'':grade;renderMembers();}
 function batchRatify(){showToast('审定已确认','success');}
 function showToast(msg,type){
   var t=document.getElementById('toast');

@@ -420,6 +420,10 @@ function render(){
           <span>目标数: <strong>${m.goals.length}</strong></span>
         </div>
         <div class="mod-hd-sep"></div>
+        <button class="mod-hd-add" onclick="event.stopPropagation();openIndicatorPicker(null,${mi})" title="从指标库选择">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          指标库选择
+        </button>
         <button class="mod-hd-add" onclick="event.stopPropagation();openCopyModal(${mi})" title="复制历史目标">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           复制历史
@@ -437,11 +441,11 @@ function render(){
         const typeClass=g.type==='quant'?'quant':'qual';
         h+=`<div class="goal-row">
           <div class="goal-summary" onclick="toggleGoal('${g.id}')">
-            <span class="goal-drag">${I.drag}</span>
+            <div class="goal-icon" style="background:var(--pr50);color:var(--pr);font:700 12px/1 var(--m);width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0">${gi+1}</div>
+            <span class="goal-weight" style="font:700 14px/1 var(--m);color:var(--pr);background:var(--pr50);padding:3px 8px;border-radius:var(--r1);flex-shrink:0">${g.weight}%</span>
             <span class="goal-name">${g.name}</span>
             <div class="goal-meta">
               <span class="goal-type ${typeClass}">${typeLabel}</span>
-              <span class="goal-weight">权重: ${g.weight}%</span>
               <div class="goal-actions">
                 <button class="goal-act edit" title="编辑" onclick="event.stopPropagation();openEdit('${g.id}',${mi})">${I.edit}</button>
                 <button class="goal-act del" title="删除" onclick="event.stopPropagation();deleteGoal('${g.id}',${mi})">${I.trash}</button>
@@ -544,7 +548,6 @@ function openEdit(id,mi){
       <div class="ef-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>目标信息</div>
       <div class="ef-grid">
         <div class="ef-fi"><span class="ef-fi-l">目标名称<span class="req">*</span></span><div class="field-with-lang"><input class="inp" id="ef_name" value="${g.name}" ${linked?'readonly':''}/>${langBtn(g.id+'_name')}</div></div>
-        <div class="ef-fi"><span class="ef-fi-l">关联指标<span class="req">*</span></span><div style="display:flex;gap:6px;align-items:center">${linked?`<span style="flex:1;font:500 12px/1 var(--f);color:var(--pr);padding:6px 8px;background:var(--pr50);border:1px solid var(--pr200);border-radius:var(--r1)">${linked.name}</span><button class="btn btn-s btn-sm" onclick="openIndicatorPicker('${g.id}',${mi})">更换</button>`:`<button class="btn btn-o btn-sm" onclick="openIndicatorPicker('${g.id}',${mi})">${I.link} 选择指标</button>`}</div></div>
         <div class="ef-fi"><span class="ef-fi-l">权重(%)<span class="req">*</span></span><input class="inp num" id="ef_weight" type="number" value="${g.weight}" min="0" max="100"/></div>
       </div>
     </div>`;
@@ -694,16 +697,32 @@ function renderKpiList(){
 }
 function filterKPI(){renderKpiList()}
 function confirmIndicator(){
-  if(!selectedKpiId||!kpiPickerGoalId){showToast('请选择一个指标');return}
-  const d=findGoal(kpiPickerGoalId);if(!d)return;
-  const g=d.goal;
+  if(!selectedKpiId){showToast('请选择一个指标');return}
   const kpi=MOCK_INDICATORS.find(k=>k.id===selectedKpiId);
-  g.name=kpi.name;g.indicator=kpi.name;g.type=kpi.type==='定量'?'quant':'qual';
-  g.unit=kpi.unit;g.rule=kpi.rule;g.desc=kpi.desc;
-  g.linkedIndicatorId=kpi.id;
-  closeModal('indicatorModal');
-  render();
-  openEdit(kpiPickerGoalId,kpiPickerModIdx);
+  if(!kpi)return;
+  if(kpiPickerGoalId){
+    const d=findGoal(kpiPickerGoalId);if(!d)return;
+    const g=d.goal;
+    g.name=kpi.name;g.indicator=kpi.name;g.type=kpi.type==='定量'?'quant':'qual';
+    g.unit=kpi.unit;g.rule=kpi.rule;g.desc=kpi.desc;
+    g.linkedIndicatorId=kpi.id;
+    closeModal('indicatorModal');
+    render();
+    openEdit(kpiPickerGoalId,kpiPickerModIdx);
+  }else{
+    const mi=kpiPickerModIdx;
+    const id='g'+Date.now();
+    const isQuant=kpi.type==='定量';
+    MODULES[mi].goals.push({
+      id,name:kpi.name,indicator:kpi.name,type:isQuant?'quant':'qual',
+      weight:10,desc:kpi.desc,measure:isQuant?'梯度评分':'定性评分',
+      target:0,challenge:0,baseline:0,unit:kpi.unit,
+      rule:kpi.rule,ruleFormula:'',msLevels:[],linkedIndicatorId:kpi.id
+    });
+    expandedMods.add(mi);
+    closeModal('indicatorModal');
+    render();
+  }
 }
 
 function openLangModal(fieldKey){
