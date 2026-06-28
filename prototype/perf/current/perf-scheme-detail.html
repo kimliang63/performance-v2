@@ -15,675 +15,134 @@
   --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
   --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
   --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
-  --shadow-card-hover:0 8px 20px -4px rgba(0,0,0,.08),0 2px 6px -2px rgba(0,0,0,.04);
   --r1:6px;--r2:8px;--r3:10px;--r4:14px;
   --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
   --m:'JetBrains Mono','SF Mono',monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoothing:antialiased;line-height:1.5}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
-
-/* HEADER */
-.hdr{height:52px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:100}
-.logo{display:flex;align-items:center;gap:8px}
-.logo-i{width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center}
-.logo-i svg{width:15px;height:15px;color:#FFF}
-.logo-t{font-size:15px;font-weight:700;color:var(--c9);letter-spacing:-.3px}
-.back-link{display:flex;align-items:center;gap:5px;font:500 13px/1 var(--f);color:var(--c5);text-decoration:none;transition:color .12s}
-.back-link:hover{color:var(--pr)}
-.back-link svg{width:14px;height:14px}
-.hdr-sep{width:1px;height:20px;background:var(--c2)}
-.hdr-title{font:600 14px/1.2 var(--f);color:var(--c9)}
-.hdr-status{display:inline-flex;align-items:center;gap:4px;font:500 11px/1 var(--f);padding:3px 10px;border-radius:var(--r1);color:var(--em700);background:var(--em50)}
-.hdr-r{margin-left:auto;display:flex;align-items:center;gap:8px}
-
-/* BUTTONS */
 .btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
 .btn svg{width:13px;height:13px}
 .btn-p{background:var(--pr);color:#FFF}.btn-p:hover{background:var(--pr700)}
 .btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
-.btn-d{background:var(--sf);color:var(--ro);border:1px solid var(--ro100)}.btn-d:hover{background:var(--ro50);border-color:var(--ro)}
-
-/* TABS */
-.tabs{display:flex;padding:0 24px;border-bottom:1px solid var(--dv);gap:0;background:var(--sf)}
-.tab{padding:10px 16px;font:500 13px/1 var(--f);color:var(--c5);cursor:pointer;border-bottom:2px solid transparent;transition:all .12s;margin-bottom:-1px;display:flex;align-items:center;gap:5px}
-.tab:hover{color:var(--c7)}
-.tab.on{color:var(--pr);border-bottom-color:var(--pr);font-weight:600}
-
-/* LAYOUT */
-.detail{display:flex;height:calc(100vh - 52px - 41px)}
-.det-sb{width:220px;background:var(--sf);border-right:1px solid var(--dv);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
-.det-sb-hd{padding:16px;border-bottom:1px solid var(--dv)}
-.det-sb-t{font:600 13px/1 var(--f);color:var(--c9)}
-.det-sb-s{font:400 11px/1 var(--f);color:var(--c4);margin-top:2px}
-.det-sb-bd{flex:1;padding:8px}
-.det-sb-i{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:var(--r1);cursor:pointer;transition:all .12s;font:400 13px/1.3 var(--f);color:var(--c6)}
-.det-sb-i:hover{background:var(--c0);color:var(--c8)}
-.det-sb-i.on{background:var(--pr50);color:var(--pr);font-weight:600}
-.det-sb-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;border:1.5px solid var(--c3)}
-.det-sb-i.done .det-sb-dot{background:var(--em);border-color:var(--em)}
-.det-sb-i.on .det-sb-dot{background:var(--pr);border-color:var(--pr)}
-.det-ct{flex:1;overflow-y:auto;padding:24px}
-
-/* FORM SECTION (read-only) */
-.form-sec{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:16px}
-.form-sec-t{font:600 14px/1.3 var(--f);color:var(--c9);margin-bottom:16px;display:flex;align-items:center;gap:8px}
-.form-sec-t::before{content:'';width:3px;height:14px;background:var(--pr);border-radius:2px}
-.form-row{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:16px}
-.form-row.single{grid-template-columns:1fr}
-.form-grp{display:flex;flex-direction:column;gap:5px}
-.form-lb{font:500 12px/1 var(--f);color:var(--c6)}
-.ro-val{font:400 13px/1.4 var(--f);color:var(--c9);padding:7px 10px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r1);min-height:34px;display:flex;align-items:center}
-.ro-val.mono{font-family:var(--m);font-size:12px;letter-spacing:.3px}
-.ro-tag{display:inline-flex;align-items:center;gap:4px;font:500 11px/1 var(--f);padding:3px 10px;border-radius:var(--r1);color:var(--em700);background:var(--em50)}
-.ro-tag.off{color:var(--c5);background:var(--c1)}
-.ro-tag.warn{color:var(--ac700);background:var(--ac50)}
-.ro-text{font:400 13px/1.6 var(--f);color:var(--c7)}
-
-/* TABLE */
-.tbl{width:100%;border-collapse:collapse}
-.tbl th{font:600 12px/1 var(--f);color:var(--c5);text-align:left;padding:8px 10px;border-bottom:1px solid var(--dv);background:var(--c0);position:sticky;top:0}
-.tbl td{padding:8px 10px;border-bottom:1px solid var(--dv);font:400 13px/1.3 var(--f);color:var(--c7)}
-.tbl tr:hover td{background:var(--c0)}
-
-/* STAGE LIST (read-only) */
-.stage-list{display:flex;flex-direction:column;gap:8px}
-.stage-item{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--dv);border-radius:var(--r1);transition:all .12s}
-.stage-item:hover{border-color:var(--c3);background:var(--c0)}
-.stage-item.off{opacity:.5}
-.stage-name{font:500 13px/1 var(--f);color:var(--c8)}
-.stage-desc{font:400 11px/1 var(--f);color:var(--c4);margin-top:2px}
-.stage-badge{font:500 10px/1 var(--f);padding:2px 8px;border-radius:3px}
-.stage-badge.on{color:var(--em700);background:var(--em50)}
-.stage-badge.off{color:var(--c5);background:var(--c1)}
-.stage-badge.pending{color:var(--ac700);background:var(--ac50)}
-
-/* STAGE CONFIG (read-only) */
-.stage-cfg{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden}
-.stage-cfg-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--dv);cursor:pointer;transition:background .12s}
-.stage-cfg-hd:hover{background:var(--c0)}
-.stage-cfg-hd-l{display:flex;align-items:center;gap:10px}
-.stage-cfg-hd-t{font:600 14px/1.3 var(--f);color:var(--c9)}
-.stage-cfg-hd-s{font:400 12px/1 var(--f);color:var(--c5)}
-.stage-cfg-hd svg{width:14px;height:14px;color:var(--c4);transition:transform .2s}
-.stage-cfg.open .stage-cfg-hd svg{transform:rotate(180deg)}
-.stage-cfg-bd{padding:16px 20px;display:none}
-.stage-cfg.open .stage-cfg-bd{display:block}
-
-/* GROUP PANEL (read-only) */
-.grp-panel{display:flex;gap:16px}
-.grp-list{width:200px;flex-shrink:0;display:flex;flex-direction:column;gap:4px}
-.grp-item{padding:10px 12px;border:1px solid var(--dv);border-radius:var(--r1);cursor:pointer;transition:all .12s}
-.grp-item:hover{border-color:var(--c3);background:var(--c0)}
-.grp-item.on{border-color:var(--pr);background:var(--pr50)}
-.grp-item-n{font:500 13px/1 var(--f);color:var(--c8)}
-.grp-item-s{font:400 11px/1 var(--f);color:var(--c4);margin-top:3px}
-.grp-config{flex:1;min-width:0}
-
-/* RO RULES */
-.ro-rules{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
-.ro-rule{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--c0);border-radius:var(--r1);font:400 12px/1 var(--f);color:var(--c7)}
-.ro-rule .field{font-weight:500;color:var(--c9)}
-.ro-rule .op{color:var(--c4)}
-.ro-rule .val{color:var(--pr);font-weight:500}
-
-/* WEIGHT TABLE (read-only) */
-.wt-sum{display:flex;align-items:center;gap:8px;margin-top:8px;font:500 12px/1 var(--f);color:var(--c5)}
-.wt-sum .ok{color:var(--em)}
-
-/* PROGRESS BAR */
-.progress-bar{flex:1;height:6px;background:var(--c1);border-radius:3px;overflow:hidden;max-width:80px}
-.progress-fill{height:100%;border-radius:3px;transition:width .3s ease}
-.progress-fill.high{background:var(--em)}
-.progress-fill.mid{background:var(--ac)}
-.progress-fill.low{background:var(--ro)}
-.progress-text{font:600 11px/1 var(--m);color:var(--c6);min-width:28px;text-align:right}
-
-/* MODAL */
-.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:2000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
-.modal-ov.on{opacity:1;pointer-events:all}
-.modal{background:var(--sf);border-radius:var(--r4);box-shadow:0 20px 60px -15px rgba(0,0,0,.2);width:520px;max-width:90vw;transform:translateY(8px) scale(.98);transition:transform .2s ease}
-.modal-ov.on .modal{transform:translateY(0) scale(1)}
-.modal-hd{display:flex;align-items:center;justify-content:space-between;padding:18px 22px 14px;border-bottom:1px solid var(--dv)}
-.modal-hd-t{font:600 15px/1.2 var(--f);color:var(--c9)}
-.modal-close{width:28px;height:28px;border-radius:var(--r1);border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--c4);transition:all .12s}
-.modal-close:hover{background:var(--c1);color:var(--c7)}
-.modal-close svg{width:16px;height:16px}
-.modal-bd{padding:18px 22px}
-.modal-ft{display:flex;justify-content:flex-end;gap:8px;padding:14px 22px 18px;border-top:1px solid var(--dv)}
-.modal-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.modal-info-item{display:flex;flex-direction:column;gap:4px}
-.modal-info-lb{font:500 12px/1 var(--f);color:var(--c5)}
-.modal-info-v{font:400 13px/1.3 var(--f);color:var(--c9)}
-
-/* ANIMATION */
+.btn-t{background:transparent;color:var(--c6);border:none;padding:0 8px;height:28px;font-size:12px}.btn-t:hover{color:var(--pr);background:var(--pr50)}
+.card{background:var(--sf);border:1px solid var(--c3);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px;margin-bottom:16px}
+.card-hd{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.card-bar{width:3px;height:14px;border-radius:2px;flex-shrink:0}
+.card-title{font:600 14px/1.3 var(--f);color:var(--c9)}
+ lbl{font:500 12px/1 var(--f);color:var(--c5);margin-bottom:4px;display:block}
+val{font:400 13px/1.4 var(--f);color:var(--c9);display:block}
+.sep{border-top:1px solid var(--dv);padding-top:16px;margin-top:16px}
 @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.fi{animation:fi .2s ease forwards}
+.fi{animation:fi .25s ease forwards}
 </style>
 </head>
 <body>
-
-<!-- Navigation will be injected by navigation.js -->
-</header>
-
-<div class="tabs" id="tabs">
-  <div class="tab on" onclick="switchTab('info')">方案信息</div>
-  <div class="tab" onclick="switchTab('activities')">关联活动</div>
-</div>
-
-<div class="detail" id="detailWrap"></div>
-
-<div class="modal-ov" id="modalOv" onclick="if(event.target===this)closeModal()">
-  <div class="modal" id="modalBox"></div>
-</div>
-
 <script src="navigation.js"></script>
 <script>
-// ═══ 图标 ═══
-const I={
-  chevDown:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>',
-  x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
-  eye:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
-};
+const I={chevL:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>'};
 
-// ═══ 模拟方案数据 ═══
 const SCHEME={
-  name:'2026年度绩效考核方案',
-  code:'PERF-2026-001',
-  cycle:'年度',
-  status:'enabled',
-  downward:true,
-  version:3,
-  forcedDistRule:'标准强制分布',
-  desc:'适用于全公司正式员工的年度绩效考核，包含目标制定、绩效考核、结果审定、结果确认、绩效面谈五个阶段。',
-  creator:'王管理',
-  created:'2026-01-10 09:00',
-  modified:'2026-05-20 14:30',
+  name:'年度绩效方案 v2',code:'PERF-2026-001',version:'v2',enabled:true,desc:'适用于全公司季度绩效考核，采用360度评估方式，包含目标制定、绩效考核、结果审定、结果确认、绩效面谈五个环节。',
+  cycleType:'季度',gradeRule:'标准五级',downward:true,
+  grades:[
+    {name:'远超预期',code:'A',min:90,max:100,color:'var(--ro)',bg:'var(--ro50)'},
+    {name:'符合预期+',code:'B+',min:80,max:89,color:'var(--ac700)',bg:'var(--ac50)'},
+    {name:'符合预期',code:'B',min:70,max:79,color:'var(--em700)',bg:'var(--em50)'},
+    {name:'符合预期-',code:'B-',min:60,max:69,color:'var(--vi)',bg:'var(--vi50)'},
+    {name:'低于预期',code:'C',min:0,max:59,color:'var(--c6)',bg:'var(--c1)'},
+  ],
+  groups:[
+    {name:'默认考核组',isDefault:true,rules:'部门 属于 产品部,技术部,市场部',evalRule:'通用评价规则',excluded:'-'},
+    {name:'仓储特殊组',isDefault:false,rules:'部门 等于 仓储部 且 职级 属于 L5,L6',evalRule:'仓储评价规则',excluded:'张三'},
+  ],
+  stages:[
+    {name:'目标制定',desc:'员工/上级填写绩效目标',flow:'通用目标制定流程',enabled:true},
+    {name:'绩效考核',desc:'考核人评分',flow:'通用绩效考核流程',enabled:true},
+    {name:'结果审定',desc:'审定人调整等级',flow:'汇报线逐级审定',enabled:true},
+    {name:'结果确认',desc:'员工确认绩效结果',flow:'员工确认流程',enabled:true},
+    {name:'绩效面谈',desc:'上级与员工面谈',flow:'绩效面谈流程',enabled:true},
+  ],
+  forcedDist:{name:'标准强制分布',grades:[
+    {code:'A',name:'远超预期',op:'不超过',pct:10},
+    {code:'B+',name:'符合预期+',op:'不超过',pct:20},
+    {code:'B',name:'符合预期',op:'不低于',pct:40},
+    {code:'B-',name:'符合预期-',op:'不超过',pct:20},
+    {code:'C',name:'低于预期',op:'不低于',pct:10},
+  ]},
 };
 
-const GRADES=[
-  {name:'远超预期',code:'A',min:90,max:100,order:1},
-  {name:'符合预期+',code:'B+',min:80,max:89,order:2},
-  {name:'符合预期',code:'B',min:70,max:79,order:3},
-  {name:'符合预期-',code:'B-',min:60,max:69,order:4},
-  {name:'低于预期',code:'C',min:0,max:59,order:5},
-];
-
-const STAGES=[
-  {id:'goal',name:'目标制定',desc:'员工/上级填写绩效目标',enabled:true,flow:'通用目标制定流程',startMethod:'手动',endMethod:'手动',endRule:'符合预期-'},
-  {id:'eval',name:'绩效考核',desc:'考核人评分',enabled:true,flow:'通用绩效考核流程',startMethod:'手动',endMethod:'超时自动结束',evalRule:'通用评价规则',endRule:'符合预期-',
-   nodes:[{name:'员工自评',type:'填写',weight:20},{name:'直接上级评分',type:'评分',weight:50},{name:'隔级上级评分',type:'评分',weight:30}]},
-  {id:'ratify',name:'结果审定',desc:'审定人调整等级',enabled:true,flow:'汇报线逐级审定',startMethod:'手动',endMethod:'手动',endRule:'符合预期-',forcedDistRule:'标准强制分布',
-   forcedDist:[{group:'默认考核组',mode:'强控',minCount:5},{group:'仓储特殊组',mode:'弱控',minCount:3},{group:'销售精英组',mode:'强控',minCount:8}]},
-  {id:'confirm',name:'结果确认',desc:'员工确认绩效结果',enabled:true,flow:'员工确认流程',startMethod:'手动',endMethod:'手动'},
-  {id:'interview',name:'绩效面谈',desc:'上级与员工面谈',enabled:true,flow:'绩效面谈流程',startMethod:'手动',endMethod:'手动',endRule:'符合预期-'},
-];
-
-const GROUPS=[
-  {id:'g1',name:'默认考核组',rules:[{field:'部门',op:'属于',val:'产品部,技术部,市场部'}],excluded:[],evalRule:'通用评价规则',shared:['goal','eval']},
-  {id:'g2',name:'仓储特殊组',rules:[{field:'部门',op:'等于',val:'仓储部'},{field:'职级',op:'属于',val:'L5,L6'}],excluded:['张三'],evalRule:'仓储评价规则',shared:[]},
-  {id:'g3',name:'销售精英组',rules:[{field:'部门',op:'等于',val:'销售部'},{field:'职级',op:'属于',val:'L7,L8'}],excluded:[],evalRule:'销售评价规则',shared:['eval']},
-];
-
-const ACTIVITIES=[
-  {name:'2026年度Q1考核',cycle:'2026-Q1',status:'进行中',start:'2026-01-15',end:'2026-02-28',count:156,progress:72},
-  {name:'2026年度Q2考核',cycle:'2026-Q2',status:'已结束',start:'2026-04-15',end:'2026-05-31',count:156,progress:100},
-];
-
-const ACT_STATUS={进行中:{cls:'warn',color:'var(--ac700)',bg:'var(--ac50)'},已结束:{cls:'',color:'var(--em700)',bg:'var(--em50)'},未开始:{cls:'off',color:'var(--c5)',bg:'var(--c1)'}};
-
-const FORCED_DIST_RULES=[
-  {name:'标准强制分布',desc:'A 10% / B+ 20% / B 40% / B- 20% / C 10%',
-   grades:[{code:'A',name:'远超预期',op:'不超过',pct:10},{code:'B+',name:'符合预期+',op:'不超过',pct:20},{code:'B',name:'符合预期',op:'不低于',pct:40},{code:'B-',name:'符合预期-',op:'不超过',pct:20},{code:'C',name:'低于预期',op:'不低于',pct:10}]},
-  {name:'宽松强制分布',desc:'A 15% / B+ 25% / B 40% / B- 15% / C 5%',
-   grades:[{code:'A',name:'远超预期',op:'不超过',pct:15},{code:'B+',name:'符合预期+',op:'不超过',pct:25},{code:'B',name:'符合预期',op:'不低于',pct:40},{code:'B-',name:'符合预期-',op:'不超过',pct:15},{code:'C',name:'低于预期',op:'不超过',pct:5}]},
-  {name:'严格强制分布',desc:'A 5% / B+ 15% / B 40% / B- 25% / C 15%',
-   grades:[{code:'A',name:'远超预期',op:'不超过',pct:5},{code:'B+',name:'符合预期+',op:'不超过',pct:15},{code:'B',name:'符合预期',op:'不低于',pct:40},{code:'B-',name:'符合预期-',op:'不超过',pct:25},{code:'C',name:'低于预期',op:'不低于',pct:15}]},
-];
-
-// ═══ 状态 ═══
-let curTab='info', activeSection='basic', activeGroup='g1', openStage='goal';
-
-// ═══ 渲染 ═══
 function render(){
-  renderTabs();
-  renderDetail();
-}
+  const s=SCHEME;
+  const ct=document.getElementById('ct')||document.getElementById('app');
+  if(!ct) return;
+  ct.innerHTML=`<div style="max-width:1120px" class="fi">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;font:400 13px/1 var(--f);color:var(--c6)">
+      <a href="perf-scheme-list.html" style="color:var(--pr);text-decoration:none;cursor:pointer">← 返回方案列表</a>
+      <span style="color:var(--c4)">/</span><span>${s.name}</span>
+    </div>
 
-function renderTabs(){
-  document.getElementById('tabs').innerHTML=['info','activities'].map(t=>{
-    const label=t==='info'?'方案信息':'关联活动';
-    return `<div class="tab${curTab===t?' on':''}" onclick="switchTab('${t}')">${label}</div>`;
-  }).join('');
-}
+    <!-- 基本信息 -->
+    <div class="card">
+      <div class="card-hd"><span class="card-bar" style="background:var(--pr)"></span><span class="card-title">基本信息</span></div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+        <div><lbl>方案名称</lbl><val>${s.name}</val></div>
+        <div><lbl>方案编号</lbl><val style="font-family:var(--m)">${s.code}</val></div>
+        <div><lbl>方案版本</lbl><val>${s.version}</val></div>
+        <div><lbl>启用状态</lbl><val style="color:var(--em)">已启用</val></div>
+        <div><lbl>周期类型</lbl><val>${s.cycleType}</val></div>
+        <div><lbl>等级规则</lbl><val>${s.gradeRule}</val></div>
+        <div><lbl>向下公开</lbl><val>${s.downward?'开启':'关闭'}</val></div>
+        <div><lbl>强制分布</lbl><val>${s.forcedDist.name}</val></div>
+        <div style="grid-column:1/-1"><lbl>方案描述</lbl><val>${s.desc}</val></div>
+      </div>
+    </div>
 
-function renderDetail(){
-  const wrap=document.getElementById('detailWrap');
-  if(curTab==='info') renderInfoTab(wrap);
-  else renderActivitiesTab(wrap);
-}
+    <!-- 绩效等级 -->
+    <div class="card">
+      <div class="card-hd"><span class="card-bar" style="background:var(--ro)"></span><span class="card-title">绩效等级 · ${s.gradeRule}</span></div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        ${s.grades.map(g=>`<span style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:var(--r1);font:500 13px/1 var(--f);background:${g.bg};color:${g.color}"><strong>${g.code}</strong> ${g.name} <span style="font:400 11px/1 var(--f);opacity:.7">${g.min}-${g.max}分</span></span>`).join('')}
+      </div>
+    </div>
 
-// ═══ Tab 1: 方案信息 ═══
-function renderInfoTab(wrap){
-  let sidebarItems;
-  sidebarItems=[
-    {id:'basic',t:'方案基本信息',done:true},
-    {id:'grades',t:'等级规则',done:true},
-    {id:'stages',t:'考核阶段',done:true},
-    ...GROUPS.map(g=>({id:g.id,t:g.name,done:true})),
-    ...STAGES.filter(s=>s.enabled).map(s=>({id:'cfg-'+s.id,t:s.name+'配置',done:true})),
-  ];
-
-  wrap.innerHTML=`
-    <aside class="det-sb">
-      <div class="det-sb-hd"><div class="det-sb-t">配置目录</div><div class="det-sb-s">只读查看</div></div>
-      <div class="det-sb-bd">${sidebarItems.map(it=>`
-        <div class="det-sb-i${activeSection===it.id?' on':''}${it.done?' done':''}" onclick="selSection('${it.id}')">
-          <div class="det-sb-dot"></div>${it.t}
+    <!-- 考核组 -->
+    <div class="card">
+      <div class="card-hd"><span class="card-bar" style="background:var(--vi)"></span><span class="card-title">考核组</span></div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        ${s.groups.map(g=>`<div style="padding:12px 16px;border:1px solid var(--dv);border-radius:var(--r1)">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font:600 13px/1 var(--f);color:var(--c9)">${g.name}</span>${g.isDefault?'<span style="font:500 10px/1 var(--f);padding:1px 6px;border-radius:3px;background:var(--pr50);color:var(--pr)">默认</span>':''}</div>
+          <div style="font:400 12px/1 var(--f);color:var(--c6);margin-top:6px">适用规则：${g.rules}</div>
+          <div style="font:400 12px/1 var(--f);color:var(--c6);margin-top:2px">评价规则：${g.evalRule}</div>
+          <div style="font:400 12px/1 var(--f);color:var(--c6);margin-top:2px">排除人员：${g.excluded}</div>
         </div>`).join('')}
       </div>
-    </aside>
-    <div class="det-ct" id="detCt">${renderInfoContent()}</div>`;
-}
+    </div>
 
-function renderInfoContent(){
-  let h='<div class="fi">';
-  if(activeSection==='basic') h+=renderBasicInfo();
-  else if(activeSection==='grades') h+=renderGradeRules();
-  else if(activeSection==='stages') h+=renderStageToggles();
-  else if(GROUPS.find(g=>g.id===activeSection)) h+=renderGroupDetail(activeSection);
-  else if(activeSection.startsWith('cfg-')) h+=renderStageCfg(activeSection.replace('cfg-',''));
-  else h+=renderBasicInfo();
-  h+='</div>';
-  return h;
-}
+    <!-- 考核环节 -->
+    <div class="card">
+      <div class="card-hd"><span class="card-bar" style="background:var(--ac)"></span><span class="card-title">考核环节</span></div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        ${s.stages.map(st=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--dv);border-radius:var(--r1)">
+          <div><span style="font:500 13px/1 var(--f);color:var(--c9)">${st.name}</span><span style="font:400 12px/1 var(--f);color:var(--c5);margin-left:8px">${st.desc}</span></div>
+          <div style="display:flex;align-items:center;gap:10px"><span style="font:400 11px/1 var(--f);color:var(--c5);font-family:var(--m)">${st.flow}</span><span style="font:500 11px/1 var(--f);padding:2px 8px;border-radius:3px;background:var(--em50);color:var(--em700)">${st.enabled?'已启用':'已停用'}</span></div>
+        </div>`).join('')}
+      </div>
+    </div>
 
-function renderBasicInfo(){
-  return `<div class="form-sec">
-    <div class="form-sec-t">方案基本信息</div>
-    <div class="form-row">
-      <div class="form-grp"><label class="form-lb">方案名称</label><div class="ro-val">${SCHEME.name}</div></div>
-      <div class="form-grp"><label class="form-lb">方案编号</label><div class="ro-val mono">${SCHEME.code}</div></div>
-    </div>
-    <div class="form-row">
-      <div class="form-grp"><label class="form-lb">周期类型</label><div class="ro-val">${SCHEME.cycle}</div></div>
-      <div class="form-grp"><label class="form-lb">启用状态</label><div class="ro-val"><span class="ro-tag${SCHEME.status==='disabled'?' off':''}${SCHEME.status==='draft'?' warn':''}">${SCHEME.status==='enabled'?'已启用':SCHEME.status==='disabled'?'已停用':'草稿'}</span></div></div>
-    </div>
-    <div class="form-row">
-      <div class="form-grp"><label class="form-lb">方案版本</label><div class="ro-val mono">v${SCHEME.version}</div></div>
-      <div class="form-grp"></div>
-    </div>
-    <div class="form-row">
-      <div class="form-grp"><label class="form-lb">向下公开</label><div class="ro-val">${SCHEME.downward?'是':'否'}</div></div>
-      <div class="form-grp"><label class="form-lb">创建人</label><div class="ro-val">${SCHEME.creator}</div></div>
-    </div>
-    <div class="form-row single">
-      <div class="form-grp"><label class="form-lb">描述</label><div class="ro-text">${SCHEME.desc}</div></div>
-    </div>
-    <div class="form-row">
-      <div class="form-grp"><label class="form-lb">创建时间</label><div class="ro-val mono">${SCHEME.created}</div></div>
-      <div class="form-grp"><label class="form-lb">最近修改</label><div class="ro-val mono">${SCHEME.modified}</div></div>
-    </div>
-  </div>`;
-}
-
-function renderGradeRules(){
-  return `<div class="form-sec">
-    <div class="form-sec-t">等级规则定义</div>
-    <table class="tbl">
-      <thead><tr><th>等级名称</th><th>等级代码</th><th>分数下限</th><th>分数上限</th><th>排序</th></tr></thead>
-      <tbody>${GRADES.map(g=>`<tr>
-        <td style="font-weight:500;color:var(--c9)">${g.name}</td>
-        <td><span style="font-family:var(--m);font-size:12px;background:var(--pr50);color:var(--pr);padding:2px 8px;border-radius:3px">${g.code}</span></td>
-        <td style="font-family:var(--m);font-size:12px">${g.min}</td>
-        <td style="font-family:var(--m);font-size:12px">${g.max}</td>
-        <td style="font-family:var(--m);font-size:12px">${g.order}</td>
-      </tr>`).join('')}</tbody>
-    </table>
-  </div>`;
-}
-
-function renderStageToggles(){
-  return `<div class="form-sec">
-    <div class="form-sec-t">考核阶段设置</div>
-    <div class="stage-list">${STAGES.map(s=>`
-      <div class="stage-item ${s.enabled?'':'off'}">
-        <div><div class="stage-name">${s.name}</div><div class="stage-desc">${s.desc}</div></div>
-        ${s.pending?'<span class="stage-badge pending">待定</span>':`<span class="stage-badge ${s.enabled?'on':'off'}">${s.enabled?'已启用':'已停用'}</span>`}
-      </div>`).join('')}
-    </div>
-  </div>`;
-}
-
-function renderGroupDetail(gid){
-  const grp=GROUPS.find(g=>g.id===gid);
-  if(!grp) return '';
-  const enabledStages=STAGES.filter(s=>s.enabled);
-
-  return `<div class="form-sec">
-    <div class="form-sec-t">${grp.name}</div>
-    <div class="form-row single">
-      <div class="form-grp"><label class="form-lb">考核组名称</label><div class="ro-val">${grp.name}</div></div>
-    </div>
-    <div style="margin-bottom:16px">
-      <label class="form-lb" style="margin-bottom:8px;display:block">适用规则</label>
-      <div class="ro-rules">${grp.rules.map(r=>`<div class="ro-rule"><span class="field">${r.field}</span><span class="op">${r.op}</span><span class="val">${r.val}</span></div>`).join('')}</div>
-    </div>
-    <div class="form-row">
-      <div class="form-grp"><label class="form-lb">排除人员</label><div class="ro-val">${grp.excluded.length?grp.excluded.join('、'):'无'}</div></div>
-    </div>
-    <div style="margin-top:8px">
-      <label class="form-lb" style="margin-bottom:8px;display:block">共用环节</label>
-      <div style="display:flex;gap:12px;flex-wrap:wrap">${enabledStages.map(s=>{
-        const shared=grp.shared.includes(s.id);
-        return `<span style="font:400 13px/1 var(--f);color:${shared?'var(--pr)':'var(--c4)'};padding:4px 10px;border-radius:var(--r1);background:${shared?'var(--pr50)':'var(--c0)'};border:1px solid ${shared?'var(--pr100)':'var(--dv)'}">${shared?'✓':'—'} ${s.name}</span>`;
-      }).join('')}</div>
-    </div>
-  </div>`;
-}
-
-function renderStageCfg(sid){
-  const s=STAGES.find(x=>x.id===sid);
-  if(!s||!s.enabled) return '';
-
-  let cfg='';
-  if(s.id==='goal') cfg=renderGoalCfg(s);
-  else if(s.id==='eval') cfg=renderEvalCfg(s);
-  else if(s.id==='ratify') cfg=renderRatifyCfg(s);
-  else if(s.id==='confirm') cfg=renderConfirmCfg(s);
-  else if(s.id==='interview') cfg=renderInterviewCfg(s);
-
-  return `<div class="form-sec">
-    <div class="form-sec-t">${s.name} — 环节配置</div>
-    ${cfg}
-  </div>`;
-}
-
-function renderGoalCfg(s){
-  return `<div class="form-row">
-    <div class="form-grp"><label class="form-lb">流程模型</label><div class="ro-val">${s.flow}</div></div>
-    <div class="form-grp"><label class="form-lb">开启方式</label><div class="ro-val">${s.startMethod}</div></div>
-  </div>
-  <div class="form-row">
-    <div class="form-grp"><label class="form-lb">结束方式</label><div class="ro-val">${s.endMethod}</div></div>
-  </div>
-  <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
-    <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制结束规则</div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <span style="font:400 13px/1 var(--f);color:var(--c7)">结束流程并默认结果等级</span>
-      <div class="ro-val" style="width:160px">${s.endRule}</div>
-    </div>
-  </div>`;
-}
-
-function renderEvalCfg(s){
-  return `<div class="form-row">
-    <div class="form-grp"><label class="form-lb">流程模型</label><div class="ro-val">${s.flow}</div></div>
-    <div class="form-grp"><label class="form-lb">评价规则</label><div class="ro-val">${s.evalRule}</div></div>
-  </div>
-  <div class="form-row">
-    <div class="form-grp"><label class="form-lb">开启方式</label><div class="ro-val">${s.startMethod}</div></div>
-    <div class="form-grp"><label class="form-lb">结束方式</label><div class="ro-val">${s.endMethod}</div></div>
-  </div>
-  <div style="margin-top:16px">
-    <label class="form-lb" style="margin-bottom:8px;display:block">节点权重分配</label>
-    <table class="tbl">
-      <thead><tr><th>节点名称</th><th>节点类型</th><th>权重</th></tr></thead>
-      <tbody>${s.nodes.map(n=>`<tr>
-        <td style="font-weight:500;color:var(--c9)">${n.name}</td>
-        <td><span style="font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px;background:var(--pr50);color:var(--pr)">${n.type}</span></td>
-        <td style="font-family:var(--m);font-size:12px">${n.weight}%</td>
-      </tr>`).join('')}</tbody>
-    </table>
-    <div class="wt-sum"><span>总权重：</span><span class="ok">${s.nodes.reduce((a,n)=>a+n.weight,0)}%</span></div>
-  </div>
-  <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
-    <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制结束规则</div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <span style="font:400 13px/1 var(--f);color:var(--c7)">结束流程并默认结果等级</span>
-      <div class="ro-val" style="width:160px">${s.endRule}</div>
-    </div>
-  </div>`;
-}
-
-function renderRatifyCfg(s){
-  return `<div class="form-row">
-    <div class="form-grp"><label class="form-lb">流程模型</label><div class="ro-val">${s.flow}</div></div>
-    <div class="form-grp"><label class="form-lb">开启方式</label><div class="ro-val">${s.startMethod}</div></div>
-  </div>
-  <div class="form-row">
-    <div class="form-grp"><label class="form-lb">结束方式</label><div class="ro-val">${s.endMethod}</div></div>
-  </div>
-  <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
-    <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制结束规则</div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <span style="font:400 13px/1 var(--f);color:var(--c7)">结束流程并默认结果等级</span>
-      <div class="ro-val" style="width:160px">${s.endRule}</div>
-    </div>
-  </div>
-  <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
-    <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制分布规则</div>
-    <div class="form-row">
-      <div class="form-grp"><label class="form-lb">关联强制分布规则</label><div class="ro-val">${s.forcedDistRule}</div></div>
-      <div class="form-grp"><label class="form-lb">控制模式</label><div class="ro-val">强控</div></div>
-    </div>
-    <div style="margin-bottom:16px"><a href="perf-forced-distribution.html" target="_blank" style="font:500 12px/1 var(--f);color:var(--pr);text-decoration:none">查看分布规则 →</a></div>
-    <div style="padding:14px 16px;background:var(--c0);border-radius:var(--r2);border:1px solid var(--dv)">
-      <div style="font:600 12px/1 var(--f);color:var(--c8);margin-bottom:10px">当前规则：${s.forcedDistRule}</div>
-      <table class="tbl" style="margin:0"><thead><tr><th>等级</th><th>等级名称</th><th>计算规则</th><th>比例上限(%)</th></tr></thead><tbody>${(()=>{
-        const rule=FORCED_DIST_RULES.find(r=>r.name===s.forcedDistRule);
-        if(!rule||!rule.grades) return '';
-        return rule.grades.map(g=>`<tr>
-          <td><span style="font:500 11px/1 var(--f);padding:2px 8px;border-radius:3px;background:var(--pr50);color:var(--pr)">${g.code}</span></td>
-          <td style="font:500 13px/1 var(--f);color:var(--c9)">${g.name}</td>
-          <td style="font:400 13px/1 var(--f);color:var(--c6)">${g.op}</td>
-          <td style="font-family:var(--m);font-size:13px;font-weight:600;color:var(--c9)">${g.pct}%</td>
-        </tr>`).join('');
-      })()}</tbody></table>
-    </div>
-  </div>`;
-}
-
-function renderConfirmCfg(s){
-  return `<div class="form-row">
-    <div class="form-grp"><label class="form-lb">流程模型</label><div class="ro-val">${s.flow}</div></div>
-    <div class="form-grp"><label class="form-lb">开启方式</label><div class="ro-val">${s.startMethod}</div></div>
-  </div>
-  <div class="form-row">
-    <div class="form-grp"><label class="form-lb">结束方式</label><div class="ro-val">${s.endMethod}</div></div>
-  </div>
-  <div style="margin-top:12px;padding:10px 12px;background:var(--pr50);border:1px solid var(--pr100);border-radius:var(--r1)">
-    <div style="font:500 12px/1.4 var(--f);color:var(--pr)">流程包含分支：员工确认「同意」→ 流程结束；员工确认「不同意」→ 通知 HRBP 知悉 → 流程结束</div>
-  </div>`;
-}
-
-function renderInterviewCfg(s){
-  return `<div class="form-row">
-    <div class="form-grp"><label class="form-lb">流程模型</label><div class="ro-val">${s.flow}</div></div>
-    <div class="form-grp"><label class="form-lb">开启方式</label><div class="ro-val">${s.startMethod}</div></div>
-  </div>
-  <div class="form-row">
-    <div class="form-grp"><label class="form-lb">结束方式</label><div class="ro-val">${s.endMethod}</div></div>
-  </div>
-  <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
-    <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制结束规则</div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <span style="font:400 13px/1 var(--f);color:var(--c7)">结束流程并默认结果等级</span>
-      <div class="ro-val" style="width:160px">${s.endRule}</div>
-    </div>
-  </div>`;
-}
-
-// ═══ Tab 2: 关联活动 ═══
-function renderActivitiesTab(wrap){
-  wrap.innerHTML=`<aside class="det-sb">
-    <div class="det-sb-hd"><div class="det-sb-t">关联活动</div><div class="det-sb-s">共 ${ACTIVITIES.length} 个</div></div>
-    <div class="det-sb-bd">${ACTIVITIES.map((a,i)=>`
-      <div class="det-sb-i" onclick="scrollToActivity(${i})">
-        <div class="det-sb-dot" style="background:${a.status==='进行中'?'var(--ac)':a.status==='已结束'?'var(--em)':'var(--c3)'};border-color:${a.status==='进行中'?'var(--ac)':a.status==='已结束'?'var(--em)':'var(--c3)'}"></div>
-        ${a.name}
-      </div>`).join('')}
-    </div>
-  </aside>
-  <div class="det-ct">
-    <div class="fi">
-      <div class="form-sec">
-        <div class="form-sec-t">关联考核活动</div>
-        <table class="tbl">
-          <thead><tr><th>活动名称</th><th>考核周期</th><th>状态</th><th>开始日期</th><th>结束日期</th><th>参与人数</th><th>完成进度</th><th>操作</th></tr></thead>
-          <tbody>${ACTIVITIES.map((a,i)=>{
-            const st=ACT_STATUS[a.status]||ACT_STATUS['未开始'];
-            const progCls=a.progress>=80?'high':a.progress>=50?'mid':'low';
-            return `<tr id="act-${i}">
-              <td style="font-weight:500;color:var(--c9)">${a.name}</td>
-              <td><span style="font:500 11px/1 var(--f);padding:3px 8px;border-radius:var(--r1);background:var(--pr50);color:var(--pr)">${a.cycle}</span></td>
-              <td><span style="font:500 11px/1 var(--f);padding:3px 10px;border-radius:var(--r1);color:${st.color};background:${st.bg}">${a.status}</span></td>
-              <td style="font-family:var(--m);font-size:12px;color:var(--c5)">${a.start}</td>
-              <td style="font-family:var(--m);font-size:12px;color:var(--c5)">${a.end}</td>
-              <td style="font-family:var(--m);font-size:12px;color:var(--pr);font-weight:600">${a.count}</td>
-              <td><div style="display:flex;align-items:center;gap:8px;min-width:100px"><div class="progress-bar"><div class="progress-fill ${progCls}" style="width:${a.progress}%"></div></div><span class="progress-text">${a.progress}%</span></div></td>
-              <td><button class="btn btn-s" style="height:28px;padding:0 10px;font-size:12px" onclick="viewActivity(${i})"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> 查看</button></td>
-            </tr>`;
-          }).join('')}</tbody>
-        </table>
+    <!-- 强制分布 -->
+    <div class="card">
+      <div class="card-hd"><span class="card-bar" style="background:var(--em)"></span><span class="card-title">强制分布 · ${s.forcedDist.name}</span></div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px">
+        ${s.forcedDist.grades.map(d=>`<span style="font:500 13px/1 var(--f);color:var(--c7)"><strong>${d.code}</strong> ${d.name} <span style="color:var(--c5)">${d.op} ${d.pct}%</span></span>`).join('<span style="color:var(--c3)">|</span>')}
       </div>
     </div>
   </div>`;
 }
 
-function scrollToActivity(i){
-  const el=document.getElementById('act-'+i);
-  if(el) el.scrollIntoView({behavior:'smooth',block:'center'});
-}
-
-// ═══ 交互 ═══
-function switchTab(t){
-  curTab=t;
-  activeSection='basic';
-  render();
-}
-
-function selSection(id){
-  activeSection=id;
-  const ct=document.getElementById('detCt');
-  if(ct) ct.innerHTML=renderInfoContent();
-}
-
-function goEdit(){
-  window.location.href='perf-scheme-wizard.html';
-}
-
-// ═══ 活动详情弹窗 ═══
-function viewActivity(i){
-  const a=ACTIVITIES[i];
-  if(!a) return;
-  const st=ACT_STATUS[a.status]||ACT_STATUS['未开始'];
-  document.getElementById('modalBox').innerHTML=`
-    <div class="modal-hd">
-      <span class="modal-hd-t">活动详情</span>
-      <button class="modal-close" onclick="closeModal()">${I.x}</button>
-    </div>
-    <div class="modal-bd">
-      <div style="font:600 15px/1.3 var(--f);color:var(--c9);margin-bottom:16px">${a.name}</div>
-      <div class="modal-info-grid">
-        <div class="modal-info-item"><span class="modal-info-lb">考核周期</span><span class="modal-info-v">${a.cycle}</span></div>
-        <div class="modal-info-item"><span class="modal-info-lb">状态</span><span class="modal-info-v"><span style="font:500 11px/1 var(--f);padding:3px 10px;border-radius:var(--r1);color:${st.color};background:${st.bg}">${a.status}</span></span></div>
-        <div class="modal-info-item"><span class="modal-info-lb">开始日期</span><span class="modal-info-v" style="font-family:var(--m);font-size:12px">${a.start}</span></div>
-        <div class="modal-info-item"><span class="modal-info-lb">结束日期</span><span class="modal-info-v" style="font-family:var(--m);font-size:12px">${a.end}</span></div>
-        <div class="modal-info-item"><span class="modal-info-lb">参与人数</span><span class="modal-info-v" style="font-family:var(--m);font-size:12px;color:var(--pr);font-weight:600">${a.count}</span></div>
-        <div class="modal-info-item"><span class="modal-info-lb">完成进度</span><span class="modal-info-v"><div style="display:flex;align-items:center;gap:8px"><div class="progress-bar" style="max-width:100px"><div class="progress-fill ${a.progress>=80?'high':a.progress>=50?'mid':'low'}" style="width:${a.progress}%"></div></div><span class="progress-text">${a.progress}%</span></div></span></div>
-      </div>
-    </div>
-    <div class="modal-ft">
-      <button class="btn btn-s" onclick="closeModal()">关闭</button>
-    </div>`;
-  document.getElementById('modalOv').classList.add('on');
-}
-
-function closeModal(){
-  document.getElementById('modalOv').classList.remove('on');
-}
-
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
-
-// ═══ 状态驱动按钮 ═══
-function renderActions(){
-  const el=document.getElementById('hdrActions');
-  if(!el) return;
-  const s=SCHEME.status;
-  let h=`<button class="btn btn-p" onclick="goEdit()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-    编辑</button>`;
-  if(s==='draft'){
-    h+=`<button class="btn btn-d" onclick="deleteScheme()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-      删除</button>`;
-  } else if(s==='enabled'){
-    h+=`<button class="btn btn-s" onclick="toggleStatus('disabled')">停用</button>`;
-  } else if(s==='disabled'){
-    h+=`<button class="btn btn-s" onclick="toggleStatus('enabled')">启用</button>`;
-  }
-  el.innerHTML=h;
-}
-
-function renderStatusBadge(){
-  const el=document.getElementById('hdrStatus');
-  if(!el) return;
-  const map={draft:{label:'草稿',cls:''},enabled:{label:'已启用',cls:''},disabled:{label:'已停用',cls:'off'}};
-  const m=map[SCHEME.status]||map.draft;
-  el.textContent=m.label;
-  el.className='hdr-status'+(m.cls?' hdr-status-'+m.cls:'');
-  // inline style override for non-default states
-  if(SCHEME.status==='disabled'){
-    el.style.cssText='color:var(--c5);background:var(--c1)';
-  } else if(SCHEME.status==='draft'){
-    el.style.cssText='color:var(--ac700);background:var(--ac50)';
-  } else {
-    el.style.cssText='';
-  }
-}
-
-function deleteScheme(){
-  if(!confirm('确定要删除方案「'+SCHEME.name+'」吗？此操作不可撤销。')) return;
-  // prototype: show feedback
-  alert('方案已删除（原型演示）');
-  window.location.href='perf-scheme-list.html';
-}
-
-function toggleStatus(newStatus){
-  const label=newStatus==='enabled'?'启用':'停用';
-  if(!confirm('确定要'+label+'方案「'+SCHEME.name+'」吗？')) return;
-  SCHEME.status=newStatus;
-  // sync state switcher dropdown
-  const sw=document.getElementById('stateSwitch');
-  if(sw) sw.value=newStatus;
-  renderStatusBadge();
-  renderActions();
-  // refresh basic info section if visible
-  if(curTab==='info' && activeSection==='basic'){
-    const ct=document.getElementById('detCt');
-    if(ct) ct.innerHTML=renderInfoContent();
-  }
-}
-
-function switchState(val){
-  SCHEME.status=val;
-  renderStatusBadge();
-  renderActions();
-  // refresh basic info section if visible
-  if(curTab==='info' && activeSection==='basic'){
-    const ct=document.getElementById('detCt');
-    if(ct) ct.innerHTML=renderInfoContent();
-  }
-}
-
-// ═══ 初始化 ═══
-// Initialize navigation first to create the content container
-GHR_NAV.init('perf', '绩效方案');
+GHR_NAV.init('perf','绩效方案');
 render();
-renderActions();
-renderStatusBadge();
 </script>
 </body>
 </html>

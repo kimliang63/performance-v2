@@ -4,6 +4,11 @@
 **交付物模板**：参考 GHR-出差流程审批节点的详细参数配置（流程名称/一级分类/二级分类/参数/选项）
 **状态**：已确认主要配置项，待补充评分规则细节
 
+> **目录说明**：
+> - `prd/` — 按版本输出的正式需求说明书（v1/v2/v3）
+> - `docs/deliverables/` — 本目录，存放流程交付物和过程文档
+> - `docs/*.html` — 架构设计文档
+
 ---
 
 ## 交付物总览
@@ -19,23 +24,6 @@
 | 7 | 绩效面谈流程 | flow_interview | [07-面谈流程.md](./07-面谈流程.md) | 已完成 |
 
 > 注：线下考核流程（导入/定性上级评语）暂未单独输出，因其与线上考核流程共用同一表单，差异仅在流程入口。如需单独输出请确认。
-
----
-
-## PRD文档
-
-| 序号 | 文档名称 | 文件 | 说明 |
-|------|---------|------|------|
-| 1 | 后端处理逻辑规格 | [prd-backend-logic.md](./prd-backend-logic.md) | submit接口通用流程、计算引擎、数据存储模式 |
-| 2 | 实体状态机定义 | [prd-states.md](./prd-states.md) | 各实体状态机定义、转换表、跨实体联动 |
-| 3 | API定义 | [prd-api.md](./prd-api.md) | 接口清单、请求/响应Schema、权限 |
-| 4 | 业务规则目录 | [prd-rules-business.md](./prd-rules-business.md) | 36项业务规则定义 |
-| 5 | 配置与方案更新逻辑 | [prd-config-scheme-update.md](./prd-config-scheme-update.md) | 配置层级关系、版本管理、快照机制 |
-| 6 | 活动处理逻辑 | [prd-activity-processing.md](./prd-activity-processing.md) | 活动生命周期、状态机、执行流程 |
-| 7 | 配置变更影响范围 | [prd-config-change-impact.md](./prd-config-change-impact.md) | 变更影响矩阵、审批流程、通知机制 |
-| 8 | 实时更新 vs 版本管理 | [prd-realtime-vs-version.md](./prd-realtime-vs-version.md) | 信息分类、更新机制、决策树 |
-| 9 | 数据库设计 | [prd-database-design.md](./prd-database-design.md) | 数据模型、表结构、索引设计、ER图 |
-| 10 | 更新特殊场景 | [prd-update-scenarios.md](./prd-update-scenarios.md) | 配置/方案/活动更新场景、并发处理、数据一致性 |
 
 ---
 

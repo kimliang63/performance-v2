@@ -69,21 +69,23 @@ textarea.edit-cell::placeholder{color:var(--c4)}
 .grade-select select option[value="符合预期+"]{color:var(--pr)}
 .grade-select select option[value="符合预期"]{color:var(--c8)}
 .grade-select select option[value="符合预期-"]{color:var(--ac)}
+.grade-select select option[value="远超预期"]{color:#065F46}
 .grade-select select option[value="低于预期"]{color:var(--ro)}
+.grade-select select option[value="远低预期"]{color:#9F1239}
 
 /* ═══ GRADE BUTTON GROUP ═══ */
 .grade-btn-group{display:flex;flex-wrap:wrap;gap:4px}
-.grade-btn{padding:4px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);border:1px solid transparent;cursor:pointer;transition:all .12s;background:transparent;line-height:1.3}
+.grade-btn{padding:4px 10px;border-radius:var(--r1);font:500 12px/1 var(--f);border:1px solid var(--c2);cursor:pointer;transition:all .12s;background:var(--sf);color:var(--c6)}
 .grade-btn[data-grade="超出预期"]{color:var(--em700);background:var(--em50)}
 .grade-btn[data-grade="符合预期+"]{color:var(--pr);background:var(--pr50)}
 .grade-btn[data-grade="符合预期"]{color:var(--c8);background:var(--c1)}
 .grade-btn[data-grade="符合预期-"]{color:var(--ac700);background:var(--ac50)}
 .grade-btn[data-grade="低于预期"]{color:var(--ro);background:var(--ro50)}
-.grade-btn.active[data-grade="超出预期"]{border-color:var(--em700);font-weight:600}
-.grade-btn.active[data-grade="符合预期+"]{border-color:var(--pr);font-weight:600}
-.grade-btn.active[data-grade="符合预期"]{border-color:var(--c8);font-weight:600}
-.grade-btn.active[data-grade="符合预期-"]{border-color:var(--ac700);font-weight:600}
-.grade-btn.active[data-grade="低于预期"]{border-color:var(--ro);font-weight:600}
+.grade-btn[data-grade="远超预期"]{color:#065F46;background:var(--em100)}
+.grade-btn[data-grade="远低预期"]{color:#9F1239;background:var(--ro100)}
+.grade-btn:hover{border-color:var(--pr200);background:var(--pr50)}
+.grade-btn.active{font-weight:600;border-color:currentColor}
+.grade-btn.faded{opacity:0.4;background:var(--c1);color:var(--c4)}
 
 /* ═══ HISTORY CARD ═══ */
 .hist-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:16px 24px;margin-bottom:16px}
@@ -327,7 +329,7 @@ var employeeComment='本季度整体工作完成情况良好。关键指标方�
 var indirectComment='';
 
 function renderModuleContainer(){
-  var gradeOptions=['超出预期','符合预期+','符合预期','符合预期-','低于预期'];
+  var gradeOptions=['远超预期','超出预期','符合预期+','符合预期','符合预期-','低于预期','远低预期'];
   var html='<div class="eval-list"><table><thead><tr>'+
     '<th style="width:180px">名称</th>'+
     '<th style="width:55px">权重</th>'+
@@ -364,11 +366,13 @@ function renderModuleContainer(){
     '<div style="font:600 14px/1 var(--f);color:var(--c9);margin-bottom:6px">初评等级</div>'+
     '<div style="font:400 12px/1 var(--f);color:var(--c5);margin-bottom:12px">请根据被考核人表现选择初评等级</div>'+
     '<div class="grade-btn-group" id="initGradeGroup">'+
+      '<button type="button" class="grade-btn" data-grade="远超预期" onclick="selectInitGrade(this)">远超预期</button>'+
       '<button type="button" class="grade-btn" data-grade="超出预期" onclick="selectInitGrade(this)">超出预期</button>'+
       '<button type="button" class="grade-btn" data-grade="符合预期+" onclick="selectInitGrade(this)">符合预期+</button>'+
       '<button type="button" class="grade-btn" data-grade="符合预期" onclick="selectInitGrade(this)">符合预期</button>'+
       '<button type="button" class="grade-btn" data-grade="符合预期-" onclick="selectInitGrade(this)">符合预期-</button>'+
       '<button type="button" class="grade-btn" data-grade="低于预期" onclick="selectInitGrade(this)">低于预期</button>'+
+      '<button type="button" class="grade-btn" data-grade="远低预期" onclick="selectInitGrade(this)">远低预期</button>'+
     '</div>'+
     '<input type="hidden" id="initGradeValue" value="">'+
   '</div>';
@@ -396,18 +400,22 @@ function renderModuleContainer(){
 }
 
 function updateGrade(mi,gi,btn){
-  var group=btn.closest('.grade-btn-group');
-  group.querySelectorAll('.grade-btn').forEach(function(b){b.classList.remove('active');});
-  btn.classList.add('active');
   var val=btn.getAttribute('data-grade');
   document.getElementById('grade_'+mi+'_'+gi).value=val;
   MODULES[mi].goals[gi].grade=val;
+  var group=btn.parentElement;
+  group.querySelectorAll('.grade-btn').forEach(function(b){
+    if(b===btn){b.classList.add('active');b.classList.remove('faded');}
+    else{b.classList.remove('active');b.classList.add('faded');}
+  });
 }
 
 function selectInitGrade(btn){
   var group=document.getElementById('initGradeGroup');
-  group.querySelectorAll('.grade-btn').forEach(function(b){b.classList.remove('active');});
-  btn.classList.add('active');
+  group.querySelectorAll('.grade-btn').forEach(function(b){
+    if(b===btn){b.classList.add('active');b.classList.remove('faded');}
+    else{b.classList.remove('active');b.classList.add('faded');}
+  });
   document.getElementById('initGradeValue').value=btn.getAttribute('data-grade');
 }
 

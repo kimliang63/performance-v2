@@ -314,9 +314,11 @@ const SCHEMES=[
   {id:'S004',name:'2025年度绩效考核方案',code:'PERF-2025-001',desc:'2025年度全公司绩效考核方案',status:'disabled',version:1,groups:3,activities:0,modifier:'王管理',modified:'2025-12-15 11:00'},
   {id:'S005',name:'试用期考核方案',code:'PERF-2026-004',desc:'新员工试用期考核专用',status:'disabled',version:2,groups:1,activities:0,modifier:'李HR',modified:'2026-05-22 08:30'},
   {id:'S006',name:'特殊岗位考核方案',code:'PERF-2026-005',desc:'技术序列及特殊岗位定制考核',status:'enabled',version:1,groups:2,activities:0,modifier:'王管理',modified:'2026-05-25 10:20'},
+  {id:'S007',name:'2026年Q3绩效考核方案',code:'PERF-2026-006',desc:'Q3季度考核方案（配置中）',status:'draft',version:1,groups:0,activities:0,modifier:'李HR',modified:'2026-06-20 09:00'},
 ];
 
 const STATUS_MAP={
+  draft:{label:'草稿',cls:'draft'},
   enabled:{label:'已启用',cls:'enabled'},
   disabled:{label:'已停用',cls:'disabled'},
 };
@@ -377,6 +379,7 @@ function renderFilterBar(){
     </div>
     <select class="fl-sel" id="flStatus" onchange="onStatusChange(this.value)">
       <option value=""${filter.status===''?' selected':''}>全部状态</option>
+      <option value="draft"${filter.status==='draft'?' selected':''}>草稿</option>
       <option value="enabled"${filter.status==='enabled'?' selected':''}>已启用</option>
       <option value="disabled"${filter.status==='disabled'?' selected':''}>已停用</option>
     </select>
@@ -389,7 +392,8 @@ function renderFilterBar(){
 function renderTable(data){
   const rows=data.map(s=>{
     const st=STATUS_MAP[s.status];
-    const toggleLabel=s.status==='enabled'?'停用':'启用';
+    const isDraft=s.status==='draft';
+    const toggleLabel=s.status==='enabled'?'停用':s.status==='draft'?'启用':'启用';
     return `<tr>
       <td class="cell-name">${s.name}</td>
       <td class="cell-code">${s.code}</td>
@@ -404,8 +408,8 @@ function renderTable(data){
           <button class="btn btn-t" onclick="editScheme('${s.id}')">编辑</button>
           <button class="btn btn-t" onclick="copyScheme('${s.id}')">复制</button>
           <button class="btn btn-t" onclick="viewDetail('${s.id}')">详情</button>
-          <button class="btn btn-t${s.status==='enabled'?' danger':''}" onclick="toggleStatus('${s.id}')">${toggleLabel}</button>
-          ${s.status==='disabled'?`<button class="btn btn-t danger" onclick="deleteScheme('${s.id}')">删除</button>`:''}
+          ${!isDraft?`<button class="btn btn-t${s.status==='enabled'?' danger':''}" onclick="toggleStatus('${s.id}')">${toggleLabel}</button>`:''}
+          ${(s.status==='disabled'||isDraft)?`<button class="btn btn-t danger" onclick="deleteScheme('${s.id}')">删除</button>`:''}
         </div>
       </td>
     </tr>`;
@@ -577,7 +581,8 @@ function toggleStatus(id){
 function confirmToggle(){
   const s=SCHEMES.find(x=>x.id===modalState.data);
   if(s){
-    s.status=s.status==='enabled'?'disabled':'enabled';
+    if(s.status==='enabled') s.status='disabled';
+    else s.status='enabled';
     console.log('[绩效方案] 切换状态:',s.id,'→',s.status);
   }
   modalState={type:null,data:null};

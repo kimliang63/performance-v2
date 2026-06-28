@@ -56,112 +56,266 @@
 
 ## 2. 基础配置层（V1）
 
+> **更新说明**（2026-06-26）：根据飞书需求说明书核对修正，主要变更：
+> - 新增：排序码、部门、向下公开、多语言支持
+> - 删除：单位表的grades字段、计算规则的type字段
+> - 修正：衡量标准梯度结构、等级规则区间配置
+
 ### 2.1 perf_cycle（绩效周期）
 
 | 字段 | 类型 | 约束 | 说明 |
 |------|------|------|------|
 | `id` | bigint | PK | 主键 |
-| `name` | varchar(100) | NOT NULL | 周期名称 |
-| `code` | varchar(50) | UNIQUE | 周期编码 |
-| `type` | enum | NOT NULL | monthly/quarterly/half_yearly/yearly/custom |
-| `start_month` | int | | 开始月份（1-12） |
-| `end_month` | int | | 结束月份（1-12） |
-| `status` | enum | NOT NULL | enabled/disabled |
-| `created_at` | timestamp | DEFAULT NOW() | 创建时间 |
-| `updated_at` | timestamp | ON UPDATE NOW() | 更新时间 |
-
-### 2.2 perf_unit（考核单位）
-
-| 字段 | 类型 | 约束 | 说明 |
-|------|------|------|------|
-| `id` | bigint | PK | 主键 |
-| `name` | varchar(200) | NOT NULL | 规则名称 |
-| `code` | varchar(50) | UNIQUE | 规则编码 |
-| `grades` | JSON | NOT NULL | 等级定义 [{name, min_score, max_score, color}] |
+| `name` | json | NOT NULL | 多语言名称 {zh: "", en: ""} |
+| `code` | varchar(50) | UNIQUE | 周期编码（系统自动生成） |
+| `type` | enum | NOT NULL | fixed_year/fixed_half_year/fixed_quarter/fixed_month/non_fixed |
+| `start_year_offset` | int | | 开始年份偏移（0=本年，-1=上一年，1=下一年） |
+| `start_date` | date | | 开始日期（非固定周期时为空） |
+| `end_year_offset` | int | | 结束年份偏移（0=本年，-1=上一年，1=下一年） |
+| `end_date` | date | | 结束日期（非固定周期时为空） |
+| `sort_order` | int | NOT NULL | 排序码（正整数，升序） |
+| `is_preset` | boolean | NOT NULL DEFAULT FALSE | 是否系统预置 |
 | `status` | enum | NOT NULL | enabled/disabled |
 | `created_by` | bigint | FK → employee | 创建人 |
 | `modified_by` | bigint | FK → employee | 修改人 |
 | `created_at` | timestamp | DEFAULT NOW() | 创建时间 |
 | `updated_at` | timestamp | ON UPDATE NOW() | 更新时间 |
+
+**约束**：
+- 名称各语种唯一
+- 排序码唯一
+- 固定周期必须填写开始/结束日期
+- 归属年份校验：下一年 > 本年 > 上一年
+
+### 2.2 perf_unit（单位）
+
+| 字段 | 类型 | 约束 | 说明 |
+|------|------|------|------|
+| `id` | bigint | PK | 主键 |
+| `name` | json | NOT NULL | 多语言名称 {zh: "", en: ""} |
+| `created_by` | bigint | FK → employee | 创建人 |
+| `modified_by` | bigint | FK → employee | 修改人 |
+| `created_at` | timestamp | DEFAULT NOW() | 创建时间 |
+| `updated_at` | timestamp | ON UPDATE NOW() | 更新时间 |
+
+**说明**：单位仅存储名称，用于指标的计量单位引用。被启用中的指标引用时不可删除。
+
+### 2.3 perf_grade_rule（等级规则）
+
+| 字段 | 类型 | 约束 | 说明 |
+|------|------|------|------|
+| `id` | bigint | PK | 主键 |
+| `name` | json | NOT NULL | 多语言名称 {zh: "", en: ""} |
+| `code` | varchar(50) | UNIQUE | 规则编码（系统自动生成） |
+| `dept_ids` | json | NOT NULL | 适用部门ID列表 |
+| `is_public` | boolean | NOT NULL DEFAULT TRUE | 是否向下公开 |
+| `match_rule` | enum | NOT NULL | enabled/disabled（匹配规则启用/不启用） |
+| `status` | enum | NOT NULL | enabled/disabled |
+| `created_by` | bigint | FK → employee | 创建人 |
+| `modified_by` | bigint | FK → employee | 修改人 |
+| `created_at` | timestamp | DEFAULT NOW() | 创建时间 |
+| `updated_at` | timestamp | ON UPDATE NOW() | 更新时间 |
+
+**关联表：perf_grade_rule_detail（等级明细）**
+
+| 字段 | 类型 | 约束 | 说明 |
+|------|------|------|------|
+| `id` | bigint | PK | 主键 |
+| `grade_rule_id` | bigint | FK → perf_grade_rule | 所属等级规则 |
+| `grade_name` | json | NOT NULL | 多语言等级名称 |
+| `left_interval_type` | enum | | included/excluded（左区间：包含/不包含） |
+| `right_interval_type` | enum | | included/excluded（右区间：包含/不包含） |
+| `score` | decimal(10,2) | | 分值 |
+| `sort_order` | int | NOT NULL | 排序码 |
+
+**说明**：
+- 匹配规则启用时，左区间/右区间/分值必填
+- 被强制分布规则、绩效方案引用时不可删除
 
 ### 2.4 perf_calc_rule（计算规则）
 
 | 字段 | 类型 | 约束 | 说明 |
 |------|------|------|------|
 | `id` | bigint | PK | 主键 |
-| `name` | varchar(200) | NOT NULL | 规则名称 |
-| `code` | varchar(50) | UNIQUE | 规则编码 |
-| `type` | enum | NOT NULL | quantitative/qualitative |
-| `formula` | text | NOT NULL | 计算公式 |
-| `description` | text | | 规则说明 |
+| `name` | json | NOT NULL | 多语言名称 {zh: "", en: ""} |
+| `code` | varchar(50) | UNIQUE | 规则编码（系统自动生成） |
+| `sort_order` | int | NOT NULL | 排序码（正整数，升序） |
+| `dept_ids` | json | NOT NULL | 适用部门ID列表 |
+| `is_public` | boolean | NOT NULL DEFAULT TRUE | 是否向下公开 |
+| `formula` | text | NOT NULL | 计算公式（公式编辑器表达式） |
+| `description` | json | | 多语言规则描述 |
 | `status` | enum | NOT NULL | enabled/disabled |
 | `created_by` | bigint | FK → employee | 创建人 |
 | `modified_by` | bigint | FK → employee | 修改人 |
 | `created_at` | timestamp | DEFAULT NOW() | 创建时间 |
 | `updated_at` | timestamp | ON UPDATE NOW() | 更新时间 |
+
+**约束**：
+- 名称各语种唯一
+- 排序码唯一
+- 被指标引用时不可删除
+
+**导入校验规则**：
+1. 必填项校验：名称、排序码、部门、向下公开、公式
+2. 唯一性校验：同语种名称、排序码
+3. 数据匹配校验：编码值、部门、向下公开
+4. 重复项校验：文件内名称、排序码
+5. 内容长度校验：名称≤200，描述≤500
+6. 公式校验：表达式是否正确
 
 ### 2.5 perf_measure_standard（衡量标准）
 
 | 字段 | 类型 | 约束 | 说明 |
 |------|------|------|------|
 | `id` | bigint | PK | 主键 |
-| `name` | varchar(200) | NOT NULL | 标准名称 |
-| `code` | varchar(50) | UNIQUE | 标准编码 |
-| `unit` | varchar(50) | | 计量单位 |
-| `grades` | JSON | NOT NULL | 参考值 {challenge, target, baseline} |
+| `name` | json | NOT NULL | 多语言名称 {zh: "", en: ""} |
+| `code` | varchar(50) | UNIQUE | 标准编码（系统自动生成） |
+| `dept_ids` | json | NOT NULL | 适用部门ID列表 |
+| `standard_type` | enum | NOT NULL | fixed（固定值，预留扩展） |
 | `status` | enum | NOT NULL | enabled/disabled |
 | `created_by` | bigint | FK → employee | 创建人 |
 | `modified_by` | bigint | FK → employee | 修改人 |
 | `created_at` | timestamp | DEFAULT NOW() | 创建时间 |
 | `updated_at` | timestamp | ON UPDATE NOW() | 更新时间 |
+
+**关联表：perf_measure_standard_gradient（衡量梯度）**
+
+| 字段 | 类型 | 约束 | 说明 |
+|------|------|------|------|
+| `id` | bigint | PK | 主键 |
+| `standard_id` | bigint | FK → perf_measure_standard | 所属衡量标准 |
+| `gradient_name` | json | NOT NULL | 多语言梯度名称 |
+| `gradient_rule` | enum | NOT NULL | integer/decimal（整数/小数） |
+| `sort_order` | int | NOT NULL | 排序码 |
+| `created_at` | timestamp | DEFAULT NOW() | 创建时间 |
+
+**说明**：
+- 梯度支持上下移动
+- 被指标引用时不可删除
 
 ### 2.6 perf_indicator（指标库）
 
 | 字段 | 类型 | 约束 | 说明 |
 |------|------|------|------|
 | `id` | bigint | PK | 主键 |
-| `name` | varchar(200) | NOT NULL | 指标名称 |
-| `code` | varchar(50) | UNIQUE | 指标编码 |
-| `measure_standard_id` | bigint | FK → perf_measure_standard | 衡量标准 |
+| `name` | json | NOT NULL | 多语言名称 {zh: "", en: ""} |
+| `code` | varchar(50) | UNIQUE | 指标编码（系统自动生成） |
+| `sort_order` | int | NOT NULL | 排序码（正整数，升序） |
+| `dept_ids` | json | NOT NULL | 适用部门ID列表 |
+| `is_public` | boolean | NOT NULL DEFAULT TRUE | 是否向下公开 |
+| `category_id` | bigint | FK → perf_indicator_category | 指标分类 |
+| `indicator_type` | enum | NOT NULL | qualitative/quantitative/add_subtract（定性/定量/加减法） |
+| `indicator_nature` | enum | NOT NULL | positive/negative（正向/负向） |
 | `calc_rule_id` | bigint | FK → perf_calc_rule | 计算规则 |
+| `unit_id` | bigint | FK → perf_unit | 单位 |
+| `value_source` | enum | | user_fill（完成值来源，默认用户填写，预留扩展） |
+| `description` | json | | 多语言指标描述 |
 | `status` | enum | NOT NULL | enabled/disabled |
 | `created_by` | bigint | FK → employee | 创建人 |
 | `modified_by` | bigint | FK → employee | 修改人 |
 | `created_at` | timestamp | DEFAULT NOW() | 创建时间 |
 | `updated_at` | timestamp | ON UPDATE NOW() | 更新时间 |
 
-### 2.7 perf_eval_rule（评价规则）
+**关联表：perf_indicator_measure_value（指标衡量值）**
+
+> 定量指标引用衡量标准时，存储用户填写的衡量值
 
 | 字段 | 类型 | 约束 | 说明 |
 |------|------|------|------|
 | `id` | bigint | PK | 主键 |
-| `name` | varchar(200) | NOT NULL | 规则名称 |
-| `code` | varchar(50) | UNIQUE | 规则编码 |
-| `eval_levels` | JSON | NOT NULL | 评价等级定义 |
-| `status` | enum | NOT NULL | enabled/disabled |
-| `created_by` | bigint | FK → employee | 创建人 |
-| `modified_by` | bigint | FK → employee | 修改人 |
-| `created_at` | timestamp | DEFAULT NOW() | 创建时间 |
-| `updated_at` | timestamp | ON UPDATE NOW() | 更新时间 |
+| `indicator_id` | bigint | FK → perf_indicator | 所属指标 |
+| `gradient_id` | bigint | FK → perf_measure_standard_gradient | 衡量梯度 |
+| `measure_value` | decimal(10,2) | | 衡量值 |
 
-### 2.8 perf_dist_rule（强制分布规则）
+**说明**：
+- 指标分类为树结构，支持多级
+- 定性/加减法指标：衡量标准为手动输入文本
+- 定量指标：引用衡量标准，存储衡量值
+- 被绩效方案/考核表单引用时不可删除
+
+### 2.7 perf_indicator_category（指标分类）
 
 | 字段 | 类型 | 约束 | 说明 |
 |------|------|------|------|
 | `id` | bigint | PK | 主键 |
-| `name` | varchar(200) | NOT NULL | 规则名称 |
-| `code` | varchar(50) | UNIQUE | 规则编码 |
-| `grade_rule_id` | bigint | FK → perf_grade_rule | 绑定的等级规则（必须关联） |
-| `distribution` | JSON | NOT NULL | 分布要求 [{grade, percentage, min_count}] |
-| `control_mode` | enum | NOT NULL | strong/weak（强控/弱控） |
-| `min_threshold` | int | | 起控人数 |
+| `parent_id` | bigint | | 父级分类ID（NULL=顶级） |
+| `name` | json | NOT NULL | 多语言分类名称 |
+| `sort_order` | int | NOT NULL | 排序码 |
+| `created_at` | timestamp | DEFAULT NOW() | 创建时间 |
+| `updated_at` | timestamp | ON UPDATE NOW() | 更新时间 |
+
+**说明**：
+- 存在子级分类时不可删除
+- 存在关联指标时不可删除
+
+### 2.8 perf_eval_rule（评价规则）
+
+| 字段 | 类型 | 约束 | 说明 |
+|------|------|------|------|
+| `id` | bigint | PK | 主键 |
+| `name` | json | NOT NULL | 多语言名称 {zh: "", en: ""} |
+| `code` | varchar(50) | UNIQUE | 规则编码（系统自动生成） |
+| `dept_ids` | json | NOT NULL | 适用部门ID列表 |
+| `is_public` | boolean | NOT NULL DEFAULT TRUE | 是否向下公开 |
+| `rule_type` | enum | NOT NULL | numeric/grade（数值/等级） |
+| `min_score` | decimal(10,2) | | 分值范围最小值 |
+| `max_score` | decimal(10,2) | | 分值范围最大值 |
 | `status` | enum | NOT NULL | enabled/disabled |
 | `created_by` | bigint | FK → employee | 创建人 |
 | `modified_by` | bigint | FK → employee | 修改人 |
 | `created_at` | timestamp | DEFAULT NOW() | 创建时间 |
 | `updated_at` | timestamp | ON UPDATE NOW() | 更新时间 |
 
-**说明**：强制分布规则必须绑定等级规则，分布比例中的 grade 必须是等级规则中定义的等级。等级规则增删等级时，引用的强制分布规则需同步更新。
+**关联表：perf_eval_rule_level（评价等级）**
+
+> 规则类型为"等级"时使用
+
+| 字段 | 类型 | 约束 | 说明 |
+|------|------|------|------|
+| `id` | bigint | PK | 主键 |
+| `eval_rule_id` | bigint | FK → perf_eval_rule | 所属评价规则 |
+| `level_name` | json | NOT NULL | 多语言等级名称 |
+| `score` | decimal(10,2) | | 分值 |
+| `sort_order` | int | NOT NULL | 排序码 |
+
+**说明**：
+- 等级名称各语种不可重复
+- 被考核组引用时不可删除
+
+### 2.9 perf_dist_rule（强制分布规则）
+
+| 字段 | 类型 | 约束 | 说明 |
+|------|------|------|------|
+| `id` | bigint | PK | 主键 |
+| `name` | json | NOT NULL | 多语言名称 {zh: "", en: ""} |
+| `code` | varchar(50) | UNIQUE | 规则编码（系统自动生成） |
+| `dept_ids` | json | NOT NULL | 适用部门ID列表 |
+| `is_public` | boolean | NOT NULL DEFAULT TRUE | 是否向下公开 |
+| `grade_rule_id` | bigint | FK → perf_grade_rule | 应用等级（必须关联） |
+| `rule_type` | enum | NOT NULL | numeric/grade（数值/等级） |
+| `effective_count` | int | NOT NULL | 生效人数（>0） |
+| `status` | enum | NOT NULL | enabled/disabled |
+| `created_by` | bigint | FK → employee | 创建人 |
+| `modified_by` | bigint | FK → employee | 修改人 |
+| `created_at` | timestamp | DEFAULT NOW() | 创建时间 |
+| `updated_at` | timestamp | ON UPDATE NOW() | 更新时间 |
+
+**关联表：perf_dist_rule_detail（分布规则明细）**
+
+| 字段 | 类型 | 约束 | 说明 |
+|------|------|------|------|
+| `id` | bigint | PK | 主键 |
+| `dist_rule_id` | bigint | FK → perf_dist_rule | 所属强制分布规则 |
+| `grade_name` | json | NOT NULL | 多语言等级名称（来自等级规则） |
+| `compare_rule` | enum | NOT NULL | le/ge（不超过/不低于） |
+| `value` | decimal(10,4) | NOT NULL | 值（数值模式为绝对值，等级模式为百分比） |
+| `sort_order` | int | NOT NULL | 排序码 |
+
+**说明**：
+- 强制分布规则必须绑定等级规则
+- 等级名称必须是等级规则中定义的等级
+- 等级规则增删等级时，引用的强制分布规则需同步更新
+- 支持操作记录查看
 
 ---
 
@@ -172,21 +326,25 @@
 | 字段 | 类型 | 约束 | 说明 |
 |------|------|------|------|
 | `id` | bigint | PK | 主键 |
-| `name` | varchar(200) | NOT NULL | 方案名称 |
-| `code` | varchar(50) | UNIQUE | 方案编号（自动生成） |
+| `name` | varchar(200) | NOT NULL | 方案名称（同语种唯一） |
+| `code` | varchar(50) | UNIQUE | 方案编号（系统自动生成，不可编辑） |
 | `version` | int | NOT NULL DEFAULT 1 | 版本号（每次保存+1） |
 | `cycle_type` | enum | NOT NULL | monthly/quarterly/half_yearly/yearly/custom |
 | `status` | enum | NOT NULL | draft/enabled/disabled |
+| `dept_id` | bigint | FK → org_unit | 适用部门（方案适用的组织范围） |
+| `is_public` | boolean | NOT NULL DEFAULT TRUE | 是否向下公开（控制员工是否可在工作台查看绩效结果） |
 | `grade_rule_id` | bigint | FK → perf_grade_rule | 等级规则 |
-| `dynamic_assessment` | boolean | NOT NULL DEFAULT FALSE | 是否动态考核 |
+| `dynamic_assessment` | enum | NOT NULL | snapshot/realtime（snapshot=活动发起时快照考核关系；realtime=每次环节启动时实时查询） |
 | `config_mode` | enum | NOT NULL | merged/per_group（合并/按考核组） |
-| `description` | text | | 方案描述 |
+| `rule_desc` | text | | 规则描述（最多500字） |
 | `created_by` | bigint | FK → employee | 创建人 |
 | `modified_by` | bigint | FK → employee | 修改人 |
 | `created_at` | timestamp | DEFAULT NOW() | 创建时间 |
 | `updated_at` | timestamp | ON UPDATE NOW() | 更新时间 |
 
-**说明**：方案的 `cycle_type` 是周期类型（月度/季度/半年度/年度/自定义），不绑定具体周期。具体周期由活动发起时选择（activity.cycle_id）。一个方案可跨多个周期复用。
+**说明**：
+- 方案的 `cycle_type` 是周期类型（monthly=月度/quarterly=季度/half_yearly=半年度/yearly=年度/custom=自定义），不绑定具体周期。具体周期由活动发起时选择（activity.cycle_id）。一个方案可跨多个周期复用。
+- `dynamic_assessment` 为 snapshot 时，活动发起时快照考核关系，后续不随组织调整变化；为 realtime 时，每次环节启动时实时查询当前汇报关系。
 
 **索引**：
 - `idx_scheme_status` (status)
@@ -484,9 +642,12 @@ BEGIN
       JSON_OBJECT(
         'name', NEW.name,
         'cycle_type', NEW.cycle_type,
+        'dept_id', NEW.dept_id,
+        'is_public', NEW.is_public,
         'grade_rule_id', NEW.grade_rule_id,
         'dynamic_assessment', NEW.dynamic_assessment,
         'config_mode', NEW.config_mode,
+        'rule_desc', NEW.rule_desc,
         'groups', (SELECT JSON_ARRAYAGG(JSON_OBJECT('id', g.id, 'name', g.name, 'priority', g.priority, 'rule_type', g.rule_type, 'rule_config', g.rule_config, 'exclude_employees', g.exclude_employees, 'eval_rule_id', g.eval_rule_id)) FROM perf_assessment_group g WHERE g.scheme_id = NEW.id),
         'stages', (SELECT JSON_ARRAYAGG(JSON_OBJECT('id', s.id, 'stage_type', s.stage_type, 'enabled', s.enabled, 'start_method', s.start_method, 'end_method', s.end_method, 'timeout_days', s.timeout_days, 'flow_template_id', s.flow_template_id, 'form_template_id', s.form_template_id, 'forced_end_grade', s.forced_end_grade, 'node_weights', s.node_weights, 'eval_rule_id', s.eval_rule_id, 'dist_rule_id', s.dist_rule_id, 'control_mode', s.control_mode)) FROM perf_stage_config s WHERE s.scheme_id = NEW.id)
       ),

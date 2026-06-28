@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE 绩效管理 - 绩效方案</title>
+<style>
+:root {
+  --primary: #409eff;
+  --primary-light: #ecf5ff;
+  --success: #67c23a;
+  --warning: #e6a23c;
+  --danger: #f56c6c;
+  --info: #909399;
+  --text-primary: #303133;
+  --text-regular: #606266;
+  --text-secondary: #909399;
+  --border: #dcdfe6;
+  --border-light: #e4e7ed;
+  --bg: #f5f7fa;
+  --bg-white: #ffffff;
+  --radius: 4px;
+  --shadow: 0 2px 12px rgba(0,0,0,.1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; color: var(--text-primary); background: var(--bg); font-size: 14px; }
+
+/* Layout */
+.app-container { display: flex; min-height: 100vh; }
+.sidebar { width: 210px; background: #304156; color: #bfcbd9; flex-shrink: 0; }
+.sidebar-header { height: 50px; display: flex; align-items: center; justify-content: center; background: #263445; color: #fff; font-size: 16px; font-weight: 600; letter-spacing: 2px; }
+.sidebar-menu { padding: 8px 0; }
+.menu-group-title { padding: 12px 20px 6px; font-size: 12px; color: #8899aa; text-transform: uppercase; letter-spacing: 1px; }
+.menu-item { padding: 10px 20px 10px 28px; cursor: pointer; transition: all .2s; display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.menu-item:hover { background: rgba(255,255,255,.05); color: #fff; }
+.menu-item.active { background: var(--primary); color: #fff; }
+.menu-item .icon { width: 18px; text-align: center; font-size: 15px; }
+
+.main-area { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.top-bar { height: 50px; background: #fff; border-bottom: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; }
+.breadcrumb { color: var(--text-secondary); font-size: 13px; }
+.breadcrumb span { color: var(--text-primary); }
+.user-info { display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--text-regular); }
+.user-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+
+.content { flex: 1; padding: 16px; overflow-y: auto; }
+
+/* Page Header */
+.page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.page-title { font-size: 18px; font-weight: 600; }
+
+/* Card */
+.card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 16px; }
+.card-header { padding: 12px 20px; border-bottom: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between; }
+.card-header h3 { font-size: 14px; font-weight: 600; }
+.card-body { padding: 16px 20px; }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; gap: 4px; padding: 7px 15px; border-radius: var(--radius); font-size: 13px; cursor: pointer; border: 1px solid transparent; transition: all .2s; white-space: nowrap; }
+.btn-primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+.btn-primary:hover { background: #66b1ff; }
+.btn-success { background: var(--success); color: #fff; border-color: var(--success); }
+.btn-warning { background: var(--warning); color: #fff; border-color: var(--warning); }
+.btn-danger { background: var(--danger); color: #fff; border-color: var(--danger); }
+.btn-default { background: #fff; color: var(--text-regular); border-color: var(--border); }
+.btn-default:hover { color: var(--primary); border-color: var(--primary); background: var(--primary-light); }
+.btn-text { background: transparent; color: var(--primary); border: none; padding: 4px 8px; }
+.btn-text:hover { color: #66b1ff; }
+.btn-text.danger { color: var(--danger); }
+.btn-sm { padding: 4px 10px; font-size: 12px; }
+.btn-group { display: flex; gap: 8px; }
+
+/* Table */
+.table-wrapper { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border-light); font-size: 13px; }
+th { background: #fafafa; color: var(--text-secondary); font-weight: 500; white-space: nowrap; }
+tr:hover td { background: #f5f7fa; }
+td .actions { display: flex; gap: 4px; flex-wrap: nowrap; }
+
+/* Tags */
+.tag { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 12px; line-height: 18px; }
+.tag-success { background: #f0f9eb; color: #67c23a; }
+.tag-warning { background: #fdf6ec; color: #e6a23c; }
+.tag-info { background: #f4f4f5; color: #909399; }
+.tag-danger { background: #fef0f0; color: #f56c6c; }
+
+/* Form */
+.form-group { margin-bottom: 16px; }
+.form-label { display: block; margin-bottom: 6px; font-size: 13px; color: var(--text-regular); }
+.form-label .required { color: var(--danger); margin-right: 2px; }
+.form-input, .form-select, .form-textarea { width: 100%; padding: 7px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 13px; color: var(--text-primary); transition: border-color .2s; outline: none; }
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--primary); }
+.form-textarea { min-height: 80px; resize: vertical; }
+.form-row { display: flex; gap: 20px; }
+.form-row .form-group { flex: 1; }
+.form-inline { display: flex; align-items: center; gap: 8px; }
+.radio-group { display: flex; gap: 16px; }
+.radio-item { display: flex; align-items: center; gap: 4px; cursor: pointer; font-size: 13px; }
+.radio-item input[type="radio"] { accent-color: var(--primary); }
+
+/* Stepper */
+.stepper { display: flex; align-items: flex-start; margin-bottom: 24px; padding: 0 20px; }
+.step { flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; }
+.step:not(:last-child)::after { content: ''; position: absolute; top: 14px; left: calc(50% + 20px); width: calc(100% - 40px); height: 2px; background: var(--border-light); }
+.step.completed:not(:last-child)::after { background: var(--primary); }
+.step-number { width: 28px; height: 28px; border-radius: 50%; background: var(--border-light); color: var(--text-secondary); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; position: relative; z-index: 1; margin-bottom: 6px; }
+.step.active .step-number { background: var(--primary); color: #fff; }
+.step.completed .step-number { background: var(--primary); color: #fff; }
+.step-label { font-size: 12px; color: var(--text-secondary); text-align: center; max-width: 80px; }
+.step.active .step-label { color: var(--primary); font-weight: 500; }
+
+/* Sub-stepper (directory) */
+.config-layout { display: flex; gap: 0; min-height: 500px; }
+.config-sidebar { width: 200px; border-right: 1px solid var(--border-light); padding: 16px 0; flex-shrink: 0; }
+.config-sidebar-title { padding: 0 16px 12px; font-size: 13px; font-weight: 600; color: var(--text-secondary); display: flex; align-items: center; justify-content: space-between; }
+.config-menu-item { padding: 10px 16px 10px 24px; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 8px; transition: all .15s; position: relative; }
+.config-menu-item:hover { background: #f5f7fa; }
+.config-menu-item.active { color: var(--primary); background: var(--primary-light); font-weight: 500; }
+.config-menu-item.active::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--primary); border-radius: 0 2px 2px 0; }
+.config-menu-item .status-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.config-menu-item .status-dot.empty { background: var(--border); }
+.config-menu-item .status-dot.done { background: var(--success); }
+.config-menu-item .status-dot.partial { background: var(--warning); }
+.config-content { flex: 1; padding: 20px; overflow-y: auto; }
+
+/* Progress */
+.progress-bar { height: 6px; background: #eee; border-radius: 3px; overflow: hidden; margin-top: 4px; }
+.progress-fill { height: 100%; background: var(--primary); border-radius: 3px; transition: width .3s; }
+
+/* Switch */
+.switch { position: relative; display: inline-block; width: 40px; height: 20px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.switch-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #dcdfe6; border-radius: 20px; transition: .3s; }
+.switch-slider::before { content: ''; position: absolute; height: 16px; width: 16px; left: 2px; bottom: 2px; background: #fff; border-radius: 50%; transition: .3s; }
+.switch input:checked + .switch-slider { background: var(--primary); }
+.switch input:checked + .switch-slider::before { transform: translateX(20px); }
+
+/* Tabs */
+.tabs { display: flex; border-bottom: 1px solid var(--border-light); margin-bottom: 16px; }
+.tab-item { padding: 10px 20px; cursor: pointer; font-size: 13px; color: var(--text-secondary); border-bottom: 2px solid transparent; transition: all .2s; }
+.tab-item:hover { color: var(--primary); }
+.tab-item.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 500; }
+
+/* Modal */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+.modal { background: #fff; border-radius: var(--radius); width: 600px; max-width: 90vw; max-height: 80vh; display: flex; flex-direction: column; box-shadow: 0 4px 24px rgba(0,0,0,.15); }
+.modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between; }
+.modal-header h3 { font-size: 15px; }
+.modal-close { background: none; border: none; font-size: 18px; cursor: pointer; color: var(--text-secondary); padding: 4px; }
+.modal-body { padding: 20px; overflow-y: auto; flex: 1; }
+.modal-footer { padding: 12px 20px; border-top: 1px solid var(--border-light); display: flex; justify-content: flex-end; gap: 8px; }
+
+/* Toast */
+.toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 10px 20px; background: #303133; color: #fff; border-radius: var(--radius); font-size: 13px; z-index: 2000; opacity: 0; transition: opacity .3s; }
+.toast.show { opacity: 1; }
+
+/* Empty state */
+.empty-state { text-align: center; padding: 40px; color: var(--text-secondary); }
+.empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+
+/* Utility */
+.mt-8 { margin-top: 8px; }
+.mt-16 { margin-top: 16px; }
+.mb-8 { margin-bottom: 8px; }
+.mb-16 { margin-bottom: 16px; }
+.text-right { text-align: right; }
+.text-center { text-align: center; }
+.flex-between { display: flex; align-items: center; justify-content: space-between; }
+.gap-8 { gap: 8px; }
+
+/* Assessment group rule card */
+.rule-card { border: 1px solid var(--border-light); border-radius: var(--radius); padding: 12px 16px; margin-bottom: 8px; background: #fafafa; }
+.rule-card .rule-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.rule-card .rule-body { font-size: 13px; color: var(--text-regular); }
+.rule-tag { display: inline-block; padding: 1px 6px; background: #ecf5ff; color: var(--primary); border-radius: 3px; font-size: 12px; margin: 0 2px; }
+
+/* Phase config card */
+.phase-card { border: 1px solid var(--border-light); border-radius: var(--radius); margin-bottom: 16px; }
+.phase-card-header { padding: 12px 16px; background: #fafafa; border-bottom: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between; }
+.phase-card-header h4 { font-size: 14px; display: flex; align-items: center; gap: 8px; }
+.phase-card-body { padding: 16px; }
+.config-row { display: flex; align-items: flex-start; margin-bottom: 14px; }
+.config-label { width: 140px; flex-shrink: 0; font-size: 13px; color: var(--text-regular); padding-top: 6px; }
+.config-value { flex: 1; }
+
+/* Workflow mini preview */
+.flow-preview { display: flex; align-items: center; gap: 4px; padding: 12px 16px; background: #f9f9f9; border-radius: var(--radius); overflow-x: auto; }
+.flow-node { padding: 6px 12px; background: #fff; border: 1px solid var(--border); border-radius: var(--radius); font-size: 12px; white-space: nowrap; }
+.flow-node.start { background: #e8f5e9; border-color: #a5d6a7; }
+.flow-node.end { background: #ffebee; border-color: #ef9a9a; }
+.flow-arrow { color: var(--text-secondary); font-size: 16px; }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">GHR</div>
+    <nav class="sidebar-menu">
+      <div class="menu-group-title">绩效管理</div>
+      <div class="menu-item" onclick="showToast('绩效周期')"><span class="icon">&#9776;</span> 绩效周期</div>
+      <div class="menu-item" onclick="showToast('单位')"><span class="icon">&#9776;</span> 单位</div>
+      <div class="menu-item" onclick="showToast('等级规则')"><span class="icon">&#9776;</span> 等级规则</div>
+      <div class="menu-item" onclick="showToast('计算规则')"><span class="icon">&#9776;</span> 计算规则</div>
+      <div class="menu-item" onclick="showToast('衡量标准')"><span class="icon">&#9776;</span> 衡量标准</div>
+      <div class="menu-item" onclick="showToast('指标库')"><span class="icon">&#9776;</span> 指标库</div>
+      <div class="menu-item" onclick="showToast('评价规则')"><span class="icon">&#9776;</span> 评价规则</div>
+      <div class="menu-item" onclick="showToast('强制分布规则')"><span class="icon">&#9776;</span> 强制分布规则</div>
+      <div class="menu-group-title">绩效方案</div>
+      <div class="menu-item active"><span class="icon">&#9776;</span> 绩效方案</div>
+      <div class="menu-group-title">绩效活动</div>
+      <div class="menu-item" onclick="showToast('绩效活动 - V3版本')"><span class="icon">&#9776;</span> 绩效活动</div>
+    </nav>
+  </aside>
+
+  <!-- Main -->
+  <div class="main-area">
+    <header class="top-bar">
+      <div class="breadcrumb">绩效管理 / <span>绩效方案</span></div>
+      <div class="user-info">
+        <span>管理员</span>
+        <div class="user-avatar">A</div>
+      </div>
+    </header>
+
+    <main class="content" id="app">
+      <!-- Content rendered by JS -->
+    </main>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ==================== DATA ====================
+const plans = [
+  { id: 1, name: '2026年月度绩效方案', code: 'PERFP001', version: 'v1.2', status: 'enabled', updater: '张三', updateTime: '2026-05-20 14:30', grade: 'S/A/B/C/D', dynamic: false },
+  { id: 2, name: '2026年半年度绩效方案', code: 'PERFP002', version: 'v1.0', status: 'disabled', updater: '李四', updateTime: '2026-05-18 10:00', grade: 'S/A/B/C/D', dynamic: true },
+  { id: 3, name: '海外销售季度考核', code: 'PERFP003', version: 'v2.1', status: 'enabled', updater: '王五', updateTime: '2026-05-15 09:20', grade: '优秀/良好/合格/待改进', dynamic: false },
+];
+
+const phases = [
+  { id: 'goal', name: '目标制定', icon: '&#9998;', hasConfig: false },
+  { id: 'assess', name: '绩效考核', icon: '&#9733;', hasConfig: false },
+  { id: 'review', name: '绩效审定', icon: '&#9745;', hasConfig: false },
+  { id: 'confirm', name: '结果确认', icon: '&#10003;', hasConfig: false },
+  { id: 'appeal', name: '绩效申诉', icon: '&#9888;', hasConfig: false },
+  { id: 'interview', name: '绩效面谈', icon: '&#9993;', hasConfig: false },
+];
+
+const templates = {
+  monthly: { name: '月度绩效', phases: ['goal','assess','review','confirm','appeal'] },
+  semi: { name: '半年度绩效', phases: ['goal','assess','review','confirm','appeal','interview'] },
+  annual: { name: '年度绩效', phases: ['goal','assess','review','confirm','appeal','interview'] },
+  custom: { name: '自定义', phases: ['goal','assess','review','confirm'] },
+};
+
+// ==================== STATE ====================
+let currentView = 'list'; // list | create | detail
+let currentPlanId = null;
+let currentStep = 1; // 1: basic, 2: group, 3: phases
+let currentPhase = 'goal';
+let planForm = {
+  name: '', enabled: 'enabled', dynamic: 'lock', grade: '',
+  template: 'monthly',
+  groups: [
+    { id: 1, name: '默认考核组', priority: 1, rules: [{ type: 'department', values: ['全部部门'], exclude: [] }] }
+  ],
+  phaseConfig: {}
+};
+
+// ==================== RENDER ====================
+function render() {
+  const app = document.getElementById('app');
+  if (currentView === 'list') app.innerHTML = renderList();
+  else if (currentView === 'create') app.innerHTML = renderCreate();
+  else if (currentView === 'detail') app.innerHTML = renderDetail();
+}
+
+// --- LIST VIEW ---
+function renderList() {
+  return `
+    <div class="page-header">
+      <h2 class="page-title">绩效方案</h2>
+      <button class="btn btn-primary" onclick="startCreate()">+ 新增方案</button>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <div class="flex-between mb-16">
+          <div class="form-inline">
+            <input class="form-input" placeholder="搜索方案名称/编号" style="width:240px">
+            <button class="btn btn-default">搜索</button>
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>方案名称</th>
+                <th>编号</th>
+                <th>版本</th>
+                <th>绩效等级</th>
+                <th>状态</th>
+                <th>最近修改人</th>
+                <th>最近修改时间</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${plans.map(p => `
+                <tr>
+                  <td><a href="#" style="color:var(--primary);text-decoration:none" onclick="viewDetail(${p.id})">${p.name}</a></td>
+                  <td>${p.code}</td>
+                  <td>${p.version}</td>
+                  <td>${p.grade}</td>
+                  <td><span class="tag ${p.status==='enabled'?'tag-success':'tag-info'}">${p.status==='enabled'?'启用':'停用'}</span></td>
+                  <td>${p.updater}</td>
+                  <td>${p.updateTime}</td>
+                  <td>
+                    <div class="actions">
+                      <button class="btn btn-text btn-sm" onclick="startEdit(${p.id})">编辑</button>
+                      <button class="btn btn-text btn-sm" onclick="showToast('复制方案')">复制</button>
+                      <button class="btn btn-text btn-sm" onclick="toggleStatus(${p.id})">${p.status==='enabled'?'停用':'启用'}</button>
+                      ${p.status==='disabled' ? '<button class="btn btn-text btn-sm danger" onclick="showToast(\'确认删除？\')">删除</button>' : ''}
+                    </div>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>`;
+}
+
+// --- CREATE / EDIT VIEW ---
+function renderCreate() {
+  const stepLabels = ['基本信息', '考核组', '考核环节设计'];
+  return `
+    <div class="page-header">
+      <h2 class="page-title">${currentPlanId ? '编辑' : '新增'}绩效方案</h2>
+      <button class="btn btn-default" onclick="backToList()">返回列表</button>
+    </div>
+
+    <!-- Stepper -->
+    <div class="card">
+      <div class="card-body" style="padding:16px 20px">
+        <div class="stepper">
+          ${stepLabels.map((label, i) => `
+            <div class="step ${currentStep > i+1 ? 'completed' : ''} ${currentStep === i+1 ? 'active' : ''}">
+              <div class="step-number">${currentStep > i+1 ? '&#10003;' : i+1}</div>
+              <div class="step-label">${label}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+
+    <!-- Step Content -->
+    <div class="card">
+      <div class="card-body">
+        ${currentStep === 1 ? renderStepBasic() : ''}
+        ${currentStep === 2 ? renderStepGroup() : ''}
+        ${currentStep === 3 ? renderStepPhases() : ''}
+      </div>
+    </div>
+
+    <!-- Bottom Actions -->
+    <div class="card">
+      <div class="card-body flex-between">
+        <div>
+          ${currentStep > 1 ? '<button class="btn btn-default" onclick="prevStep()">上一步</button>' : ''}
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-default" onclick="backToList()">取消</button>
+          ${currentStep < 3
+            ? '<button class="btn btn-primary" onclick="nextStep()">下一步</button>'
+            : '<button class="btn btn-primary" onclick="savePlan()">保存</button>'}
+        </div>
+      </div>
+    </div>`;
+}
+
+// --- Step 1: Basic Info ---
+function renderStepBasic() {
+  return `
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label"><span class="required">*</span>方案名称</label>
+        <input class="form-input" value="${planForm.name}" placeholder="请输入方案名称" oninput="planForm.name=this.value">
+      </div>
+      <div class="form-group">
+        <label class="form-label"><span class="required">*</span>是否启用</label>
+        <div class="radio-group" style="padding-top:6px">
+          <label class="radio-item"><input type="radio" name="enabled" value="enabled" ${planForm.enabled==='enabled'?'checked':''} onchange="planForm.enabled=this.value"> 启用</label>
+          <label class="radio-item"><input type="radio" name="enabled" value="disabled" ${planForm.enabled==='disabled'?'checked':''} onchange="planForm.enabled=this.value"> 停用</label>
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label"><span class="required">*</span>动态考核</label>
+        <div class="radio-group" style="padding-top:6px">
+          <label class="radio-item"><input type="radio" name="dynamic" value="lock" ${planForm.dynamic==='lock'?'checked':''} onchange="planForm.dynamic=this.value"> 锁定时获取考核关系</label>
+          <label class="radio-item"><input type="radio" name="dynamic" value="dynamic" ${planForm.dynamic==='dynamic'?'checked':''} onchange="planForm.dynamic=this.value"> 动态获取考核关系</label>
+        </div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">
+          锁定：创建活动时存入当前人员+节点处理人，不随组织架构变动更新
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label"><span class="required">*</span>绩效等级</label>
+        <select class="form-select" onchange="planForm.grade=this.value">
+          <option value="">请选择绩效等级</option>
+          <option ${planForm.grade==='S/A/B/C/D'?'selected':''}>S/A/B/C/D</option>
+          <option ${planForm.grade==='优秀/良好/合格/待改进'?'selected':''}>优秀/良好/合格/待改进</option>
+        </select>
+      </div>
+    </div>`;
+}
+
+// --- Step 2: Assessment Groups ---
+function renderStepGroup() {
+  return `
+    <div class="flex-between mb-16">
+      <div>
+        <span style="font-weight:600">考核组</span>
+        <span style="font-size:12px;color:var(--text-secondary);margin-left:8px">默认1个考核组，可创建多个</span>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="showAddGroupModal()">+ 新增考核组</button>
+    </div>
+
+    ${planForm.groups.map((g, idx) => `
+      <div class="rule-card">
+        <div class="rule-header">
+          <div>
+            <strong>${g.name}</strong>
+            <span style="font-size:12px;color:var(--text-secondary);margin-left:8px">优先级: ${g.priority}</span>
+            ${idx === 0 ? '<span class="tag tag-info" style="margin-left:8px">默认</span>' : ''}
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-text btn-sm" onclick="showToast('编辑考核组')">编辑</button>
+            ${idx > 0 ? '<button class="btn btn-text btn-sm danger" onclick="removeGroup(' + idx + ')">删除</button>' : ''}
+          </div>
+        </div>
+        <div class="rule-body">
+          ${g.rules.map(r => `
+            <div style="margin-bottom:4px">
+              <span class="rule-tag">${r.type === 'department' ? '按部门' : r.type === 'position' ? '按职位' : '按职级'}</span>
+              <span>${r.values.join('、')}</span>
+              ${r.exclude.length ? `<span style="color:var(--text-secondary)"> (排除: ${r.exclude.join('、')})</span>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('')}`;
+}
+
+// --- Step 3: Phase Configuration ---
+function renderStepPhases() {
+  const activePhases = templates[planForm.template]?.phases || phases.map(p=>p.id);
+  return `
+    <div class="flex-between mb-16">
+      <div>
+        <span style="font-weight:600">考核环节设计</span>
+        <span style="font-size:12px;color:var(--text-secondary);margin-left:8px">模板：
+          <select style="border:1px solid var(--border);border-radius:3px;padding:2px 6px;font-size:12px" onchange="planForm.template=this.value;render()">
+            <option value="monthly" ${planForm.template==='monthly'?'selected':''}>月度绩效</option>
+            <option value="semi" ${planForm.template==='semi'?'selected':''}>半年度绩效</option>
+            <option value="annual" ${planForm.template==='annual'?'selected':''}>年度绩效</option>
+            <option value="custom" ${planForm.template==='custom'?'selected':''}>自定义</option>
+          </select>
+        </span>
+      </div>
+      <div style="font-size:12px;color:var(--text-secondary)">
+        配置完成度：<strong style="color:var(--primary)">0%</strong>
+      </div>
+    </div>
+
+    <!-- Phase Tabs -->
+    <div class="tabs">
+      ${phases.filter(p => activePhases.includes(p.id)).map(p => `
+        <div class="tab-item ${currentPhase === p.id ? 'active' : ''}" onclick="currentPhase='${p.id}';render()">
+          <span style="margin-right:4px">${p.icon}</span> ${p.name}
+        </div>
+      `).join('')}
+    </div>
+
+    <!-- Phase Config Content -->
+    ${renderPhaseConfig(currentPhase)}`;
+}
+
+function renderPhaseConfig(phaseId) {
+  const phaseNames = { goal:'目标制定', assess:'绩效考核', review:'绩效审定', confirm:'结果确认', appeal:'绩效申诉', interview:'绩效面谈' };
+  const phaseName = phaseNames[phaseId];
+
+  // Common config sections
+  const commonConfig = `
+    <div class="phase-card">
+      <div class="phase-card-header">
+        <h4>&#9881; 环节配置</h4>
+      </div>
+      <div class="phase-card-body">
+        <div class="config-row">
+          <div class="config-label">开启方式</div>
+          <div class="config-value">
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="open_${phaseId}" value="auto" checked> 自动开启</label>
+              <label class="radio-item"><input type="radio" name="open_${phaseId}" value="manual"> 手动开启</label>
+              ${phaseId === 'confirm' ? '<label class="radio-item"><input type="radio" name="open_confirm" value="none"> 不开启</label>' : ''}
+            </div>
+          </div>
+        </div>
+        <div class="config-row">
+          <div class="config-label">结束方式</div>
+          <div class="config-value">
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="close_${phaseId}" value="auto" checked> 自动结束</label>
+              <label class="radio-item"><input type="radio" name="close_${phaseId}" value="manual"> 手动结束</label>
+              ${phaseId === 'goal' ? '<label class="radio-item"><input type="radio" name="close_goal" value="timer"> 定时结束</label>' : ''}
+            </div>
+          </div>
+        </div>
+        ${phaseId === 'goal' ? `
+        <div class="config-row">
+          <div class="config-label">未填写人员结束规则</div>
+          <div class="config-value">
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="empty_rule" value="force" checked> 强制结束</label>
+            </div>
+          </div>
+        </div>` : ''}
+        ${phaseId === 'assess' ? `
+        <div class="config-row">
+          <div class="config-label">结束处理规则</div>
+          <div class="config-value">
+            <div class="form-group" style="margin-bottom:8px">
+              <select class="form-select" style="width:300px">
+                <option>仅结束流程</option>
+                <option selected>结束流程并默认评价结果</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom:0">
+              <select class="form-select" style="width:300px">
+                <option>选择默认评价等级...</option>
+                <option>S - 远超预期</option>
+                <option>A - 超出预期</option>
+                <option selected>B - 符合预期</option>
+                <option>C - 低于预期</option>
+              </select>
+            </div>
+          </div>
+        </div>` : ''}
+        ${phaseId === 'review' ? `
+        <div class="config-row">
+          <div class="config-label">结束处理规则</div>
+          <div class="config-value">
+            <select class="form-select" style="width:300px">
+              <option>仅结束流程</option>
+              <option selected>结束流程并默认审定等级</option>
+            </select>
+          </div>
+        </div>
+        <div class="config-row">
+          <div class="config-label">强制分布规则</div>
+          <div class="config-value">
+            <select class="form-select" style="width:300px">
+              <option>请选择强制分布规则...</option>
+              <option selected>2026年S/A/B/C/D分布规则</option>
+            </select>
+          </div>
+        </div>
+        <div class="config-row">
+          <div class="config-label">强制分布控制</div>
+          <div class="config-value">
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="dist_ctrl" value="strong"> 强控 <span style="font-size:11px;color:var(--text-secondary);margin-left:4px">不符合分布要求时不允许提交</span></label>
+              <label class="radio-item"><input type="radio" name="dist_ctrl" value="weak" checked> 弱控 <span style="font-size:11px;color:var(--text-secondary);margin-left:4px">不符合时给出提示，确定后可提交</span></label>
+            </div>
+          </div>
+        </div>
+        <div class="config-row">
+          <div class="config-label">起控人数</div>
+          <div class="config-value">
+            <input class="form-input" type="number" value="10" style="width:120px">
+            <span style="font-size:12px;color:var(--text-secondary);margin-left:8px">低于此人数不启用强制分布</span>
+          </div>
+        </div>
+        <div class="config-row">
+          <div class="config-label">审定提交方式</div>
+          <div class="config-value">
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="submit_mode" value="single" checked> 单个提交</label>
+              <label class="radio-item"><input type="radio" name="submit_mode" value="batch"> 整体提交</label>
+            </div>
+          </div>
+        </div>` : ''}
+      </div>
+    </div>
+
+    <!-- Notification Config -->
+    ${!['goal','confirm'].includes(phaseId) ? `
+    <div class="phase-card">
+      <div class="phase-card-header">
+        <h4>&#128276; 通知配置</h4>
+      </div>
+      <div class="phase-card-body">
+        <div class="config-row">
+          <div class="config-label">通知类型</div>
+          <div class="config-value">
+            <div class="form-inline gap-8">
+              <label class="radio-item"><input type="checkbox" checked> 待办处理</label>
+              <label class="radio-item"><input type="checkbox" checked> 抄送通知</label>
+            </div>
+          </div>
+        </div>
+        <div class="config-row">
+          <div class="config-label">通知渠道</div>
+          <div class="config-value">
+            <div class="form-inline gap-8">
+              <label class="radio-item"><input type="checkbox" checked> 站内信</label>
+              <label class="radio-item"><input type="checkbox" checked> 飞书</label>
+              <label class="radio-item"><input type="checkbox"> 邮件</label>
+              <label class="radio-item"><input type="checkbox"> 短信</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>` : ''}
+
+    <!-- Workflow Template -->
+    <div class="phase-card">
+      <div class="phase-card-header">
+        <h4>&#9654; 流程模板</h4>
+      </div>
+      <div class="phase-card-body">
+        <div class="config-row">
+          <div class="config-label">选择流程模板</div>
+          <div class="config-value">
+            <div class="form-inline" style="gap:8px">
+              <select class="form-select" style="width:300px">
+                <option>请选择流程模板...</option>
+                <option selected>通用${phaseName}流程</option>
+                <option>+ 新增模型</option>
+              </select>
+              <button class="btn btn-default btn-sm" onclick="showToast('预览流程')">预览</button>
+            </div>
+          </div>
+        </div>
+        <div class="config-row">
+          <div class="config-label">流程预览</div>
+          <div class="config-value">
+            ${renderFlowPreview(phaseId)}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    ${phaseId === 'assess' ? `
+    <div class="phase-card">
+      <div class="phase-card-header">
+        <h4>&#9881; 评分权重分配</h4>
+      </div>
+      <div class="phase-card-body">
+        <div class="config-row">
+          <div class="config-label">权重分配</div>
+          <div class="config-value">
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="weight" value="off" checked> 不开启</label>
+              <label class="radio-item"><input type="radio" name="weight" value="on"> 开启</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>` : ''}`;
+}
+
+function renderFlowPreview(phaseId) {
+  const flows = {
+    goal: ['被考核人<br>制定目标', '双线上级<br>审批', '直接上级<br>审批'],
+    assess: ['被考核人<br>自评分', '双线上级<br>评分', '直接上级<br>评分'],
+    review: ['直接上级<br>评级', '双线上级<br>评级', '逐级上级<br>评级', 'HRBP<br>审批'],
+    confirm: ['本人<br>确认', 'HRBP<br>审批(不同意时)'],
+    appeal: ['本人<br>确认', 'HRBP<br>审批(不同意时)'],
+    interview: ['本人<br>填写', '直接上级<br>审批'],
+  };
+  const nodes = flows[phaseId] || ['开始', '处理', '结束'];
+  return `
+    <div class="flow-preview">
+      <div class="flow-node start">开始</div>
+      ${nodes.map(n => `<span class="flow-arrow">&#8594;</span><div class="flow-node">${n}</div>`).join('')}
+      <span class="flow-arrow">&#8594;</span>
+      <div class="flow-node end">结束</div>
+    </div>`;
+}
+
+// --- DETAIL VIEW ---
+function renderDetail() {
+  const plan = plans.find(p => p.id === currentPlanId);
+  if (!plan) return '<div class="empty-state">方案不存在</div>';
+  return `
+    <div class="page-header">
+      <h2 class="page-title">${plan.name}</h2>
+      <div class="btn-group">
+        <button class="btn btn-default" onclick="backToList()">返回列表</button>
+        <button class="btn btn-primary" onclick="startEdit(${plan.id})">编辑</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>方案详情</h3></div>
+      <div class="card-body">
+        <div class="form-row">
+          <div class="form-group">
+            <div class="form-label">方案名称</div>
+            <div style="padding:6px 0;font-size:15px;font-weight:500">${plan.name}</div>
+          </div>
+          <div class="form-group">
+            <div class="form-label">编号</div>
+            <div style="padding:6px 0">${plan.code}</div>
+          </div>
+          <div class="form-group">
+            <div class="form-label">版本</div>
+            <div style="padding:6px 0">${plan.version}</div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <div class="form-label">状态</div>
+            <div style="padding:6px 0"><span class="tag ${plan.status==='enabled'?'tag-success':'tag-info'}">${plan.status==='enabled'?'启用':'停用'}</span></div>
+          </div>
+          <div class="form-group">
+            <div class="form-label">绩效等级</div>
+            <div style="padding:6px 0">${plan.grade}</div>
+          </div>
+          <div class="form-group">
+            <div class="form-label">动态考核</div>
+            <div style="padding:6px 0">${plan.dynamic ? '动态获取' : '锁定获取'}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>关联活动</h3></div>
+      <div class="card-body">
+        <div class="empty-state" style="padding:20px">
+          <div style="font-size:14px">暂无关联活动</div>
+          <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">创建绩效活动后将在此展示</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ==================== ACTIONS ====================
+function showView(view) { currentView = view; render(); }
+function backToList() { currentView = 'list'; currentStep = 1; currentPlanId = null; render(); }
+function startCreate() {
+  currentView = 'create'; currentStep = 1; currentPlanId = null;
+  planForm = { name:'', enabled:'enabled', dynamic:'lock', grade:'', template:'monthly',
+    groups:[{ id:1, name:'默认考核组', priority:1, rules:[{ type:'department', values:['全部部门'], exclude:[] }] }],
+    phaseConfig: {} };
+  render();
+}
+function startEdit(id) {
+  const plan = plans.find(p => p.id === id);
+  if (!plan) return;
+  currentPlanId = id; currentView = 'create'; currentStep = 1;
+  planForm.name = plan.name; planForm.grade = plan.grade;
+  planForm.enabled = plan.status; planForm.dynamic = plan.dynamic ? 'dynamic' : 'lock';
+  render();
+}
+function viewDetail(id) { currentPlanId = id; currentView = 'detail'; render(); }
+function nextStep() { if (currentStep < 3) { currentStep++; render(); } }
+function prevStep() { if (currentStep > 1) { currentStep--; render(); } }
+function toggleStatus(id) { showToast('状态已切换'); }
+function removeGroup(idx) { planForm.groups.splice(idx, 1); render(); }
+function showAddGroupModal() {
+  planForm.groups.push({ id: Date.now(), name: '新增考核组', priority: planForm.groups.length + 1, rules: [] });
+  render();
+  showToast('已添加考核组');
+}
+function savePlan() { showToast('方案保存成功'); setTimeout(backToList, 800); }
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// ==================== INIT ====================
+render();
+</script>
+</body>
+</html>

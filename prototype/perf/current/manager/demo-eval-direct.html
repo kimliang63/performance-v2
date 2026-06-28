@@ -66,21 +66,29 @@ textarea.edit-cell::placeholder{color:var(--c4)}
 .grade-select select option[value="符合预期+"]{color:var(--pr)}
 .grade-select select option[value="符合预期"]{color:var(--c8)}
 .grade-select select option[value="符合预期-"]{color:var(--ac)}
+.grade-select select option[value="远超预期"]{color:#065F46}
 .grade-select select option[value="低于预期"]{color:var(--ro)}
+.grade-select select option[value="远低预期"]{color:#9F1239}
 
 /* ═══ GRADE BUTTON GROUP ═══ */
 .grade-btn-group{display:flex;flex-wrap:wrap;gap:4px}
-.grade-btn{padding:4px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);border:1px solid transparent;cursor:pointer;transition:all .12s;background:transparent;line-height:1.3}
+.grade-btn{padding:4px 10px;border-radius:var(--r1);font:500 12px/1 var(--f);border:1px solid var(--c2);cursor:pointer;transition:all .12s;background:var(--sf);color:var(--c6)}
 .grade-btn[data-grade="超出预期"]{color:var(--em700);background:var(--em50)}
 .grade-btn[data-grade="符合预期+"]{color:var(--pr);background:var(--pr50)}
 .grade-btn[data-grade="符合预期"]{color:var(--c8);background:var(--c1)}
 .grade-btn[data-grade="符合预期-"]{color:var(--ac700);background:var(--ac50)}
 .grade-btn[data-grade="低于预期"]{color:var(--ro);background:var(--ro50)}
-.grade-btn.active[data-grade="超出预期"]{border-color:var(--em700);font-weight:600}
-.grade-btn.active[data-grade="符合预期+"]{border-color:var(--pr);font-weight:600}
-.grade-btn.active[data-grade="符合预期"]{border-color:var(--c8);font-weight:600}
-.grade-btn.active[data-grade="符合预期-"]{border-color:var(--ac700);font-weight:600}
-.grade-btn.active[data-grade="低于预期"]{border-color:var(--ro);font-weight:600}
+.grade-btn[data-grade="远超预期"]{color:#065F46;background:var(--em100)}
+.grade-btn[data-grade="远低预期"]{color:#9F1239;background:var(--ro100)}
+.grade-btn:hover{border-color:var(--pr200);background:var(--pr50)}
+.grade-btn.active{font-weight:600;border-color:currentColor}
+.grade-btn.faded{opacity:0.4;background:var(--c1);color:var(--c4)}
+
+/* ═══ STAR RATING ═══ */
+.star-rating{display:inline-flex;gap:2px}
+.star-rating .star{font-size:20px;color:var(--c3);cursor:pointer;transition:color .12s}
+.star-rating .star.active{color:var(--ac)}
+.star-rating .star:hover,.star-rating .star.hover{color:var(--ac)}
 
 /* ═══ HISTORY CARD ═══ */
 .hist-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:16px 24px;margin-bottom:16px}
@@ -325,7 +333,7 @@ var indirectComment='张明在产品规划和执行方面展现了较强的能�
 var directComment='';
 
 function renderModuleContainer(){
-  var gradeOptions=['超出预期','符合预期+','符合预期','符合预期-','低于预期'];
+  var gradeOptions=['远超预期','超出预期','符合预期+','符合预期','符合预期-','低于预期','远低预期'];
   var html='<div class="eval-list"><table><thead><tr>'+
     '<th style="width:180px">名称</th>'+
     '<th style="width:55px">权重</th>'+
@@ -354,12 +362,21 @@ function renderModuleContainer(){
       html+='<td style="font:400 13px/1.4 var(--f);color:var(--c7)">'+g.completed+'</td>'+
         '<td><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--c1);color:var(--c6)">'+g.employeeGrade+'</span></td>'+
         '<td><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--c1);color:var(--c6)">'+g.indirectGrade+'</span></td>'+
-        '<td><div class="grade-btn-group">';
-      gradeOptions.forEach(function(opt){
-        html+='<button type="button" class="grade-btn'+(g.grade===opt?' active':'')+'" data-grade="'+opt+'" onclick="updateGrade('+mi+','+gi+',this)">'+opt+'</button>';
-      });
-      html+='<input type="hidden" id="grade_'+mi+'_'+gi+'" value="'+(g.grade||'')+'"></div></td>'+
-        '</tr>';
+        '<td>';
+      if(g.id==='g4'||g.id==='g5'){
+        html+='<div class="star-rating" data-goal="'+g.id+'">';
+        for(var s=1;s<=5;s++){
+          html+='<span class="star" data-v="'+s+'" onclick="setStar(this,'+s+')">&#9733;</span>';
+        }
+        html+='</div><input type="hidden" id="grade_'+mi+'_'+gi+'" value="'+(g.starRating||'')+'">';
+      }else{
+        html+='<div class="grade-btn-group">';
+        gradeOptions.forEach(function(opt){
+          html+='<button type="button" class="grade-btn'+(g.grade===opt?' active':'')+'" data-grade="'+opt+'" onclick="updateGrade('+mi+','+gi+',this)">'+opt+'</button>';
+        });
+        html+='<input type="hidden" id="grade_'+mi+'_'+gi+'" value="'+(g.grade||'')+'"></div>';
+      }
+      html+='</td></tr>';
     });
   });
   html+='</tbody></table></div>';
@@ -369,11 +386,13 @@ function renderModuleContainer(){
     '<div style="font:600 14px/1 var(--f);color:var(--c9);margin-bottom:6px">初评等级</div>'+
     '<div style="font:400 12px/1 var(--f);color:var(--c5);margin-bottom:12px">请根据被考核人表现选择初评等级</div>'+
     '<div class="grade-btn-group" id="initGradeGroup">'+
+      '<button type="button" class="grade-btn" data-grade="远超预期" onclick="selectInitGrade(this)">远超预期</button>'+
       '<button type="button" class="grade-btn" data-grade="超出预期" onclick="selectInitGrade(this)">超出预期</button>'+
       '<button type="button" class="grade-btn" data-grade="符合预期+" onclick="selectInitGrade(this)">符合预期+</button>'+
       '<button type="button" class="grade-btn" data-grade="符合预期" onclick="selectInitGrade(this)">符合预期</button>'+
       '<button type="button" class="grade-btn" data-grade="符合预期-" onclick="selectInitGrade(this)">符合预期-</button>'+
       '<button type="button" class="grade-btn" data-grade="低于预期" onclick="selectInitGrade(this)">低于预期</button>'+
+      '<button type="button" class="grade-btn" data-grade="远低预期" onclick="selectInitGrade(this)">远低预期</button>'+
     '</div>'+
     '<input type="hidden" id="initGradeValue" value="">'+
   '</div>';
@@ -408,18 +427,38 @@ function renderModuleContainer(){
 }
 
 function updateGrade(mi,gi,btn){
-  var group=btn.closest('.grade-btn-group');
-  group.querySelectorAll('.grade-btn').forEach(function(b){b.classList.remove('active');});
-  btn.classList.add('active');
   var val=btn.getAttribute('data-grade');
   document.getElementById('grade_'+mi+'_'+gi).value=val;
   MODULES[mi].goals[gi].grade=val;
+  var group=btn.parentElement;
+  group.querySelectorAll('.grade-btn').forEach(function(b){
+    if(b===btn){b.classList.add('active');b.classList.remove('faded');}
+    else{b.classList.remove('active');b.classList.add('faded');}
+  });
+}
+
+function setStar(el,val){
+  var group=el.parentElement;
+  group.querySelectorAll('.star').forEach(function(s,i){
+    s.classList.toggle('active',i<val);
+  });
+  group.dataset.value=val;
+  var hiddenInput=group.parentElement.querySelector('input[type="hidden"]');
+  if(hiddenInput){
+    hiddenInput.value=val;
+    var parts=hiddenInput.id.split('_');
+    if(parts.length===3){
+      MODULES[parseInt(parts[1])].goals[parseInt(parts[2])].starRating=val;
+    }
+  }
 }
 
 function selectInitGrade(btn){
   var group=document.getElementById('initGradeGroup');
-  group.querySelectorAll('.grade-btn').forEach(function(b){b.classList.remove('active');});
-  btn.classList.add('active');
+  group.querySelectorAll('.grade-btn').forEach(function(b){
+    if(b===btn){b.classList.add('active');b.classList.remove('faded');}
+    else{b.classList.remove('active');b.classList.add('faded');}
+  });
   document.getElementById('initGradeValue').value=btn.getAttribute('data-grade');
 }
 
@@ -503,17 +542,23 @@ function applyAiSuggestion(type){
       {mi:0,gi:0,grade:'符合预期+'},
       {mi:0,gi:1,grade:'符合预期'},
       {mi:0,gi:2,grade:'符合预期'},
-      {mi:1,gi:3,grade:'符合预期'},
-      {mi:1,gi:4,grade:'符合预期'},
-      {mi:1,gi:5,grade:'符合预期+'},
-      {mi:1,gi:6,grade:'符合预期+'}
+      {mi:1,gi:0,starRating:4},
+      {mi:1,gi:1,starRating:4},
+      {mi:1,gi:2,grade:'符合预期+'},
+      {mi:1,gi:3,grade:'符合预期+'}
     ];
     grades.forEach(function(g){
-      MODULES[g.mi].goals[g.gi].grade=g.grade;
-      var gr=document.getElementById('grade_'+g.mi+'_'+g.gi);
-      if(gr){
-        var btn=gr.parentElement.querySelector('.grade-btn[data-grade="'+g.grade+'"]');
-        if(btn){updateGrade(g.mi,g.gi,btn);}
+      if(g.starRating){
+        MODULES[g.mi].goals[g.gi].starRating=g.starRating;
+        var starDiv=document.getElementById('grade_'+g.mi+'_'+g.gi).parentElement.querySelector('.star-rating');
+        if(starDiv){setStar(starDiv.querySelector('.star'),g.starRating);}
+      }else{
+        MODULES[g.mi].goals[g.gi].grade=g.grade;
+        var gr=document.getElementById('grade_'+g.mi+'_'+g.gi);
+        if(gr){
+          var btn=gr.parentElement.querySelector('.grade-btn[data-grade="'+g.grade+'"]');
+          if(btn){updateGrade(g.mi,g.gi,btn);}
+        }
       }
     });
     directComment='张明本季度整体表现优秀，关键指标基本达标，关键行动均按时完成。资源利用率超额完成，绩效重构和AI应用项目推进有力。建议继续保持跨部门协作优势，持续提升需求评审及时率。综合评价：符合预期+。';

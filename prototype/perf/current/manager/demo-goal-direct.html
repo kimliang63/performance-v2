@@ -65,8 +65,8 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .btn-ac:hover{background:var(--ac50);border-color:var(--ac)}
 
 /* Module section */
-.mod-section{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden;border-left:3px solid var(--pr)}
-.mod-section.em{border-left-color:var(--em)}
+.mod-section{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden}
+.mod-section.em{}
 .mod-hd{display:flex;align-items:center;padding:14px 20px;gap:12px;cursor:pointer;user-select:none;transition:background .12s}
 .mod-hd:hover{background:var(--c0)}
 .mod-hd-title{font:600 15px/1 var(--f);color:var(--c9);flex:1}
@@ -81,7 +81,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 /* Goal row */
 .goal-row{border-top:1px solid var(--dv);transition:background .1s}
 .goal-row:hover{background:var(--c0)}
-.goal-summary{display:flex;align-items:center;padding:12px 20px;gap:12px;cursor:pointer}
+.goal-summary{display:flex;align-items:center;padding:10px 20px;gap:10px;cursor:pointer}
 .goal-name{flex:1;font:500 14px/1.3 var(--f);color:var(--c8)}
 .goal-meta{display:flex;align-items:center;gap:12px;flex-shrink:0}
 .goal-type{font:500 11px/1 var(--f);padding:2px 7px;border-radius:3px;background:var(--c1);color:var(--c6)}
@@ -90,14 +90,14 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .goal-weight{font:500 13px/1 var(--m);color:var(--c7)}
 
 /* Goal detail - read only */
-.goal-detail{padding:0 20px 16px 46px;display:none}
+.goal-detail{padding:0 20px 12px 42px;display:none}
 .goal-detail.open{display:block}
-.gd-form{background:var(--c0);border-radius:var(--r2);padding:16px;border:1px solid var(--c2)}
-.gd-sec{margin-bottom:14px}
+.gd-form{border-radius:var(--r2);padding:8px 0}
+.gd-sec{margin-bottom:10px}
 .gd-sec:last-child{margin-bottom:0}
-.gd-sec-title{font:600 12px/1 var(--f);color:var(--c6);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:6px}
+.gd-sec-title{font:600 12px/1 var(--f);color:var(--c6);margin-bottom:8px;display:flex;align-items:center;gap:6px}
 .gd-sec-title svg{width:13px;height:13px;color:var(--pr)}
-.gd-row{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px}
+.gd-row{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px}
 .gd-row.f3{grid-template-columns:1fr 1fr 1fr}
 .gd-fi{display:flex;flex-direction:column;gap:3px}
 .gd-fi-l{font:400 11px/1 var(--f);color:var(--c5)}
@@ -333,12 +333,12 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 GHR_NAV.init('perf', '目标审批');
 
 const MODULES=[
-  {name:'关键指标',weight:30,color:'var(--pr)',goals:[
-    {id:'g1',name:'资源利用率（通用）',type:'quant',weight:5,target:105,challenge:110,baseline:100,unit:'%',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',linkedIndicator:'资源利用率'},
-    {id:'g2',name:'HRASUAT用户验收首次通过率(产品)',type:'quant',weight:10,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',linkedIndicator:'UAT首次通过率'},
-    {id:'g3',name:'HRAS需求评审及时率(产品)',type:'quant',weight:15,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',linkedIndicator:'需求评审及时率'},
+  {name:'KPI',weight:30,color:'var(--pr)',goals:[
+    {id:'g1',name:'资源利用率（通用）',type:'quant',weight:5,target:105,challenge:110,baseline:100,unit:'%',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',linkedIndicator:'资源利用率',desc:'1.指标定义：人员的实际工作量饱和情况，数据来源：Devops\n2.计算逻辑：公式=当月实际任务工时（人天）/EHR实际出勤天数*100%'},
+    {id:'g2',name:'HRASUAT用户验收首次通过率(产品)',type:'quant',weight:10,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',linkedIndicator:'UAT首次通过率',desc:'1.指标定义：需求首次业务验收通过的概率\n2.计算逻辑：公式=当月需求首次业务验收通过的迭代数量/当月业务验收的迭代总数*100%'},
+    {id:'g3',name:'HRAS需求评审及时率(产品)',type:'quant',weight:15,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',linkedIndicator:'需求评审及时率',desc:'1.迭代版本评审的及时性情况\n2.计算逻辑：公式=统计周期内按时需求评审迭代数/计划评审迭代*100%\n备注：按需求个数的维度。'},
   ]},
-  {name:'关键行动',weight:70,color:'var(--em)',goals:[
+  {name:'KPA',weight:70,color:'var(--em)',goals:[
     {id:'g4',name:'HRAS产品管理规范',type:'qual',weight:10,measure:'定性评分',desc:'1、需求管理流程尊从规范\n2、产品需求规范\n3、迭代火车管理规范\n4、周会/月会前事项准时完成更新'},
     {id:'g5',name:'【产品设计】日常滚动需求响应',type:'qual',weight:10,measure:'定性评分',desc:'根据业务日会需求优先级，滚动响应日常需求，输出产品解决方案'},
     {id:'g6',name:'【产品设计】HR ONE 绩效重构事项推进',type:'qual',weight:25,measure:'定性评分',desc:'06-10 输出AI+绩效核心用户页面原型\n06-19 完成绩效版本4需求内审\n06-24 完成绩效版本4需求评审'},
@@ -371,9 +371,9 @@ function render(){
       const isQ=g.type==='quant';
       h+=`<div class="goal-row">
         <div class="goal-summary" onclick="toggleGoal('${gid}')">
-          <div class="goal-icon" style="background:var(--pr50);color:var(--pr);font:700 12px/1 var(--m);width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0">${gi+1}</div>
-          <span class="goal-weight" style="font:700 14px/1 var(--m);color:var(--pr);background:var(--pr50);padding:3px 8px;border-radius:var(--r1);flex-shrink:0">${g.weight}%</span>
+          <div class="goal-icon" style="background:var(--c1);color:var(--c6);font:600 11px/1 var(--m);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">${gi+1}</div>
           <span class="goal-name">${g.name}</span>
+          <span class="goal-weight" style="font:600 13px/1 var(--m);color:var(--pr);background:var(--pr50);padding:2px 8px;border-radius:var(--r1);flex-shrink:0">${g.weight}%</span>
           <div class="goal-meta">
             <span class="goal-type ${isQ?'quant':'qual'}">${isQ?'定量':'定性'}</span>
             <div class="mod-hd-chevron ${gOpen?'open':''}" style="width:16px;height:16px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
@@ -395,18 +395,13 @@ function render(){
               </div>
             </div>
             <div class="gd-sec">
-              <div class="gd-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>计算规则</div>
-              <div class="gd-row">
-                <div class="gd-fi"><span class="gd-fi-l">衡量方式</span><span class="gd-fi-v">${g.measure}</span></div>
-                <div class="gd-fi"><span class="gd-fi-l">计算规则</span><span class="gd-fi-v">${g.rule||'-'}</span></div>
-              </div>
-              ${g.ruleFormula?`<div class="gd-rule-box"><div class="gd-rule-lbl">计算公式</div><code>${g.ruleFormula}</code></div>`:''}
+              <div class="gd-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>指标描述</div>
+              <div style="font:400 13px/1.6 var(--f);color:var(--c7);white-space:pre-line;word-break:break-word">${g.desc||'-'}</div>
             </div>
             `:`
             <div class="gd-sec">
-              <div class="gd-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>衡量标准</div>
-              <div class="gd-fi"><span class="gd-fi-l">衡量方式</span><span class="gd-fi-v">${g.measure}</span></div>
-              ${g.desc?`<div class="gd-fi" style="margin-top:8px"><span class="gd-fi-l">衡量标准描述</span><div style="font:400 13px/1.6 var(--f);color:var(--c7);white-space:pre-line">${g.desc}</div></div>`:''}
+              <div class="gd-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>指标描述</div>
+              <div style="font:400 13px/1.6 var(--f);color:var(--c7);white-space:pre-line;word-break:break-word">${g.desc||'-'}</div>
             </div>
             `}
           </div>

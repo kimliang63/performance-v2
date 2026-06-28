@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>绩效考核活动详情 - HR ONE</title>
+<style>
+:root{
+  --pr:#1677FF;--pr50:#E6F4FF;--pr700:#0958D9;
+  --em:#16A34A;--em50:#DCFCE7;--em700:#15803D;
+  --ac:#EA580C;--ac50:#FFF7ED;--ac700:#C2410C;
+  --ro:#DC2626;--ro50:#FEF2F2;--ro700:#B91C1C;
+  --vi:#7C3AED;--vi50:#F5F3FF;
+  --c9:#0F172A;--c8:#1E293B;--c7:#334155;--c6:#64748B;--c5:#94A3B8;--c4:#CBD5E1;--c3:#E5E7EB;--c2:#F1F5F9;--c1:#F8FAFC;
+  --sf:#FFF;--bg:#F8FAFC;--dv:#F1F5F9;
+  --shadow:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --r1:6px;--r2:8px;--r3:10px;
+  --f:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c9);-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c4);border-radius:3px}
+
+/* ═══ Navigation (from navigation.js) ═══ */
+.hdr{height:52px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:1100}
+.hdr-l{display:flex;align-items:center;gap:14px}
+.logo{display:flex;align-items:center;gap:8px}
+.logo-i{width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center}
+.logo-i svg{width:15px;height:15px;color:#FFF}
+.logo-t{font-size:15px;font-weight:700;color:var(--c9);letter-spacing:-.3px}
+.menu-btn{display:flex;align-items:center;gap:5px;padding:5px 12px;background:var(--sf);border:1px solid var(--c3);border-radius:var(--r1);font:500 13px/1 var(--f);color:var(--c6);cursor:pointer;transition:all .12s}
+.menu-btn:hover{border-color:var(--c4);color:var(--c8)}
+.menu-btn svg{width:13px;height:13px}
+.hdr-c{flex:1;display:flex;justify-content:center}
+.sch{width:320px;display:flex;align-items:center;gap:8px;background:var(--c1);border:1px solid transparent;border-radius:var(--r1);padding:0 12px;height:34px;transition:all .15s}
+.sch:focus-within{background:var(--sf);border-color:var(--pr)}
+.sch svg{color:var(--c5);flex-shrink:0}
+.sch input{border:none;background:transparent;outline:none;font:13px/1 var(--f);width:100%;color:var(--c9)}
+.sch input::placeholder{color:var(--c5)}
+.hdr-r{display:flex;align-items:center;gap:2px}
+.hdr-ic{width:32px;height:32px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c6);background:transparent;border:none;transition:all .12s;position:relative}
+.hdr-ic:hover{background:var(--c2);color:var(--c8)}
+.hdr-ic .dot{position:absolute;top:6px;right:6px;width:7px;height:7px;background:var(--ro);border-radius:50%;border:1.5px solid var(--sf)}
+.av{width:30px;height:30px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--f);color:#FFF;cursor:pointer;margin-left:6px}
+
+/* Sidebar */
+.main{display:flex;height:calc(100vh - 52px)}
+.ct{flex:1;overflow-y:auto;padding:20px 24px}
+.sb{width:240px;background:var(--sf);display:flex;flex-direction:column;flex-shrink:0;box-shadow:1px 0 0 0 var(--c3)}
+.sb-hd{padding:16px;border-bottom:1px solid var(--dv)}
+.sb-hd-in{display:flex;align-items:center;gap:10px}
+.sb-ic{width:30px;height:30px;border-radius:var(--r1);background:var(--pr);display:flex;align-items:center;justify-content:center}
+.sb-ic svg{width:15px;height:15px;color:#FFF}
+.sb-n{font:600 14px/1.2 var(--f);color:var(--c9)}
+.sb-l{font:500 10px/1 var(--f);color:var(--c5);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.sb-bd{flex:1;overflow-y:auto;padding:6px 8px}
+.sb-g{margin-bottom:1px}
+.sb-g-hd{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--r1);cursor:pointer;transition:all .12s;font:600 13px/1 var(--f);color:var(--c6)}
+.sb-g-hd:hover{background:var(--c2);color:var(--c8)}
+.sb-g-hd svg{width:14px;height:14px;color:var(--c5);flex-shrink:0;transition:all .15s}
+.sb-g-hd.on svg{color:var(--pr);transform:rotate(90deg)}
+.sb-g-hd.on{color:var(--c8)}
+.sb-g-bd{overflow:hidden;max-height:0;transition:max-height .25s ease}
+.sb-g-bd.on{max-height:800px}
+.sb-i{display:flex;align-items:center;gap:8px;padding:7px 10px 7px 32px;border-radius:var(--r1);cursor:pointer;transition:all .12s;font:400 13px/1.4 var(--f);color:var(--c6);position:relative}
+.sb-i:hover{background:var(--c2);color:var(--c8);font-weight:500}
+.sb-i.on{background:var(--pr50);color:var(--pr);font-weight:600}
+.sb-i.on::before{content:'';position:absolute;left:0;top:5px;bottom:5px;width:3px;background:var(--pr);border-radius:0 2px 2px 0}
+.sb-i svg{width:14px;height:14px;flex-shrink:0;color:var(--c5);opacity:.6}
+.sb-i:hover svg{opacity:.9;color:var(--c8)}
+.sb-i.on svg{color:var(--pr);opacity:1}
+.sb-ft{padding:10px 16px;border-top:1px solid var(--dv);font:500 10px/1 var(--f);color:var(--c5);text-align:center}
+
+/* ═══ Buttons ═══ */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:var(--f);white-space:nowrap}
+.btn svg{width:14px;height:14px}
+.btn-p{background:var(--pr);color:#FFF}.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c7);border:1px solid var(--c3)}.btn-s:hover{border-color:var(--pr);color:var(--pr)}
+.btn-d{background:var(--ro50);color:var(--ro);border:1px solid #FECACA}.btn-d:hover{background:#FEE2E2;border-color:var(--ro)}
+
+/* ═══ Dropdown ═══ */
+.dropdown-wrap{position:relative}
+.dropdown-menu{position:absolute;top:calc(100% + 4px);right:0;background:var(--sf);border:1px solid var(--c3);border-radius:var(--r1);box-shadow:0 6px 16px rgba(0,0,0,.08);min-width:160px;z-index:100;padding:4px 0;display:none}
+.dropdown-menu.show{display:block}
+.dropdown-item{padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer;transition:background .1s;display:flex;align-items:center;gap:6px}
+.dropdown-item:hover{background:var(--c1)}
+.dropdown-item.danger{color:var(--ro)}
+.dropdown-divider{height:1px;background:var(--dv);margin:4px 0}
+
+/* ═══ Activity Header ═══ */
+.act-hd{padding:16px 0;border-bottom:1px solid var(--dv);margin-bottom:16px;display:flex;align-items:flex-start;justify-content:space-between}
+.act-hd-l{display:flex;align-items:flex-start;gap:12px}
+.back-btn{width:32px;height:32px;border-radius:var(--r1);border:1px solid var(--c3);background:var(--sf);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--c6);transition:all .15s;flex-shrink:0;margin-top:2px}
+.back-btn:hover{border-color:var(--pr);color:var(--pr)}
+.back-btn svg{width:16px;height:16px}
+.act-hd-info{display:flex;flex-direction:column;gap:6px}
+.act-title-row{display:flex;align-items:center;gap:10px}
+.act-title{font:700 20px/1.3 var(--f);color:var(--c9)}
+.status-tag{display:inline-flex;align-items:center;font:500 12px/1 var(--f);padding:3px 10px;border-radius:4px}
+.status-tag.green{color:var(--em700);background:var(--em50)}
+.act-meta{display:flex;align-items:center;gap:8px;font:400 13px/1 var(--f);color:var(--c6)}
+.act-meta .sep{width:1px;height:14px;background:var(--c3)}
+.act-hd-r{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.act-link-btn{display:flex;align-items:center;gap:5px;font:500 13px/1 var(--f);color:var(--c6);cursor:pointer;background:none;border:none;padding:4px;border-radius:4px;transition:color .15s}
+.act-link-btn:hover{color:var(--pr)}
+.act-link-btn svg{width:16px;height:16px}
+
+/* ═══ Action Row ═══ */
+.action-row{display:flex;align-items:center;gap:10px;padding:12px 0;flex-wrap:wrap}
+.action-row .spacer{flex:1}
+.action-stats{display:flex;align-items:center;gap:20px}
+.action-stat{font:400 13px/1 var(--f);color:var(--c6);display:flex;align-items:baseline;gap:4px}
+.action-stat-num{font:700 20px/1 var(--f);color:var(--c9)}
+.action-stat-num.red{color:var(--ro)}
+.action-stat-num.pr{color:var(--pr)}
+.stage-tip-wrap{position:relative;display:inline-flex;cursor:pointer}
+.stage-tip-wrap .tip-icon{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--c4);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:var(--c5);margin-left:6px;transition:all .15s}
+.stage-tip-wrap:hover .tip-icon{border-color:var(--pr);color:var(--pr)}
+.stage-tip{position:absolute;top:calc(100% + 6px);left:0;background:var(--sf);border:1px solid var(--c3);border-radius:var(--r2);box-shadow:0 8px 24px rgba(0,0,0,.12);padding:12px 16px;z-index:200;min-width:280px;display:none}
+.stage-tip-wrap:hover .stage-tip{display:block}
+.stage-tip-title{font:600 13px/1 var(--f);color:var(--c9);margin-bottom:10px}
+.stage-tip-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--dv);font:400 12px/1 var(--f);color:var(--c7)}
+.stage-tip-item:last-child{border-bottom:none}
+.stage-tip-num{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);flex-shrink:0}
+.stage-tip-num.done{background:var(--em);color:#FFF}
+.stage-tip-num.active{background:var(--pr);color:#FFF}
+.stage-tip-num.pending{background:var(--c2);color:var(--c5)}
+.stage-tip-name{flex:1}
+.stage-tip-cnt{font:500 11px/1 var(--f);color:var(--c5)}
+.stage-tip-status{font:500 11px/1 var(--f);padding:1px 6px;border-radius:3px}
+.stage-tip-status.done{background:var(--em50);color:var(--em700)}
+.stage-tip-status.active{background:var(--pr50);color:var(--pr)}
+.stage-tip-status.pending{background:var(--c2);color:var(--c5)}
+
+/* ═══ Filter Bar ═══ */
+.filter-bar{padding:12px 0}
+.filter-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.filter-group{display:flex;align-items:center;gap:6px}
+.filter-label{font:500 13px/1 var(--f);color:var(--c6);white-space:nowrap}
+.filter-select{height:32px;padding:0 28px 0 10px;border:1px solid var(--c3);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c7);background:var(--sf) url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2394A3B8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 8px center;appearance:none;cursor:pointer;outline:none;font-family:var(--f);min-width:100px}
+.filter-select:focus{border-color:var(--pr)}
+.filter-search{height:32px;border:1px solid var(--c3);border-radius:var(--r1);padding:0 10px 0 32px;font:400 13px/1 var(--f);color:var(--c7);outline:none;width:220px;background:var(--sf) url("data:image/svg+xml,%3Csvg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") no-repeat 10px center;font-family:var(--f)}
+.filter-search:focus{border-color:var(--pr)}
+.filter-search::placeholder{color:var(--c5)}
+.filter-reset{display:flex;align-items:center;gap:4px;font:500 13px/1 var(--f);color:var(--c6);cursor:pointer;background:none;border:none;padding:4px 8px;border-radius:4px;transition:color .15s;font-family:var(--f)}
+.filter-reset:hover{color:var(--pr)}
+.filter-reset svg{width:14px;height:14px}
+
+/* ═══ Table ═══ */
+.table-wrap{background:var(--sf);border:1px solid var(--c3);border-radius:var(--r2);box-shadow:var(--shadow);overflow-x:auto;position:relative}
+table{border-collapse:collapse;table-layout:auto}
+thead th{background:var(--c1);font:600 12px/1 var(--f);color:var(--c6);text-align:left;padding:12px 14px;border-bottom:1px solid var(--dv);white-space:nowrap;position:sticky;top:0;z-index:2}
+tbody td{padding:13px 14px;border-bottom:1px solid var(--dv);font:400 13px/1.3 var(--f);color:var(--c7);vertical-align:middle;white-space:nowrap}
+tbody tr:hover td{background:var(--c1)}
+tbody tr:last-child td{border-bottom:none}
+/* Fixed left: checkbox + 姓名 */
+.col-check{position:sticky;left:0;z-index:3;background:var(--sf);min-width:40px;width:40px}
+thead th.col-check{background:var(--c1);z-index:4}
+tbody tr:hover td.col-check{background:var(--c1)}
+.col-name{position:sticky;left:40px;z-index:3;background:var(--sf);min-width:80px}
+thead th.col-name{background:var(--c1);z-index:4}
+tbody tr:hover td.col-name{background:var(--c1)}
+/* Fixed right: 操作 */
+.col-ops{position:sticky;right:0;z-index:3;background:var(--sf);min-width:120px}
+thead th.col-ops{background:var(--c1);z-index:4}
+tbody tr:hover td.col-ops{background:var(--c1)}
+/* 异常原因 fixed width + ellipsis */
+.col-reason{max-width:180px;min-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.table-checkbox{width:14px;height:14px;cursor:pointer;accent-color:var(--pr)}
+.node-badge{display:inline-flex;align-items:center;gap:5px}
+.node-num{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--pr);color:var(--pr);font:600 12px/1 var(--f);display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--pr50)}
+.node-name{font:400 13px/1 var(--f);color:var(--c9)}
+.ex-tag{display:inline-flex;font:500 12px/1 var(--f);padding:2px 10px;border-radius:4px;white-space:nowrap}
+.ex-red{color:var(--ro700);background:var(--ro50)}
+.ex-orange{color:var(--ac700);background:var(--ac50)}
+.ex-dash{color:var(--c5)}
+.grade{font:400 13px/1 var(--f);color:var(--c7)}
+.grade.dash{color:var(--c5)}
+.name-link{color:var(--c9);font-weight:500;cursor:pointer;text-decoration:none}
+.name-link:hover{color:var(--pr)}
+
+/* ═══ Row Ops ═══ */
+.ops-cell{position:relative}
+.ops-default{display:flex;align-items:center;gap:10px;white-space:nowrap}
+.ops-default a{font:500 13px/1 var(--f);color:var(--c7);cursor:pointer;text-decoration:none;transition:color .15s}
+.ops-default a:hover{color:var(--pr)}
+.ops-expand-btn{font:500 13px/1 var(--f);color:var(--c5);cursor:pointer;background:none;border:none;font-family:var(--f);display:inline-flex;align-items:center;gap:3px;padding:0}
+.ops-expand-btn:hover{color:var(--pr)}
+.ops-expand-btn svg{width:12px;height:12px;transition:transform .2s}
+.ops-expand-btn.open svg{transform:rotate(180deg)}
+.ops-panel{position:absolute;top:100%;right:0;margin-top:4px;background:var(--sf);border:1px solid var(--c3);border-radius:var(--r1);box-shadow:0 6px 16px rgba(0,0,0,.08);padding:4px 0;z-index:50;min-width:110px;display:none}
+.ops-panel.show{display:block}
+.ops-panel-item{padding:7px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer;transition:background .1s;white-space:nowrap}
+.ops-panel-item:hover{background:var(--c1)}
+.ops-panel-item.danger{color:var(--ro)}
+.ops-panel-item.danger:hover{background:var(--ro50)}
+.ops-panel-divider{height:1px;background:var(--dv);margin:3px 0}
+
+/* ═══ Bottom Bar ═══ */
+.bottom-bar{background:var(--sf);border:1px solid var(--c3);border-radius:var(--r2);box-shadow:var(--shadow);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.bottom-left{display:flex;align-items:center;gap:12px}
+.bottom-left .selected-info{display:flex;align-items:center;gap:8px;font:400 13px/1 var(--f);color:var(--c7)}
+.bottom-left .selected-info .count{font-weight:600}
+.clear-btn{font:500 13px/1 var(--f);color:var(--pr);cursor:pointer;background:none;border:none;font-family:var(--f)}
+.clear-btn:hover{text-decoration:underline}
+.bottom-right{display:flex;align-items:center;gap:16px}
+.total-text{font:400 13px/1 var(--f);color:var(--c6)}
+.pagination{display:flex;align-items:center;gap:4px}
+.pg-btn{min-width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:var(--r1);font:500 13px/1 var(--f);color:var(--c7);cursor:pointer;border:1px solid var(--c3);background:var(--sf);transition:all .12s;font-family:var(--f)}
+.pg-btn:hover{border-color:var(--pr);color:var(--pr)}
+.pg-btn.active{background:var(--pr);color:#FFF;border-color:var(--pr)}
+.pg-btn.disabled{color:var(--c5);cursor:not-allowed;border-color:var(--dv)}
+.pg-btn.disabled:hover{border-color:var(--dv);color:var(--c5)}
+.pg-ellipsis{min-width:30px;height:30px;display:flex;align-items:center;justify-content:center;font:400 13px/1 var(--f);color:var(--c5)}
+.page-size-select{height:30px;padding:0 24px 0 8px;border:1px solid var(--c3);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c7);background:var(--sf) url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2394A3B8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 6px center;appearance:none;cursor:pointer;outline:none;font-family:var(--f)}
+
+/* ═══ Sub Page ═══ */
+.sub-page-hd{display:flex;align-items:center;gap:12px;padding-bottom:16px;border-bottom:1px solid var(--dv);margin-bottom:20px}
+.sub-page-hd .back{font:500 13px/1 var(--f);color:var(--pr);cursor:pointer;display:flex;align-items:center;gap:4px;background:none;border:none;font-family:var(--f)}
+.sub-page-hd .back:hover{text-decoration:underline}
+.sub-page-hd .title{font:600 16px/1.3 var(--f);color:var(--c9)}
+
+/* Scheme Detail */
+.scheme-section{background:var(--sf);border:1px solid var(--c3);border-radius:var(--r2);margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow)}
+.scheme-section-hd{display:flex;align-items:center;gap:8px;padding:14px 20px;border-bottom:1px solid var(--dv)}
+.scheme-section-hd::before{content:'';width:3px;height:14px;background:var(--pr);border-radius:2px;flex-shrink:0}
+.scheme-section-title{font:600 14px/1.3 var(--f);color:var(--c9)}
+.scheme-section-bd{padding:16px 20px}
+.scheme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.scheme-item{display:flex;flex-direction:column;gap:4px}
+.scheme-item .label{font:500 12px/1 var(--f);color:var(--c6)}
+.scheme-item .value{font:400 13px/1.4 var(--f);color:var(--c9)}
+.scheme-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.scheme-tag{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:4px;font:500 12px/1 var(--f)}
+.scheme-tag.grade-a{background:var(--ro50);color:var(--ro700)}
+.scheme-tag.grade-bp{background:var(--ac50);color:var(--ac700)}
+.scheme-tag.grade-b{background:var(--em50);color:var(--em700)}
+.scheme-tag.grade-bm{background:var(--vi50);color:var(--vi)}
+.scheme-tag.grade-c{background:var(--c2);color:var(--c6)}
+.scheme-stage-list{display:flex;flex-direction:column;gap:8px}
+.scheme-stage-item{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--dv);border-radius:var(--r1)}
+.scheme-stage-name{font:500 13px/1 var(--f);color:var(--c9)}
+.scheme-stage-desc{font:400 11px/1 var(--f);color:var(--c5);margin-top:2px}
+.scheme-stage-tag{font:500 11px/1 var(--f);padding:2px 8px;border-radius:3px}
+.scheme-stage-tag.on{background:var(--em50);color:var(--em700)}
+.scheme-stage-tag.off{background:var(--c2);color:var(--c5)}
+.scheme-group-list{display:flex;flex-direction:column;gap:8px}
+.scheme-group-item{padding:12px 16px;border:1px solid var(--dv);border-radius:var(--r1)}
+.scheme-group-name{font:600 13px/1 var(--f);color:var(--c9);display:flex;align-items:center;gap:8px}
+.scheme-group-name .badge{font:500 10px/1 var(--f);padding:1px 6px;border-radius:3px;background:var(--pr50);color:var(--pr)}
+.scheme-group-rules{font:400 12px/1 var(--f);color:var(--c6);margin-top:6px}
+
+/* Op Log */
+.oplog-table{width:100%;border-collapse:collapse}
+.oplog-table th{font:600 13px/1 var(--f);color:var(--c6);text-align:left;padding:12px 14px;border-bottom:1px solid var(--dv);background:var(--c1)}
+.oplog-table td{padding:12px 14px;border-bottom:1px solid var(--dv);font:400 13px/1.3 var(--f);color:var(--c7)}
+.oplog-table tr:hover td{background:var(--c1)}
+.oplog-type{display:inline-flex;font:500 12px/1 var(--f);padding:2px 10px;border-radius:4px}
+.oplog-type.t-blue{background:var(--pr50);color:var(--pr)}
+.oplog-type.t-green{background:var(--em50);color:var(--em700)}
+.oplog-type.t-red{background:var(--ro50);color:var(--ro700)}
+.oplog-type.t-orange{background:var(--ac50);color:var(--ac700)}
+.oplog-type.t-purple{background:var(--vi50);color:var(--vi)}
+.oplog-time{font:400 12px/1 var(--f);color:var(--c6);font-family:"SF Mono","JetBrains Mono",monospace;white-space:nowrap}
+
+/* Detail Page */
+.detail-card{background:var(--sf);border:1px solid var(--c3);border-radius:var(--r3);box-shadow:var(--shadow);padding:24px;max-width:1120px}
+.detail-breadcrumb{font:400 13px/1 var(--f);color:var(--c6);margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.detail-breadcrumb .back{color:var(--pr);cursor:pointer;background:none;border:none;font:400 13px/1 var(--f);font-family:var(--f);display:inline-flex;align-items:center;gap:4px}
+.detail-breadcrumb .back:hover{text-decoration:underline}
+.detail-breadcrumb .sep{color:var(--c4)}
+.detail-title-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
+.detail-title-l{display:flex;flex-direction:column;gap:6px}
+.detail-title-name{font:700 20px/1.3 var(--f);color:var(--c9);display:flex;align-items:center;gap:10px}
+.detail-title-meta{font:400 13px/1 var(--f);color:var(--c6)}
+.detail-title-meta .sep{margin:0 6px;color:var(--c4)}
+.detail-title-r{display:flex;gap:8px;flex-shrink:0}
+/* Flow Progress */
+.detail-flow{display:flex;align-items:flex-start;position:relative;margin:28px 0 24px;padding:0 20px}
+.detail-flow::before{content:'';position:absolute;top:18px;left:60px;right:60px;height:3px;background:var(--c3);z-index:0}
+.detail-flow-stage{flex:1;display:flex;flex-direction:column;align-items:center;position:relative;z-index:1}
+.detail-flow-dot{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 13px/1 var(--f);margin-bottom:10px;border:3px solid var(--sf);transition:all .2s}
+.detail-flow-dot.done{background:var(--em);color:#FFF}
+.detail-flow-dot.active{background:var(--pr);color:#FFF;box-shadow:0 0 0 4px var(--pr50)}
+.detail-flow-dot.pending{background:var(--c2);color:var(--c5)}
+.detail-flow-name{font:600 13px/1 var(--f);color:var(--c9);margin-bottom:6px;text-align:center}
+.detail-flow-status{font:500 12px/1 var(--f);padding:2px 8px;border-radius:4px;margin-bottom:4px}
+.detail-flow-status.done{color:var(--em700);background:var(--em50)}
+.detail-flow-status.active{color:var(--pr);background:var(--pr50)}
+.detail-flow-status.pending{color:var(--c5);background:var(--c2)}
+.detail-flow-date{font:400 12px/1 var(--f);color:var(--c5)}
+.detail-flow-hint{font:400 11px/1 var(--f);color:var(--c5)}
+/* Stage Tab */
+.detail-stage-tab{display:inline-flex;font:600 14px/1 var(--f);color:var(--pr);padding-bottom:10px;border-bottom:2px solid var(--pr);margin-bottom:20px}
+/* Node Table */
+.detail-sec-title{font:600 15px/1.3 var(--f);color:var(--c9);margin-bottom:14px}
+.detail-node-tbl{width:100%;border-collapse:collapse;margin-bottom:24px}
+.detail-node-tbl th{background:var(--c1);font:600 13px/1 var(--f);color:var(--c6);text-align:left;padding:12px 16px;border-bottom:1px solid var(--dv)}
+.detail-node-tbl td{padding:14px 16px;border-bottom:1px solid var(--dv);font:400 13px/1.3 var(--f);color:var(--c7);vertical-align:middle}
+.detail-node-tbl tr:last-child td{border-bottom:none}
+.detail-node-tbl tr:hover td{background:var(--c1)}
+.detail-node-tbl .link{color:var(--pr);cursor:pointer;text-decoration:none;font:500 13px/1 var(--f)}
+.detail-node-tbl .link:hover{text-decoration:underline}
+.detail-node-tbl .dash{color:var(--c5)}
+/* Stage Info Card */
+.detail-info{border:1px solid var(--c3);border-radius:var(--r2);overflow:hidden}
+.detail-info-row{display:flex;border-bottom:1px solid var(--dv)}
+.detail-info-row:last-child{border-bottom:none}
+.detail-info-label{width:100px;flex-shrink:0;padding:14px 16px;font:500 13px/1.4 var(--f);color:var(--c6);background:var(--c1);border-right:1px solid var(--dv)}
+.detail-info-value{flex:1;padding:14px 16px;font:400 13px/1.4 var(--f);color:var(--c7);display:flex;align-items:center;gap:8px}
+.detail-info-value .red{color:var(--ro);font-weight:500}
+.detail-info-value .link{color:var(--pr);cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.detail-info-value .link:hover{text-decoration:underline}
+.detail-info-value .record-link{margin-left:auto;color:var(--pr);cursor:pointer;display:inline-flex;align-items:center;gap:4px;font:500 13px/1 var(--f)}
+.detail-info-value .record-link:hover{text-decoration:underline}
+
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#1F2937;color:#FFF;padding:10px 20px;border-radius:8px;font:500 13px/1 var(--f);z-index:9999;opacity:0;transition:opacity .25s;pointer-events:none}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<!-- Navigation Header -->
+<header class="hdr">
+  <div class="hdr-l">
+    <div class="logo"><div class="logo-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><span class="logo-t">HR ONE</span></div>
+    <button class="menu-btn" onclick="GHR_NAV.toggleMenu()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <span>全部菜单</span>
+      <svg width="7" height="7" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 6l4 4 4-4"/></svg>
+    </button>
+  </div>
+  <div class="hdr-c"><div class="sch"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg><input placeholder="搜索菜单、员工、流程…" /><span style="font:600 10px/1 var(--f);color:var(--c5);background:var(--c2);padding:2px 6px;border-radius:3px;border:1px solid var(--c3);flex-shrink:0">⌘K</span></div></div>
+  <div class="hdr-r">
+    <button class="hdr-ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="dot"></span></button>
+    <button class="hdr-ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></button>
+    <div class="av">管</div>
+  </div>
+</header>
+
+<!-- Main Layout -->
+<div class="main">
+  <!-- Sidebar -->
+  <aside class="sb">
+    <div class="sb-hd"><div class="sb-hd-in"><div class="sb-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div><div><div class="sb-n">绩效管理</div><div class="sb-l">Performance</div></div></div></div>
+    <div class="sb-bd" id="sbBd"></div>
+    <div class="sb-ft">HR ONE v3.0</div>
+  </aside>
+
+  <!-- Content -->
+  <div class="ct" id="pageRoot"></div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="navigation.js"></script>
+<script>
+// ═══ State ═══
+let subPage = null;
+let detailIdx = null;
+let selectedRows = new Set();
+let expandedOps = new Set();
+let currentPage = 1;
+
+// ═══ Table Data ═══
+const tableData = [
+  { name:'张三', emp:'EMP001', dept:'技术部', node:2, nodeName:'绩效考核', handler:'李四', grade:'超出预期', approveGrade:'-', confirmStatus:'已确认', exception:'超时', exceptionCls:'ex-red', exceptionReason:'超过节点截止时间2天', updateTime:'2025-05-23 16:30', status:'进行中' },
+  { name:'李四', emp:'EMP002', dept:'产品部', node:1, nodeName:'目标制定', handler:'王五', grade:'符合预期', approveGrade:'超出预期+', confirmStatus:'已确认', exception:'-', exceptionCls:'ex-dash', exceptionReason:'-', updateTime:'2025-05-20 14:20', status:'已完成' },
+  { name:'王五', emp:'EMP003', dept:'技术部', node:2, nodeName:'绩效考核', handler:'李四', grade:'-', approveGrade:'-', confirmStatus:'-', exception:'-', exceptionCls:'ex-dash', exceptionReason:'-', updateTime:'2025-05-23 10:15', status:'待处理' },
+  { name:'赵六', emp:'EMP004', dept:'设计部', node:3, nodeName:'结果审定', handler:'孙七', grade:'符合预期-', approveGrade:'-', confirmStatus:'不确认', exception:'缺少操作', exceptionCls:'ex-orange', exceptionReason:'等待审定人提交结果', updateTime:'2025-05-21 09:40', status:'超时' },
+  { name:'孙七', emp:'EMP005', dept:'技术部', node:1, nodeName:'目标制定', handler:'李四', grade:'远超预期', approveGrade:'超出预期', confirmStatus:'已确认', exception:'-', exceptionCls:'ex-dash', exceptionReason:'-', updateTime:'2025-05-18 11:30', status:'已完成' },
+  { name:'周八', emp:'EMP006', dept:'人力资源部', node:4, nodeName:'结果确认', handler:'吴九', grade:'符合预期', approveGrade:'符合预期-', confirmStatus:'不确认', exception:'逾期', exceptionCls:'ex-orange', exceptionReason:'超过节点截止时间1天', updateTime:'2025-05-22 15:10', status:'待处理' },
+  { name:'钱十', emp:'EMP007', dept:'市场部', node:2, nodeName:'绩效考核', handler:'郑十一', grade:'低于预期', approveGrade:'-', confirmStatus:'-', exception:'-', exceptionCls:'ex-dash', exceptionReason:'-', updateTime:'2025-05-23 09:50', status:'进行中' },
+  { name:'陈十一', emp:'EMP008', dept:'运营部', node:5, nodeName:'绩效面谈', handler:'郑十二', grade:'-', approveGrade:'-', confirmStatus:'-', exception:'-', exceptionCls:'ex-dash', exceptionReason:'-', updateTime:'2025-05-20 17:20', status:'未开始' },
+];
+
+// ═══ Stage Data ═══
+const STAGES = [
+  { id:1, name:'目标制定', total:128, done:128, status:'done' },
+  { id:2, name:'绩效考核', total:128, done:98, status:'active' },
+  { id:3, name:'结果审定', total:128, done:0, status:'pending' },
+  { id:4, name:'结果确认', total:128, done:0, status:'pending' },
+  { id:5, name:'绩效面谈', total:128, done:0, status:'pending' },
+];
+
+const SCHEME = {
+  name:'年度绩效方案', code:'PERF-2025-001', version:'v2', enabled:true,
+  desc:'适用于全公司年度绩效考核，采用360度评估方式，包含目标制定、绩效考核、结果审定、结果确认、绩效面谈五个环节。',
+  gradeRule:'标准五级',
+  grades:[{name:'远超预期',code:'A',range:'90-100分',color:'grade-a'},{name:'符合预期+',code:'B+',range:'80-89分',color:'grade-bp'},{name:'符合预期',code:'B',range:'70-79分',color:'grade-b'},{name:'符合预期-',code:'B-',range:'60-69分',color:'grade-bm'},{name:'低于预期',code:'C',range:'0-59分',color:'grade-c'}],
+  stages:[{name:'目标制定',desc:'员工/上级填写绩效目标',flow:'通用目标制定流程',enabled:true},{name:'绩效考核',desc:'考核人评分',flow:'通用绩效考核流程',enabled:true},{name:'结果审定',desc:'审定人调整等级',flow:'汇报线逐级审定',enabled:true},{name:'结果确认',desc:'员工确认绩效结果',flow:'员工确认流程',enabled:true},{name:'绩效面谈',desc:'上级与员工面谈',flow:'绩效面谈流程',enabled:true}],
+  groups:[{name:'默认考核组',isDefault:true,rules:'部门 属于 产品部,技术部,市场部',excluded:'-'},{name:'仓储特殊组',isDefault:false,rules:'部门 等于 仓储部 且 职级 属于 L5,L6',excluded:'张三'}],
+  forcedDist:'标准强制分布（A≤10% / B+≤20% / B≥40% / B-≤20% / C不低于10%）',
+};
+
+const DETAIL_DATA = {
+  0:{name:'张三',emp:'EMP001',dept:'技术部',position:'高级工程师',level:'P6',assessor:'李四',
+    goals:[{module:'业绩目标',weight:50,items:[{name:'Q2核心项目交付率',target:'95%',actual:'98%',grade:'超出预期',score:120}]},{module:'能力发展',weight:25,items:[{name:'专业技能提升',target:'-',actual:'-',grade:'符合预期',score:80}]},{module:'价值观践行',weight:15,items:[{name:'主动担责',target:'-',actual:'-',grade:'超出预期+',score:90}]}],
+    result:{selfScore:88,directScore:92,indirectScore:90,finalScore:92,grade:'超出预期'},
+    stages:[{name:'目标制定',status:'done',nodes:[{name:'员工提交',status:'done',time:'05/18 14:20'},{name:'直接上级审批',status:'done',time:'05/19 09:30'},{name:'间接上级审批',status:'done',time:'05/19 15:00'}]},
+      {name:'绩效考核',status:'active',nodes:[{name:'员工自评',status:'done',time:'05/20 10:00'},{name:'直接上级评分',status:'done',time:'05/21 14:30'},{name:'间接上级评分',status:'active',time:'进行中'}]},
+      {name:'结果审定',status:'pending',nodes:[]},{name:'结果确认',status:'pending',nodes:[]},{name:'绩效面谈',status:'pending',nodes:[]}]},
+  1:{name:'李四',emp:'EMP002',dept:'产品部',position:'产品经理',level:'P5',assessor:'王五',
+    goals:[{module:'业绩目标',weight:60,items:[{name:'产品需求评审完成率',target:'100%',actual:'100%',grade:'符合预期',score:100}]},{module:'能力发展',weight:25,items:[{name:'需求分析能力',target:'-',actual:'-',grade:'超出预期+',score:90}]}],
+    result:{selfScore:82,directScore:85,indirectScore:84,finalScore:85,grade:'超出预期+'},
+    stages:[{name:'目标制定',status:'done',nodes:[{name:'员工提交',status:'done',time:'05/16 16:00'},{name:'直接上级审批',status:'done',time:'05/17 10:00'}]},
+      {name:'绩效考核',status:'done',nodes:[{name:'员工自评',status:'done',time:'05/18 09:00'},{name:'直接上级评分',status:'done',time:'05/19 11:00'}]},
+      {name:'结果审定',status:'done',nodes:[{name:'直接上级审定',status:'done',time:'05/20 14:00'}]},
+      {name:'结果确认',status:'done',nodes:[{name:'员工确认',status:'done',time:'05/20 16:00'}]},
+      {name:'绩效面谈',status:'pending',nodes:[]}]},
+  2:{name:'王五',emp:'EMP003',dept:'技术部',position:'财务总监',level:'M4',assessor:'李四',
+    goals:[],result:null,
+    stages:[{name:'目标制定',status:'done',nodes:[{name:'员工提交',status:'done',time:'05/15 17:30'}]},
+      {name:'绩效考核',status:'pending',nodes:[]},{name:'结果审定',status:'pending',nodes:[]},{name:'结果确认',status:'pending',nodes:[]},{name:'绩效面谈',status:'pending',nodes:[]}]},
+  3:{name:'赵六',emp:'EMP004',dept:'设计部',position:'渠道经理',level:'P6',assessor:'孙七',
+    goals:[{module:'业绩目标',weight:50,items:[{name:'市场活动执行完成率',target:'90%',actual:'-',grade:'-',score:0}]}],
+    result:{selfScore:0,directScore:0,indirectScore:0,finalScore:'-',grade:'-'},
+    stages:[{name:'目标制定',status:'done',nodes:[{name:'员工提交',status:'done',time:'05/10 09:40'}]},
+      {name:'绩效考核',status:'done',nodes:[]},{name:'结果审定',status:'active',nodes:[{name:'直接上级审定',status:'active',time:'超时'}]},
+      {name:'结果确认',status:'pending',nodes:[]},{name:'绩效面谈',status:'pending',nodes:[]}]},
+  4:{name:'孙七',emp:'EMP005',dept:'技术部',position:'前端工程师',level:'P4',assessor:'李四',
+    goals:[{module:'业绩目标',weight:50,items:[{name:'代码Review覆盖率',target:'80%',actual:'85%',grade:'超出预期',score:100}]}],
+    result:{selfScore:85,directScore:87,indirectScore:86,finalScore:87,grade:'超出预期'},
+    stages:[{name:'目标制定',status:'done',nodes:[{name:'员工提交',status:'done',time:'05/12 11:30'}]},
+      {name:'绩效考核',status:'done',nodes:[{name:'员工自评',status:'done',time:'05/14 09:00'}]},
+      {name:'结果审定',status:'done',nodes:[]},{name:'结果确认',status:'done',nodes:[]},{name:'绩效面谈',status:'pending',nodes:[]}]},
+  5:{name:'周八',emp:'EMP006',dept:'人力资源部',position:'HRBP',level:'P5',assessor:'吴九',
+    goals:[{module:'业绩目标',weight:55,items:[{name:'招聘完成率',target:'95%',actual:'92%',grade:'符合预期',score:80}]}],
+    result:{selfScore:80,directScore:82,indirectScore:81,finalScore:81,grade:'符合预期'},
+    stages:[{name:'目标制定',status:'done',nodes:[{name:'员工提交',status:'done',time:'05/14 15:10'}]},
+      {name:'绩效考核',status:'done',nodes:[]},{name:'结果审定',status:'done',nodes:[]},
+      {name:'结果确认',status:'active',nodes:[{name:'员工确认',status:'active',time:'逾期'}]},
+      {name:'绩效面谈',status:'pending',nodes:[]}]},
+  6:{name:'钱十',emp:'EMP007',dept:'市场部',position:'市场经理',level:'P7',assessor:'郑十一',
+    goals:[],result:null,
+    stages:[{name:'目标制定',status:'done',nodes:[{name:'员工提交',status:'done',time:'05/19 09:50'}]},
+      {name:'绩效考核',status:'active',nodes:[{name:'员工自评',status:'done',time:'05/20 10:00'},{name:'直接上级评分',status:'active',time:'进行中'}]},
+      {name:'结果审定',status:'pending',nodes:[]},{name:'结果确认',status:'pending',nodes:[]},{name:'绩效面谈',status:'pending',nodes:[]}]},
+  7:{name:'陈十一',emp:'EMP008',dept:'运营部',position:'运营专员',level:'P3',assessor:'郑十二',
+    goals:[],result:null,
+    stages:[{name:'目标制定',status:'done',nodes:[{name:'员工提交',status:'done',time:'05/17 17:20'}]},
+      {name:'绩效考核',status:'pending',nodes:[]},{name:'结果审定',status:'pending',nodes:[]},{name:'结果确认',status:'pending',nodes:[]},{name:'绩效面谈',status:'pending',nodes:[]}]},
+};
+
+const OP_LOGS = [
+  {time:'2025-06-27 09:15',operator:'Kim',type:'强制终止',typeCls:'t-red',target:'赵六 → 8名被考核人',detail:'考核人离职，终止关联流程并重新分配'},
+  {time:'2025-06-26 14:30',operator:'Kim',type:'催办',typeCls:'t-blue',target:'绩效考核 - 李四、吴十等3人',detail:'发送催办通知（系统消息+邮件）'},
+  {time:'2025-06-25 10:00',operator:'Kim',type:'转交',typeCls:'t-green',target:'钱七 → 孙八',detail:'被考核人调岗，考核人变更'},
+  {time:'2025-06-24 16:00',operator:'Kim',type:'结束环节',typeCls:'t-red',target:'目标制定 - 全部',detail:'手动结束目标制定环节，128人已提交'},
+  {time:'2025-06-23 18:00',operator:'Kim',type:'开启环节',typeCls:'t-blue',target:'绩效考核 - 全部',detail:'手动开启绩效考核环节'},
+  {time:'2025-06-22 09:30',operator:'Kim',type:'导入数据',typeCls:'t-purple',target:'目标数据 - 128条',detail:'导入目标数据，成功125条，失败3条'},
+  {time:'2025-06-21 14:00',operator:'Kim',type:'导出数据',typeCls:'t-purple',target:'结果数据 - 128条',detail:'导出绩效考核结果数据'},
+  {time:'2025-06-20 10:00',operator:'Kim',type:'暂停环节',typeCls:'t-orange',target:'目标制定 - 管理层组',detail:'暂停管理层组目标制定，等待审批结果'},
+  {time:'2025-06-19 16:30',operator:'Kim',type:'继续环节',typeCls:'t-green',target:'目标制定 - 管理层组',detail:'恢复管理层组目标制定环节'},
+];
+
+const ICO = {
+  upload:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>',
+  download:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+  file:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
+  chevDown:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>',
+  userPlus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>',
+  flow:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>',
+};
+
+// ═══ Sidebar ═══
+function renderSidebar() {
+  const sb = document.getElementById('sbBd');
+  const groups = [
+    {n:'绩效基础配置',open:false,items:['绩效周期','单位','等级规则','计算规则','衡量标准','指标库','评价规则','强制分布规则']},
+    {n:'绩效方案',open:false,items:['绩效方案']},
+    {n:'绩效活动',open:true,items:['活动管理','活动详情']},
+    {n:'工作台',open:false,items:['绩效首页']},
+    {n:'绩效报表',open:false,items:['目标中心','考核进度','绩效结果','绩效分析报表']},
+  ];
+  sb.innerHTML = groups.map(g => `
+    <div class="sb-g">
+      <div class="sb-g-hd${g.open?' on':''}" onclick="this.classList.toggle('on');this.nextElementSibling.classList.toggle('on')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        ${g.n}
+      </div>
+      <div class="sb-g-bd${g.open?' on':''}">
+        ${g.items.map(item => `<div class="sb-i${item==='活动详情'?' on':''}">${item}</div>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ═══ Render ═══
+function render() {
+  const root = document.getElementById('pageRoot');
+  if (subPage === 'scheme') root.innerHTML = renderSchemePage();
+  else if (subPage === 'oplog') root.innerHTML = renderOpLogPage();
+  else if (subPage === 'detail') root.innerHTML = renderDetailPage();
+  else root.innerHTML = renderMainPage();
+}
+
+function renderMainPage() {
+  const hasSelection = selectedRows.size > 0;
+  const activeStage = STAGES.find(s => s.status === 'active') || STAGES[0];
+  const exceptionCount = tableData.filter(r => r.exception !== '-').length;
+  return `
+    <!-- Activity Header -->
+    <div class="act-hd">
+      <div class="act-hd-l">
+        <button class="back-btn" onclick="history.back()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <div class="act-hd-info">
+          <div class="act-title-row"><span class="act-title">2025年上半年绩效考核活动</span><span class="status-tag green">进行中</span></div>
+          <div class="act-meta"><span>考核周期：2025-01-01 ~ 2025-06-30</span><div class="sep"></div><span>考核方式：360度考核</span><div class="sep"></div><span>评分规则：5分制</span></div>
+        </div>
+      </div>
+      <div class="act-hd-r">
+        <button class="act-link-btn" onclick="openSubPage('scheme')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>方案详情</button>
+        <button class="act-link-btn" onclick="openSubPage('oplog')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="12 8 12 12 14 14"/><circle cx="12" cy="12" r="10"/></svg>操作记录</button>
+      </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div class="filter-row">
+        <div class="filter-group"><span class="filter-label">当前节点</span><select class="filter-select" id="fNode"><option value="">全部</option><option>目标制定</option><option>绩效考核</option><option>结果审定</option><option>结果确认</option><option>绩效面谈</option></select></div>
+        <div class="filter-group"><span class="filter-label">异常状态</span><select class="filter-select" id="fException"><option value="">全部</option><option>超时</option><option>逾期</option><option>缺少操作</option><option>不确认</option></select></div>
+        <div class="filter-group"><span class="filter-label">考核组</span><select class="filter-select" id="fGroup"><option value="">全部</option><option>管理层组</option><option>员工组</option><option>默认组</option></select></div>
+        <div class="filter-group"><span class="filter-label">部门</span><select class="filter-select" id="fDept"><option value="">全部</option><option>技术部</option><option>产品部</option><option>设计部</option><option>人力资源部</option><option>市场部</option><option>运营部</option></select></div>
+        <input type="text" class="filter-search" placeholder="搜索姓名、工号、部门、处理人" id="fSearch" />
+        <button class="filter-reset" onclick="resetFilters()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>重置</button>
+      </div>
+    </div>
+
+    <!-- Action Row -->
+    <div class="action-row">
+      <div class="action-stats">
+        <span class="action-stat"><span class="action-stat-num pr">${activeStage.name}</span> 当前环节
+          <span class="stage-tip-wrap">
+            <span class="tip-icon">?</span>
+            <div class="stage-tip">
+              <div class="stage-tip-title">各环节状态</div>
+              ${STAGES.map(s => `<div class="stage-tip-item">
+                <span class="stage-tip-num ${s.status}">${s.id}</span>
+                <span class="stage-tip-name">${s.name}</span>
+                <span class="stage-tip-cnt">${s.status==='done'||s.status==='active'?s.done+'/'+s.total:'—'}</span>
+                <span class="stage-tip-status ${s.status}">${s.status==='done'?'已完成':s.status==='active'?'进行中':'待处理'}</span>
+              </div>`).join('')}
+            </div>
+          </span>
+        </span>
+        <span class="action-stat"><span class="action-stat-num">128</span> 总人数</span>
+        <span class="action-stat"><span class="action-stat-num" style="color:var(--em)">38</span> 完成人数</span>
+        <span class="action-stat"><span class="action-stat-num red">${exceptionCount}</span> 异常人数</span>
+      </div>
+      <span class="spacer"></span>
+      <div class="dropdown-wrap">
+        <button class="btn btn-p" onclick="toggleDropdown('stageDd')">${ICO.flow} 节点管理 ${ICO.chevDown}</button>
+        <div class="dropdown-menu" id="stageDd">
+          <div class="dropdown-item" onclick="showToast('开启下一环节')">开启环节</div>
+          <div class="dropdown-item" onclick="showToast('结束当前环节')">结束环节</div>
+        </div>
+      </div>
+      <div class="dropdown-wrap">
+        <button class="btn btn-s" onclick="toggleDropdown('addDd')">${ICO.userPlus} 添加人员 ${ICO.chevDown}</button>
+        <div class="dropdown-menu" id="addDd">
+          <div class="dropdown-item" onclick="showToast('按考核组规则更新')">按考核组规则更新</div>
+          <div class="dropdown-item" onclick="showToast('手动添加考核人')">手动添加</div>
+          <div class="dropdown-item" onclick="showToast('导入添加考核人')">导入添加</div>
+        </div>
+      </div>
+      <div class="dropdown-wrap">
+        <button class="btn btn-s" onclick="toggleDropdown('importDd')">${ICO.upload} 导入 ${ICO.chevDown}</button>
+        <div class="dropdown-menu" id="importDd">
+          <div class="dropdown-item" onclick="handleImport('目标数据')">导入目标数据</div>
+          <div class="dropdown-item" onclick="handleImport('考核结果')">导入考核结果</div>
+          <div class="dropdown-item" onclick="handleImport('审定结果')">导入审定结果</div>
+        </div>
+      </div>
+      <div class="dropdown-wrap">
+        <button class="btn btn-s" onclick="toggleDropdown('exportDd')">${ICO.download} 导出 ${ICO.chevDown}</button>
+        <div class="dropdown-menu" id="exportDd">
+          <div class="dropdown-item" onclick="showToast('导出名单')">导出名单</div>
+          <div class="dropdown-item" onclick="showToast('导出目标')">导出目标</div>
+          <div class="dropdown-item" onclick="showToast('导出考核结果')">导出考核结果</div>
+          <div class="dropdown-item" onclick="showToast('导出审定结果')">导出审定结果</div>
+          <div class="dropdown-item" onclick="showToast('导出面谈结果')">导出面谈结果</div>
+        </div>
+      </div>
+      <div class="dropdown-wrap">
+        <button class="btn btn-s" onclick="toggleDropdown('batchDd')" id="batchBtn">批量操作 ${ICO.chevDown}</button>
+        <div class="dropdown-menu" id="batchDd" style="min-width:120px">
+          <div class="dropdown-item" onclick="handleBatch('催办')">催办</div>
+          <div class="dropdown-item" onclick="handleBatch('转交')">转交</div>
+          <div class="dropdown-item" onclick="handleBatch('暂停')">暂停</div>
+          <div class="dropdown-item" onclick="handleBatch('继续')">继续</div>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-item danger" onclick="handleBatch('终止')">终止</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th class="col-check"><input type="checkbox" class="table-checkbox" id="selectAll" onchange="toggleSelectAll()" /></th>
+          <th class="col-name">姓名</th><th>工号</th><th>部门</th><th>当前节点</th><th>当前处理人</th><th>初评等级</th><th>审定等级</th><th>确认状态</th><th>异常状态</th><th class="col-reason">异常原因</th><th>更新时间</th><th class="col-ops">操作</th>
+        </tr></thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="bottom-bar">
+      <div class="bottom-left">
+        <div class="selected-info">
+          <input type="checkbox" class="table-checkbox" id="bottomSelectAll" onchange="toggleSelectAll()" />
+          <span>已选 <span class="count" id="selectedCount">0</span> 人</span>
+        </div>
+        <button class="clear-btn" onclick="clearSelection()">清空选择</button>
+      </div>
+      <div class="bottom-right">
+        <span class="total-text">共 128 条</span>
+        <div class="pagination">
+          <button class="pg-btn disabled" onclick="goPage('prev')">&lt;</button>
+          <button class="pg-btn active" onclick="goPage(1)">1</button>
+          <button class="pg-btn" onclick="goPage(2)">2</button>
+          <button class="pg-btn" onclick="goPage(3)">3</button>
+          <button class="pg-btn" onclick="goPage(4)">4</button>
+          <button class="pg-btn" onclick="goPage(5)">5</button>
+          <span class="pg-ellipsis">...</span>
+          <button class="pg-btn" onclick="goPage(13)">13</button>
+          <button class="pg-btn" onclick="goPage('next')">&gt;</button>
+        </div>
+        <select class="page-size-select" onchange="showToast('每页 '+this.value+' 条')"><option value="10">10 条/页</option><option value="20">20 条/页</option><option value="50">50 条/页</option></select>
+      </div>
+    </div>`;
+}
+
+// ═══ Flow Operations ═══
+function getFlowOps(row) {
+  const n = row.nodeName, s = row.status;
+  if (n === '目标制定' && s === '已完成') return [{label:'查看'}];
+  if (n === '目标制定' && s === '进行中') return [{label:'查看'},{label:'催办'},{label:'转交'},{label:'暂停'}];
+  if (n === '绩效考核' && s === '进行中') return [{label:'查看'},{label:'催办'},{label:'转交'},{label:'暂停'}];
+  if (n === '绩效考核' && s === '待处理') return [{label:'查看'},{label:'催办'},{label:'转交'},{label:'暂停'}];
+  if (n === '结果审定' && s === '超时') return [{label:'查看'},{label:'催办'},{label:'转交'},{label:'继续'},{label:'终止',danger:true}];
+  if (n === '结果确认' && s === '待处理') return [{label:'查看'},{label:'催办'},{label:'暂停'}];
+  if (n === '绩效面谈' && s === '未开始') return [{label:'查看'}];
+  return [{label:'查看'}];
+}
+
+function renderTable() {
+  const tbody = document.getElementById('tableBody');
+  if (!tbody) return;
+  tbody.innerHTML = tableData.map((row, i) => {
+    const checked = selectedRows.has(i) ? 'checked' : '';
+    const ops = getFlowOps(row);
+    const isExpanded = expandedOps.has(i);
+    const defaultOp = ops[0];
+    const extraCount = ops.length - 1;
+    const confirmCls = row.confirmStatus==='不确认'?'ex-orange':row.confirmStatus==='已确认'?'ex-green':'';
+    const confirmStyle = row.confirmStatus==='不确认'?'color:var(--ac700);background:var(--ac50)':row.confirmStatus==='已确认'?'color:var(--em700);background:var(--em50)':'color:var(--c5)';
+    return `<tr>
+      <td class="col-check"><input type="checkbox" class="table-checkbox" ${checked} onchange="toggleRow(${i})" /></td>
+      <td class="col-name"><a class="name-link" href="javascript:void(0)">${row.name}</a></td>
+      <td style="font:400 12px/1 var(--f);color:var(--c6)">${row.emp}</td>
+      <td>${row.dept}</td>
+      <td><div class="node-badge"><span class="node-num">${row.node}</span><span class="node-name">${row.nodeName}</span></div></td>
+      <td>${row.handler}</td>
+      <td><span class="grade${row.grade==='-'?' dash':''}">${row.grade}</span></td>
+      <td><span class="grade${row.approveGrade==='-'?' dash':''}">${row.approveGrade}</span></td>
+      <td>${row.confirmStatus==='-'?'<span class="ex-dash">-</span>':`<span class="ex-tag" style="${confirmStyle}">${row.confirmStatus}</span>`}</td>
+      <td>${row.exception==='-'?'<span class="ex-dash">-</span>':`<span class="ex-tag ${row.exceptionCls}">${row.exception}</span>`}</td>
+      <td class="col-reason" title="${row.exceptionReason}">${row.exceptionReason}</td>
+      <td style="font:400 12px/1 var(--f);color:var(--c6)">${row.updateTime}</td>
+      <td class="col-ops ops-cell">
+        <div class="ops-default">
+          <a href="javascript:void(0)" onclick="viewDetail(${i})">${defaultOp.label}</a>
+          ${extraCount>0?`<button class="ops-expand-btn${isExpanded?' open':''}" onclick="toggleOps(${i})">更多${ICO.chevDown}</button>`:''}
+        </div>
+        ${extraCount>0?`<div class="ops-panel${isExpanded?' show':''}" id="opsPanel${i}">
+          ${ops.slice(1).map(op => op.danger
+            ?`<div class="ops-panel-divider"></div><div class="ops-panel-item danger" onclick="showToast('${op.label} ${row.name}')">${op.label}</div>`
+            :`<div class="ops-panel-item" onclick="showToast('${op.label} ${row.name}')">${op.label}</div>`
+          ).join('')}
+        </div>`:''}
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ═══ Employee Detail ═══
+function viewDetail(idx) { detailIdx = idx; subPage = 'detail'; render(); }
+
+const NODE_DETAIL_DATA = [
+  [{node:'考核人填写',role:'考核人',person:'李四（技术部经理）',status:'进行中',time:'-',action:'去处理'},
+   {node:'二级考核人',role:'二级考核人',person:'王五（产品部经理）',status:'未开始',time:'-',action:'-'},
+   {node:'HRBP 确认',role:'HRBP',person:'赵六（HRBP）',status:'未开始',time:'-',action:'-'},
+   {node:'校准/审定',role:'审定人',person:'孙七（审定委员会成员）',status:'未开始',time:'-',action:'-'},
+   {node:'SSC 审核',role:'SSC',person:'周八（SSC绩效专员）',status:'未开始',time:'-',action:'-'}],
+];
+
+function renderDetailPage() {
+  const row = tableData[detailIdx];
+  const d = DETAIL_DATA[detailIdx];
+  if (!row || !d) return '<div style="padding:24px;color:var(--c5)">暂无详情</div>';
+  const nodes = NODE_DETAIL_DATA[0];
+  const statusCls = {'进行中':'st-blue','已提交':'st-green','未开始':'st-gray','已挂起':'st-orange','已超时':'st-red'};
+  const statusStyle = {'进行中':'color:var(--pr);background:var(--pr50)','已提交':'color:var(--em700);background:var(--em50)','未开始':'color:var(--c5);background:var(--c2)','已挂起':'color:var(--ac700);background:var(--ac50)','已超时':'color:var(--ro700);background:var(--ro50)'};
+  return `<div class="detail-card">
+    <!-- Breadcrumb -->
+    <div class="detail-breadcrumb">
+      <button class="back" onclick="subPage=null;detailIdx=null;render()">← 返回</button>
+      <span class="sep">|</span>
+      <span>活动详情</span>
+      <span class="sep">/</span>
+      <span>员工详情</span>
+    </div>
+
+    <!-- Title -->
+    <div class="detail-title-row">
+      <div class="detail-title-l">
+        <div class="detail-title-name">${d.name}（${d.emp}）<span class="status-tag green">${row.status}</span></div>
+        <div class="detail-title-meta">${d.dept}<span class="sep">/</span>${d.position}<span class="sep">/</span>员工组</div>
+      </div>
+      <div class="detail-title-r">
+        <button class="btn btn-s" onclick="showToast('已发送催办提醒')">催办</button>
+        <button class="btn btn-s" onclick="showTransferDlg()">转交</button>
+        <div class="dropdown-wrap">
+          <button class="btn btn-s" onclick="toggleDropdown('moreDd')">更多 ${ICO.chevDown}</button>
+          <div class="dropdown-menu" id="moreDd" style="right:0">
+            <div class="dropdown-item" onclick="showToast('查看操作日志')">查看操作日志</div>
+            <div class="dropdown-item" onclick="showToast('终止流程')">终止流程</div>
+            <div class="dropdown-item" onclick="showToast('导出详情')">导出详情</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Flow Progress -->
+    <div class="detail-flow">
+      ${d.stages.map((s, i) => {
+        const dotCls = s.status==='done'?'done':s.status==='active'?'active':'pending';
+        const dotContent = s.status==='done'?'✓':(i+1);
+        const statusLabel = s.status==='done'?'已提交':s.status==='active'?'进行中':'未开始';
+        const dateText = s.status==='done'?'2026-01-0'+(i+1):s.status==='active'?'当前节点':'';
+        return `<div class="detail-flow-stage">
+          <div class="detail-flow-dot ${dotCls}">${dotContent}</div>
+          <div class="detail-flow-name">${s.name}</div>
+          <span class="detail-flow-status ${dotCls}">${statusLabel}</span>
+          ${dateText?`<div class="detail-flow-date">${dateText}</div>`:''}
+        </div>`;
+      }).join('')}
+    </div>
+
+    <!-- Stage Tab -->
+    <div class="detail-stage-tab">绩效考核</div>
+
+    <!-- Node Detail Table -->
+    <div class="detail-sec-title">节点处理明细</div>
+    <table class="detail-node-tbl">
+      <thead><tr><th>节点</th><th>角色</th><th>人员</th><th>处理状态</th><th>提交时间</th><th>操作</th></tr></thead>
+      <tbody>
+        ${nodes.map(n => `<tr>
+          <td style="font-weight:500">${n.node}</td>
+          <td>${n.role}</td>
+          <td>${n.person}</td>
+          <td><span class="ex-tag" style="${statusStyle[n.status]||''}">${n.status}</span></td>
+          <td>${n.time}</td>
+          <td>${n.action==='-'?'<span class="dash">-</span>':`<a class="link" onclick="showToast('前往处理 ${n.node}')">${n.action}</a>`}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+
+    <!-- Current Stage Info -->
+    <div class="detail-sec-title">当前环节信息</div>
+    <div class="detail-info">
+      <div class="detail-info-row">
+        <div class="detail-info-label">当前环节</div>
+        <div class="detail-info-value" style="font-weight:500;color:var(--c9)">绩效考核</div>
+      </div>
+      <div class="detail-info-row">
+        <div class="detail-info-label">环节说明</div>
+        <div class="detail-info-value">考核人对员工目标完成情况、能力表现及价值贡献进行评价并提交考核结果。</div>
+      </div>
+      <div class="detail-info-row">
+        <div class="detail-info-label">处理时限</div>
+        <div class="detail-info-value">2026-01-06 23:59 截止 <span class="red">剩余 1 天</span></div>
+      </div>
+      <div class="detail-info-row">
+        <div class="detail-info-label">要求</div>
+        <div class="detail-info-value">考核分数及评语必填，附件可选。</div>
+      </div>
+      <div class="detail-info-row">
+        <div class="detail-info-label">相关表单</div>
+        <div class="detail-info-value">
+          <span class="link" onclick="showToast('查看绩效考核表')">绩效考核表</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--pr);cursor:pointer"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          <span class="record-link" onclick="openSubPage('oplog')" style="margin-left:auto">操作记录 <span style="font-weight:400;color:var(--c5)">查看（2）</span> →</span>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ═══ Scheme Detail ═══
+function renderSchemePage() {
+  const s = SCHEME;
+  return `<div>
+    <div class="sub-page-hd"><button class="back" onclick="closeSubPage()">← 返回</button><span class="title">方案详情</span></div>
+    <div class="scheme-section"><div class="scheme-section-hd"><span class="scheme-section-title">基本信息</span></div><div class="scheme-section-bd"><div class="scheme-grid">
+      <div class="scheme-item"><span class="label">方案名称</span><span class="value">${s.name}</span></div>
+      <div class="scheme-item"><span class="label">方案编号</span><span class="value" style="font-family:monospace">${s.code}</span></div>
+      <div class="scheme-item"><span class="label">方案版本</span><span class="value">${s.version}</span></div>
+      <div class="scheme-item"><span class="label">是否启用</span><span class="value" style="color:var(--em)">${s.enabled?'已启用':'已停用'}</span></div>
+      <div class="scheme-item" style="grid-column:1/-1"><span class="label">描述</span><span class="value">${s.desc}</span></div>
+    </div></div></div>
+    <div class="scheme-section"><div class="scheme-section-hd"><span class="scheme-section-title">绩效等级</span></div><div class="scheme-section-bd">
+      <div class="scheme-item" style="margin-bottom:12px"><span class="label">等级规则</span><span class="value">${s.gradeRule}</span></div>
+      <div class="scheme-tags">${s.grades.map(g=>`<span class="scheme-tag ${g.color}">${g.name} <strong>${g.code}</strong> ${g.range}</span>`).join('')}</div>
+    </div></div>
+    <div class="scheme-section"><div class="scheme-section-hd"><span class="scheme-section-title">考核组</span></div><div class="scheme-section-bd"><div class="scheme-group-list">
+      ${s.groups.map(g=>`<div class="scheme-group-item"><div class="scheme-group-name">${g.name} ${g.isDefault?'<span class="badge">默认</span>':''}</div><div class="scheme-group-rules">适用规则：${g.rules}</div><div class="scheme-group-rules">排除人员：${g.excluded}</div></div>`).join('')}
+    </div></div></div>
+    <div class="scheme-section"><div class="scheme-section-hd"><span class="scheme-section-title">考核环节</span></div><div class="scheme-section-bd"><div class="scheme-stage-list">
+      ${s.stages.map(st=>`<div class="scheme-stage-item"><div><div class="scheme-stage-name">${st.name}</div><div class="scheme-stage-desc">${st.desc} · ${st.flow}</div></div><span class="scheme-stage-tag ${st.enabled?'on':'off'}">${st.enabled?'已启用':'未启用'}</span></div>`).join('')}
+    </div></div></div>
+    <div class="scheme-section"><div class="scheme-section-hd"><span class="scheme-section-title">强制分布</span></div><div class="scheme-section-bd">
+      <div class="scheme-item"><span class="label">强制分布规则</span><span class="value">${s.forcedDist}</span></div>
+    </div></div>
+  </div>`;
+}
+
+// ═══ Op Log ═══
+function renderOpLogPage() {
+  return `<div>
+    <div class="sub-page-hd"><button class="back" onclick="closeSubPage()">← 返回</button><span class="title">操作记录</span></div>
+    <div style="background:var(--sf);border:1px solid var(--c3);border-radius:var(--r2);box-shadow:var(--shadow);overflow:hidden">
+      <table class="oplog-table"><thead><tr><th>时间</th><th>操作人</th><th>操作类型</th><th>操作对象</th><th>详情</th></tr></thead><tbody>
+        ${OP_LOGS.map(l=>`<tr><td class="oplog-time">${l.time}</td><td>${l.operator}</td><td><span class="oplog-type ${l.typeCls}">${l.type}</span></td><td>${l.target}</td><td>${l.detail}</td></tr>`).join('')}
+      </tbody></table>
+    </div>
+    <div style="padding:12px 0;font:400 13px/1 var(--f);color:var(--c6)">共 ${OP_LOGS.length} 条操作记录</div>
+  </div>`;
+}
+
+// ═══ Interactions ═══
+function openSubPage(p){subPage=p;detailIdx=null;render();}
+function closeSubPage(){subPage=null;render();}
+function toggleRow(idx){if(selectedRows.has(idx))selectedRows.delete(idx);else selectedRows.add(idx);updateSelectionUI();}
+function toggleSelectAll(){if(selectedRows.size===tableData.length)selectedRows.clear();else tableData.forEach((_,i)=>selectedRows.add(i));renderTable();updateSelectionUI();}
+function clearSelection(){selectedRows.clear();renderTable();updateSelectionUI();}
+function updateSelectionUI(){const c=selectedRows.size;document.getElementById('selectedCount').textContent=c;const sa=document.getElementById('selectAll');const bsa=document.getElementById('bottomSelectAll');if(sa)sa.checked=c===tableData.length&&tableData.length>0;if(bsa)bsa.checked=sa?.checked;}
+function toggleOps(idx){if(expandedOps.has(idx))expandedOps.delete(idx);else expandedOps.add(idx);renderTable();document.querySelectorAll('.ops-panel').forEach(p=>{const id=parseInt(p.id.replace('opsPanel',''));if(id!==idx)p.classList.remove('show');});}
+function resetFilters(){['fNode','fException','fGroup','fDept','fSearch'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});showToast('筛选已重置');}
+function toggleDropdown(id){const dd=document.getElementById(id);const wasOpen=dd.classList.contains('show');document.querySelectorAll('.dropdown-menu').forEach(d=>d.classList.remove('show'));if(!wasOpen)dd.classList.add('show');}
+function handleImport(type){document.querySelectorAll('.dropdown-menu').forEach(d=>d.classList.remove('show'));showToast('导入'+type+' — 功能待实现');}
+function handleBatch(action){document.querySelectorAll('.dropdown-menu').forEach(d=>d.classList.remove('show'));const cnt=selectedRows.size;if(!cnt){showToast('请先选择人员');return;}showToast('已对 '+cnt+' 人执行'+action);}
+function goPage(p){if(p==='prev')p=Math.max(1,currentPage-1);else if(p==='next')p=Math.min(13,currentPage+1);currentPage=p;document.querySelectorAll('.pagination .pg-btn').forEach(btn=>{const t=btn.textContent.trim();btn.classList.remove('active','disabled');if(t===String(currentPage))btn.classList.add('active');if((t==='<'&&currentPage===1)||(t==='>'&&currentPage===13))btn.classList.add('disabled');});}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),2000);}
+function showTransferDlg(){
+  const ov=document.createElement('div');ov.className='cfm-ov';ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:2100;display:flex;align-items:center;justify-content:center';
+  ov.innerHTML=`<div style="background:var(--sf);border-radius:var(--r3);box-shadow:0 20px 60px rgba(0,0,0,.2);width:400px;padding:24px">
+    <div style="font:600 15px/1.3 var(--f);color:var(--c9);margin-bottom:16px">转交流程</div>
+    <div style="margin-bottom:20px"><input style="width:100%;height:36px;padding:0 12px;border:1px solid var(--c3);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c7);outline:none" placeholder="请输入转交人姓名" /></div>
+    <div style="display:flex;justify-content:flex-end;gap:8px">
+      <button class="btn btn-s" onclick="this.closest('.cfm-ov').remove()">取消</button>
+      <button class="btn btn-p" onclick="showToast('已转交');this.closest('.cfm-ov').remove()">确认转交</button>
+    </div>
+  </div>`;
+  ov.addEventListener('click',e=>{if(e.target===ov)ov.remove();});
+  document.body.appendChild(ov);
+}
+document.addEventListener('click',function(e){if(!e.target.closest('.dropdown-wrap'))document.querySelectorAll('.dropdown-menu').forEach(d=>d.classList.remove('show'));if(!e.target.closest('.ops-cell')){document.querySelectorAll('.ops-panel').forEach(p=>p.classList.remove('show'));expandedOps.clear();}});
+
+// ═══ Init ═══
+renderSidebar();
+render();
+renderTable();
+</script>
+</body>
+</html>

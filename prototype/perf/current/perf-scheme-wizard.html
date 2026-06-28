@@ -374,6 +374,23 @@ document.querySelector('.wiz-sb-icons button[title="设置"]').onclick=openSetti
 // ═══ 渲染 ═══
 function render(){renderSidebar();renderContent();updateProgress()}
 
+// ═══ 导航顺序 ═══
+function getNavList(){
+  const list=['basic','groups'];
+  form.stages.filter(s=>s.enabled).forEach(s=>list.push(s.id));
+  return list;
+}
+function renderNavButtons(){
+  const nav=getNavList();
+  const idx=nav.indexOf(activeSection);
+  const prev=idx>0?nav[idx-1]:null;
+  const next=idx<nav.length-1?nav[idx+1]:null;
+  return `<div style="display:flex;align-items:center;justify-content:space-between;margin-top:20px;padding-top:16px;border-top:1px solid var(--dv)">
+    <div>${prev?`<button class="btn btn-s" onclick="selSection('${prev}')">上一步</button>`:'<span></span>'}</div>
+    <div>${next?`<button class="btn btn-p" onclick="selSection('${next}')">下一步</button>`:'<span></span>'}</div>
+  </div>`;
+}
+
 function renderSidebar(){
   const sections=[
     {id:'basic',t:'基本信息',icon:'check',type:'done'},
@@ -466,6 +483,7 @@ function renderBasicInfo(ct){
         </div>
       </div>
     </div>
+    ${renderNavButtons()}
   </div>`;
 }
 
@@ -507,6 +525,7 @@ function renderGroups(ct){
         </div>
       </div>
     </div>`).join('')}
+    ${renderNavButtons()}
   </div>`;
 }
 
@@ -569,12 +588,12 @@ function renderStageDetail(ct){
   }
 
   ct.innerHTML=`<div class="fi">
-    <div style="margin-bottom:16px"><button class="btn btn-s btn-sm" onclick="selSection('stages')">← 返回环节列表</button></div>
     ${modeToggle}
     <div class="form-sec open">
       <div class="form-sec-hd"><div class="form-sec-hd-l"><span class="form-sec-t">${s.name}</span><span style="font:400 12px/1 var(--f);color:var(--c5);margin-left:8px">${s.desc}</span></div></div>
       <div class="form-sec-bd">${groupTabs}${groupContent}${cfg}</div>
     </div>
+    ${renderNavButtons()}
   </div>`;
 }
 
