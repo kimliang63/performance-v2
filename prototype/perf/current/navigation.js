@@ -33,44 +33,6 @@ const GHR_NAV = {
 
   // Module data with file paths
   M: {
-    workbench:{n:'工作台',l:'Workbench',ic:'home',groups:[
-      {n:'审批通知中心',ic:'inbox',items:[
-        {n:'我的待办',ic:'inbox'},
-        {n:'我的审批',ic:'check'},
-        {n:'我的申请',ic:'file'},
-        {n:'我的委托',ic:'users'},
-        {n:'我的传阅',ic:'eye'},
-        {n:'我的通知',ic:'bell'},
-        {n:'发起流程',ic:'plus'},
-      ]},
-      {n:'我的人事',ic:'user',items:[
-        {n:'我的档案',ic:'user'},
-        {n:'人事申请',ic:'file'},
-        {n:'开证明',ic:'file'},
-      ]},
-      {n:'我的假勤',ic:'clock',items:[
-        {n:'我的假期余额',ic:'calendar'},
-        {n:'我的排班',ic:'calendar'},
-        {n:'我的出勤',ic:'clock'},
-        {n:'我的休假',ic:'calendar'},
-        {n:'我的加班',ic:'clock'},
-        {n:'我的出差',ic:'briefcase'},
-        {n:'我的公出',ic:'briefcase'},
-        {n:'我的调班',ic:'calendar'},
-        {n:'我的居家办公',ic:'building'},
-        {n:'我的考勤申诉',ic:'file'},
-      ]},
-      {n:'我的绩效',ic:'target',items:[
-        {n:'绩效首页',ic:'target'},
-      ]},
-      {n:'我的薪酬',ic:'dollar',items:[
-        {n:'我的工资条',ic:'dollar'},
-        {n:'我的薪酬申诉',ic:'file'},
-      ]},
-      {n:'我的团队',ic:'users',items:[
-        {n:'团队绩效工作台',ic:'target',file:'employee/demo-workbench-team.html'},
-      ]},
-    ]},
     perf:{n:'绩效管理',l:'Performance',ic:'target',groups:[
       {n:'绩效基础配置',ic:'settings',items:[
         {n:'绩效周期',ic:'calendar',file:'perf-base-cycle.html'},
@@ -87,10 +49,10 @@ const GHR_NAV = {
       ]},
       {n:'绩效活动',ic:'calendar',items:[
         {n:'活动管理',ic:'grid',file:'perf-activity.html'},
-        {n:'活动详情',ic:'eye',file:'perf-activity-detail.html'},
       ]},
       {n:'工作台',ic:'home',items:[
-        {n:'绩效首页',ic:'target',file:'perf-workbench-perf-home.html'},
+        {n:'我的绩效',ic:'target',file:'employee/demo-workbench-home.html'},
+        {n:'团队绩效',ic:'users',file:'employee/demo-workbench-team.html'},
       ]},
       {n:'绩效报表',ic:'chart',items:[
         {n:'目标中心',ic:'target',file:'perf-result-employee.html'},
@@ -103,7 +65,7 @@ const GHR_NAV = {
       ]},
     ]},
   },
-  MO:['workbench','perf'],
+  MO:['perf'],
 
   // State
   cur:'perf',
@@ -115,6 +77,9 @@ const GHR_NAV = {
   init(activeModule, activeItem) {
     this.cur = activeModule || 'perf';
     this.child = activeItem || '绩效方案';
+    // Compute base path for cross-directory navigation
+    const path = window.location.pathname;
+    this.basePath = path.includes('/employee/') ? '../' : '';
     this.injectHTML();
     this.injectCSS();
     this.injectToastCSS();
@@ -409,7 +374,7 @@ const GHR_NAV = {
   // Navigate to a page
   navigateTo(item) {
     if (item && item.file) {
-      window.location.href = item.file;
+      window.location.href = this.basePath + item.file;
     } else {
       this.showToast('该页面暂无原型，正在开发中');
     }
@@ -487,7 +452,7 @@ const GHR_NAV = {
     // Navigate to the file
     const file = childFile || parentFile;
     if (file) {
-      window.location.href = file;
+      window.location.href = this.basePath + file;
     } else {
       // Check if this is a parent item with children
       const mod = this.M[this.cur];
