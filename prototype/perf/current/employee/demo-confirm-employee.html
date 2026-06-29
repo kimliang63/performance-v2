@@ -99,6 +99,20 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .eval-tag.normal{background:var(--c1);color:var(--c6)}
 .eval-tag.poor{background:var(--ro50);color:var(--ro)}
 
+/* ═══ CONFIRM HERO ═══ */
+.confirm-hero{text-align:center;padding:32px 0}
+.confirm-grade{font:700 48px/1 var(--f);color:#059669}
+.confirm-badge{display:inline-block;padding:4px 12px;border-radius:4px;font:500 12px/1 var(--f);background:var(--ac50);color:var(--ac700);margin-top:8px}
+.confirm-layout{display:flex;gap:20px}
+.confirm-info{flex:1;padding:20px;background:var(--sf);border:1px solid var(--c2);border-radius:8px}
+.confirm-actions{flex:1;padding:20px;background:var(--sf);border:1px solid var(--c2);border-radius:8px}
+.confirm-opt{display:flex;align-items:flex-start;gap:10px;padding:12px;border:1px solid var(--c2);border-radius:8px;cursor:pointer;margin-bottom:10px}
+.confirm-opt.sel{border-color:#2563EB;background:#EFF6FF}
+.confirm-opt-dot{width:18px;height:18px;border-radius:50%;border:2px solid #D1D5DB;flex-shrink:0;margin-top:2px}
+.confirm-opt.sel .confirm-opt-dot{border-color:#2563EB;background:#2563EB}
+.confirm-opt-title{font:600 14px/1.3 var(--f);color:var(--c9)}
+.confirm-opt-desc{font:400 12px/1.5 var(--f);color:var(--c5);margin-top:4px}
+
 /* ═══ AI CHAT ═══ */
 .ai-chat{position:fixed;top:52px;right:0;width:380px;height:calc(100vh - 52px);background:var(--sf);border-left:1px solid var(--dv);z-index:900;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s ease}
 body.chat-open .ai-chat{transform:translateX(0)}
@@ -173,33 +187,43 @@ body.chat-open .ai-toggle{display:none}
     </div>
   </div>
 
-  <!-- Result Hero Card -->
-  <div style="background:linear-gradient(135deg,var(--pr50),var(--vi50));border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;padding:28px 32px;display:flex;align-items:center;gap:0">
-    <div style="text-align:center;padding-right:32px;border-right:1px solid var(--c2)">
-      <div style="font:700 48px/1 var(--m);color:var(--pr)">87.5</div>
-      <div style="font:400 12px/1 var(--f);color:var(--c5);margin-top:8px">加权总分</div>
-    </div>
-    <div style="text-align:center;padding:0 32px;border-right:1px solid var(--c2)">
-      <div style="font:700 24px/1 var(--f);color:var(--em700)">符合预期+</div>
-      <div style="font:400 12px/1 var(--f);color:var(--c5);margin-top:8px">综合等级</div>
-    </div>
-    <div style="padding-left:32px;display:flex;flex-direction:column;gap:6px">
-      <div style="font:400 12px/1.3 var(--f);color:var(--c6)"><span style="color:var(--c4)">考核周期：</span>2026年Q2</div>
-      <div style="font:400 12px/1.3 var(--f);color:var(--c6)"><span style="color:var(--c4)">部门：</span>产品部 · <span style="color:var(--c4)">岗位：</span>高级产品经理</div>
-      <div style="font:400 12px/1.3 var(--f);color:var(--c6)"><span style="color:var(--c4)">HRBP：</span>赵敏</div>
-    </div>
+  <!-- Hero: Grade Result -->
+  <div class="confirm-hero">
+    <div class="confirm-grade">符合预期+</div>
+    <span class="confirm-badge">待员工确认</span>
   </div>
 
-  <!-- Confirm Buttons -->
-  <div style="display:flex;gap:12px;margin-bottom:16px">
-    <button class="btn btn-p" style="flex:1;height:44px;font-size:14px" onclick="showToast('已确认绩效结果','success')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>
-      确认绩效结果
-    </button>
-    <button class="btn btn-r" style="flex:1;height:44px;font-size:14px" onclick="openDisagree()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      不确认并申诉
-    </button>
+  <!-- Left-right: Info + Options -->
+  <div class="confirm-layout">
+    <div class="confirm-info">
+      <div style="font:600 14px/1 var(--f);color:var(--c9);margin-bottom:12px">员工信息</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 20px;font:400 13px/1.6 var(--f)">
+        <div><span style="color:var(--c4)">姓名</span><br><span style="color:var(--c8);font-weight:500">张明</span></div>
+        <div><span style="color:var(--c4)">部门</span><br><span style="color:var(--c8);font-weight:500">产品部</span></div>
+        <div><span style="color:var(--c4)">岗位</span><br><span style="color:var(--c8);font-weight:500">高级产品经理</span></div>
+        <div><span style="color:var(--c4)">考核周期</span><br><span style="color:var(--c8);font-weight:500">2026年Q2</span></div>
+      </div>
+    </div>
+    <div class="confirm-actions">
+      <div style="font:600 14px/1 var(--f);color:var(--c9);margin-bottom:12px">确认操作</div>
+      <div class="confirm-opt sel" onclick="selectOpt(this,1)">
+        <div class="confirm-opt-dot"></div>
+        <div>
+          <div class="confirm-opt-title">我认可上述考核结果</div>
+          <div class="confirm-opt-desc">提交后，本期绩效考核结果将进入归档流程。</div>
+        </div>
+      </div>
+      <div class="confirm-opt" onclick="selectOpt(this,2)">
+        <div class="confirm-opt-dot"></div>
+        <div>
+          <div class="confirm-opt-title">我对上述考核结果有异议，申请申诉</div>
+          <div class="confirm-opt-desc">提交后，将生成申诉申请并流转至相关负责人处理。</div>
+        </div>
+      </div>
+      <div style="text-align:right;margin-top:12px">
+        <button class="btn btn-p" style="height:36px;font-size:13px;padding:0 20px" onclick="submitConfirm()">提交</button>
+      </div>
+    </div>
   </div>
 
   <!-- Results Table -->
@@ -321,6 +345,22 @@ body.chat-open .ai-toggle{display:none}
 <script src="../navigation.js"></script>
 <script>
 GHR_NAV.init('perf', '结果确认');
+
+var selectedOpt=1;
+
+function selectOpt(el,n){
+  document.querySelectorAll('.confirm-opt').forEach(function(o){o.classList.remove('sel')});
+  el.classList.add('sel');
+  selectedOpt=n;
+}
+
+function submitConfirm(){
+  if(selectedOpt===1){
+    showToast('已确认绩效结果','success');
+  }else{
+    openDisagree();
+  }
+}
 
 function openDisagree(){
   document.getElementById('appealOverlay').classList.add('open');

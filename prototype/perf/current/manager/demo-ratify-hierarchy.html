@@ -96,7 +96,7 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .dist-val{width:50px;font:500 12px/1 var(--f);color:var(--c6);text-align:center}
 
 /* ═══ GRADE BTN GROUP ═══ */
-.grade-btn-group{display:inline-flex;gap:3px;flex-wrap:nowrap}
+.grade-btn-group{display:flex;flex-wrap:wrap;gap:4px;max-width:360px}
 .grade-btn{padding:3px 8px;border-radius:var(--r1);font:500 12px/1 var(--f);border:1px solid var(--c2);cursor:pointer;transition:all .12s;white-space:nowrap;background:var(--sf);color:var(--c6)}
 .grade-btn[data-g="超出预期"]{color:var(--em700);background:var(--em50)}
 .grade-btn[data-g="符合预期+"]{color:var(--pr);background:var(--pr50)}
@@ -345,7 +345,7 @@ body.chat-open .ai-toggle{display:none}
           </tr>
           <tr>
             <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c4)"><div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--c3);flex-shrink:0"></span>HRBP审批</div></td>
-            <td style="padding:12px 16px"><div style="display:flex;align-items:center;gap:6px"><span style="width:22px;height:22px;border-radius:50%;background:var(--c1);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:var(--c5);flex-shrink:0">李</span><span style="font:400 13px/1 var(--f);color:var(--c4)">李HR</span></div></td>
+            <td style="padding:12px 16px"><div style="display:flex;align-items:center;gap:6px"><span style="width:22px;height:22px;border-radius:50%;background:var(--c1);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:var(--c5);flex-shrink:0">李</span><span style="font:400 13px/1 var(--f);color:var(--c4)">赵敏</span></div></td>
             <td style="padding:12px 16px"><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--c1);color:var(--c4)">待处理</span></td>
           </tr>
         </tbody>
@@ -919,7 +919,7 @@ function handleAiAction(action){
             {t:'待完成',d:unfilledCount+' 项等级待填入',tag:'未完成',tc:'ac'}
           ],actions:['自动填充全部','批量调整建议']});
         }else{
-          AI_MSGS.push({role:'bot',text:'✅ 审定数据校验通过！\n\n• 已到达 '+reached+' 人，全部已填写等级\n• 强制分布校验：合规\n• 等级偏离人员：已确认\n\n提交后将流转至HRBP（李HR）审批。确认提交？',time:now(),cards:[
+          AI_MSGS.push({role:'bot',text:'✅ 审定数据校验通过！\n\n• 已到达 '+reached+' 人，全部已填写等级\n• 强制分布校验：合规\n• 等级偏离人员：已确认\n\n提交后将流转至HRBP（赵敏）审批。确认提交？',time:now(),cards:[
             {t:'提交确认',d:reached+' 人审定数据已就绪',tag:'待提交',tc:'pr'}
           ],actions:['确认提交','返回修改']});
         }
@@ -927,7 +927,7 @@ function handleAiAction(action){
 
       // ─── 确认提交 ───
       case '确认提交':
-        AI_MSGS.push({role:'bot',text:'🎉 审定已提交成功！\n\n当前状态：HRBP审批中（李HR）\n预计审批时间：1个工作日\n\n审批通过后将自动通知所有被考核人。',time:now(),cards:[
+        AI_MSGS.push({role:'bot',text:'🎉 审定已提交成功！\n\n当前状态：HRBP审批中（赵敏）\n预计审批时间：1个工作日\n\n审批通过后将自动通知所有被考核人。',time:now(),cards:[
           {t:'已提交',d:'等待HRBP审批',tag:'审批中',tc:'pr'}
         ],actions:['查看通知模板']});
         break;

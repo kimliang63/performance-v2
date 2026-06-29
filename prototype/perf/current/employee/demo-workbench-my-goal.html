@@ -26,9 +26,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 
 
 
-.logo-i svg{width:15px;height:15px;color:#FFF}
 
-.hdr-sep{width:1px;height:20px;background:var(--c2);margin:0 2px}
 .hdr-r{margin-left:auto;display:flex;align-items:center;gap:10px}
 .avatar{width:30px;height:30px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--f);color:#FFF}
 
@@ -257,7 +255,7 @@ function render(){
       h+=`<div class="goal">
         <div class="goal-top" onclick="toggleGoal('${gid}')">
           <span class="goal-seq">${gi+1}</span>
-          <span class="goal-weight">${g.weight}%</span>
+          <span class="goal-weight">${g.weight}</span>
           <span class="goal-name">${g.name}</span>
           <span class="goal-tag ${isQ?'quant':'qual'}">${isQ?'定量':'定性'}</span>
           <div class="goal-chevron ${gOpen?'open':''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
@@ -267,31 +265,24 @@ function render(){
             <div class="gd-sec">
               <div class="gd-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>目标信息</div>
               <div style="display:flex;gap:40px;align-items:center">
-                <div class="gd-fi"><span class="gd-fi-l">权重</span><span class="gd-fi-v mono">${g.weight}%</span></div>
+                <div class="gd-fi"><span class="gd-fi-l">权重</span><span class="gd-fi-v mono">${g.weight}</span></div>
               </div>
             </div>
             ${isQ?`
             <div class="gd-sec">
-              <div class="gd-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>衡量标准</div>
+              <div class="gd-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>指标描述 <span style="cursor:pointer;font-size:12px;color:var(--c4);margin-left:4px" onclick="event.stopPropagation();showMeasureDesc('${gid}')" title="点击查看指标描述">ⓘ</span></div>
               <div class="gd-row f3">
-                <div class="gd-fi"><span class="gd-fi-l">目标值</span><span class="gd-fi-v mono">${g.target} ${g.unit||''}</span></div>
                 <div class="gd-fi"><span class="gd-fi-l">挑战值</span><span class="gd-fi-v mono">${g.challenge} ${g.unit||''}</span></div>
-                <div class="gd-fi"><span class="gd-fi-l">保底值</span><span class="gd-fi-v mono">${g.baseline} ${g.unit||''}</span></div>
+                <div class="gd-fi"><span class="gd-fi-l">目标值</span><span class="gd-fi-v mono">${g.target} ${g.unit||''}</span></div>
+                <div class="gd-fi"><span class="gd-fi-l">完成值</span><span class="gd-fi-v mono">${g.baseline} ${g.unit||''}</span></div>
               </div>
-            </div>
-            <div class="gd-sec">
-              <div class="gd-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>计算规则</div>
-              <div class="gd-row">
-                <div class="gd-fi"><span class="gd-fi-l">衡量方式</span><span class="gd-fi-v">${g.measure}</span></div>
-                <div class="gd-fi"><span class="gd-fi-l">计算规则</span><span class="gd-fi-v">${g.rule||'-'}</span></div>
-              </div>
-              ${g.ruleFormula?`<div class="gd-rule-box"><div class="gd-rule-lbl">计算公式</div><code>${g.ruleFormula}</code></div>`:''}
             </div>
             `:`
             <div class="gd-sec">
               <div class="gd-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>衡量标准</div>
-              <div class="gd-fi"><span class="gd-fi-l">衡量方式</span><span class="gd-fi-v">${g.measure}</span></div>
-              ${g.desc?`<div class="gd-fi" style="margin-top:8px"><span class="gd-fi-l">衡量标准描述</span><div class="gd-desc">${g.desc}</div></div>`:''}
+              <div class="gd-fi"><span class="gd-fi-l">衡量标准-评价梯度2</span><span class="gd-fi-v">${(g.msLevels&&g.msLevels[0])?g.msLevels[0].condition:'-'}</span></div>
+              <div class="gd-fi" style="margin-top:8px"><span class="gd-fi-l">衡量标准-评价梯度3 <span style="color:var(--ro)">*</span></span><span class="gd-fi-v">${(g.msLevels&&g.msLevels[1])?g.msLevels[1].condition:'-'}</span></div>
+              <div class="gd-fi" style="margin-top:8px"><span class="gd-fi-l">衡量标准-评价梯度4</span><span class="gd-fi-v">${(g.msLevels&&g.msLevels[2])?g.msLevels[2].condition:'-'}</span></div>
             </div>
             `}
           </div>
@@ -316,10 +307,11 @@ function switchCycle(el,cycle){
   showToast('已切换到 '+el.textContent);
 }
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000)}
+function showMeasureDesc(gid){const p=gid.split('_');const cycle=p[0];const mi=parseInt(p[1]);const gi=parseInt(p[2]);const g=DATA[cycle]?.modules[mi]?.goals[gi];showToast(g?.desc||'暂无指标描述')}
 
 render();
 </script>
 <script src="../navigation.js"></script>
-<script>GHR_NAV.init('workbench', '我的目标');</script>
+<script>GHR_NAV.init('perf', '我的目标');</script>
 </body>
 </html>

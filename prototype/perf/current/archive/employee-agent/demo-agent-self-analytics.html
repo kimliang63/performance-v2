@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HR ONE - AI 个人绩效分析</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+.main{display:flex;height:calc(100vh - 52px)}
+.dashboard{flex:1;overflow-y:auto;padding:24px}
+.ai-panel{width:380px;background:var(--sf);border-left:1px solid var(--dv);display:flex;flex-direction:column;flex-shrink:0}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.stat{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:18px 20px;position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.stat.pr::before{background:var(--pr)}.stat.em::before{background:var(--em)}.stat.vi::before{background:var(--vi)}.stat.ac::before{background:var(--ac)}
+.stat-t{font:400 12px/1 var(--f);color:var(--c5);margin-bottom:8px}
+.stat-v{font:700 28px/1 var(--f);color:var(--c9);margin-bottom:4px}
+.stat-d{font:400 11px/1 var(--f);color:var(--c4);display:flex;align-items:center;gap:4px}
+.stat-d.up{color:var(--em700)}.stat-d.down{color:var(--ro)}
+
+/* Chart Grid */
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.chart-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden}
+.chart-card-hd{padding:14px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between}
+.chart-card-t{font:600 14px/1.3 var(--f);color:var(--c8)}
+.chart-card-body{padding:20px;min-height:200px}
+
+/* Bar Chart */
+.bar-chart{display:flex;align-items:flex-end;gap:16px;height:160px;padding:0 10px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar{width:100%;border-radius:4px 4px 0 0;transition:height .5s ease;min-height:4px}
+.bar-label{font:500 11px/1 var(--f);color:var(--c5);text-align:center}
+.bar-value{font:600 12px/1 var(--f);color:var(--c8)}
+
+/* Radar */
+.radar-wrap{display:flex;align-items:center;justify-content:center;padding:10px}
+.radar-labels{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
+.radar-label{text-align:center;font:400 11px/1 var(--f);color:var(--c5)}
+.radar-label .val{font:600 13px/1 var(--fm);color:var(--pr);display:block;margin-top:4px}
+
+/* Insight */
+.insight{background:linear-gradient(135deg,var(--pr50) 0%,var(--vi50) 100%);border:1px solid var(--pr100);border-radius:var(--r3);padding:20px;margin-bottom:20px}
+.insight-hd{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.insight-ic{width:36px;height:36px;border-radius:var(--r2);background:linear-gradient(135deg,var(--pr) 0%,var(--vi) 100%);display:flex;align-items:center;justify-content:center}
+.insight-ic svg{width:18px;height:18px;color:#FFF}
+.insight-t{font:600 14px/1.3 var(--f);color:var(--c9)}
+.insight-items{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.insight-item{background:var(--sf);border-radius:var(--r2);padding:14px;border:1px solid var(--pr100)}
+.insight-item-t{font:600 12px/1.3 var(--f);color:var(--c8);margin-bottom:4px}
+.insight-item-d{font:400 12px/1.5 var(--f);color:var(--c6)}
+
+/* Score Compare */
+.compare-bar{display:flex;align-items:center;gap:12px;padding:10px 0}
+.compare-label{font:500 12px/1 var(--f);color:var(--c6);width:80px;flex-shrink:0}
+.compare-track{flex:1;height:24px;background:var(--c1);border-radius:4px;position:relative;overflow:hidden}
+.compare-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px;transition:width .5s ease}
+.compare-fill span{font:600 11px/1 var(--f);color:#FFF;white-space:nowrap}
+.compare-val{font:600 13px/1 var(--fm);color:var(--c8);width:40px;text-align:right}
+
+/* Tag */
+.tag{font:500 10px/1 var(--f);padding:2px 7px;border-radius:3px;display:inline-block}
+.tag.pr{color:var(--pr);background:var(--pr50)}
+.tag.em{color:var(--em700);background:var(--em50)}
+.tag.ac{color:var(--ac700);background:var(--ac50)}
+
+/* AI Chat */
+.ai-hd{padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:10px}
+.ai-hd-ic{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--pr),var(--vi));display:flex;align-items:center;justify-content:center;color:#fff}
+.ai-hd-info{flex:1}
+.ai-hd-t{font:600 14px/1.2 var(--f);color:var(--c9)}
+.ai-hd-s{font:400 11px/1 var(--f);color:var(--c5)}
+.ai-bd{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:12px}
+.ai-msg{max-width:92%;animation:msgIn .3s ease}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.ai-msg.bot{align-self:flex-start}
+.ai-msg.user{align-self:flex-end}
+.ai-msg-bd{padding:10px 14px;border-radius:var(--r3);font:400 13px/1.6 var(--f);word-break:break-word}
+.ai-msg.bot .ai-msg-bd{background:var(--c0);color:var(--c8);border-bottom-left-radius:4px}
+.ai-msg.user .ai-msg-bd{background:var(--pr);color:#fff;border-bottom-right-radius:4px}
+.ai-msg-time{font:400 10px/1 var(--f);color:var(--c4);margin-top:4px}
+.ai-msg.user .ai-msg-time{text-align:right}
+.ai-msg-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.ai-msg-btn{font:500 11px/1 var(--f);padding:5px 10px;border-radius:var(--r1);border:1px solid var(--c2);background:var(--sf);color:var(--c6);cursor:pointer;transition:all .12s}
+.ai-msg-btn:hover{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-msg-btn.primary{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-msg-card{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);padding:12px;margin-top:8px}
+.ai-msg-card-t{font:600 12px/1.3 var(--f);color:var(--c8);margin-bottom:6px}
+.ai-msg-card-row{display:flex;justify-content:space-between;padding:4px 0;font:400 12px/1.4 var(--f);color:var(--c6)}
+.ai-msg-card-row .v{font-weight:600;color:var(--c8)}
+.ai-msg-card-tag{display:inline-block;font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px}
+.ai-msg-card-tag.em{color:var(--em700);background:var(--em50)}
+.ai-msg-card-tag.pr{color:var(--pr);background:var(--pr50)}
+.ai-msg-card-tag.ac{color:var(--ac700);background:var(--ac50)}
+.ai-msg-card-tag.ro{color:var(--ro);background:var(--ro50)}
+.ai-ft{padding:12px 16px;border-top:1px solid var(--dv);display:flex;gap:8px;align-items:center}
+.ai-input{flex:1;height:36px;border:1px solid var(--c2);border-radius:var(--r2);padding:0 12px;font:400 13px/1 var(--f);color:var(--c8);outline:none;transition:border .15s}
+.ai-input:focus{border-color:var(--pr)}
+.ai-send{width:36px;height:36px;border-radius:var(--r2);background:var(--pr);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#FFF;transition:all .12s}
+.ai-send:hover{background:var(--pr700)}
+</style>
+</head>
+<body>
+
+<div style="height:52px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:1100">
+  <div style="display:flex;align-items:center;gap:14px">
+    <a href="../demo-index.html" style="text-decoration:none;display:flex;align-items:center;gap:8px">
+      <div style="width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <span style="font-size:15px;font-weight:700;color:var(--c9)">HR ONE</span>
+    </a>
+    <div style="width:1px;height:20px;background:var(--c2)"></div>
+    <span style="font:500 13px/1 var(--f);color:var(--c5)">AI Agent - 员工端</span>
+    <span style="color:var(--c3)">&rsaquo;</span>
+    <span style="font:600 13px/1 var(--f);color:var(--c8)">AI 个人绩效分析</span>
+  </div>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+    <div style="width:30px;height:30px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--f);color:#FFF">张</div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="dashboard">
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat pr">
+        <div class="stat-t">综合绩效分</div>
+        <div class="stat-v">88.5</div>
+        <div class="stat-d up">较上期 +4.2</div>
+      </div>
+      <div class="stat em">
+        <div class="stat-t">绩效等级</div>
+        <div class="stat-v">B+</div>
+        <div class="stat-d up">较上期提升</div>
+      </div>
+      <div class="stat vi">
+        <div class="stat-t">团队排名</div>
+        <div class="stat-v">3/12</div>
+        <div class="stat-d up">前 25%</div>
+      </div>
+      <div class="stat ac">
+        <div class="stat-t">目标完成率</div>
+        <div class="stat-v">92%</div>
+        <div class="stat-d up">较上期 +8%</div>
+      </div>
+    </div>
+
+    <!-- AI Insight -->
+    <div class="insight">
+      <div class="insight-hd">
+        <div class="insight-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg></div>
+        <div class="insight-t">AI 核心洞察 - 基于 2026-Q2 绩效数据分析</div>
+      </div>
+      <div class="insight-items">
+        <div class="insight-item">
+          <div class="insight-item-t">核心优势：产品交付能力</div>
+          <div class="insight-item-d">AI 产品迭代完成率 105%，连续 3 季度超额完成。建议将此作为个人品牌标签持续强化。</div>
+        </div>
+        <div class="insight-item">
+          <div class="insight-item-t">提升方向：跨部门协作</div>
+          <div class="insight-item-d">跨部门项目参与度较低(2个)，建议主动承担 1-2 个跨部门协作项目，提升影响力。</div>
+        </div>
+        <div class="insight-item">
+          <div class="insight-item-t">发展建议：技术影响力</div>
+          <div class="insight-item-d">建议参加 1 次技术分享或撰写 1 篇技术博客，提升团队内外技术影响力。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="chart-grid">
+      <div class="chart-card">
+        <div class="chart-card-hd">
+          <div class="chart-card-t">绩效趋势 (近4季度)</div>
+          <span class="tag pr">AI 分析</span>
+        </div>
+        <div class="chart-card-body">
+          <div class="bar-chart">
+            <div class="bar-col">
+              <div class="bar-value">82</div>
+              <div class="bar" style="height:82%;background:var(--pr200)"></div>
+              <div class="bar-label">Q1</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-value">84</div>
+              <div class="bar" style="height:84%;background:var(--pr200)"></div>
+              <div class="bar-label">Q2</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-value">85</div>
+              <div class="bar" style="height:85%;background:var(--pr200)"></div>
+              <div class="bar-label">Q3</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-value">88.5</div>
+              <div class="bar" style="height:88.5%;background:var(--pr)"></div>
+              <div class="bar-label">Q4</div>
+            </div>
+          </div>
+          <div style="margin-top:12px;font:400 12px/1.5 var(--f);color:var(--c5)">
+            AI 趋势分析: 绩效呈稳步上升趋势，Q3-Q4 提升最为显著(+3.5分)，主要得益于产品交付能力的持续提升。
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-card-hd">
+          <div class="chart-card-t">能力雷达图</div>
+          <span class="tag pr">AI 分析</span>
+        </div>
+        <div class="chart-card-body">
+          <div class="radar-wrap">
+            <svg width="200" height="200" viewBox="0 0 200 200">
+              <g transform="translate(100,100)">
+                <polygon points="0,-80 69.3,-40 69.3,40 0,80 -69.3,40 -69.3,-40" fill="none" stroke="var(--c2)" stroke-width="1"/>
+                <polygon points="0,-60 52,-30 52,30 0,60 -52,30 -52,-30" fill="none" stroke="var(--c2)" stroke-width="1"/>
+                <polygon points="0,-40 34.6,-20 34.6,20 0,40 -34.6,20 -34.6,-20" fill="none" stroke="var(--c2)" stroke-width="1"/>
+                <polygon points="0,-20 17.3,-10 17.3,10 0,20 -17.3,10 -17.3,-10" fill="none" stroke="var(--c2)" stroke-width="1"/>
+                <polygon points="0,-72 62.4,-36 58.9,33.6 0,64 -55.4,32 -62.4,-36" fill="var(--pr)" fill-opacity="0.15" stroke="var(--pr)" stroke-width="2"/>
+                <circle cx="0" cy="-72" r="3" fill="var(--pr)"/>
+                <circle cx="62.4" cy="-36" r="3" fill="var(--pr)"/>
+                <circle cx="58.9" cy="33.6" r="3" fill="var(--pr)"/>
+                <circle cx="0" cy="64" r="3" fill="var(--pr)"/>
+                <circle cx="-55.4" cy="32" r="3" fill="var(--pr)"/>
+                <circle cx="-62.4" cy="-36" r="3" fill="var(--pr)"/>
+              </g>
+            </svg>
+          </div>
+          <div class="radar-labels">
+            <div class="radar-label">专业技能<span class="val">90</span></div>
+            <div class="radar-label">创新能力<span class="val">82</span></div>
+            <div class="radar-label">协作能力<span class="val">75</span></div>
+            <div class="radar-label">执行力<span class="val">88</span></div>
+            <div class="radar-label">学习能力<span class="val">80</span></div>
+            <div class="radar-label">领导力<span class="val">78</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Score Compare -->
+    <div class="chart-card">
+      <div class="chart-card-hd">
+        <div class="chart-card-t">得分对比 - 个人 vs 团队平均</div>
+        <span class="tag pr">AI 分析</span>
+      </div>
+      <div class="chart-card-body">
+        <div class="compare-bar">
+          <span class="compare-label">专业技能</span>
+          <div class="compare-track"><div class="compare-fill" style="width:90%;background:var(--pr)"><span>90</span></div></div>
+          <span class="compare-val">82</span>
+        </div>
+        <div class="compare-bar">
+          <span class="compare-label">创新能力</span>
+          <div class="compare-track"><div class="compare-fill" style="width:82%;background:var(--pr)"><span>82</span></div></div>
+          <span class="compare-val">78</span>
+        </div>
+        <div class="compare-bar">
+          <span class="compare-label">协作能力</span>
+          <div class="compare-track"><div class="compare-fill" style="width:75%;background:var(--ac)"><span>75</span></div></div>
+          <span class="compare-val">80</span>
+        </div>
+        <div class="compare-bar">
+          <span class="compare-label">执行力</span>
+          <div class="compare-track"><div class="compare-fill" style="width:88%;background:var(--pr)"><span>88</span></div></div>
+          <span class="compare-val">81</span>
+        </div>
+        <div class="compare-bar">
+          <span class="compare-label">学习能力</span>
+          <div class="compare-track"><div class="compare-fill" style="width:80%;background:var(--pr)"><span>80</span></div></div>
+          <span class="compare-val">76</span>
+        </div>
+        <div class="compare-bar">
+          <span class="compare-label">领导力</span>
+          <div class="compare-track"><div class="compare-fill" style="width:78%;background:var(--ac)"><span>78</span></div></div>
+          <span class="compare-val">75</span>
+        </div>
+        <div style="margin-top:8px;font:400 11px/1 var(--f);color:var(--c4)">蓝色柱为个人得分，右侧灰色数字为团队平均分</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Chat Panel -->
+  <div class="ai-panel">
+    <div class="ai-hd">
+      <div class="ai-hd-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg></div>
+      <div class="ai-hd-info">
+        <div class="ai-hd-t">AI 分析助手</div>
+        <div class="ai-hd-s">个人绩效深度分析</div>
+      </div>
+    </div>
+    <div class="ai-bd" id="chatBd"></div>
+    <div class="ai-ft">
+      <input class="ai-input" id="chatInput" placeholder="输入问题，如「为什么协作能力偏低」" onkeydown="if(event.key==='Enter')sendMsg()">
+      <button class="ai-send" onclick="sendMsg()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<script>
+const CHAT_MSGS = [
+  { role:'bot', text:'你好，张明！我是你的 AI 分析助手，可以帮你深入了解绩效数据。\n\n基于你的 Q2 绩效表现，我为你准备了以下分析：', buttons:['查看优势分析', '查看改进建议', '对比历史数据'] },
+  { role:'user', text:'查看优势分析' },
+  { role:'bot', text:'基于你的绩效数据，AI 识别出以下核心优势：', card:{
+    title:'核心优势分析',
+    rows:[
+      { label:'产品交付能力', value:'90 分', tag:'突出', tagCls:'em' },
+      { label:'目标完成率', value:'105%', tag:'超额', tagCls:'em' },
+      { label:'技术深度', value:'88 分', tag:'优秀', tagCls:'pr' },
+    ],
+    note:'建议: 将产品交付能力作为个人品牌标签，在团队内分享经验，提升技术影响力。'
+  }},
+  { role:'user', text:'协作能力为什么只有 75 分？' },
+  { role:'bot', text:'协作能力得分 75 分，低于团队平均 80 分。主要原因：\n\n1. 跨部门项目参与较少(仅 2 个)\n2. 360 度评价中「主动协作」维度得分偏低\n3. 技术分享次数为 0\n\n建议: 主动承担 1-2 个跨部门项目，每月至少进行 1 次技术分享。', card:{
+    title:'协作能力提升建议',
+    rows:[
+      { label:'跨部门项目', value:'当前 2 个', tag:'目标 4 个', tagCls:'ac' },
+      { label:'技术分享', value:'当前 0 次', tag:'目标 2 次', tagCls:'ac' },
+      { label:'360 评价', value:'3.8/5', tag:'目标 4.2', tagCls:'ac' },
+    ]
+  }},
+];
+
+let chatMsgs = [...CHAT_MSGS];
+
+function renderChat() {
+  const bd = document.getElementById('chatBd');
+  bd.innerHTML = chatMsgs.map(m => {
+    let html = `<div class="ai-msg ${m.role}"><div class="ai-msg-bd">${m.text.replace(/\n/g,'<br>')}</div>`;
+    if (m.card) {
+      html += `<div class="ai-msg-card"><div class="ai-msg-card-t">${m.card.title}</div>`;
+      m.card.rows.forEach(r => {
+        html += `<div class="ai-msg-card-row"><span>${r.label}</span><span><span class="v">${r.value}</span> <span class="ai-msg-card-tag ${r.tagCls}">${r.tag}</span></span></div>`;
+      });
+      if (m.card.note) html += `<div style="margin-top:8px;font:400 11px/1.5 var(--f);color:var(--c5)">${m.card.note}</div>`;
+      html += '</div>';
+    }
+    if (m.buttons) {
+      html += `<div class="ai-msg-actions">${m.buttons.map((b,i) => `<button class="ai-msg-btn${i===0?' primary':''}" onclick="clickSuggest('${b}')">${b}</button>`).join('')}</div>`;
+    }
+    html += `<div class="ai-msg-time">${m.role==='bot'?'AI':'你'} - 刚刚</div></div>`;
+    return html;
+  }).join('');
+  scrollBottom();
+}
+
+function scrollBottom() {
+  const bd = document.getElementById('chatBd');
+  if (bd) setTimeout(() => bd.scrollTop = bd.scrollHeight, 50);
+}
+
+function clickSuggest(text) {
+  const input = document.getElementById('chatInput');
+  if (input) { input.value = text; sendMsg(); }
+}
+
+function sendMsg() {
+  const input = document.getElementById('chatInput');
+  if (!input || !input.value.trim()) return;
+  const text = input.value.trim();
+  input.value = '';
+
+  chatMsgs.push({ role:'user', text });
+  renderChat();
+
+  setTimeout(() => {
+    const responses = [
+      { text:'已为你生成个性化发展建议：\n\n1. Q3 重点提升跨部门协作能力\n2. 每月至少 1 次技术分享\n3. 主动承担 1 个跨部门项目\n\n预计可将协作能力提升至 82 分。' },
+      { text:'基于历史数据分析，你的绩效呈稳步上升趋势。建议保持当前节奏，重点关注协作能力的提升。', card:{
+        title:'发展路径建议',
+        rows:[
+          { label:'Q3 目标', value:'综合 90+', tag:'可达成', tagCls:'em' },
+          { label:'Q4 目标', value:'综合 92+', tag:'有挑战', tagCls:'ac' },
+          { label:'年度目标', value:'A 级', tag:'有信心', tagCls:'em' },
+        ]
+      }},
+      { text:'好的，我来为你详细分析...\n\n基于你的能力模型和历史数据，建议优先提升协作能力，这对你的职级晋升最为关键。' },
+    ];
+    chatMsgs.push({ role:'bot', ...responses[Math.floor(Math.random() * responses.length)] });
+    renderChat();
+  }, 600);
+}
+
+renderChat();
+</script>
+</body>
+</html>

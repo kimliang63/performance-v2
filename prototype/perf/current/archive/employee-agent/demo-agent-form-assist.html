@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HR ONE - AI 表单辅助</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+.main{display:flex;height:calc(100vh - 52px)}
+
+/* Left: Form Context */
+.form-ctx{flex:1;overflow-y:auto;padding:24px}
+.form-ctx-hd{font:700 18px/1.3 var(--f);color:var(--c9);margin-bottom:6px}
+.form-ctx-sub{font:400 13px/1 var(--f);color:var(--c5);margin-bottom:20px}
+
+.mod-sec{background:var(--sf);border-radius:var(--r3);box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:16px;overflow:hidden;border-left:3px solid var(--pr)}
+.mod-sec.em{border-left-color:var(--em)}
+.mod-sec.ac{border-left-color:var(--ac)}
+.mod-sec.vi{border-left-color:var(--vi)}
+.mod-hd{display:flex;align-items:center;padding:14px 20px;gap:12px}
+.mod-hd-title{font:600 14px/1 var(--f);color:var(--c9);flex:1}
+.mod-hd-wt{font:500 12px/1 var(--fm);color:var(--c5);padding:3px 10px;border-radius:var(--r1);background:var(--c1)}
+.goal-row{border-top:1px solid var(--dv);padding:12px 20px;display:flex;align-items:center;gap:12px}
+.goal-row:hover{background:var(--c0)}
+.goal-name{flex:1;font:500 13px/1.3 var(--f);color:var(--c8)}
+.goal-type{font:500 10px/1 var(--f);padding:2px 7px;border-radius:3px}
+.goal-type.q{background:var(--pr50);color:var(--pr)}
+.goal-type.d{background:var(--vi50);color:var(--vi)}
+.goal-wt{font:500 12px/1 var(--fm);color:var(--c6)}
+.goal-val{font:400 12px/1 var(--f);color:var(--c5);min-width:120px}
+
+/* Right: AI Chat */
+.ai-panel{width:380px;background:var(--sf);border-left:1px solid var(--dv);display:flex;flex-direction:column;flex-shrink:0}
+.ai-hd{padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:10px}
+.ai-hd-ic{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--pr),var(--vi));display:flex;align-items:center;justify-content:center;color:#fff}
+.ai-hd-info{flex:1}
+.ai-hd-t{font:600 14px/1.2 var(--f);color:var(--c9)}
+.ai-hd-s{font:400 11px/1 var(--f);color:var(--c5)}
+.ai-bd{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:12px}
+.ai-msg{max-width:92%;animation:msgIn .3s ease}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.ai-msg.bot{align-self:flex-start}
+.ai-msg.user{align-self:flex-end}
+.ai-msg-bd{padding:10px 14px;border-radius:var(--r3);font:400 13px/1.6 var(--f);word-break:break-word}
+.ai-msg.bot .ai-msg-bd{background:var(--c0);color:var(--c8);border-bottom-left-radius:4px}
+.ai-msg.user .ai-msg-bd{background:var(--pr);color:#fff;border-bottom-right-radius:4px}
+.ai-msg-time{font:400 10px/1 var(--f);color:var(--c4);margin-top:4px}
+.ai-msg.user .ai-msg-time{text-align:right}
+.ai-msg-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.ai-msg-btn{font:500 11px/1 var(--f);padding:5px 10px;border-radius:var(--r1);border:1px solid var(--c2);background:var(--sf);color:var(--c6);cursor:pointer;transition:all .12s}
+.ai-msg-btn:hover{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-msg-btn.primary{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-msg-card{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);padding:12px;margin-top:8px}
+.ai-msg-card-t{font:600 12px/1.3 var(--f);color:var(--c8);margin-bottom:6px}
+.ai-msg-card-row{display:flex;justify-content:space-between;padding:4px 0;font:400 12px/1.4 var(--f);color:var(--c6)}
+.ai-msg-card-row .v{font-weight:600;color:var(--c8)}
+.ai-msg-card-tag{display:inline-block;font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px}
+.ai-msg-card-tag.em{color:var(--em700);background:var(--em50)}
+.ai-msg-card-tag.pr{color:var(--pr);background:var(--pr50)}
+.ai-msg-card-tag.ac{color:var(--ac700);background:var(--ac50)}
+.ai-ft{padding:12px 16px;border-top:1px solid var(--dv);display:flex;gap:8px;align-items:center}
+.ai-input{flex:1;height:36px;border:1px solid var(--c2);border-radius:var(--r2);padding:0 12px;font:400 13px/1 var(--f);color:var(--c8);outline:none;transition:border .15s}
+.ai-input:focus{border-color:var(--pr)}
+.ai-send{width:36px;height:36px;border-radius:var(--r2);background:var(--pr);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#FFF;transition:all .12s}
+.ai-send:hover{background:var(--pr700)}
+
+/* Goal card in chat */
+.goal-card{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);padding:12px;margin-top:6px}
+.goal-card-item{padding:6px 0;border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:8px}
+.goal-card-item:last-child{border-bottom:none}
+.goal-card-name{flex:1;font:500 12px/1.3 var(--f);color:var(--c8)}
+.goal-card-wt{font:500 11px/1 var(--fm);color:var(--pr);background:var(--pr50);padding:2px 6px;border-radius:3px}
+
+.toast{position:fixed;top:60px;left:50%;transform:translateX(-50%);background:var(--c9);color:#fff;font:500 13px/1 var(--f);padding:10px 20px;border-radius:var(--r2);z-index:9999;animation:toastIn .3s ease}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+</style>
+</head>
+<body>
+
+<div style="height:52px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:1100">
+  <div style="display:flex;align-items:center;gap:14px">
+    <a href="../demo-index.html" style="text-decoration:none;display:flex;align-items:center;gap:8px">
+      <div style="width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <span style="font-size:15px;font-weight:700;color:var(--c9)">HR ONE</span>
+    </a>
+    <div style="width:1px;height:20px;background:var(--c2)"></div>
+    <span style="font:500 13px/1 var(--f);color:var(--c5)">AI Agent - 员工端</span>
+    <span style="color:var(--c3)">&rsaquo;</span>
+    <span style="font:600 13px/1 var(--f);color:var(--c8)">AI 表单辅助</span>
+  </div>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+    <div style="width:30px;height:30px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--f);color:#FFF">张</div>
+  </div>
+</div>
+
+<div class="main">
+  <!-- Left: Form Context -->
+  <div class="form-ctx" id="formCtx">
+    <div class="form-ctx-hd">Q2 绩效目标 - 张明</div>
+    <div class="form-ctx-sub">2026年Q2 | 产品研发部 | PBC 季度考核</div>
+
+    <div class="mod-sec">
+      <div class="mod-hd">
+        <div class="mod-hd-title">业绩目标</div>
+        <div class="mod-hd-wt">50%</div>
+      </div>
+      <div class="goal-row">
+        <span class="goal-name">AI 产品迭代完成率</span>
+        <span class="goal-type q">定量</span>
+        <span class="goal-wt">25%</span>
+        <span class="goal-val">目标值 100%</span>
+      </div>
+      <div class="goal-row">
+        <span class="goal-name">AI 新增用户数</span>
+        <span class="goal-type q">定量</span>
+        <span class="goal-wt">15%</span>
+        <span class="goal-val">目标值 5000</span>
+      </div>
+      <div class="goal-row">
+        <span class="goal-name">产品营收贡献</span>
+        <span class="goal-type q">定量</span>
+        <span class="goal-wt">10%</span>
+        <span class="goal-val">目标值 200万</span>
+      </div>
+    </div>
+
+    <div class="mod-sec em">
+      <div class="mod-hd">
+        <div class="mod-hd-title">管理目标</div>
+        <div class="mod-hd-wt">20%</div>
+      </div>
+      <div class="goal-row">
+        <span class="goal-name">团队效能提升</span>
+        <span class="goal-type q">定量</span>
+        <span class="goal-wt">10%</span>
+        <span class="goal-val">目标值 15%</span>
+      </div>
+      <div class="goal-row">
+        <span class="goal-name">人才培养</span>
+        <span class="goal-type d">定性</span>
+        <span class="goal-wt">10%</span>
+        <span class="goal-val">-</span>
+      </div>
+    </div>
+
+    <div class="mod-sec vi">
+      <div class="mod-hd">
+        <div class="mod-hd-title">能力发展</div>
+        <div class="mod-hd-wt">15%</div>
+      </div>
+      <div class="goal-row">
+        <span class="goal-name">技术架构能力提升</span>
+        <span class="goal-type d">定性</span>
+        <span class="goal-wt">8%</span>
+        <span class="goal-val">-</span>
+      </div>
+      <div class="goal-row">
+        <span class="goal-name">跨部门协作能力</span>
+        <span class="goal-type d">定性</span>
+        <span class="goal-wt">7%</span>
+        <span class="goal-val">-</span>
+      </div>
+    </div>
+
+    <div class="mod-sec ac">
+      <div class="mod-hd">
+        <div class="mod-hd-title">价值观</div>
+        <div class="mod-hd-wt">15%</div>
+      </div>
+      <div class="goal-row">
+        <span class="goal-name">客户第一</span>
+        <span class="goal-type d">定性</span>
+        <span class="goal-wt">8%</span>
+        <span class="goal-val">-</span>
+      </div>
+      <div class="goal-row">
+        <span class="goal-name">团队协作</span>
+        <span class="goal-type d">定性</span>
+        <span class="goal-wt">7%</span>
+        <span class="goal-val">-</span>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:12px;margin-top:8px">
+      <div style="font:500 13px/1 var(--f);color:var(--c5)">总权重</div>
+      <div style="font:600 15px/1 var(--fm);color:var(--em700)">100%</div>
+      <div style="font:400 11px/1 var(--f);color:var(--em700);background:var(--em50);padding:3px 8px;border-radius:var(--r1)">合规</div>
+    </div>
+  </div>
+
+  <!-- Right: AI Chat Panel -->
+  <div class="ai-panel">
+    <div class="ai-hd">
+      <div class="ai-hd-ic">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg>
+      </div>
+      <div class="ai-hd-info">
+        <div class="ai-hd-t">AI 表单助手</div>
+        <div class="ai-hd-s">目标填写 - 智能辅助</div>
+      </div>
+    </div>
+    <div class="ai-bd" id="chatBd"></div>
+    <div class="ai-ft">
+      <input class="ai-input" id="chatInput" placeholder="输入消息..." onkeydown="if(event.key==='Enter')sendMsg()">
+      <button class="ai-send" onclick="sendMsg()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+const I = {
+  close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+  send: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>',
+};
+
+const GOALS = [
+  { module:'业绩目标', name:'AI 产品迭代完成率', weight:'25%', type:'定量', target:'目标值 100%', challenge:'挑战值 120%', min:'保底值 80%' },
+  { module:'业绩目标', name:'AI 新增用户数', weight:'15%', type:'定量', target:'目标值 5000', challenge:'挑战值 7000', min:'保底值 3000' },
+  { module:'业绩目标', name:'产品营收贡献', weight:'10%', type:'定量', target:'目标值 200万', challenge:'挑战值 300万', min:'保底值 150万' },
+  { module:'管理目标', name:'团队效能提升', weight:'10%', type:'定量', target:'目标值 15%', challenge:'挑战值 25%', min:'保底值 10%' },
+  { module:'管理目标', name:'人才培养', weight:'10%', type:'定性', target:'完成 2 名新人带教' },
+  { module:'能力发展', name:'技术架构能力提升', weight:'8%', type:'定性', target:'主导 1 次架构评审' },
+];
+
+const CHAT_MSGS = [
+  { role:'bot', text:'你好，张明！我是 AI 表单助手，可以帮你填写 Q2 绩效目标。\n\n基于你的 Q1 完成情况和岗位画像，我已为你预填了目标，是否需要我帮你优化？', time:'09:15' },
+  { role:'user', text:'帮我看看目标设置是否合理', time:'09:16' },
+  { role:'bot', text:'好的，我来分析一下你的目标设置合理性：\n\n整体评估：目标设置较为合理，但有以下优化建议：', time:'09:16', card:{
+    title:'目标合理性分析',
+    rows:[
+      { label:'业绩目标权重', value:'50%', tag:'合理', tagCls:'em' },
+      { label:'管理目标权重', value:'20%', tag:'合理', tagCls:'em' },
+      { label:'挑战值设置', value:'偏保守', tag:'建议提升', tagCls:'ac' },
+      { label:'目标对齐度', value:'78%', tag:'可优化', tagCls:'ac' },
+    ],
+    note:'建议：AI 新增用户数挑战值可从 7000 提升至 8000，与部门 OKR 对齐度将从 78% 提升至 85%。'
+  }},
+  { role:'user', text:'好的，帮我调整挑战值', time:'09:18' },
+  { role:'bot', text:'已为你调整以下目标的挑战值：', time:'09:18', card:{
+    title:'挑战值调整结果',
+    rows:[
+      { label:'AI 新增用户数', value:'7000 -> 8000', tag:'已调整', tagCls:'pr' },
+      { label:'产品营收贡献', value:'300万 -> 350万', tag:'已调整', tagCls:'pr' },
+      { label:'团队效能提升', value:'25% -> 30%', tag:'已调整', tagCls:'pr' },
+    ],
+    note:'调整后目标对齐度提升至 87%，整体挑战性适中。'
+  }},
+  { role:'user', text:'再帮我看看有没有遗漏的目标', time:'09:20' },
+  { role:'bot', text:'基于你的岗位画像和团队 OKR，我发现以下可补充的目标：', time:'09:20', buttons:['采纳建议1', '采纳建议2', '暂不添加'] },
+];
+
+let chatMsgs = [...CHAT_MSGS];
+
+function renderChat() {
+  const bd = document.getElementById('chatBd');
+  bd.innerHTML = chatMsgs.map(m => renderMsg(m)).join('');
+  scrollBottom();
+}
+
+function renderMsg(m) {
+  let html = `<div class="ai-msg ${m.role}"><div class="ai-msg-bd">${m.text.replace(/\n/g,'<br>')}</div>`;
+  if (m.card) {
+    html += `<div class="ai-msg-card"><div class="ai-msg-card-t">${m.card.title}</div>`;
+    m.card.rows.forEach(r => {
+      html += `<div class="ai-msg-card-row"><span>${r.label}</span><span><span class="v">${r.value}</span> <span class="ai-msg-card-tag ${r.tagCls}">${r.tag}</span></span></div>`;
+    });
+    if (m.card.note) html += `<div style="margin-top:8px;font:400 11px/1.5 var(--f);color:var(--c5)">${m.card.note}</div>`;
+    html += '</div>';
+  }
+  if (m.buttons) {
+    html += `<div class="ai-msg-actions">${m.buttons.map((b,i) => `<button class="ai-msg-btn${i===0?' primary':''}" onclick="clickSuggest('${b}')">${b}</button>`).join('')}</div>`;
+  }
+  html += `<div class="ai-msg-time">${m.role==='bot'?'AI':'你'} - ${m.time}</div></div>`;
+  return html;
+}
+
+function scrollBottom() {
+  const bd = document.getElementById('chatBd');
+  if (bd) setTimeout(() => bd.scrollTop = bd.scrollHeight, 50);
+}
+
+function clickSuggest(text) {
+  const input = document.getElementById('chatInput');
+  if (input) { input.value = text; sendMsg(); }
+}
+
+function sendMsg() {
+  const input = document.getElementById('chatInput');
+  if (!input || !input.value.trim()) return;
+  const text = input.value.trim();
+  input.value = '';
+
+  const now = new Date();
+  const time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+
+  chatMsgs.push({ role:'user', text, time });
+  renderChat();
+
+  setTimeout(() => {
+    const responses = [
+      { text:'收到！基于你的岗位画像，我推荐以下补充目标：', card:{
+        title:'AI 推荐目标',
+        rows:[
+          { label:'技术分享 (能力发展)', value:'权重 5%', tag:'推荐', tagCls:'pr' },
+          { label:'代码质量指标 (业绩)', value:'定量 5%', tag:'推荐', tagCls:'pr' },
+        ],
+        note:'这两个目标与你的技术专家发展路径匹配度较高，建议采纳。'
+      }},
+      { text:'已为你完成分析。还有其他需要优化的地方吗？', buttons:['查看完整目标', '提交目标', '继续优化'] },
+      { text:'好的，我来帮你检查目标完整性...\n\n当前目标总权重 100%，各模块权重分布合理。合规检查全部通过。', buttons:['提交目标', '继续优化'] },
+    ];
+    const resp = responses[Math.floor(Math.random() * responses.length)];
+    chatMsgs.push({ role:'bot', time, ...resp });
+    renderChat();
+  }, 600);
+}
+
+function showToast(text) {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = text;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 2000);
+}
+
+renderChat();
+</script>
+</body>
+</html>

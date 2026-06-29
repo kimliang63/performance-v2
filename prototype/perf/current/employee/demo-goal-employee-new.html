@@ -442,8 +442,8 @@ function render(){
         h+=`<div class="goal-row">
           <div class="goal-summary" onclick="toggleGoal('${g.id}')">
             <div class="goal-icon" style="background:var(--pr50);color:var(--pr);font:700 12px/1 var(--m);width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0">${gi+1}</div>
-            <span class="goal-weight" style="font:700 14px/1 var(--m);color:var(--pr);background:var(--pr50);padding:3px 8px;border-radius:var(--r1);flex-shrink:0">${g.weight}%</span>
             <span class="goal-name">${g.name}</span>
+            <span class="goal-weight" style="font:700 14px/1 var(--m);color:var(--pr);background:var(--pr50);padding:3px 8px;border-radius:var(--r1);flex-shrink:0">${g.weight}</span>
             <div class="goal-meta">
               <span class="goal-type ${typeClass}">${typeLabel}</span>
               <div class="goal-actions">
@@ -453,13 +453,25 @@ function render(){
             </div>
           </div>
           <div class="goal-detail ${isOpen?'open':''}">
-            <div class="goal-detail-grid">
-              ${g.type==='quant'?`
-              <div class="gd-item"><span class="gd-label">挑战值</span><span class="gd-value mono">${g.challenge} ${g.unit||''}</span></div>
-              <div class="gd-item"><span class="gd-label">目标值</span><span class="gd-value mono">${g.target} ${g.unit||''}</span></div>
-              <div class="gd-item"><span class="gd-label">保底值</span><span class="gd-value mono">${g.baseline} ${g.unit||''}</span></div>
-              `:`<div class="gd-item" style="grid-column:1/-1"><span class="gd-label">衡量标准</span><span class="gd-value">${g.desc||'-'}</span></div>`}
+            ${g.type==='quant'?`
+            <div style="background:var(--c0);border-radius:var(--r2);padding:12px;border:1px solid var(--c2)">
+              <div style="font:600 12px/1 var(--f);color:var(--c6);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;color:var(--pr)"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>指标描述 <span style="cursor:pointer;font-size:12px;color:var(--c4);margin-left:4px" onclick="event.stopPropagation();showMeasureDesc('${g.id}')" title="点击查看指标描述">ⓘ</span></div>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 16px">
+                <div style="display:flex;flex-direction:column;gap:3px"><span style="font:400 11px/1 var(--f);color:var(--c5)">挑战值</span><span class="gd-value mono">${g.challenge} ${g.unit||''}</span></div>
+                <div style="display:flex;flex-direction:column;gap:3px"><span style="font:400 11px/1 var(--f);color:var(--c5)">目标值</span><span class="gd-value mono">${g.target} ${g.unit||''}</span></div>
+                <div style="display:flex;flex-direction:column;gap:3px"><span style="font:400 11px/1 var(--f);color:var(--c5)">完成值</span><span class="gd-value mono">${g.baseline} ${g.unit||''}</span></div>
+              </div>
             </div>
+            `:`
+            <div style="background:var(--c0);border-radius:var(--r2);padding:12px;border:1px solid var(--c2)">
+              <div style="font:600 12px/1 var(--f);color:var(--c6);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;color:var(--pr)"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>衡量标准</div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div style="display:flex;flex-direction:column;gap:3px"><span style="font:400 11px/1 var(--f);color:var(--c5)">衡量标准-评价梯度2</span><span class="gd-value">${(g.msLevels&&g.msLevels[0])?g.msLevels[0].condition:'-'}</span></div>
+                <div style="display:flex;flex-direction:column;gap:3px"><span style="font:400 11px/1 var(--f);color:var(--c5)">衡量标准-评价梯度3 <span style="color:var(--ro)">*</span></span><span class="gd-value" style="font-weight:500">${(g.msLevels&&g.msLevels[1])?g.msLevels[1].condition:'-'}</span></div>
+                <div style="display:flex;flex-direction:column;gap:3px"><span style="font:400 11px/1 var(--f);color:var(--c5)">衡量标准-评价梯度4</span><span class="gd-value">${(g.msLevels&&g.msLevels[2])?g.msLevels[2].condition:'-'}</span></div>
+              </div>
+            </div>
+            `}
           </div>
         </div>`;
       });
@@ -552,20 +564,12 @@ function openEdit(id,mi){
       </div>
     </div>`;
     html+=`<div class="ef-sec">
-      <div class="ef-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>目标值配置</div>
+      <div class="ef-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>指标描述 <span style="cursor:pointer;font-size:12px;color:var(--c4);margin-left:4px" onclick="showMeasureDesc('${id}')" title="点击查看指标描述">ⓘ</span></div>
       <div class="ef-grid f3">
-        <div class="ef-fi"><span class="ef-fi-l">目标值<span class="req">*</span></span><input class="inp num" id="ef_target" type="number" value="${g.target}" ${linked?'readonly':''}/></div>
-        <div class="ef-fi"><span class="ef-fi-l">挑战值</span><input class="inp num" id="ef_challenge" type="number" value="${g.challenge}" ${linked?'readonly':''}/></div>
-        <div class="ef-fi"><span class="ef-fi-l">保底值</span><input class="inp num" id="ef_baseline" type="number" value="${g.baseline}" ${linked?'readonly':''}/></div>
+        <div class="ef-fi"><span class="ef-fi-l">挑战值${linked?'<span class="ai-tag" style="display:inline-flex;align-items:center;gap:2px;padding:1px 5px;border-radius:3px;font:500 9px/1 var(--f);background:linear-gradient(135deg,#8B5CF6 0%,#6366F1 100%);color:#FFF;flex-shrink:0">AI</span>':''}</span><input class="inp num" id="ef_challenge" type="number" value="${g.challenge}" ${linked?'readonly':''}/></div>
+        <div class="ef-fi"><span class="ef-fi-l">目标值 <span class="req">*</span>${linked?'<span class="ai-tag" style="display:inline-flex;align-items:center;gap:2px;padding:1px 5px;border-radius:3px;font:500 9px/1 var(--f);background:linear-gradient(135deg,#8B5CF6 0%,#6366F1 100%);color:#FFF;flex-shrink:0">AI</span>':''}</span><input class="inp num" id="ef_target" type="number" value="${g.target}" ${linked?'readonly':''}/></div>
+        <div class="ef-fi"><span class="ef-fi-l">完成值</span><input class="inp num" id="ef_baseline" type="number" value="${g.baseline}" ${linked?'readonly':''}/></div>
       </div>
-    </div>`;
-    html+=`<div class="ef-sec">
-      <div class="ef-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>衡量标准与计算规则（由指标自动带入）</div>
-      <div class="ef-grid" style="margin-bottom:8px">
-        <div class="ef-fi"><span class="ef-fi-l">衡量方式</span><input class="inp" value="${g.measure}" readonly/></div>
-        <div class="ef-fi"><span class="ef-fi-l">计算规则</span><input class="inp" value="${g.rule||'-'}" readonly/></div>
-      </div>
-      ${g.ruleFormula?`<div style="background:var(--sf);border:1px solid var(--c2);border-radius:var(--r1);padding:8px 10px;margin-top:6px"><div style="font:500 10px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">计算公式</div><code style="font:400 11px/1.5 var(--m);color:var(--c8);white-space:pre-wrap;word-break:break-all">${g.ruleFormula}</code></div>`:''}
     </div>`;
   }else{
     html+=`<div class="ef-sec">
@@ -577,7 +581,9 @@ function openEdit(id,mi){
     </div>`;
     html+=`<div class="ef-sec">
       <div class="ef-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>衡量标准</div>
-      <div class="ef-fi full"><span class="ef-fi-l">衡量标准<span class="req">*</span></span><div class="field-with-lang"><textarea class="inp" id="ef_desc" rows="3" placeholder="请输入衡量标准...">${g.desc||''}</textarea>${langBtn(g.id+'_desc')}</div></div>
+      <div class="ef-fi full"><span class="ef-fi-l">衡量标准-评价梯度2</span><textarea class="inp" id="ef_ms2" rows="2" placeholder="请输入2分评价标准...">${(g.msLevels&&g.msLevels[0])?g.msLevels[0].condition:''}</textarea></div>
+      <div class="ef-fi full" style="margin-top:10px"><span class="ef-fi-l">衡量标准-评价梯度3 <span class="req">*</span></span><textarea class="inp" id="ef_ms3" rows="2" placeholder="请输入3分评价标准（必填）...">${(g.msLevels&&g.msLevels[1])?g.msLevels[1].condition:''}</textarea></div>
+      <div class="ef-fi full" style="margin-top:10px"><span class="ef-fi-l">衡量标准-评价梯度4</span><textarea class="inp" id="ef_ms4" rows="2" placeholder="请输入4分评价标准...">${(g.msLevels&&g.msLevels[2])?g.msLevels[2].condition:''}</textarea></div>
     </div>`;
   }
   document.getElementById('esbBody').innerHTML=html;
@@ -601,8 +607,8 @@ function saveEdit(){
     const targetEl=document.getElementById('ef_target');
     if(!targetEl||!targetEl.value){if(targetEl)targetEl.classList.add('inp-err');if(!firstErr)firstErr='请填写目标值';}
   }else{
-    const descEl=document.getElementById('ef_desc');
-    if(!descEl||!descEl.value.trim()){if(descEl)descEl.classList.add('inp-err');if(!firstErr)firstErr='请填写衡量标准';}
+    const ms3El=document.getElementById('ef_ms3');
+    if(!ms3El||!ms3El.value.trim()){if(ms3El)ms3El.classList.add('inp-err');if(!firstErr)firstErr='请填写衡量标准-评价梯度3（必填）';}
   }
   if(firstErr){showToast(firstErr);return}
   if(nameEl&&!nameEl.readOnly) g.name=nameEl.value;
@@ -615,8 +621,13 @@ function saveEdit(){
     if(challengeEl&&!challengeEl.readOnly) g.challenge=parseFloat(challengeEl.value)||0;
     if(baselineEl&&!baselineEl.readOnly) g.baseline=parseFloat(baselineEl.value)||0;
   }else{
-    const descEl=document.getElementById('ef_desc');
-    if(descEl) g.desc=descEl.value;
+    if(!g.msLevels)g.msLevels=[];
+    const ms2El=document.getElementById('ef_ms2');
+    const ms3El=document.getElementById('ef_ms3');
+    const ms4El=document.getElementById('ef_ms4');
+    if(ms2El){while(g.msLevels.length<1)g.msLevels.push({});g.msLevels[0].condition=ms2El.value;}
+    if(ms3El){while(g.msLevels.length<2)g.msLevels.push({});g.msLevels[1].condition=ms3El.value;}
+    if(ms4El){while(g.msLevels.length<3)g.msLevels.push({});g.msLevels[2].condition=ms4El.value;}
   }
   closeEdit();
   render();
@@ -636,7 +647,7 @@ function renderHistTable(){
   const goals=HISTORY[period]||[];
   let h=`<thead><tr><th><span class="chk ${histSelected.size===goals.length&&goals.length?'on':''}" onclick="toggleAllHist()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span></th><th>目标名称</th><th>模块</th><th>类型</th><th>权重</th><th>目标值</th></tr></thead><tbody>`;
   goals.forEach((g,i)=>{
-    h+=`<tr onclick="toggleHistItem(${i})"><td><span class="chk ${histSelected.has(i)?'on':''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span></td><td style="font-weight:500;color:var(--c8)">${g.name}</td><td>${g.module}</td><td>${g.type==='quant'?'定量':'定性'}</td><td style="font-family:var(--m)">${g.weight}%</td><td style="font-family:var(--m)">${g.target}</td></tr>`;
+    h+=`<tr onclick="toggleHistItem(${i})"><td><span class="chk ${histSelected.has(i)?'on':''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span></td><td style="font-weight:500;color:var(--c8)">${g.name}</td><td>${g.module}</td><td>${g.type==='quant'?'定量':'定性'}</td><td style="font-family:var(--m)">${g.weight}</td><td style="font-family:var(--m)">${g.target}</td></tr>`;
   });
   h+='</tbody>';
   document.getElementById('histTable').innerHTML=h;
@@ -749,6 +760,7 @@ function validateAndSubmit(){
   showToast('提交成功','success');
 }
 
+function showMeasureDesc(id){const d=findGoal(id);showToast(d?.goal?.desc||'暂无指标描述')}
 function showToast(msg,type){
   const t=document.getElementById('validateToast');
   document.getElementById('toastMsg').textContent=msg;
