@@ -66,6 +66,8 @@ const GHR_NAV = {
     ]},
   },
   MO:['perf'],
+  // Module aliases: map non-standard module names to real modules
+  _aliases: { workbench: 'perf' },
 
   // State
   cur:'perf',
@@ -78,8 +80,11 @@ const GHR_NAV = {
     this.cur = activeModule || 'perf';
     this.child = activeItem || '绩效方案';
     // Compute base path for cross-directory navigation
+    // All demo pages are one level deep (employee/, manager/, etc.),
+    // so basePath is always '../' to reach demo-index.html and root-level files.
     const path = window.location.pathname;
-    this.basePath = path.includes('/employee/') ? '../' : '';
+    const subdirs = ['/employee/', '/manager/', '/employee-mobile/', '/manager-mobile/', '/employee-agent/', '/manager-agent/'];
+    this.basePath = subdirs.some(d => path.includes(d)) ? '../' : '';
     this.injectHTML();
     this.injectCSS();
     this.injectToastCSS();
@@ -357,7 +362,7 @@ const GHR_NAV = {
     this.enter();
     if (child) {
       // Find the item and click its child
-      const mod = this.M[m];
+      const mod = this.M[this._aliases[m] || m];
       if (mod) {
         for (const g of mod.groups) {
           for (const item of g.items) {
@@ -382,7 +387,9 @@ const GHR_NAV = {
 
   // Sidebar
   enter() {
-    const m = this.M[this.cur];
+    // Resolve module alias
+    const modKey = this._aliases[this.cur] || this.cur;
+    const m = this.M[modKey];
     if (!m) return;
     document.getElementById('sbHd').innerHTML = `<div class="sb-hd-in"><div class="sb-ic">${this.I[m.ic]}</div><div><div class="sb-n">${m.n}</div><div class="sb-l">${m.l}</div></div></div>`;
 
@@ -455,7 +462,7 @@ const GHR_NAV = {
       window.location.href = this.basePath + file;
     } else {
       // Check if this is a parent item with children
-      const mod = this.M[this.cur];
+      const mod = this.M[this._aliases[this.cur] || this.cur];
       if (mod) {
         for (const g of mod.groups) {
           for (const item of g.items) {
