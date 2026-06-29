@@ -50,7 +50,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoo
 .chart-box canvas{width:100%!important;height:220px!important}
 
 /* Stat cards */
-.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--sp-md);margin-bottom:var(--sp-lg)}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp-md);margin-bottom:var(--sp-lg)}
 .stat-card{background:var(--c0);border-radius:var(--r2);padding:var(--sp-md) var(--sp-lg);text-align:center}
 .stat-card-val{font:700 22px/1 var(--fm);color:var(--c9)}
 .stat-card-label{font:400 12px/1 var(--f);color:var(--c5);margin-top:2px}
@@ -59,6 +59,31 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoo
 .perf-legend{display:flex;align-items:center;gap:10px;margin-top:var(--sp-md);font:400 11px/1 var(--f);color:var(--c5)}
 .perf-legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
 
+/* Member goal card */
+.mem-goal{display:grid;grid-template-columns:140px 1fr;gap:0;min-height:280px}
+.mem-list{border-right:1px solid var(--dv)}
+.mem-item{display:flex;align-items:center;gap:var(--sp-sm);padding:var(--sp-md) var(--sp-lg);cursor:pointer;transition:background 0.12s;border-left:3px solid transparent}
+.mem-item:hover{background:var(--c0)}
+.mem-item.active{background:var(--pr50);border-left-color:var(--pr)}
+.mem-item-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0}
+.mem-item-name{font:500 13px/1 var(--f);color:var(--c8)}
+.mem-item-info{font:400 11px/1 var(--f);color:var(--c5);margin-top:1px}
+.mem-detail{padding:var(--sp-md) var(--sp-xl)}
+
+/* Goal modules (reused from home) */
+.mod-sec{border:1px solid var(--dv);border-radius:var(--r2);overflow:hidden}
+.mod-sec+.mod-sec{margin-top:var(--sp-md)}
+.mod-hd{display:flex;align-items:center;padding:var(--sp-md) var(--sp-lg);gap:var(--sp-sm)}
+.mod-hd-title{font:600 13px/1 var(--f);color:var(--c9);flex:1}
+.mod-hd-wt{font:500 12px/1 var(--fm);color:var(--c5);padding:2px 8px;border-radius:var(--r1);background:var(--c1)}
+.goal-row{border-top:1px solid var(--dv);padding:var(--sp-sm) var(--sp-lg);display:flex;align-items:center;gap:var(--sp-sm)}
+.goal-name{flex:1;font:500 13px/1.3 var(--f);color:var(--c8)}
+.goal-type{font:500 10px/1 var(--f);padding:2px 7px;border-radius:3px}
+.goal-type.q{background:var(--pr50);color:var(--pr)}
+.goal-type.d{background:var(--vi50);color:var(--vi)}
+.goal-wt{font:500 12px/1 var(--fm);color:var(--c6)}
+.goal-val{font:400 12px/1 var(--f);color:var(--c5);min-width:140px;text-align:right}
+
 .toast{position:fixed;top:70px;right:24px;padding:12px 18px;border-radius:var(--r2);font:500 13px/1.3 var(--f);box-shadow:0 10px 40px -10px rgba(0,0,0,.12);z-index:3000;transform:translateX(120%);transition:transform .25s ease}
 .toast.on{transform:translateX(0)}
 .toast.success{background:var(--em);color:#FFF}
@@ -66,33 +91,6 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoo
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
 </head>
 <body>
-
-<!-- Header -->
-<div style="height:52px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 var(--sp-2xl);gap:var(--sp-lg);position:sticky;top:0;z-index:1100">
-  <div style="display:flex;align-items:center;gap:14px">
-    <a href="../demo-index.html" style="text-decoration:none;display:flex;align-items:center;gap:var(--sp-sm)">
-      <div style="width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      </div>
-      <span style="font-size:15px;font-weight:700;color:var(--c9)">HR ONE</span>
-    </a>
-    <div style="width:1px;height:20px;background:var(--c2)"></div>
-    <span style="font:500 13px/1 var(--f);color:var(--c5)">绩效工作台</span>
-    <span style="color:var(--c3)">&#8250;</span>
-    <span style="font:600 13px/1 var(--f);color:var(--c8)">团队绩效工作台</span>
-  </div>
-  <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
-    <div style="width:30px;height:30px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--f);color:#FFF">张</div>
-  </div>
-</div>
-
-<!-- Filter Bar -->
-<div style="display:flex;align-items:center;gap:var(--sp-md);padding:var(--sp-lg) var(--sp-2xl);background:var(--sf);border-bottom:1px solid var(--dv)">
-  <span style="font:500 13px/1 var(--f);color:var(--c6)">考核周期</span>
-  <select style="font:500 13px/1 var(--f);color:var(--c9);background:var(--c1);border:1px solid var(--c2);border-radius:var(--r2);padding:var(--sp-sm) var(--sp-lg) var(--sp-sm) var(--sp-md);outline:none;cursor:pointer;appearance:none;background-image:url(&quot;data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2371717A' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 10px center;padding-right:28px">
-    <option>2026年6月</option><option>2026年5月</option><option>2026年4月</option>
-  </select>
-</div>
 
 <div style="padding:var(--sp-2xl)">
 
@@ -122,21 +120,18 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoo
       </div>
     </div>
 
-    <!-- 右侧：团队目标统计 -->
+    <!-- 右侧：成员目标 -->
     <div class="card" style="margin-bottom:0">
       <div class="card-hd">
-        <span class="card-t">团队目标统计</span>
+        <span class="card-t">成员目标</span>
+        <span class="card-action" onclick="showToast('查看更多')">更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
       </div>
-      <div class="card-bd">
-        <div class="charts-row">
-          <div class="chart-box">
-            <div class="chart-box-title">各成员目标完成率</div>
-            <canvas id="chartGoal"></canvas>
-          </div>
-          <div class="chart-box">
-            <div class="chart-box-title">指标 vs 行动完成对比</div>
-            <canvas id="chartCat"></canvas>
-          </div>
+      <div class="card-bd" style="padding:0">
+        <div class="mem-goal">
+          <!-- 左侧员工列表 -->
+          <div class="mem-list" id="memList"></div>
+          <!-- 右侧目标详情 -->
+          <div class="mem-detail" id="memDetail"></div>
         </div>
       </div>
     </div>
@@ -154,10 +149,6 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoo
         <div class="stat-card">
           <div class="stat-card-val">4</div>
           <div class="stat-card-label">团队人数</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-val" style="color:var(--em)">4.75</div>
-          <div class="stat-card-label">本月均分</div>
         </div>
         <div class="stat-card">
           <div class="stat-card-val" style="color:var(--pr)">超出预期</div>
@@ -299,110 +290,111 @@ function showToast(msg, type) {
   });
 })();
 
-// ===== 各成员目标完成率 (horizontal bar) =====
-(function(){
-  var ctx = document.getElementById('chartGoal');
-  if(!ctx) return;
-  new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: ['张明','李华','王芳','赵强'],
-      datasets: [{
-        data: [87, 79, 67, 57],
-        backgroundColor: ['#2563EB','#10B981','#8B5CF6','#F59E0B'],
-        borderRadius: 6,
-        barPercentage: 0.55,
-        categoryPercentage: 0.7
-      }]
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: function(ctx){ return '完成率：' + ctx.raw + '%' }
-          }
-        }
-      },
-      scales: {
-        x: {
-          min: 0, max: 100,
-          ticks: { stepSize: 25, callback: function(v){ return v+'%' }, font: { family: 'JetBrains Mono, SF Mono, monospace', size: 11 }, color: '#A1A1AA' },
-          grid: { color: '#E4E4E7', drawTicks: false }
-        },
-        y: {
-          ticks: { font: { family: 'Inter, Noto Sans SC, sans-serif', size: 12 }, color: '#27272A' },
-          grid: { display: false }
-        }
-      }
-    }
-  });
-})();
+// ===== 成员目标数据与切换 =====
+var MEMBER_GOALS = {
+  zm: {
+    name: '张明', dept: '产品部', color: 'var(--pr)',
+    modules: [
+      {name: '关键指标', weight: 60, goals: [
+        {name: 'AI 产品迭代完成率', type: 'q', weight: 25, val: '目标 100% · 挑战 120%'},
+        {name: 'AI 新增用户数', type: 'q', weight: 20, val: '目标 5000 · 挑战 7000'},
+        {name: '产品营收贡献', type: 'q', weight: 15, val: '目标 200万 · 挑战 300万'}
+      ]},
+      {name: '关键行动', weight: 40, goals: [
+        {name: '主导完成6月产品架构评审', type: 'd', weight: 15, val: '定性'},
+        {name: '完成2名新人带教', type: 'd', weight: 10, val: '定性'},
+        {name: '推动跨部门协作机制落地', type: 'd', weight: 15, val: '定性'}
+      ]}
+    ]
+  },
+  lh: {
+    name: '李华', dept: '技术部', color: 'var(--em)',
+    modules: [
+      {name: '关键指标', weight: 60, goals: [
+        {name: '前端代码质量评分', type: 'q', weight: 20, val: '目标 90分 · 挑战 95分'},
+        {name: '需求按时交付率', type: 'q', weight: 25, val: '目标 95% · 挑战 100%'},
+        {name: 'Bug修复及时率', type: 'q', weight: 15, val: '目标 90% · 挑战 98%'}
+      ]},
+      {name: '关键行动', weight: 40, goals: [
+        {name: '完成前端组件库升级', type: 'd', weight: 20, val: '定性'},
+        {name: '技术分享2次', type: 'd', weight: 10, val: '定性'},
+        {name: '新人代码Review', type: 'd', weight: 10, val: '定性'}
+      ]}
+    ]
+  },
+  wf: {
+    name: '王芳', dept: '设计部', color: 'var(--vi)',
+    modules: [
+      {name: '关键指标', weight: 60, goals: [
+        {name: '设计稿按时交付率', type: 'q', weight: 20, val: '目标 95% · 挑战 100%'},
+        {name: '设计评审通过率', type: 'q', weight: 20, val: '目标 90% · 挑战 95%'},
+        {name: '用户体验满意度', type: 'q', weight: 20, val: '目标 85分 · 挑战 90分'}
+      ]},
+      {name: '关键行动', weight: 40, goals: [
+        {name: '完成HR ONE UI规范制定', type: 'd', weight: 20, val: '定性'},
+        {name: '设计系统组件库建设', type: 'd', weight: 15, val: '定性'},
+        {name: '竞品分析报告', type: 'd', weight: 5, val: '定性'}
+      ]}
+    ]
+  },
+  zq: {
+    name: '赵强', dept: '产品部', color: 'var(--ac)',
+    modules: [
+      {name: '关键指标', weight: 60, goals: [
+        {name: '需求评审及时率', type: 'q', weight: 20, val: '目标 95% · 挑战 100%'},
+        {name: '产品上线准时率', type: 'q', weight: 20, val: '目标 90% · 挑战 95%'},
+        {name: '客户满意度', type: 'q', weight: 20, val: '目标 85分 · 挑战 90分'}
+      ]},
+      {name: '关键行动', weight: 40, goals: [
+        {name: '完成采购系统需求文档', type: 'd', weight: 15, val: '定性'},
+        {name: '参与产品评审会', type: 'd', weight: 10, val: '定性'},
+        {name: '跨部门需求对接', type: 'd', weight: 15, val: '定性'}
+      ]}
+    ]
+  }
+};
 
-// ===== 指标 vs 行动完成对比 (grouped bar) =====
-(function(){
-  var ctx = document.getElementById('chartCat');
-  if(!ctx) return;
-  new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: ['张明','李华','王芳','赵强'],
-      datasets: [
-        {
-          label: '关键指标',
-          data: [85, 82, 67, 57],
-          backgroundColor: '#2563EB',
-          borderRadius: 6,
-          barPercentage: 0.7,
-          categoryPercentage: 0.8
-        },
-        {
-          label: '关键行动',
-          data: [88, 83, 67, 58],
-          backgroundColor: '#10B981',
-          borderRadius: 6,
-          barPercentage: 0.7,
-          categoryPercentage: 0.8
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          position: 'bottom',
-          labels: {
-            usePointStyle: true,
-            pointStyleWidth: 8,
-            padding: 20,
-            font: { family: 'Inter, Noto Sans SC, sans-serif', size: 11 },
-            color: '#71717A'
-          }
-        },
-        tooltip: {
-          callbacks: {
-            label: function(ctx){ return ctx.dataset.label + '：' + ctx.raw + '%' }
-          }
-        }
-      },
-      scales: {
-        y: {
-          min: 0, max: 100,
-          ticks: { stepSize: 25, callback: function(v){ return v+'%' }, font: { family: 'JetBrains Mono, SF Mono, monospace', size: 11 }, color: '#A1A1AA' },
-          grid: { color: '#E4E4E7', drawTicks: false }
-        },
-        x: {
-          ticks: { font: { family: 'Inter, Noto Sans SC, sans-serif', size: 11 }, color: '#A1A1AA' },
-          grid: { display: false }
-        }
-      }
-    }
+function buildMemList() {
+  var h = '';
+  var keys = ['zm','lh','wf','zq'];
+  keys.forEach(function(k, i) {
+    var m = MEMBER_GOALS[k];
+    h += '<div class="mem-item' + (i===0?' active':'') + '" onclick="selectMember(\'' + k + '\',this)" data-key="' + k + '">';
+    h += '<div class="mem-item-av" style="background:' + m.color + '">' + m.name[0] + '</div>';
+    h += '<div><div class="mem-item-name">' + m.name + '</div><div class="mem-item-info">' + m.dept + '</div></div>';
+    h += '</div>';
   });
-})();
+  document.getElementById('memList').innerHTML = h;
+}
+
+function selectMember(key, el) {
+  document.querySelectorAll('.mem-item').forEach(function(t){ t.classList.remove('active'); });
+  el.classList.add('active');
+  renderMemDetail(key);
+}
+
+function renderMemDetail(key) {
+  var d = MEMBER_GOALS[key];
+  if (!d) return;
+  var h = '';
+  d.modules.forEach(function(m) {
+    h += '<div class="mod-sec">';
+    h += '<div class="mod-hd"><div class="mod-hd-title">' + m.name + '</div><div class="mod-hd-wt">' + m.weight + '%</div></div>';
+    m.goals.forEach(function(g) {
+      h += '<div class="goal-row">';
+      h += '<span class="goal-name">' + g.name + '</span>';
+      h += '<span class="goal-type ' + g.type + '">' + (g.type==='q'?'定量':'定性') + '</span>';
+      h += '<span class="goal-wt">' + g.weight + '%</span>';
+      h += '<span class="goal-val">' + g.val + '</span>';
+      h += '</div>';
+    });
+    h += '</div>';
+  });
+  document.getElementById('memDetail').innerHTML = h;
+}
+
+buildMemList();
+renderMemDetail('zm');
 </script>
 <script src="../navigation.js"></script>
 <script>GHR_NAV.init('perf', '团队绩效');</script>
