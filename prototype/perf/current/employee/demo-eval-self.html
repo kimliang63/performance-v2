@@ -53,10 +53,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .eval-type-tag.qual{background:var(--vi50);color:var(--vi)}
 .eval-weight{font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px}
 .eval-target{color:var(--c6);font-size:12px}
-.eval-score{font-family:var(--m);font-weight:600;font-size:13px}
-.eval-score.high{color:var(--em700)}
-.eval-score.mid{color:var(--pr)}
-.eval-score.low{color:var(--ro)}
+.eval-score{font:600 13px/1 var(--m)}.eval-score.high{color:var(--em700)}.eval-score.mid{color:var(--pr)}.eval-score.low{color:var(--ac700)}.eval-score.zero{color:var(--ro)}
 
 textarea.edit-cell{width:100%;border:1px solid var(--c2);border-radius:var(--r1);padding:6px 8px;font:400 13px/1.4 var(--f);color:var(--c9);background:var(--sf);transition:all .12s;font-family:var(--f);resize:vertical;min-height:56px;outline:none}
 textarea.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
@@ -81,19 +78,14 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .grade-select select option[value="符合预期-"]{color:var(--ac)}
 .grade-select select option[value="低于预期"]{color:var(--ro)}
 
-/* ═══ GRADE BUTTON GROUP ═══ */
-.grade-btn-group{display:flex;flex-wrap:wrap;gap:4px}
-.grade-btn{padding:4px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);border:1px solid transparent;cursor:pointer;transition:all .12s;background:transparent;line-height:1.3}
-.grade-btn[data-grade="超出预期"]{color:var(--em700);background:var(--em50)}
-.grade-btn[data-grade="符合预期+"]{color:var(--pr);background:var(--pr50)}
-.grade-btn[data-grade="符合预期"]{color:var(--c8);background:var(--c1)}
-.grade-btn[data-grade="符合预期-"]{color:var(--ac700);background:var(--ac50)}
-.grade-btn[data-grade="低于预期"]{color:var(--ro);background:var(--ro50)}
-.grade-btn.active[data-grade="超出预期"]{border-color:var(--em700);font-weight:600}
-.grade-btn.active[data-grade="符合预期+"]{border-color:var(--pr);font-weight:600}
-.grade-btn.active[data-grade="符合预期"]{border-color:var(--c8);font-weight:600}
-.grade-btn.active[data-grade="符合预期-"]{border-color:var(--ac700);font-weight:600}
-.grade-btn.active[data-grade="低于预期"]{border-color:var(--ro);font-weight:600}
+/* ═══ STAR RATING ═══ */
+.star-rating{display:flex;flex-direction:column;gap:6px;align-items:flex-start;min-width:220px}
+.star-row{display:flex;align-items:center;gap:4px;height:24px}
+.star{width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:20px;line-height:1;cursor:pointer;color:#D1D5DB;transition:color .12s}
+.star.active{color:#F59E0B}
+.star:hover{color:#F59E0B}
+.star-legend{font-size:11px;line-height:1.45;color:#64748B;max-width:360px}
+.score-cell{min-width:260px}
 
 /* ═══ HISTORY CARD ═══ */
 .hist-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:16px}
@@ -368,7 +360,6 @@ var MODULES=[
 var overallComment='';
 
 function renderModuleContainer(){
-  var gradeOptions=['超出预期','符合预期+','符合预期','符合预期-','低于预期'];
   var html='<div class="eval-list"><table><thead><tr>'+
     '<th style="width:180px">名称</th>'+
     '<th style="width:55px">权重</th>'+
@@ -394,11 +385,11 @@ function renderModuleContainer(){
       }else{
         html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">'+g.measureDesc+'</td>';
         html+='<td><textarea class="edit-cell-sm" id="completed_'+mi+'_'+gi+'" placeholder="描述完成情况…" oninput="updateCompleted('+mi+','+gi+')">'+g.completed+'</textarea></td>';
-        html+='<td><div class="grade-btn-group">';
-        gradeOptions.forEach(function(opt){
-          html+='<button type="button" class="grade-btn'+(g.grade===opt?' active':'')+'" data-grade="'+opt+'" onclick="updateGrade('+mi+','+gi+',this)">'+opt+'</button>';
-        });
-        html+='<input type="hidden" id="grade_'+mi+'_'+gi+'" value="'+(g.grade||'')+'"></div></td>';
+        html+='<td class="score-cell"><div class="star-rating" id="stars_'+mi+'_'+gi+'" data-value="'+(g.stars||0)+'"><div class="star-row">';
+        for(var si=1;si<=5;si++){
+          html+='<span class="star'+(si<=(g.stars||0)?' active':'')+'" data-v="'+si+'" onclick="setStar(this,'+mi+','+gi+','+si+')" onmouseenter="starHover(this,1)" onmouseleave="starHover(this,0)">★</span>';
+        }
+        html+='</div><div class="star-legend">2分:部分达标 · 3分:基本达标 · 4分:良好 · 5分:卓越</div></div></td>';
       }
       html+='</tr>';
     });
@@ -440,17 +431,28 @@ function updateCompleted(mi,gi){
   }
 }
 
-function updateGrade(mi,gi,btn){
-  var group=btn.closest('.grade-btn-group');
-  group.querySelectorAll('.grade-btn').forEach(function(b){b.classList.remove('active');});
-  btn.classList.add('active');
-  var val=btn.getAttribute('data-grade');
-  document.getElementById('grade_'+mi+'_'+gi).value=val;
-  MODULES[mi].goals[gi].grade=val;
+function setStar(el,mi,gi,val){
+  MODULES[mi].goals[gi].stars=val;
+  var rating=el.closest('.star-rating');
+  rating.dataset.value=val;
+  rating.querySelectorAll('.star').forEach(function(s,i){
+    s.classList.toggle('active',i<val);
+  });
 }
 
-function updateCompleted(mi,gi){
-  MODULES[mi].goals[gi].completed=document.getElementById('completed_'+mi+'_'+gi).value;
+function starHover(el,entering){
+  var rating=el.closest('.star-rating');
+  if(entering){
+    var val=parseInt(el.dataset.v);
+    rating.querySelectorAll('.star').forEach(function(s,i){
+      s.classList.toggle('active',i<val);
+    });
+  }else{
+    var saved=parseInt(rating.dataset.value);
+    rating.querySelectorAll('.star').forEach(function(s,i){
+      s.classList.toggle('active',i<saved);
+    });
+  }
 }
 
 function submitSelfEval(){
@@ -533,15 +535,15 @@ function applyAiSuggestion(type){
       {mi:0,gi:0,completed:'108'},
       {mi:0,gi:1,completed:'97'},
       {mi:0,gi:2,completed:'96'},
-      {mi:1,gi:3,completed:'4项规范全部符合，团队遵从度95%以上',grade:'符合预期'},
-      {mi:1,gi:4,completed:'按时完成GOFO 6月迭代需求评审和验收',grade:'符合预期'},
-      {mi:1,gi:5,completed:'3个里程碑按时交付，无延期',grade:'符合预期+'},
-      {mi:1,gi:6,completed:'3个版本按时发布，1个试点应用已落地',grade:'符合预期+'}
+      {mi:1,gi:3,completed:'4项规范全部符合，团队遵从度95%以上',stars:4},
+      {mi:1,gi:4,completed:'按时完成GOFO 6月迭代需求评审和验收',stars:4},
+      {mi:1,gi:5,completed:'3个里程碑按时交付，无延期',stars:5},
+      {mi:1,gi:6,completed:'3个版本按时发布，1个试点应用已落地',stars:5}
     ];
     comments.forEach(function(c){
       MODULES[c.mi].goals[c.gi].completed=c.completed;
-      if(MODULES[c.mi].goals[c.gi].type==='qual'){
-        MODULES[c.mi].goals[c.gi].grade=c.grade;
+      if(MODULES[c.mi].goals[c.gi].type==='qual' && c.stars){
+        MODULES[c.mi].goals[c.gi].stars=c.stars;
       }
       var comp=document.getElementById('completed_'+c.mi+'_'+c.gi);
       if(comp){
@@ -549,11 +551,13 @@ function applyAiSuggestion(type){
           comp.value=c.completed;
           updateCompleted(c.mi,c.gi);
         }else{
-          comp.textContent=c.completed;
-          var gr=document.getElementById('grade_'+c.mi+'_'+c.gi);
-          if(gr){
-            var btn=gr.parentElement.querySelector('.grade-btn[data-grade="'+c.grade+'"]');
-            if(btn){updateGrade(c.mi,c.gi,btn);}
+          comp.value=c.completed;
+          if(c.stars){
+            var rating=document.getElementById('stars_'+c.mi+'_'+c.gi);
+            if(rating){
+              var starEl=rating.querySelector('.star[data-v="'+c.stars+'"]');
+              if(starEl){setStar(starEl,c.mi,c.gi,c.stars);}
+            }
           }
         }
       }
