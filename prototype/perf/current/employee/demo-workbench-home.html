@@ -35,10 +35,12 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoo
 
 /* Grid */
 .row{display:grid;gap:var(--sp-lg);align-items:stretch}
-.row-2{grid-template-columns:1fr}
+.row-2{grid-template-columns:1fr 1fr}
+.row .card{margin-bottom:0}
 
 /* Task */
-.task{display:flex;align-items:center;gap:var(--sp-md);padding:var(--sp-md) 0;border-bottom:1px solid var(--dv);cursor:pointer}
+.task{display:flex;align-items:center;gap:var(--sp-md);padding:var(--sp-md) 0;border-bottom:1px solid var(--dv);cursor:pointer;transition:background 0.12s}
+.task:hover{background:var(--c0)}
 .task:last-child{border-bottom:none}
 .task-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .task-dot.pr{background:var(--pr)}.task-dot.ac{background:var(--ac)}.task-dot.ro{background:var(--ro)}
@@ -49,10 +51,14 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoo
 .task-tag.pending{background:var(--ac50);color:var(--ac700)}
 .task-tag.active{background:var(--pr50);color:var(--pr)}
 
+/* Task Deadline */
+.task-deadline{font:400 12px/1 var(--f);color:var(--c5);margin-left:var(--sp-md);flex-shrink:0}
+.task-deadline.overdue{color:var(--ro)}
+
 /* Score Layer 1 */
 .score-layer1{display:flex;align-items:center;gap:var(--sp-xl);padding-bottom:var(--sp-lg);border-bottom:1px solid var(--dv)}
 .score-left{display:flex;align-items:flex-end;gap:var(--sp-lg)}
-.score-num{font:700 36px/1 var(--f);color:var(--pr);letter-spacing:-1px}
+.score-num{font:700 36px/1 var(--fm);color:var(--pr);letter-spacing:-1px}
 .score-info{padding-bottom:var(--sp-xs)}
 .score-badge{font:500 12px/1 var(--f);color:var(--pr);background:var(--pr50);padding:var(--sp-xs) var(--sp-md);border-radius:var(--r1);display:inline-block;margin-bottom:var(--sp-xs)}
 .score-period{font:400 12px/1 var(--f);color:var(--c5)}
@@ -66,6 +72,20 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoo
 /* Score Layer 2 */
 .score-layer2{padding-top:var(--sp-lg)}
 .score-layer2-title{font:600 13px/1 var(--f);color:var(--c8);margin-bottom:var(--sp-md)}
+
+/* ===== 绩效图表 ===== */
+.perf-status{font:500 13px/1.4 var(--f);color:var(--c5);margin-bottom:var(--sp-lg)}
+.perf-status .val{font:700 22px/1 var(--fm);color:var(--em)}
+.perf-status .sep{color:var(--c3);margin:0 var(--sp-sm)}
+
+.perf-charts{display:grid;grid-template-columns:3fr 7fr;gap:var(--sp-2xl)}
+
+.chart-box{min-width:0}
+.chart-box-title{font:600 13px/1 var(--f);color:var(--c8);margin-bottom:var(--sp-md)}
+.chart-box canvas{width:100%!important;height:240px!important}
+
+.perf-legend{display:flex;align-items:center;gap:10px;margin-top:var(--sp-lg);font:400 11px/1 var(--f);color:var(--c5)}
+.perf-legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
 
 /* Goal Modules */
 .mod-sec{border:1px solid var(--dv);border-radius:var(--r2);overflow:hidden}
@@ -103,58 +123,43 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoo
 /* Month Performance Badge */
 .mp-badge{display:inline-block;padding:3px 10px;border-radius:4px;font:600 12px/1 var(--f);white-space:nowrap}
 .mp-badge.excellent{background:var(--em50);color:var(--em700)}
+.mp-badge.far-exceed{background:var(--em100);color:var(--em700)}
 .mp-badge.good{background:var(--pr50);color:var(--pr)}
 .mp-badge.normal{background:var(--c1);color:var(--c6)}
 .mp-badge.poor{background:var(--ac50);color:var(--ac700)}
 .mp-badge.bad{background:var(--ro50);color:var(--ro)}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
 </head>
 <body>
 
-<!-- Header -->
-<div style="height:52px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 var(--sp-2xl);gap:var(--sp-lg);position:sticky;top:0;z-index:1100">
-  <div style="display:flex;align-items:center;gap:14px">
-    <a href="../demo-index.html" style="text-decoration:none;display:flex;align-items:center;gap:var(--sp-sm)">
-      <div style="width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      </div>
-      <span style="font-size:15px;font-weight:700;color:var(--c9)">HR ONE</span>
-    </a>
-    <div style="width:1px;height:20px;background:var(--c2)"></div>
-    <span style="font:500 13px/1 var(--f);color:var(--c5)">业务演示</span>
-    <span style="color:var(--c3)">&#8250;</span>
-    <span style="font:600 13px/1 var(--f);color:var(--c8)">绩效首页</span>
-  </div>
-  <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
-    <div style="width:30px;height:30px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--f);color:#FFF">张</div>
-  </div>
-</div>
-
 <div style="padding:var(--sp-2xl)">
-  <!-- Row 1: 待办任务 -->
-  <div class="card">
-    <div class="card-hd">
-      <span class="card-t">待办任务</span>
-      <span class="card-action" onclick="showToast('查看更多')">更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
-    </div>
-    <div class="card-bd">
-      <div class="task" onclick="location.href='demo-goal-employee.html'">
-        <span class="task-dot pr"></span>
-        <div class="task-info"><div class="task-name">填写6月绩效目标</div><div class="task-meta">绩效方案 - 高级产品经理</div></div>
-        <span class="task-tag active">进行中</span>
+  <!-- Row 1: 待办任务 + 我的目标 -->
+  <div class="row" style="grid-template-columns:3fr 7fr;gap:var(--sp-lg)">
+    <!-- 待办任务 -->
+    <div class="card">
+      <div class="card-hd">
+        <span class="card-t">待办任务</span>
+        <span class="card-action" onclick="showToast('查看更多')">更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
       </div>
-      <div class="task" onclick="location.href='demo-confirm-employee.html'">
-        <span class="task-dot ac"></span>
-        <div class="task-info"><div class="task-name">确认5月绩效结果</div><div class="task-meta">绩效方案 - 2026年5月</div></div>
-        <span class="task-tag pending">待处理</span>
+      <div class="card-bd">
+        <div class="task" onclick="location.href='demo-goal-employee.html'">
+          <span class="task-dot pr"></span>
+          <div class="task-info"><div class="task-name">填写6月绩效目标</div><div class="task-meta">绩效方案 - 高级产品经理</div></div>
+          <span class="task-deadline">截止 6/30</span>
+          <span class="task-tag active">进行中</span>
+        </div>
+        <div class="task" onclick="location.href='demo-confirm-employee.html'">
+          <span class="task-dot ac"></span>
+          <div class="task-info"><div class="task-name">确认5月绩效结果</div><div class="task-meta">绩效方案 - 2026年5月</div></div>
+          <span class="task-deadline">截止 7/5</span>
+          <span class="task-tag pending">待处理</span>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Row 2: Goals + Score -->
-  <div class="row row-2">
     <!-- 我的目标 -->
-    <div class="card" style="margin-bottom:0">
+    <div class="card">
       <div class="card-hd">
         <span class="card-t">我的目标</span>
         <span class="card-action">更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
@@ -168,19 +173,16 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoo
           <div class="goal-row" onclick="location.href='demo-goal-employee.html'">
             <span class="goal-name">AI 产品迭代完成率</span>
             <span class="goal-val">目标 100% · 挑战 120%</span>
-            <span class="goal-type q">定量</span>
             <span class="goal-wt">25%</span>
           </div>
           <div class="goal-row" onclick="location.href='demo-goal-employee.html'">
             <span class="goal-name">AI 新增用户数</span>
             <span class="goal-val">目标 5000 · 挑战 7000</span>
-            <span class="goal-type q">定量</span>
             <span class="goal-wt">20%</span>
           </div>
           <div class="goal-row" onclick="location.href='demo-goal-employee.html'">
             <span class="goal-name">产品营收贡献</span>
             <span class="goal-val">目标 200万 · 挑战 300万</span>
-            <span class="goal-type q">定量</span>
             <span class="goal-wt">15%</span>
           </div>
         </div>
@@ -192,100 +194,58 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoo
           <div class="goal-row" onclick="location.href='demo-goal-employee.html'">
             <span class="goal-name">主导完成6月产品架构评审</span>
             <span class="goal-val">定性</span>
-            <span class="goal-type d">定性</span>
             <span class="goal-wt">15%</span>
           </div>
           <div class="goal-row" onclick="location.href='demo-goal-employee.html'">
             <span class="goal-name">完成2名新人带教</span>
             <span class="goal-val">定性</span>
-            <span class="goal-type d">定性</span>
             <span class="goal-wt">10%</span>
           </div>
           <div class="goal-row" onclick="location.href='demo-goal-employee.html'">
             <span class="goal-name">推动跨部门协作机制落地</span>
             <span class="goal-val">定性</span>
-            <span class="goal-type d">定性</span>
             <span class="goal-wt">15%</span>
           </div>
         </div>
-        <div class="goal-footer">
-          <span class="goal-footer-label">总权重</span>
-          <span class="goal-footer-val">100%</span>
-        </div>
       </div>
     </div>
+  </div>
 
-    <!-- 我的绩效评分 -->
-    <div class="card" style="margin-bottom:0">
-      <div class="card-hd">
-        <span class="card-t">我的绩效评分</span>
-        <span class="card-action">更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+  <!-- Row 2: 我的绩效评分（全宽） -->
+  <div class="card" style="margin-top:var(--sp-lg)">
+    <div class="card-hd">
+      <span class="card-t">我的绩效评分</span>
+      <span class="card-action">更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+    </div>
+    <div class="card-bd">
+      <!-- 当前状态 -->
+      <div class="perf-status">
+        当前 <span class="val">4.10</span> <span class="sep">·</span> 超出预期 <span class="sep">·</span> 2026年6月
       </div>
-      <div class="card-bd">
-        <!-- Layer 1: Score -->
-        <div class="score-layer1">
-          <div class="score-left">
-            <span class="score-num">4.10</span>
-            <div class="score-info">
-              <div class="score-badge">超出预期</div>
-              <div class="score-period">2026年6月 · 绩效评分</div>
-            </div>
-          </div>
+
+      <!-- 图表区 -->
+      <div class="perf-charts">
+        <!-- 左：年度绩效柱状图 -->
+        <div class="chart-box">
+          <div class="chart-box-title">年度绩效</div>
+          <canvas id="chartAnnual"></canvas>
         </div>
-        <!-- Layer 2: 12-month Grade Grid -->
-        <div class="score-layer2">
-          <div class="score-layer2-title">过去12个月绩效等级</div>
-          <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px">
-            <div style="text-align:center;padding:8px 4px;border:1px solid var(--c2);border-radius:var(--r2)">
-              <div style="font:500 11px/1 var(--f);color:var(--c5);margin-bottom:4px">25年7月</div>
-              <span class="mp-badge good">符合预期+</span>
-            </div>
-            <div style="text-align:center;padding:8px 4px;border:1px solid var(--c2);border-radius:var(--r2)">
-              <div style="font:500 11px/1 var(--f);color:var(--c5);margin-bottom:4px">25年8月</div>
-              <span class="mp-badge normal">符合预期</span>
-            </div>
-            <div style="text-align:center;padding:8px 4px;border:1px solid var(--c2);border-radius:var(--r2)">
-              <div style="font:500 11px/1 var(--f);color:var(--c5);margin-bottom:4px">25年9月</div>
-              <span class="mp-badge normal">符合预期</span>
-            </div>
-            <div style="text-align:center;padding:8px 4px;border:1px solid var(--c2);border-radius:var(--r2)">
-              <div style="font:500 11px/1 var(--f);color:var(--c5);margin-bottom:4px">25年10月</div>
-              <span class="mp-badge good">符合预期+</span>
-            </div>
-            <div style="text-align:center;padding:8px 4px;border:1px solid var(--c2);border-radius:var(--r2)">
-              <div style="font:500 11px/1 var(--f);color:var(--c5);margin-bottom:4px">25年11月</div>
-              <span class="mp-badge good">符合预期+</span>
-            </div>
-            <div style="text-align:center;padding:8px 4px;border:1px solid var(--c2);border-radius:var(--r2)">
-              <div style="font:500 11px/1 var(--f);color:var(--c5);margin-bottom:4px">25年12月</div>
-              <span class="mp-badge good">符合预期+</span>
-            </div>
-            <div style="text-align:center;padding:8px 4px;border:1px solid var(--c2);border-radius:var(--r2)">
-              <div style="font:500 11px/1 var(--f);color:var(--c5);margin-bottom:4px">26年1月</div>
-              <span class="mp-badge normal">符合预期</span>
-            </div>
-            <div style="text-align:center;padding:8px 4px;border:1px solid var(--c2);border-radius:var(--r2)">
-              <div style="font:500 11px/1 var(--f);color:var(--c5);margin-bottom:4px">26年2月</div>
-              <span class="mp-badge normal">符合预期</span>
-            </div>
-            <div style="text-align:center;padding:8px 4px;border:1px solid var(--c2);border-radius:var(--r2)">
-              <div style="font:500 11px/1 var(--f);color:var(--c5);margin-bottom:4px">26年3月</div>
-              <span class="mp-badge good">符合预期+</span>
-            </div>
-            <div style="text-align:center;padding:8px 4px;border:1px solid var(--c2);border-radius:var(--r2)">
-              <div style="font:500 11px/1 var(--f);color:var(--c5);margin-bottom:4px">26年4月</div>
-              <span class="mp-badge good">符合预期+</span>
-            </div>
-            <div style="text-align:center;padding:8px 4px;border:1px solid var(--c2);border-radius:var(--r2)">
-              <div style="font:500 11px/1 var(--f);color:var(--c5);margin-bottom:4px">26年5月</div>
-              <span class="mp-badge excellent">超出预期</span>
-            </div>
-            <div style="text-align:center;padding:8px 4px;border:1px solid var(--c2);border-radius:var(--r2)">
-              <div style="font:500 11px/1 var(--f);color:var(--c5);margin-bottom:4px">26年6月</div>
-              <span class="mp-badge excellent">超出预期</span>
-            </div>
-          </div>
+        <!-- 右：月度绩效折线图 -->
+        <div class="chart-box">
+          <div class="chart-box-title">月度绩效趋势</div>
+          <canvas id="chartMonthly"></canvas>
         </div>
+      </div>
+
+      <!-- 图例 -->
+      <div class="perf-legend">
+        <div class="perf-legend-dot" style="background:#E11D48"></div>远低预期
+        <div class="perf-legend-dot" style="background:#F43F5E"></div>低于预期
+        <div class="perf-legend-dot" style="background:#F59E0B"></div>符合预期-
+        <div class="perf-legend-dot" style="background:#A1A1AA"></div>符合预期
+        <div class="perf-legend-dot" style="background:#2563EB"></div>符合预期+
+        <div class="perf-legend-dot" style="background:#10B981"></div>超出预期
+        <div class="perf-legend-dot" style="background:#047857"></div>远超预期
       </div>
     </div>
   </div>
@@ -301,6 +261,110 @@ function showToast(msg, type) {
   setTimeout(function() { t.classList.add('on'); }, 10);
   setTimeout(function() { t.classList.remove('on'); }, 2500);
 }
+
+// ===== Chart.js 年度绩效柱状图 =====
+(function(){
+  var ctx1 = document.getElementById('chartAnnual');
+  if (!ctx1) return;
+  new Chart(ctx1, {
+    type: 'bar',
+    data: {
+      labels: ['2021', '2022', '2023', '2024', '2025'],
+      datasets: [{
+        data: [3, 4, 4, 5, 6],
+        backgroundColor: ['#A1A1AA', '#2563EB', '#2563EB', '#10B981', '#047857'],
+        borderRadius: 8,
+        borderSkipped: false,
+        barPercentage: 0.5,
+        categoryPercentage: 0.6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(ctx){ return '年度等级：' + ['符合预期','符合预期+','符合预期+','超出预期','远超预期'][ctx.dataIndex] }
+          }
+        }
+      },
+      scales: {
+        y: {
+          min: 0, max: 7,
+          ticks: {
+            stepSize: 1,
+            callback: function(v){
+              return ['','远低预期','低于预期','符合预期-','符合预期','符合预期+','超出预期','远超预期'][v] || ''
+            },
+            font: { family: 'Inter, Noto Sans SC, sans-serif', size: 11 },
+            color: '#A1A1AA'
+          },
+          grid: { color: '#E4E4E7', drawTicks: false }
+        },
+        x: {
+          ticks: { font: { family: 'JetBrains Mono, SF Mono, monospace', size: 12 }, color: '#27272A' },
+          grid: { display: false }
+        }
+      }
+    }
+  });
+})();
+
+// ===== Chart.js 月度绩效折线图 =====
+(function(){
+  var ctx2 = document.getElementById('chartMonthly');
+  if (!ctx2) return;
+  new Chart(ctx2, {
+    type: 'line',
+    data: {
+      labels: ['1月','2月','3月','4月','5月','6月'],
+      datasets: [{
+        data: [1, 4, 7, 2, 6, 5],
+        borderColor: '#D4D4D8',
+        backgroundColor: 'transparent',
+        borderWidth: 2,
+        pointBackgroundColor: ['#E11D48','#A1A1AA','#047857','#F43F5E','#10B981','#2563EB'],
+        pointRadius: [5,5,5,5,5,7],
+        pointBorderWidth: [0,0,0,0,0,2],
+        pointBorderColor: ['','','','','','#18181B'],
+        tension: 0.2,
+        pointHoverRadius: 8
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(ctx){ return '月度等级：' + ['','远低预期','低于预期','符合预期-','符合预期','符合预期+','超出预期','远超预期'][ctx.raw] }
+          }
+        }
+      },
+      scales: {
+        y: {
+          min: 0, max: 7,
+          ticks: {
+            stepSize: 1,
+            callback: function(v){
+              return ['','远低预期','低于预期','符合预期-','符合预期','符合预期+','超出预期','远超预期'][v] || ''
+            },
+            font: { family: 'Inter, Noto Sans SC, sans-serif', size: 11 },
+            color: '#A1A1AA'
+          },
+          grid: { color: '#E4E4E7', drawTicks: false }
+        },
+        x: {
+          ticks: { font: { family: 'Inter, Noto Sans SC, sans-serif', size: 11 }, color: '#A1A1AA' },
+          grid: { display: false }
+        }
+      }
+    }
+  });
+})();
 </script>
 <script src="../navigation.js"></script>
 <script>GHR_NAV.init('perf', '我的绩效');</script>
