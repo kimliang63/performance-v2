@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>HR ONE - 面谈审批</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../mobile-base.css">
+<style>
+.sec-hd{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.sec-ic{width:20px;height:20px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sec-ic svg{width:10px;height:10px;color:#FFF}
+.sec-name{font:600 var(--fs-base)/1 var(--f);color:var(--c8)}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="phone-notch"></div>
+  <div class="phone-status">9:41<div class="phone-status-r">
+    <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="6" width="3" height="6" rx="1" fill="currentColor" style="color:var(--c9)"/><rect x="4.5" y="4" width="3" height="8" rx="1" fill="currentColor" style="color:var(--c9)"/><rect x="9" y="1.5" width="3" height="10.5" rx="1" fill="currentColor" style="color:var(--c9)"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="currentColor" style="color:var(--c9)"/></svg>
+    <svg width="15" height="12" viewBox="0 0 15 12" fill="none"><rect x="0.5" y="0.5" width="12" height="11" rx="2" stroke="currentColor" style="color:var(--c9)" stroke-width="1.2"/><line x1="13" y1="4" x2="13" y2="8" stroke="currentColor" style="color:var(--c9)" stroke-width="1.2"/><rect x="2" y="2.5" width="7" height="7" rx="1" fill="currentColor" style="color:var(--c9)"/></svg>
+  </div></div>
+  <div class="weui-navigation-bar">
+    <a href="../demo-index.html" class="back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></a>
+    <span class="title">面谈审批</span>
+  </div>
+  <div class="phone-body" id="phoneBody"></div>
+  <div class="bottom-bar">
+    <button class="weui-btn weui-btn_warn" style="flex:1" onclick="showToast('已退回')">退回</button>
+    <button class="weui-btn weui-btn_primary" style="flex:1" onclick="showToast('已批准')">批准</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script src="../mobile-base.js"></script>
+<script>
+var PERSON={name:'张明',dept:'产品部',title:'高级产品经理',score:88,grade:'A'};
+var INTERVIEW={
+  praises:['Q2主导的产品路线图获得管理层高度认可','跨部门协作能力突出，推动3个P0功能按时上线','主动收集用户反馈，建立了高效的需求响应机制'],
+  turns:['需要加强数据分析能力，用数据驱动决策','项目管理可更精细化，减少临时调整','建议多参与行业交流，拓宽产品视野'],
+  plan:'Q3重点推进用户增长项目，目标月活提升20%。同时完成产品方法论体系搭建，输出内部培训材料。'
+};
+
+function render(){
+  var h='';
+  // Person
+  h+='<div class="weui-panel weui-panel_access" style="margin-bottom:10px"><div class="weui-cells"><div class="weui-cell"><div class="weui-cell__hd"><div style="width:36px;height:36px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 var(--fs-base)/1 var(--f);color:#FFF;margin-right:12px">'+PERSON.name[0]+'</div></div><div class="weui-cell__bd"><div style="font:600 var(--fs-base)/1 var(--f);color:var(--c9)">'+PERSON.name+'</div><div style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5);margin-top:2px">'+PERSON.dept+' · '+PERSON.title+'</div></div><div class="weui-cell__ft"><span class="grade-tag meet-plus">'+PERSON.grade+'</span><span style="font:500 var(--fs-sm)/1 var(--fm);color:var(--c5);margin-left:4px">'+PERSON.score+'分</span></div></div></div></div>';
+
+  // Praises
+  h+='<div class="weui-panel weui-panel_access" style="margin-bottom:8px"><div class="weui-panel__hd"><div class="sec-hd"><div class="sec-ic" style="background:var(--em)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg></div><span class="sec-name">三个赞</span></div></div><div class="weui-cells">';
+  INTERVIEW.praises.forEach(function(p,i){h+='<div class="weui-cell"><div class="weui-cell__bd"><div style="font:400 var(--fs-base)/1.5 var(--f);color:var(--c7)">'+p+'</div></div></div>';});
+  h+='</div></div>';
+
+  // Turns
+  h+='<div class="weui-panel weui-panel_access" style="margin-bottom:8px"><div class="weui-panel__hd"><div class="sec-hd"><div class="sec-ic" style="background:var(--ac)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></div><span class="sec-name">三个转</span></div></div><div class="weui-cells">';
+  INTERVIEW.turns.forEach(function(t,i){h+='<div class="weui-cell"><div class="weui-cell__bd"><div style="font:400 var(--fs-base)/1.5 var(--f);color:var(--c7)">'+t+'</div></div></div>';});
+  h+='</div></div>';
+
+  // Plan
+  h+='<div class="weui-panel weui-panel_access" style="margin-bottom:10px"><div class="weui-panel__hd"><div class="sec-hd"><div class="sec-ic" style="background:var(--pr)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div><span class="sec-name">下阶段规划</span></div></div><div class="weui-cells"><div class="weui-cell"><div class="weui-cell__bd"><div style="font:400 var(--fs-base)/1.5 var(--f);color:var(--c7)">'+INTERVIEW.plan+'</div></div></div></div></div>';
+
+  // Comment
+  h+='<div class="weui-panel weui-panel_access"><div class="weui-panel__hd"><div style="font:600 var(--fs-base)/1 var(--f);color:var(--c8)">上级评语</div></div><div style="padding:0 16px 14px"><textarea class="weui-textarea" style="min-height:80px;font-size:var(--fs-sm)" placeholder="请输入您的评语和建议..."></textarea></div></div>';
+
+  h+='<div style="height:80px"></div>';
+  document.getElementById('phoneBody').innerHTML=h;
+}
+render();
+</script>
+</body>
+</html>

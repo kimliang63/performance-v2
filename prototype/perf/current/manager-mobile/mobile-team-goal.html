@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>HR ONE - 团队目标</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../mobile-base.css">
+<style>
+.mem-row{display:flex;align-items:center;gap:10px;padding:12px 0}
+.mem-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 var(--fs-base)/1 var(--f);color:#FFF;flex-shrink:0}
+.mem-info{flex:1;min-width:0}
+.mem-name{font:500 var(--fs-base)/1 var(--f);color:var(--c8)}
+.mem-rate{font:400 var(--fs-sm)/1 var(--f);color:var(--c5);margin-top:2px}
+.mem-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.prog-wrap{width:60px;height:4px;background:var(--c1);border-radius:2px;overflow:hidden}
+.prog-bar{height:100%;border-radius:2px}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="phone-notch"></div>
+  <div class="phone-status">9:41<div class="phone-status-r">
+    <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="6" width="3" height="6" rx="1" fill="currentColor" style="color:var(--c9)"/><rect x="4.5" y="4" width="3" height="8" rx="1" fill="currentColor" style="color:var(--c9)"/><rect x="9" y="1.5" width="3" height="10.5" rx="1" fill="currentColor" style="color:var(--c9)"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="currentColor" style="color:var(--c9)"/></svg>
+    <svg width="15" height="12" viewBox="0 0 15 12" fill="none"><rect x="0.5" y="0.5" width="12" height="11" rx="2" stroke="currentColor" style="color:var(--c9)" stroke-width="1.2"/><line x1="13" y1="4" x2="13" y2="8" stroke="currentColor" style="color:var(--c9)" stroke-width="1.2"/><rect x="2" y="2.5" width="7" height="7" rx="1" fill="currentColor" style="color:var(--c9)"/></svg>
+  </div></div>
+  <div class="weui-navigation-bar">
+    <a href="../demo-index.html" class="back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></a>
+    <span class="title">团队目标</span>
+  </div>
+  <div class="phone-body" id="phoneBody"></div>
+</div>
+<div class="toast" id="toast"></div>
+<script src="../mobile-base.js"></script>
+<script>
+var MEMBERS=[
+  {name:'张明',title:'高级产品经理',completion:87,color:'var(--pr)',status:'已提交',sc:'var(--em50)',stc:'var(--em700)'},
+  {name:'李华',title:'产品经理',completion:79,color:'var(--em)',status:'已提交',sc:'var(--em50)',stc:'var(--em700)'},
+  {name:'王芳',title:'产品专员',completion:67,color:'var(--ac)',status:'填写中',sc:'var(--ac50)',stc:'var(--ac700)'},
+  {name:'赵强',title:'高级产品经理',completion:57,color:'var(--vi)',status:'填写中',sc:'var(--ac50)',stc:'var(--ac700)'}
+];
+
+function render(){
+  var h='';
+  // Stats
+  h+='<div style="display:flex;gap:8px;margin-bottom:12px">';
+  h+='<div style="flex:1;background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:12px;text-align:center"><div style="font:700 var(--fs-xl)/1 var(--fm);color:var(--c9)">'+MEMBERS.length+'</div><div style="font:400 var(--fs-xs)/1 var(--f);color:var(--c5);margin-top:3px">团队成员</div></div>';
+  var done=MEMBERS.filter(function(m){return m.status==='已提交'}).length;
+  h+='<div style="flex:1;background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:12px;text-align:center"><div style="font:700 var(--fs-xl)/1 var(--fm);color:var(--em)">'+done+'</div><div style="font:400 var(--fs-xs)/1 var(--f);color:var(--c5);margin-top:3px">已完成</div></div>';
+  var avgRate=Math.round(MEMBERS.reduce(function(s,m){return s+m.completion},0)/MEMBERS.length);
+  h+='<div style="flex:1;background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:12px;text-align:center"><div style="font:700 var(--fs-xl)/1 var(--fm);color:var(--pr)">'+avgRate+'%</div><div style="font:400 var(--fs-xs)/1 var(--f);color:var(--c5);margin-top:3px">平均完成率</div></div>';
+  h+='</div>';
+
+  // Member list via WeUI
+  h+='<div class="weui-panel weui-panel_access"><div class="weui-panel__hd" style="font:600 var(--fs-base)/1 var(--f);color:var(--c8);padding:0 0 8px">成员列表 ('+MEMBERS.length+'人)</div><div class="weui-cells">';
+  MEMBERS.forEach(function(m){
+    var pc=m.completion>=100?'var(--em)':m.completion>=60?'var(--ac)':'var(--ro)';
+    h+='<a class="weui-cell weui-cell_access" href="mobile-eval-score.html"><div class="weui-cell__hd"><div style="width:36px;height:36px;border-radius:50%;background:'+m.color+';display:flex;align-items:center;justify-content:center;font:600 var(--fs-base)/1 var(--f);color:#FFF;margin-right:10px">'+m.name[0]+'</div></div><div class="weui-cell__bd"><div style="font:500 var(--fs-base)/1 var(--f);color:var(--c8)">'+m.name+'</div><div style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5);margin-top:2px">'+m.title+'</div></div><div class="weui-cell__ft" style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span style="font:500 var(--fs-xs)/1 var(--f);padding:2px 8px;border-radius:10px;background:'+m.sc+';color:'+m.stc+'">'+m.status+'</span><div class="prog-wrap"><div class="prog-bar" style="width:'+m.completion+'%;background:'+pc+'"></div></div><span style="font:400 var(--fs-sm)/1 var(--fm);color:var(--c5)">'+m.completion+'%</span></div></a>';
+  });
+  h+='</div></div><div style="height:24px"></div>';
+  document.getElementById('phoneBody').innerHTML=h;
+}
+render();
+</script>
+</body>
+</html>

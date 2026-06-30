@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>HR ONE - 目标制定</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../mobile-base.css">
+<style>
+.goal-mod{margin-bottom:10px}
+.goal-mod-hd{display:flex;align-items:center;gap:8px;padding:8px 0}
+.goal-mod-color{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.goal-mod-name{font:600 var(--fs-base)/1 var(--f);color:var(--c8);flex:1}
+.goal-mod-wt{font:500 var(--fs-sm)/1 var(--fm);color:var(--c5)}
+.goal-item{padding:8px 0;border-bottom:1px solid var(--dv)}
+.goal-item:last-child{border-bottom:none}
+.goal-item-top{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.goal-item-name{flex:1;font:500 var(--fs-base)/1.3 var(--f);color:var(--c8)}
+.goal-item-type{font:500 var(--fs-xs)/1 var(--f);padding:2px 6px;border-radius:3px}
+.goal-item-type.quant{background:var(--pr50);color:var(--pr)}
+.goal-item-type.qual{background:var(--em50);color:var(--em700)}
+.goal-item-wt{font:500 var(--fs-sm)/1 var(--fm);color:var(--c5)}
+.goal-item-desc{font:400 var(--fs-sm)/1.4 var(--f);color:var(--c6);padding:6px 10px;background:var(--c0);border-radius:6px;margin-bottom:6px}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="phone-notch"></div>
+  <div class="phone-status">9:41<div class="phone-status-r">
+    <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="6" width="3" height="6" rx="1" fill="currentColor" style="color:var(--c9)"/><rect x="4.5" y="4" width="3" height="8" rx="1" fill="currentColor" style="color:var(--c9)"/><rect x="9" y="1.5" width="3" height="10.5" rx="1" fill="currentColor" style="color:var(--c9)"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="currentColor" style="color:var(--c9)"/></svg>
+    <svg width="15" height="12" viewBox="0 0 15 12" fill="none"><rect x="0.5" y="0.5" width="12" height="11" rx="2" stroke="currentColor" style="color:var(--c9)" stroke-width="1.2"/><line x1="13" y1="4" x2="13" y2="8" stroke="currentColor" style="color:var(--c9)" stroke-width="1.2"/><rect x="2" y="2.5" width="7" height="7" rx="1" fill="currentColor" style="color:var(--c9)"/></svg>
+  </div></div>
+  <div class="weui-navigation-bar">
+    <a href="../demo-index.html" class="back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></a>
+    <span class="title">目标制定</span>
+  </div>
+  <div class="phone-body" id="phoneBody"></div>
+  <div class="bottom-bar">
+    <button class="weui-btn weui-btn_default" style="flex:1" onclick="showToast('已保存草稿')">保存草稿</button>
+    <button class="weui-btn weui-btn_primary" style="flex:1" onclick="showToast('已提交审批')">提交审批</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script src="../mobile-base.js"></script>
+<script>
+var EMP={name:'张明',dept:'产品部',title:'高级产品经理',cycle:'2026年Q2'};
+
+var MODS=[
+  {name:'关键指标',weight:30,color:'var(--pr)',goals:[
+    {id:'g1',name:'资源利用率（通用）',type:'quant',weight:5,desc:'人员实际工作量饱和情况',target:105,challenge:110,baseline:100,unit:'%'},
+    {id:'g2',name:'HRAS UAT用户验收首次通过率',type:'quant',weight:10,desc:'需求首次业务验收通过的概率',target:98,challenge:100,baseline:95,unit:'%'},
+    {id:'g3',name:'HRAS需求评审及时率',type:'quant',weight:15,desc:'迭代版本评审的及时性情况',target:98,challenge:100,baseline:95,unit:'%'}
+  ]},
+  {name:'关键行动',weight:70,color:'var(--em)',goals:[
+    {id:'g4',name:'HRAS产品管理规范',type:'qual',weight:10,desc:'需求管理流程规范、产品需求规范、迭代火车管理规范、周会/月会准时完成'},
+    {id:'g5',name:'日常滚动需求响应',type:'qual',weight:10,desc:'根据业务日会需求优先级，滚动响应日常需求，输出产品解决方案'},
+    {id:'g6',name:'HR ONE 绩效重构事项推进',type:'qual',weight:25,desc:'06-10 输出AI+绩效核心页面原型；06-19 完成绩效版本4需求内审；06-24 完成需求评审'},
+    {id:'g7',name:'AI应用项目探索与落地推广',type:'qual',weight:25,desc:'06-05 完成ASSC采购侧AI应用1.0版本；06-12 对接LBU试点应用；06-26 完成1.1版本'}
+  ]}
+];
+
+function render(){
+  var h='';
+  // Employee card
+  h+='<div class="weui-panel weui-panel_access" style="margin-bottom:10px"><div class="weui-cells">';
+  h+='<div class="weui-cell"><div class="weui-cell__hd"><div style="width:36px;height:36px;border-radius:50%;background:var(--pr50);display:flex;align-items:center;justify-content:center;font:700 var(--fs-lg)/1 var(--f);color:var(--pr);margin-right:12px">'+EMP.name[0]+'</div></div><div class="weui-cell__bd"><div style="font:600 var(--fs-base)/1 var(--f);color:var(--c9)">'+EMP.name+'</div><div style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5);margin-top:2px">'+EMP.title+' · '+EMP.dept+'</div></div><div class="weui-cell__ft"><span class="weui-badge" style="background:var(--pr50);color:var(--pr)">'+EMP.cycle+'</span></div></div>';
+  h+='</div></div>';
+
+  // Summary
+  var totalGoals=MODS.reduce(function(s,m){return s+m.goals.length},0);
+  h+='<div style="display:flex;gap:8px;margin-bottom:12px">';
+  h+='<div style="flex:1;background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:10px;text-align:center"><div style="font:700 var(--fs-lg)/1 var(--fm);color:var(--c9)">'+totalGoals+'</div><div style="font:400 var(--fs-xs)/1 var(--f);color:var(--c5);margin-top:2px">目标数</div></div>';
+  h+='<div style="flex:1;background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:10px;text-align:center"><div style="font:700 var(--fs-lg)/1 var(--fm);color:var(--pr)">100%</div><div style="font:400 var(--fs-xs)/1 var(--f);color:var(--c5);margin-top:2px">总权重</div></div>';
+  h+='</div>';
+
+  // Modules with WeUI cells
+  MODS.forEach(function(m){
+    h+='<div class="weui-panel weui-panel_access goal-mod"><div class="weui-panel__hd" style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:'+m.color+';display:inline-block"></span><span style="font:600 var(--fs-base)/1 var(--f);color:var(--c8)">'+m.name+'</span><span style="font:500 var(--fs-sm)/1 var(--fm);color:var(--c5)">权重 '+m.weight+'%</span></div><div class="weui-cells">';
+    m.goals.forEach(function(g){
+      var isQuant=g.type==='quant';
+      h+='<div class="weui-cell"><div class="weui-cell__bd"><div class="goal-item-top"><span class="goal-item-name">'+g.name+'</span><span class="goal-item-type '+(isQuant?'quant':'qual')+'">'+(isQuant?'定量':'定性')+'</span><span class="goal-item-wt">'+g.weight+'%</span></div><div class="goal-item-desc">'+g.desc+'</div>';
+      if(isQuant){
+        h+='<div style="display:flex;gap:6px;font-size:var(--fs-sm);color:var(--c5)"><span>挑战: <strong style="color:var(--c8)">'+g.challenge+g.unit+'</strong></span><span>目标: <strong style="color:var(--c8)">'+g.target+g.unit+'</strong></span><span>保底: <strong style="color:var(--c8)">'+g.baseline+g.unit+'</strong></span></div>';
+      }
+      h+='</div></div>';
+    });
+    h+='</div></div>';
+  });
+
+  // Approval flow
+  h+='<div class="weui-panel weui-panel_access"><div class="weui-panel__hd" style="font:600 var(--fs-base)/1 var(--f);color:var(--c8)">审批流程</div><div class="weui-cells">';
+  var flow=[{n:'员工提交',p:'张明',c:'var(--pr)',s:'当前',sb:'var(--pr50)',sc:'var(--pr)'},{n:'直线上级审批',p:'王总监',c:'var(--c4)',s:'待处理',sb:'var(--c1)',sc:'var(--c5)'},{n:'HRBP确认',p:'赵敏',c:'var(--c4)',s:'待处理',sb:'var(--c1)',sc:'var(--c5)'}];
+  flow.forEach(function(f){
+    h+='<div class="weui-cell"><div class="weui-cell__hd"><div style="width:24px;height:24px;border-radius:50%;background:'+f.c+';display:flex;align-items:center;justify-content:center;margin-right:10px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div></div><div class="weui-cell__bd"><div style="font:500 var(--fs-sm)/1 var(--f);color:var(--c8)">'+f.n+'</div><div style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5);margin-top:2px">'+f.p+'</div></div><div class="weui-cell__ft"><span style="font:500 var(--fs-xs)/1 var(--f);padding:2px 8px;border-radius:4px;background:'+f.sb+';color:'+f.sc+'">'+f.s+'</span></div></div>';
+  });
+  h+='</div></div><div style="height:80px"></div>';
+
+  document.getElementById('phoneBody').innerHTML=h;
+}
+
+render();
+injectAIPanel('AI 目标助手','优化目标 · 检查权重 · 推荐指标',['优化目标描述','检查权重分配','推荐指标']);
+</script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>HR ONE - 绩效评分</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../mobile-base.css">
+</head>
+<body>
+<div class="phone">
+  <div class="phone-notch"></div>
+  <div class="phone-status">9:41<div class="phone-status-r">
+    <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="6" width="3" height="6" rx="1" fill="currentColor" style="color:var(--c9)"/><rect x="4.5" y="4" width="3" height="8" rx="1" fill="currentColor" style="color:var(--c9)"/><rect x="9" y="1.5" width="3" height="10.5" rx="1" fill="currentColor" style="color:var(--c9)"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="currentColor" style="color:var(--c9)"/></svg>
+    <svg width="15" height="12" viewBox="0 0 15 12" fill="none"><rect x="0.5" y="0.5" width="12" height="11" rx="2" stroke="currentColor" style="color:var(--c9)" stroke-width="1.2"/><line x1="13" y1="4" x2="13" y2="8" stroke="currentColor" style="color:var(--c9)" stroke-width="1.2"/><rect x="2" y="2.5" width="7" height="7" rx="1" fill="currentColor" style="color:var(--c9)"/></svg>
+  </div></div>
+  <div class="weui-navigation-bar">
+    <a href="../demo-index.html" class="back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></a>
+    <span class="title">绩效评分</span>
+  </div>
+  <div class="phone-body" id="phoneBody"></div>
+  <div class="bottom-bar">
+    <button class="weui-btn weui-btn_default" style="flex:1" onclick="showToast('已暂存')">暂存</button>
+    <button class="weui-btn weui-btn_primary" style="flex:1" onclick="showToast('已提交评分')">提交评分</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script src="../mobile-base.js"></script>
+<script>
+var PERSON={name:'张明',dept:'产品部',title:'高级产品经理'};
+var GRADES=['超出预期','符合预期+','符合预期','符合预期-','低于预期'];
+
+var MODS=[
+  {title:'关键指标',weight:30,goals:[
+    {id:1,title:'资源利用率（通用）',type:'quant',weight:5,completed:'108%',score:4.0,grade:'符合预期+'},
+    {id:2,title:'HRAS UAT用户验收首次通过率',type:'quant',weight:10,completed:'97%',score:3.5,grade:'符合预期'},
+    {id:3,title:'HRAS需求评审及时率',type:'quant',weight:15,completed:'96%',score:3.5,grade:'符合预期'}
+  ]},
+  {title:'关键行动',weight:70,goals:[
+    {id:4,title:'HRAS产品管理规范',type:'qual',weight:10,completed:'4项规范全部符合',grade:'符合预期+'},
+    {id:5,title:'日常滚动需求响应',type:'qual',weight:10,completed:'按时完成GOFO迭代',grade:'符合预期+'},
+    {id:6,title:'HR ONE 绩效重构事项推进',type:'qual',weight:25,completed:'3个里程碑按时交付',grade:'符合预期+'},
+    {id:7,title:'AI应用项目探索与落地推广',type:'qual',weight:25,completed:'3个版本按时发布',grade:'符合预期+'}
+  ]}
+];
+
+function calcTotal(){
+  var total=0,wSum=0;
+  MODS.forEach(function(m){m.goals.forEach(function(g){
+    if(g.score!==null&&g.score!==undefined){total+=g.score*g.weight;wSum+=g.weight;}
+  })});
+  return wSum>0?Math.round(total/wSum*10)/10:0;
+}
+function suggestGrade(s){return s>=4.5?'超出预期':s>=3.8?'符合预期+':s>=3.0?'符合预期':s>=2.0?'符合预期-':'低于预期';}
+
+function render(){
+  var h='';
+  h+='<div class="weui-panel weui-panel_access" style="margin-bottom:10px"><div class="weui-cells"><div class="weui-cell"><div class="weui-cell__hd"><div style="width:36px;height:36px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 var(--fs-base)/1 var(--f);color:#FFF;margin-right:12px">'+PERSON.name[0]+'</div></div><div class="weui-cell__bd"><div style="font:600 var(--fs-base)/1 var(--f);color:var(--c9)">'+PERSON.name+'</div><div style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5);margin-top:2px">'+PERSON.dept+' · '+PERSON.title+'</div></div></div></div></div>';
+
+  MODS.forEach(function(m){
+    h+='<div class="weui-panel weui-panel_access" style="margin-bottom:10px"><div class="weui-panel__hd" style="display:flex;align-items:center;justify-content:space-between"><span style="font:600 var(--fs-base)/1 var(--f);color:var(--c8)">'+m.title+'</span><span class="weui-badge" style="background:var(--pr50);color:var(--pr)">'+m.weight+'%</span></div><div class="weui-cells">';
+    m.goals.forEach(function(g){
+      var isQ=g.type==='quant';
+      h+='<div class="weui-cell"><div class="weui-cell__bd"><div style="display:flex;align-items:center;gap:6px;margin-bottom:2px"><span style="font:500 var(--fs-base)/1 var(--f);color:var(--c8)">'+g.title+'</span><span style="font:500 var(--fs-xs)/1 var(--f);padding:2px 6px;border-radius:3px;background:'+(isQ?'var(--pr50)':'var(--em50)')+';color:'+(isQ?'var(--pr)':'var(--em700)')+'">'+(isQ?'定量':'定性')+'</span></div><div style="font:400 var(--fs-sm)/1 var(--f);color:var(--c6);margin-bottom:4px">完成：'+g.completed+'</div><div style="display:flex;align-items:center;gap:8px">'+(isQ?'<span style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5)">得分</span><input class="weui-input" type="number" style="width:60px;text-align:center;font-family:var(--fm)" value="'+g.score+'" min="0" max="5" step="0.1" onchange="updScore('+(m.title[0]==='关'?0:1)+','+g.id+',this.value)"><span style="font:400 var(--fs-sm)/1 var(--f);color:var(--c4)">/5</span>':'')+'<span style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5);margin-left:auto">等级</span><select class="weui-select" style="width:auto" onchange="updGrade('+(m.title[0]==='关'?0:1)+','+g.id+',this.value)">'+GRADES.map(function(gr){return'<option value="'+gr+'"'+(gr===g.grade?' selected':'')+'>'+gr+'</option>'}).join('')+'</select></div></div></div>';
+    });
+    h+='</div></div>';
+  });
+
+  var total=calcTotal(),grade=suggestGrade(total);
+  h+='<div class="weui-panel weui-panel_access" style="margin-bottom:10px"><div class="weui-cells"><div class="weui-cell"><div class="weui-cell__bd" style="font:500 var(--fs-base)/1 var(--f);color:var(--c8)">加权总分</div><div class="weui-cell__ft" style="font:700 var(--fs-lg)/1 var(--fm);color:var(--c9)">'+total+'</div></div><div class="weui-cell"><div class="weui-cell__bd" style="font:500 var(--fs-base)/1 var(--f);color:var(--c8)">建议等级</div><div class="weui-cell__ft"><span class="grade-tag meet-plus">'+grade+'</span></div></div></div></div>';
+
+  // Comments
+  h+='<div class="weui-panel weui-panel_access" style="margin-bottom:10px"><div class="weui-panel__hd" style="font:600 var(--fs-base)/1 var(--f);color:var(--c8)">评语</div><div class="weui-cells"><div class="weui-cell"><div class="weui-cell__bd"><div style="font:500 var(--fs-sm)/1 var(--f);color:var(--c5);margin-bottom:6px">员工自评</div><div style="font:400 var(--fs-base)/1.5 var(--f);color:var(--c7);padding:10px;background:var(--c0);border-radius:var(--r1);border-left:3px solid var(--pr)">本季度完成了产品迭代核心功能上线，整体进度符合预期。</div></div></div><div class="weui-cell"><div class="weui-cell__bd"><div style="font:500 var(--fs-sm)/1 var(--f);color:var(--c5);margin-bottom:6px">直线上级评语 <span style="color:var(--ro)">*</span></div><textarea class="weui-textarea" style="min-height:72px;font-size:var(--fs-sm)" placeholder="请输入直线上级评语…"></textarea></div></div></div></div>';
+
+  h+='<div style="height:80px"></div>';
+  document.getElementById('phoneBody').innerHTML=h;
+}
+function updScore(mi,gi,v){MODS[mi].goals.find(function(g){return g.id===gi}).score=Number(v);render();}
+function updGrade(mi,gi,v){MODS[mi].goals.find(function(g){return g.id===gi}).grade=v;}
+render();
+injectAIPanel('AI 评分助手','辅助评分 · 一致性校验 · 评语生成',['辅助评分','一致性校验','生成评语']);
+</script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>HR ONE - 结果审定</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../mobile-base.css">
+<style>
+.dist-card{background:var(--sf);border-radius:var(--r2);padding:14px;box-shadow:var(--sx);border:1px solid var(--bd);margin-bottom:12px}
+.dist-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.dist-row:last-child{margin-bottom:0}
+.dist-label{font:500 var(--fs-sm)/1 var(--f);width:28px;text-align:center}
+.dist-bar-wrap{flex:1;height:18px;background:var(--c1);border-radius:9px;overflow:hidden;position:relative}
+.dist-bar{height:100%;border-radius:9px;position:absolute;top:0;left:0}
+.dist-pct{font:600 var(--fs-sm)/1 var(--fm);width:32px;text-align:right}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="phone-notch"></div>
+  <div class="phone-status">9:41<div class="phone-status-r">
+    <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="6" width="3" height="6" rx="1" fill="currentColor" style="color:var(--c9)"/><rect x="4.5" y="4" width="3" height="8" rx="1" fill="currentColor" style="color:var(--c9)"/><rect x="9" y="1.5" width="3" height="10.5" rx="1" fill="currentColor" style="color:var(--c9)"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="currentColor" style="color:var(--c9)"/></svg>
+    <svg width="15" height="12" viewBox="0 0 15 12" fill="none"><rect x="0.5" y="0.5" width="12" height="11" rx="2" stroke="currentColor" style="color:var(--c9)" stroke-width="1.2"/><line x1="13" y1="4" x2="13" y2="8" stroke="currentColor" style="color:var(--c9)" stroke-width="1.2"/><rect x="2" y="2.5" width="7" height="7" rx="1" fill="currentColor" style="color:var(--c9)"/></svg>
+  </div></div>
+  <div class="weui-navigation-bar">
+    <a href="../demo-index.html" class="back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></a>
+    <span class="title">结果审定</span>
+  </div>
+  <div class="phone-body" id="phoneBody"></div>
+  <div class="bottom-bar">
+    <button class="weui-btn weui-btn_primary" style="flex:1" onclick="showToast('已批量提交审定结果')">批量提交</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script src="../mobile-base.js"></script>
+<script>
+var GRADES=['超出预期','符合预期+','符合预期','符合预期-','低于预期'];
+var GC={'超出预期':'var(--em700)','符合预期+':'var(--pr)','符合预期':'var(--c7)','符合预期-':'var(--ac)','低于预期':'var(--ro)'};
+var GB={'超出预期':'var(--em50)','符合预期+':'var(--pr50)','符合预期':'var(--c1)','符合预期-':'var(--ac50)','低于预期':'var(--ro50)'};
+var DT={'超出预期':10,'符合预期+':30,'符合预期':40,'符合预期-':20,'低于预期':0};
+
+var MEMBERS=[
+  {name:'张明',title:'高级产品经理',score:87.5,curGrade:'符合预期+',directGrade:'符合预期+',newGrade:'',reached:true},
+  {name:'李华',title:'产品经理',score:91.0,curGrade:'超出预期',directGrade:'超出预期',newGrade:'',reached:true},
+  {name:'王芳',title:'产品专员',score:77.0,curGrade:'符合预期',directGrade:'符合预期',newGrade:'',reached:true},
+  {name:'赵强',title:'高级产品经理',score:85.0,curGrade:'符合预期',directGrade:'符合预期',newGrade:'',reached:false}
+];
+
+function calcDist(){
+  var dist={};GRADES.forEach(function(g){dist[g]=0});
+  MEMBERS.forEach(function(m){if(m.reached&&m.newGrade)dist[m.newGrade]++});
+  return dist;
+}
+
+function render(){
+  var h='',dist=calcDist(),reached=MEMBERS.filter(function(m){return m.reached}).length;
+  // Stats
+  h+='<div style="display:flex;gap:8px;margin-bottom:12px">';
+  h+='<div style="flex:1;background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:12px;text-align:center"><div style="font:700 var(--fs-xl)/1 var(--fm);color:var(--c9)">'+MEMBERS.length+'</div><div style="font:400 var(--fs-xs)/1 var(--f);color:var(--c5);margin-top:3px">总人数</div></div>';
+  h+='<div style="flex:1;background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:12px;text-align:center"><div style="font:700 var(--fs-xl)/1 var(--fm);color:var(--em)">'+reached+'</div><div style="font:400 var(--fs-xs)/1 var(--f);color:var(--c5);margin-top:3px">已到达</div></div>';
+  h+='<div style="flex:1;background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:12px;text-align:center"><div style="font:700 var(--fs-xl)/1 var(--fm);color:var(--ac)">'+(MEMBERS.length-reached)+'</div><div style="font:400 var(--fs-xs)/1 var(--f);color:var(--c5);margin-top:3px">未到达</div></div>';
+  h+='</div>';
+
+  // Distribution
+  h+='<div class="dist-card"><div style="font:600 var(--fs-base)/1 var(--f);color:var(--c8);margin-bottom:10px">等级分布 · 强制分布规则</div>';
+  GRADES.forEach(function(g){
+    var color=GC[g],count=dist[g]||0,target=Math.ceil(MEMBERS.length*DT[g]/100);
+    h+='<div class="dist-row"><span class="dist-label" style="color:'+color+'">'+g.replace('符合预期','符合').replace('超出预期','超出').replace('低于预期','低于')+'</span><div class="dist-bar-wrap"><div class="dist-bar" style="width:'+DT[g]+'%;background:'+color+';opacity:.25"></div><div class="dist-bar" style="width:'+Math.round(count/MEMBERS.length*100)+'%;background:'+color+'"></div></div><span class="dist-pct">'+count+'人</span></div>';
+  });
+  h+='</div>';
+
+  // Members
+  h+='<div class="weui-panel weui-panel_access" style="margin-bottom:10px"><div class="weui-panel__hd" style="font:600 var(--fs-base)/1 var(--f);color:var(--c8)">成员审定 ('+MEMBERS.length+'人)</div><div class="weui-cells">';
+  MEMBERS.forEach(function(m,i){
+    h+='<div class="weui-cell"><div class="weui-cell__hd"><div style="width:36px;height:36px;border-radius:50%;background:'+(GC[m.curGrade]||'var(--c5)')+';display:flex;align-items:center;justify-content:center;font:600 var(--fs-base)/1 var(--f);color:#FFF;margin-right:10px">'+m.name[0]+'</div></div><div class="weui-cell__bd"><div style="font:500 var(--fs-base)/1 var(--f);color:var(--c8)">'+m.name+'</div><div style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5);margin-top:1px">'+m.title+' · '+m.score+'分</div><div style="display:flex;align-items:center;gap:4px;margin-top:4px"><span style="font:500 var(--fs-xs)/1 var(--f);padding:1px 5px;border-radius:3px;background:'+(GB[m.curGrade]||'var(--c1)')+';color:'+(GC[m.curGrade]||'var(--c5)')+'">'+m.curGrade+'</span><span style="color:var(--c4);font-size:var(--fs-xs)">→</span><span style="font:500 var(--fs-xs)/1 var(--f);padding:1px 5px;border-radius:3px;background:'+(GB[m.directGrade]||'var(--c1)')+';color:'+(GC[m.directGrade]||'var(--c5)')+'">'+m.directGrade+'</span></div></div><div class="weui-cell__ft">'+(m.reached?'<select class="weui-select" style="width:auto" onchange="updGrade('+i+',this.value)"><option value="">请选择</option>'+GRADES.map(function(g){return'<option value="'+g+'"'+(g===m.newGrade?' selected':'')+'>'+g+'</option>'}).join('')+'</select>':'<span style="font:400 var(--fs-sm)/1 var(--f);color:var(--c4)">未到达</span>')+'</div></div>';
+  });
+  h+='</div></div>';
+
+  // Flow
+  h+='<div class="weui-panel weui-panel_access"><div class="weui-panel__hd" style="font:600 var(--fs-base)/1 var(--f);color:var(--c8)">审批流程</div><div class="weui-cells">';
+  var flow=[{n:'HRBP批量导入',p:'赵敏',c:'var(--em)',s:'处理中',sb:'var(--pr50)',sc:'var(--pr)'},{n:'员工确认',p:'相关人员',c:'var(--c4)',s:'待处理',sb:'var(--c1)',sc:'var(--c5)'},{n:'上级审批',p:'王总监',c:'var(--c4)',s:'待处理',sb:'var(--c1)',sc:'var(--c5)'}];
+  flow.forEach(function(f){h+='<div class="weui-cell"><div class="weui-cell__hd"><div style="width:24px;height:24px;border-radius:50%;background:'+f.c+';display:flex;align-items:center;justify-content:center;margin-right:10px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div></div><div class="weui-cell__bd"><div style="font:500 var(--fs-sm)/1 var(--f);color:var(--c8)">'+f.n+'</div><div style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5);margin-top:2px">'+f.p+'</div></div><div class="weui-cell__ft"><span style="font:500 var(--fs-xs)/1 var(--f);padding:2px 8px;border-radius:4px;background:'+f.sb+';color:'+f.sc+'">'+f.s+'</span></div></div>';});
+  h+='</div></div><div style="height:80px"></div>';
+  document.getElementById('phoneBody').innerHTML=h;
+}
+function updGrade(i,v){MEMBERS[i].newGrade=v;render();}
+render();
+injectAIPanel('AI 审定助手','等级分布 · 批量调整 · 异常检测',['分析等级分布','批量调整建议','异常检测']);
+</script>
+</body>
+</html>

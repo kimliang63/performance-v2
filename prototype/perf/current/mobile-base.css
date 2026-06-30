@@ -1,0 +1,154 @@
+/* ═══════════════════════════════════════
+   HR ONE · Mobile Base
+   10 个移动端页面共享：token / 外壳 / 导航 / AI / Toast
+   ═══════════════════════════════════════ */
+
+/* 1. WeUI 组件库 */
+@import url('https://cdn.jsdelivr.net/npm/weui@2.6.16/dist/style/weui.min.css');
+
+/* 2. HRONE Mobile Token */
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#0F172A;--c8:#1E293B;--c7:#334155;--c6:#475569;--c5:#64748B;--c4:#94A3B8;--c3:#CBD5E1;--c2:#E2E8F0;--c1:#F1F5F9;--c0:#F8FAFC;
+  --sf:#FFF;--bg:#F0F4F8;--dv:#E2E8F0;
+  --r1:10px;--r2:12px;--r3:14px;--r4:18px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+  --sx:0 1px 2px rgba(0,0,0,.04);--sm:0 2px 8px rgba(0,0,0,.06);
+  --bd:rgba(15,23,42,.06);
+  /* Spacing & Type Scale */
+  --sp-xs:4px;--sp-sm:8px;--sp-md:12px;--sp-lg:16px;--sp-xl:20px;--sp-2xl:24px;
+  --fs-xs:10px;--fs-sm:11px;--fs-base:13px;--fs-lg:15px;--fs-xl:18px;
+}
+
+/* 3. 全局重置 */
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:#E5E7EB;color:var(--c7);display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px;-webkit-font-smoothing:antialiased}
+
+/* Type scale defaults */
+.weui-panel__hd{font:600 var(--fs-base)/1 var(--f);color:var(--c8)}
+.weui-cell__bd{font:500 var(--fs-base)/1.3 var(--f);color:var(--c8)}
+.weui-cell__ft{font:400 var(--fs-sm)/1 var(--f);color:var(--c5)}
+
+/* 4. iPhone 外壳 */
+.phone{width:393px;height:852px;background:var(--bg);border-radius:48px;box-shadow:0 25px 50px -12px rgba(0,0,0,.25),0 0 0 1px rgba(0,0,0,.05);overflow:hidden;position:relative;display:flex;flex-direction:column}
+.phone-notch{width:126px;height:34px;background:#000;border-radius:0 0 20px 20px;position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:100}
+.phone-status{height:54px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 8px;font:600 14px/1 var(--f);color:var(--c9)}
+.phone-status-r{display:flex;gap:4px;align-items:center}
+
+/* 5. WeUI 导航栏 */
+.weui-navigation-bar{position:sticky;top:0;z-index:50;background:var(--sf);display:flex;align-items:center;height:44px;padding:0 16px;border-bottom:0.5px solid var(--dv)}
+.weui-navigation-bar .back{width:32px;height:32px;border-radius:8px;background:var(--c1);display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--c7);flex-shrink:0;margin-right:8px}
+.weui-navigation-bar .back svg{width:16px;height:16px}
+.weui-navigation-bar .title{flex:1;font:600 17px/1 var(--f);color:var(--c9);text-align:center;margin-right:32px}
+
+/* 6. 页面滚动区 */
+.phone-body{flex:1;overflow-y:auto;padding:0 16px 100px}
+.phone-body::-webkit-scrollbar{width:0}
+
+/* 7. WeUI 颜色覆写 */
+.weui-btn_primary{background-color:var(--pr)}
+.weui-btn_warn{background-color:var(--ro)}
+.weui-btn_primary:active{background-color:var(--pr700)}
+.weui-cell_access:active{background-color:var(--c0)}
+.weui-badge{background-color:var(--ro)}
+
+/* 8. 底部操作栏 */
+.bottom-bar{position:absolute;bottom:0;left:0;right:0;background:rgba(255,255,255,.95);backdrop-filter:blur(24px);border-top:0.5px solid var(--bd);display:flex;align-items:center;padding:12px 16px;gap:8px;padding-bottom:34px;z-index:10}
+
+/* 9. 7级绩效等级徽章 */
+.grade-tag{display:inline-block;padding:2px 8px;border-radius:4px;font:500 11px/1 var(--f);white-space:nowrap}
+.grade-tag.far-exceed{background:#D1FAE5;color:#047857}
+.grade-tag.exceed{background:var(--em50);color:var(--em700)}
+.grade-tag.meet-plus{background:var(--pr50);color:var(--pr)}
+.grade-tag.meet{background:var(--c1);color:var(--c6)}
+.grade-tag.meet-minus{background:var(--ac50);color:var(--ac700)}
+.grade-tag.below{background:var(--ro50);color:var(--ro)}
+.grade-tag.far-below{background:#FFE4E6;color:#E11D48}
+
+/* 10. Toast */
+.toast{position:absolute;top:70px;left:50%;transform:translateX(-50%);background:var(--c9);color:#FFF;padding:10px 22px;border-radius:22px;font:500 13px/1 var(--f);z-index:900;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1}
+
+/* ═══════════════════════════════════════
+   11. AI 面板样式（移动端通用）
+   ═══════════════════════════════════════ */
+
+/* AI FAB */
+.m-fab{position:absolute;bottom:100px;right:16px;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--pr),var(--vi));border:none;box-shadow:0 4px 16px rgba(37,99,235,.35);display:flex;align-items:center;justify-content:center;z-index:50;cursor:pointer;transition:transform .2s}
+.m-fab:active{transform:scale(.92)}
+.m-fab svg{width:22px;height:22px;color:#FFF}
+
+/* AI Overlay */
+.ai-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:9998;opacity:0;pointer-events:none;transition:opacity .25s}
+.ai-overlay.open{opacity:1;pointer-events:all}
+
+/* AI Panel */
+.ai-panel{position:fixed;bottom:0;left:0;right:0;height:70%;background:var(--sf);border-radius:16px 16px 0 0;box-shadow:0 -4px 24px rgba(0,0,0,.18);z-index:9999;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1)}
+.ai-panel.open{transform:translateY(0)}
+
+/* AI Header */
+.ai-hd{padding:14px 16px;border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.ai-hd-ic{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--pr),var(--vi));display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0}
+.ai-hd-ic svg{width:16px;height:16px}
+.ai-hd-info{flex:1}
+.ai-hd-t{font:600 14px/1.2 var(--f);color:var(--c9)}
+.ai-hd-s{font:400 11px/1 var(--f);color:var(--c5)}
+.ai-hd-close{width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;border:none;background:transparent;color:var(--c5);cursor:pointer;flex-shrink:0}
+.ai-hd-close:active{background:var(--c1)}
+
+/* AI Body */
+.ai-bd{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:12px}
+
+/* AI Message */
+.ai-msg{max-width:88%;animation:aiMsgIn .25s ease}
+@keyframes aiMsgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.ai-msg.bot{align-self:flex-start}
+.ai-msg.user{align-self:flex-end}
+.ai-msg-bd{padding:10px 14px;border-radius:var(--r3);font:400 13px/1.6 var(--f);word-break:break-word}
+.ai-msg.bot .ai-msg-bd{background:var(--c0);color:var(--c8);border-bottom-left-radius:4px}
+.ai-msg.user .ai-msg-bd{background:var(--pr);color:#fff;border-bottom-right-radius:4px}
+.ai-msg-time{font:400 10px/1 var(--f);color:var(--c4);margin-top:4px}
+.ai-msg.user .ai-msg-time{text-align:right}
+
+/* AI Message Actions */
+.ai-msg-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.ai-msg-btn{font:500 11px/1 var(--f);padding:5px 10px;border-radius:var(--r1);border:1px solid var(--c2);background:var(--sf);color:var(--c6);cursor:pointer;transition:all .12s}
+.ai-msg-btn:active{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+
+/* AI Message Card */
+.ai-msg-card{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);padding:12px;margin-top:8px}
+.ai-msg-card-t{font:600 12px/1.3 var(--f);color:var(--c8);margin-bottom:6px}
+.ai-msg-card-d{font:400 12px/1.5 var(--f);color:var(--c5)}
+.ai-msg-card-ft{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.ai-msg-card-tag{display:inline-block;font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px}
+.ai-msg-card-tag.em{color:var(--em700);background:var(--em50)}
+.ai-msg-card-tag.pr{color:var(--pr);background:var(--pr50)}
+.ai-msg-card-tag.ac{color:var(--ac700);background:var(--ac50)}
+
+/* AI Shortcuts */
+.ai-shortcuts{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.ai-shortcut{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);cursor:pointer;transition:all .12s}
+.ai-shortcut:active{border-color:var(--pr200);background:var(--pr50)}
+.ai-shortcut-icon{font-size:18px;flex-shrink:0}
+.ai-shortcut-text{flex:1;min-width:0}
+.ai-shortcut-label{font:500 13px/1.2 var(--f);color:var(--c8)}
+.ai-shortcut-desc{font:400 11px/1.3 var(--f);color:var(--c5);margin-top:2px}
+
+/* AI Footer */
+.ai-ft{padding:12px 16px;border-top:1px solid var(--dv);display:flex;gap:8px;align-items:center;flex-shrink:0}
+.ai-input{flex:1;height:36px;border:1px solid var(--c2);border-radius:var(--r2);padding:0 12px;font:400 13px/1 var(--f);color:var(--c8);outline:none;transition:border .15s}
+.ai-input:focus{border-color:var(--pr)}
+.ai-send{width:36px;height:36px;border-radius:var(--r2);background:var(--pr);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#FFF;transition:all .12s}
+.ai-send:active{background:var(--pr700)}
+
+/* ═══════════════════════════════════════
+   12. 通用工具类
+   ═══════════════════════════════════════ */
+.flex-center{display:flex;align-items:center;justify-content:center}
+.text-mono{font-family:var(--fm)}
+.text-muted{color:var(--c5)}
