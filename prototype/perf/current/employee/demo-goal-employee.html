@@ -661,12 +661,12 @@ const I={
 };
 
 const MODULES=[
-  {name:'关键指标',weight:30,icon:'target',color:'var(--pr)',accent:'',goals:[
+  {name:'KPI',weight:30,icon:'target',color:'var(--pr)',accent:'',goals:[
     {id:'g1',name:'资源利用率（通用）',indicator:'资源利用率',type:'quant',weight:5,aiFilled:true,desc:'1.指标定义：人员的实际工作量饱和情况，数据来源：Devops\n2.计算逻辑：公式=当月实际任务工时（人天）/EHR实际出勤天数*100%',measure:'梯度评分',target:105,challenge:110,baseline:100,unit:'%',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',msLevels:[{level:'优秀',color:'var(--em)',score:'120分',condition:'利用率 >= 110%'},{level:'良好',color:'var(--pr)',score:'100分',condition:'利用率 >= 105%'},{level:'合格',color:'var(--ac)',score:'80分',condition:'利用率 >= 100%'},{level:'不合格',color:'var(--ro)',score:'0分',condition:'利用率 < 100%'}]},
     {id:'g2',name:'HRASUAT用户验收首次通过率(产品)',indicator:'UAT首次通过率',type:'quant',weight:10,desc:'1.指标定义：需求首次业务验收通过的概率\n2.计算逻辑：公式=当月需求首次业务验收通过的迭代数量/当月业务验收的迭代总数*100%',measure:'梯度评分',target:98,challenge:100,baseline:95,unit:'百分比',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',msLevels:[{level:'优秀',color:'var(--em)',score:'120分',condition:'通过率 >= 100%'},{level:'良好',color:'var(--pr)',score:'100分',condition:'通过率 >= 98%'},{level:'合格',color:'var(--ac)',score:'80分',condition:'通过率 >= 95%'},{level:'不合格',color:'var(--ro)',score:'0分',condition:'通过率 < 95%'}]},
     {id:'g3',name:'HRAS需求评审及时率(产品)',indicator:'需求评审及时率',type:'quant',weight:15,desc:'1.迭代版本评审的及时性情况\n2.计算逻辑：公式=统计周期内按时需求评审迭代数/计划评审迭代*100%\n备注：按需求个数的维度。',measure:'梯度评分',target:98,challenge:100,baseline:95,unit:'百分比',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',msLevels:[{level:'优秀',color:'var(--em)',score:'120分',condition:'及时率 >= 100%'},{level:'良好',color:'var(--pr)',score:'100分',condition:'及时率 >= 98%'},{level:'合格',color:'var(--ac)',score:'80分',condition:'及时率 >= 95%'},{level:'不合格',color:'var(--ro)',score:'0分',condition:'及时率 < 95%'}]},
   ]},
-  {name:'关键行动',weight:70,icon:'users',color:'var(--em)',accent:'em',goals:[
+  {name:'KPA',weight:70,icon:'users',color:'var(--em)',accent:'em',goals:[
     {id:'g4',name:'HRAS产品管理规范',indicator:'产品管理规范',type:'qual',weight:10,desc:'1、需求管理流程尊从规范（受理-澄清-方案-业务内审-技术评审-研发交付-产品验收-用户验收）\n2、产品需求规范（需求池需求管理、文档规范）\n3、迭代火车管理规范\n4、周会/月会前事项准时完成更新',measure:'定性评分',target:1,challenge:1,baseline:1,rule:'-',ruleFormula:'',msLevels:[{level:'符合预期',color:'var(--em)',score:'100分',condition:'4项全部符合规范'},{level:'低于预期',color:'var(--ro)',score:'0分',condition:'4项任何1项不符合规范'}]},
     {id:'g5',name:'【产品设计】日常滚动需求响应',indicator:'日常需求响应',type:'qual',weight:10,aiFilled:true,desc:'根据业务日会需求优先级，滚动响应日常需求，输出产品解决方案，计划事项如下：\n05/18 已完成GOFO6月双周上半月迭代需求评审：费控系统对接需求、签字报表支持按薪酬制度区分\n06/12 完成GOFO6月双周上半月迭代需求验收',measure:'定性评分',target:1,challenge:1,baseline:1,rule:'-',ruleFormula:'',msLevels:[{level:'符合预期',color:'var(--em)',score:'100分',condition:'按时完成需求响应和验收'},{level:'低于预期',color:'var(--ro)',score:'0分',condition:'未按时完成'}]},
     {id:'g6',name:'【产品设计】HR ONE 绩效重构事项推进',indicator:'绩效重构推进',type:'qual',weight:25,desc:'计划事项：\n06-10 输出AI+绩效核心用户页面原型，给新哥、蔡老师汇报整体内容，并确认后续版本页面落地方式\n06-19 完成绩效版本4（考核活动管理）需求内审\n06-24 完成绩效版本4（考核活动管理）需求评审',measure:'定性评分',target:1,challenge:1,baseline:1,rule:'-',ruleFormula:'',msLevels:[{level:'符合预期',color:'var(--em)',score:'100分',condition:'按时完成各里程碑'},{level:'低于预期',color:'var(--ro)',score:'0分',condition:'未按时完成'}]},
@@ -676,31 +676,31 @@ const MODULES=[
 
 const HISTORY={
   '2026年5月':[
-    {name:'资源利用率（通用）',indicator:'资源利用率',module:'关键指标',type:'quant',weight:5,target:105,challenge:110,baseline:100,unit:'%',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'人员的实际工作量饱和情况',msLevels:[]},
-    {name:'HRASUAT用户验收首次通过率(产品)',indicator:'UAT首次通过率',module:'关键指标',type:'quant',weight:10,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'需求首次业务验收通过的概率',msLevels:[]},
-    {name:'HRAS需求评审及时率(产品)',indicator:'需求评审及时率',module:'关键指标',type:'quant',weight:15,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'迭代版本评审的及时性情况',msLevels:[]},
-    {name:'HRAS产品管理规范',indicator:'产品管理规范',module:'关键行动',type:'qual',weight:10,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'产品需求管理和迭代管理的规范',msLevels:[]},
-    {name:'【产品设计】日常滚动需求响应',indicator:'日常需求响应',module:'关键行动',type:'qual',weight:10,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'滚动响应日常需求',msLevels:[]},
-    {name:'【产品设计】HR ONE 绩效重构事项推进',indicator:'绩效重构推进',module:'关键行动',type:'qual',weight:25,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'绩效重构各里程碑推进',msLevels:[]},
-    {name:'【应用探索】AI应用项目探索与落地推广',indicator:'AI应用落地',module:'关键行动',type:'qual',weight:25,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'AI应用版本交付和试点落地',msLevels:[]},
+    {name:'资源利用率（通用）',indicator:'资源利用率',module:'KPI',type:'quant',weight:5,target:105,challenge:110,baseline:100,unit:'%',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'人员的实际工作量饱和情况',msLevels:[]},
+    {name:'HRASUAT用户验收首次通过率(产品)',indicator:'UAT首次通过率',module:'KPI',type:'quant',weight:10,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'需求首次业务验收通过的概率',msLevels:[]},
+    {name:'HRAS需求评审及时率(产品)',indicator:'需求评审及时率',module:'KPI',type:'quant',weight:15,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'迭代版本评审的及时性情况',msLevels:[]},
+    {name:'HRAS产品管理规范',indicator:'产品管理规范',module:'KPA',type:'qual',weight:10,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'产品需求管理和迭代管理的规范',msLevels:[]},
+    {name:'【产品设计】日常滚动需求响应',indicator:'日常需求响应',module:'KPA',type:'qual',weight:10,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'滚动响应日常需求',msLevels:[]},
+    {name:'【产品设计】HR ONE 绩效重构事项推进',indicator:'绩效重构推进',module:'KPA',type:'qual',weight:25,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'绩效重构各里程碑推进',msLevels:[]},
+    {name:'【应用探索】AI应用项目探索与落地推广',indicator:'AI应用落地',module:'KPA',type:'qual',weight:25,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'AI应用版本交付和试点落地',msLevels:[]},
   ],
   '2026年4月':[
-    {name:'资源利用率（通用）',indicator:'资源利用率',module:'关键指标',type:'quant',weight:5,target:105,challenge:110,baseline:100,unit:'%',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
-    {name:'HRASUAT用户验收首次通过率(产品)',indicator:'UAT首次通过率',module:'关键指标',type:'quant',weight:10,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
-    {name:'HRAS需求评审及时率(产品)',indicator:'需求评审及时率',module:'关键指标',type:'quant',weight:15,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
-    {name:'HRAS产品管理规范',indicator:'产品管理规范',module:'关键行动',type:'qual',weight:10,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
-    {name:'【产品设计】日常滚动需求响应',indicator:'日常需求响应',module:'关键行动',type:'qual',weight:10,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
-    {name:'【产品设计】HR ONE 绩效重构事项推进',indicator:'绩效重构推进',module:'关键行动',type:'qual',weight:25,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
-    {name:'【应用探索】AI应用项目探索与落地推广',indicator:'AI应用落地',module:'关键行动',type:'qual',weight:25,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
+    {name:'资源利用率（通用）',indicator:'资源利用率',module:'KPI',type:'quant',weight:5,target:105,challenge:110,baseline:100,unit:'%',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
+    {name:'HRASUAT用户验收首次通过率(产品)',indicator:'UAT首次通过率',module:'KPI',type:'quant',weight:10,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
+    {name:'HRAS需求评审及时率(产品)',indicator:'需求评审及时率',module:'KPI',type:'quant',weight:15,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
+    {name:'HRAS产品管理规范',indicator:'产品管理规范',module:'KPA',type:'qual',weight:10,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
+    {name:'【产品设计】日常滚动需求响应',indicator:'日常需求响应',module:'KPA',type:'qual',weight:10,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
+    {name:'【产品设计】HR ONE 绩效重构事项推进',indicator:'绩效重构推进',module:'KPA',type:'qual',weight:25,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
+    {name:'【应用探索】AI应用项目探索与落地推广',indicator:'AI应用落地',module:'KPA',type:'qual',weight:25,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
   ],
   '2026年3月':[
-    {name:'资源利用率（通用）',indicator:'资源利用率',module:'关键指标',type:'quant',weight:5,target:105,challenge:110,baseline:100,unit:'%',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
-    {name:'HRASUAT用户验收首次通过率(产品)',indicator:'UAT首次通过率',module:'关键指标',type:'quant',weight:10,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
-    {name:'HRAS需求评审及时率(产品)',indicator:'需求评审及时率',module:'关键指标',type:'quant',weight:15,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
-    {name:'HRAS产品管理规范',indicator:'产品管理规范',module:'关键行动',type:'qual',weight:10,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
-    {name:'【产品设计】日常滚动需求响应',indicator:'日常需求响应',module:'关键行动',type:'qual',weight:10,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
-    {name:'【产品设计】HR ONE 绩效重构事项推进',indicator:'绩效重构推进',module:'关键行动',type:'qual',weight:25,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
-    {name:'【应用探索】AI应用项目探索与落地推广',indicator:'AI应用落地',module:'关键行动',type:'qual',weight:25,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
+    {name:'资源利用率（通用）',indicator:'资源利用率',module:'KPI',type:'quant',weight:5,target:105,challenge:110,baseline:100,unit:'%',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
+    {name:'HRASUAT用户验收首次通过率(产品)',indicator:'UAT首次通过率',module:'KPI',type:'quant',weight:10,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
+    {name:'HRAS需求评审及时率(产品)',indicator:'需求评审及时率',module:'KPI',type:'quant',weight:15,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
+    {name:'HRAS产品管理规范',indicator:'产品管理规范',module:'KPA',type:'qual',weight:10,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
+    {name:'【产品设计】日常滚动需求响应',indicator:'日常需求响应',module:'KPA',type:'qual',weight:10,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
+    {name:'【产品设计】HR ONE 绩效重构事项推进',indicator:'绩效重构推进',module:'KPA',type:'qual',weight:25,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
+    {name:'【应用探索】AI应用项目探索与落地推广',indicator:'AI应用落地',module:'KPA',type:'qual',weight:25,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
   ],
 };
 
@@ -1438,7 +1438,7 @@ function handleAiAction(action){
         AI_MSGS.push({role:'bot',text:'请上传你的工作文档，AI 将自动解析并生成目标建议。\n\n支持的文件类型：\n• 周报/日报/月报（Word、TXT）\n• 工作计划（Excel）\n• 项目文档（PDF）\n\n上传后点击「应用到目标」即可自动填入。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),upload:true});
         break;
       case '检查权重分配':
-        response='当前权重分配分析：\n\n• 关键指标: 30%（3个目标）\n• 关键行动: 70%（4个目标）\n\n整体结构合理，关键行动占比偏高。建议：\n• 资源利用率权重偏低（5%），可适当提升\n• 绩效重构和AI探索各25%，单项权重较大';
+        response='当前权重分配分析：\n\n• KPI: 30%（3个目标）\n• KPA: 70%（4个目标）\n\n整体结构合理，KPA占比偏高。建议：\n• 资源利用率权重偏低（5%），可适当提升\n• 绩效重构和AI探索各25%，单项权重较大';
         AI_MSGS.push({role:'bot',text:response,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
           {t:'权重建议',d:'资源利用率 5% → 8%，绩效重构 25% → 22%，AI探索 25% → 27%',tag:'建议调整',tc:'pr',apply:'weight'},
         ]});
@@ -1471,9 +1471,9 @@ function handleAiAction(action){
         ]});
         break;
       case '对标历史数据':
-        response='与上月（2026年5月）对比：\n\n• 目标数量: 7 → 7（持平）\n• 关键指标权重: 35% → 30%（下降5%）\n• 关键行动权重: 65% → 70%（上升5%）\n\n关注：关键指标权重下降，建议适当回调';
+        response='与上月（2026年5月）对比：\n\n• 目标数量: 7 → 7（持平）\n• KPI权重: 35% → 30%（下降5%）\n• KPA权重: 65% → 70%（上升5%）\n\n关注：KPI权重下降，建议适当回调';
         AI_MSGS.push({role:'bot',text:response,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
-          {t:'历史对比',d:'关键指标权重从35%降至30%，建议回调至33%',tag:'关注',tc:'ac'},
+          {t:'历史对比',d:'KPI权重从35%降至30%，建议回调至33%',tag:'关注',tc:'ac'},
         ]});
         break;
       case '智能拆分目标':

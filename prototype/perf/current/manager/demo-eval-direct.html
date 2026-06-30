@@ -316,19 +316,19 @@ GHR_NAV.init('perf', '绩效评分');
 
 // ═══ MOCK DATA — 直线上级评分范围：全部模块 ═══
 var MODULES=[
-  {name:'关键指标',weight:30,color:'var(--pr)',goals:[
+  {name:'KPI',weight:30,color:'var(--pr)',goals:[
     {id:'g1',name:'资源利用率（通用）',indicator:'资源利用率',type:'quant',weight:5,target:105,challenge:110,baseline:100,unit:'%',desc:'人员实际工作量饱和情况',completed:'108%',employeeGrade:'符合预期+',indirectGrade:'符合预期+'},
     {id:'g2',name:'HRAS UAT用户验收首次通过率',indicator:'UAT首次通过率',type:'quant',weight:10,target:98,challenge:100,baseline:95,unit:'%',desc:'需求首次业务验收通过的概率',completed:'97%',employeeGrade:'符合预期',indirectGrade:'符合预期'},
     {id:'g3',name:'HRAS需求评审及时率',indicator:'需求评审及时率',type:'quant',weight:15,target:98,challenge:100,baseline:95,unit:'%',desc:'迭代版本评审的及时性情况',completed:'96%',employeeGrade:'符合预期',indirectGrade:'符合预期'}
   ]},
-  {name:'关键行动',weight:70,color:'var(--em)',goals:[
+  {name:'KPA',weight:70,color:'var(--em)',goals:[
     {id:'g4',name:'HRAS产品管理规范',indicator:'产品管理规范',type:'qual',weight:10,measureDesc:'需求管理流程规范、产品需求规范、迭代火车管理规范、周会/月会准时完成',completed:'4项规范全部符合',employeeGrade:'符合预期',indirectGrade:'符合预期'},
     {id:'g5',name:'日常滚动需求响应',indicator:'日常需求响应',type:'qual',weight:10,measureDesc:'根据业务日会需求优先级，滚动响应日常需求，输出产品解决方案',completed:'按时完成GOFO 6月迭代',employeeGrade:'符合预期',indirectGrade:'符合预期'},
     {id:'g6',name:'HR ONE 绩效重构事项推进',indicator:'绩效重构推进',type:'qual',weight:25,measureDesc:'06-10 输出AI+绩效核心页面原型；06-19 完成绩效版本4需求内审；06-24 完成需求评审',completed:'3个里程碑按时交付',employeeGrade:'符合预期+',indirectGrade:'符合预期+'},
     {id:'g7',name:'AI应用项目探索与落地推广',indicator:'AI应用落地',type:'qual',weight:25,measureDesc:'06-05 完成ASSC采购侧AI应用1.0版本；06-12 对接LBU试点应用；06-26 完成1.1版本',completed:'3个版本按时发布',employeeGrade:'符合预期+',indirectGrade:'符合预期+'}
   ]}
 ];
-var employeeComment='本季度整体工作完成情况良好。关键指标方面，资源利用率达标，UAT通过率和需求评审及时率略低于目标，已制定改进措施。关键行动方面，产品管理规范落地执行，日常需求响应及时，绩效重构和AI应用项目均按里程碑计划推进完成。';
+var employeeComment='本季度整体工作完成情况良好。KPI方面，资源利用率达标，UAT通过率和需求评审及时率略低于目标，已制定改进措施。KPA方面，产品管理规范落地执行，日常需求响应及时，绩效重构和AI应用项目均按里程碑计划推进完成。';
 var indirectComment='张明在产品规划和执行方面展现了较强的能力，跨部门协作表现突出。建议进一步提升战略思维，关注行业趋势。认可其在团队建设和人才培养方面的努力。';
 var directComment='';
 
@@ -529,7 +529,7 @@ function processFiles(files){
   renderAiChat();
 
   setTimeout(function(){
-    AI_MSGS.push({role:'bot',text:'文件解析完成！已综合分析以下信息：\n\n📄 张明_周报_Q2_W12.docx:\n• 资源利用率: 108%（Devops数据）\n• UAT通过率: 97%\n• 需求评审及时率: 96%\n\n📊 绩效数据汇总.xlsx:\n• 产品管理规范: 4项全部符合\n• 日常需求: 按时完成GOFO迭代\n• 绩效重构: 3个里程碑按时交付\n• AI应用: 3个版本按时发布\n\n综合员工自评和双线上级评价，建议最终评价：\n• 关键指标: 符合预期\n• 关键行动: 符合预期+\n\n点击「应用到表格」一键填入。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
+    AI_MSGS.push({role:'bot',text:'文件解析完成！已综合分析以下信息：\n\n📄 张明_周报_Q2_W12.docx:\n• 资源利用率: 108%（Devops数据）\n• UAT通过率: 97%\n• 需求评审及时率: 96%\n\n📊 绩效数据汇总.xlsx:\n• 产品管理规范: 4项全部符合\n• 日常需求: 按时完成GOFO迭代\n• 绩效重构: 3个里程碑按时交付\n• AI应用: 3个版本按时发布\n\n综合员工自评和双线上级评价，建议最终评价：\n• KPI: 符合预期\n• KPA: 符合预期+\n\n点击「应用到表格」一键填入。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
       {t:'综合分析完成',d:'已分析 7 项目标，综合三方评价给出建议',tag:'AI 综合',tc:'pr',apply:'batch'}
     ]});
     renderAiChat();
@@ -561,7 +561,7 @@ function applyAiSuggestion(type){
         }
       }
     });
-    directComment='张明本季度整体表现优秀，关键指标基本达标，关键行动均按时完成。资源利用率超额完成，绩效重构和AI应用项目推进有力。建议继续保持跨部门协作优势，持续提升需求评审及时率。综合评价：符合预期+。';
+    directComment='张明本季度整体表现优秀，KPI基本达标，KPA均按时完成。资源利用率超额完成，绩效重构和AI应用项目推进有力。建议继续保持跨部门协作优势，持续提升需求评审及时率。综合评价：符合预期+。';
     var dc=document.getElementById('directComment');
     if(dc)dc.value=directComment;
     showToast('已为7项目标 + 总评语自动生成','success');
@@ -591,7 +591,7 @@ function handleAiAction(action){
         AI_MSGS.push({role:'bot',text:'请上传员工的工作文档，AI 将综合分析完成情况。\n\n支持的文件类型：\n• 周报/日报/月报（Word、TXT）\n• 工作总结（PDF）\n• 绩效数据汇总（Excel）',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),upload:true});
         break;
       case '批量填写评价':
-        AI_MSGS.push({role:'bot',text:'已综合员工自评和双线上级评价，为 7 项目标推荐最终评价：\n\n关键指标:\n• 资源利用率 108% → 符合预期+\n• UAT通过率 97% → 符合预期\n• 需求评审及时率 96% → 符合预期\n\n关键行动:\n• 产品管理规范 → 符合预期\n• 日常需求响应 → 符合预期\n• 绩效重构推进 → 符合预期+\n• AI应用落地 → 符合预期+\n\n综合建议等级: 符合预期+',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
+        AI_MSGS.push({role:'bot',text:'已综合员工自评和双线上级评价，为 7 项目标推荐最终评价：\n\nKPI:\n• 资源利用率 108% → 符合预期+\n• UAT通过率 97% → 符合预期\n• 需求评审及时率 96% → 符合预期\n\nKPA:\n• 产品管理规范 → 符合预期\n• 日常需求响应 → 符合预期\n• 绩效重构推进 → 符合预期+\n• AI应用落地 → 符合预期+\n\n综合建议等级: 符合预期+',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
           {t:'批量评价完成',d:'7 项评价已就绪，综合三方评价推荐',tag:'AI 综合',tc:'pr',apply:'batch'}
         ]});
         break;

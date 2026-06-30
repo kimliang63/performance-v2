@@ -345,12 +345,12 @@ GHR_NAV.init('perf', '绩效自评');
 
 // ═══ MOCK DATA — 来自目标制定表单 ═══
 var MODULES=[
-  {name:'关键指标',weight:30,color:'var(--pr)',goals:[
+  {name:'KPI',weight:30,color:'var(--pr)',goals:[
     {id:'g1',name:'资源利用率（通用）',indicator:'资源利用率',type:'quant',weight:5,target:105,challenge:110,baseline:100,unit:'%',desc:'人员实际工作量饱和情况，数据来源：Devops',completed:''},
     {id:'g2',name:'HRAS UAT用户验收首次通过率',indicator:'UAT首次通过率',type:'quant',weight:10,target:98,challenge:100,baseline:95,unit:'%',desc:'需求首次业务验收通过的概率',completed:''},
     {id:'g3',name:'HRAS需求评审及时率',indicator:'需求评审及时率',type:'quant',weight:15,target:98,challenge:100,baseline:95,unit:'%',desc:'迭代版本评审的及时性情况',completed:''}
   ]},
-  {name:'关键行动',weight:70,color:'var(--em)',goals:[
+  {name:'KPA',weight:70,color:'var(--em)',goals:[
     {id:'g4',name:'HRAS产品管理规范',indicator:'产品管理规范',type:'qual',weight:10,measureDesc:'需求管理流程规范、产品需求规范、迭代火车管理规范、周会/月会准时完成',completed:''},
     {id:'g5',name:'日常滚动需求响应',indicator:'日常需求响应',type:'qual',weight:10,measureDesc:'根据业务日会需求优先级，滚动响应日常需求，输出产品解决方案',completed:''},
     {id:'g6',name:'HR ONE 绩效重构事项推进',indicator:'绩效重构推进',type:'qual',weight:25,measureDesc:'06-10 输出AI+绩效核心页面原型；06-19 完成绩效版本4需求内审；06-24 完成需求评审',completed:''},
@@ -564,7 +564,7 @@ function applyAiSuggestion(type){
         }
       }
     });
-    overallComment='本季度整体工作完成情况良好。关键指标方面，资源利用率达标，UAT通过率和需求评审及时率略低于目标，已制定改进措施。关键行动方面，产品管理规范落地执行，日常需求响应及时，绩效重构和AI应用项目均按里程碑计划推进完成。下一季度将持续优化评审流程，提升指标达成率。';
+    overallComment='本季度整体工作完成情况良好。KPI方面，资源利用率达标，UAT通过率和需求评审及时率略低于目标，已制定改进措施。KPA方面，产品管理规范落地执行，日常需求响应及时，绩效重构和AI应用项目均按里程碑计划推进完成。下一季度将持续优化评审流程，提升指标达成率。';
     var oc=document.getElementById('overallComment');
     if(oc)oc.value=overallComment;
     showToast('已为7项目标 + 总评语自动生成','success');
@@ -594,12 +594,12 @@ function handleAiAction(action){
         AI_MSGS.push({role:'bot',text:'请上传你的工作文档，AI 将自动解析并提取目标进度和完成情况。\n\n支持的文件类型：\n• 周报/日报/月报（Word、TXT）\n• 项目进度表（Excel）\n• 工作总结（PDF）',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),upload:true});
         break;
       case '批量填写完成情况':
-        AI_MSGS.push({role:'bot',text:'已根据目标制定表的 7 项目标 + 完成度数据自动填入：\n\n关键指标（30%）:\n• 资源利用率 → 108%（得分100分）\n• UAT首次通过率 → 97%（得分80分）\n• 需求评审及时率 → 96%（得分80分）\n\n关键行动（70%）:\n• 产品管理规范 → 符合预期\n• 日常需求响应 → 符合预期\n• 绩效重构推进 → 符合预期+\n• AI应用落地 → 符合预期+\n\n点击「应用到表格」一键填入。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
+        AI_MSGS.push({role:'bot',text:'已根据目标制定表的 7 项目标 + 完成度数据自动填入：\n\nKPI（30%）:\n• 资源利用率 → 108%（得分100分）\n• UAT首次通过率 → 97%（得分80分）\n• 需求评审及时率 → 96%（得分80分）\n\nKPA（70%）:\n• 产品管理规范 → 符合预期\n• 日常需求响应 → 符合预期\n• 绩效重构推进 → 符合预期+\n• AI应用落地 → 符合预期+\n\n点击「应用到表格」一键填入。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
           {t:'批量填写完成',d:'7 项已完成填入，基于目标制定数据 + 完成度自动生成',tag:'AI 生成',tc:'pr',apply:'batch'}
         ]});
         break;
       case '查看完成度详情':
-        AI_MSGS.push({role:'bot',text:'各目标完成度详情：\n\n关键指标:\n• 资源利用率: 108% (保底100/目标105/挑战110) → 100分\n• UAT通过率: 97% (保底95/目标98/挑战100) → 80分\n• 评审及时率: 96% (保底95/目标98/挑战100) → 80分\n\n关键行动:\n• 产品管理规范 → 符合预期\n• 日常需求响应 → 符合预期\n• 绩效重构推进 → 符合预期+\n• AI应用落地 → 符合预期+',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
+        AI_MSGS.push({role:'bot',text:'各目标完成度详情：\n\nKPI:\n• 资源利用率: 108% (保底100/目标105/挑战110) → 100分\n• UAT通过率: 97% (保底95/目标98/挑战100) → 80分\n• 评审及时率: 96% (保底95/目标98/挑战100) → 80分\n\nKPA:\n• 产品管理规范 → 符合预期\n• 日常需求响应 → 符合预期\n• 绩效重构推进 → 符合预期+\n• AI应用落地 → 符合预期+',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
           {t:'完成度分析',d:'1项100分，2项80分，4项符合预期',tag:'整体达标',tc:'em'}
         ]});
         break;
