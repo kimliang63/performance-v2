@@ -363,12 +363,13 @@ function renderModuleContainer(){
   var html='<div class="eval-list"><table><thead><tr>'+
     '<th style="width:180px">名称</th>'+
     '<th style="width:55px">权重</th>'+
-    '<th>完成值/衡量标准</th>'+
-    '<th style="min-width:200px">完成值/完成情况</th>'+
-    '<th style="min-width:180px">评价/得分</th>'+
+    '<th style="width:60px">类型</th>'+
+    '<th style="min-width:220px">完成值/衡量标准</th>'+
+    '<th style="min-width:220px">完成值/完成情况</th>'+
+    '<th style="min-width:160px">评价/得分</th>'+
     '</tr></thead><tbody>';
   MODULES.forEach(function(mod,mi){
-    html+='<tr class="mod-row"><td colspan="5"><div class="eval-mod">'+
+    html+='<tr class="mod-row"><td colspan="6"><div class="eval-mod">'+
       '<div class="eval-mod-dot" style="background:'+mod.color+'"></div>'+
       '<span class="eval-mod-name">'+mod.name+'</span>'+
       '<span class="eval-mod-weight">'+mod.weight+'%</span>'+
@@ -377,7 +378,8 @@ function renderModuleContainer(){
       var isQuant=g.type==='quant';
       html+='<tr>'+
         '<td><span style="font-weight:500;color:var(--c8)">'+g.name+'</span></td>'+
-        '<td><span class="eval-weight">'+g.weight+'%</span></td>';
+        '<td><span class="eval-weight">'+g.weight+'%</span></td>'+
+        '<td><span class="eval-type-tag '+(isQuant?'quant':'qual')+'">'+(isQuant?'定量':'定性')+'</span></td>';
       if(isQuant){
         html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">'+g.desc+'<br>挑战值: <span style="font-family:var(--m);color:var(--c7)">'+g.challenge+g.unit+'</span> / 目标值: <span style="font-family:var(--m);color:var(--c7)">'+g.target+g.unit+'</span></td>';
         html+='<td><input class="edit-cell" type="number" id="completed_'+mi+'_'+gi+'" placeholder="输入完成值" oninput="updateCompleted('+mi+','+gi+')"></td>';
