@@ -830,16 +830,18 @@ function render(){
             <div class="ge-form">
               ${g.type==='quant'?`
               <div class="ge-sec">
-                <div class="ge-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>指标描述 <span style="cursor:pointer;font-size:12px;color:var(--c4);margin-left:4px" onclick="event.stopPropagation();showMeasureDesc('${g.id}')" title="点击查看指标描述">ⓘ</span></div>
-                <div class="ge-row f3">
+                <div class="ge-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>指标值</div>
+                <div class="ge-row f3" style="grid-template-columns:100px 100px 100px 1fr">
                   <div class="ge-fi"><span class="ge-fi-l">挑战值${(linked||g.aiFilled)?aiTag():''}</span><input class="inp num" id="ge_challenge_${g.id}" type="number" value="${g.challenge}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')"/></div>
                   <div class="ge-fi"><span class="ge-fi-l">目标值 <span class="req">*</span>${(linked||g.aiFilled)?aiTag():''}</span><input class="inp num" id="ge_target_${g.id}" type="number" value="${g.target}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')"/></div>
-                  <div class="ge-fi"><span class="ge-fi-l">完成值</span><input class="inp num" id="ge_baseline_${g.id}" type="number" value="${g.baseline}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')"/></div>
+                  <div class="ge-fi"><span class="ge-fi-l">保底值</span><input class="inp num" id="ge_baseline_${g.id}" type="number" value="${g.baseline}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')"/></div>
+                  <div class="ge-fi"><span class="ge-fi-l">指标描述</span><div style="font:400 11px/1.4 var(--f);color:var(--c5);padding-top:6px">${g.desc||'—'}</div></div>
                 </div>
               </div>
               `:`
               <div class="ge-sec">
                 <div class="ge-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>衡量标准</div>
+                <div style="font:400 11px/1.4 var(--f);color:var(--c5);padding-bottom:8px;border-bottom:1px solid var(--dv);margin-bottom:8px">指标描述：${g.desc||'—'}</div>
                 <div class="ge-fi"><span class="ge-fi-l">衡量标准-评价梯度2</span><textarea class="inp" id="ge_ms2_${g.id}" rows="2" placeholder="请输入2分评价标准...">${(g.msLevels&&g.msLevels[0])?g.msLevels[0].condition:''}</textarea></div>
                 <div class="ge-fi" style="margin-top:8px"><span class="ge-fi-l">衡量标准-评价梯度3 <span class="req">*</span></span><textarea class="inp" id="ge_ms3_${g.id}" rows="2" placeholder="请输入3分评价标准（必填）...">${(g.msLevels&&g.msLevels[1])?g.msLevels[1].condition:''}</textarea></div>
                 <div class="ge-fi" style="margin-top:8px"><span class="ge-fi-l">衡量标准-评价梯度4</span><textarea class="inp" id="ge_ms4_${g.id}" rows="2" placeholder="请输入4分评价标准...">${(g.msLevels&&g.msLevels[2])?g.msLevels[2].condition:''}</textarea></div>
