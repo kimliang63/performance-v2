@@ -1,6 +1,21 @@
 # 变更记录
 
-## 格式说明
+## 2026-07-02 审定等级控件统一为评星
+
+**改造** `manager/demo-ratify-direct.html` — 7级审定按钮组 → 7星评星组件
+**改造** `manager/demo-ratify-indirect.html` — 同上
+**改造** `manager/demo-ratify-hierarchy.html` — 同上
+**改造** `manager/demo-ratify-hrbp.html` — 审定等级只读文本 → 带颜色标签
+
+等级-星级-颜色映射：
+- 7级审定（ratify 页面）：远低预期(c5) → 低于预期(ro) → 符合预期-(ac700) → 符合预期(em700) → 符合预期+(pr700) → 超出预期(vi) → 远超预期(ac)
+- 5级考核（eval 页面）：不变，已有5星评星
+
+交互：hover 黄色高亮+浮动提示，点击第N颗星选中1-N颗，下方标签显示等级名称+颜色
+图表联动：setRatifyStar 末尾调用 updateChart()/updateStats() 实时刷新
+
+---
+
 每条记录包含：日期、类型、页面/组件、变更内容、原因
 
 类型：新增 / 改造 / 删除 / 修复

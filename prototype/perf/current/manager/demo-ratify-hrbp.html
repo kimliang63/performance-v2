@@ -260,6 +260,8 @@ GHR_NAV.init('perf', '结果审定');
 var GRADE_OPTIONS=['超出预期','符合预期+','符合预期','符合预期-','低于预期'];
 var GRADE_COLORS={'超出预期':'var(--em700)','符合预期+':'var(--pr)','符合预期':'var(--c7)','符合预期-':'var(--ac)','低于预期':'var(--ro)'};
 var GRADE_BG={'超出预期':'var(--em)','符合预期+':'var(--pr)','符合预期':'var(--c4)','符合预期-':'var(--ac)','低于预期':'var(--ro)'};
+var RATIFY_COLORS={'远低预期':'var(--c5)','低于预期':'var(--ro)','符合预期-':'var(--ac700)','符合预期':'var(--em700)','符合预期+':'var(--pr700)','超出预期':'var(--vi)','远超预期':'var(--ac)'};
+var RATIFY_BG={'远低预期':'var(--c1)','低于预期':'var(--ro50)','符合预期-':'var(--ac50)','符合预期':'var(--em50)','符合预期+':'var(--pr50)','超出预期':'var(--vi50)','远超预期':'var(--ac50)'};
 
 var DIST_RULES={
   '全部':[
@@ -481,7 +483,9 @@ function renderMembers(){
       '<td><span style="font:400 13px/1 var(--f);color:var(--c7)">'+m.grade+'</span></td>'+
       '<td><span style="font:400 13px/1 var(--f);color:var(--c7)">'+m.hierarchyGrade+'</span></td>';
     if(m.ratifyGrade){
-      html+='<td><span style="font:400 13px/1 var(--f);color:var(--c7)">'+m.ratifyGrade+'</span></td>';
+      var gc=RATIFY_COLORS[m.ratifyGrade]||'var(--c7)';
+      var gb=RATIFY_BG[m.ratifyGrade]||'var(--c1)';
+      html+='<td><span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:var(--r1);font:500 12px/1 var(--f);color:'+gc+';background:'+gb+'">'+m.ratifyGrade+'</span></td>';
     }else{
       html+='<td><span style="font:400 12px/1 var(--f);color:var(--c4)">待确认</span></td>';
     }
