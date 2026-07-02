@@ -74,6 +74,22 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}
 .btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
 
+/* ═══ APPEAL MODAL ═══ */
+.appeal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:2000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.appeal-overlay.open{opacity:1;pointer-events:all}
+.appeal-box{background:var(--sf);border-radius:var(--r4);box-shadow:0 20px 60px rgba(0,0,0,.15);width:480px;transform:scale(.96);transition:transform .2s ease}
+.appeal-overlay.open .appeal-box{transform:scale(1)}
+.appeal-box-hd{padding:18px 24px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between}
+.appeal-box-t{font:600 16px/1 var(--f);color:var(--c9)}
+.appeal-box-close{width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c4);background:transparent;border:none;transition:all .12s}
+.appeal-box-close:hover{background:var(--c1);color:var(--c7)}
+.appeal-box-close svg{width:16px;height:16px}
+.appeal-box-bd{padding:20px 24px}
+.appeal-box-ft{padding:14px 24px;border-top:1px solid var(--dv);display:flex;justify-content:flex-end;gap:8px}
+.appeal-textarea{width:100%;min-height:120px;border:1px solid var(--c2);border-radius:var(--r1);padding:10px 12px;font:400 13px/1.5 var(--f);color:var(--c8);outline:none;resize:vertical;transition:border-color .15s}
+.appeal-textarea:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
+.appeal-label{font:500 12px/1 var(--f);color:var(--c6);margin-bottom:8px;display:block}
+
 /* ═══ TOAST ═══ */
 .validate-toast{position:fixed;top:64px;left:50%;transform:translateX(-50%);background:var(--em);color:#FFF;padding:10px 20px;border-radius:var(--r2);font:500 13px/1 var(--f);box-shadow:0 8px 24px rgba(16,185,129,.3);z-index:3000;opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:center;gap:8px}
 .validate-toast.show{opacity:1;pointer-events:all}
@@ -148,19 +164,19 @@ body.chat-open .ai-chat{transform:translateX(0)}
 .ai-toggle svg{width:22px;height:22px;color:#FFF}
 body.chat-open .ai-toggle{display:none}
 
-/* ═══ INLINE APPEAL ═══ */
-.appeal-td{padding:10px 8px !important}
-.appeal-row-ck{width:16px;height:16px;border-radius:3px;border:1.5px solid var(--c3);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .12s}
-.appeal-row-ck.sel{background:var(--pr);border-color:var(--pr)}
-.appeal-row-ck svg{width:10px;height:10px;color:#FFF;display:none}
-.appeal-row-ck.sel svg{display:block}
-tr.appeal-sel{background:var(--pr50)}
-tr.appeal-sel:hover td{background:var(--pr50)}
-
-#appealForm{border-top:1px solid var(--dv)}
-.appeal-label{font:500 12px/1 var(--f);color:var(--c6);margin-bottom:8px;display:block}
-.appeal-textarea{width:100%;min-height:100px;border:1px solid var(--c2);border-radius:var(--r1);padding:10px 12px;font:400 13px/1.5 var(--f);color:var(--c8);outline:none;resize:vertical;transition:border-color .15s}
-.appeal-textarea:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
+/* ═══ APPEAL ITEMS ═══ */
+.appeal-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--dv);cursor:pointer;transition:background .1s}
+.appeal-item:last-child{border-bottom:none}
+.appeal-item:hover{background:var(--c0)}
+.appeal-item.sel{background:var(--pr50)}
+.appeal-item-ck{width:16px;height:16px;border-radius:3px;border:1.5px solid var(--c3);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.appeal-item.sel .appeal-item-ck{background:var(--pr);border-color:var(--pr)}
+.appeal-item-ck svg{width:10px;height:10px;color:#FFF;display:none}
+.appeal-item.sel .appeal-item-ck svg{display:block}
+.appeal-item-info{flex:1;min-width:0}
+.appeal-item-name{font:500 13px/1.3 var(--f);color:var(--c8)}
+.appeal-item-meta{font:400 11px/1 var(--f);color:var(--c5);margin-top:2px}
+.appeal-item-grade{font:500 11px/1 var(--f);padding:2px 8px;border-radius:3px;flex-shrink:0;white-space:nowrap}
 
 /* ═══ APPEAL FILE UPLOAD ═══ */
 .appeal-file{border:2px dashed var(--c2);border-radius:var(--r2);padding:16px 10px;text-align:center;cursor:pointer;transition:all .12s;display:flex;flex-direction:column;align-items:center;gap:4px}
@@ -193,6 +209,7 @@ tr.appeal-sel:hover td{background:var(--pr50)}
         <div class="pg-hd-title">绩效结果确认</div>
         <span class="status-pending">待确认</span>
       </div>
+      <button class="btn btn-p" onclick="submitConfirm()" style="display:none">提交</button>
     </div>
   </div>
 
@@ -216,12 +233,14 @@ tr.appeal-sel:hover td{background:var(--pr50)}
           <div class="confirm-opt-dot"></div>
           <div>
             <div class="confirm-opt-title">我认可上述考核结果</div>
+            <div class="confirm-opt-desc">提交后，本期绩效考核结果将进入归档流程。</div>
           </div>
         </div>
         <div class="confirm-opt" onclick="selectOpt(this,2)">
           <div class="confirm-opt-dot"></div>
           <div>
             <div class="confirm-opt-title">我对上述考核结果有异议，申请申诉</div>
+            <div class="confirm-opt-desc">提交后，将生成申诉申请并流转至相关负责人处理。</div>
           </div>
         </div>
       </div>
@@ -236,12 +255,10 @@ tr.appeal-sel:hover td{background:var(--pr50)}
   <div class="results-list" style="margin-bottom:16px">
     <div style="padding:16px 20px;border-bottom:1px solid var(--dv)">
       <span style="font:600 15px/1 var(--f);color:var(--c9)">得分明细</span>
-      <span id="appealHint" style="display:none;font:400 12px/1 var(--f);color:var(--ro);margin-left:12px">请勾选有异议的得分项</span>
     </div>
     <table>
       <thead>
         <tr>
-          <th id="appealColHead" style="width:36px;text-align:center;display:none">选择</th>
           <th style="width:180px">名称</th>
           <th style="width:55px">权重</th>
           <th style="width:80px">类型</th>
@@ -251,15 +268,12 @@ tr.appeal-sel:hover td{background:var(--pr50)}
         </tr>
       </thead>
       <tbody>
-        <tr class="mod-row"><td colspan="7"><div class="results-mod">
+        <tr class="mod-row"><td colspan="6"><div class="results-mod">
           <div class="results-mod-dot" style="background:var(--pr)"></div>
           <span class="results-mod-name">KPI</span>
           <span class="results-mod-weight">30%</span>
         </div></td></tr>
         <tr>
-          <td class="appeal-td" style="text-align:center;display:none">
-            <div class="appeal-row-ck" data-id="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
-          </td>
           <td><span style="font-weight:500;color:var(--c8)">资源利用率（通用）</span></td>
           <td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">5%</span></td>
           <td><span style="display:inline-block;padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)">定量</span></td>
@@ -268,9 +282,6 @@ tr.appeal-sel:hover td{background:var(--pr50)}
           <td><span class="eval-tag excellent">符合预期+</span></td>
         </tr>
         <tr>
-          <td class="appeal-td" style="text-align:center;display:none">
-            <div class="appeal-row-ck" data-id="2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
-          </td>
           <td><span style="font-weight:500;color:var(--c8)">HRAS UAT用户验收首次通过率</span></td>
           <td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">10%</span></td>
           <td><span style="display:inline-block;padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)">定量</span></td>
@@ -279,9 +290,6 @@ tr.appeal-sel:hover td{background:var(--pr50)}
           <td><span class="eval-tag good">符合预期</span></td>
         </tr>
         <tr>
-          <td class="appeal-td" style="text-align:center;display:none">
-            <div class="appeal-row-ck" data-id="3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
-          </td>
           <td><span style="font-weight:500;color:var(--c8)">HRAS需求评审及时率</span></td>
           <td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">15%</span></td>
           <td><span style="display:inline-block;padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)">定量</span></td>
@@ -289,15 +297,12 @@ tr.appeal-sel:hover td{background:var(--pr50)}
           <td style="font-family:var(--m);font-weight:500;color:var(--c8)">96%</td>
           <td><span class="eval-tag good">符合预期</span></td>
         </tr>
-        <tr class="mod-row"><td colspan="7"><div class="results-mod">
+        <tr class="mod-row"><td colspan="6"><div class="results-mod">
           <div class="results-mod-dot" style="background:var(--em)"></div>
           <span class="results-mod-name">KPA</span>
           <span class="results-mod-weight">70%</span>
         </div></td></tr>
         <tr>
-          <td class="appeal-td" style="text-align:center;display:none">
-            <div class="appeal-row-ck" data-id="4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
-          </td>
           <td><span style="font-weight:500;color:var(--c8)">HRAS产品管理规范</span></td>
           <td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">10%</span></td>
           <td><span style="display:inline-block;padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">定性</span></td>
@@ -306,9 +311,6 @@ tr.appeal-sel:hover td{background:var(--pr50)}
           <td><span class="eval-tag excellent">符合预期+</span></td>
         </tr>
         <tr>
-          <td class="appeal-td" style="text-align:center;display:none">
-            <div class="appeal-row-ck" data-id="5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
-          </td>
           <td><span style="font-weight:500;color:var(--c8)">日常滚动需求响应</span></td>
           <td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">10%</span></td>
           <td><span style="display:inline-block;padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">定性</span></td>
@@ -317,9 +319,6 @@ tr.appeal-sel:hover td{background:var(--pr50)}
           <td><span class="eval-tag excellent">符合预期+</span></td>
         </tr>
         <tr>
-          <td class="appeal-td" style="text-align:center;display:none">
-            <div class="appeal-row-ck" data-id="6"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
-          </td>
           <td><span style="font-weight:500;color:var(--c8)">HR ONE 绩效重构事项推进</span></td>
           <td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">25%</span></td>
           <td><span style="display:inline-block;padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">定性</span></td>
@@ -328,9 +327,6 @@ tr.appeal-sel:hover td{background:var(--pr50)}
           <td><span class="eval-tag excellent">符合预期+</span></td>
         </tr>
         <tr>
-          <td class="appeal-td" style="text-align:center;display:none">
-            <div class="appeal-row-ck" data-id="7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
-          </td>
           <td><span style="font-weight:500;color:var(--c8)">AI应用项目探索与落地推广</span></td>
           <td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">25%</span></td>
           <td><span style="display:inline-block;padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">定性</span></td>
@@ -340,21 +336,43 @@ tr.appeal-sel:hover td{background:var(--pr50)}
         </tr>
       </tbody>
     </table>
+  </div>
+</div>
 
-    <!-- Inline Appeal Form -->
-    <div id="appealForm" style="display:none;padding:20px 24px">
-      <div id="appealItemCount" style="font:400 11px/1 var(--f);color:var(--pr);margin-bottom:16px">已选 0 项</div>
-
+<!-- Appeal Modal -->
+<div class="appeal-overlay" id="appealOverlay">
+  <div class="appeal-box" style="width:580px">
+    <div class="appeal-box-hd">
+      <span class="appeal-box-t">不同意绩效结果</span>
+      <button class="appeal-box-close" onclick="closeDisagree()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="appeal-box-bd">
+      <!-- 一、选择异议得分项 -->
       <div style="margin-bottom:16px">
-        <label class="appeal-label">申诉原因 <span style="color:var(--ro)">*</span></label>
+        <label class="appeal-label">一、选择异议得分项 <span style="color:var(--ro)">*</span></label>
+        <div id="appealItems" style="max-height:220px;overflow-y:auto;border:1px solid var(--c2);border-radius:var(--r1)"></div>
+        <div id="appealItemCount" style="font:400 11px/1 var(--f);color:var(--pr);margin-top:4px">已选 0 项</div>
+      </div>
+
+      <!-- 二、申诉原因 -->
+      <div style="margin-bottom:16px">
+        <label class="appeal-label">二、申诉原因 <span style="color:var(--ro)">*</span></label>
         <textarea class="appeal-textarea" id="appealReason" placeholder="请说明不同意的原因，至少10个字..."></textarea>
         <div id="appealReasonErr" style="font:400 11px/1 var(--f);color:var(--ro);margin-top:4px;display:none">请至少输入 10 个字</div>
       </div>
 
+      <!-- 三、佐证材料 -->
       <div>
-        <label class="appeal-label">佐证材料（选填，最多 5 份）</label>
-        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px" id="appealFilesGrid"></div>
+        <label class="appeal-label">三、佐证材料（选填，最多 5 份）</label>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px" id="appealFilesGrid">
+        </div>
       </div>
+    </div>
+    <div class="appeal-box-ft">
+      <button class="btn btn-s" onclick="closeDisagree()">取消</button>
+      <button class="btn btn-r" onclick="submitDisagree()">提交申诉</button>
     </div>
   </div>
 </div>
@@ -365,7 +383,21 @@ tr.appeal-sel:hover td{background:var(--pr50)}
 <script>
 GHR_NAV.init('perf', '结果确认');
 
-var selectedOpt = 1;
+var selectedOpt=1;
+
+function selectOpt(el,n){
+  document.querySelectorAll('.confirm-opt').forEach(function(o){o.classList.remove('sel')});
+  el.classList.add('sel');
+  selectedOpt=n;
+}
+
+function submitConfirm(){
+  if(selectedOpt===1){
+    showToast('已确认绩效结果','success');
+  }else{
+    openDisagree();
+  }
+}
 
 // ═══ 申诉数据 ═══
 var SCORE_ITEMS = [
@@ -380,53 +412,48 @@ var SCORE_ITEMS = [
 var selectedItems = [];
 var uploadedFiles = [null, null, null, null, null];
 
-// ═══ 选择选项联动 ═══
-function selectOpt(el, n) {
-  document.querySelectorAll('.confirm-opt').forEach(function(o) { o.classList.remove('sel'); });
-  el.classList.add('sel');
-  selectedOpt = n;
+var GRADE_TAG_CLS = {
+  '超出预期':'excellent','符合预期+':'excellent','符合预期':'good',
+  '符合预期-':'normal','低于预期':'poor'
+};
+
+// ═══ 弹窗控制 ═══
+function openDisagree() {
   selectedItems = [];
   uploadedFiles = [null, null, null, null, null];
-  toggleAppealForm(n === 2);
-}
-
-function toggleAppealForm(show) {
-  // 勾选列
-  document.querySelectorAll('.appeal-td').forEach(function(td) { td.style.display = show ? '' : 'none'; });
-  document.getElementById('appealColHead').style.display = show ? '' : 'none';
-  document.getElementById('appealHint').style.display = show ? 'inline' : 'none';
-  // 申诉表单
-  document.getElementById('appealForm').style.display = show ? 'block' : 'none';
-  // 重置状态
-  document.querySelectorAll('.appeal-row-ck').forEach(function(ck) { ck.classList.remove('sel'); });
-  document.querySelectorAll('tr.appeal-sel').forEach(function(tr) { tr.classList.remove('appeal-sel'); });
   document.getElementById('appealReason').value = '';
   document.getElementById('appealReasonErr').style.display = 'none';
+  renderAppealItems();
   renderAppealFiles();
-  updateAppealCount();
+  document.getElementById('appealOverlay').classList.add('open');
 }
 
-// ═══ 勾选行 ═══
-document.addEventListener('click', function(e) {
-  var ck = e.target.closest('.appeal-row-ck');
-  if (!ck) return;
-  e.stopPropagation();
-  var id = parseInt(ck.dataset.id);
-  var idx = selectedItems.indexOf(id);
-  if (idx >= 0) {
-    selectedItems.splice(idx, 1);
-    ck.classList.remove('sel');
-    ck.closest('tr').classList.remove('appeal-sel');
-  } else {
-    selectedItems.push(id);
-    ck.classList.add('sel');
-    ck.closest('tr').classList.add('appeal-sel');
-  }
-  updateAppealCount();
-});
+function closeDisagree() {
+  document.getElementById('appealOverlay').classList.remove('open');
+}
 
-function updateAppealCount() {
+// ═══ 得分项选择 ═══
+function renderAppealItems() {
+  var container = document.getElementById('appealItems');
+  container.innerHTML = SCORE_ITEMS.map(function(item) {
+    var sel = selectedItems.includes(item.id);
+    return '<div class="appeal-item' + (sel ? ' sel' : '') + '" onclick="toggleAppealItem(' + item.id + ')">' +
+      '<div class="appeal-item-ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>' +
+      '<div class="appeal-item-info">' +
+        '<div class="appeal-item-name">' + item.module + ' · ' + item.name + '</div>' +
+        '<div class="appeal-item-meta">' + item.type + (item.score ? ' → ' + item.score : '') + '</div>' +
+      '</div>' +
+      '<span class="appeal-item-grade eval-tag ' + item.gradeCls + '">' + item.grade + '</span>' +
+    '</div>';
+  }).join('');
   document.getElementById('appealItemCount').textContent = '已选 ' + selectedItems.length + ' 项';
+}
+
+function toggleAppealItem(id) {
+  var idx = selectedItems.indexOf(id);
+  if (idx >= 0) { selectedItems.splice(idx, 1); }
+  else { selectedItems.push(id); }
+  renderAppealItems();
 }
 
 // ═══ 文件上传 ═══
@@ -444,44 +471,47 @@ function renderAppealFiles() {
   grid.innerHTML = html;
 }
 
-function triggerFile(slot) { document.getElementById('fileInput' + slot).click(); }
+function triggerFile(slot) {
+  document.getElementById('fileInput' + slot).click();
+}
 
 function handleFile(slot, input) {
   if (input.files.length > 0) {
     uploadedFiles[slot - 1] = input.files[0];
     var el = document.getElementById('appealFile' + slot);
     el.classList.add('uploaded');
-    el.querySelector('.appeal-file-label').textContent = '已上传';
-    var old = el.querySelector('.appeal-file-name');
-    if (old) old.remove();
-    var n = document.createElement('div');
-    n.className = 'appeal-file-name';
-    n.textContent = input.files[0].name;
-    el.appendChild(n);
+    var label = el.querySelector('.appeal-file-label');
+    label.textContent = '已上传';
+    // 移除旧文件名
+    var oldName = el.querySelector('.appeal-file-name');
+    if (oldName) oldName.remove();
+    var nameEl = document.createElement('div');
+    nameEl.className = 'appeal-file-name';
+    nameEl.textContent = input.files[0].name;
+    el.appendChild(nameEl);
   }
 }
 
 // ═══ 提交 ═══
-function submitConfirm() {
-  if (selectedOpt === 1) {
-    showToast('已确认绩效结果', 'success');
-  } else {
-    var reason = document.getElementById('appealReason').value.trim();
-    var hasErr = false;
-    if (selectedItems.length === 0) {
-      showToast('请至少选择 1 项异议得分项', 'warn');
-      hasErr = true;
-    }
-    if (reason.length < 10) {
-      document.getElementById('appealReasonErr').style.display = 'block';
-      hasErr = true;
-    } else {
-      document.getElementById('appealReasonErr').style.display = 'none';
-    }
-    if (hasErr) return;
-    var fileCount = uploadedFiles.filter(Boolean).length;
-    showToast('已提交申诉 · ' + selectedItems.length + ' 项异议' + (fileCount > 0 ? ' · ' + fileCount + ' 份材料' : '') + ' · HRBP将在3个工作日内处理', 'warn');
+function submitDisagree() {
+  var reason = document.getElementById('appealReason').value.trim();
+  var hasErr = false;
+
+  if (selectedItems.length === 0) {
+    showToast('请至少选择 1 项异议得分项', 'warn');
+    hasErr = true;
   }
+  if (reason.length < 10) {
+    document.getElementById('appealReasonErr').style.display = 'block';
+    hasErr = true;
+  } else {
+    document.getElementById('appealReasonErr').style.display = 'none';
+  }
+  if (hasErr) return;
+
+  var fileCount = uploadedFiles.filter(Boolean).length;
+  closeDisagree();
+  showToast('已提交申诉 · ' + selectedItems.length + ' 项异议' + (fileCount > 0 ? ' · ' + fileCount + ' 份材料' : '') + ' · HRBP将在3个工作日内处理', 'warn');
 }
 
 // ═══ AI CHAT ═══
@@ -540,7 +570,7 @@ function handleAiAction(action){
         ],actions:['分析我的绩效','有异议怎么办']});
         break;
       case '有异议怎么办':
-        AI_MSGS.push({role:'bot',text:'❓ 如果你对绩效结果有异议：\n\n1. 选择「我对考核结果有异议」\n2. 勾选有异议的得分项\n3. 填写申诉原因（至少10个字）\n4. 可选上传佐证材料\n5. 点击提交，HRBP将在3个工作日内处理\n\n💡 建议：\n• 先冷静分析，确认是否有误解\n• 准备具体数据或事实依据\n• 异议不影响后续绩效改进计划',time:aiNow(),cards:[
+        AI_MSGS.push({role:'bot',text:'❓ 如果你对绩效结果有异议：\n\n1. 点击页面右上角「不同意」按钮\n2. 填写异议原因（越具体越好）\n3. 可上传佐证材料\n4. HRBP将在3个工作日内处理\n\n💡 建议：\n• 先冷静分析，确认是否有误解\n• 准备具体数据或事实依据\n• 异议不影响后续绩效改进计划',time:aiNow(),cards:[
           {t:'申诉指引',d:'3个工作日内HRBP处理',tag:'流程说明',tc:'pr'}
         ],actions:['分析我的绩效','查看成长趋势']});
         break;
@@ -560,9 +590,6 @@ function showToast(msg,type){
   t.className='validate-toast show'+(type==='warn'?' warn':'');
   setTimeout(function(){t.classList.remove('show')},3000);
 }
-
-// 初始化文件上传格
-renderAppealFiles();
 </script>
 
 <!-- AI Chat Panel -->
