@@ -265,6 +265,30 @@ tbody tr:last-child td{border-bottom:none}
 @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .fi{animation:fi .25s ease forwards}
 
+/* ═══ VERSION TOOLTIP ═══ */
+.cell-version{position:relative;cursor:pointer}
+.cell-version:hover .ver-tip{display:block}
+.ver-tip{
+  display:none;position:absolute;top:100%;left:0;z-index:500;
+  background:var(--sf);border:1px solid var(--c3);border-radius:var(--r2);
+  box-shadow:var(--shadow-dropdown);min-width:400px;padding:8px 0;
+}
+.ver-tip-hd{
+  display:flex;align-items:center;gap:12px;
+  font:600 11px/1 var(--f);color:var(--c5);padding:6px 14px 8px;
+  border-bottom:1px solid var(--dv);margin-bottom:4px;
+  text-transform:uppercase;letter-spacing:.3px;
+}
+.ver-tip-row{
+  display:flex;align-items:center;gap:8px;
+  padding:6px 14px;font:400 12px/1.4 var(--f);color:var(--c7);
+  cursor:pointer;transition:background .1s;
+}
+.ver-tip-row:hover{background:var(--pr50);color:var(--pr)}
+.ver-tip-row .v{font-family:var(--m);font-weight:600;color:var(--c9)}
+.ver-tip-row .d{font:400 11px/1 var(--f);color:var(--c5)}
+.ver-tip-row .n{font:400 11px/1 var(--f);color:var(--c4)}
+
 /* ═══ RESPONSIVE ═══ */
 @media(max-width:1200px){
   .st-g{grid-template-columns:repeat(2,1fr)}
@@ -321,6 +345,38 @@ const STATUS_MAP={
   draft:{label:'草稿',cls:'draft'},
   enabled:{label:'已启用',cls:'enabled'},
   disabled:{label:'已停用',cls:'disabled'},
+};
+
+const VERSION_HISTORY={
+  S001:[
+    {v:3,date:'2026-05-20',modifier:'王管理',name:'2026年度绩效考核方案 v3'},
+    {v:2,date:'2026-04-10',modifier:'王管理',name:'2026年度绩效考核方案 v2'},
+    {v:1,date:'2026-02-15',modifier:'王管理',name:'2026年度绩效考核方案 v1'},
+  ],
+  S002:[
+    {v:1,date:'2026-05-18',modifier:'王管理',name:'2026年半年度绩效考核 v1'},
+  ],
+  S003:[
+    {v:5,date:'2026-05-10',modifier:'李HR',name:'月度绩效考核-仓储 v5'},
+    {v:4,date:'2026-04-22',modifier:'李HR',name:'月度绩效考核-仓储 v4'},
+    {v:3,date:'2026-03-15',modifier:'王管理',name:'月度绩效考核-仓储 v3'},
+    {v:2,date:'2026-02-01',modifier:'李HR',name:'月度绩效考核-仓储 v2'},
+    {v:1,date:'2026-01-10',modifier:'李HR',name:'月度绩效考核-仓储 v1'},
+  ],
+  S005:[
+    {v:2,date:'2026-05-22',modifier:'李HR',name:'试用期考核方案 v2'},
+    {v:1,date:'2026-03-01',modifier:'李HR',name:'试用期考核方案 v1'},
+  ],
+};
+
+const ACTIVITIES_BY_SCHEME={
+  S001:[
+    {id:1,name:'2026年Q2绩效考核',cycleName:'Q2季度考核',cycleRange:'2026/04/01 - 2026/06/30',status:'active',empCount:128},
+    {id:2,name:'2026年Q3绩效考核',cycleName:'Q3季度考核',cycleRange:'2026/07/01 - 2026/09/30',status:'not_started',empCount:0},
+  ],
+  S002:[
+    {id:3,name:'2026年Q1绩效考核',cycleName:'Q1季度考核',cycleRange:'2026/01/01 - 2026/03/31',status:'ended',empCount:96},
+  ],
 };
 
 // ═══ 状态 ═══
@@ -397,10 +453,39 @@ function renderTable(data){
     return `<tr>
       <td class="cell-name">${s.name}</td>
       <td class="cell-code">${s.code}</td>
-      <td><span style="font-family:var(--m);font-size:11px;color:var(--c5);padding:2px 6px;background:var(--c1);border-radius:3px">v${s.version}</span></td>
+      <td class="cell-version" onclick="event.stopPropagation()">
+        <span style="font-family:var(--m);font-size:11px;color:var(--c5);padding:2px 6px;background:var(--c1);border-radius:3px">v${s.version}</span>
+        ${VERSION_HISTORY[s.id]?`
+        <div class="ver-tip">
+          <div class="ver-tip-hd"><span style="width:36px">版本</span><span style="flex:1">名称</span><span style="width:60px">修改人</span><span style="width:80px">日期</span></div>
+          ${VERSION_HISTORY[s.id].map(v=>`
+            <div class="ver-tip-row" onclick="viewVersionDetail('${s.id}',${v.v})">
+              <span class="v">v${v.v}</span>
+              <span style="flex:1;margin:0 12px;font:400 12px/1 var(--f);color:var(--c7);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${v.name}</span>
+              <span class="n" style="width:60px">${v.modifier}</span>
+              <span class="d" style="width:80px">${v.date}</span>
+            </div>`).join('')}
+        </div>`:''}
+      </td>
       <td style="font:400 12px/1.4 var(--f);color:var(--c6);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.desc}</td>
       <td><span class="cell-status ${st.cls}">${st.label}</span></td>
-      <td class="cell-act"><span class="cell-act-count">${s.activities}</span> 个活动</td>
+      <td class="cell-version">
+        <span style="font:500 12px/1 var(--f);color:var(--pr);cursor:pointer"><span class="cell-act-count">${s.activities}</span> 个活动</span>
+        ${(ACTIVITIES_BY_SCHEME[s.id]||[]).length>0?`
+        <div class="ver-tip">
+          <div class="ver-tip-hd"><span style="flex:1">活动名称</span><span style="width:180px">考核周期</span><span style="width:50px">人数</span><span style="width:64px">状态</span></div>
+          ${ACTIVITIES_BY_SCHEME[s.id].map(function(a){
+            var stLabel={active:'进行中',not_started:'未开始',ended:'已结束',archived:'已归档'};
+            var stClr={active:'#10B981',not_started:'#F59E0B',ended:'#71717A',archived:'#A1A1AA'};
+            return `<div class="ver-tip-row" onclick="event.stopPropagation();window.open('perf-activity-detail.html?id=${a.id}','_blank')" style="display:flex;align-items:center;gap:8px">
+              <span style="flex:1;font:400 12px/1 var(--f);color:var(--c9);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.name}</span>
+              <span style="width:180px;line-height:1.4"><span style="font:400 11px/1 var(--f);color:var(--c7);display:block">${a.cycleName}</span><span style="font:400 10px/1 var(--f);color:var(--c4);display:block">${a.cycleRange}</span></span>
+              <span style="width:50px;font-family:var(--m);font-size:11px;color:var(--c6)">${a.empCount}人</span>
+              <span style="width:64px;font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px;color:${stClr[a.status]};background:${stClr[a.status]}18">${stLabel[a.status]}</span>
+            </div>`;
+          }).join('')}
+        </div>`:''}
+      </td>
       <td class="cell-creator">${s.modifier}</td>
       <td class="cell-date">${s.modified}</td>
       <td>
@@ -587,6 +672,11 @@ function confirmToggle(){
   }
   modalState={type:null,data:null};
   renderApp();
+}
+
+function viewVersionDetail(schemeId,version){
+  console.log('[绩效方案] 查看历史版本:',schemeId,'v'+version);
+  window.location.href='perf-scheme-detail.html?id='+schemeId+'&version='+version;
 }
 
 function closeModal(){

@@ -35,7 +35,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .pg-hd-info-value{font:500 13px/1.3 var(--f);color:var(--c8)}
 
 /* ═══ EVAL TABLE ═══ */
-.eval-list{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden}
+.eval-list{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden;overflow-x:auto}
 .eval-list table{width:100%;border-collapse:collapse}
 .eval-list thead{position:sticky;top:0;z-index:10}
 .eval-list th{background:var(--c0);padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
@@ -48,7 +48,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .eval-mod-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .eval-mod-name{font:600 13px/1 var(--f);color:var(--c8)}
 .eval-mod-weight{font-family:var(--m);font-weight:500;font-size:12px;color:var(--c5);background:var(--c1);padding:2px 8px;border-radius:4px}
-.eval-type-tag{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:3px;font:500 11px/1 var(--f)}
+.eval-type-tag{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:3px;font:500 11px/1 var(--f);white-space:nowrap}
 .eval-type-tag.quant{background:var(--pr50);color:var(--pr)}
 .eval-type-tag.qual{background:var(--vi50);color:var(--vi)}
 .eval-weight{font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px}
@@ -363,10 +363,10 @@ function renderModuleContainer(){
   var html='<div class="eval-list"><table><thead><tr>'+
     '<th style="width:180px">名称</th>'+
     '<th style="width:55px">权重</th>'+
-    '<th style="width:60px">类型</th>'+
-    '<th style="min-width:220px">完成值/衡量标准</th>'+
-    '<th style="min-width:220px">完成值/完成情况</th>'+
-    '<th style="min-width:160px">评价/得分</th>'+
+    '<th style="width:70px">类型</th>'+
+    '<th style="min-width:220px">衡量标准</th>'+
+    '<th style="min-width:220px;position:sticky;right:160px;background:var(--c0);z-index:2">完成值/完成情况</th>'+
+    '<th style="min-width:160px;position:sticky;right:0;background:var(--c0);z-index:2">评价/得分</th>'+
     '</tr></thead><tbody>';
   MODULES.forEach(function(mod,mi){
     html+='<tr class="mod-row"><td colspan="6"><div class="eval-mod">'+
@@ -382,12 +382,12 @@ function renderModuleContainer(){
         '<td><span class="eval-type-tag '+(isQuant?'quant':'qual')+'">'+(isQuant?'定量':'定性')+'</span></td>';
       if(isQuant){
         html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">'+g.desc+'<br>挑战值: <span style="font-family:var(--m);color:var(--c7)">'+g.challenge+g.unit+'</span> / 目标值: <span style="font-family:var(--m);color:var(--c7)">'+g.target+g.unit+'</span></td>';
-        html+='<td><input class="edit-cell" type="number" id="completed_'+mi+'_'+gi+'" placeholder="输入完成值" oninput="updateCompleted('+mi+','+gi+')"></td>';
-        html+='<td id="score_'+mi+'_'+gi+'" class="eval-score">—</td>';
+        html+='<td style="position:sticky;right:160px;background:var(--sf);z-index:1"><input class="edit-cell" type="number" id="completed_'+mi+'_'+gi+'" placeholder="输入完成值" oninput="updateCompleted('+mi+','+gi+')"></td>';
+        html+='<td id="score_'+mi+'_'+gi+'" class="eval-score" style="position:sticky;right:0;background:var(--sf);z-index:1">—</td>';
       }else{
         html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">'+g.measureDesc+'</td>';
-        html+='<td><textarea class="edit-cell-sm" id="completed_'+mi+'_'+gi+'" placeholder="描述完成情况…" oninput="updateCompleted('+mi+','+gi+')">'+g.completed+'</textarea></td>';
-        html+='<td class="score-cell"><div class="star-rating" id="stars_'+mi+'_'+gi+'" data-value="'+(g.stars||0)+'"><div class="star-row">';
+        html+='<td style="position:sticky;right:160px;background:var(--sf);z-index:1"><textarea class="edit-cell-sm" id="completed_'+mi+'_'+gi+'" placeholder="描述完成情况…" oninput="updateCompleted('+mi+','+gi+')">'+g.completed+'</textarea></td>';
+        html+='<td class="score-cell" style="position:sticky;right:0;background:var(--sf);z-index:1"><div class="star-rating" id="stars_'+mi+'_'+gi+'" data-value="'+(g.stars||0)+'"><div class="star-row">';
         for(var si=1;si<=5;si++){
           html+='<span class="star'+(si<=(g.stars||0)?' active':'')+'" data-v="'+si+'" onclick="setStar(this,'+mi+','+gi+','+si+')" onmouseenter="starHover(this,1)" onmouseleave="starHover(this,0)">★</span>';
         }
@@ -400,7 +400,7 @@ function renderModuleContainer(){
   html+='<div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-top:16px;padding:20px 24px">'+
     '<div style="font:600 14px/1 var(--f);color:var(--c9);margin-bottom:12px;display:flex;align-items:center;gap:6px">'+
     '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>'+
-    '员工总评语</div>'+
+    '员工自评</div>'+
     '<textarea class="edit-cell" id="overallComment" placeholder="请对本季度整体工作进行总结评价，包括主要成果、不足之处及改进方向…" style="min-height:100px" oninput="overallComment=this.value">'+overallComment+'</textarea>'+
     '</div>';
   document.getElementById('moduleContainer').innerHTML=html;

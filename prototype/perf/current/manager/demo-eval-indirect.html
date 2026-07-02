@@ -35,7 +35,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .pg-hd-info-value{font:500 13px/1.3 var(--f);color:var(--c8)}
 
 /* ═══ EVAL TABLE ═══ */
-.eval-list{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden}
+.eval-list{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden;overflow-x:auto}
 .eval-list table{width:100%;border-collapse:collapse}
 .eval-list thead{position:sticky;top:0;z-index:10}
 .eval-list th{background:var(--c0);padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
@@ -49,6 +49,9 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .eval-mod-name{font:600 13px/1 var(--f);color:var(--c8)}
 .eval-mod-weight{font-family:var(--m);font-weight:500;font-size:12px;color:var(--c5);background:var(--c1);padding:2px 8px;border-radius:4px}
 .eval-mod-readonly{font:500 11px/1 var(--f);padding:2px 8px;border-radius:4px;background:var(--c1);color:var(--c4)}
+.eval-type-tag{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:3px;font:500 11px/1 var(--f);white-space:nowrap}
+.eval-type-tag.quant{background:var(--pr50);color:var(--pr)}
+.eval-type-tag.qual{background:var(--vi50);color:var(--vi)}
 
 /* ═══ INPUT ═══ */
 input.edit-cell{border:1px solid var(--c2);border-radius:var(--r1);padding:5px 8px;font:400 13px/1 var(--f);color:var(--c9);background:var(--sf);transition:all .12s;width:80px;outline:none;text-align:center;font-family:var(--m)}
@@ -88,13 +91,37 @@ textarea.edit-cell::placeholder{color:var(--c4)}
 .grade-btn.faded{opacity:0.4;background:var(--c1);color:var(--c4)}
 
 /* ═══ HISTORY CARD ═══ */
-.hist-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:16px 24px;margin-bottom:16px}
-.hist-card-title{font:600 14px/1 var(--f);color:var(--c9);margin-bottom:12px}
-.hist-row{display:flex;align-items:center;gap:6px;margin-bottom:10px;font:400 13px/1.4 var(--f);color:var(--c7)}
-.hist-months{display:flex;flex-wrap:wrap;gap:8px}
-.hist-month{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;background:var(--c0);border-radius:var(--r2);min-width:64px}
-.hist-month-label{font:500 11px/1 var(--f);color:var(--c5)}
-.hist-month-badge{font:500 11px/1 var(--f);padding:2px 8px;border-radius:3px}
+.hist-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:16px}
+.hist-hd{font:600 14px/1 var(--f);color:var(--c9);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.hist-hd svg{width:16px;height:16px;color:var(--pr)}
+.hist-body{display:flex;gap:20px;align-items:stretch}
+.hist-annual{min-width:160px;padding:16px 20px;background:linear-gradient(135deg,var(--pr50),var(--vi50));border-radius:var(--r2);display:flex;flex-direction:column;justify-content:center;align-items:center;border:1px solid var(--pr100)}
+.hist-annual-label{font:500 11px/1 var(--f);color:var(--c5);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.hist-annual-grade{font:700 28px/1 var(--f);color:var(--pr)}
+.hist-divider{width:1px;background:var(--c2);flex-shrink:0}
+.hist-monthly{flex:1;display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.hist-month{padding:10px 12px;background:var(--c0);border:1px solid var(--c2);border-radius:var(--r2);text-align:center;transition:all .12s}
+.hist-month:hover{border-color:var(--pr200);box-shadow:0 2px 8px rgba(37,99,235,.06)}
+.hist-month-label{font:500 11px/1 var(--f);color:var(--c5);margin-bottom:6px}
+.hist-month-letter{font:700 18px/1 var(--f);margin-bottom:2px}
+.hist-month-letter.excellent{color:var(--em700)}
+.hist-month-letter.good{color:var(--pr)}
+.hist-month-letter.normal{color:var(--c6)}
+.hist-month-letter.pending{color:var(--c4)}
+.hist-month-grade{font:600 13px/1 var(--f);padding:3px 8px;border-radius:4px;display:inline-block}
+.hist-month-grade.excellent{background:var(--em50);color:var(--em700)}
+.hist-month-grade.good{background:var(--pr50);color:var(--pr)}
+.hist-month-grade.normal{background:var(--c1);color:var(--c6)}
+.hist-month-grade.pending{color:var(--c4)}
+
+/* ═══ STAR RATING ═══ */
+.star-rating{display:flex;flex-direction:column;gap:6px;align-items:flex-start;min-width:220px}
+.star-row{display:flex;align-items:center;gap:4px;height:24px}
+.star{width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:20px;line-height:1;cursor:pointer;color:#D1D5DB;transition:color .12s}
+.star.active{color:#F59E0B}
+.star:hover{color:#F59E0B}
+.star-tip{font:400 11px/1 var(--f);color:var(--pr);height:18px;transition:all .12s}
+.score-cell{min-width:260px}
 
 /* ═══ INITIAL GRADE CARD ═══ */
 .init-grade-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:16px 24px;margin-bottom:16px}
@@ -249,16 +276,25 @@ body.chat-open .ai-toggle{display:none}
 
   <!-- 历史绩效统计 -->
   <div class="hist-card">
-    <div class="hist-card-title">历史绩效统计</div>
-    <div class="hist-row">上年年度绩效结果：<span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:3px;font:500 12px/1 var(--f);color:var(--pr);background:var(--pr50)">2025年度 符合预期+</span></div>
-    <div style="font:500 12px/1 var(--f);color:var(--c6);margin-bottom:8px">今年月度绩效结果</div>
-    <div class="hist-months">
-      <div class="hist-month"><span class="hist-month-label">2026年1月</span><span class="hist-month-badge" style="color:var(--c8);background:var(--c1)">符合预期</span></div>
-      <div class="hist-month"><span class="hist-month-label">2026年2月</span><span class="hist-month-badge" style="color:var(--c8);background:var(--c1)">符合预期</span></div>
-      <div class="hist-month"><span class="hist-month-label">2026年3月</span><span class="hist-month-badge" style="color:var(--pr);background:var(--pr50)">符合预期+</span></div>
-      <div class="hist-month"><span class="hist-month-label">2026年4月</span><span class="hist-month-badge" style="color:var(--pr);background:var(--pr50)">符合预期+</span></div>
-      <div class="hist-month"><span class="hist-month-label">2026年5月</span><span class="hist-month-badge" style="color:var(--em700);background:var(--em50)">超出预期</span></div>
-      <div class="hist-month"><span class="hist-month-label">2026年6月</span><span class="hist-month-badge" style="color:var(--c4);background:var(--c1)">当前，未出</span></div>
+    <div class="hist-hd">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      历史绩效统计
+    </div>
+    <div class="hist-body">
+      <div class="hist-annual">
+        <div class="hist-annual-label">2025年度绩效</div>
+        <div class="hist-annual-grade">B+</div>
+        <div style="font:500 13px/1 var(--f);color:var(--pr);margin-top:4px">符合预期+</div>
+      </div>
+      <div class="hist-divider"></div>
+      <div class="hist-monthly">
+        <div class="hist-month"><span class="hist-month-label">2026年1月</span><span class="hist-month-letter normal">B</span><span class="hist-month-grade normal">符合预期</span></div>
+        <div class="hist-month"><span class="hist-month-label">2026年2月</span><span class="hist-month-letter normal">B</span><span class="hist-month-grade normal">符合预期</span></div>
+        <div class="hist-month"><span class="hist-month-label">2026年3月</span><span class="hist-month-letter good">B+</span><span class="hist-month-grade good">符合预期+</span></div>
+        <div class="hist-month"><span class="hist-month-label">2026年4月</span><span class="hist-month-letter good">B+</span><span class="hist-month-grade good">符合预期+</span></div>
+        <div class="hist-month"><span class="hist-month-label">2026年5月</span><span class="hist-month-letter excellent">A</span><span class="hist-month-grade excellent">超出预期</span></div>
+        <div class="hist-month"><span class="hist-month-label">2026年6月</span><span class="hist-month-letter pending">—</span><span class="hist-month-grade pending">当前，未出</span></div>
+      </div>
     </div>
   </div>
 
@@ -331,10 +367,10 @@ var MODULES=[
     {id:'g3',name:'需求评审及时率',indicator:'需求评审及时率',type:'quant',weight:15,target:98,challenge:100,baseline:95,unit:'%',desc:'迭代版本评审的及时性情况',completed:'96',employeeGrade:'符合预期'}
   ]},
   {name:'KPA',weight:70,color:'var(--em)',goals:[
-    {id:'g4',name:'产品管理规范',indicator:'产品管理规范',type:'qual',weight:10,measureDesc:'需求管理流程规范、产品需求规范、迭代火车管理规范、周会/月会准时完成',completed:'',employeeGrade:'符合预期'},
-    {id:'g5',name:'日常需求响应',indicator:'日常需求响应',type:'qual',weight:10,measureDesc:'根据业务日会需求优先级，滚动响应日常需求，输出产品解决方案',completed:'',employeeGrade:'符合预期'},
-    {id:'g6',name:'绩效重构',indicator:'绩效重构推进',type:'qual',weight:25,measureDesc:'06-10 输出AI+绩效核心页面原型；06-19 完成绩效版本4需求内审；06-24 完成需求评审',completed:'',employeeGrade:'符合预期+'},
-    {id:'g7',name:'AI应用落地',indicator:'AI应用落地',type:'qual',weight:25,measureDesc:'06-05 完成ASSC采购侧AI应用1.0版本；06-12 对接LBU试点应用；06-26 完成1.1版本',completed:'',employeeGrade:'符合预期+'}
+    {id:'g4',name:'产品管理规范',indicator:'产品管理规范',type:'qual',weight:10,measureDesc:'需求管理流程规范、产品需求规范、迭代火车管理规范、周会/月会准时完成',completed:'已完成需求管理流程和产品需求规范文档编写，迭代火车管理规范已落地执行，周会/月会按计划准时完成',employeeGrade:'符合预期'},
+    {id:'g5',name:'日常需求响应',indicator:'日常需求响应',type:'qual',weight:10,measureDesc:'根据业务日会需求优先级，滚动响应日常需求，输出产品解决方案',completed:'按日会需求优先级滚动响应，Q2共输出8份产品解决方案，平均响应时间<2天',employeeGrade:'符合预期'},
+    {id:'g6',name:'绩效重构',indicator:'绩效重构推进',type:'qual',weight:25,measureDesc:'06-10 输出AI+绩效核心页面原型；06-19 完成绩效版本4需求内审；06-24 完成需求评审',completed:'三个里程碑全部按时完成，原型已通过内审，需求评审于6月24日完成',employeeGrade:'符合预期+',indirectStar:4},
+    {id:'g7',name:'AI应用落地',indicator:'AI应用落地',type:'qual',weight:25,measureDesc:'06-05 完成ASSC采购侧AI应用1.0版本；06-12 对接LBU试点应用；06-26 完成1.1版本',completed:'按里程碑全部完成，1.0版本准时上线，LBU试点反馈良好，1.1版本已于6月26日发布',employeeGrade:'符合预期+',indirectStar:5}
   ]}
 ];
 function calcScore(g,completedVal){
@@ -357,12 +393,14 @@ function renderModuleContainer(){
   var html='<div class="eval-list"><table><thead><tr>'+
     '<th style="width:180px">名称</th>'+
     '<th style="width:55px">权重</th>'+
-    '<th>完成值/衡量标准</th>'+
-    '<th style="width:80px">员工自评</th>'+
-    '<th style="width:80px">双线上级</th>'+
+    '<th style="width:70px">类型</th>'+
+    '<th style="min-width:200px">衡量标准</th>'+
+    '<th style="min-width:200px">完成值/完成情况</th>'+
+    '<th style="min-width:140px">员工自评</th>'+
+    '<th style="min-width:220px;position:sticky;right:0;background:var(--c0);z-index:2">双线上级评分</th>'+
     '</tr></thead><tbody>';
   MODULES.forEach(function(mod,mi){
-    html+='<tr class="mod-row"><td colspan="5"><div class="eval-mod">'+
+    html+='<tr class="mod-row"><td colspan="7"><div class="eval-mod">'+
       '<div class="eval-mod-dot" style="background:'+mod.color+'"></div>'+
       '<span class="eval-mod-name">'+mod.name+'</span>'+
       '<span class="eval-mod-weight">'+mod.weight+'%</span>'+
@@ -371,43 +409,37 @@ function renderModuleContainer(){
       var isQuant=g.type==='quant';
       html+='<tr>'+
         '<td><span style="font-weight:500;color:var(--c8)">'+g.name+'</span></td>'+
-        '<td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">'+g.weight+'%</span></td>';
+        '<td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">'+g.weight+'%</span></td>'+
+        '<td><span class="eval-type-tag '+(isQuant?'quant':'qual')+'">'+(isQuant?'定量':'定性')+'</span></td>';
       if(isQuant){
         var score=calcScore(g,g.completed);
         var empScore=gradeToScore(g.employeeGrade);
-        html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">'+g.desc+'<br>完成值: <span style="font-family:var(--m);font-weight:600;color:var(--c8)">'+g.completed+g.unit+'</span> / 挑战值: <span style="font-family:var(--m);color:var(--c7)">'+g.challenge+g.unit+'</span> / 目标值: <span style="font-family:var(--m);color:var(--c7)">'+g.target+g.unit+'</span><br><span style="font-family:var(--m);font-weight:600;color:var(--pr)">'+(empScore!==null?empScore.toFixed(1):'—')+' ｜ '+(score!==null?score.toFixed(1):'—')+'</span></td>';
+        html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">'+g.desc+'<br>挑战值: <span style="font-family:var(--m);color:var(--c7)">'+g.challenge+g.unit+'</span> / 目标值: <span style="font-family:var(--m);color:var(--c7)">'+g.target+g.unit+'</span></td>';
+        html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">完成值: <span style="font-family:var(--m);font-weight:600;color:var(--c8)">'+g.completed+g.unit+'</span><br><span style="font-family:var(--m);color:var(--pr)">系统评分: '+(score!==null?score.toFixed(1):'—')+'</span></td>';
       }else{
         html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">'+g.measureDesc+'</td>';
+        html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">'+(g.completed||'—')+'</td>';
       }
-      html+='<td><span style="font-family:var(--m);font-weight:600;font-size:13px;color:var(--c8)">'+(isQuant&&gradeToScore(g.employeeGrade)!==null?gradeToScore(g.employeeGrade).toFixed(1):'—')+'</span></td>';
-      if(isQuant){
-        var score=calcScore(g,g.completed);
-        html+='<td><span style="font-family:var(--m);font-weight:600;font-size:13px;color:var(--pr)">'+(score!==null?score.toFixed(1):'—')+'</span></td>';
-      }else{
-        html+='<td class="score-cell"><div class="star-rating" data-value="'+(g.indirectStar||0)+'"><div class="star-row">';
-        for(var si=1;si<=5;si++){
-          html+='<span class="star'+(si<=(g.indirectStar||0)?' active':'')+'" data-v="'+si+'" onclick="setIndirectStar(this,'+mi+','+gi+','+si+')" onmouseenter="starHover(this,1)" onmouseleave="starHover(this,0)">★</span>';
-        }
-        html+='</div><div class="star-legend">2分:部分达标 · 3分:基本达标 · 4分:良好 · 5分:卓越</div></div></td>';
+      html+='<td><span style="font-family:var(--m);font-weight:600;font-size:13px;color:var(--c8)">'+(isQuant&&gradeToScore(g.employeeGrade)!==null?gradeToScore(g.employeeGrade).toFixed(1):g.employeeGrade||'—')+'</span></td>';
+      html+='<td style="position:sticky;right:0;background:var(--sf);z-index:1" class="score-cell"><div class="star-rating" data-value="'+(g.indirectStar||0)+'"><div class="star-row">';
+      for(var si=1;si<=5;si++){
+        html+='<span class="star'+(si<=(g.indirectStar||0)?' active':'')+'" data-v="'+si+'" onclick="setIndirectStar(this,'+mi+','+gi+','+si+')" onmouseenter="starHover(this,1)" onmouseleave="starHover(this,0)">★</span>';
       }
+      html+='</div><div class="star-tip" id="starTip_'+mi+'_'+gi+'"></div></div></td>';
       html+='</tr>';
     });
   });
   html+='</tbody></table></div>';
 
-  // 初评等级
+  // 初评等级 - 评星
   html+='<div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-top:16px;padding:20px 24px">'+
     '<div style="font:600 14px/1 var(--f);color:var(--c9);margin-bottom:6px">初评等级</div>'+
     '<div style="font:400 12px/1 var(--f);color:var(--c5);margin-bottom:12px">请根据被考核人表现选择初评等级</div>'+
-    '<div class="grade-btn-group" id="initGradeGroup">'+
-      '<button type="button" class="grade-btn" data-grade="远超预期" onclick="selectInitGrade(this)">远超预期</button>'+
-      '<button type="button" class="grade-btn" data-grade="超出预期" onclick="selectInitGrade(this)">超出预期</button>'+
-      '<button type="button" class="grade-btn" data-grade="符合预期+" onclick="selectInitGrade(this)">符合预期+</button>'+
-      '<button type="button" class="grade-btn" data-grade="符合预期" onclick="selectInitGrade(this)">符合预期</button>'+
-      '<button type="button" class="grade-btn" data-grade="符合预期-" onclick="selectInitGrade(this)">符合预期-</button>'+
-      '<button type="button" class="grade-btn" data-grade="低于预期" onclick="selectInitGrade(this)">低于预期</button>'+
-      '<button type="button" class="grade-btn" data-grade="远低预期" onclick="selectInitGrade(this)">远低预期</button>'+
-    '</div>'+
+    '<div class="star-rating" id="initGradeStars" data-value="0"><div class="star-row">';
+  for(var si=1;si<=5;si++){
+    html+='<span class="star" data-v="'+si+'" onclick="setInitGradeStar(this,'+si+')" onmouseenter="starHoverInit(this,1)" onmouseleave="starHoverInit(this,0)">★</span>';
+  }
+  html+='</div><div class="star-tip" id="initGradeTip"></div></div>'+
     '<input type="hidden" id="initGradeValue" value="">'+
   '</div>';
 
@@ -453,6 +485,8 @@ function selectInitGrade(btn){
   document.getElementById('initGradeValue').value=btn.getAttribute('data-grade');
 }
 
+var STAR_TIPS={1:'低于预期',2:'符合预期-',3:'符合预期',4:'符合预期+',5:'超出预期'};
+
 function setIndirectStar(el,mi,gi,val){
   MODULES[mi].goals[gi].indirectStar=val;
   var rating=el.closest('.star-rating');
@@ -460,20 +494,54 @@ function setIndirectStar(el,mi,gi,val){
   rating.querySelectorAll('.star').forEach(function(s,i){
     s.classList.toggle('active',i<val);
   });
+  var tip=rating.querySelector('.star-tip');
+  if(tip)tip.textContent=STAR_TIPS[val]||'';
 }
 
 function starHover(el,entering){
   var rating=el.closest('.star-rating');
+  var tip=rating.querySelector('.star-tip');
   if(entering){
     var val=parseInt(el.dataset.v);
     rating.querySelectorAll('.star').forEach(function(s,i){
       s.classList.toggle('active',i<val);
     });
+    if(tip)tip.textContent=STAR_TIPS[val]||'';
   }else{
     var saved=parseInt(rating.dataset.value);
     rating.querySelectorAll('.star').forEach(function(s,i){
       s.classList.toggle('active',i<saved);
     });
+    if(tip)tip.textContent=saved?STAR_TIPS[saved]||'':'';
+  }
+}
+
+function setInitGradeStar(el,val){
+  var rating=document.getElementById('initGradeStars');
+  rating.dataset.value=val;
+  rating.querySelectorAll('.star').forEach(function(s,i){
+    s.classList.toggle('active',i<val);
+  });
+  var tip=document.getElementById('initGradeTip');
+  if(tip)tip.textContent=STAR_TIPS[val]||'';
+  document.getElementById('initGradeValue').value=STAR_TIPS[val]||'';
+}
+
+function starHoverInit(el,entering){
+  var rating=document.getElementById('initGradeStars');
+  var tip=document.getElementById('initGradeTip');
+  if(entering){
+    var val=parseInt(el.dataset.v);
+    rating.querySelectorAll('.star').forEach(function(s,i){
+      s.classList.toggle('active',i<val);
+    });
+    if(tip)tip.textContent=STAR_TIPS[val]||'';
+  }else{
+    var saved=parseInt(rating.dataset.value);
+    rating.querySelectorAll('.star').forEach(function(s,i){
+      s.classList.toggle('active',i<saved);
+    });
+    if(tip)tip.textContent=saved?STAR_TIPS[saved]||'':'';
   }
 }
 

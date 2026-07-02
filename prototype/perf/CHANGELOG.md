@@ -7,6 +7,94 @@
 
 ---
 
+## 2026-07-01 绩效考核评分页面优化
+- 改动文件: employee/demo-eval-self.html, manager/demo-eval-indirect.html, manager/demo-eval-direct.html
+- 改动内容: 自评页表格优化（类型列加宽/nowrap/overflow-x/sticky后两列/文案修正）；双线+直线评分页历史卡片重布局（年度卡片+月度网格）、表格新增类型列+重构列名、全部定性目标统一评星组件（hover预览+tip）、初评等级改评星、mock数据补充完成值
+- 回滚路径: prototype/perf/confirmed/backups/20260701_1823/
+
+---
+
+## 2026-07-01 方案配置六项优化
+
+### 优化 1：活动管理员支持搜索 + 多选
+- 改动文件: perf-scheme-wizard.html, perf-activity.html
+- 改动内容: ADMIN_LIST 改为对象数组（id+name）；form.admins 存储 ID 数组；管理员选择区增加搜索框+实时过滤+已选计数；活动页同步改造（搜索+ID匹配+name映射展示）
+- 回滚路径: prototype/perf/confirmed/backups/20260701_1803/
+
+### 优化 2：自动创建活动样式完善（按周期类型四条规则）
+- 改动文件: perf-scheme-wizard.html
+- 改动内容: autoCreate.timing 拆分为四种周期类型独立配置（monthly/quarterly/semiannual/annual）；UI 改为四条规则行（当前周期高亮+pr50背景，非当前置灰）；预览只显示最近一条；月度用数字input替代下拉
+- 回滚路径: prototype/perf/confirmed/backups/20260701_1803/
+
+### 优化 3：隐藏版本/编码/启用停用
+- 改动文件: perf-scheme-wizard.html
+- 改动内容: 删除基本信息区中的方案编号行、是否启用radio行、方案版本字段；保留名称+周期类型作为第一行
+- 回滚路径: prototype/perf/confirmed/backups/20260701_1803/
+
+### 优化 4：目录不显示"自动创建活动"
+- 改动文件: perf-scheme-wizard.html
+- 改动内容: 侧边栏删除 autoCreate 条目；导航列表从 ['basic','autoCreate','groups'] 改为 ['basic','groups']；renderContent 删除 autoCreate 分支；保留 renderAutoCreate 函数不删
+- 回滚路径: prototype/perf/confirmed/backups/20260701_1803/
+
+### 优化 5：考核组规则结构重组（三区）
+- 改动文件: perf-scheme-wizard.html, perf-scheme-detail.html
+- 改动内容: excluded 字段合并进 autoRemove.manualExclude；编辑区拆分为三区（名称/添加人员规则/移除人员规则）用分隔线+序号标题；移除人员规则区包含条件checkbox+手动排除输入框；详情页同步改造
+- 回滚路径: prototype/perf/confirmed/backups/20260701_1803/
+
+### 优化 6：环节自动规则重构（相对/固定双模式+冲突检测）
+- 改动文件: perf-scheme-wizard.html, perf-scheme-detail.html
+- 改动内容: autoStart/autoEnd 增加 mode 字段（relative/fixed）；renderTimeRulePanel 支持双模式radio切换；相对模式：参考点+偏移天数；固定模式：TIME_RULES下拉+偏移；新增 calcStageDate 和 checkStageConflict；冲突时红色警告条；详情页显示简化描述
+- 回滚路径: prototype/perf/confirmed/backups/20260701_1803/
+
+---
+
+## 2026-07-01 活动管理员下沉方案 + 活动继承覆盖
+- 改动文件: perf-scheme-wizard.html, perf-scheme-detail.html, perf-activity.html
+- 改动内容: 方案增加活动管理员预设（多选 checkbox）；创建活动时从方案继承管理员并支持覆盖；活动详情展示管理员列表
+- 回滚路径: prototype/perf/confirmed/backups/20260701_1730/
+
+---
+
+## 2026-07-01 周期类型+月度自动创建 + 环节定时开启/结束
+
+### 优化 1：绩效方案增加周期类型 + 月度自动创建活动规则
+- 改动文件: perf-scheme-wizard.html, perf-scheme-detail.html
+- 改动内容: 基本信息新增周期类型下拉框（月度/季度/半年度/年度）；自动创建活动卡片根据周期类型切换模式（月度显示每月N号创建+未来3期预览 / 非月度显示周期开始前/后N天）；autoCreate 数据模型增加 monthlyDay 字段
+- 回滚路径: prototype/perf/confirmed/backups/20260701_1721/
+
+### 优化 2：所有环节支持自动开启+自动结束，时间基于考核周期绝对日期规则
+- 改动文件: perf-scheme-wizard.html, perf-scheme-detail.html
+- 改动内容: 新增 TIME_RULES 绝对日期规则表（13条规则按周期类型过滤）；STAGES 数据模型重构 autoStart/autoEnd（rule+offsetDays 替代 ref+days）；新增 renderTimeRulePanel 统一时间规则面板组件；5个环节配置函数均支持自动开启+自动结束面板；结束方式从"超时自动结束"升级为"定时自动结束"；详情页展示自动开启/结束规则标签
+- 回滚路径: prototype/perf/confirmed/backups/20260701_1721/
+
+---
+
+## 2026-07-01 活动管理优化
+- 改动文件: perf-activity.html
+- 改动内容: 进行中活动增加修改考核关系弹窗（单人与批量）；创建活动增加活动管理员字段；列表页与详情页展示活动管理员
+- 回滚路径: prototype/perf/confirmed/backups/20260701_1657/
+
+---
+
+## 2026-07-01 方案配置三项优化
+
+### 优化 1：考核组支持自动移除人员规则
+- 改动文件: perf-scheme-wizard.html, perf-scheme-detail.html
+- 改动内容: 考核组数据模型新增 autoRemove 字段（enabled + conditions），编辑区新增 toggle + 多选条件（离职/调岗/组织架构变更），折叠头部显示自动移除标记，详情页展示已配置规则
+- 回滚路径: prototype/perf/confirmed/backups/20260701_1651/
+
+### 优化 2：绩效方案支持自动创建每期活动
+- 改动文件: perf-scheme-wizard.html, perf-scheme-detail.html
+- 改动内容: form 新增 autoCreate 字段，基本信息区增加自动创建活动卡片（toggle + 方向/天数 + 预览），侧边栏新增"自动创建活动"导航节点，详情页展示自动创建配置
+- 回滚路径: prototype/perf/confirmed/backups/20260701_1651/
+
+### 优化 3：考核环节支持定时自动开启
+- 改动文件: perf-scheme-wizard.html, perf-scheme-detail.html
+- 改动内容: STAGES 新增 autoStart 字段（enabled + ref + days），5 个环节配置函数均新增定时开启规则面板（参考点 + 延迟天数 + 预览），目标制定环节参考点仅显示"周期开始后"，详情页环节行显示定时标记
+- 回滚路径: prototype/perf/confirmed/backups/20260701_1651/
+
+---
+
 ## 2026-06-29 原型整改第二轮：导航补漏 + 描述修正 + 审批人统一 + 流程顺序
 
 ### 一、导航修复 (navigation.js)

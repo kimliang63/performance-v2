@@ -15,13 +15,21 @@
   --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
   --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
   --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
-  --r1:6px;--r2:8px;--r3:10px;
-  --f:'Inter','Noto Sans SC',-apple-system,sans-serif;
+  --shadow-card-hover:0 8px 20px -4px rgba(0,0,0,.08),0 2px 6px -2px rgba(0,0,0,.04);
+  --shadow-dropdown:0 10px 40px -10px rgba(0,0,0,.12),0 2px 10px -2px rgba(0,0,0,.04);
+  --shadow-modal:0 20px 60px -12px rgba(0,0,0,.18),0 4px 16px -4px rgba(0,0,0,.08);
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
   --m:'JetBrains Mono','SF Mono',monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+/* Flow badge */
+.flow-badge{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:var(--r1);background:var(--pr50);border:1px solid var(--pr200);font:500 12px/1 var(--f);color:var(--pr)}
+.flow-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--pr);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
 /* Header */
 .hdr{height:52px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:1100}
@@ -45,12 +53,15 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 /* Page header */
 .pg-hd{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:16px}
 .pg-hd-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.pg-hd-title{font:700 20px/1.2 var(--f);color:var(--c9)}
+.pg-hd-title{font:700 20px/1.2 var(--f);color:var(--c9);letter-spacing:-.3px}
 .pg-hd-actions{display:flex;gap:8px}
-.pg-hd-info{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 24px;font:400 13px/1 var(--f);color:var(--c5);padding:12px 16px;background:var(--c0);border-radius:var(--r2)}
+.pg-hd-info{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 24px;font:400 13px/1 var(--f);color:var(--c5);margin-bottom:12px;padding:12px 16px;background:var(--c0);border-radius:var(--r2)}
 .pg-hd-info-item{display:flex;flex-direction:column;gap:2px}
 .pg-hd-info-label{font:400 11px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px}
 .pg-hd-info-value{font:500 13px/1.3 var(--f);color:var(--c8)}
+.pg-hd-summary{display:flex;align-items:center;gap:24px;padding-top:12px;border-top:1px solid var(--dv)}
+.pg-hd-summary .sum-item{font:500 13px/1 var(--f);color:var(--c6)}
+.pg-hd-summary .sum-val{font-family:var(--m);font-weight:700;color:var(--pr)}
 
 /* Buttons */
 .btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
@@ -63,15 +74,22 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .btn-danger:hover{background:var(--ro50);border-color:var(--ro)}
 .btn-ac{background:var(--sf);color:var(--ac700);border:1px solid var(--ac100)}
 .btn-ac:hover{background:var(--ac50);border-color:var(--ac)}
+.btn-o{background:var(--sf);color:var(--pr);border:1px solid var(--pr200)}
+.btn-o:hover{background:var(--pr50);border-color:var(--pr)}
+.btn-sm{height:28px;padding:0 10px;font-size:12px}
+.btn-sm svg{width:12px;height:12px}
 
 /* Module section */
-.mod-section{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden}
+.mod-section{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden;border:1px solid var(--c2)}
 .mod-section.em{}
-.mod-hd{display:flex;align-items:center;padding:14px 20px;gap:12px;cursor:pointer;user-select:none;transition:background .12s}
+.mod-hd{display:flex;align-items:center;padding:14px 20px;cursor:pointer;user-select:none;transition:background .12s;gap:12px}
 .mod-hd:hover{background:var(--c0)}
-.mod-hd-title{font:600 15px/1 var(--f);color:var(--c9);flex:1}
-.mod-hd-stats{display:flex;align-items:center;gap:16px;font:400 13px/1 var(--f);color:var(--c5)}
-.mod-hd-stats strong{font-family:var(--m);font-weight:600;color:var(--pr)}
+.mod-hd-icon{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#FFF}
+.mod-hd-icon svg{width:13px;height:13px;color:#FFF}
+.mod-hd-title{font:500 12px/1 var(--f);color:var(--c5);flex:1;text-transform:uppercase;letter-spacing:.5px}
+.mod-hd-stats{display:flex;align-items:center;gap:12px;font:400 12px/1 var(--f);color:var(--c5)}
+.mod-hd-stats strong{font-family:var(--m);font-weight:600;color:var(--c8)}
+.mod-hd-sep{width:1px;height:14px;background:var(--c2)}
 .mod-hd-chevron{width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--c4);transition:transform .25s;flex-shrink:0}
 .mod-hd-chevron.open{transform:rotate(180deg)}
 .mod-hd-chevron svg{width:14px;height:14px}
@@ -81,33 +99,37 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 /* Goal row */
 .goal-row{border-top:1px solid var(--dv);transition:background .1s}
 .goal-row:hover{background:var(--c0)}
-.goal-summary{display:flex;align-items:center;padding:10px 20px;gap:10px;cursor:pointer}
-.goal-name{flex:1;font:500 14px/1.3 var(--f);color:var(--c8)}
-.goal-meta{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.goal-row:last-child{border-bottom:none}
+.goal-summary{display:flex;align-items:center;padding:14px 20px;gap:10px;cursor:pointer}
+.goal-drag{color:var(--c3);cursor:grab;flex-shrink:0;display:flex;align-items:center;user-select:none}
+.goal-drag svg{width:14px;height:14px}
+.goal-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.goal-icon.pr{background:var(--pr50);color:var(--pr)}
+.goal-icon.em{background:var(--em50);color:var(--em)}
+.goal-name{flex:1;font:600 14px/1.3 var(--f);color:var(--c9)}
+.goal-weight{font:700 14px/1 var(--m);color:var(--pr);background:var(--pr50);padding:3px 8px;border-radius:var(--r1);flex-shrink:0}
 .goal-type{font:500 11px/1 var(--f);padding:2px 7px;border-radius:3px;background:var(--c1);color:var(--c6)}
 .goal-type.quant{background:var(--pr50);color:var(--pr)}
 .goal-type.qual{background:var(--vi50);color:var(--vi)}
-.goal-weight{font:500 13px/1 var(--m);color:var(--c7)}
+.goal-actions{display:flex;align-items:center;gap:4px}
 
-/* Goal detail - read only */
-.goal-detail{padding:0 20px 12px 42px;display:none}
-.goal-detail.open{display:block}
-.gd-form{border-radius:var(--r2);padding:8px 0}
-.gd-sec{margin-bottom:10px}
-.gd-sec:last-child{margin-bottom:0}
-.gd-sec-title{font:600 12px/1 var(--f);color:var(--c6);margin-bottom:8px;display:flex;align-items:center;gap:6px}
-.gd-sec-title svg{width:13px;height:13px;color:var(--pr)}
-.gd-row{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px}
-.gd-row.f3{grid-template-columns:1fr 1fr 1fr}
-.gd-fi{display:flex;flex-direction:column;gap:3px}
-.gd-fi-l{font:400 11px/1 var(--f);color:var(--c5)}
-.gd-fi-v{font:500 13px/1.4 var(--f);color:var(--c8)}
-.gd-fi-v.mono{font-family:var(--m)}
-.gd-linked{display:flex;align-items:center;gap:4px;padding:5px 8px;background:var(--pr50);border:1px solid var(--pr200);border-radius:var(--r1);font:500 12px/1 var(--f);color:var(--pr)}
-.gd-linked svg{width:12px;height:12px;flex-shrink:0}
-.gd-rule-box{margin-top:8px;padding:8px 10px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r1)}
-.gd-rule-box code{font:400 11px/1.5 var(--m);color:var(--c8);white-space:pre-wrap;word-break:break-all}
-.gd-rule-lbl{font:500 10px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+/* Goal edit detail */
+.goal-edit{padding:0 20px 16px 82px;display:none}
+.goal-edit.open{display:block;animation:fadeIn .2s ease}
+.ge-form{padding:12px 0}
+.ge-sec{margin-bottom:14px}
+.ge-sec:last-child{margin-bottom:0}
+.ge-sec-title{font:600 12px/1 var(--f);color:var(--c8);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.ge-sec-title::before{content:'';width:3px;height:12px;background:var(--pr);border-radius:2px;flex-shrink:0}
+.ge-sec-title svg{width:13px;height:13px;color:var(--pr)}
+.ge-row{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px}
+.ge-row.f3{grid-template-columns:100px 100px 100px}
+.ge-fi{display:flex;flex-direction:column;gap:3px}
+.ge-fi-l{font:400 11px/1 var(--f);color:var(--c5);display:flex;align-items:center;gap:4px}
+.ge-fi-val{font:500 13px/1.4 var(--f);color:var(--c8);padding:7px 0}
+.ge-linked{display:flex;align-items:center;gap:4px;padding:5px 8px;background:var(--pr50);border:1px solid var(--pr200);border-radius:var(--r1);font:500 12px/1 var(--f);color:var(--pr)}
+.ge-linked svg{width:12px;height:12px;flex-shrink:0}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
 /* Approval comment */
 .approval-box{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-top:16px;overflow:hidden}
@@ -121,9 +143,9 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .toast.error{background:var(--ro);color:#FFF}
 
 /* Modal */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:2000;align-items:center;justify-content:center}
-.modal-overlay.on{display:flex}
-.modal{background:var(--sf);border-radius:var(--r3);padding:24px;width:420px;box-shadow:var(--shadow-modal)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:2000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.on{opacity:1;pointer-events:all}
+.modal{background:var(--sf);border-radius:var(--r4);box-shadow:var(--shadow-modal);padding:24px;width:420px}
 .modal-t{font:600 16px/1 var(--f);color:var(--c9);margin-bottom:12px}
 .modal-desc{font:400 13px/1.5 var(--f);color:var(--c6);margin-bottom:12px}
 .modal textarea{width:100%;height:80px;border:1px solid var(--c2);border-radius:var(--r1);padding:10px 12px;font:400 13px/1.5 var(--f);resize:vertical;outline:none;font-family:inherit}
@@ -159,27 +181,23 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 
   <div class="pg-hd">
     <div class="pg-hd-top">
-      <div class="pg-hd-title">目标审批</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="pg-hd-title">目标审批·直线上级</div>
+        <span class="flow-badge"><span class="dot"></span>直线上级审批</span>
+      </div>
       <div class="pg-hd-actions">
-        <button class="btn btn-ac" onclick="showDelegateModal()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          转派
-        </button>
-        <button class="btn btn-danger" onclick="showRejectModal()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          退回
-        </button>
-        <button class="btn btn-p" onclick="approveGoal()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          批准
-        </button>
+        <button class="btn btn-s" onclick="showRejectModal()">驳回</button>
+        <button class="btn btn-p" onclick="approveGoal()">通过</button>
       </div>
     </div>
     <div class="pg-hd-info">
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">申请人</span><span class="pg-hd-info-value">张明</span></div>
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">部门</span><span class="pg-hd-info-value">产品部</span></div>
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">岗位</span><span class="pg-hd-info-value">高级产品经理</span></div>
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">提交时间</span><span class="pg-hd-info-value">2026-06-10</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">考核方案</span><span class="pg-hd-info-value">产品部2026年6月绩效考核</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">考核周期</span><span class="pg-hd-info-value">2026年6月</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">被评人</span><span class="pg-hd-info-value">张明</span></div>
+    </div>
+    <div class="pg-hd-summary">
+      <span class="sum-item">总权重: <span class="sum-val">100%</span></span>
+      <span class="sum-item">总目标数: <strong>7</strong></span>
     </div>
   </div>
 
@@ -198,106 +216,15 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
   <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-top:16px;overflow:hidden">
     <div style="padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between">
       <span style="font:600 15px/1 var(--f);color:var(--c9)">审批流程</span>
-      <span style="font:400 12px/1 var(--f);color:var(--c5)">员工制定流程</span>
     </div>
-    <div style="padding:0">
-      <table style="width:100%;border-collapse:collapse">
-        <thead>
-          <tr style="background:var(--c0)">
-            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">节点</th>
-            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">处理人</th>
-            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">流入时间</th>
-            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">流出时间</th>
-            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">状态</th>
-            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">原因/备注</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr style="background:var(--pr50)">
-            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c8);border-bottom:1px solid var(--dv)">
-              <div style="display:flex;align-items:center;gap:6px">
-                <span style="width:8px;height:8px;border-radius:50%;background:var(--pr);flex-shrink:0"></span>
-                目标填写
-              </div>
-            </td>
-            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)">
-              <div style="display:flex;align-items:center;gap:6px">
-                <span style="width:22px;height:22px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">张</span>
-                <span style="font:400 13px/1 var(--f);color:var(--c8)">张明</span>
-              </div>
-            </td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c7);border-bottom:1px solid var(--dv)">2026-06-01 09:00</td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
-            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)">
-              <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)">
-                <span style="width:6px;height:6px;border-radius:50%;background:var(--pr);animation:pulse 2s ease-in-out infinite"></span>
-                处理中
-              </span>
-            </td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c5);border-bottom:1px solid var(--dv)">当前节点</td>
-          </tr>
-          <tr>
-            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c6);border-bottom:1px solid var(--dv)">
-              <div style="display:flex;align-items:center;gap:6px">
-                <span style="width:8px;height:8px;border-radius:50%;background:var(--c3);flex-shrink:0"></span>
-                直属上级审批
-              </div>
-            </td>
-            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)">
-              <div style="display:flex;align-items:center;gap:6px">
-                <span style="width:22px;height:22px;border-radius:50%;background:var(--c1);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:var(--c5);flex-shrink:0">李</span>
-                <span style="font:400 13px/1 var(--f);color:var(--c6)">李总</span>
-              </div>
-            </td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
-            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)">
-              <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--c1);color:var(--c5)">待处理</span>
-            </td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
-          </tr>
-          <tr>
-            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c6);border-bottom:1px solid var(--dv)">
-              <div style="display:flex;align-items:center;gap:6px">
-                <span style="width:8px;height:8px;border-radius:50%;background:var(--c3);flex-shrink:0"></span>
-                间接上级审批
-              </div>
-            </td>
-            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)">
-              <div style="display:flex;align-items:center;gap:6px">
-                <span style="width:22px;height:22px;border-radius:50%;background:var(--c1);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:var(--c5);flex-shrink:0">王</span>
-                <span style="font:400 13px/1 var(--f);color:var(--c6)">王总监</span>
-              </div>
-            </td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
-            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)">
-              <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--c1);color:var(--c5)">待处理</span>
-            </td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
-          </tr>
-          <tr>
-            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c6)">
-              <div style="display:flex;align-items:center;gap:6px">
-                <span style="width:8px;height:8px;border-radius:50%;background:var(--c3);flex-shrink:0"></span>
-                HR确认
-              </div>
-            </td>
-            <td style="padding:12px 16px">
-              <div style="display:flex;align-items:center;gap:6px">
-                <span style="width:22px;height:22px;border-radius:50%;background:var(--c1);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:var(--c5);flex-shrink:0">赵</span>
-                <span style="font:400 13px/1 var(--f);color:var(--c6)">赵敏</span>
-              </div>
-            </td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4)">—</td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4)">—</td>
-            <td style="padding:12px 16px">
-              <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--c1);color:var(--c5)">待处理</span>
-            </td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4)">—</td>
-          </tr>
-        </tbody>
-      </table>
+    <div style="padding:16px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <span style="display:inline-flex;align-items:center;gap:6px;font:500 13px/1 var(--f);color:var(--c8)"><span style="width:8px;height:8px;border-radius:50%;background:var(--pr)"></span>目标填写·张明</span>
+      <span style="color:var(--c3);font:400 11px/1 var(--f)">→</span>
+      <span style="display:inline-flex;align-items:center;gap:6px;font:500 13px/1 var(--f);color:var(--c8);padding:5px 12px;border-radius:var(--r1);background:var(--pr50);border:1px solid var(--pr200)"><span style="width:7px;height:7px;border-radius:50%;background:var(--pr);animation:pulse 2s ease-in-out infinite"></span>直线上级审批·王总监</span>
+      <span style="color:var(--c3);font:400 11px/1 var(--f)">→</span>
+      <span style="display:inline-flex;align-items:center;gap:6px;font:500 13px/1 var(--f);color:var(--c5)"><span style="width:8px;height:8px;border-radius:50%;background:var(--c3)"></span>间接上级审批</span>
+      <span style="color:var(--c3);font:400 11px/1 var(--f)">→</span>
+      <span style="display:inline-flex;align-items:center;gap:6px;font:500 13px/1 var(--f);color:var(--c5)"><span style="width:8px;height:8px;border-radius:50%;background:var(--c3)"></span>HR确认</span>
     </div>
   </div>
 </div>
@@ -314,37 +241,34 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
   </div>
 </div>
 
-<div class="modal-overlay" id="delegateModal">
-  <div class="modal">
-    <div class="modal-t">转派审批</div>
-    <div class="modal-desc">将此审批任务转派给其他管理者。</div>
-    <textarea id="delegateReason" placeholder="请输入转派原因..."></textarea>
-    <div class="modal-btns">
-      <button class="btn btn-s" onclick="closeModal('delegateModal')">取消</button>
-      <button class="btn btn-ac" onclick="confirmDelegate()">确认转派</button>
-    </div>
-  </div>
-</div>
-
 <div class="toast" id="toast"></div>
 
 <script src="../navigation.js"></script>
 <script>
-GHR_NAV.init('perf', '目标审批');
+GHR_NAV.init('perf', '目标审批·直线上级');
 
 const MODULES=[
-  {name:'KPI',weight:30,color:'var(--pr)',goals:[
-    {id:'g1',name:'资源利用率（通用）',type:'quant',weight:5,target:105,challenge:110,baseline:100,unit:'%',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',linkedIndicator:'资源利用率',desc:'1.指标定义：人员的实际工作量饱和情况，数据来源：Devops\n2.计算逻辑：公式=当月实际任务工时（人天）/EHR实际出勤天数*100%'},
-    {id:'g2',name:'HRASUAT用户验收首次通过率(产品)',type:'quant',weight:10,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',linkedIndicator:'UAT首次通过率',desc:'1.指标定义：需求首次业务验收通过的概率\n2.计算逻辑：公式=当月需求首次业务验收通过的迭代数量/当月业务验收的迭代总数*100%'},
-    {id:'g3',name:'HRAS需求评审及时率(产品)',type:'quant',weight:15,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',linkedIndicator:'需求评审及时率',desc:'1.迭代版本评审的及时性情况\n2.计算逻辑：公式=统计周期内按时需求评审迭代数/计划评审迭代*100%\n备注：按需求个数的维度。'},
+  {name:'KPI',weight:30,icon:'target',color:'var(--pr)',accent:'',goals:[
+    {id:'g1',name:'资源利用率（通用）',indicator:'资源利用率',type:'quant',weight:5,aiFilled:true,desc:'1.指标定义：人员的实际工作量饱和情况，数据来源：Devops\n2.计算逻辑：公式=当月实际任务工时（人天）/EHR实际出勤天数*100%',measure:'梯度评分',target:105,challenge:110,baseline:100,unit:'%',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',msLevels:[{level:'优秀',color:'var(--em)',score:'120分',condition:'利用率 >= 110%'},{level:'良好',color:'var(--pr)',score:'100分',condition:'利用率 >= 105%'},{level:'合格',color:'var(--ac)',score:'80分',condition:'利用率 >= 100%'},{level:'不合格',color:'var(--ro)',score:'0分',condition:'利用率 < 100%'}]},
+    {id:'g2',name:'HRASUAT用户验收首次通过率(产品)',indicator:'UAT首次通过率',type:'quant',weight:10,desc:'1.指标定义：需求首次业务验收通过的概率\n2.计算逻辑：公式=当月需求首次业务验收通过的迭代数量/当月业务验收的迭代总数*100%',measure:'梯度评分',target:98,challenge:100,baseline:95,unit:'%',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',msLevels:[{level:'优秀',color:'var(--em)',score:'120分',condition:'通过率 >= 100%'},{level:'良好',color:'var(--pr)',score:'100分',condition:'通过率 >= 98%'},{level:'合格',color:'var(--ac)',score:'80分',condition:'通过率 >= 95%'},{level:'不合格',color:'var(--ro)',score:'0分',condition:'通过率 < 95%'}]},
+    {id:'g3',name:'HRAS需求评审及时率(产品)',indicator:'需求评审及时率',type:'quant',weight:15,desc:'1.迭代版本评审的及时性情况\n2.计算逻辑：公式=统计周期内按时需求评审迭代数/计划评审迭代*100%\n备注：按需求个数的维度。',measure:'梯度评分',target:98,challenge:100,baseline:95,unit:'%',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',msLevels:[{level:'优秀',color:'var(--em)',score:'120分',condition:'及时率 >= 100%'},{level:'良好',color:'var(--pr)',score:'100分',condition:'及时率 >= 98%'},{level:'合格',color:'var(--ac)',score:'80分',condition:'及时率 >= 95%'},{level:'不合格',color:'var(--ro)',score:'0分',condition:'及时率 < 95%'}]},
   ]},
-  {name:'KPA',weight:70,color:'var(--em)',goals:[
-    {id:'g4',name:'HRAS产品管理规范',type:'qual',weight:10,measure:'定性评分',desc:'1、需求管理流程尊从规范\n2、产品需求规范\n3、迭代火车管理规范\n4、周会/月会前事项准时完成更新'},
-    {id:'g5',name:'【产品设计】日常滚动需求响应',type:'qual',weight:10,measure:'定性评分',desc:'根据业务日会需求优先级，滚动响应日常需求，输出产品解决方案'},
-    {id:'g6',name:'【产品设计】HR ONE 绩效重构事项推进',type:'qual',weight:25,measure:'定性评分',desc:'06-10 输出AI+绩效核心用户页面原型\n06-19 完成绩效版本4需求内审\n06-24 完成绩效版本4需求评审'},
-    {id:'g7',name:'【应用探索】AI应用项目探索与落地推广',type:'qual',weight:25,measure:'定性评分',desc:'06-05 输出ASSC采购侧AI项目管理应用1.0版本\n06-12 对接LBU AI应用场景需求\n06-26 完成1.1版本'},
-  ]}
+  {name:'KPA',weight:70,icon:'users',color:'var(--em)',accent:'em',goals:[
+    {id:'g4',name:'HRAS产品管理规范',indicator:'产品管理规范',type:'qual',weight:10,desc:'1、需求管理流程尊从规范（受理-澄清-方案-业务内审-技术评审-研发交付-产品验收-用户验收）\n2、产品需求规范（需求池需求管理、文档规范）\n3、迭代火车管理规范\n4、周会/月会前事项准时完成更新',measure:'定性评分',target:1,challenge:1,baseline:1,rule:'-',ruleFormula:'',msLevels:[{level:'符合预期',color:'var(--em)',score:'100分',condition:'4项全部符合规范'},{level:'低于预期',color:'var(--ro)',score:'0分',condition:'4项任何1项不符合规范'}]},
+    {id:'g5',name:'【产品设计】日常滚动需求响应',indicator:'日常需求响应',type:'qual',weight:10,aiFilled:true,desc:'根据业务日会需求优先级，滚动响应日常需求，输出产品解决方案，计划事项如下：\n05/18 已完成GOFO6月双周上半月迭代需求评审：费控系统对接需求、签字报表支持按薪酬制度区分\n06/12 完成GOFO6月双周上半月迭代需求验收',measure:'定性评分',target:1,challenge:1,baseline:1,rule:'-',ruleFormula:'',msLevels:[{level:'符合预期',color:'var(--em)',score:'100分',condition:'按时完成需求响应和验收'},{level:'低于预期',color:'var(--ro)',score:'0分',condition:'未按时完成'}]},
+    {id:'g6',name:'【产品设计】HR ONE 绩效重构事项推进',indicator:'绩效重构推进',type:'qual',weight:25,desc:'计划事项：\n06-10 输出AI+绩效核心用户页面原型，给新哥、蔡老师汇报整体内容，并确认后续版本页面落地方式\n06-19 完成绩效版本4（考核活动管理）需求内审\n06-24 完成绩效版本4（考核活动管理）需求评审',measure:'定性评分',target:1,challenge:1,baseline:1,rule:'-',ruleFormula:'',msLevels:[{level:'符合预期',color:'var(--em)',score:'100分',condition:'按时完成各里程碑'},{level:'低于预期',color:'var(--ro)',score:'0分',condition:'未按时完成'}]},
+    {id:'g7',name:'【应用探索】AI应用项目探索与落地推广',indicator:'AI应用落地',type:'qual',weight:25,desc:'06-05 输出ASSC采购侧AI项目管理应用1.0版本（登录、项目管理、节点管理），进行测试试用阶段\n06-12 对接LBU AI 应用场景需求，启动第一个试点应用落地\n06-26 完成ASSC采购侧AI项目管理应用1.1版本（私聊/群聊场景的对话式更新项目、节点进度）',measure:'定性评分',target:1,challenge:1,baseline:1,rule:'-',ruleFormula:'',msLevels:[{level:'符合预期',color:'var(--em)',score:'100分',condition:'按时完成各版本交付'},{level:'低于预期',color:'var(--ro)',score:'0分',condition:'未按时完成'}]},
+  ]},
 ];
+
+const I={
+  chevron:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>',
+  drag:'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/></svg>',
+  target:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
+  users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  chart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+  info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
+};
 
 let expandedMods=new Set([0,1]);
 let expandedGoals=new Set();
@@ -355,51 +279,47 @@ function render(){
   MODULES.forEach((m,mi)=>{
     const open=expandedMods.has(mi);
     const tw=m.goals.reduce((s,g)=>s+g.weight,0);
-    h+=`<div class="mod-section ${m.color==='var(--em)'?'em':''}">
+    const iconColor=m.color;
+    h+=`<div class="mod-section ${m.accent}">
       <div class="mod-hd" onclick="toggleMod(${mi})">
-        <div class="mod-hd-title">${m.name}</div>
+        <div class="mod-hd-icon" style="background:${iconColor}">${I[m.icon]||I.target}</div>
+        <div class="mod-hd-title" style="font:600 15px/1 var(--f);color:var(--c9);text-transform:none;letter-spacing:0">${m.name}</div>
         <div class="mod-hd-stats">
-          <span>合计权重: <strong>${tw}%</strong></span>
-          <span>目标数: <strong>${m.goals.length}</strong></span>
+          <span>权重 <strong>${tw}%</strong></span>
+          <span>${m.goals.length} 个目标</span>
         </div>
-        <div class="mod-hd-chevron ${open?'open':''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+        <div class="mod-hd-sep"></div>
+        <div class="mod-hd-chevron ${open?'open':''}">${I.chevron}</div>
       </div>
       <div class="mod-body ${open?'open':''}">`;
     m.goals.forEach((g,gi)=>{
-      const gid=mi+'_'+gi;
-      const gOpen=expandedGoals.has(gid);
+      const isOpen=expandedGoals.has(g.id);
       const isQ=g.type==='quant';
       h+=`<div class="goal-row">
-        <div class="goal-summary" onclick="toggleGoal('${gid}')">
-          <div class="goal-icon" style="background:var(--c1);color:var(--c6);font:600 11px/1 var(--m);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">${gi+1}</div>
+        <div class="goal-summary" onclick="toggleGoal('${g.id}')">
+          <div class="goal-drag" onclick="event.stopPropagation()">${I.drag}</div>
+          <div class="goal-icon ${isQ?'pr':'em'}" style="font:700 12px/1 var(--m)">${gi+1}</div>
           <span class="goal-name">${g.name}</span>
-          <span class="goal-weight" style="font:600 13px/1 var(--m);color:var(--pr);background:var(--pr50);padding:2px 8px;border-radius:var(--r1);flex-shrink:0">${g.weight}</span>
-          <div class="goal-meta">
-            <span class="goal-type ${isQ?'quant':'qual'}">${isQ?'定量':'定性'}</span>
-            <div class="mod-hd-chevron ${gOpen?'open':''}" style="width:16px;height:16px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
-          </div>
+          <span class="goal-weight">${g.weight}%</span>
+          <span class="goal-type ${isQ?'quant':'qual'}">${isQ?'定量':'定性'}</span>
+          <div class="mod-hd-chevron ${isOpen?'open':''}" style="width:20px;height:20px">${I.chevron}</div>
         </div>
-        <div class="goal-detail ${gOpen?'open':''}">
-          <div class="gd-form">
-            <div class="gd-sec">
-              <div class="gd-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>目标信息</div>
-              <div class="gd-fi"><span class="gd-fi-l">权重</span><span class="gd-fi-v mono">${g.weight}</span></div>
-            </div>
+        <div class="goal-edit ${isOpen?'open':''}">
+          <div class="ge-form">
             ${isQ?`
-            <div class="gd-sec">
-              <div class="gd-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>指标描述 <span style="cursor:pointer;font-size:12px;color:var(--c4);margin-left:4px" onclick="event.stopPropagation();showMeasureDesc('${gid}')" title="点击查看指标描述">ⓘ</span></div>
-              <div class="gd-row f3">
-                <div class="gd-fi"><span class="gd-fi-l">挑战值</span><span class="gd-fi-v mono">${g.challenge} ${g.unit||''}</span></div>
-                <div class="gd-fi"><span class="gd-fi-l">目标值</span><span class="gd-fi-v mono">${g.target} ${g.unit||''}</span></div>
-                <div class="gd-fi"><span class="gd-fi-l">完成值</span><span class="gd-fi-v mono">${g.baseline} ${g.unit||''}</span></div>
+            <div class="ge-sec">
+              <div class="ge-row f3" style="grid-template-columns:100px 100px 100px 1fr">
+                <div class="ge-fi"><span class="ge-fi-l">挑战值</span><span class="ge-fi-val" style="font-family:var(--m)">${g.challenge} ${g.unit||''}</span></div>
+                <div class="ge-fi"><span class="ge-fi-l">目标值 <span class="req">*</span></span><span class="ge-fi-val" style="font-family:var(--m)">${g.target} ${g.unit||''}</span></div>
+                <div class="ge-fi"><span class="ge-fi-l">保底值</span><span class="ge-fi-val" style="font-family:var(--m)">${g.baseline} ${g.unit||''}</span></div>
+                <div class="ge-fi"><span class="ge-fi-l">指标描述</span><span class="ge-fi-val" style="white-space:pre-wrap">${g.desc||'—'}</span></div>
               </div>
             </div>
             `:`
-            <div class="gd-sec">
-              <div class="gd-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>衡量标准</div>
-              <div class="gd-fi"><span class="gd-fi-l">衡量标准-评价梯度2</span><span class="gd-fi-v">${(g.msLevels&&g.msLevels[0])?g.msLevels[0].condition:'-'}</span></div>
-              <div class="gd-fi" style="margin-top:8px"><span class="gd-fi-l">衡量标准-评价梯度3 <span style="color:var(--ro)">*</span></span><span class="gd-fi-v" style="font-weight:500">${(g.msLevels&&g.msLevels[1])?g.msLevels[1].condition:'-'}</span></div>
-              <div class="gd-fi" style="margin-top:8px"><span class="gd-fi-l">衡量标准-评价梯度4</span><span class="gd-fi-v">${(g.msLevels&&g.msLevels[2])?g.msLevels[2].condition:'-'}</span></div>
+            <div class="ge-sec">
+              <div class="ge-fi"><span class="ge-fi-l">衡量标准-评价梯度2</span><span class="ge-fi-val">${(g.msLevels&&g.msLevels[0])?g.msLevels[0].condition:'—'}</span></div>
+              <div class="ge-fi" style="margin-top:8px"><span class="ge-fi-l">衡量标准-评价梯度3 <span class="req">*</span></span><span class="ge-fi-val">${(g.msLevels&&g.msLevels[1])?g.msLevels[1].condition:'—'}</span></div>
+              <div class="ge-fi" style="margin-top:8px"><span class="ge-fi-l">衡量标准-评价梯度4</span><span class="ge-fi-val">${(g.msLevels&&g.msLevels[2])?g.msLevels[2].condition:'—'}</span></div>
             </div>
             `}
           </div>
@@ -420,7 +340,6 @@ function approveGoal(){
 }
 
 function showRejectModal(){document.getElementById('rejectModal').classList.add('on')}
-function showDelegateModal(){document.getElementById('delegateModal').classList.add('on')}
 function closeModal(id){document.getElementById(id).classList.remove('on')}
 
 function confirmReject(){
@@ -430,14 +349,6 @@ function confirmReject(){
   showToast('已退回，申请人将收到通知','success');
 }
 
-function confirmDelegate(){
-  const reason=document.getElementById('delegateReason').value;
-  if(!reason){showToast('请填写转派原因','error');return}
-  closeModal('delegateModal');
-  showToast('已转派','success');
-}
-
-function showMeasureDesc(gid){const p=gid.split('_');const mi=parseInt(p[0]);const gi=parseInt(p[1]);const g=MODULES[mi]?.goals[gi];showToast(g?.desc||'暂无指标描述')}
 function showToast(msg,type){
   const t=document.getElementById('toast');
   t.textContent=msg;

@@ -43,41 +43,63 @@ val{font:400 13px/1.4 var(--f);color:var(--c9);display:block}
 <script>
 const I={chevL:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>'};
 
+const ADMIN_LIST=[
+  {id:'EMP0088',name:'Kim（HRBP经理）'},
+  {id:'EMP0012',name:'张经理（COE负责人）'},
+  {id:'EMP0025',name:'李HR（HRBP）'},
+  {id:'EMP0036',name:'王管理（部门总监）'},
+  {id:'EMP0047',name:'赵HR（SSC专员）'},
+];
+
 const SCHEME={
   name:'年度绩效方案 v2',code:'PERF-2026-001',version:'v2',enabled:true,desc:'适用于全公司季度绩效考核，采用360度评估方式，包含目标制定、绩效考核、结果审定、结果确认、绩效面谈五个环节。',
-  cycleType:'季度',gradeRule:'标准五级',downward:true,
+  cycleType:'月度',gradeRule:'标准七级',downward:true,
   grades:[
-    {name:'远超预期',code:'A',min:90,max:100,color:'var(--ro)',bg:'var(--ro50)'},
-    {name:'符合预期+',code:'B+',min:80,max:89,color:'var(--ac700)',bg:'var(--ac50)'},
-    {name:'符合预期',code:'B',min:70,max:79,color:'var(--em700)',bg:'var(--em50)'},
-    {name:'符合预期-',code:'B-',min:60,max:69,color:'var(--vi)',bg:'var(--vi50)'},
-    {name:'低于预期',code:'C',min:0,max:59,color:'var(--c6)',bg:'var(--c1)'},
+    {name:'远超预期',code:'A',min:95,max:100,color:'#DC2626',bg:'#FEF2F2'},
+    {name:'超出预期',code:'A-',min:85,max:94,color:'#F97316',bg:'#FFF7ED'},
+    {name:'符合预期+',code:'B+',min:78,max:84,color:'#F59E0B',bg:'#FFFBEB'},
+    {name:'符合预期',code:'B',min:65,max:77,color:'#10B981',bg:'#ECFDF5'},
+    {name:'符合预期-',code:'B-',min:55,max:64,color:'#6366F1',bg:'#EEF2FF'},
+    {name:'低于预期',code:'C',min:40,max:54,color:'#71717A',bg:'#F4F4F5'},
+    {name:'远低预期',code:'D',min:0,max:39,color:'#A1A1AA',bg:'#FAFAFA'},
   ],
   groups:[
-    {name:'默认考核组',isDefault:true,rules:'部门 属于 产品部,技术部,市场部',evalRule:'通用评价规则',excluded:'-'},
-    {name:'仓储特殊组',isDefault:false,rules:'部门 等于 仓储部 且 职级 属于 L5,L6',evalRule:'仓储评价规则',excluded:'张三'},
+    {name:'默认考核组',isDefault:true,rules:'部门 属于 产品部,技术部,市场部',evalRule:'通用评价规则',autoRemove:{enabled:true,conditions:['resignation']}},
+    {name:'仓储特殊组',isDefault:false,rules:'部门 等于 仓储部 且 职级 属于 L5,L6',evalRule:'仓储评价规则',autoRemove:{enabled:false,conditions:[]}},
   ],
   stages:[
-    {name:'目标制定',desc:'员工/上级填写绩效目标',flow:'通用目标制定流程',enabled:true},
-    {name:'绩效考核',desc:'考核人评分',flow:'通用绩效考核流程',enabled:true},
-    {name:'结果审定',desc:'审定人调整等级',flow:'汇报线逐级审定',enabled:true},
-    {name:'结果确认',desc:'员工确认绩效结果',flow:'员工确认流程',enabled:true},
-    {name:'绩效面谈',desc:'上级与员工面谈',flow:'绩效面谈流程',enabled:true},
+    {name:'目标制定',desc:'员工/上级填写绩效目标',flow:'通用目标制定流程',enabled:true,autoStart:{enabled:false,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'firstDayOfPeriod',fixedOffset:0},autoEnd:{enabled:false,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'lastDayOfPeriod',fixedOffset:0}},
+    {name:'绩效考核',desc:'考核人评分',flow:'通用绩效考核流程',enabled:true,autoStart:{enabled:true,mode:'relative',ref:'cycleStart',offsetDays:3,fixedRule:'firstDayOfPeriod',fixedOffset:0},autoEnd:{enabled:true,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'lastDayOfPeriod',fixedOffset:-3}},
+    {name:'结果审定',desc:'审定人调整等级',flow:'汇报线逐级审定',enabled:true,autoStart:{enabled:false,mode:'relative',ref:'prevStageEnd',offsetDays:0,fixedRule:'firstDayOfPeriod',fixedOffset:0},autoEnd:{enabled:false,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'lastDayOfPeriod',fixedOffset:0}},
+    {name:'结果确认',desc:'员工确认绩效结果',flow:'员工确认流程',enabled:true,autoStart:{enabled:false,mode:'relative',ref:'prevStageEnd',offsetDays:0,fixedRule:'firstDayOfPeriod',fixedOffset:0},autoEnd:{enabled:false,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'lastDayOfPeriod',fixedOffset:0}},
+    {name:'绩效面谈',desc:'上级与员工面谈',flow:'绩效面谈流程',enabled:true,autoStart:{enabled:false,mode:'relative',ref:'prevStageEnd',offsetDays:0,fixedRule:'firstDayOfPeriod',fixedOffset:0},autoEnd:{enabled:false,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'lastDayOfPeriod',fixedOffset:0}},
   ],
-  forcedDist:{name:'标准强制分布',grades:[
-    {code:'A',name:'远超预期',op:'不超过',pct:10},
-    {code:'B+',name:'符合预期+',op:'不超过',pct:20},
+  forcedDist:{name:'标准七级强制分布',grades:[
+    {code:'A',name:'远超预期',op:'不超过',pct:5},
+    {code:'A-',name:'超出预期',op:'不超过',pct:10},
+    {code:'B+',name:'符合预期+',op:'不超过',pct:15},
     {code:'B',name:'符合预期',op:'不低于',pct:40},
-    {code:'B-',name:'符合预期-',op:'不超过',pct:20},
-    {code:'C',name:'低于预期',op:'不低于',pct:10},
+    {code:'B-',name:'符合预期-',op:'不超过',pct:15},
+    {code:'C',name:'低于预期',op:'不超过',pct:10},
+    {code:'D',name:'远低预期',op:'不超过',pct:5},
   ]},
+  autoCreate:{enabled:true,monthly:{direction:'前',days:7},quarterly:{direction:'前',days:7},semiannual:{direction:'前',days:14},annual:{direction:'前',days:30}},
+  admins:['EMP0088'],
 };
+
+const TIME_RULES_LABEL={
+  'firstDayOfPeriod':'周期第一天','lastDayOfPeriod':'周期最后一天','lastDayOfPrevPeriod':'上一周期最后一天',
+  'firstDayOfNextPeriod':'下一周期第一天','prevMonthLastDay':'上月最后一天','prevMonthDay25':'上月25号',
+  'currentMonthDay1':'当月1号','currentMonthDay15':'当月15号','prevYearDec31':'上年12月31日',
+  'currentYearJan1':'当年1月1日','currentYearJun30':'当年6月30日','prevQuarterLastDay':'上季最后一天','currentQuarterDay1':'当季第一天',
+};
+function ruleLabel(k){return TIME_RULES_LABEL[k]||k;}
 
 function render(){
   const s=SCHEME;
   const ct=document.getElementById('ct')||document.getElementById('app');
   if(!ct) return;
-  ct.innerHTML=`<div style="max-width:1120px" class="fi">
+  ct.innerHTML=`<div style="width:100%" class="fi">
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;font:400 13px/1 var(--f);color:var(--c6)">
       <a href="perf-scheme-list.html" style="color:var(--pr);text-decoration:none;cursor:pointer">← 返回方案列表</a>
       <span style="color:var(--c4)">/</span><span>${s.name}</span>
@@ -86,16 +108,18 @@ function render(){
     <!-- 基本信息 -->
     <div class="card">
       <div class="card-hd"><span class="card-bar" style="background:var(--pr)"></span><span class="card-title">基本信息</span></div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
         <div><lbl>方案名称</lbl><val>${s.name}</val></div>
-        <div><lbl>方案编号</lbl><val style="font-family:var(--m)">${s.code}</val></div>
-        <div><lbl>方案版本</lbl><val>${s.version}</val></div>
-        <div><lbl>启用状态</lbl><val style="color:var(--em)">已启用</val></div>
         <div><lbl>周期类型</lbl><val>${s.cycleType}</val></div>
         <div><lbl>等级规则</lbl><val>${s.gradeRule}</val></div>
         <div><lbl>向下公开</lbl><val>${s.downward?'开启':'关闭'}</val></div>
         <div><lbl>强制分布</lbl><val>${s.forcedDist.name}</val></div>
+        <div><lbl>活动管理员</lbl><val>${(s.admins||[]).map(function(id){var a=ADMIN_LIST.find(function(x){return x.id===id;});return a?a.name:id;}).join('、')||'—'}</val></div>
         <div style="grid-column:1/-1"><lbl>方案描述</lbl><val>${s.desc}</val></div>
+        ${s.autoCreate?`
+        <div><lbl>自动创建活动</lbl><val style="color:var(--em)">${s.autoCreate.enabled?'已开启':'已关闭'}</val></div>
+        ${s.autoCreate.enabled?`<div><lbl>创建时间</lbl><val>${s.cycleType==='月度'?'周期开始'+s.autoCreate.monthly.direction+' '+s.autoCreate.monthly.days+' 天':s.cycleType==='季度'?'周期开始'+s.autoCreate.quarterly.direction+' '+s.autoCreate.quarterly.days+' 天':s.cycleType==='半年度'?'周期开始'+s.autoCreate.semiannual.direction+' '+s.autoCreate.semiannual.days+' 天':'周期开始'+s.autoCreate.annual.direction+' '+s.autoCreate.annual.days+' 天'}</val></div>`:''}
+        `:''}
       </div>
     </div>
 
@@ -103,7 +127,7 @@ function render(){
     <div class="card">
       <div class="card-hd"><span class="card-bar" style="background:var(--ro)"></span><span class="card-title">绩效等级 · ${s.gradeRule}</span></div>
       <div style="display:flex;flex-wrap:wrap;gap:8px">
-        ${s.grades.map(g=>`<span style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:var(--r1);font:500 13px/1 var(--f);background:${g.bg};color:${g.color}"><strong>${g.code}</strong> ${g.name} <span style="font:400 11px/1 var(--f);opacity:.7">${g.min}-${g.max}分</span></span>`).join('')}
+        ${s.grades.map(g=>`<span style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:var(--r1);font:500 13px/1 var(--f);background:${g.bg};color:${g.color}">${g.name}</span>`).join('')}
       </div>
     </div>
 
@@ -113,9 +137,18 @@ function render(){
       <div style="display:flex;flex-direction:column;gap:8px">
         ${s.groups.map(g=>`<div style="padding:12px 16px;border:1px solid var(--dv);border-radius:var(--r1)">
           <div style="display:flex;align-items:center;gap:8px"><span style="font:600 13px/1 var(--f);color:var(--c9)">${g.name}</span>${g.isDefault?'<span style="font:500 10px/1 var(--f);padding:1px 6px;border-radius:3px;background:var(--pr50);color:var(--pr)">默认</span>':''}</div>
-          <div style="font:400 12px/1 var(--f);color:var(--c6);margin-top:6px">适用规则：${g.rules}</div>
-          <div style="font:400 12px/1 var(--f);color:var(--c6);margin-top:2px">评价规则：${g.evalRule}</div>
-          <div style="font:400 12px/1 var(--f);color:var(--c6);margin-top:2px">排除人员：${g.excluded}</div>
+          <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--dv)">
+            <div style="font:600 12px/1 var(--f);color:var(--c6);margin-bottom:6px">添加人员规则</div>
+            <div style="font:400 12px/1 var(--f);color:var(--c7)">${g.rules}</div>
+            <div style="font:400 12px/1 var(--f);color:var(--c5);margin-top:2px">评价规则：${g.evalRule}</div>
+          </div>
+          ${g.autoRemove&&g.autoRemove.enabled?`
+          <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--dv)">
+            <div style="font:600 12px/1 var(--f);color:var(--c6);margin-bottom:6px">移除人员规则</div>
+            <div style="font:400 12px/1 var(--f);color:var(--c7)">
+              ${g.autoRemove.conditions.map(c=>c==='resignation'?'员工离职':c==='transfer'?'调岗':c==='orgChange'?'组织架构变更':c).join('、')}
+            </div>
+          </div>`:''}
         </div>`).join('')}
       </div>
     </div>
@@ -126,7 +159,7 @@ function render(){
       <div style="display:flex;flex-direction:column;gap:6px">
         ${s.stages.map(st=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--dv);border-radius:var(--r1)">
           <div><span style="font:500 13px/1 var(--f);color:var(--c9)">${st.name}</span><span style="font:400 12px/1 var(--f);color:var(--c5);margin-left:8px">${st.desc}</span></div>
-          <div style="display:flex;align-items:center;gap:10px"><span style="font:400 11px/1 var(--f);color:var(--c5);font-family:var(--m)">${st.flow}</span><span style="font:500 11px/1 var(--f);padding:2px 8px;border-radius:3px;background:var(--em50);color:var(--em700)">${st.enabled?'已启用':'已停用'}</span></div>
+          <div style="display:flex;align-items:center;gap:10px"><span style="font:400 11px/1 var(--f);color:var(--c5);font-family:var(--m)">${st.flow}</span><span style="font:500 11px/1 var(--f);padding:2px 8px;border-radius:3px;background:var(--em50);color:var(--em700)">${st.enabled?'已启用':'已停用'}</span>${st.autoStart&&st.autoStart.enabled?`<span style="font:400 11px/1 var(--f);color:var(--pr);margin-left:2px">自动开启: ${(function(a){if(a.mode==='relative'){var r=a.ref==='cycleStart'?'周期开始':a.ref==='prevStageEnd'?'上一环节结束':'周期开始';return r+(a.offsetDays>=0?'后':'前')+Math.abs(a.offsetDays||0)+'天';}else{return ruleLabel(a.fixedRule)+(a.fixedOffset?(a.fixedOffset>0?'+'+a.fixedOffset:a.fixedOffset)+'天':'');}})(st.autoStart)}</span>`:''}${st.autoEnd&&st.autoEnd.enabled?`<span style="font:400 11px/1 var(--f);color:var(--ac700);margin-left:2px">自动结束: ${(function(a){if(a.mode==='relative'){var r=a.ref==='cycleStart'?'周期开始':a.ref==='prevStageEnd'?'上一环节结束':'周期开始';return r+(a.offsetDays>=0?'后':'前')+Math.abs(a.offsetDays||0)+'天';}else{return ruleLabel(a.fixedRule)+(a.fixedOffset?(a.fixedOffset>0?'+'+a.fixedOffset:a.fixedOffset)+'天':'');}})(st.autoEnd)}</span>`:''}</div>
         </div>`).join('')}
       </div>
     </div>

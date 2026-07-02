@@ -333,12 +333,37 @@ const CYCLES=[
 
 // ═══ 模拟数据 ═══
 let ACTIVITIES=[
-  {id:1,name:'2026年Q2绩效考核',plan:'年度绩效方案 v2',cycle:'Q2季度考核（2026/04/01 - 2026/06/30）',dynamicAssessment:'locked',empCount:128,status:'active',updater:'Kim',updateTime:'2026/03/15 09:30:00',creator:'Kim（HRBP经理）',createTime:'2026/03/10 10:00:00',description:'2026年Q2全员季度绩效考核，采用360度评估方式，覆盖技术部、产品部、设计部等全部门。'},
-  {id:2,name:'2026年Q3绩效考核',plan:'年度绩效方案 v2',cycle:'Q3季度考核（2026/07/01 - 2026/09/30）',dynamicAssessment:'dynamic',empCount:0,status:'not_started',updater:'Kim',updateTime:'2026/06/20 14:00:00',creator:'Kim（HRBP经理）',createTime:'2026/06/18 09:00:00',description:'Q3季度考核预配置，启用动态考核关系，考核组按最新组织架构自动匹配。'},
-  {id:3,name:'2026年Q1绩效考核',plan:'半年度方案 v1',cycle:'Q1季度考核（2026/01/01 - 2026/03/31）',dynamicAssessment:'locked',empCount:96,status:'ended',updater:'Kim',updateTime:'2026/03/31 18:00:00',creator:'张经理（COE负责人）',createTime:'2026/01/02 08:30:00',description:'Q1季度绩效考核，锁定考核关系，96人参与。'},
-  {id:4,name:'2025年度绩效考核',plan:'年度绩效方案 v1',cycle:'年度考核（2025/01/01 - 2025/12/31）',dynamicAssessment:'dynamic',empCount:210,status:'ended',updater:'Kim',updateTime:'2025/12/31 23:59:00',creator:'张经理（COE负责人）',createTime:'2025/01/05 09:00:00',description:'2025年度全员绩效考核，210人参与，已全部完成。'},
-  {id:5,name:'2024年度绩效考核',plan:'年度绩效方案 v1',cycle:'年度考核（2024/01/01 - 2024/12/31）',dynamicAssessment:'locked',empCount:195,status:'archived',updater:'张经理',updateTime:'2025/01/15 10:00:00',creator:'张经理（COE负责人）',createTime:'2024/01/03 09:00:00',description:'2024年度全员绩效考核，已归档锁定。'},
+  {id:1,name:'2026年Q2绩效考核',plan:'年度绩效方案 v2',cycle:'Q2季度考核（2026/04/01 - 2026/06/30）',dynamicAssessment:'locked',empCount:128,status:'active',updater:'Kim',updateTime:'2026/03/15 09:30:00',creator:'Kim（HRBP经理）',createTime:'2026/03/10 10:00:00',description:'2026年Q2全员季度绩效考核，采用360度评估方式，覆盖技术部、产品部、设计部等全部门。',admin:'EMP0088',admins:['EMP0088']},
+  {id:2,name:'2026年Q3绩效考核',plan:'年度绩效方案 v2',cycle:'Q3季度考核（2026/07/01 - 2026/09/30）',dynamicAssessment:'dynamic',empCount:0,status:'not_started',updater:'Kim',updateTime:'2026/06/20 14:00:00',creator:'Kim（HRBP经理）',createTime:'2026/06/18 09:00:00',description:'Q3季度考核预配置，启用动态考核关系，考核组按最新组织架构自动匹配。',admin:'EMP0088',admins:['EMP0088']},
+  {id:3,name:'2026年Q1绩效考核',plan:'半年度方案 v1',cycle:'Q1季度考核（2026/01/01 - 2026/03/31）',dynamicAssessment:'locked',empCount:96,status:'ended',updater:'Kim',updateTime:'2026/03/31 18:00:00',creator:'张经理（COE负责人）',createTime:'2026/01/02 08:30:00',description:'Q1季度绩效考核，锁定考核关系，96人参与。',admin:'EMP0012',admins:['EMP0012']},
+  {id:4,name:'2025年度绩效考核',plan:'年度绩效方案 v1',cycle:'年度考核（2025/01/01 - 2025/12/31）',dynamicAssessment:'dynamic',empCount:210,status:'ended',updater:'Kim',updateTime:'2025/12/31 23:59:00',creator:'张经理（COE负责人）',createTime:'2025/01/05 09:00:00',description:'2025年度全员绩效考核，210人参与，已全部完成。',admin:'EMP0012',admins:['EMP0012']},
+  {id:5,name:'2024年度绩效考核',plan:'年度绩效方案 v1',cycle:'年度考核（2024/01/01 - 2024/12/31）',dynamicAssessment:'locked',empCount:195,status:'archived',updater:'张经理',updateTime:'2025/01/15 10:00:00',creator:'张经理（COE负责人）',createTime:'2024/01/03 09:00:00',description:'2024年度全员绩效考核，已归档锁定。',admin:'EMP0012',admins:['EMP0012']},
 ];
+
+const HANDLER_LIST=[
+  '李四（技术部经理）','王五（产品部经理）','赵六（HRBP）',
+  '孙七（审定委员会）','周八（SSC绩效专员）','郑十一（市场部总监）',
+  '吴九（财务总监）','郑十二（运营总监）'
+];
+
+const GROUP_LIST=['默认考核组','仓储特殊组','管理层组'];
+
+const ADMIN_LIST=[
+  {id:'EMP0088',name:'Kim（HRBP经理）'},
+  {id:'EMP0012',name:'张经理（COE负责人）'},
+  {id:'EMP0025',name:'李HR（HRBP）'},
+  {id:'EMP0036',name:'王管理（部门总监）'},
+  {id:'EMP0047',name:'赵HR（SSC专员）'},
+  {id:'EMP0058',name:'陈主管（财务部）'},
+  {id:'EMP0069',name:'周经理（技术部）'},
+];
+
+const SCHEME_ADMINS={
+  '年度绩效方案 v2': ['EMP0088'],
+  '半年度方案 v1': ['EMP0012', 'EMP0025'],
+  '月度方案 v1': ['EMP0036'],
+  '年度绩效方案 v1': ['EMP0088', 'EMP0012'],
+};
 
 // ═══ 状态 ═══
 let filter={search:'',status:''};
@@ -569,6 +594,12 @@ function renderEmployeeList(){
           </div>
         </div>
 
+        <!-- 修改考核关系 -->
+        <button class="btn btn-s" onclick="showRelationModal()" style="gap:6px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          修改考核关系
+        </button>
+
         <!-- 导入 -->
         <div style="position:relative;display:inline-flex">
           <button class="btn btn-s" onclick="toggleEmpDropdown('empImportDd')" style="gap:6px">
@@ -605,6 +636,7 @@ function renderEmployeeList(){
           <div id="empBatchDd" style="display:none;position:absolute;top:calc(100% + 4px);right:0;background:var(--sf);border:1px solid var(--c3);border-radius:var(--r1);box-shadow:0 6px 16px rgba(0,0,0,.08);min-width:120px;z-index:100;padding:4px 0">
             <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="GHR_NAV.showToast('批量催办已发送');toggleEmpDropdown('empBatchDd')">催办</div>
             <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="GHR_NAV.showToast('批量转交已提交');toggleEmpDropdown('empBatchDd')">转交</div>
+            <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="showRelationModal();toggleEmpDropdown('empBatchDd')">修改考核关系</div>
             <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="GHR_NAV.showToast('批量暂停已执行');toggleEmpDropdown('empBatchDd')">暂停</div>
             <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="GHR_NAV.showToast('批量继续已执行');toggleEmpDropdown('empBatchDd')">继续</div>
             <div style="height:1px;background:var(--dv);margin:4px 0"></div>
@@ -826,6 +858,7 @@ function renderTable(data){
       <td><span class="cell-status ${st.cls}">${st.label}</span></td>
       <td class="cell-creator">${a.updater}</td>
       <td class="cell-date">${a.updateTime}</td>
+      <td class="cell-creator">${(a.admins||[a.admin||a.creator]).map(function(id){var found=ADMIN_LIST.find(function(x){return x.id===id;});return found?found.name:id;}).join('、')}</td>
       <td>
         <div class="cell-actions">
           <button class="btn btn-t" onclick="viewActivity(${a.id})" title="查看">查看</button>
@@ -855,10 +888,11 @@ function renderTable(data){
             <th>状态</th>
             <th>更新人</th>
             <th>最近更新时间</th>
+            <th>活动管理员</th>
             <th>操作</th>
           </tr>
         </thead>
-        <tbody>${rows.length?rows:`<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--c4);font-size:13px">暂无匹配的考核活动</td></tr>`}</tbody>
+        <tbody>${rows.length?rows:`<tr><td colspan="11" style="text-align:center;padding:40px;color:var(--c4);font-size:13px">暂无匹配的考核活动</td></tr>`}</tbody>
       </table>
     </div>
     <div class="pg-bar">
@@ -935,7 +969,7 @@ function renderModals(){
       </div>
       <div class="form-row">
         <div class="modal-label">关联方案<span class="req">*</span></div>
-        <select class="fl-sel" id="fPlan" style="width:100%;height:36px">
+        <select class="fl-sel" id="fPlan" style="width:100%;height:36px" onchange="onPlanChange(this.value)">
           <option value="">请选择关联方案</option>
           ${planOptions}
         </select>
@@ -973,6 +1007,26 @@ function renderModals(){
           </label>
         </div>
         <div style="font:400 12px/1.4 var(--f);color:var(--c5);margin-top:4px">锁定：活动发起时快照考核关系，后续不随组织调整变化；动态：每次环节启动时实时查询当前汇报关系</div>
+      </div>
+      <div class="form-row">
+        <div class="modal-label">活动管理员<span class="req">*</span></div>
+        <div style="border:1px solid var(--c2);border-radius:var(--r1);overflow:hidden">
+          <input id="fAdminSearch" style="width:100%;height:36px;padding:0 12px;border:none;border-bottom:1px solid var(--dv);border-radius:0;font:400 13px/1 var(--f);color:var(--c9);outline:none" placeholder="🔍 搜索工号/姓名…" oninput="filterAdminListAct(this.value)">
+          <div id="fAdminList" style="max-height:180px;overflow-y:auto">
+            ${ADMIN_LIST.map(a=>{
+              var sel=d.admins?d.admins.includes(a.id):(d.admin===a.id);
+              if(!d.admins&&!d.admin&&a.id==='EMP0088') sel=true;
+              return `<label style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;cursor:pointer;font:400 13px/1 var(--f);color:var(--c7);border-bottom:1px solid var(--dv);transition:background .1s;${sel?'background:var(--pr50)':''}" onmouseover="if(!this.querySelector('input').checked) this.style.background='var(--c0)'" onmouseout="if(!this.querySelector('input').checked) this.style.background=''">
+                <span style="display:flex;align-items:center;gap:8px"><input type="checkbox" value="${a.id}" ${sel?'checked':''} onchange="updateAdminSelectionAct(this)" style="accent-color:var(--pr)">${a.name}</span>
+                <span style="font:400 11px/1 var(--m);color:var(--c4)">${a.id}</span>
+              </label>`;
+            }).join('')}
+          </div>
+        </div>
+        <div id="fAdminHint" style="font:400 11px/1 var(--f);color:var(--pr);margin-top:4px;display:none"></div>
+        <div id="fAdminCount" style="font:400 11px/1 var(--f);color:var(--c5);margin-top:2px">已选 ${(()=>{var c=0;if(d.admins)c=d.admins.length;else if(d.admin)c=1;else c=1;return c;})()} 人</div>
+        <div class="form-err" id="errAdmin">请选择至少一位活动管理员</div>
+        <div style="font:400 12px/1.4 var(--f);color:var(--c5);margin-top:4px">活动管理员拥有管理考核活动的权限，包括启停环节、修改考核关系等操作</div>
       </div>
       <div class="form-row">
         <div class="modal-label">活动说明</div>
@@ -1154,6 +1208,7 @@ function renderSchemeDetailPage(){
         <div><div class="info-item-label">被考核人数</div><div class="info-item-value" style="font-family:var(--m)">${a.empCount} 人</div></div>
         <div><div class="info-item-label">发起人</div><div class="info-item-value">${a.creator}</div></div>
         <div><div class="info-item-label">发起时间</div><div class="info-item-value" style="font-family:var(--m);font-size:12px">${a.createTime}</div></div>
+        <div><div class="info-item-label">活动管理员</div><div class="info-item-value">${(a.admins||[a.admin||a.creator]).map(function(id){var found=ADMIN_LIST.find(function(x){return x.id===id;});return found?found.name:id;}).join('、')}</div></div>
       </div>
       ${a.description?`<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)"><div class="info-item-label">活动说明</div><div class="info-item-value" style="margin-top:4px">${a.description}</div></div>`:''}
     </div>
@@ -1229,7 +1284,7 @@ function renderOpLogPage(){
     // 数据操作
     '导入数据':'color:var(--vi);background:var(--vi50)','导出数据':'color:var(--vi);background:var(--vi50)',
     // 人员管理
-    '添加人员':'color:var(--em700);background:var(--em50)','移除人员':'color:var(--ac700);background:var(--ac50)','按规则更新':'color:var(--pr);background:var(--pr50)',
+    '添加人员':'color:var(--em700);background:var(--em50)','移除人员':'color:var(--ac700);background:var(--ac50)','按规则更新':'color:var(--pr);background:var(--pr50)','修改考核关系':'color:var(--vi);background:var(--vi50)',
     // 流程处理
     '驳回':'color:var(--ac700);background:var(--ac50)','审批通过':'color:var(--em700);background:var(--em50)',
   };
@@ -1265,7 +1320,7 @@ function renderOpLogPage(){
       <div class="oplog-tree-sep"></div>
       ${g('data','数据操作',['导入数据','导出数据'])}
       <div class="oplog-tree-sep"></div>
-      ${g('mgmt','人员管理',['添加人员','移除人员','按规则更新'])}
+      ${g('mgmt','人员管理',['添加人员','移除人员','按规则更新','修改考核关系'])}
       <div class="oplog-tree-sep"></div>
       ${g('flow','流程处理',['驳回','审批通过'])}
     </div>`;
@@ -1418,13 +1473,191 @@ function showArchiveDlg(){
   document.body.appendChild(ov);
 }
 
+function showRelationModal(empNames){
+  // empNames 可选，批量操作时预填已勾选人员
+  var selected=[];
+  var searchTerm='';
+  var handlerVal='';
+  var groupVal='';
+  var reasonVal='';
+
+  function buildEmpOptions(){
+    var M=window._relModal||{searchTerm:'',selected:[]};
+    var q=M.searchTerm.toLowerCase();
+    return EMPLOYEE_LIST.filter(function(e){
+      return e.name.toLowerCase().includes(q)||e.emp.toLowerCase().includes(q)||e.dept.toLowerCase().includes(q);
+    }).map(function(e){
+      var checked=M.selected.some(function(s){return s.emp===e.emp;});
+      return '<label style="display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;font:400 13px/1 var(--f);color:var(--c7);transition:background .1s;border-bottom:1px solid var(--dv)" onmouseover="this.style.background=\'var(--c0)\'" onmouseout="this.style.background=\'transparent\'">'+
+        '<input type="checkbox" value="'+e.emp+'"'+(checked?' checked':'')+' style="accent-color:var(--pr)" onchange="var M=window._relModal;var v=this.value;if(this.checked){var emp=EMPLOYEE_LIST.find(function(x){return x.emp===v});if(emp&&!M.selected.some(function(x){return x.emp===v})){M.selected.push(emp);}}else{M.selected=M.selected.filter(function(x){return x.emp!==v});}var el=document.getElementById(\'relSelectedList\');if(el)el.innerHTML=M.buildSelectedList();var cnt=document.getElementById(\'relSelCount\');if(cnt)cnt.textContent=M.selected.length;M.updateConfirmBtn();"/>'+
+        '<span>'+e.name+'</span><span style="color:var(--c5);font-size:12px">'+e.emp+'</span><span style="color:var(--c5);font-size:12px">'+e.dept+'</span>'+
+        '</label>';
+    }).join('');
+  }
+
+  function buildSelectedList(){
+    var M=window._relModal||{selected:[]};
+    if(!M.selected.length) return '<div style="font:400 13px/1 var(--f);color:var(--c4);text-align:center;padding:20px">暂未选择人员</div>';
+    return M.selected.map(function(e){
+      return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--dv);border-radius:var(--r1);margin-bottom:6px;background:var(--c0)">'+
+        '<div style="display:flex;align-items:center;gap:10px">'+
+        '<span style="width:6px;height:6px;border-radius:50%;background:var(--pr);flex-shrink:0"></span>'+
+        '<span style="font:500 13px/1 var(--f);color:var(--c8)">'+e.name+'</span>'+
+        '<span style="font:400 12px/1 var(--f);color:var(--c5)">'+e.dept+'</span>'+
+        '<span style="font:400 12px/1 var(--f);color:var(--c5)">当前处理人: '+e.handler+'</span>'+
+        '</div>'+
+        '<span style="font:400 12px/1 var(--f);color:var(--c4);cursor:pointer" onclick="var M=window._relModal;M.selected=M.selected.filter(function(x){return x.emp!==\''+e.emp+'\';});document.getElementById(\'relSelectedList\').innerHTML=M.buildSelectedList();document.getElementById(\'relSelCount\').textContent=M.selected.length;M.updateConfirmBtn();var cbs=document.querySelectorAll(\'#relEmpList input[type=checkbox]\');cbs.forEach(function(cb){if(cb.value===\''+e.emp+'\')cb.checked=false;});">✕ 移除</span>'+
+        '</div>';
+    }).join('');
+  }
+
+  function updateConfirmBtn(){
+    var M=window._relModal||{selected:[],handlerVal:'',reasonVal:''};
+    var btn=document.getElementById('relConfirmBtn');
+    if(btn){btn.disabled=!M.selected.length||!M.handlerVal||!M.reasonVal.trim();btn.style.opacity=btn.disabled?'.5':'1';}
+  }
+
+  function doConfirm(){
+    var M=window._relModal;
+    if(!M||!M.selected.length||!M.handlerVal||!M.reasonVal.trim()) return;
+    var names=M.selected.map(function(e){return e.name;});
+    M.selected.forEach(function(emp){
+      emp.handler=M.handlerVal;
+    });
+    OP_LOGS.unshift({
+      time:formatTime(new Date()),operator:'当前用户',type:'修改考核关系',typeGroup:'人员管理',
+      target:names.join('、'),detail:'考核人变更为 '+M.handlerVal+(M.groupVal?'，考核组变更为 '+M.groupVal:'')+'，原因：'+M.reasonVal.trim()
+    });
+    var ov=document.getElementById('relModalOv');
+    if(ov) ov.remove();
+    GHR_NAV.showToast('已修改 '+M.selected.length+' 人的考核关系');
+    renderApp();
+  }
+
+  var modal={
+    selected:selected,searchTerm:searchTerm,handlerVal:handlerVal,groupVal:groupVal,reasonVal:reasonVal,
+    buildEmpOptions:buildEmpOptions,buildSelectedList:buildSelectedList,updateConfirmBtn:updateConfirmBtn,doConfirm:doConfirm
+  };
+  window._relModal=modal;
+
+  var handlerOptions=HANDLER_LIST.map(function(h){
+    return '<option value="'+h+'"'+(handlerVal===h?' selected':'')+'>'+h+'</option>';
+  }).join('');
+  var groupOptions=GROUP_LIST.map(function(g){
+    return '<option value="'+g+'"'+(groupVal===g?' selected':'')+'>'+g+'</option>';
+  }).join('');
+
+  var ov=document.createElement('div');
+  ov.id='relModalOv';
+  ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:2000;display:flex;align-items:center;justify-content:center';
+  ov.innerHTML='<div class="modal" style="width:600px;max-width:90vw;max-height:85vh;overflow-y:auto">'+
+    '<div class="modal-hd">'+
+      '<span class="modal-hd-t">修改考核关系</span>'+
+      '<button class="modal-close" onclick="document.getElementById(\'relModalOv\').remove()">'+I.x+'</button>'+
+    '</div>'+
+    '<div class="modal-bd">'+
+      '<div class="form-row">'+
+        '<div class="modal-label">选择人员</div>'+
+        '<input class="modal-input" id="relSearchInput" placeholder="搜索姓名、工号、部门..." value="'+searchTerm+'" oninput="var w=window._relModal;if(!w)return;w.searchTerm=this.value;document.getElementById(\'relEmpList\').innerHTML=w.buildEmpOptions();" />'+
+        '<div id="relEmpList" style="max-height:180px;overflow-y:auto;border:1px solid var(--c2);border-radius:var(--r1);margin-top:6px">'+buildEmpOptions()+'</div>'+
+      '</div>'+
+      '<div class="form-row">'+
+        '<div class="modal-label">已选 <span id="relSelCount" style="font-weight:600;color:var(--pr)">'+selected.length+'</span> 人</div>'+
+        '<div id="relSelectedList" style="max-height:200px;overflow-y:auto">'+buildSelectedList()+'</div>'+
+      '</div>'+
+      '<div class="form-row">'+
+        '<div class="modal-label">新处理人<span class="req">*</span></div>'+
+        '<select class="fl-sel" id="relHandler" style="width:100%;height:36px" onchange="var w=window._relModal;if(!w)return;w.handlerVal=this.value;w.updateConfirmBtn();">'+
+          '<option value="">请选择新处理人</option>'+handlerOptions+
+        '</select>'+
+      '</div>'+
+      '<div class="form-row">'+
+        '<div class="modal-label">新考核组</div>'+
+        '<select class="fl-sel" id="relGroup" style="width:100%;height:36px" onchange="var w=window._relModal;if(!w)return;w.groupVal=this.value;">'+
+          '<option value="">不修改考核组</option>'+groupOptions+
+        '</select>'+
+      '</div>'+
+      '<div class="form-row">'+
+        '<div class="modal-label">变更原因<span class="req">*</span></div>'+
+        '<textarea class="modal-textarea" id="relReason" placeholder="请输入变更原因..." oninput="var w=window._relModal;if(!w)return;w.reasonVal=this.value;w.updateConfirmBtn();"></textarea>'+
+      '</div>'+
+    '</div>'+
+    '<div class="modal-ft">'+
+      '<button class="btn btn-s" onclick="document.getElementById(\'relModalOv\').remove()">取消</button>'+
+      '<button class="btn btn-p" id="relConfirmBtn" disabled style="opacity:.5" onclick="var w=window._relModal;if(w)w.doConfirm();">确认修改</button>'+
+    '</div>'+
+  '</div>';
+  ov.addEventListener('click',function(e){if(e.target===ov)ov.remove();});
+  document.body.appendChild(ov);
+
+  // Pre-select from batch if empNames provided
+  if(empNames&&empNames.length){
+    empNames.forEach(function(n){
+      var emp=EMPLOYEE_LIST.find(function(e){return e.name===n;});
+      if(emp&&!modal.selected.some(function(s){return s.emp===emp.emp;})) modal.selected.push(emp);
+    });
+    // Refresh display
+    setTimeout(function(){
+      var listEl=document.getElementById('relSelectedList');
+      if(listEl) listEl.innerHTML=modal.buildSelectedList();
+      var cntEl=document.getElementById('relSelCount');
+      if(cntEl) cntEl.textContent=modal.selected.length;
+      modal.updateConfirmBtn();
+    },50);
+  }
+}
+
 function formatTime(d){
   return d.getFullYear()+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0')+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+':'+String(d.getSeconds()).padStart(2,'0');
 }
 
+function updateAdminSelectionAct(cb){
+  var row=cb.closest('label');
+  if(cb.checked){
+    row.style.background='var(--pr50)';
+  }else{
+    row.style.background='';
+  }
+  updateAdminCountAct();
+}
+
+function filterAdminListAct(q){
+  var s=q.toLowerCase();
+  var items=document.querySelectorAll('#fAdminList label');
+  items.forEach(function(item){
+    var text=(item.textContent||'').toLowerCase();
+    item.style.display=!s||text.indexOf(s)>=0?'flex':'none';
+  });
+}
+
+function updateAdminCountAct(){
+  var cbs=document.querySelectorAll('#fAdminList input[type="checkbox"]:checked');
+  var el=document.getElementById('fAdminCount');
+  if(el) el.textContent='已选 '+cbs.length+' 人';
+}
+
+function onPlanChange(planName){
+  var inherited=SCHEME_ADMINS[planName]||[];
+  var container=document.getElementById('fAdminList');
+  if(container){
+    var cbs=container.querySelectorAll('input[type="checkbox"]');
+    cbs.forEach(function(cb){
+      cb.checked=inherited.includes(cb.value);
+      var row=cb.closest('label');
+      if(row) row.style.background=cb.checked?'var(--pr50)':'';
+    });
+  }
+  var hint=document.getElementById('fAdminHint');
+  if(hint){
+    hint.textContent=inherited.length>0?'已从方案带入 '+inherited.length+' 位管理员，可修改':'方案未预设管理员，请手动选择';
+    hint.style.display='block';
+  }
+  updateAdminCountAct();
+}
+
 function submitForm(){
   // 清除错误
-  ['errName','errPlan','errCycle'].forEach(id=>{
+  ['errName','errPlan','errCycle','errAdmin'].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.classList.remove('show');
   });
@@ -1438,12 +1671,16 @@ function submitForm(){
   const cycle=cycleLabel?cycleLabel+'（'+cycleOpt.dataset.start+' - '+cycleOpt.dataset.end+'）':'';
   const dynamicEl=document.querySelector('input[name="fDynamic"]:checked');
   const dynamicAssessment=dynamicEl?dynamicEl.value:'locked';
+  const adminCbs=document.querySelectorAll('#fAdminList input[type="checkbox"]:checked');
+  const admins=Array.from(adminCbs).map(function(cb){return cb.value;});
+  const admin=admins.length>0?admins[0]:'';
   const desc=document.getElementById('fDesc').value.trim();
 
   let hasErr=false;
   if(!name){showErr('errName','fName');hasErr=true}
   if(!plan){showErr('errPlan');hasErr=true}
   if(!cycle){showErr('errCycle','fCycle');hasErr=true}
+  if(admins.length===0){showErr('errAdmin');hasErr=true}
   if(hasErr) return;
 
   const now=new Date();
@@ -1454,7 +1691,7 @@ function submitForm(){
     ACTIVITIES.unshift({
       id:newId,name:name,plan:plan,cycle:cycle,dynamicAssessment:dynamicAssessment,empCount:0,
       status:'not_started',updater:'当前用户',updateTime:timeStr,description:desc,
-      creator:'当前用户',createTime:timeStr
+      creator:'当前用户',createTime:timeStr,admin:admin,admins:admins
     });
     modalState={type:null,data:null};
     viewActivity(newId);
@@ -1463,6 +1700,8 @@ function submitForm(){
     const a=ACTIVITIES.find(x=>x.id===modalState.data.id);
     if(a){
       a.name=name;a.plan=plan;a.cycle=cycle;a.dynamicAssessment=dynamicAssessment;a.description=desc;
+      a.admin=admin;
+      a.admins=admins;
       a.updater='当前用户';a.updateTime=timeStr;
     }
   }

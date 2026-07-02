@@ -244,24 +244,26 @@ const I={
 
 // ═══ 数据 ═══
 const GRADES=[
-  {name:'远超预期',code:'A',min:90,max:100,order:1},
-  {name:'符合预期+',code:'B+',min:80,max:89,order:2},
-  {name:'符合预期',code:'B',min:70,max:79,order:3},
-  {name:'符合预期-',code:'B-',min:60,max:69,order:4},
-  {name:'低于预期',code:'C',min:0,max:59,order:5},
+  {name:'远超预期',code:'A',min:95,max:100,order:1,color:'#DC2626',bg:'#FEF2F2'},
+  {name:'超出预期',code:'A-',min:85,max:94,order:2,color:'#F97316',bg:'#FFF7ED'},
+  {name:'符合预期+',code:'B+',min:78,max:84,order:3,color:'#F59E0B',bg:'#FFFBEB'},
+  {name:'符合预期',code:'B',min:65,max:77,order:4,color:'#10B981',bg:'#ECFDF5'},
+  {name:'符合预期-',code:'B-',min:55,max:64,order:5,color:'#6366F1',bg:'#EEF2FF'},
+  {name:'低于预期',code:'C',min:40,max:54,order:6,color:'#71717A',bg:'#F4F4F5'},
+  {name:'远低预期',code:'D',min:0,max:39,order:7,color:'#A1A1AA',bg:'#FAFAFA'},
 ];
 
 const STAGES=[
-  {id:'goal',name:'目标制定',desc:'员工/上级填写绩效目标',enabled:true,status:'done',flow:'通用目标制定流程'},
-  {id:'interview',name:'绩效面谈',desc:'上级与员工面谈',enabled:true,status:'warn',flow:'绩效面谈流程'},
-  {id:'eval',name:'绩效考核',desc:'考核人评分',enabled:true,status:'active',flow:'通用绩效考核流程'},
-  {id:'ratify',name:'结果审定',desc:'审定人调整等级',enabled:true,status:'pending',flow:'汇报线逐级审定'},
-  {id:'confirm',name:'结果确认',desc:'员工确认绩效结果',enabled:true,status:'pending',flow:'员工确认流程'},
+  {id:'goal',name:'目标制定',desc:'员工/上级填写绩效目标',enabled:true,status:'done',flow:'通用目标制定流程',autoStart:{enabled:false,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'firstDayOfPeriod',fixedOffset:0},autoEnd:{enabled:false,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'lastDayOfPeriod',fixedOffset:0}},
+  {id:'interview',name:'绩效面谈',desc:'上级与员工面谈',enabled:true,status:'warn',flow:'绩效面谈流程',autoStart:{enabled:false,mode:'relative',ref:'prevStageEnd',offsetDays:0,fixedRule:'firstDayOfPeriod',fixedOffset:0},autoEnd:{enabled:false,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'lastDayOfPeriod',fixedOffset:0}},
+  {id:'eval',name:'绩效考核',desc:'考核人评分',enabled:true,status:'active',flow:'通用绩效考核流程',autoStart:{enabled:true,mode:'relative',ref:'cycleStart',offsetDays:3,fixedRule:'firstDayOfPeriod',fixedOffset:0},autoEnd:{enabled:true,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'lastDayOfPeriod',fixedOffset:-3}},
+  {id:'ratify',name:'结果审定',desc:'审定人调整等级',enabled:true,status:'pending',flow:'汇报线逐级审定',autoStart:{enabled:false,mode:'relative',ref:'prevStageEnd',offsetDays:0,fixedRule:'firstDayOfPeriod',fixedOffset:0},autoEnd:{enabled:false,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'lastDayOfPeriod',fixedOffset:0}},
+  {id:'confirm',name:'结果确认',desc:'员工确认绩效结果',enabled:true,status:'pending',flow:'员工确认流程',autoStart:{enabled:false,mode:'relative',ref:'prevStageEnd',offsetDays:0,fixedRule:'firstDayOfPeriod',fixedOffset:0},autoEnd:{enabled:false,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'lastDayOfPeriod',fixedOffset:0}},
 ];
 
 const GROUPS=[
-  {id:'g1',name:'默认考核组',rules:[{field:'部门',op:'属于',val:'产品部,技术部,市场部'}],excluded:[],evalRule:'通用评价规则',isDefault:true},
-  {id:'g2',name:'仓储特殊组',rules:[{field:'部门',op:'等于',val:'仓储部'},{field:'职级',op:'属于',val:'L5,L6'}],excluded:['张三'],evalRule:'仓储评价规则',isDefault:false},
+  {id:'g1',name:'默认考核组',rules:[{field:'部门',op:'属于',val:'产品部,技术部,市场部'}],evalRule:'通用评价规则',isDefault:true,autoRemove:{enabled:true,conditions:['resignation']}},
+  {id:'g2',name:'仓储特殊组',rules:[{field:'部门',op:'等于',val:'仓储部'},{field:'职级',op:'属于',val:'L5,L6'}],evalRule:'仓储评价规则',isDefault:false,autoRemove:{enabled:false,conditions:[]}},
 ];
 
 const FLOW_MODELS={
@@ -272,6 +274,40 @@ const FLOW_MODELS={
   interview:['绩效面谈流程'],
 };
 
+const ADMIN_LIST=[
+  {id:'EMP0088',name:'Kim（HRBP经理）'},
+  {id:'EMP0012',name:'张经理（COE负责人）'},
+  {id:'EMP0025',name:'李HR（HRBP）'},
+  {id:'EMP0036',name:'王管理（部门总监）'},
+  {id:'EMP0047',name:'赵HR（SSC专员）'},
+  {id:'EMP0058',name:'陈主管（财务部）'},
+  {id:'EMP0069',name:'周经理（技术部）'},
+];
+
+const TIME_RULES={
+  'firstDayOfPeriod':    {label:'周期第一天',forType:'all'},
+  'lastDayOfPeriod':     {label:'周期最后一天',forType:'all'},
+  'lastDayOfPrevPeriod': {label:'上一周期最后一天',forType:'all'},
+  'firstDayOfNextPeriod':{label:'下一周期第一天',forType:'all'},
+  'prevMonthLastDay':    {label:'上月最后一天',forType:'月度'},
+  'prevMonthDay25':      {label:'上月25号',forType:'月度'},
+  'currentMonthDay1':    {label:'当月1号',forType:'月度'},
+  'currentMonthDay15':   {label:'当月15号',forType:'月度'},
+  'prevYearDec31':       {label:'上年12月31日',forType:'年度'},
+  'currentYearJan1':     {label:'当年1月1日',forType:'年度'},
+  'currentYearJun30':    {label:'当年6月30日',forType:'年度'},
+  'prevQuarterLastDay':  {label:'上季最后一天',forType:'季度'},
+  'currentQuarterDay1':  {label:'当季第一天',forType:'季度'},
+};
+
+function getTimeRuleLabel(key){ return TIME_RULES[key]?.label||key; }
+
+function getTimeRulesForCycle(){
+  const ct=form.cycleType||'季度';
+  const entries=Object.entries(TIME_RULES).filter(([k,v])=>v.forType==='all'||v.forType===ct);
+  return entries.map(([k,v])=>`<option value="${k}">${v.label}</option>`).join('');
+}
+
 // ═══ 状态 ═══
 let activeSection='basic', activeGroup='g1';
 let stageConfigMode='merged'; // merged | perGroup
@@ -279,28 +315,48 @@ let activeGroupTab={};
 let form={
   name:'',code:'PERF-2026-'+String(Math.floor(Math.random()*900)+100),enabled:true,downward:true,desc:'',
   dept:'',
-  gradeRule:'标准五级',
+  cycleType:'月度',
+  gradeRule:'标准七级',
   version:1,
-  forcedDistRule:'标准强制分布',
+  forcedDistRule:'标准七级强制分布',
   grades:JSON.parse(JSON.stringify(GRADES)),
   stages:JSON.parse(JSON.stringify(STAGES)),
   groups:JSON.parse(JSON.stringify(GROUPS)),
+  autoCreate:{enabled:true,monthly:{direction:'前',days:7},quarterly:{direction:'前',days:7},semiannual:{direction:'前',days:14},annual:{direction:'前',days:30}},
+  dynamicAssessment:'locked',
+  admins:['EMP0088'],
 };
 
 // 等级规则库（引用自基础设置）
 const GRADE_RULES=[
-  {name:'标准五级',grades:[{name:'远超预期',code:'A',min:90,max:100},{name:'符合预期+',code:'B+',min:80,max:89},{name:'符合预期',code:'B',min:70,max:79},{name:'符合预期-',code:'B-',min:60,max:69},{name:'低于预期',code:'C',min:0,max:59}]},
-  {name:'简化三级',grades:[{name:'优秀',code:'A',min:80,max:100},{name:'合格',code:'B',min:60,max:79},{name:'待改进',code:'C',min:0,max:59}]},
-  {name:'四级制',grades:[{name:'卓越',code:'S',min:90,max:100},{name:'优秀',code:'A',min:75,max:89},{name:'合格',code:'B',min:60,max:74},{name:'不合格',code:'C',min:0,max:59}]},
+  {name:'标准七级',grades:[
+    {name:'远超预期',code:'A',min:95,max:100,color:'#DC2626',bg:'#FEF2F2'},
+    {name:'超出预期',code:'A-',min:85,max:94,color:'#F97316',bg:'#FFF7ED'},
+    {name:'符合预期+',code:'B+',min:78,max:84,color:'#F59E0B',bg:'#FFFBEB'},
+    {name:'符合预期',code:'B',min:65,max:77,color:'#10B981',bg:'#ECFDF5'},
+    {name:'符合预期-',code:'B-',min:55,max:64,color:'#6366F1',bg:'#EEF2FF'},
+    {name:'低于预期',code:'C',min:40,max:54,color:'#71717A',bg:'#F4F4F5'},
+    {name:'远低预期',code:'D',min:0,max:39,color:'#A1A1AA',bg:'#FAFAFA'},
+  ]},
+  {name:'简化五级',grades:[
+    {name:'远超预期',code:'A',min:90,max:100,color:'#DC2626',bg:'#FEF2F2'},
+    {name:'符合预期+',code:'B+',min:80,max:89,color:'#F59E0B',bg:'#FFFBEB'},
+    {name:'符合预期',code:'B',min:70,max:79,color:'#10B981',bg:'#ECFDF5'},
+    {name:'符合预期-',code:'B-',min:60,max:69,color:'#6366F1',bg:'#EEF2FF'},
+    {name:'低于预期',code:'C',min:0,max:59,color:'#71717A',bg:'#F4F4F5'},
+  ]},
+  {name:'简化三级',grades:[
+    {name:'优秀',code:'A',min:80,max:100,color:'#DC2626',bg:'#FEF2F2'},
+    {name:'合格',code:'B',min:60,max:79,color:'#10B981',bg:'#ECFDF5'},
+    {name:'待改进',code:'C',min:0,max:59,color:'#71717A',bg:'#F4F4F5'},
+  ]},
 ];
 
 const FORCED_DIST_RULES=[
-  {name:'标准强制分布',desc:'A 10% / B+ 20% / B 40% / B- 20% / C 10%',
-   grades:[{code:'A',name:'远超预期',op:'不超过',pct:10},{code:'B+',name:'符合预期+',op:'不超过',pct:20},{code:'B',name:'符合预期',op:'不低于',pct:40},{code:'B-',name:'符合预期-',op:'不超过',pct:20},{code:'C',name:'低于预期',op:'不低于',pct:10}]},
-  {name:'宽松强制分布',desc:'A 15% / B+ 25% / B 40% / B- 15% / C 5%',
-   grades:[{code:'A',name:'远超预期',op:'不超过',pct:15},{code:'B+',name:'符合预期+',op:'不超过',pct:25},{code:'B',name:'符合预期',op:'不低于',pct:40},{code:'B-',name:'符合预期-',op:'不超过',pct:15},{code:'C',name:'低于预期',op:'不超过',pct:5}]},
-  {name:'严格强制分布',desc:'A 5% / B+ 15% / B 40% / B- 25% / C 15%',
-   grades:[{code:'A',name:'远超预期',op:'不超过',pct:5},{code:'B+',name:'符合预期+',op:'不超过',pct:15},{code:'B',name:'符合预期',op:'不低于',pct:40},{code:'B-',name:'符合预期-',op:'不超过',pct:25},{code:'C',name:'低于预期',op:'不低于',pct:15}]},
+  {name:'标准七级强制分布',desc:'A 5% / A- 10% / B+ 15% / B 40% / B- 15% / C 10% / D 5%',
+   grades:[{code:'A',name:'远超预期',op:'不超过',pct:5},{code:'A-',name:'超出预期',op:'不超过',pct:10},{code:'B+',name:'符合预期+',op:'不超过',pct:15},{code:'B',name:'符合预期',op:'不低于',pct:40},{code:'B-',name:'符合预期-',op:'不超过',pct:15},{code:'C',name:'低于预期',op:'不超过',pct:10},{code:'D',name:'远低预期',op:'不超过',pct:5}]},
+  {name:'宽松七级强制分布',desc:'A 8% / A- 12% / B+ 18% / B 35% / B- 15% / C 8% / D 4%',
+   grades:[{code:'A',name:'远超预期',op:'不超过',pct:8},{code:'A-',name:'超出预期',op:'不超过',pct:12},{code:'B+',name:'符合预期+',op:'不超过',pct:18},{code:'B',name:'符合预期',op:'不低于',pct:35},{code:'B-',name:'符合预期-',op:'不超过',pct:15},{code:'C',name:'低于预期',op:'不超过',pct:8},{code:'D',name:'远低预期',op:'不超过',pct:4}]},
 ];
 
 // 模板预设：每个模板定义启用的阶段
@@ -419,8 +475,8 @@ function renderSidebar(){
 }
 
 function updateProgress(){
-  const total=form.stages.filter(s=>s.enabled).length+2;
-  const done=form.stages.filter(s=>s.status==='done').length+(form.name?1:0)+(form.groups.length>0?1:0);
+  const total=form.stages.filter(s=>s.enabled).length+3;
+  const done=form.stages.filter(s=>s.status==='done').length+(form.name?1:0)+(form.autoCreate.enabled?1:0)+(form.groups.length>0?1:0);
   const pct=Math.min(100,Math.round(done/total*100));
   document.getElementById('progressFill').style.width=pct+'%';
   document.getElementById('progressPct').textContent=pct+'%';
@@ -436,55 +492,133 @@ function renderContent(){
 
 // ═══ 基本信息 ═══
 function renderBasicInfo(ct){
+  var selAdmins=(form.admins||[]).map(function(id){return ADMIN_LIST.find(function(a){return a.id===id;});}).filter(Boolean);
   ct.innerHTML=`<div class="fi">
     <div class="form-sec open">
       <div class="form-sec-hd" onclick="toggleSec(this)"><div class="form-sec-hd-l"><span class="form-sec-t">基本信息</span></div>${I.chevDown}</div>
       <div class="form-sec-bd">
-        <div class="form-row">
+        <div class="form-row" style="grid-template-columns:1fr">
           <div class="form-grp"><label class="form-lb">名称 <span class="req">*</span></label><input class="form-input" value="${form.name}" placeholder="请输入" oninput="form.name=this.value"></div>
-          <div class="form-grp"><label class="form-lb">方案编号</label><input class="form-input" value="${form.code}" disabled></div>
         </div>
         <div class="form-row">
-          <div class="form-grp"><label class="form-lb">是否启用 <span class="req">*</span></label>
-            <div class="radio-group"><label class="radio ${form.enabled?'on':''}" onclick="form.enabled=true;render()"><div class="radio-dot"></div>启用</label><label class="radio ${!form.enabled?'on':''}" onclick="form.enabled=false;render()"><div class="radio-dot"></div>停用</label></div>
+          <div class="form-grp"><label class="form-lb">周期类型 <span class="req">*</span></label>
+            <select class="form-input" onchange="onCycleTypeChange(this.value)">
+              <option value="月度" ${form.cycleType==='月度'?'selected':''}>月度</option>
+              <option value="季度" ${form.cycleType==='季度'?'selected':''}>季度</option>
+              <option value="半年度" ${form.cycleType==='半年度'?'selected':''}>半年度</option>
+              <option value="年度" ${form.cycleType==='年度'?'selected':''}>年度</option>
+            </select>
           </div>
-          <div class="form-grp"><label class="form-lb">方案版本</label>
-            <input class="form-input" value="v${form.version}" disabled style="width:80px">
+          <div class="form-grp">
+            <label class="form-lb">活动管理员</label>
+            <div style="border:1px solid var(--c2);border-radius:var(--r1);overflow:hidden">
+              <input id="frmAdminsSearch" class="form-input" placeholder="🔍 搜索工号/姓名…" style="width:100%;border:none;border-bottom:1px solid var(--dv);border-radius:0" oninput="filterAdminList(this.value)" onfocus="this.parentElement.style.borderColor='var(--pr)'" onblur="this.parentElement.style.borderColor='var(--c2)'">
+              <div id="frmAdminsList" style="max-height:150px;overflow-y:auto;display:none">
+                ${ADMIN_LIST.map(a=>`
+                  <label style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;cursor:pointer;font:400 13px/1 var(--f);color:var(--c7);border-bottom:1px solid var(--dv);transition:background .1s;${selAdmins.some(function(x){return x&&x.id===a.id;})?'background:var(--pr50)':''}" onmouseover="this.style.background='var(--c0)'" onmouseout="this.style.background='${selAdmins.some(function(x){return x&&x.id===a.id;})?'var(--pr50)':''}'">
+                    <span style="display:flex;align-items:center;gap:8px"><input type="checkbox" value="${a.id}" ${selAdmins.some(function(x){return x&&x.id===a.id;})?'checked':''} onchange="toggleFormAdmin(this)" style="accent-color:var(--pr)">${a.name}</span>
+                    <span style="font:400 11px/1 var(--m);color:var(--c4)">${a.id}</span>
+                  </label>`).join('')}
+              </div>
+            </div>
+            <div id="frmAdminsTags" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;min-height:0">
+              ${selAdmins.map(function(a){return a?`<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:var(--pr50);border:1px solid var(--pr200);border-radius:var(--r1);font:400 12px/1 var(--f);color:var(--pr)">${a.name}<span onclick="event.stopPropagation();removeFormAdmin('${a.id}')" style="cursor:pointer;color:var(--c4);font-size:14px;line-height:1" title="移除">×</span></span>`:'';}).join('')}
+            </div>
+            <div id="frmAdminsCount" style="font:400 11px/1 var(--f);color:var(--c5);margin-top:4px">已选 ${selAdmins.length} 人</div>
           </div>
         </div>
         <div class="form-row" style="grid-template-columns:1fr">
           <div class="form-grp"><label class="form-lb">描述</label><textarea class="form-input" placeholder="请输入" maxlength="100" oninput="form.desc=this.value">${form.desc}</textarea><div class="form-hint">${form.desc.length}/100</div></div>
         </div>
-      </div>
-    </div>
-    <div class="form-sec open">
-      <div class="form-sec-hd" onclick="toggleSec(this)"><div class="form-sec-hd-l"><span class="form-sec-t">引用绩效等级</span><span style="font:400 12px/1 var(--f);color:var(--c4);margin-left:8px">选择等级规则后，该规则下的等级将自动引用</span></div>${I.chevDown}</div>
-      <div class="form-sec-bd">
-        <div class="form-row">
-          <div class="form-grp">
-            <label class="form-lb">等级规则 <span class="req">*</span></label>
-            <select class="form-input" onchange="form.gradeRule=this.value;render()">
-              ${GRADE_RULES.map(r=>`<option ${form.gradeRule===r.name?'selected':''}>${r.name}</option>`).join('')}
-            </select>
-            <div class="form-hint">规则引用自基础设置，包含固定的等级划分</div>
+        <div style="margin-top:8px;padding-top:16px;border-top:1px solid var(--dv)">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+            <span style="font:600 13px/1 var(--f);color:var(--c9)">自动创建活动</span>
+            <div class="tog ${form.autoCreate.enabled?'on':''}" onclick="toggleAutoCreate()"><div class="tog-track"><div class="tog-knob"></div></div></div>
+          </div>
+          <div id="autoCreatePanel" style="opacity:${form.autoCreate.enabled?'1':'0.5'};pointer-events:${form.autoCreate.enabled?'auto':'none'};transition:opacity .15s">
+            ${form.cycleType==='月度'?`
+            <div class="form-row">
+              <div class="form-grp">
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span style="font:400 13px/1 var(--f);color:var(--c7)">周期开始</span>
+                  <select class="form-input" style="width:80px" onchange="form.autoCreate.monthly.direction=this.value;updateAutoCreatePreview()"><option ${form.autoCreate.monthly.direction==='前'?'selected':''}>前</option><option ${form.autoCreate.monthly.direction==='后'?'selected':''}>后</option></select>
+                  <input class="form-input" type="number" value="${form.autoCreate.monthly.days}" min="1" max="15" style="width:60px" oninput="form.autoCreate.monthly.days=parseInt(this.value)||7;updateAutoCreatePreview()">
+                  <span style="font:400 13px/1 var(--f);color:var(--c7)">天，自动创建下月考核活动</span>
+                </div>
+              </div>
+            </div>
+            `:form.cycleType==='季度'?`
+            <div class="form-row">
+              <div class="form-grp">
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span style="font:400 13px/1 var(--f);color:var(--c7)">周期开始</span>
+                  <select class="form-input" style="width:80px" onchange="form.autoCreate.quarterly.direction=this.value;updateAutoCreatePreview()"><option ${form.autoCreate.quarterly.direction==='前'?'selected':''}>前</option><option ${form.autoCreate.quarterly.direction==='后'?'selected':''}>后</option></select>
+                  <input class="form-input" type="number" value="${form.autoCreate.quarterly.days}" min="1" max="90" style="width:60px" oninput="form.autoCreate.quarterly.days=parseInt(this.value)||7;updateAutoCreatePreview()">
+                  <span style="font:400 13px/1 var(--f);color:var(--c7)">天，自动创建下季考核活动</span>
+                </div>
+              </div>
+            </div>
+            `:form.cycleType==='半年度'?`
+            <div class="form-row">
+              <div class="form-grp">
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span style="font:400 13px/1 var(--f);color:var(--c7)">周期开始</span>
+                  <select class="form-input" style="width:80px" onchange="form.autoCreate.semiannual.direction=this.value;updateAutoCreatePreview()"><option ${form.autoCreate.semiannual.direction==='前'?'selected':''}>前</option><option ${form.autoCreate.semiannual.direction==='后'?'selected':''}>后</option></select>
+                  <input class="form-input" type="number" value="${form.autoCreate.semiannual.days}" min="1" max="180" style="width:60px" oninput="form.autoCreate.semiannual.days=parseInt(this.value)||14;updateAutoCreatePreview()">
+                  <span style="font:400 13px/1 var(--f);color:var(--c7)">天，自动创建下半年度考核活动</span>
+                </div>
+              </div>
+            </div>
+            `:`
+            <div class="form-row">
+              <div class="form-grp">
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span style="font:400 13px/1 var(--f);color:var(--c7)">周期开始</span>
+                  <select class="form-input" style="width:80px" onchange="form.autoCreate.annual.direction=this.value;updateAutoCreatePreview()"><option ${form.autoCreate.annual.direction==='前'?'selected':''}>前</option><option ${form.autoCreate.annual.direction==='后'?'selected':''}>后</option></select>
+                  <input class="form-input" type="number" value="${form.autoCreate.annual.days}" min="1" max="365" style="width:60px" oninput="form.autoCreate.annual.days=parseInt(this.value)||30;updateAutoCreatePreview()">
+                  <span style="font:400 13px/1 var(--f);color:var(--c7)">天，自动创建下年度考核活动</span>
+                </div>
+              </div>
+            </div>
+            `}
+            <div id="autoCreatePreview" style="margin-top:8px;padding:10px 14px;background:var(--pr50);border:1px solid var(--pr100);border-radius:var(--r1);font:400 12px/1.3 var(--f);color:var(--pr700)"></div>
+            <div style="margin-top:12px">
+              <span style="font:500 12px/1 var(--f);color:var(--c6);display:block;margin-bottom:6px">动态考核关系</span>
+              <div style="display:flex;gap:20px">
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font:400 13px/1 var(--f);color:var(--c7)" onclick="form.dynamicAssessment='locked'"><div style="width:16px;height:16px;border-radius:50%;border:2px solid ${form.dynamicAssessment==='locked'?'var(--pr)':'var(--c3)'};display:flex;align-items:center;justify-content:center">${form.dynamicAssessment==='locked'?'<div style="width:8px;height:8px;border-radius:50%;background:var(--pr)"></div>':''}</div>开启时锁定考核关系</label>
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font:400 13px/1 var(--f);color:var(--c7)" onclick="form.dynamicAssessment='dynamic'"><div style="width:16px;height:16px;border-radius:50%;border:2px solid ${form.dynamicAssessment==='dynamic'?'var(--pr)':'var(--c3)'};display:flex;align-items:center;justify-content:center">${form.dynamicAssessment==='dynamic'?'<div style="width:8px;height:8px;border-radius:50%;background:var(--pr)"></div>':''}</div>每次开启时动态匹配</label>
+              </div>
+              <div style="font:400 11px/1 var(--f);color:var(--c4);margin-top:4px">${form.dynamicAssessment==='locked'?'锁定：活动发起时快照考核关系，后续不随组织调整变化':'动态：每次环节启动时实时查询当前汇报关系'}</div>
+            </div>
+            <div style="margin-top:8px;font:400 11px/1 var(--f);color:var(--c4)">说明：开启后系统将在指定时间自动创建考核活动</div>
           </div>
         </div>
-        <div style="margin-top:4px">
-          <label class="form-lb" style="margin-bottom:8px;display:block">包含等级</label>
-          <div style="display:flex;flex-wrap:wrap;gap:8px">
-            ${getSelectedRule().grades.map(g=>`
-              <div style="display:flex;align-items:center;gap:5px;padding:6px 12px;border:1px solid var(--pr200);border-radius:var(--r1);background:var(--pr50)">
-                <span style="font:500 12px/1 var(--f);color:var(--pr700)">${g.name}</span>
-                <span style="font:500 10px/1 var(--f);padding:1px 5px;border-radius:3px;background:var(--pr100);color:var(--pr)">${g.code}</span>
-                <span style="font:400 11px/1 var(--f);color:var(--c4);margin-left:2px">${g.min}-${g.max}分</span>
-              </div>
-            `).join('')}
+        <div style="margin-top:8px;padding-top:16px;border-top:1px solid var(--dv)">
+          <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制分布规则</div>
+          <div class="form-row">
+            <div class="form-grp">
+              <label class="form-lb">等级规则 <span class="req">*</span></label>
+              <select class="form-input" onchange="form.gradeRule=this.value;render()">
+                ${GRADE_RULES.map(r=>`<option ${form.gradeRule===r.name?'selected':''}>${r.name}</option>`).join('')}
+              </select>
+            </div>
+          </div>
+          <div style="margin-top:4px">
+            <label class="form-lb" style="margin-bottom:8px;display:block">包含等级</label>
+            <div style="display:flex;flex-wrap:wrap;gap:8px">
+              ${getSelectedRule().grades.map(g=>`
+                <div style="display:flex;align-items:center;gap:5px;padding:6px 12px;border:1px solid ${g.color}30;border-radius:var(--r1);background:${g.bg}">
+                  <span style="font:500 12px/1 var(--f);color:${g.color}">${g.name}</span>
+                </div>
+              `).join('')}
+            </div>
           </div>
         </div>
       </div>
     </div>
     ${renderNavButtons()}
   </div>`;
+  setTimeout(function(){ updateAutoCreatePreview(); }, 0);
 }
 
 // ═══ 考核组 ═══
@@ -501,7 +635,6 @@ function renderGroups(ct){
         <div class="form-sec-hd-l">
           <span class="form-sec-t">${grp.name}</span>
           ${grp.isDefault?'<span style="font:500 10px/1 var(--f);padding:2px 8px;border-radius:3px;background:var(--pr50);color:var(--pr);margin-left:8px">默认</span>':''}
-          <span style="font:400 12px/1 var(--f);color:var(--c4);margin-left:8px">${grp.rules.length} 条适用规则</span>
         </div>
         <div style="display:flex;align-items:center;gap:8px">
           ${!grp.isDefault?`<button class="btn btn-s btn-sm" onclick="event.stopPropagation();form.groups.splice(${gi},1);render()" style="color:var(--ro)">删除</button>`:''}
@@ -509,8 +642,12 @@ function renderGroups(ct){
         </div>
       </div>
       <div class="form-sec-bd">
-        <div class="form-row"><div class="form-grp"><label class="form-lb">考核组名称 <span class="req">*</span></label><input class="form-input" value="${grp.name}" oninput="form.groups[${gi}].name=this.value;renderSidebar()"></div></div>
-        <div style="margin-bottom:16px"><label class="form-lb" style="margin-bottom:8px;display:block">适用规则</label>
+        <div style="padding-bottom:12px;border-bottom:1px solid var(--dv);margin-bottom:12px">
+          <div style="font:600 12px/1 var(--f);color:var(--c6);margin-bottom:10px">一、考核组名称</div>
+          <div class="form-row"><div class="form-grp"><label class="form-lb">名称 <span class="req">*</span></label><input class="form-input" value="${grp.name}" oninput="form.groups[${gi}].name=this.value;renderSidebar()"></div></div>
+        </div>
+        <div style="padding-bottom:12px;border-bottom:1px solid var(--dv);margin-bottom:12px">
+          <div style="font:600 12px/1 var(--f);color:var(--c6);margin-bottom:10px">二、添加人员规则</div>
           ${grp.rules.map((r,ri)=>{
             const isManual=r.field==='手动选择人员';
             return `<div class="rule-row">
@@ -520,8 +657,21 @@ function renderGroups(ct){
           </div>`}).join('')}
           <button class="btn btn-s btn-sm" onclick="form.groups[${gi}].rules.push({field:'部门',op:'等于',val:''});render()">${I.plus} 添加规则</button>
         </div>
-        <div class="form-row">
-          <div class="form-grp"><label class="form-lb">排除人员</label><input class="form-input" value="${grp.excluded.join(', ')}" placeholder="输入姓名，逗号分隔" oninput="form.groups[${gi}].excluded=this.value.split(',').map(s=>s.trim()).filter(Boolean)"></div>
+        <div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+            <span style="font:600 12px/1 var(--f);color:var(--c6)">三、移除人员规则</span>
+            <div class="tog ${grp.autoRemove&&grp.autoRemove.enabled?'on':''}" onclick="toggleAutoRemove(${gi})"><div class="tog-track"><div class="tog-knob"></div></div></div>
+          </div>
+          <div id="autoRemovePanel-${gi}" style="opacity:${grp.autoRemove&&grp.autoRemove.enabled?'1':'0.5'};pointer-events:${grp.autoRemove&&grp.autoRemove.enabled?'auto':'none'};transition:opacity .15s">
+            <div style="font:400 12px/1 var(--f);color:var(--c6);margin-bottom:10px">满足以下条件时，自动将人员从考核组中移除：</div>
+            <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px">
+              ${[{v:'resignation',t:'员工离职'},{v:'transfer',t:'调岗'},{v:'orgChange',t:'组织架构变更'}].map(opt=>`
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font:400 13px/1 var(--f);color:var(--c7)">
+                  <input type="checkbox" value="${opt.v}" ${grp.autoRemove&&grp.autoRemove.conditions.includes(opt.v)?'checked':''} onchange="toggleAutoRemoveCond(${gi},'${opt.v}',this.checked)" style="accent-color:var(--pr)">
+                  ${opt.t}
+                </label>`).join('')}
+            </div>
+          </div>
         </div>
       </div>
     </div>`).join('')}
@@ -531,7 +681,7 @@ function renderGroups(ct){
 
 function addGroup(){
   const id='g'+(form.groups.length+1);
-  form.groups.push({id,name:'新考核组',rules:[{field:'部门',op:'等于',val:''}],excluded:[],evalRule:'通用评价规则'});
+  form.groups.push({id,name:'新考核组',rules:[{field:'部门',op:'等于',val:''}],evalRule:'通用评价规则',autoRemove:{enabled:false,conditions:[]}});
   render();
 }
 
@@ -600,18 +750,17 @@ function renderStageDetail(ct){
 function renderGoalCfg(s){
   const models=FLOW_MODELS[s.id]||[];
   const grades=getSelectedRule().grades;
+  const a=s.autoStart||{enabled:false,rule:'firstDayOfPeriod',offsetDays:0};
+  const e=s.autoEnd||{enabled:false,rule:'lastDayOfPeriod',offsetDays:0};
   return `<div class="form-row">
     <div class="form-grp"><label class="form-lb">流程模型</label><select class="form-input">${models.map(m=>`<option ${s.flow===m?'selected':''}>${m}</option>`).join('')}</select></div>
-    <div class="form-grp"><label class="form-lb">开启方式</label><select class="form-input"><option>手动</option><option>自动</option></select></div>
+    <div class="form-grp"><label class="form-lb">开启方式</label><select class="form-input" onchange="updateStageAuto('${s.id}','start',this.value==='自动');render()"><option ${a.enabled?'':'selected'}>手动</option><option ${a.enabled?'selected':''}>自动</option></select></div>
   </div>
+  ${a.enabled?`<div id="timeRulePanel-start-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderTimeRulePanel('start',s)}</div>`:''}
   <div class="form-row">
-    <div class="form-grp"><label class="form-lb">结束方式</label><select class="form-input" onchange="toggleTimeout('goal',this.value)"><option>手动</option><option>超时自动结束</option></select></div>
+    <div class="form-grp"><label class="form-lb">结束方式</label><select class="form-input" onchange="updateStageAuto('${s.id}','end',this.value==='定时自动结束');render()"><option ${e.enabled?'':'selected'}>手动</option><option ${e.enabled?'selected':''}>定时自动结束</option></select></div>
   </div>
-  <div id="timeout-goal" style="display:none;margin-top:12px;padding:12px;background:var(--c0);border-radius:var(--r1)">
-    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-      <div style="display:flex;align-items:center;gap:6px"><label style="font:400 12px/1 var(--f);color:var(--c7)">超时天数</label><input class="form-input" type="number" value="7" min="1" max="90" style="width:70px"><span style="font:400 12px/1 var(--f);color:var(--c5)">天</span></div>
-    </div>
-  </div>
+  ${e.enabled?`<div id="timeRulePanel-end-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderTimeRulePanel('end',s)}</div>`:''}
   <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
     <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制结束规则</div>
     <div style="display:flex;align-items:center;gap:8px">
@@ -630,6 +779,8 @@ function renderEvalCfg(s){
   };
   const nodes=FLOW_NODES[s.flow]||FLOW_NODES['通用绩效考核流程'];
   const EVAL_RULES=['通用评价规则','仓储评价规则','销售评价规则','研发评价规则'];
+  const a=s.autoStart||{enabled:false,rule:'firstDayOfPeriod',offsetDays:0};
+  const e=s.autoEnd||{enabled:false,rule:'lastDayOfPeriod',offsetDays:0};
   return `<div class="form-row">
     <div class="form-grp"><label class="form-lb">流程模型</label><select class="form-input" onchange="render()">${models.map(m=>`<option ${s.flow===m?'selected':''}>${m}</option>`).join('')}</select></div>
     <div class="form-grp"><label class="form-lb">评价规则 <span class="req">*</span></label>
@@ -638,14 +789,11 @@ function renderEvalCfg(s){
     </div>
   </div>
   <div class="form-row">
-    <div class="form-grp"><label class="form-lb">开启方式</label><select class="form-input"><option>手动</option><option>自动</option></select></div>
-    <div class="form-grp"><label class="form-lb">结束方式</label><select class="form-input" onchange="toggleTimeout('eval',this.value)"><option>手动</option><option>超时自动结束</option></select></div>
+    <div class="form-grp"><label class="form-lb">开启方式</label><select class="form-input" onchange="updateStageAuto('${s.id}','start',this.value==='自动');render()"><option ${a.enabled?'':'selected'}>手动</option><option ${a.enabled?'selected':''}>自动</option></select></div>
+    <div class="form-grp"><label class="form-lb">结束方式</label><select class="form-input" onchange="updateStageAuto('${s.id}','end',this.value==='定时自动结束');render()"><option ${e.enabled?'':'selected'}>手动</option><option ${e.enabled?'selected':''}>定时自动结束</option></select></div>
   </div>
-  <div id="timeout-eval" style="display:none;margin-top:12px;padding:12px;background:var(--c0);border-radius:var(--r1)">
-    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-      <div style="display:flex;align-items:center;gap:6px"><label style="font:400 12px/1 var(--f);color:var(--c7)">超时天数</label><input class="form-input" type="number" value="7" min="1" max="90" style="width:70px"><span style="font:400 12px/1 var(--f);color:var(--c5)">天</span></div>
-    </div>
-  </div>
+  ${a.enabled?`<div id="timeRulePanel-start-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderTimeRulePanel('start',s)}</div>`:''}
+  ${e.enabled?`<div id="timeRulePanel-end-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderTimeRulePanel('end',s)}</div>`:''}
   <div style="margin-top:16px"><label class="form-lb" style="margin-bottom:8px;display:block">节点权重分配 <span style="font:400 11px/1 var(--f);color:var(--c4)">（节点由流程模型「${s.flow}」决定，仅处理节点可配置权重）</span></label>
     <table class="tbl"><thead><tr><th>节点名称</th><th>节点类型</th><th>权重(%)</th></tr></thead>
     <tbody>${nodes.map(n=>`<tr><td>${n.name}</td><td><span style="font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px;${n.type==='处理'?'background:var(--pr50);color:var(--pr)':'background:var(--c1);color:var(--c5)'}">${n.type}</span></td><td>${n.type==='处理'?`<input class="form-input" type="number" value="${n.weight}" style="width:60px"> %`:'<span style="font:400 12px/1 var(--f);color:var(--c4)">—</span>'}</td></tr>`).join('')}</tbody></table>
@@ -663,19 +811,18 @@ function renderEvalCfg(s){
 function renderRatifyCfg(s){
   const models=FLOW_MODELS[s.id]||[];
   const grades=getSelectedRule().grades;
+  const a=s.autoStart||{enabled:false,rule:'firstDayOfPeriod',offsetDays:0};
+  const e=s.autoEnd||{enabled:false,rule:'lastDayOfPeriod',offsetDays:0};
   const showGroups=stageConfigMode==='merged'?form.groups:[form.groups.find(g=>g.id===(activeGroupTab[s.id]||form.groups[0]?.id))].filter(Boolean);
   return `<div class="form-row">
     <div class="form-grp"><label class="form-lb">流程模型</label><select class="form-input">${models.map(m=>`<option ${s.flow===m?'selected':''}>${m}</option>`).join('')}</select></div>
-    <div class="form-grp"><label class="form-lb">开启方式</label><select class="form-input"><option>手动</option><option>自动</option></select></div>
+    <div class="form-grp"><label class="form-lb">开启方式</label><select class="form-input" onchange="updateStageAuto('${s.id}','start',this.value==='自动');render()"><option ${a.enabled?'':'selected'}>手动</option><option ${a.enabled?'selected':''}>自动</option></select></div>
   </div>
+  ${a.enabled?`<div id="timeRulePanel-start-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderTimeRulePanel('start',s)}</div>`:''}
   <div class="form-row">
-    <div class="form-grp"><label class="form-lb">结束方式</label><select class="form-input" onchange="toggleTimeout('ratify',this.value)"><option>手动</option><option>超时自动结束</option></select></div>
+    <div class="form-grp"><label class="form-lb">结束方式</label><select class="form-input" onchange="updateStageAuto('${s.id}','end',this.value==='定时自动结束');render()"><option ${e.enabled?'':'selected'}>手动</option><option ${e.enabled?'selected':''}>定时自动结束</option></select></div>
   </div>
-  <div id="timeout-ratify" style="display:none;margin-top:12px;padding:12px;background:var(--c0);border-radius:var(--r1)">
-    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-      <div style="display:flex;align-items:center;gap:6px"><label style="font:400 12px/1 var(--f);color:var(--c7)">超时天数</label><input class="form-input" type="number" value="7" min="1" max="90" style="width:70px"><span style="font:400 12px/1 var(--f);color:var(--c5)">天</span></div>
-    </div>
-  </div>
+  ${e.enabled?`<div id="timeRulePanel-end-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderTimeRulePanel('end',s)}</div>`:''}
   <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
     <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制结束规则</div>
     <div style="display:flex;align-items:center;gap:8px">
@@ -716,18 +863,17 @@ function renderRatifyCfg(s){
 
 function renderConfirmCfg(s){
   const models=FLOW_MODELS[s.id]||[];
+  const a=s.autoStart||{enabled:false,rule:'firstDayOfPeriod',offsetDays:0};
+  const e=s.autoEnd||{enabled:false,rule:'lastDayOfPeriod',offsetDays:0};
   return `<div class="form-row">
     <div class="form-grp"><label class="form-lb">流程模型</label><select class="form-input">${models.map(m=>`<option ${s.flow===m?'selected':''}>${m}</option>`).join('')}</select></div>
-    <div class="form-grp"><label class="form-lb">开启方式</label><select class="form-input"><option>手动</option><option>自动</option></select></div>
+    <div class="form-grp"><label class="form-lb">开启方式</label><select class="form-input" onchange="updateStageAuto('${s.id}','start',this.value==='自动');render()"><option ${a.enabled?'':'selected'}>手动</option><option ${a.enabled?'selected':''}>自动</option></select></div>
   </div>
+  ${a.enabled?`<div id="timeRulePanel-start-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderTimeRulePanel('start',s)}</div>`:''}
   <div class="form-row">
-    <div class="form-grp"><label class="form-lb">结束方式</label><select class="form-input" onchange="toggleTimeout('confirm',this.value)"><option>手动</option><option>超时自动结束</option></select></div>
+    <div class="form-grp"><label class="form-lb">结束方式</label><select class="form-input" onchange="updateStageAuto('${s.id}','end',this.value==='定时自动结束');render()"><option ${e.enabled?'':'selected'}>手动</option><option ${e.enabled?'selected':''}>定时自动结束</option></select></div>
   </div>
-  <div id="timeout-confirm" style="display:none;margin-top:12px;padding:12px;background:var(--c0);border-radius:var(--r1)">
-    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-      <div style="display:flex;align-items:center;gap:6px"><label style="font:400 12px/1 var(--f);color:var(--c7)">超时天数</label><input class="form-input" type="number" value="7" min="1" max="90" style="width:70px"><span style="font:400 12px/1 var(--f);color:var(--c5)">天</span></div>
-    </div>
-  </div>
+  ${e.enabled?`<div id="timeRulePanel-end-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderTimeRulePanel('end',s)}</div>`:''}
   <div style="margin-top:12px;padding:10px 12px;background:var(--pr50);border:1px solid var(--pr100);border-radius:var(--r1)">
     <div style="font:500 12px/1.4 var(--f);color:var(--pr)">流程包含分支：员工确认「同意」→ 流程结束；员工确认「不同意」→ 通知 HRBP 知悉 → 流程结束</div>
   </div>
@@ -737,18 +883,17 @@ function renderConfirmCfg(s){
 function renderInterviewCfg(s){
   const models=FLOW_MODELS[s.id]||[];
   const grades=getSelectedRule().grades;
+  const a=s.autoStart||{enabled:false,rule:'firstDayOfPeriod',offsetDays:0};
+  const e=s.autoEnd||{enabled:false,rule:'lastDayOfPeriod',offsetDays:0};
   return `<div class="form-row">
     <div class="form-grp"><label class="form-lb">流程模型</label><select class="form-input">${models.map(m=>`<option ${s.flow===m?'selected':''}>${m}</option>`).join('')}</select></div>
-    <div class="form-grp"><label class="form-lb">开启方式</label><select class="form-input"><option>手动</option><option>自动</option></select></div>
+    <div class="form-grp"><label class="form-lb">开启方式</label><select class="form-input" onchange="updateStageAuto('${s.id}','start',this.value==='自动');render()"><option ${a.enabled?'':'selected'}>手动</option><option ${a.enabled?'selected':''}>自动</option></select></div>
   </div>
+  ${a.enabled?`<div id="timeRulePanel-start-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderTimeRulePanel('start',s)}</div>`:''}
   <div class="form-row">
-    <div class="form-grp"><label class="form-lb">结束方式</label><select class="form-input" onchange="toggleTimeout('interview',this.value)"><option>手动</option><option>超时自动结束</option></select></div>
+    <div class="form-grp"><label class="form-lb">结束方式</label><select class="form-input" onchange="updateStageAuto('${s.id}','end',this.value==='定时自动结束');render()"><option ${e.enabled?'':'selected'}>手动</option><option ${e.enabled?'selected':''}>定时自动结束</option></select></div>
   </div>
-  <div id="timeout-interview" style="display:none;margin-top:12px;padding:12px;background:var(--c0);border-radius:var(--r1)">
-    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-      <div style="display:flex;align-items:center;gap:6px"><label style="font:400 12px/1 var(--f);color:var(--c7)">超时天数</label><input class="form-input" type="number" value="7" min="1" max="90" style="width:70px"><span style="font:400 12px/1 var(--f);color:var(--c5)">天</span></div>
-    </div>
-  </div>
+  ${e.enabled?`<div id="timeRulePanel-end-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderTimeRulePanel('end',s)}</div>`:''}
   <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
     <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制结束规则</div>
     <div style="display:flex;align-items:center;gap:8px">
@@ -762,6 +907,342 @@ function renderInterviewCfg(s){
 function toggleTimeout(stageId,value){
   const el=document.getElementById('timeout-'+stageId);
   if(el) el.style.display=value==='超时自动结束'?'block':'none';
+}
+
+// ═══ 自动创建活动 ═══
+function toggleAutoCreate(){
+  form.autoCreate.enabled=!form.autoCreate.enabled;
+  var panel=document.getElementById('autoCreatePanel');
+  if(panel){ panel.style.opacity=form.autoCreate.enabled?'1':'0.5'; panel.style.pointerEvents=form.autoCreate.enabled?'auto':'none'; }
+  render();
+}
+
+function refreshAutoCreatePanel(){
+  var panel=document.getElementById('autoCreatePanel');
+  if(!panel) return;
+  var t=form.autoCreate;
+  var ct=form.cycleType;
+  var html='';
+  if(ct==='月度'){
+    html='<div class="form-row"><div class="form-grp"><label class="form-lb">创建规则</label><div style="display:flex;align-items:center;gap:8px"><span style="font:400 13px/1 var(--f);color:var(--c7)">周期开始</span><select class="form-input" style="width:80px" onchange="form.autoCreate.monthly.direction=this.value;updateAutoCreatePreview()"><option '+(t.monthly.direction==='前'?'selected':'')+'>前</option><option '+(t.monthly.direction==='后'?'selected':'')+'>后</option></select><input class="form-input" type="number" value="'+t.monthly.days+'" min="1" max="15" style="width:60px" oninput="form.autoCreate.monthly.days=parseInt(this.value)||7;updateAutoCreatePreview()"><span style="font:400 13px/1 var(--f);color:var(--c7)">天，自动创建下月考核活动</span></div></div></div>';
+  }else if(ct==='季度'){
+    html='<div class="form-row"><div class="form-grp"><label class="form-lb">创建规则</label><div style="display:flex;align-items:center;gap:8px"><span style="font:400 13px/1 var(--f);color:var(--c7)">周期开始</span><select class="form-input" style="width:80px" onchange="form.autoCreate.quarterly.direction=this.value;updateAutoCreatePreview()"><option '+(t.quarterly.direction==='前'?'selected':'')+'>前</option><option '+(t.quarterly.direction==='后'?'selected':'')+'>后</option></select><input class="form-input" type="number" value="'+t.quarterly.days+'" min="1" max="90" style="width:60px" oninput="form.autoCreate.quarterly.days=parseInt(this.value)||7;updateAutoCreatePreview()"><span style="font:400 13px/1 var(--f);color:var(--c7)">天，自动创建下季考核活动</span></div></div></div>';
+  }else if(ct==='半年度'){
+    html='<div class="form-row"><div class="form-grp"><label class="form-lb">创建规则</label><div style="display:flex;align-items:center;gap:8px"><span style="font:400 13px/1 var(--f);color:var(--c7)">周期开始</span><select class="form-input" style="width:80px" onchange="form.autoCreate.semiannual.direction=this.value;updateAutoCreatePreview()"><option '+(t.semiannual.direction==='前'?'selected':'')+'>前</option><option '+(t.semiannual.direction==='后'?'selected':'')+'>后</option></select><input class="form-input" type="number" value="'+t.semiannual.days+'" min="1" max="180" style="width:60px" oninput="form.autoCreate.semiannual.days=parseInt(this.value)||14;updateAutoCreatePreview()"><span style="font:400 13px/1 var(--f);color:var(--c7)">天，自动创建下半年度考核活动</span></div></div></div>';
+  }else{
+    html='<div class="form-row"><div class="form-grp"><label class="form-lb">创建规则</label><div style="display:flex;align-items:center;gap:8px"><span style="font:400 13px/1 var(--f);color:var(--c7)">周期开始</span><select class="form-input" style="width:80px" onchange="form.autoCreate.annual.direction=this.value;updateAutoCreatePreview()"><option '+(t.annual.direction==='前'?'selected':'')+'>前</option><option '+(t.annual.direction==='后'?'selected':'')+'>后</option></select><input class="form-input" type="number" value="'+t.annual.days+'" min="1" max="365" style="width:60px" oninput="form.autoCreate.annual.days=parseInt(this.value)||30;updateAutoCreatePreview()"><span style="font:400 13px/1 var(--f);color:var(--c7)">天，自动创建下年度考核活动</span></div></div></div>';
+  }
+  panel.innerHTML=html+'<div id="autoCreatePreview" style="margin-top:8px;padding:10px 14px;background:var(--pr50);border:1px solid var(--pr100);border-radius:var(--r1);font:400 12px/1.3 var(--f);color:var(--pr700)"></div><div style="margin-top:12px"><span style="font:500 12px/1 var(--f);color:var(--c6);display:block;margin-bottom:6px">动态考核关系</span><div style="display:flex;gap:20px"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font:400 13px/1 var(--f);color:var(--c7)" onclick="form.dynamicAssessment=\'locked\'"><div style="width:16px;height:16px;border-radius:50%;border:2px solid '+(form.dynamicAssessment==='locked'?'var(--pr)':'var(--c3)')+';display:flex;align-items:center;justify-content:center">'+(form.dynamicAssessment==='locked'?'<div style="width:8px;height:8px;border-radius:50%;background:var(--pr)"></div>':'')+'</div>开启时锁定考核关系</label><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font:400 13px/1 var(--f);color:var(--c7)" onclick="form.dynamicAssessment=\'dynamic\'"><div style="width:16px;height:16px;border-radius:50%;border:2px solid '+(form.dynamicAssessment==='dynamic'?'var(--pr)':'var(--c3)')+';display:flex;align-items:center;justify-content:center">'+(form.dynamicAssessment==='dynamic'?'<div style="width:8px;height:8px;border-radius:50%;background:var(--pr)"></div>':'')+'</div>每次开启时动态匹配</label></div><div style="font:400 11px/1 var(--f);color:var(--c4);margin-top:4px">'+(form.dynamicAssessment==='locked'?'锁定：活动发起时快照考核关系，后续不随组织调整变化':'动态：每次环节启动时实时查询当前汇报关系')+'</div></div><div style="margin-top:8px;font:400 11px/1 var(--f);color:var(--c4)">说明：开启后系统将在指定时间自动创建考核活动</div>';
+}
+
+function onCycleTypeChange(val){
+  form.cycleType=val;
+  refreshAutoCreatePanel();
+  updateAutoCreatePreview();
+  renderSidebar();
+}
+
+function toggleFormAdmin(cb){
+  if(!form.admins) form.admins=[];
+  if(cb.checked){ if(!form.admins.includes(cb.value)) form.admins.push(cb.value); }
+  else form.admins=form.admins.filter(function(a){return a!==cb.value;});
+  updateAdminCount();
+  var row=cb.closest('label');
+  if(row) row.style.background=cb.checked?'var(--pr50)':'';
+  renderAdminTags();
+}
+
+function removeFormAdmin(id){
+  form.admins=(form.admins||[]).filter(function(a){return a!==id;});
+  renderAdminTags();
+  updateAdminCount();
+}
+
+function renderAdminTags(){
+  var selAdmins=(form.admins||[]).map(function(id){return ADMIN_LIST.find(function(a){return a.id===id;});}).filter(Boolean);
+  var container=document.getElementById('frmAdminsTags');
+  if(!container) return;
+  container.innerHTML=selAdmins.map(function(a){return a?'<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:var(--pr50);border:1px solid var(--pr200);border-radius:var(--r1);font:400 12px/1 var(--f);color:var(--pr)">'+a.name+'<span onclick="event.stopPropagation();removeFormAdmin(\''+a.id+'\')" style="cursor:pointer;color:var(--c4);font-size:14px;line-height:1" title="移除">×</span></span>':'';}).join('');
+  // Also update checkboxes in dropdown
+  var cbs=document.querySelectorAll('#frmAdminsList input[type="checkbox"]');
+  cbs.forEach(function(cb){ cb.checked=form.admins.includes(cb.value); });
+}
+
+function filterAdminList(q){
+  var s=q.toLowerCase();
+  var list=document.getElementById('frmAdminsList');
+  if(list){ list.style.display='block'; }
+  var items=document.querySelectorAll('#frmAdminsList label');
+  items.forEach(function(item){
+    var text=(item.textContent||'').toLowerCase();
+    item.style.display=!s||text.indexOf(s)>=0?'flex':'none';
+  });
+}
+
+function updateAdminCount(){
+  var el=document.getElementById('frmAdminsCount');
+  if(el) el.textContent='已选 '+(form.admins||[]).length+' 人';
+}
+
+function getMonthlyPreview(day){
+  const now=new Date();
+  const previews=[];
+  for(let i=1;i<=3;i++){
+    const targetMonth=new Date(now.getFullYear(),now.getMonth()+i,1);
+    const lastDayOfPrev=new Date(targetMonth.getFullYear(),targetMonth.getMonth(),0).getDate();
+    const d=Math.min(day,lastDayOfPrev);
+    const createDate=new Date(targetMonth.getFullYear(),targetMonth.getMonth()-1,d);
+    previews.push({
+      period:`${targetMonth.getFullYear()}-${String(targetMonth.getMonth()+1).padStart(2,'0')}`,
+      create:`${createDate.getFullYear()}-${String(createDate.getMonth()+1).padStart(2,'0')}-${String(createDate.getDate()).padStart(2,'0')}`
+    });
+  }
+  return previews;
+}
+
+function updateAutoCreatePreview(){
+  const el=document.getElementById('autoCreatePreview');
+  if(!el)return;
+  const ct=form.cycleType;
+  const t=form.autoCreate;
+  const pad=function(n){return String(n).padStart(2,'0');};
+  var createDate;
+  if(ct==='月度'){
+    var m=form.autoCreate.monthly;
+    var now=new Date();
+    var nextMonth=new Date(now.getFullYear(),now.getMonth()+1,1);
+    createDate=new Date(nextMonth.getTime()+(m.direction==='前'?-1:1)*m.days*86400000);
+  }else{
+    var cfg=ct==='季度'?t.quarterly:ct==='半年度'?t.semiannual:t.annual;
+    var nextCycle=new Date(ct==='季度'?'2026-10-01':ct==='半年度'?'2026-07-01':'2027-01-01');
+    createDate=new Date(nextCycle.getTime()+(cfg.direction==='前'?-1:1)*cfg.days*86400000);
+  }
+  el.innerHTML='<span style="font:500 12px/1 var(--f);color:var(--pr700)">📅 下次活动将于 '+createDate.getFullYear()+'/'+pad(createDate.getMonth()+1)+'/'+pad(createDate.getDate())+' 创建</span>';
+}
+
+function renderAutoCreate(ct){
+  const t=form.autoCreate.timing;
+  const isMonthly=form.cycleType==='月度';
+  ct.innerHTML=`<div class="fi">
+    <div class="form-sec open">
+      <div class="form-sec-hd" onclick="toggleSec(this)"><div class="form-sec-hd-l"><span class="form-sec-t">自动创建活动</span></div>${I.chevDown}</div>
+      <div class="form-sec-bd">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <span style="font:500 13px/1 var(--f);color:var(--c7)">启用自动创建</span>
+          <div class="tog ${form.autoCreate.enabled?'on':''}" onclick="toggleAutoCreate()"><div class="tog-track"><div class="tog-knob"></div></div></div>
+        </div>
+        <div id="autoCreatePanel" style="opacity:${form.autoCreate.enabled?'1':'0.5'};pointer-events:${form.autoCreate.enabled?'auto':'none'};transition:opacity .15s">
+          ${isMonthly?`
+          <div style="margin-bottom:12px;padding:10px 14px;background:var(--c0);border-radius:var(--r1);font:400 12px/1 var(--f);color:var(--c6)">周期类型为「月度」时，按月自动创建下月考核活动</div>
+          <div class="form-row">
+            <div class="form-grp">
+              <label class="form-lb">创建规则</label>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="font:400 13px/1 var(--f);color:var(--c7)">每月</span>
+                <select class="form-input" style="width:80px" onchange="form.autoCreate.timing.monthlyDay=parseInt(this.value);updateAutoCreatePreview()">
+                  ${Array.from({length:28},(_,i)=>i+1).map(d=>`<option value="${d}" ${t.monthlyDay===d?'selected':''}>${d}</option>`).join('')}
+                </select>
+                <span style="font:400 13px/1 var(--f);color:var(--c7)">号，自动创建下月考核活动</span>
+              </div>
+            </div>
+          </div>
+          <div id="autoCreatePreview" style="margin-top:8px;padding:10px 14px;background:var(--pr50);border:1px solid var(--pr100);border-radius:var(--r1);font:400 12px/1.4 var(--f);color:var(--pr700)">${(()=>{const previews=getMonthlyPreview(t.monthlyDay||25);return `<div style="font:500 12px/1 var(--f);color:var(--pr700);margin-bottom:4px">📅 预览（未来 3 期）：</div>${previews.map(p=>`<div style="font:400 12px/1.4 var(--f);color:var(--pr700);margin-left:8px">· ${p.period} 月活动 → ${p.create} 创建</div>`).join('')}`;})()}</div>
+          `:`
+          <div class="form-row">
+            <div class="form-grp">
+              <label class="form-lb">创建时间</label>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="font:400 13px/1 var(--f);color:var(--c7)">周期开始</span>
+                <select class="form-input" style="width:80px" onchange="form.autoCreate.timing.direction=this.value;updateAutoCreatePreview()">
+                  <option ${t.direction==='前'?'selected':''}>前</option>
+                  <option ${t.direction==='后'?'selected':''}>后</option>
+                </select>
+                <input class="form-input" type="number" value="${t.days}" min="1" max="30" style="width:60px" oninput="form.autoCreate.timing.days=parseInt(this.value)||7;updateAutoCreatePreview()">
+                <span style="font:400 13px/1 var(--f);color:var(--c7)">天</span>
+              </div>
+            </div>
+          </div>
+          <div id="autoCreatePreview" style="margin-top:8px;padding:10px 14px;background:var(--pr50);border:1px solid var(--pr100);border-radius:var(--r1);font:400 12px/1.3 var(--f);color:var(--pr700)">${(()=>{const nextCycle=new Date('2026-10-01');const ms=nextCycle.getTime()+(t.direction==='前'?-1:1)*(t.days||7)*86400000;const preview=new Date(ms);const pad=n=>String(n).padStart(2,'0');return `📅 预览：下一周期开始于 2026-10-01，活动将于 ${preview.getFullYear()}-${pad(preview.getMonth()+1)}-${pad(preview.getDate())} 自动创建`;})()}</div>
+          `}
+          <div style="margin-top:8px;font:400 11px/1 var(--f);color:var(--c4)">说明：开启后系统将在指定时间自动创建考核活动</div>
+        </div>
+      </div>
+    </div>
+    ${renderNavButtons()}
+  </div>`;
+  updateAutoCreatePreview();
+}
+
+// ═══ 自动移除人员规则 ═══
+function toggleAutoRemove(gi){
+  const grp=form.groups[gi];
+  if(!grp.autoRemove) grp.autoRemove={enabled:false,conditions:[]};
+  grp.autoRemove.enabled=!grp.autoRemove.enabled;
+  const panel=document.getElementById('autoRemovePanel-'+gi);
+  if(panel){ panel.style.opacity=grp.autoRemove.enabled?'1':'0.5'; panel.style.pointerEvents=grp.autoRemove.enabled?'auto':'none'; }
+  render();
+}
+
+function toggleAutoRemoveCond(gi,cond,checked){
+  const grp=form.groups[gi];
+  if(!grp.autoRemove) grp.autoRemove={enabled:false,conditions:[]};
+  if(checked){ if(!grp.autoRemove.conditions.includes(cond)) grp.autoRemove.conditions.push(cond); }
+  else grp.autoRemove.conditions=grp.autoRemove.conditions.filter(c=>c!==cond);
+}
+
+// ═══ 环节定时开启/结束规则 ═══
+function calcStageDate(a,type){
+  var refDate=new Date('2026-07-01'); // Mock cycle start 2026-Q3
+  var refDateEnd=new Date('2026-09-30');
+  var offset=0;
+  if(a.mode==='relative'){
+    var ref=a.ref==='cycleStart'?refDate:new Date('2026-07-15'); // mock prev stage end
+    offset=a.offsetDays||0;
+    return new Date(ref.getTime()+offset*86400000);
+  }else{
+    var rule=a.fixedRule||'firstDayOfPeriod';
+    offset=a.fixedOffset||0;
+    switch(rule){
+      case 'firstDayOfPeriod': return new Date(refDate.getTime()+offset*86400000);
+      case 'lastDayOfPeriod': return new Date(refDateEnd.getTime()+offset*86400000);
+      case 'lastDayOfPrevPeriod': return new Date(new Date('2026-06-30').getTime()+offset*86400000);
+      case 'firstDayOfNextPeriod': return new Date(new Date('2026-10-01').getTime()+offset*86400000);
+      case 'prevMonthLastDay': return new Date(new Date('2026-06-30').getTime()+offset*86400000);
+      case 'prevMonthDay25': return new Date(new Date('2026-06-25').getTime()+offset*86400000);
+      case 'currentMonthDay1': return new Date(new Date('2026-07-01').getTime()+offset*86400000);
+      case 'currentMonthDay15': return new Date(new Date('2026-07-15').getTime()+offset*86400000);
+      case 'prevYearDec31': return new Date(new Date('2025-12-31').getTime()+offset*86400000);
+      case 'currentYearJan1': return new Date(new Date('2026-01-01').getTime()+offset*86400000);
+      case 'currentYearJun30': return new Date(new Date('2026-06-30').getTime()+offset*86400000);
+      case 'prevQuarterLastDay': return new Date(new Date('2026-06-30').getTime()+offset*86400000);
+      case 'currentQuarterDay1': return new Date(new Date('2026-07-01').getTime()+offset*86400000);
+      default: return new Date(refDate.getTime()+offset*86400000);
+    }
+  }
+}
+
+function checkStageConflict(stage,type){
+  if(type!=='start') return null;
+  var stages=form.stages.filter(function(s){return s.enabled;});
+  var idx=-1;
+  for(var i=0;i<stages.length;i++){ if(stages[i].id===stage.id){ idx=i; break; } }
+  if(idx<=0) return null;
+  var prevStage=stages[idx-1];
+  if(!prevStage.autoEnd||!prevStage.autoEnd.enabled) return null;
+  var startDate=calcStageDate(stage.autoStart,'start');
+  var prevEndDate=calcStageDate(prevStage.autoEnd,'end');
+  if(startDate<prevEndDate){
+    return {prevStageName:prevStage.name,prevEndDate:prevEndDate,startDate:startDate};
+  }
+  return null;
+}
+
+function renderTimeRulePanel(type,stage){
+  var a=type==='start'?(stage.autoStart||{enabled:false,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'firstDayOfPeriod',fixedOffset:0}):(stage.autoEnd||{enabled:false,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'lastDayOfPeriod',fixedOffset:0});
+  return '<div style="font:500 12px/1 var(--f);color:var(--c6);margin-bottom:10px">'+(type==='start'?'自动开启':'自动结束')+'规则</div>'+
+    '<div id="timeRuleInner-'+type+'-'+stage.id+'">'+renderTimeRuleControls(type,stage,a)+'</div>';
+}
+
+function renderTimeRuleControls(type,stage,a){
+  var label=type==='start'?'自动开启':'自动结束';
+  var previewId='timeRulePreview-'+type+'-'+stage.id;
+  var pad=function(n){return String(n).padStart(2,'0');};
+  var isGoal=stage.id==='goal';
+  var resultDate=calcStageDate(a,type);
+  var conflict=checkStageConflict(stage,type);
+
+  var desc='';
+  if(a.mode==='relative'){
+    var refLabel=a.ref==='cycleStart'?'周期开始':(a.ref==='prevStageEnd'?'上一环节结束':'周期开始');
+    desc=refLabel+(a.offsetDays>=0?'后':'前')+' '+Math.abs(a.offsetDays||0)+' 天';
+  }else{
+    desc=getTimeRuleLabel(a.fixedRule)+(a.fixedOffset?(a.fixedOffset>0?'+'+a.fixedOffset:a.fixedOffset)+'天':'');
+  }
+
+  return '<div style="margin-bottom:10px"><div style="display:flex;gap:16px">'+
+    '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font:400 13px/1 var(--f);color:var(--c7)" onclick="refreshTimeRulePanel(\''+type+'\',\''+stage.id+'\')"><div style="width:16px;height:16px;border-radius:50%;border:2px solid '+(a.mode==='relative'?'var(--pr)':'var(--c3)')+';display:flex;align-items:center;justify-content:center">'+(a.mode==='relative'?'<div style="width:8px;height:8px;border-radius:50%;background:var(--pr)"></div>':'')+'</div>周期相对时间</label>'+
+    '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font:400 13px/1 var(--f);color:var(--c7)" onclick="refreshTimeRulePanel(\''+type+'\',\''+stage.id+'\')"><div style="width:16px;height:16px;border-radius:50%;border:2px solid '+(a.mode==='fixed'?'var(--pr)':'var(--c3)')+';display:flex;align-items:center;justify-content:center">'+(a.mode==='fixed'?'<div style="width:8px;height:8px;border-radius:50%;background:var(--pr)"></div>':'')+'</div>周期固定时间</label>'+
+    '</div></div>'+
+    (a.mode==='relative'?(
+      '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px">'+
+        '<div style="display:flex;align-items:center;gap:6px"><span style="font:400 12px/1 var(--f);color:var(--c7)">参考点</span>'+
+          '<select class="form-input" style="width:160px" onchange="updateTimeRule(\''+stage.id+'\',\''+type+'\',\'ref\',this.value);updateTimeRulePreview(\''+type+'\',\''+stage.id+'\')">'+
+            (isGoal?'':'<option value="prevStageEnd" '+(a.ref==='prevStageEnd'?'selected':'')+'>上一环节结束后</option>')+
+            '<option value="cycleStart" '+(a.ref==='cycleStart'?'selected':'')+'>周期开始后</option>'+
+          '</select></div>'+
+        '<div style="display:flex;align-items:center;gap:6px"><span style="font:400 12px/1 var(--f);color:var(--c7)">偏移</span>'+
+          '<input class="form-input" type="number" value="'+(a.offsetDays||0)+'" min="-30" max="30" style="width:70px" oninput="updateTimeRule(\''+stage.id+'\',\''+type+'\',\'offsetDays\',parseInt(this.value)||0);updateTimeRulePreview(\''+type+'\',\''+stage.id+'\')"><span style="font:400 12px/1 var(--f);color:var(--c5)">天（正数延后，负数提前）</span></div>'+
+      '</div>'
+    ):(
+      '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px">'+
+        '<div style="display:flex;align-items:center;gap:6px"><span style="font:400 12px/1 var(--f);color:var(--c7)">参考点</span>'+
+          '<select class="form-input" style="width:180px" onchange="updateTimeRule(\''+stage.id+'\',\''+type+'\',\'fixedRule\',this.value);updateTimeRulePreview(\''+type+'\',\''+stage.id+'\')">'+getTimeRulesForCycleWithSelected(a.fixedRule)+'</select></div>'+
+        '<div style="display:flex;align-items:center;gap:6px"><span style="font:400 12px/1 var(--f);color:var(--c7)">偏移</span>'+
+          '<input class="form-input" type="number" value="'+(a.fixedOffset||0)+'" min="-30" max="30" style="width:70px" oninput="updateTimeRule(\''+stage.id+'\',\''+type+'\',\'fixedOffset\',parseInt(this.value)||0);updateTimeRulePreview(\''+type+'\',\''+stage.id+'\')"><span style="font:400 12px/1 var(--f);color:var(--c5)">天</span></div>'+
+      '</div>'
+    ))+
+    '<div id="'+previewId+'" style="margin-top:10px;padding:8px 12px;background:var(--pr50);border:1px solid var(--pr100);border-radius:var(--r1);font:400 12px/1.3 var(--f);color:var(--pr700)">'+
+      '📅 预览：预计 '+resultDate.getFullYear()+'-'+pad(resultDate.getMonth()+1)+'-'+pad(resultDate.getDate())+' 自动'+label+'（'+desc+'）'+
+    '</div>'+
+    (conflict?'<div style="margin-top:8px;padding:8px 12px;background:var(--ro50);border:1px solid var(--ro100);border-radius:var(--r1);font:400 12px/1.3 var(--f);color:var(--ro)">'+
+      '⚠ 上一环节「'+conflict.prevStageName+'」自动结束于 '+conflict.prevEndDate.getFullYear()+'-'+pad(conflict.prevEndDate.getMonth()+1)+'-'+pad(conflict.prevEndDate.getDate())+'<br>'+
+      '&nbsp;&nbsp;&nbsp;&nbsp;当前环节开启时间早于上一环节结束时间，请检查'+
+    '</div>':'')+
+  '';
+}
+
+function refreshTimeRulePanel(type,stageId){
+  var stage=form.stages.find(function(s){return s.id===stageId;});
+  if(!stage) return;
+  var a=type==='start'?stage.autoStart:stage.autoEnd;
+  if(!a) return;
+  // Toggle mode
+  a.mode=(a.mode==='relative'?'fixed':'relative');
+  var el=document.getElementById('timeRuleInner-'+type+'-'+stageId);
+  if(el){
+    el.innerHTML=renderTimeRuleControls(type,stage,a);
+  }
+}
+
+function getTimeRulesForCycleWithSelected(selectedKey){
+  var ct=form.cycleType||'季度';
+  return Object.entries(TIME_RULES).filter(function(e){return e[1].forType==='all'||e[1].forType===ct;}).map(function(e){return '<option value="'+e[0]+'" '+(e[0]===selectedKey?'selected':'')+'>'+e[1].label+'</option>';}).join('');
+}
+
+function updateTimeRule(stageId,type,field,value){
+  var stage=form.stages.find(function(s){return s.id===stageId;});
+  if(!stage)return;
+  var target=type==='start'?stage.autoStart:stage.autoEnd;
+  if(target) target[field]=value;
+}
+
+function updateTimeRulePreview(type,stageId){
+  var el=document.getElementById('timeRulePreview-'+type+'-'+stageId);
+  if(!el)return;
+  var stage=form.stages.find(function(s){return s.id===stageId;});
+  if(!stage)return;
+  var a=type==='start'?stage.autoStart:stage.autoEnd;
+  if(!a)return;
+  var pad=function(n){return String(n).padStart(2,'0');};
+  var label=type==='start'?'开启':'结束';
+  var resultDate=calcStageDate(a,type);
+  var desc='';
+  if(a.mode==='relative'){
+    var refLabel=a.ref==='cycleStart'?'周期开始':(a.ref==='prevStageEnd'?'上一环节结束':'周期开始');
+    desc=refLabel+(a.offsetDays>=0?'后':'前')+' '+Math.abs(a.offsetDays||0)+' 天';
+  }else{
+    desc=getTimeRuleLabel(a.fixedRule)+(a.fixedOffset?(a.fixedOffset>0?'+'+a.fixedOffset:a.fixedOffset)+'天':'');
+  }
+  var conflict=checkStageConflict(stage,type);
+  el.innerHTML='📅 预览：预计 '+resultDate.getFullYear()+'-'+pad(resultDate.getMonth()+1)+'-'+pad(resultDate.getDate())+' 自动'+label+'（'+desc+'）'+
+    (conflict?'<div style="margin-top:6px;padding:6px 8px;background:var(--ro50);border:1px solid var(--ro100);border-radius:var(--r1);font:400 11px/1.3 var(--f);color:var(--ro)">⚠ 上一环节「'+conflict.prevStageName+'」自动结束于 '+conflict.prevEndDate.getFullYear()+'-'+pad(conflict.prevEndDate.getMonth()+1)+'-'+pad(conflict.prevEndDate.getDate())+'<br>&nbsp;&nbsp;&nbsp;当前环节开启时间早于上一环节结束时间，请检查</div>':'');
+}
+
+function updateStageAuto(stageId,type,enabled){
+  var stage=form.stages.find(function(s){return s.id===stageId;});
+  if(!stage)return;
+  if(type==='start') stage.autoStart.enabled=enabled;
+  if(type==='end') stage.autoEnd.enabled=enabled;
 }
 
 // ═══ 导航 ═══

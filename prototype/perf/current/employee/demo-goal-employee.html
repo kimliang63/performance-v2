@@ -93,7 +93,10 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .goal-row:hover{background:var(--c0)}
 .goal-row:last-child{border-bottom:none}
 
-.goal-summary{display:flex;align-items:center;padding:14px 20px;gap:12px;cursor:pointer}
+.goal-summary{display:flex;align-items:center;padding:14px 20px;gap:10px;cursor:pointer}
+.goal-drag{color:var(--c3);cursor:grab;flex-shrink:0;display:flex;align-items:center;user-select:none}
+.goal-drag:active{cursor:grabbing;color:var(--pr)}
+.goal-drag svg{width:14px;height:14px}
 .goal-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .goal-icon svg{width:14px;height:14px}
 .goal-icon.pr{background:var(--pr50);color:var(--pr)}
@@ -140,12 +143,13 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .goal-total{font:400 13px/1 var(--f);color:var(--c5)}
 
 /* ═══ INLINE EDIT FORM ═══ */
-.goal-edit{padding:0 20px 16px 46px;display:none}
+.goal-edit{padding:0 20px 16px 82px;display:none}
 .goal-edit.open{display:block;animation:fadeIn .2s ease}
-.ge-form{background:var(--c0);border-radius:var(--r2);padding:16px;border:1px solid var(--c2)}
+.ge-form{padding:12px 0}
 .ge-sec{margin-bottom:14px}
 .ge-sec:last-child{margin-bottom:0}
-.ge-sec-title{font:600 12px/1 var(--f);color:var(--c6);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:6px}
+.ge-sec-title{font:600 12px/1 var(--f);color:var(--c8);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.ge-sec-title::before{content:'';width:3px;height:12px;background:var(--pr);border-radius:2px;flex-shrink:0}
 .ge-sec-title svg{width:13px;height:13px;color:var(--pr)}
 .ge-row{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px}
 .ge-row.f3{grid-template-columns:100px 100px 100px}
@@ -410,7 +414,7 @@ body.chat-open .ai-toggle{display:none}
       </div>
     </div>
     <div class="pg-hd-info">
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">考核周期</span><span class="pg-hd-info-value">2026年Q2 / 2026年4-6月</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">考核周期</span><span class="pg-hd-info-value">2026年6月</span></div>
       <div class="pg-hd-info-item"><span class="pg-hd-info-label">员工</span><span class="pg-hd-info-value">张明 (EMP20240315)</span></div>
       <div class="pg-hd-info-item"><span class="pg-hd-info-label">部门</span><span class="pg-hd-info-value">产品部</span></div>
       <div class="pg-hd-info-item"><span class="pg-hd-info-label">职位</span><span class="pg-hd-info-value">高级产品经理</span></div>
@@ -621,26 +625,7 @@ body.chat-open .ai-toggle{display:none}
 </div>
 
 <!-- Goal type choice popup -->
-<div id="addGoalPopup" style="position:fixed;z-index:1500;background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-dropdown)" class="goal-type-popup">
-  <div class="goal-type-item" onclick="pickGoalType('quant')">
-    <div class="goal-type-item-icon quant">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
-    </div>
-    <div class="goal-type-item-text">
-      <span class="goal-type-item-name">定量目标</span>
-      <span class="goal-type-item-desc">可量化的指标型目标</span>
-    </div>
-  </div>
-  <div class="goal-type-item" onclick="pickGoalType('qual')">
-    <div class="goal-type-item-icon qual">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-    </div>
-    <div class="goal-type-item-text">
-      <span class="goal-type-item-name">定性目标</span>
-      <span class="goal-type-item-desc">行为/能力类主观评价</span>
-    </div>
-  </div>
-</div>
+<div id="addGoalPopup" style="display:none"></div>
 
 <script src="../navigation.js"></script>
 <script>
@@ -663,8 +648,8 @@ const I={
 const MODULES=[
   {name:'KPI',weight:30,icon:'target',color:'var(--pr)',accent:'',goals:[
     {id:'g1',name:'资源利用率（通用）',indicator:'资源利用率',type:'quant',weight:5,aiFilled:true,desc:'1.指标定义：人员的实际工作量饱和情况，数据来源：Devops\n2.计算逻辑：公式=当月实际任务工时（人天）/EHR实际出勤天数*100%',measure:'梯度评分',target:105,challenge:110,baseline:100,unit:'%',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',msLevels:[{level:'优秀',color:'var(--em)',score:'120分',condition:'利用率 >= 110%'},{level:'良好',color:'var(--pr)',score:'100分',condition:'利用率 >= 105%'},{level:'合格',color:'var(--ac)',score:'80分',condition:'利用率 >= 100%'},{level:'不合格',color:'var(--ro)',score:'0分',condition:'利用率 < 100%'}]},
-    {id:'g2',name:'HRASUAT用户验收首次通过率(产品)',indicator:'UAT首次通过率',type:'quant',weight:10,desc:'1.指标定义：需求首次业务验收通过的概率\n2.计算逻辑：公式=当月需求首次业务验收通过的迭代数量/当月业务验收的迭代总数*100%',measure:'梯度评分',target:98,challenge:100,baseline:95,unit:'百分比',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',msLevels:[{level:'优秀',color:'var(--em)',score:'120分',condition:'通过率 >= 100%'},{level:'良好',color:'var(--pr)',score:'100分',condition:'通过率 >= 98%'},{level:'合格',color:'var(--ac)',score:'80分',condition:'通过率 >= 95%'},{level:'不合格',color:'var(--ro)',score:'0分',condition:'通过率 < 95%'}]},
-    {id:'g3',name:'HRAS需求评审及时率(产品)',indicator:'需求评审及时率',type:'quant',weight:15,desc:'1.迭代版本评审的及时性情况\n2.计算逻辑：公式=统计周期内按时需求评审迭代数/计划评审迭代*100%\n备注：按需求个数的维度。',measure:'梯度评分',target:98,challenge:100,baseline:95,unit:'百分比',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',msLevels:[{level:'优秀',color:'var(--em)',score:'120分',condition:'及时率 >= 100%'},{level:'良好',color:'var(--pr)',score:'100分',condition:'及时率 >= 98%'},{level:'合格',color:'var(--ac)',score:'80分',condition:'及时率 >= 95%'},{level:'不合格',color:'var(--ro)',score:'0分',condition:'及时率 < 95%'}]},
+    {id:'g2',name:'HRASUAT用户验收首次通过率(产品)',indicator:'UAT首次通过率',type:'quant',weight:10,desc:'1.指标定义：需求首次业务验收通过的概率\n2.计算逻辑：公式=当月需求首次业务验收通过的迭代数量/当月业务验收的迭代总数*100%',measure:'梯度评分',target:98,challenge:100,baseline:95,unit:'%',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',msLevels:[{level:'优秀',color:'var(--em)',score:'120分',condition:'通过率 >= 100%'},{level:'良好',color:'var(--pr)',score:'100分',condition:'通过率 >= 98%'},{level:'合格',color:'var(--ac)',score:'80分',condition:'通过率 >= 95%'},{level:'不合格',color:'var(--ro)',score:'0分',condition:'通过率 < 95%'}]},
+    {id:'g3',name:'HRAS需求评审及时率(产品)',indicator:'需求评审及时率',type:'quant',weight:15,desc:'1.迭代版本评审的及时性情况\n2.计算逻辑：公式=统计周期内按时需求评审迭代数/计划评审迭代*100%\n备注：按需求个数的维度。',measure:'梯度评分',target:98,challenge:100,baseline:95,unit:'%',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',msLevels:[{level:'优秀',color:'var(--em)',score:'120分',condition:'及时率 >= 100%'},{level:'良好',color:'var(--pr)',score:'100分',condition:'及时率 >= 98%'},{level:'合格',color:'var(--ac)',score:'80分',condition:'及时率 >= 95%'},{level:'不合格',color:'var(--ro)',score:'0分',condition:'及时率 < 95%'}]},
   ]},
   {name:'KPA',weight:70,icon:'users',color:'var(--em)',accent:'em',goals:[
     {id:'g4',name:'HRAS产品管理规范',indicator:'产品管理规范',type:'qual',weight:10,desc:'1、需求管理流程尊从规范（受理-澄清-方案-业务内审-技术评审-研发交付-产品验收-用户验收）\n2、产品需求规范（需求池需求管理、文档规范）\n3、迭代火车管理规范\n4、周会/月会前事项准时完成更新',measure:'定性评分',target:1,challenge:1,baseline:1,rule:'-',ruleFormula:'',msLevels:[{level:'符合预期',color:'var(--em)',score:'100分',condition:'4项全部符合规范'},{level:'低于预期',color:'var(--ro)',score:'0分',condition:'4项任何1项不符合规范'}]},
@@ -677,8 +662,8 @@ const MODULES=[
 const HISTORY={
   '2026年5月':[
     {name:'资源利用率（通用）',indicator:'资源利用率',module:'KPI',type:'quant',weight:5,target:105,challenge:110,baseline:100,unit:'%',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'人员的实际工作量饱和情况',msLevels:[]},
-    {name:'HRASUAT用户验收首次通过率(产品)',indicator:'UAT首次通过率',module:'KPI',type:'quant',weight:10,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'需求首次业务验收通过的概率',msLevels:[]},
-    {name:'HRAS需求评审及时率(产品)',indicator:'需求评审及时率',module:'KPI',type:'quant',weight:15,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'迭代版本评审的及时性情况',msLevels:[]},
+    {name:'HRASUAT用户验收首次通过率(产品)',indicator:'UAT首次通过率',module:'KPI',type:'quant',weight:10,target:98,challenge:100,baseline:95,unit:'%',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'需求首次业务验收通过的概率',msLevels:[]},
+    {name:'HRAS需求评审及时率(产品)',indicator:'需求评审及时率',module:'KPI',type:'quant',weight:15,target:98,challenge:100,baseline:95,unit:'%',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'迭代版本评审的及时性情况',msLevels:[]},
     {name:'HRAS产品管理规范',indicator:'产品管理规范',module:'KPA',type:'qual',weight:10,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'产品需求管理和迭代管理的规范',msLevels:[]},
     {name:'【产品设计】日常滚动需求响应',indicator:'日常需求响应',module:'KPA',type:'qual',weight:10,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'滚动响应日常需求',msLevels:[]},
     {name:'【产品设计】HR ONE 绩效重构事项推进',indicator:'绩效重构推进',module:'KPA',type:'qual',weight:25,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'绩效重构各里程碑推进',msLevels:[]},
@@ -686,8 +671,8 @@ const HISTORY={
   ],
   '2026年4月':[
     {name:'资源利用率（通用）',indicator:'资源利用率',module:'KPI',type:'quant',weight:5,target:105,challenge:110,baseline:100,unit:'%',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
-    {name:'HRASUAT用户验收首次通过率(产品)',indicator:'UAT首次通过率',module:'KPI',type:'quant',weight:10,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
-    {name:'HRAS需求评审及时率(产品)',indicator:'需求评审及时率',module:'KPI',type:'quant',weight:15,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
+    {name:'HRASUAT用户验收首次通过率(产品)',indicator:'UAT首次通过率',module:'KPI',type:'quant',weight:10,target:98,challenge:100,baseline:95,unit:'%',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
+    {name:'HRAS需求评审及时率(产品)',indicator:'需求评审及时率',module:'KPI',type:'quant',weight:15,target:98,challenge:100,baseline:95,unit:'%',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
     {name:'HRAS产品管理规范',indicator:'产品管理规范',module:'KPA',type:'qual',weight:10,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
     {name:'【产品设计】日常滚动需求响应',indicator:'日常需求响应',module:'KPA',type:'qual',weight:10,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
     {name:'【产品设计】HR ONE 绩效重构事项推进',indicator:'绩效重构推进',module:'KPA',type:'qual',weight:25,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
@@ -695,8 +680,8 @@ const HISTORY={
   ],
   '2026年3月':[
     {name:'资源利用率（通用）',indicator:'资源利用率',module:'KPI',type:'quant',weight:5,target:105,challenge:110,baseline:100,unit:'%',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
-    {name:'HRASUAT用户验收首次通过率(产品)',indicator:'UAT首次通过率',module:'KPI',type:'quant',weight:10,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
-    {name:'HRAS需求评审及时率(产品)',indicator:'需求评审及时率',module:'KPI',type:'quant',weight:15,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
+    {name:'HRASUAT用户验收首次通过率(产品)',indicator:'UAT首次通过率',module:'KPI',type:'quant',weight:10,target:98,challenge:100,baseline:95,unit:'%',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
+    {name:'HRAS需求评审及时率(产品)',indicator:'需求评审及时率',module:'KPI',type:'quant',weight:15,target:98,challenge:100,baseline:95,unit:'%',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
     {name:'HRAS产品管理规范',indicator:'产品管理规范',module:'KPA',type:'qual',weight:10,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
     {name:'【产品设计】日常滚动需求响应',indicator:'日常需求响应',module:'KPA',type:'qual',weight:10,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
     {name:'【产品设计】HR ONE 绩效重构事项推进',indicator:'绩效重构推进',module:'KPA',type:'qual',weight:25,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
@@ -718,8 +703,8 @@ const RULES=[
 
 const MOCK_INDICATORS=[
   {id:'kpi1',name:'资源利用率（通用）',type:'定量',nature:'正向',category:'效率',unit:'%',desc:'人员的实际工作量饱和情况，数据来源：Devops'},
-  {id:'kpi2',name:'HRASUAT用户验收首次通过率(产品)',type:'定量',nature:'正向',category:'质量',unit:'百分比',desc:'需求首次业务验收通过的概率'},
-  {id:'kpi3',name:'HRAS需求评审及时率(产品)',type:'定量',nature:'正向',category:'效率',unit:'百分比',desc:'迭代版本评审的及时性情况'},
+  {id:'kpi2',name:'HRASUAT用户验收首次通过率(产品)',type:'定量',nature:'正向',category:'质量',unit:'%',desc:'需求首次业务验收通过的概率'},
+  {id:'kpi3',name:'HRAS需求评审及时率(产品)',type:'定量',nature:'正向',category:'效率',unit:'%',desc:'迭代版本评审的及时性情况'},
   {id:'kpi4',name:'项目按时交付率',type:'定量',nature:'正向',category:'效率',unit:'%',desc:'衡量项目按时交付情况'},
   {id:'kpi5',name:'客户满意度评分',type:'定量',nature:'正向',category:'质量',unit:'分',desc:'衡量客户满意度指标'},
   {id:'kpi6',name:'产品迭代完成率',type:'定量',nature:'正向',category:'效率',unit:'%',desc:'衡量产品迭代计划完成率'},
@@ -816,9 +801,10 @@ function render(){
         const isFilled=g.type==='quant'?(g.target>0&&g.challenge>0&&g.baseline>0):(g.desc&&g.desc.trim().length>0);
         h+=`<div class="goal-row" data-goal-id="${g.id}">
           <div class="goal-summary" onclick="toggleGoal('${g.id}')">
+            <div class="goal-drag" onclick="event.stopPropagation()" title="拖拽排序"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/></svg></div>
             <div class="goal-icon" style="background:var(--pr50);color:var(--pr);font:700 12px/1 var(--m)">${gi+1}</div>
             ${isOpen?`<input class="goal-name-input" id="ge_name_${g.id}" value="${g.name}" onclick="event.stopPropagation()" oninput="syncGoalFromForm('${g.id}')" />`:`<span class="goal-name">${g.name}${g.aiFilled?aiTag():''}</span>`}
-            ${isOpen?`<input type="number" min="0" max="100" value="${g.weight}" onclick="event.stopPropagation()" oninput="syncGoalFromForm('${g.id}')" id="ge_weight_${g.id}" style="width:50px;font:700 13px/1 var(--m);color:var(--pr);border:1px solid var(--pr200);border-radius:var(--r1);padding:2px 4px;text-align:center;background:var(--pr50);outline:none;flex-shrink:0"  /><span style="font:700 13px/1 var(--m);color:var(--pr);margin-left:2px">%</span>`:`<span class="goal-weight" onclick="event.stopPropagation();editWeightInline('${g.id}')" style="cursor:pointer" title="点击编辑权重">${g.weight}</span>`}
+            ${isOpen?`<input type="number" min="0" max="100" value="${g.weight}" onclick="event.stopPropagation()" oninput="syncGoalFromForm('${g.id}')" id="ge_weight_${g.id}" style="width:50px;font:700 13px/1 var(--m);color:var(--pr);border:1px solid var(--pr200);border-radius:var(--r1);padding:2px 4px;text-align:center;background:var(--pr50);outline:none;flex-shrink:0"  /><span style="font:700 13px/1 var(--m);color:var(--pr);margin-left:2px">%</span>`:`<span class="goal-weight" onclick="event.stopPropagation();editWeightInline('${g.id}')" style="cursor:pointer" title="点击编辑权重">${g.weight}%</span>`}
             <div class="goal-meta">
               <span class="goal-type ${typeClass}">${typeLabel}</span>
               <div class="goal-actions">
@@ -830,18 +816,15 @@ function render(){
             <div class="ge-form">
               ${g.type==='quant'?`
               <div class="ge-sec">
-                <div class="ge-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>指标值</div>
                 <div class="ge-row f3" style="grid-template-columns:100px 100px 100px 1fr">
-                  <div class="ge-fi"><span class="ge-fi-l">挑战值${(linked||g.aiFilled)?aiTag():''}</span><input class="inp num" id="ge_challenge_${g.id}" type="number" value="${g.challenge}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')"/></div>
-                  <div class="ge-fi"><span class="ge-fi-l">目标值 <span class="req">*</span>${(linked||g.aiFilled)?aiTag():''}</span><input class="inp num" id="ge_target_${g.id}" type="number" value="${g.target}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')"/></div>
-                  <div class="ge-fi"><span class="ge-fi-l">保底值</span><input class="inp num" id="ge_baseline_${g.id}" type="number" value="${g.baseline}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')"/></div>
+                  <div class="ge-fi"><span class="ge-fi-l">挑战值${(linked||g.aiFilled)?aiTag():''}</span><div style="display:flex;align-items:center;gap:4px"><input class="inp num" id="ge_challenge_${g.id}" type="number" value="${g.challenge}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')" style="flex:1"/><span style="font:400 11px/1 var(--f);color:var(--c5);flex-shrink:0">${g.unit||''}</span></div></div>
+                  <div class="ge-fi"><span class="ge-fi-l">目标值 <span class="req">*</span>${(linked||g.aiFilled)?aiTag():''}</span><div style="display:flex;align-items:center;gap:4px"><input class="inp num" id="ge_target_${g.id}" type="number" value="${g.target}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')" style="flex:1"/><span style="font:400 11px/1 var(--f);color:var(--c5);flex-shrink:0">${g.unit||''}</span></div></div>
+                  <div class="ge-fi"><span class="ge-fi-l">保底值</span><div style="display:flex;align-items:center;gap:4px"><input class="inp num" id="ge_baseline_${g.id}" type="number" value="${g.baseline}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')" style="flex:1"/><span style="font:400 11px/1 var(--f);color:var(--c5);flex-shrink:0">${g.unit||''}</span></div></div>
                   <div class="ge-fi"><span class="ge-fi-l">指标描述</span><div style="font:400 11px/1.4 var(--f);color:var(--c5);padding-top:6px">${g.desc||'—'}</div></div>
                 </div>
               </div>
               `:`
               <div class="ge-sec">
-                <div class="ge-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>衡量标准</div>
-                <div style="font:400 11px/1.4 var(--f);color:var(--c5);padding-bottom:8px;border-bottom:1px solid var(--dv);margin-bottom:8px">指标描述：${g.desc||'—'}</div>
                 <div class="ge-fi"><span class="ge-fi-l">衡量标准-评价梯度2</span><textarea class="inp" id="ge_ms2_${g.id}" rows="2" placeholder="请输入2分评价标准...">${(g.msLevels&&g.msLevels[0])?g.msLevels[0].condition:''}</textarea></div>
                 <div class="ge-fi" style="margin-top:8px"><span class="ge-fi-l">衡量标准-评价梯度3 <span class="req">*</span></span><textarea class="inp" id="ge_ms3_${g.id}" rows="2" placeholder="请输入3分评价标准（必填）...">${(g.msLevels&&g.msLevels[1])?g.msLevels[1].condition:''}</textarea></div>
                 <div class="ge-fi" style="margin-top:8px"><span class="ge-fi-l">衡量标准-评价梯度4</span><textarea class="inp" id="ge_ms4_${g.id}" rows="2" placeholder="请输入4分评价标准...">${(g.msLevels&&g.msLevels[2])?g.msLevels[2].condition:''}</textarea></div>
@@ -891,32 +874,12 @@ function syncGoalFromForm(id){
 function toggleMod(mi){expandedMods.has(mi)?expandedMods.delete(mi):expandedMods.add(mi);render()}
 function toggleGoal(id){expandedGoals.has(id)?expandedGoals.delete(id):expandedGoals.add(id);render()}
 
-let addGoalModIdx=null;
 function addGoal(mi){
-  addGoalModIdx=mi;
-  const popup=document.getElementById('addGoalPopup');
-  const btn=document.querySelectorAll('.mod-hd-add')[mi*2+1]||document.querySelectorAll('.mod-hd-add')[mi*2];
-  if(btn){
-    const r=btn.getBoundingClientRect();
-    popup.style.top=(r.bottom+4)+'px';
-    popup.style.left=(r.left)+'px';
-  }
-  popup.classList.add('show');
-}
-function pickGoalType(type){
-  const mi=addGoalModIdx;
-  const popup=document.getElementById('addGoalPopup');
-  popup.classList.remove('show');
-  if(mi===null)return;
   const id='g'+Date.now();
-  MODULES[mi].goals.push({id,name:'新目标',indicator:'',type,weight:10,desc:'',measure:type==='quant'?'梯度评分':'',measureText:'',target:0,challenge:0,baseline:0,rule:'-',ruleFormula:'',msLevels:[],linkedIndicatorId:null,i18n:{}});
+  MODULES[mi].goals.push({id,name:'新目标',indicator:'',type:'qual',weight:10,desc:'',measure:'',measureText:'',target:1,challenge:1,baseline:1,rule:'-',ruleFormula:'',msLevels:[],linkedIndicatorId:null,i18n:{}});
   expandedMods.add(mi);
   expandedGoals.add(id);
   render();
-  if(type==='quant'){
-    openIndicatorPicker(id,mi);
-  }
-  // 定性目标直接展开编辑态
 }
 function closeGoalTypePopup(){document.getElementById('addGoalPopup').classList.remove('show')}
 
