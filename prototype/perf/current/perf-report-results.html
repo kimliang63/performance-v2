@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 绩效结果</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --r1:6px;--r2:8px;--r3:10px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --m:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
+.btn svg{width:13px;height:13px}
+.btn-p{background:var(--pr);color:#FFF}.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
+
+.fl-bar{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.fl-search{display:flex;align-items:center;gap:6px;background:var(--c0);border:1px solid var(--c2);border-radius:var(--r1);padding:0 10px;height:32px;min-width:200px;transition:all .15s}
+.fl-search:focus-within{background:var(--sf);border-color:var(--pr)}
+.fl-search svg{color:var(--c4);flex-shrink:0;width:13px;height:13px}
+.fl-search input{border:none;background:transparent;outline:none;font:13px/1 var(--f);width:100%;color:var(--c9)}
+.fl-search input::placeholder{color:var(--c4)}
+.fl-sel{height:32px;padding:0 28px 0 10px;border:1px solid var(--c2);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c7);background:var(--sf) url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center;appearance:none;cursor:pointer;transition:all .12s;outline:none;-webkit-appearance:none;-moz-appearance:none}
+.fl-sel:focus{border-color:var(--pr)}
+.fl-actions{display:flex;gap:6px;margin-left:auto}
+
+.tbl-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden;margin-bottom:16px}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:900px}
+thead th{background:var(--c0);font:600 12px/1 var(--f);color:var(--c5);text-align:left;padding:10px 14px;border-bottom:1px solid var(--dv);white-space:nowrap;letter-spacing:.2px;text-transform:uppercase}
+tbody td{font:400 13px/1.4 var(--f);color:var(--c7);padding:12px 14px;border-bottom:1px solid var(--dv);vertical-align:middle}
+tbody tr{transition:background .1s}
+tbody tr:hover{background:var(--c0)}
+tbody tr:nth-child(even){background:var(--c0)}
+tbody tr:nth-child(even):hover{background:var(--pr50)}
+tbody tr:last-child td{border-bottom:none}
+.mono{font-family:var(--m);font-size:12px}
+
+.tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:3px;font:500 11px/1 var(--f);white-space:nowrap}
+.tag-em{background:var(--em50);color:var(--em700)}
+.tag-ac{background:var(--ac50);color:var(--ac700)}
+.tag-ro{background:var(--ro50);color:var(--ro)}
+
+.grade-tag{display:inline-flex;align-items:center;padding:3px 10px;border-radius:4px;font:600 12px/1 var(--f)}
+.grade-S{background:#FEF2F2;color:#DC2626}
+.grade-A{background:#FFF7ED;color:#F97316}
+.grade-Bp{background:#FFFBEB;color:#F59E0B}
+.grade-B{background:#ECFDF5;color:#10B981}
+.grade-Bm{background:#EEF2FF;color:#6366F1}
+.grade-C{background:#F4F4F5;color:#71717A}
+.grade-D{background:#FAFAFA;color:#A1A1AA}
+
+.pg-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-top:1px solid var(--dv);font:400 12px/1 var(--f);color:var(--c5)}
+.pg-info{display:flex;align-items:center;gap:16px}
+.pg-nav{display:flex;align-items:center;gap:4px}
+.pg-btn{width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;border:1px solid var(--c2);background:var(--sf);cursor:pointer;color:var(--c5);font:500 12px/1 var(--f);transition:all .12s}
+.pg-btn:hover{border-color:var(--pr);color:var(--pr)}
+.pg-btn.on{background:var(--pr);border-color:var(--pr);color:#FFF}
+.pg-btn:disabled{opacity:.4;cursor:not-allowed}
+
+.lk{color:var(--pr);cursor:pointer;text-decoration:none;font-weight:500}
+.lk:hover{text-decoration:underline}
+
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fi{animation:fi .25s ease forwards}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="../navigation.js"></script>
+<script>
+GHR_NAV.init('perf', '绩效结果');
+
+var I={
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
+  x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+  download:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+};
+
+var GRADE_CODE={'远超预期':'S','超出预期':'A','符合预期+':'Bp','符合预期':'B','符合预期-':'Bm','低于预期':'C','远低预期':'D'};
+var GRADE_MAP={S:'grade-S',A:'grade-A',Bp:'grade-Bp',B:'grade-B',Bm:'grade-Bm',C:'grade-C',D:'grade-D'};
+
+var names=['张明','李华','王芳','赵磊','陈静','刘洋','周婷','吴强','郑丽','孙鹏','钱敏','黄波','林燕','何涛','马丽','朱伟','胡洁','郭明','杨峰','沈云'];
+var depts=['产品部','技术部','市场部','设计部','运营部','产品部','技术部','市场部','设计部','运营部','产品部','技术部','市场部','设计部','运营部','产品部','技术部','市场部','设计部','运营部'];
+var jobs=['高级产品经理','高级工程师','市场经理','UI设计师','运营主管','产品经理','前端工程师','品牌专员','交互设计师','数据分析师','产品助理','后端工程师','活动策划','视觉设计师','内容运营','产品总监','测试工程师','渠道经理','设计总监','社群运营'];
+var allPeriods=['2026年Q2','2026年Q2','2026年Q2','2026年Q2','2026年Q2','2026年Q1','2026年Q1','2026年Q1','2026年Q1','2025年Q4','2025年Q4','2025年Q4','2025年Q4','2025年Q4','2025年Q3','2025年Q3','2025年Q3','2025年Q3','2025年Q3','2026年Q2'];
+var scores=[87.5,92.0,78.3,85.6,81.2,90.1,76.8,82.4,88.9,79.5,72.3,95.0,68.5,84.2,75.0,91.3,83.7,73.2,89.0,58.0];
+var grades=['符合预期+','超出预期','符合预期','符合预期+','符合预期','超出预期','符合预期','符合预期+','符合预期+','符合预期','符合预期','远超预期','符合预期-','符合预期','符合预期','超出预期','符合预期','符合预期','符合预期+','低于预期'];
+var ratifyGrades=['符合预期+','超出预期','符合预期','符合预期+','符合预期','超出预期','符合预期','符合预期+','符合预期+','符合预期','符合预期','远超预期','符合预期-','符合预期','符合预期-','超出预期','符合预期','符合预期','符合预期+','低于预期'];
+var confirms=['已确认','已确认','已确认','已确认','已确认','已确认','已确认','已确认','已确认','已确认','已确认','已确认','已确认','已确认','待确认','待确认','待确认','待确认','待确认','已申诉'];
+
+var RESULT_DATA=[];
+for(var i=0;i<20;i++){
+  RESULT_DATA.push({
+    empId:'EMP'+String(i+1).padStart(4,'0'),name:names[i],dept:depts[i],job:jobs[i],period:allPeriods[i],
+    activity:allPeriods[i]+'-'+depts[i]+'考核',
+    score:scores[i],grade:grades[i],ratifyGrade:ratifyGrades[i],confirm:confirms[i]
+  });
+}
+
+var DEPTS=['全部','产品部','技术部','市场部','设计部','运营部'];
+var CONFIRM_STATUSES=['全部状态','已确认','待确认','已申诉'];
+
+var filter={search:'',cycle:'',dept:'',status:''};
+var currentPage=1;
+var pageSize=10;
+
+function getCycles(){
+  var set={};
+  for(var i=0;i<RESULT_DATA.length;i++){set[RESULT_DATA[i].period]=1;}
+  return Object.keys(set).sort().reverse();
+}
+
+function getFiltered(){
+  return RESULT_DATA.filter(function(d){
+    if(filter.search&&d.name.indexOf(filter.search)===-1&&d.empId.indexOf(filter.search)===-1)return false;
+    if(filter.cycle&&d.period!==filter.cycle)return false;
+    if(filter.dept&&d.dept!==filter.dept)return false;
+    if(filter.status&&filter.status!=='全部状态'&&d.confirm!==filter.status)return false;
+    return true;
+  });
+}
+
+function gradeClass(g){
+  var code=GRADE_CODE[g]||'B';
+  return GRADE_MAP[code]||'grade-B';
+}
+
+function render(){
+  var data=getFiltered();
+  var total=data.length;
+  var totalPages=Math.ceil(total/pageSize)||1;
+  if(currentPage>totalPages)currentPage=totalPages;
+  var start=(currentPage-1)*pageSize;
+  var page=data.slice(start,start+pageSize);
+
+  var cycleOptions=getCycles().map(function(c){return '<option value="'+c+'"'+(filter.cycle===c?' selected':'')+'>'+c+'</option>';}).join('');
+  var deptOptions=DEPTS.slice(1).map(function(d){return '<option value="'+d+'"'+(filter.dept===d?' selected':'')+'>'+d+'</option>';}).join('');
+  var statusOptions=CONFIRM_STATUSES.map(function(s){return '<option value="'+s+'"'+(filter.status===s?' selected':'')+'>'+s+'</option>';}).join('');
+
+  var html='<div class="fi">'+
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">'+
+      '<div><h1 style="font:700 20px/1.2 var(--f);color:var(--c9);margin-bottom:4px">绩效结果</h1><p style="font:400 13px/1 var(--f);color:var(--c5)">查看全员各周期绩效结果数据</p></div>'+
+      '<div style="display:flex;gap:8px"><button class="btn btn-s" onclick="handleExport()">'+I.download+' 导出</button></div>'+
+    '</div>'+
+    '<div class="fl-bar">'+
+      '<div class="fl-search">'+I.search+'<input id="flSearch" placeholder="搜索姓名或工号…" value="'+filter.search+'" oninput="onSearch(this.value)"></div>'+
+      '<select class="fl-sel" onchange="onCycle(this.value)"><option value="">全部周期</option>'+cycleOptions+'</select>'+
+      '<select class="fl-sel" onchange="onDept(this.value)"><option value="">全部部门</option>'+deptOptions+'</select>'+
+      '<select class="fl-sel" onchange="onStatus(this.value)">'+statusOptions+'</select>'+
+      '<div class="fl-actions"><button class="btn btn-s" onclick="resetFilters()">'+I.x+' 重置</button></div>'+
+    '</div>'+
+    '<div class="tbl-card">'+
+      '<div class="tbl-wrap"><table><thead><tr>'+
+        '<th>姓名</th><th>工号</th><th>部门</th><th>岗位</th><th>周期</th><th>绩效活动</th><th>考核总分</th><th>初评等级</th><th>最终等级</th><th>确认状态</th><th>操作</th>'+
+      '</tr></thead><tbody>';
+
+  for(var i=0;i<page.length;i++){
+    var d=page[i];
+    var ct=d.confirm==='已确认'?'tag-em':d.confirm==='待确认'?'tag-ac':'tag-ro';
+    html+='<tr>'+
+      '<td style="font-weight:500;color:var(--c9)">'+d.name+'</td>'+
+      '<td class="mono">'+d.empId+'</td>'+
+      '<td>'+d.dept+'</td>'+
+      '<td>'+d.job+'</td>'+
+      '<td>'+d.period+'</td>'+
+      '<td><a class="lk" href="perf-activity-detail.html">'+d.activity+'</a></td>'+
+      '<td class="mono" style="font-weight:600">'+d.score.toFixed(1)+'</td>'+
+      '<td>'+d.grade+'</td>'+
+      '<td><span class="grade-tag '+gradeClass(d.ratifyGrade)+'">'+d.ratifyGrade+'</span></td>'+
+      '<td><span class="tag '+ct+'">'+d.confirm+'</span></td>'+
+      '<td><a class="lk" onclick="viewDetail(\''+d.empId+'\')">查看详情</a></td>'+
+      '</tr>';
+  }
+
+  html+='</tbody></table></div>'+
+    '<div class="pg-bar">'+
+      '<div class="pg-info"><span>第 '+(total?start+1:0)+'-'+Math.min(start+pageSize,total)+' 条，共 '+total+' 条</span></div>'+
+      '<div class="pg-nav">';
+  for(var p=1;p<=totalPages;p++){
+    html+='<button class="pg-btn'+(p===currentPage?' on':'')+'" onclick="goPage('+p+')">'+p+'</button>';
+  }
+  html+='</div></div></div></div>';
+
+  document.getElementById('app').innerHTML=html;
+}
+
+function onSearch(v){filter.search=v;currentPage=1;render();}
+function onCycle(v){filter.cycle=v;currentPage=1;render();}
+function onDept(v){filter.dept=v;currentPage=1;render();}
+function onStatus(v){filter.status=v;currentPage=1;render();}
+function goPage(p){currentPage=p;render();}
+function resetFilters(){filter={search:'',cycle:'',dept:'',status:''};currentPage=1;render();}
+function handleExport(){alert('导出功能（原型占位）');}
+function viewDetail(id){alert('查看 '+id+' 绩效详情（原型占位）');}
+
+render();
+</script>
+</body>
+</html>

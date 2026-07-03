@@ -55,10 +55,10 @@ const GHR_NAV = {
         {n:'团队绩效',ic:'users',file:'employee/demo-workbench-team.html'},
       ]},
       {n:'绩效报表',ic:'chart',items:[
-        {n:'目标中心',ic:'target',file:'perf-result-employee.html'},
-        {n:'考核进度',ic:'chart',file:'perf-activity-progress.html'},
-        {n:'绩效结果',ic:'chart',file:'perf-result-view.html'},
-        {n:'绩效分析报表',ic:'chart',file:'perf-report-analytics.html'},
+        {n:'目标中心',ic:'target',file:'perf-report-goals.html'},
+        {n:'绩效结果',ic:'chart',file:'perf-report-results.html'},
+        {n:'考核进度',ic:'chart',file:'perf-report-progress.html'},
+        {n:'绩效报表',ic:'chart',file:'perf-report-distribution.html'},
       ]},
       {n:'绩效表单',ic:'file',items:[
         {n:'业务流程演示',ic:'eye',file:'demo-index.html'},

@@ -23,16 +23,6 @@
 body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
 
-/* ═══ PAGE HEADER ═══ */
-.pg-hd{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:16px}
-.pg-hd-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.pg-hd-title{font:700 20px/1.2 var(--f);color:var(--c9);letter-spacing:-.3px}
-.pg-hd-actions{display:flex;gap:8px}
-.pg-hd-info{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 24px;font:400 13px/1 var(--f);color:var(--c5);padding:12px 16px;background:var(--c0);border-radius:var(--r2)}
-.pg-hd-info-item{display:flex;flex-direction:column;gap:2px}
-.pg-hd-info-label{font:400 11px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px}
-.pg-hd-info-value{font:500 13px/1.3 var(--f);color:var(--c8)}
-
 
 /* ═══ TABLE ═══ */
 .eval-list{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden;margin-bottom:16px}
@@ -170,42 +160,20 @@ body.chat-open .ai-toggle{display:none}
     <span style="color:var(--c8);font-weight:600">结果审定</span>
   </nav>
 
-  <!-- Page header -->
-  <div class="pg-hd">
-    <div class="pg-hd-top">
-      <div style="display:flex;align-items:center;gap:10px">
-        <div class="pg-hd-title">HRBP审定</div>
-        <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)">
-          <span style="width:6px;height:6px;border-radius:50%;background:var(--pr);animation:pulse 2s ease-in-out infinite"></span>
-          审定中
-        </span>
-      </div>
-      <div class="pg-hd-actions">
-        <button class="btn btn-s" onclick="showToast('草稿已保存','success')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-          保存草稿
-        </button>
-        <button class="btn btn-s" style="color:var(--ro);border-color:var(--ro100)" onclick="showToast('已驳回，退回上级重新审定','warn')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-          驳回
-        </button>
-        <button class="btn btn-s" onclick="showToast('已转交，等待其他管理者处理','success')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
-          转交
-        </button>
-        <button class="btn btn-p" onclick="batchRatify()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          提交审定
-        </button>
-      </div>
+  <!-- Title row -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+    <div>
+      <h1 style="font:700 20px/1.2 var(--f);color:var(--c9);margin:0">HRBP审定</h1>
     </div>
-    <div class="pg-hd-info">
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">考核方案</span><span class="pg-hd-info-value">产品部2026年Q2绩效考核</span></div>
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">考核周期</span><span class="pg-hd-info-value">2026年4-6月</span></div>
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">HRBP</span><span class="pg-hd-info-value">赵敏（HRBP）</span></div>
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">团队人数</span><span class="pg-hd-info-value" id="hdTotal">—</span></div>
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">上级已审定</span><span class="pg-hd-info-value" id="hdReached">—</span></div>
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">待确认</span><span class="pg-hd-info-value" id="hdPending" style="color:var(--ac)">—</span></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-p" onclick="batchApprove()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>
+        审批通过
+      </button>
+      <button class="btn btn-s" style="color:var(--ro);border-color:var(--ro100)" onclick="showToast('已驳回','warn')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        退回
+      </button>
     </div>
   </div>
 

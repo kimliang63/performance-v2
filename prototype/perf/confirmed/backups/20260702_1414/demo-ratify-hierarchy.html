@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HR ONE - 结果审定·双线上级</title>
+<title>HR ONE - 结果审定·逐级上级</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -22,6 +22,16 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+/* ═══ PAGE HEADER ═══ */
+.pg-hd{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:14px 20px;margin-bottom:12px}
+.pg-hd-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.pg-hd-title{font:700 20px/1.2 var(--f);color:var(--c9);letter-spacing:-.3px}
+.pg-hd-actions{display:flex;gap:8px}
+.pg-hd-info{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 24px;font:400 13px/1 var(--f);color:var(--c5);padding:12px 16px;background:var(--c0);border-radius:var(--r2)}
+.pg-hd-info-item{display:flex;flex-direction:column;gap:2px}
+.pg-hd-info-label{font:400 11px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px}
+.pg-hd-info-value{font:500 13px/1.3 var(--f);color:var(--c8)}
 
 
 /* ═══ TABLE ═══ */
@@ -164,26 +174,48 @@ body.chat-open .ai-toggle{display:none}
 <!-- Main content -->
 <div class="ct fade-in">
   <!-- Breadcrumb -->
-  <nav style="display:flex;align-items:center;gap:4px;font:500 12px/1 var(--f);color:var(--c5);margin-bottom:12px">
+  <nav style="display:flex;align-items:center;gap:4px;font:500 12px/1 var(--f);color:var(--c5);margin-bottom:8px">
     <a href="../demo-index.html" style="color:var(--c5);text-decoration:none;transition:color .12s" onmouseover="this.style.color='var(--pr)'" onmouseout="this.style.color='var(--c5)'">绩效工作台</a>
     <span style="color:var(--c3)">/</span>
     <span style="color:var(--c8);font-weight:600">结果审定</span>
   </nav>
 
-  <!-- Title row -->
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-    <div>
-      <h1 style="font:700 20px/1.2 var(--f);color:var(--c9);margin:0">双线上级审定</h1>
+  <!-- Page header -->
+  <div class="pg-hd">
+    <div class="pg-hd-top">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="pg-hd-title">逐级上级审定</div>
+        <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)">
+          <span style="width:6px;height:6px;border-radius:50%;background:var(--pr);animation:pulse 2s ease-in-out infinite"></span>
+          审定中
+        </span>
+      </div>
+      <div class="pg-hd-actions">
+        <button class="btn btn-s" onclick="showToast('草稿已保存','success')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          保存草稿
+        </button>
+        <button class="btn btn-s" style="color:var(--ro);border-color:var(--ro100)" onclick="showToast('已驳回，退回双线上级重新审定','warn')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          驳回
+        </button>
+        <button class="btn btn-s" onclick="showToast('已转交，等待其他管理者处理','success')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+          转交
+        </button>
+        <button class="btn btn-p" onclick="batchRatify()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          提交审定
+        </button>
+      </div>
     </div>
-    <div style="display:flex;gap:8px">
-      <button class="btn btn-s" onclick="showToast('导出成功','success')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        导出
-      </button>
-      <button class="btn btn-p" onclick="batchRatify()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>
-        提交
-      </button>
+    <div class="pg-hd-info">
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">考核方案</span><span class="pg-hd-info-value">产品部2026年Q2绩效考核</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">考核周期</span><span class="pg-hd-info-value">2026年4-6月</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">审定人</span><span class="pg-hd-info-value">赵VP（逐级上级）</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">团队人数</span><span class="pg-hd-info-value" id="hdTotal">—</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">已评分</span><span class="pg-hd-info-value" id="hdReached">—</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">待审定</span><span class="pg-hd-info-value" id="hdPending" style="color:var(--ac)">—</span></div>
     </div>
   </div>
 
@@ -239,7 +271,7 @@ body.chat-open .ai-toggle{display:none}
           <th>状态</th>
           <th>审定前总分</th>
           <th>初评等级</th>
-          <th>直线上级调整等级</th>
+          <th>双线上级调整等级</th>
           <th>调整等级</th>
         </tr>
       </thead>
@@ -248,6 +280,50 @@ body.chat-open .ai-toggle{display:none}
     <div class="pager" id="pager"></div>
   </div>
 
+  <!-- 审批流程 -->
+  <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-top:12px;margin-bottom:12px;overflow:hidden">
+    <div style="padding:10px 16px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between">
+      <span style="font:600 14px/1 var(--f);color:var(--c9)">审批流程</span>
+      <span style="font:400 12px/1 var(--f);color:var(--c5)">汇报线逐级审定</span>
+    </div>
+    <div style="padding:0">
+      <table style="width:100%;border-collapse:collapse">
+        <thead>
+          <tr style="background:var(--c0)">
+            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">节点</th>
+            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">处理人</th>
+            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">状态</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background:var(--em50)">
+            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c8);border-bottom:1px solid var(--dv)"><div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--em);flex-shrink:0"></span>直接上级评级</div></td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><div style="display:flex;align-items:center;gap:6px"><span style="width:22px;height:22px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">王</span><span style="font:400 13px/1 var(--f);color:var(--c8)">王总监</span></div></td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">✓ 已完成</span></td>
+          </tr>
+          <tr style="background:var(--em50)">
+            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c8);border-bottom:1px solid var(--dv)"><div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--em);flex-shrink:0"></span>双线上级评级</div></td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><div style="display:flex;align-items:center;gap:6px"><span style="width:22px;height:22px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">刘</span><span style="font:400 13px/1 var(--f);color:var(--c8)">刘VP</span></div></td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">✓ 已完成</span></td>
+          </tr>
+          <tr style="background:var(--em50)">
+            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c8);border-bottom:1px solid var(--dv)"><div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--em);flex-shrink:0"></span>逐级上级评级</div></td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><div style="display:flex;align-items:center;gap:6px"><span style="width:22px;height:22px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">赵</span><span style="font:400 13px/1 var(--f);color:var(--c8)">赵VP</span></div></td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">✓ 已完成</span></td>
+          </tr>
+          <tr style="background:var(--pr50)">
+            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c8);border-bottom:1px solid var(--dv)"><div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--pr);flex-shrink:0"></span>逐级上级确认</div></td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><div style="display:flex;align-items:center;gap:6px"><span style="width:22px;height:22px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">赵</span><span style="font:400 13px/1 var(--f);color:var(--c8)">赵VP</span></div></td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)"><span style="width:6px;height:6px;border-radius:50%;background:var(--pr);animation:pulse 2s ease-in-out infinite"></span>处理中</span></td>
+          </tr>
+          <tr>
+            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c4)"><div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--c3);flex-shrink:0"></span>HRBP审批</div></td>
+            <td style="padding:12px 16px"><div style="display:flex;align-items:center;gap:6px"><span style="width:22px;height:22px;border-radius:50%;background:var(--c1);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:var(--c5);flex-shrink:0">李</span><span style="font:400 13px/1 var(--f);color:var(--c4)">赵敏</span></div></td>
+            <td style="padding:12px 16px"><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--c1);color:var(--c4)">待处理</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 
@@ -321,56 +397,56 @@ var FORCE_DIST=[
 ];
 
 var MEMBERS=[
-  {name:'谭刚伟', dept:'产品部', role:'高级产品经理', group:'产品组', totalScore:64.6, grade:'符合预期-', directGrade:'符合预期-', ratifyGrade:'低于预期', reached:true},
-  {name:'李洋杰', dept:'运营部', role:'运营总监', group:'运营组', totalScore:65.0, grade:'符合预期-', directGrade:'低于预期', ratifyGrade:'低于预期', reached:true},
-  {name:'秦明涛', dept:'运营部', role:'内容运营', group:'运营组', totalScore:85.0, grade:'符合预期+', directGrade:'符合预期+', ratifyGrade:'', reached:true},
-  {name:'孙军军', dept:'产品部', role:'产品助理', group:'产品组', totalScore:81.0, grade:'符合预期+', directGrade:'符合预期+', ratifyGrade:'符合预期', reached:true},
-  {name:'许恒勇', dept:'产品部', role:'产品总监', group:'产品组', totalScore:79.8, grade:'符合预期', directGrade:'符合预期', ratifyGrade:'', reached:true},
-  {name:'孙秀刚', dept:'产品部', role:'产品经理', group:'产品组', totalScore:74.5, grade:'符合预期', directGrade:'符合预期', ratifyGrade:'', reached:true},
-  {name:'夏涛阳', dept:'设计部', role:'设计总监', group:'设计组', totalScore:86.4, grade:'符合预期+', directGrade:'超出预期', ratifyGrade:'', reached:true},
-  {name:'胡芳龙', dept:'设计部', role:'设计总监', group:'设计组', totalScore:72.3, grade:'符合预期', directGrade:'符合预期+', ratifyGrade:'', reached:false},
-  {name:'萧萍超', dept:'技术部', role:'架构师', group:'技术组', totalScore:66.4, grade:'符合预期-', directGrade:'符合预期', ratifyGrade:'符合预期-', reached:true},
-  {name:'胡敏红', dept:'运营部', role:'运营专员', group:'运营组', totalScore:76.2, grade:'符合预期', directGrade:'符合预期', ratifyGrade:'符合预期', reached:true},
-  {name:'董瑞萍', dept:'产品部', role:'产品助理', group:'产品组', totalScore:77.8, grade:'符合预期', directGrade:'符合预期', ratifyGrade:'符合预期+', reached:true},
-  {name:'周峰博', dept:'设计部', role:'UI设计师', group:'设计组', totalScore:61.8, grade:'低于预期', directGrade:'低于预期', ratifyGrade:'', reached:false},
-  {name:'孙雪红', dept:'技术部', role:'前端工程师', group:'技术组', totalScore:81.2, grade:'符合预期+', directGrade:'超出预期', ratifyGrade:'符合预期', reached:true},
-  {name:'李磊勇', dept:'设计部', role:'UX设计师', group:'设计组', totalScore:92.8, grade:'超出预期', directGrade:'超出预期', ratifyGrade:'', reached:true},
-  {name:'姚辉静', dept:'产品部', role:'高级产品经理', group:'产品组', totalScore:97.1, grade:'远超预期', directGrade:'超出预期', ratifyGrade:'', reached:true},
-  {name:'阎瑞博', dept:'技术部', role:'工程师', group:'技术组', totalScore:96.5, grade:'远超预期', directGrade:'远超预期', ratifyGrade:'远超预期', reached:true},
-  {name:'阎欣磊', dept:'设计部', role:'UX设计师', group:'设计组', totalScore:65.7, grade:'符合预期-', directGrade:'符合预期-', ratifyGrade:'', reached:false},
-  {name:'胡明静', dept:'技术部', role:'前端工程师', group:'技术组', totalScore:85.4, grade:'符合预期+', directGrade:'符合预期+', ratifyGrade:'', reached:false},
-  {name:'叶伟刚', dept:'设计部', role:'设计总监', group:'设计组', totalScore:83.8, grade:'符合预期+', directGrade:'超出预期', ratifyGrade:'', reached:true},
-  {name:'魏宁鹏', dept:'运营部', role:'高级运营', group:'运营组', totalScore:59.1, grade:'低于预期', directGrade:'远低预期', ratifyGrade:'', reached:true},
-  {name:'赵宇玲', dept:'产品部', role:'高级产品经理', group:'产品组', totalScore:89.4, grade:'超出预期', directGrade:'远超预期', ratifyGrade:'', reached:true},
-  {name:'郑刚萍', dept:'技术部', role:'架构师', group:'技术组', totalScore:65.7, grade:'符合预期-', directGrade:'符合预期-', ratifyGrade:'低于预期', reached:true},
-  {name:'廖伟涛', dept:'产品部', role:'高级产品经理', group:'产品组', totalScore:72.5, grade:'符合预期', directGrade:'符合预期', ratifyGrade:'符合预期+', reached:true},
-  {name:'朱萍峰', dept:'产品部', role:'产品助理', group:'产品组', totalScore:73.2, grade:'符合预期', directGrade:'符合预期-', ratifyGrade:'符合预期-', reached:true},
-  {name:'何强萱', dept:'技术部', role:'工程师', group:'技术组', totalScore:86.6, grade:'符合预期+', directGrade:'符合预期+', ratifyGrade:'', reached:false},
-  {name:'魏红颖', dept:'产品部', role:'产品总监', group:'产品组', totalScore:61.8, grade:'低于预期', directGrade:'低于预期', ratifyGrade:'', reached:true},
-  {name:'萧磊皓', dept:'产品部', role:'产品经理', group:'产品组', totalScore:65.6, grade:'符合预期-', directGrade:'符合预期', ratifyGrade:'低于预期', reached:true},
-  {name:'何龙伟', dept:'设计部', role:'UI设计师', group:'设计组', totalScore:66.4, grade:'符合预期-', directGrade:'符合预期-', ratifyGrade:'低于预期', reached:true},
-  {name:'钟皓丽', dept:'产品部', role:'产品助理', group:'产品组', totalScore:58.2, grade:'低于预期', directGrade:'低于预期', ratifyGrade:'', reached:true},
-  {name:'许涛欣', dept:'技术部', role:'工程师', group:'技术组', totalScore:90.9, grade:'超出预期', directGrade:'超出预期', ratifyGrade:'符合预期+', reached:true},
-  {name:'林娜磊', dept:'设计部', role:'设计总监', group:'设计组', totalScore:93.3, grade:'超出预期', directGrade:'超出预期', ratifyGrade:'', reached:true},
-  {name:'何娜红', dept:'技术部', role:'工程师', group:'技术组', totalScore:76.0, grade:'符合预期', directGrade:'符合预期-', ratifyGrade:'符合预期+', reached:true},
-  {name:'冯敏娜', dept:'产品部', role:'高级产品经理', group:'产品组', totalScore:61.9, grade:'低于预期', directGrade:'低于预期', ratifyGrade:'远低预期', reached:true},
-  {name:'余芳勇', dept:'产品部', role:'产品经理', group:'产品组', totalScore:80.0, grade:'符合预期+', directGrade:'符合预期+', ratifyGrade:'', reached:true},
-  {name:'何伟丽', dept:'产品部', role:'产品专员', group:'产品组', totalScore:70.2, grade:'符合预期', directGrade:'符合预期', ratifyGrade:'符合预期-', reached:true},
-  {name:'潘华洁', dept:'技术部', role:'高级工程师', group:'技术组', totalScore:86.7, grade:'符合预期+', directGrade:'符合预期+', ratifyGrade:'符合预期+', reached:true},
-  {name:'王波蝶', dept:'产品部', role:'产品助理', group:'产品组', totalScore:63.6, grade:'符合预期-', directGrade:'符合预期-', ratifyGrade:'', reached:true},
-  {name:'萧玲刚', dept:'产品部', role:'产品经理', group:'产品组', totalScore:92.2, grade:'超出预期', directGrade:'远超预期', ratifyGrade:'', reached:true},
-  {name:'周娜洁', dept:'设计部', role:'设计总监', group:'设计组', totalScore:80.0, grade:'符合预期+', directGrade:'超出预期', ratifyGrade:'', reached:true},
-  {name:'田瑞红', dept:'设计部', role:'UI设计师', group:'设计组', totalScore:60.0, grade:'低于预期', directGrade:'低于预期', ratifyGrade:'', reached:true},
-  {name:'余鹏勇', dept:'产品部', role:'产品总监', group:'产品组', totalScore:73.5, grade:'符合预期', directGrade:'符合预期', ratifyGrade:'符合预期-', reached:true},
-  {name:'沈宁龙', dept:'设计部', role:'视觉设计师', group:'设计组', totalScore:72.3, grade:'符合预期', directGrade:'符合预期-', ratifyGrade:'', reached:true},
-  {name:'杜雪宇', dept:'技术部', role:'前端工程师', group:'技术组', totalScore:78.6, grade:'符合预期', directGrade:'符合预期', ratifyGrade:'', reached:false},
-  {name:'夏龙萍', dept:'运营部', role:'内容运营', group:'运营组', totalScore:74.0, grade:'符合预期', directGrade:'符合预期', ratifyGrade:'符合预期', reached:true},
-  {name:'廖伟雪', dept:'设计部', role:'设计总监', group:'设计组', totalScore:64.7, grade:'符合预期-', directGrade:'符合预期-', ratifyGrade:'', reached:true},
-  {name:'潘皓鹏', dept:'产品部', role:'产品助理', group:'产品组', totalScore:85.9, grade:'符合预期+', directGrade:'符合预期+', ratifyGrade:'', reached:true},
-  {name:'胡洁颖', dept:'产品部', role:'产品助理', group:'产品组', totalScore:75.0, grade:'符合预期', directGrade:'符合预期-', ratifyGrade:'符合预期+', reached:true},
-  {name:'潘瑞龙', dept:'运营部', role:'内容运营', group:'运营组', totalScore:95.9, grade:'远超预期', directGrade:'超出预期', ratifyGrade:'超出预期', reached:true},
-  {name:'谭波欣', dept:'运营部', role:'高级运营', group:'运营组', totalScore:66.1, grade:'符合预期-', directGrade:'低于预期', ratifyGrade:'低于预期', reached:true},
-  {name:'陈峰伟', dept:'设计部', role:'UX设计师', group:'设计组', totalScore:66.7, grade:'符合预期-', directGrade:'符合预期-', ratifyGrade:'符合预期-', reached:true},
+  {name:'谭刚伟', dept:'产品部', role:'高级产品经理', group:'产品组', totalScore:64.6, grade:'符合预期-', indirectGrade:'符合预期', ratifyGrade:'低于预期', reached:true},
+  {name:'李洋杰', dept:'运营部', role:'运营总监', group:'运营组', totalScore:65.0, grade:'符合预期-', indirectGrade:'符合预期-', ratifyGrade:'低于预期', reached:true},
+  {name:'秦明涛', dept:'运营部', role:'内容运营', group:'运营组', totalScore:85.0, grade:'符合预期+', indirectGrade:'符合预期+', ratifyGrade:'', reached:true},
+  {name:'孙军军', dept:'产品部', role:'产品助理', group:'产品组', totalScore:81.0, grade:'符合预期+', indirectGrade:'符合预期', ratifyGrade:'符合预期', reached:true},
+  {name:'许恒勇', dept:'产品部', role:'产品总监', group:'产品组', totalScore:79.8, grade:'符合预期', indirectGrade:'符合预期-', ratifyGrade:'', reached:true},
+  {name:'孙秀刚', dept:'产品部', role:'产品经理', group:'产品组', totalScore:74.5, grade:'符合预期', indirectGrade:'符合预期', ratifyGrade:'', reached:true},
+  {name:'夏涛阳', dept:'设计部', role:'设计总监', group:'设计组', totalScore:86.4, grade:'符合预期+', indirectGrade:'符合预期+', ratifyGrade:'', reached:true},
+  {name:'胡芳龙', dept:'设计部', role:'设计总监', group:'设计组', totalScore:72.3, grade:'符合预期', indirectGrade:'符合预期-', ratifyGrade:'', reached:false},
+  {name:'萧萍超', dept:'技术部', role:'架构师', group:'技术组', totalScore:66.4, grade:'符合预期-', indirectGrade:'低于预期', ratifyGrade:'符合预期-', reached:true},
+  {name:'胡敏红', dept:'运营部', role:'运营专员', group:'运营组', totalScore:76.2, grade:'符合预期', indirectGrade:'符合预期-', ratifyGrade:'符合预期', reached:true},
+  {name:'董瑞萍', dept:'产品部', role:'产品助理', group:'产品组', totalScore:77.8, grade:'符合预期', indirectGrade:'符合预期+', ratifyGrade:'符合预期+', reached:true},
+  {name:'周峰博', dept:'设计部', role:'UI设计师', group:'设计组', totalScore:61.8, grade:'低于预期', indirectGrade:'符合预期-', ratifyGrade:'', reached:false},
+  {name:'孙雪红', dept:'技术部', role:'前端工程师', group:'技术组', totalScore:81.2, grade:'符合预期+', indirectGrade:'符合预期+', ratifyGrade:'符合预期', reached:true},
+  {name:'李磊勇', dept:'设计部', role:'UX设计师', group:'设计组', totalScore:92.8, grade:'超出预期', indirectGrade:'超出预期', ratifyGrade:'', reached:true},
+  {name:'姚辉静', dept:'产品部', role:'高级产品经理', group:'产品组', totalScore:97.1, grade:'远超预期', indirectGrade:'远超预期', ratifyGrade:'', reached:true},
+  {name:'阎瑞博', dept:'技术部', role:'工程师', group:'技术组', totalScore:96.5, grade:'远超预期', indirectGrade:'超出预期', ratifyGrade:'远超预期', reached:true},
+  {name:'阎欣磊', dept:'设计部', role:'UX设计师', group:'设计组', totalScore:65.7, grade:'符合预期-', indirectGrade:'符合预期', ratifyGrade:'', reached:false},
+  {name:'胡明静', dept:'技术部', role:'前端工程师', group:'技术组', totalScore:85.4, grade:'符合预期+', indirectGrade:'符合预期+', ratifyGrade:'', reached:false},
+  {name:'叶伟刚', dept:'设计部', role:'设计总监', group:'设计组', totalScore:83.8, grade:'符合预期+', indirectGrade:'超出预期', ratifyGrade:'', reached:true},
+  {name:'魏宁鹏', dept:'运营部', role:'高级运营', group:'运营组', totalScore:59.1, grade:'低于预期', indirectGrade:'远低预期', ratifyGrade:'', reached:true},
+  {name:'赵宇玲', dept:'产品部', role:'高级产品经理', group:'产品组', totalScore:89.4, grade:'超出预期', indirectGrade:'符合预期+', ratifyGrade:'', reached:true},
+  {name:'郑刚萍', dept:'技术部', role:'架构师', group:'技术组', totalScore:65.7, grade:'符合预期-', indirectGrade:'符合预期-', ratifyGrade:'低于预期', reached:true},
+  {name:'廖伟涛', dept:'产品部', role:'高级产品经理', group:'产品组', totalScore:72.5, grade:'符合预期', indirectGrade:'符合预期-', ratifyGrade:'符合预期+', reached:true},
+  {name:'朱萍峰', dept:'产品部', role:'产品助理', group:'产品组', totalScore:73.2, grade:'符合预期', indirectGrade:'符合预期', ratifyGrade:'符合预期-', reached:true},
+  {name:'何强萱', dept:'技术部', role:'工程师', group:'技术组', totalScore:86.6, grade:'符合预期+', indirectGrade:'符合预期+', ratifyGrade:'', reached:false},
+  {name:'魏红颖', dept:'产品部', role:'产品总监', group:'产品组', totalScore:61.8, grade:'低于预期', indirectGrade:'低于预期', ratifyGrade:'', reached:true},
+  {name:'萧磊皓', dept:'产品部', role:'产品经理', group:'产品组', totalScore:65.6, grade:'符合预期-', indirectGrade:'符合预期', ratifyGrade:'低于预期', reached:true},
+  {name:'何龙伟', dept:'设计部', role:'UI设计师', group:'设计组', totalScore:66.4, grade:'符合预期-', indirectGrade:'符合预期-', ratifyGrade:'低于预期', reached:true},
+  {name:'钟皓丽', dept:'产品部', role:'产品助理', group:'产品组', totalScore:58.2, grade:'低于预期', indirectGrade:'低于预期', ratifyGrade:'', reached:true},
+  {name:'许涛欣', dept:'技术部', role:'工程师', group:'技术组', totalScore:90.9, grade:'超出预期', indirectGrade:'远超预期', ratifyGrade:'符合预期+', reached:true},
+  {name:'林娜磊', dept:'设计部', role:'设计总监', group:'设计组', totalScore:93.3, grade:'超出预期', indirectGrade:'远超预期', ratifyGrade:'', reached:true},
+  {name:'何娜红', dept:'技术部', role:'工程师', group:'技术组', totalScore:76.0, grade:'符合预期', indirectGrade:'符合预期-', ratifyGrade:'符合预期+', reached:true},
+  {name:'冯敏娜', dept:'产品部', role:'高级产品经理', group:'产品组', totalScore:61.9, grade:'低于预期', indirectGrade:'低于预期', ratifyGrade:'远低预期', reached:true},
+  {name:'余芳勇', dept:'产品部', role:'产品经理', group:'产品组', totalScore:80.0, grade:'符合预期+', indirectGrade:'符合预期', ratifyGrade:'', reached:true},
+  {name:'何伟丽', dept:'产品部', role:'产品专员', group:'产品组', totalScore:70.2, grade:'符合预期', indirectGrade:'符合预期', ratifyGrade:'符合预期-', reached:true},
+  {name:'潘华洁', dept:'技术部', role:'高级工程师', group:'技术组', totalScore:86.7, grade:'符合预期+', indirectGrade:'符合预期+', ratifyGrade:'符合预期+', reached:true},
+  {name:'王波蝶', dept:'产品部', role:'产品助理', group:'产品组', totalScore:63.6, grade:'符合预期-', indirectGrade:'符合预期-', ratifyGrade:'', reached:true},
+  {name:'萧玲刚', dept:'产品部', role:'产品经理', group:'产品组', totalScore:92.2, grade:'超出预期', indirectGrade:'符合预期+', ratifyGrade:'', reached:true},
+  {name:'周娜洁', dept:'设计部', role:'设计总监', group:'设计组', totalScore:80.0, grade:'符合预期+', indirectGrade:'符合预期', ratifyGrade:'', reached:true},
+  {name:'田瑞红', dept:'设计部', role:'UI设计师', group:'设计组', totalScore:60.0, grade:'低于预期', indirectGrade:'远低预期', ratifyGrade:'', reached:true},
+  {name:'余鹏勇', dept:'产品部', role:'产品总监', group:'产品组', totalScore:73.5, grade:'符合预期', indirectGrade:'符合预期', ratifyGrade:'符合预期-', reached:true},
+  {name:'沈宁龙', dept:'设计部', role:'视觉设计师', group:'设计组', totalScore:72.3, grade:'符合预期', indirectGrade:'符合预期-', ratifyGrade:'', reached:true},
+  {name:'杜雪宇', dept:'技术部', role:'前端工程师', group:'技术组', totalScore:78.6, grade:'符合预期', indirectGrade:'符合预期', ratifyGrade:'', reached:false},
+  {name:'夏龙萍', dept:'运营部', role:'内容运营', group:'运营组', totalScore:74.0, grade:'符合预期', indirectGrade:'符合预期-', ratifyGrade:'符合预期', reached:true},
+  {name:'廖伟雪', dept:'设计部', role:'设计总监', group:'设计组', totalScore:64.7, grade:'符合预期-', indirectGrade:'低于预期', ratifyGrade:'', reached:true},
+  {name:'潘皓鹏', dept:'产品部', role:'产品助理', group:'产品组', totalScore:85.9, grade:'符合预期+', indirectGrade:'符合预期+', ratifyGrade:'', reached:true},
+  {name:'胡洁颖', dept:'产品部', role:'产品助理', group:'产品组', totalScore:75.0, grade:'符合预期', indirectGrade:'符合预期', ratifyGrade:'符合预期+', reached:true},
+  {name:'潘瑞龙', dept:'运营部', role:'内容运营', group:'运营组', totalScore:95.9, grade:'远超预期', indirectGrade:'远超预期', ratifyGrade:'超出预期', reached:true},
+  {name:'谭波欣', dept:'运营部', role:'高级运营', group:'运营组', totalScore:66.1, grade:'符合预期-', indirectGrade:'符合预期-', ratifyGrade:'低于预期', reached:true},
+  {name:'陈峰伟', dept:'设计部', role:'UX设计师', group:'设计组', totalScore:66.7, grade:'符合预期-', indirectGrade:'符合预期-', ratifyGrade:'符合预期-', reached:true},
 ];
 
 var currentGroup='全部';
@@ -549,7 +625,7 @@ function renderMembers(){
       '<td><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:'+(m.reached?'var(--em50)':'var(--ac50)')+';color:'+(m.reached?'var(--em700)':'var(--ac700)')+'">'+(m.reached?'已到达':'未到达')+'</span></td>'+
       '<td><span style="font-family:var(--m);font-weight:600;color:var(--c9)">'+m.totalScore+'</span></td>'+
       '<td><span style="font:400 13px/1 var(--f);color:var(--c7)">'+(m.grade||'—')+'</span></td>'+
-      '<td><span style="font:400 13px/1 var(--f);color:var(--c7)">'+(m.directGrade||'—')+'</span></td>';
+      '<td><span style="font:400 13px/1 var(--f);color:var(--c7)">'+(m.indirectGrade||'—')+'</span></td>';
     if(m.reached){
       html+='<td><div class="star-rating" data-value="'+(m.ratifyGrade?7-GRADE_OPTIONS.indexOf(m.ratifyGrade):0)+'">';
       html+='<div class="star-row">';
@@ -864,7 +940,7 @@ function handleAiAction(action){
 
       // ─── 确认应用 ───
       case '确认应用':
-        AI_MSGS.push({role:'bot',text:'✅ 审定等级已确认应用。\n\n当前 '+reached+' 人已到达，'+pending+' 人待确认。\n\n下一步可进行强制分布校验，确认无误后提交审定。',time:now(),cards:[
+        AI_MSGS.push({role:'bot',text:'✅ 审定等级已确认应用。\n\n当前 '+reached+' 人已到达，'+pending+' 人待审定。\n\n下一步可进行强制分布校验，确认无误后提交审定。',time:now(),cards:[
           {t:'已确认',d:reached+' 人等级已锁定',tag:'已完成',tc:'em'}
         ],actions:['校验强制分布','生成通知模板']});
         break;
@@ -890,7 +966,7 @@ function handleAiAction(action){
       // ─── 查看通知模板 ───
       case '生成通知模板':
       case '查看通知模板':
-        AI_MSGS.push({role:'bot',text:'📋 审定结果通知模板：\n\n---\n【绩效审定结果通知】\n\nDear {员工姓名}，\n\n你2026年Q2绩效考核结果已审定：\n• 原始评级：{审定前等级}\n• 审定等级：{审定等级}\n• 审定人：刘VP\n\n如有异议，请在5个工作日内联系HRBP。\n---\n\n当前团队 '+reached+' 人已到达，可批量发送。',time:now(),cards:[
+        AI_MSGS.push({role:'bot',text:'📋 审定结果通知模板：\n\n---\n【绩效审定结果通知】\n\nDear {员工姓名}，\n\n你2026年Q2绩效考核结果已审定：\n• 原始评级：{审定前等级}\n• 审定等级：{审定等级}\n• 审定人：赵VP\n\n如有异议，请在5个工作日内联系HRBP。\n---\n\n当前团队 '+reached+' 人已到达，可批量发送。',time:now(),cards:[
           {t:'通知模板',d:'已生成标准通知格式',tag:'可预览',tc:'pr'}
         ],actions:['导出审定表','提交审定']});
         break;
@@ -910,7 +986,7 @@ function handleAiAction(action){
             {t:'待完成',d:unfilledCount+' 项等级待填入',tag:'未完成',tc:'ac'}
           ],actions:['自动填充全部','批量调整建议']});
         }else{
-          AI_MSGS.push({role:'bot',text:'✅ 审定数据校验通过！\n\n• 已到达 '+reached+' 人，全部已填写等级\n• 强制分布校验：合规\n• 等级偏离人员：已确认\n\n提交后将流转至逐级上级（赵VP）审批。确认提交？',time:now(),cards:[
+          AI_MSGS.push({role:'bot',text:'✅ 审定数据校验通过！\n\n• 已到达 '+reached+' 人，全部已填写等级\n• 强制分布校验：合规\n• 等级偏离人员：已确认\n\n提交后将流转至HRBP（赵敏）审批。确认提交？',time:now(),cards:[
             {t:'提交确认',d:reached+' 人审定数据已就绪',tag:'待提交',tc:'pr'}
           ],actions:['确认提交','返回修改']});
         }
@@ -918,8 +994,8 @@ function handleAiAction(action){
 
       // ─── 确认提交 ───
       case '确认提交':
-        AI_MSGS.push({role:'bot',text:'🎉 审定已提交成功！\n\n当前状态：逐级上级审批中（赵VP）\n预计审批时间：1-2个工作日\n\n审批通过后将自动通知所有被考核人。',time:now(),cards:[
-          {t:'已提交',d:'等待逐级上级审批',tag:'审批中',tc:'pr'}
+        AI_MSGS.push({role:'bot',text:'🎉 审定已提交成功！\n\n当前状态：HRBP审批中（赵敏）\n预计审批时间：1个工作日\n\n审批通过后将自动通知所有被考核人。',time:now(),cards:[
+          {t:'已提交',d:'等待HRBP审批',tag:'审批中',tc:'pr'}
         ],actions:['查看通知模板']});
         break;
 

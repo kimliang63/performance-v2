@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 考核进度</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --r1:6px;--r2:8px;--r3:10px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --m:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
+.btn svg{width:13px;height:13px}
+.btn-p{background:var(--pr);color:#FFF}.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
+
+.fl-bar{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.fl-search{display:flex;align-items:center;gap:6px;background:var(--c0);border:1px solid var(--c2);border-radius:var(--r1);padding:0 10px;height:32px;min-width:200px;transition:all .15s}
+.fl-search:focus-within{background:var(--sf);border-color:var(--pr)}
+.fl-search svg{color:var(--c4);flex-shrink:0;width:13px;height:13px}
+.fl-search input{border:none;background:transparent;outline:none;font:13px/1 var(--f);width:100%;color:var(--c9)}
+.fl-search input::placeholder{color:var(--c4)}
+.fl-sel{height:32px;padding:0 28px 0 10px;border:1px solid var(--c2);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c7);background:var(--sf) url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center;appearance:none;cursor:pointer;transition:all .12s;outline:none;-webkit-appearance:none;-moz-appearance:none}
+.fl-sel:focus{border-color:var(--pr)}
+.fl-actions{display:flex;gap:6px;margin-left:auto}
+
+.tbl-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden;margin-bottom:16px}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:900px}
+thead th{background:var(--c0);font:600 12px/1 var(--f);color:var(--c5);text-align:left;padding:10px 14px;border-bottom:1px solid var(--dv);white-space:nowrap;letter-spacing:.2px;text-transform:uppercase}
+tbody td{font:400 13px/1.4 var(--f);color:var(--c7);padding:12px 14px;border-bottom:1px solid var(--dv);vertical-align:middle}
+tbody tr{transition:background .1s}
+tbody tr:hover{background:var(--c0)}
+tbody tr:nth-child(even){background:var(--c0)}
+tbody tr:nth-child(even):hover{background:var(--pr50)}
+tbody tr:last-child td{border-bottom:none}
+.mono{font-family:var(--m);font-size:12px}
+
+.tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:3px;font:500 11px/1 var(--f);white-space:nowrap}
+.tag-em{background:var(--em50);color:var(--em700)}
+.tag-ac{background:var(--ac50);color:var(--ac700)}
+.tag-pr{background:var(--pr50);color:var(--pr)}
+.tag-ro{background:var(--ro50);color:var(--ro)}
+
+.lk{color:var(--pr);cursor:pointer;text-decoration:none;font-weight:500}
+.lk:hover{text-decoration:underline}
+
+.pg-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-top:1px solid var(--dv);font:400 12px/1 var(--f);color:var(--c5)}
+.pg-info{display:flex;align-items:center;gap:16px}
+.pg-nav{display:flex;align-items:center;gap:4px}
+.pg-btn{width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;border:1px solid var(--c2);background:var(--sf);cursor:pointer;color:var(--c5);font:500 12px/1 var(--f);transition:all .12s}
+.pg-btn:hover{border-color:var(--pr);color:var(--pr)}
+.pg-btn.on{background:var(--pr);border-color:var(--pr);color:#FFF}
+.pg-btn:disabled{opacity:.4;cursor:not-allowed}
+
+.lk{color:var(--pr);cursor:pointer;text-decoration:none;font-weight:500}
+.lk:hover{text-decoration:underline}
+
+/* ═══ MODAL ═══ */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:2000;display:flex;align-items:center;justify-content:center}
+.modal{background:var(--sf);border-radius:var(--r3);box-shadow:0 20px 60px rgba(0,0,0,.15);width:720px;max-height:80vh;overflow:hidden;display:flex;flex-direction:column}
+.modal-hd{padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between}
+.modal-hd-title{font:600 15px/1 var(--f);color:var(--c9)}
+.modal-close{width:28px;height:28px;border-radius:var(--r1);border:none;background:transparent;color:var(--c5);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px}
+.modal-close:hover{background:var(--c1);color:var(--c7)}
+.modal-bd{flex:1;overflow-y:auto;padding:16px 20px}
+.modal-ft{padding:12px 20px;border-top:1px solid var(--dv);display:flex;justify-content:flex-end}
+.flow-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.flow-tbl th{padding:8px 12px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);background:var(--c0)}
+.flow-tbl td{padding:8px 12px;font:400 12px/1.4 var(--f);color:var(--c7);border-bottom:1px solid var(--dv)}
+
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fi{animation:fi .25s ease forwards}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="../navigation.js"></script>
+<script>
+GHR_NAV.init('perf', '考核进度');
+
+var I={
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
+  x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+  download:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+  bell:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>',
+};
+
+var names=['张明','李华','王芳','赵磊','陈静','刘洋','周婷','吴强','郑丽','孙鹏','钱敏','黄波','林燕','何涛','马丽','朱伟','胡洁','郭明','杨峰','沈云','许亮','邓超','彭飞','蒋浩','韩雪'];
+var depts=['产品部','技术部','市场部','设计部','运营部','产品部','技术部','市场部','设计部','运营部','产品部','技术部','市场部','设计部','运营部','产品部','技术部','市场部','设计部','运营部','产品部','技术部','市场部','设计部','运营部'];
+var allPeriods=['2026年Q2','2026年Q2','2026年Q2','2026年Q2','2026年Q2','2026年Q2','2026年Q2','2026年Q2','2026年Q2','2026年Q2','2026年Q2','2026年Q2','2026年Q1','2026年Q1','2026年Q1','2026年Q1','2026年Q1','2026年Q1','2026年Q1','2026年Q1','2026年Q1','2026年Q1','2026年Q1','2026年Q1','2026年Q1'];
+/* Status by node: 未开始='', 填写中=currentNode, 已完成='done' */
+var nodeStatus=['绩效考核','结果审定','结果确认','绩效面谈','done','直接上级审批','绩效考核','结果审定','目标制定','绩效考核','done','目标制定','绩效考核','绩效考核','结果审定','结果确认','done','绩效考核','直接上级审批','结果审定','绩效考核','直接上级审批','目标制定','绩效考核','直接上级审批'];
+var handlers=['王总监','王总监','张明','王总监','','王总监','王总监','王总监','张明','王总监','','王总监','王总监','王总监','王总监','王总监','','王总监','刘VP','王总监','王总监','刘VP','张明','王总监','刘VP'];
+
+var STAGE_ORDER=['目标制定','直接上级审批','绩效考核','直接上级评分','结果审定','结果确认','绩效面谈'];
+var FLOW_HANDLERS=['张明','王总监','张明','王总监','刘VP','张明','王总监'];
+
+/* Derive status: '' → 未开始, 'done' → 已完成, otherwise → 填写中 */
+function deriveStatus(ns){
+  if(!ns)return'未开始';
+  if(ns==='done')return'已完成';
+  return'填写中';
+}
+
+var PROGRESS_DATA=[];
+for(var i=0;i<25;i++){
+  var ns=nodeStatus[i],cs=ns==='done'?'':ns,st=deriveStatus(ns);
+  var steps=[];
+  for(var j=0;j<STAGE_ORDER.length;j++){
+    var sj=STAGE_ORDER[j];
+    var isDone=st==='已完成'||(st==='填写中'&&STAGE_ORDER.indexOf(sj)<STAGE_ORDER.indexOf(cs));
+    var isCurrent=sj===cs&&st==='填写中';
+    var isPending=!isDone&&!isCurrent;
+    steps.push({stage:sj,handler:FLOW_HANDLERS[j],inTime:isDone?'2026-0'+Math.floor(Math.random()*6+1)+'-'+String(Math.floor(Math.random()*28+1)).padStart(2,'0'):'—',outTime:isDone?'2026-0'+Math.floor(Math.random()*6+1)+'-'+String(Math.floor(Math.random()*28+1)).padStart(2,'0'):'—',status:isDone?'✓ 完成':isCurrent?'● 处理中':'○ 待处理',done:isDone,current:isCurrent});
+  }
+  PROGRESS_DATA.push({empId:'EMP'+String(i+1).padStart(4,'0'),name:names[i],dept:depts[i],period:allPeriods[i],activity:allPeriods[i]+'-'+depts[i]+'考核',currentStage:cs,currentHandler:ns==='done'?'':(handlers[i]||''),status:st,flowSteps:steps});
+}
+
+var DEPTS=['全部','产品部','技术部','市场部','设计部','运营部'];
+var STATUSES=['全部状态','未开始','填写中','已完成'];
+
+var filter={search:'',cycle:'',dept:'',status:''};
+var currentPage=1;
+var pageSize=10;
+
+function getCycles(){
+  var set={};
+  for(var i=0;i<PROGRESS_DATA.length;i++){set[PROGRESS_DATA[i].period]=1;}
+  return Object.keys(set).sort().reverse();
+}
+
+function getFiltered(){
+  return PROGRESS_DATA.filter(function(d){
+    if(filter.search&&d.name.indexOf(filter.search)===-1&&d.empId.indexOf(filter.search)===-1&&d.currentHandler.indexOf(filter.search)===-1)return false;
+    if(filter.cycle&&d.period!==filter.cycle)return false;
+    if(filter.dept&&d.dept!==filter.dept)return false;
+    if(filter.status&&filter.status!=='全部状态'&&d.status!==filter.status)return false;
+    return true;
+  });
+}
+
+function showFlow(empId){
+  var d=PROGRESS_DATA.find(function(r){return r.empId===empId;});
+  if(!d)return;
+  var html='<div class="modal-overlay" onclick="closeModal()"><div class="modal" onclick="event.stopPropagation()">'+
+    '<div class="modal-hd"><span class="modal-hd-title">'+d.name+' · 考核进度明细</span><button class="modal-close" onclick="closeModal()">✕</button></div>'+
+    '<div class="modal-bd"><table class="flow-tbl"><thead><tr><th>环节</th><th>处理人</th><th>流入时间</th><th>流出时间</th><th>状态</th></tr></thead><tbody>';
+  for(var i=0;i<d.flowSteps.length;i++){
+    var fs=d.flowSteps[i];
+    var sc=fs.done?'var(--em700)':fs.current?'var(--pr)':'var(--c4)';
+    html+='<tr><td>'+fs.stage+'</td><td>'+fs.handler+'</td><td>'+fs.inTime+'</td><td>'+fs.outTime+'</td><td style="color:'+sc+'">'+fs.status+'</td></tr>';
+  }
+  html+='</tbody></table></div><div class="modal-ft"><button class="btn btn-s" onclick="closeModal()">关闭</button></div></div></div>';
+  document.getElementById('modalContainer').innerHTML=html;
+}
+function closeModal(){document.getElementById('modalContainer').innerHTML='';}
+
+function render(){
+  var data=getFiltered();
+  var total=data.length;
+  var totalPages=Math.ceil(total/pageSize)||1;
+  if(currentPage>totalPages)currentPage=totalPages;
+  var start=(currentPage-1)*pageSize;
+  var page=data.slice(start,start+pageSize);
+
+  var cycleOptions=getCycles().map(function(c){return '<option value="'+c+'"'+(filter.cycle===c?' selected':'')+'>'+c+'</option>';}).join('');
+  var deptOptions=DEPTS.slice(1).map(function(d){return '<option value="'+d+'"'+(filter.dept===d?' selected':'')+'>'+d+'</option>';}).join('');
+  var statusOptions=STATUSES.map(function(s){return '<option value="'+s+'"'+(filter.status===s?' selected':'')+'>'+s+'</option>';}).join('');
+
+  var html='<div class="fi">'+
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">'+
+      '<div><h1 style="font:700 20px/1.2 var(--f);color:var(--c9);margin-bottom:4px">考核进度</h1><p style="font:400 13px/1 var(--f);color:var(--c5)">查看全员各周期考核进度</p></div>'+
+      '<div style="display:flex;gap:8px"><button class="btn btn-s" onclick="handleExport()">'+I.download+' 导出</button><button class="btn btn-p" onclick="handleRemind()">'+I.bell+' 批量催办</button></div>'+
+    '</div>'+
+    '<div class="fl-bar">'+
+      '<div class="fl-search">'+I.search+'<input id="flSearch" placeholder="搜索姓名或工号…" value="'+filter.search+'" oninput="onSearch(this.value)"></div>'+
+      '<select class="fl-sel" onchange="onCycle(this.value)"><option value="">全部周期</option>'+cycleOptions+'</select>'+
+      '<select class="fl-sel" onchange="onDept(this.value)"><option value="">全部部门</option>'+deptOptions+'</select>'+
+      '<select class="fl-sel" onchange="onStatus(this.value)">'+statusOptions+'</select>'+
+      '<div class="fl-actions"><button class="btn btn-s" onclick="resetFilters()">'+I.x+' 重置</button></div>'+
+    '</div>'+
+    '<div class="tbl-card">'+
+      '<div class="tbl-wrap"><table><thead><tr>'+
+        '<th>姓名</th><th>工号</th><th>部门</th><th>绩效活动</th><th>当前环节</th><th>当前处理人</th><th>状态</th><th>操作</th>'+
+      '</tr></thead><tbody>';
+
+  for(var i=0;i<page.length;i++){
+    var d=page[i];
+    var sc=d.status==='已完成'?'tag-em':d.status==='填写中'?'tag-pr':'tag-c5';
+    html+='<tr>'+
+      '<td style="font-weight:500;color:var(--c9)">'+d.name+'</td>'+
+      '<td class="mono">'+d.empId+'</td>'+
+      '<td>'+d.dept+'</td>'+
+      '<td><a class="lk" href="perf-activity-detail.html">'+d.activity+'</a></td>'+
+      '<td>'+(d.currentStage?'<span class="tag tag-pr">'+d.currentStage+'</span>':'<span style="color:var(--c4)">—</span>')+'</td>'+
+      '<td>'+(d.currentHandler||'<span style="color:var(--c4)">—</span>')+'</td>'+
+      '<td><span class="tag '+sc+'">'+d.status+'</span></td>'+
+      '<td><a class="lk" href="perf-activity.html">查看明细</a></td>'+
+      '</tr>';
+  }
+
+  html+='</tbody></table></div>'+
+    '<div class="pg-bar">'+
+      '<div class="pg-info"><span>第 '+(total?start+1:0)+'-'+Math.min(start+pageSize,total)+' 条，共 '+total+' 条</span></div>'+
+      '<div class="pg-nav">';
+  for(var p=1;p<=totalPages;p++){
+    html+='<button class="pg-btn'+(p===currentPage?' on':'')+'" onclick="goPage('+p+')">'+p+'</button>';
+  }
+  html+='</div></div></div></div>';
+
+  document.getElementById('app').innerHTML=html;
+}
+
+function onSearch(v){filter.search=v;currentPage=1;render();}
+function onCycle(v){filter.cycle=v;currentPage=1;render();}
+function onDept(v){filter.dept=v;currentPage=1;render();}
+function onStatus(v){filter.status=v;currentPage=1;render();}
+function goPage(p){currentPage=p;render();}
+function resetFilters(){filter={search:'',cycle:'',dept:'',status:''};currentPage=1;render();}
+function handleExport(){alert('导出功能（原型占位）');}
+function handleRemind(){alert('批量催办功能（原型占位）');}
+
+render();
+</script>
+</body>
+</html>

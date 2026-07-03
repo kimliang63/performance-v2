@@ -1,5 +1,12 @@
 # 变更记录
 
+## 2026-07-02 新增 4 个绩效报表页面
+- 新建: perf-report-goals.html, perf-report-results.html, perf-report-progress.html, perf-report-distribution.html
+- 内容: 目标中心/绩效结果/考核进度/绩效报表，跨周期查询+Chart.js图表
+- 导航: navigation.js 报表分组更新文件引用
+
+---
+
 ## 2026-07-02 审定等级控件统一为评星
 
 **改造** `manager/demo-ratify-direct.html` — 7级审定按钮组 → 7星评星组件

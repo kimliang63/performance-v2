@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 员工目标详情</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --shadow-card-hover:0 8px 20px -4px rgba(0,0,0,.08),0 2px 6px -2px rgba(0,0,0,.04);
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --m:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+/* Page header */
+.pg-hd{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:16px}
+.pg-hd-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.pg-hd-title{font:700 20px/1.2 var(--f);color:var(--c9);letter-spacing:-.3px}
+.pg-hd-actions{display:flex;gap:8px}
+.pg-hd-info{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 24px;font:400 13px/1 var(--f);color:var(--c5);margin-bottom:12px;padding:12px 16px;background:var(--c0);border-radius:var(--r2)}
+.pg-hd-info-item{display:flex;flex-direction:column;gap:2px}
+.pg-hd-info-label{font:400 11px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px}
+.pg-hd-info-value{font:500 13px/1.3 var(--f);color:var(--c8)}
+.pg-hd-summary{display:flex;align-items:center;gap:24px;padding-top:12px;border-top:1px solid var(--dv)}
+.pg-hd-summary .sum-item{font:500 13px/1 var(--f);color:var(--c6)}
+.pg-hd-summary .sum-val{font-family:var(--m);font-weight:700;color:var(--pr)}
+.pg-hd-summary .sum-val.warn{color:var(--ro)}
+.pg-hd-summary .sum-err{display:inline-flex;align-items:center;gap:4px;font:500 11px/1 var(--f);color:var(--ro);background:var(--ro50);padding:3px 8px;border-radius:3px}
+.pg-hd-summary .sum-err svg{width:12px;height:12px}
+.pg-hd-summary .sum-ok{display:inline-flex;align-items:center;gap:4px;font:500 11px/1 var(--f);color:var(--em700);background:var(--em50);padding:3px 8px;border-radius:3px}
+.pg-hd-summary .sum-ok svg{width:12px;height:12px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
+.btn svg{width:13px;height:13px}
+.btn-p{background:var(--pr);color:#FFF}
+.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}
+.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
+
+/* FORM STATUS */
+.form-status{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:var(--r1);font:500 12px/1 var(--f)}
+.form-status .dot{width:7px;height:7px;border-radius:50%}
+.form-status.active{background:var(--em50);color:var(--em700)}
+.form-status.active .dot{background:var(--em);animation:pulse 2s ease-in-out infinite}
+.form-status.submitted{background:var(--pr50);color:var(--pr)}
+.form-status.submitted .dot{background:var(--pr);animation:pulse 2s ease-in-out infinite}
+.form-status.approved{background:var(--em50);color:var(--em700)}
+.form-status.approved .dot{background:var(--em)}
+.form-status.draft{background:var(--ac50);color:var(--ac700)}
+.form-status.draft .dot{background:var(--ac)}
+.form-status.notstarted{background:var(--c1);color:var(--c5)}
+.form-status.notstarted .dot{background:var(--c4)}
+
+/* MODULE SECTION */
+.mod-section{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden;border:1px solid var(--c2)}
+.mod-hd{display:flex;align-items:center;padding:14px 20px;cursor:pointer;user-select:none;transition:background .12s;gap:12px}
+.mod-hd:hover{background:var(--c0)}
+.mod-hd-icon{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#FFF}
+.mod-hd-icon svg{width:13px;height:13px;color:#FFF}
+.mod-hd-title{font:500 12px/1 var(--f);color:var(--c5);flex:1;text-transform:uppercase;letter-spacing:.5px}
+.mod-hd-stats{display:flex;align-items:center;gap:12px;font:400 12px/1 var(--f);color:var(--c5)}
+.mod-hd-stats strong{font-family:var(--m);font-weight:600;color:var(--c8)}
+.mod-hd-chevron{width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--c4);transition:transform .25s;flex-shrink:0}
+.mod-hd-chevron.open{transform:rotate(180deg)}
+.mod-hd-chevron svg{width:14px;height:14px}
+.mod-body{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.mod-body.open{max-height:2000px}
+
+/* GOAL ROW */
+.goal-row{border-top:1px solid var(--dv);transition:background .1s}
+.goal-row:hover{background:var(--c0)}
+.goal-summary{display:flex;align-items:center;padding:14px 20px;gap:10px;cursor:pointer}
+.goal-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.goal-name{flex:1;font:600 14px/1.3 var(--f);color:var(--c9)}
+.goal-type{font:500 11px/1 var(--f);padding:2px 7px;border-radius:3px;background:var(--c1);color:var(--c6)}
+.goal-type.quant{background:var(--pr50);color:var(--pr)}
+.goal-type.qual{background:var(--vi50);color:var(--vi)}
+.goal-weight{font:700 14px/1 var(--m);color:var(--pr);background:var(--pr50);padding:3px 8px;border-radius:var(--r1);flex-shrink:0}
+.goal-chevron{width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:var(--c4);transition:transform .2s;flex-shrink:0}
+.goal-chevron.open{transform:rotate(180deg)}
+.goal-chevron svg{width:12px;height:12px}
+
+/* GOAL EDIT (read-only) */
+.goal-edit{padding:0 20px 16px 82px;display:none}
+.goal-edit.open{display:block;animation:fadeIn .2s ease}
+.ge-form{padding:12px 0}
+.ge-sec{margin-bottom:14px}
+.ge-sec:last-child{margin-bottom:0}
+.ge-sec-title{font:600 12px/1 var(--f);color:var(--c8);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.ge-sec-title::before{content:'';width:3px;height:12px;background:var(--pr);border-radius:2px;flex-shrink:0}
+.ge-row{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px}
+.ge-row.f3{grid-template-columns:100px 100px 100px}
+.ge-row .full{grid-column:1/-1}
+.ge-fi{display:flex;flex-direction:column;gap:3px}
+.ge-fi-l{font:400 11px/1 var(--f);color:var(--c5)}
+.ge-fi-val{font:500 13px/1.4 var(--f);color:var(--c8);padding:7px 0}
+.mono{font-family:var(--m);font-size:12px}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.fade-in{animation:fadeIn .2s ease forwards}
+</style>
+</head>
+<body>
+<div class="ct fade-in">
+  <nav style="display:flex;align-items:center;gap:4px;font:500 12px/1 var(--f);color:var(--c5);margin-bottom:12px">
+    <a href="perf-report-goals.html" style="color:var(--c5);text-decoration:none;transition:color .12s" onmouseover="this.style.color='var(--pr)'" onmouseout="this.style.color='var(--c5)'">目标中心</a>
+    <span style="color:var(--c3)">/</span>
+    <span style="color:var(--c8);font-weight:600" id="breadName">员工目标</span>
+  </nav>
+
+  <div class="pg-hd" id="pgHd"></div>
+  <div id="moduleContainer"></div>
+  <div id="approvalLog"></div>
+</div>
+
+<script>
+var I={
+  chevron:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>',
+  target:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
+  users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  download:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+};
+
+var params=new URLSearchParams(window.location.search);
+var empId=params.get('id')||'EMP0001';
+
+// Goal workflow steps
+var FLOW_NODES=['目标制定','间接上级审批','直接上级审批','目标生效'];
+
+// Mock data: employee info + modules + flow by empId
+var DATA={
+  // 未开始
+  'EMP0001':{name:'张明',dept:'产品部',job:'高级产品经理',period:'2026年6月',status:'notstarted',statusLabel:'未开始',currentNode:'',modules:[],flowIdx:-1},
+  'EMP0011':{name:'钱敏',dept:'产品部',job:'产品助理',period:'2026年6月',status:'notstarted',statusLabel:'未开始',currentNode:'',modules:[],flowIdx:-1},
+  'EMP0013':{name:'林燕',dept:'市场部',job:'活动策划',period:'2026年5月',status:'notstarted',statusLabel:'未开始',currentNode:'',modules:[],flowIdx:-1},
+
+  // 员工填写中
+  'EMP0006':{name:'刘洋',dept:'产品部',job:'产品经理',period:'2026年6月',status:'draft',statusLabel:'填写中',currentNode:'目标制定',flowIdx:0,
+    modules:[{name:'KPI',weight:25,color:'var(--pr)',goals:[
+      {name:'资源利用率',indicator:'资源利用率',type:'quant',weight:15,target:105,challenge:110,baseline:100,unit:'%',desc:'人员实际工作量饱和情况'},
+      {name:'HRAS UAT首次通过率',indicator:'UAT首次通过率',type:'quant',weight:10,target:98,challenge:100,baseline:95,unit:'%',desc:'需求首次业务验收通过的概率'},
+    ]},{name:'KPA',weight:60,color:'var(--em)',goals:[
+      {name:'HRAS产品管理规范',indicator:'产品管理规范',type:'qual',weight:35,desc:'需求管理流程规范、产品需求规范、迭代火车管理规范，周会/月会准时完成',msLevels:[{level:'符合预期',condition:'4项全部符合规范'},{level:'低于预期',condition:'4项任何1项不符合规范'}]},
+      {name:'日常滚动需求响应',indicator:'日常需求响应',type:'qual',weight:25,desc:'根据业务日会需求优先级，滚动响应日常需求，输出产品解决方案',msLevels:[{level:'符合预期',condition:'按时完成需求响应和验收'},{level:'低于预期',condition:'未按时完成'}]},
+    ]}],
+  },
+  'EMP0010':{name:'孙鹏',dept:'运营部',job:'数据分析师',period:'2026年6月',status:'draft',statusLabel:'填写中',currentNode:'目标制定',flowIdx:0,
+    modules:[{name:'KPI',weight:20,color:'var(--pr)',goals:[
+      {name:'数据分析报表产出',indicator:'报表产出',type:'quant',weight:20,target:12,challenge:15,baseline:10,unit:'份',desc:'每月产出数据分析报表'},
+    ]},{name:'KPA',weight:60,color:'var(--em)',goals:[
+      {name:'运营活动ROI分析',indicator:'ROI分析',type:'qual',weight:30,desc:'对每场运营活动进行ROI分析，输出改进建议',msLevels:[{level:'符合预期',condition:'按时完成所有活动ROI分析'},{level:'低于预期',condition:'未按时完成'}]},
+      {name:'社群数据分析',indicator:'社群分析',type:'qual',weight:30,desc:'每周输出社群活跃度分析报告',msLevels:[{level:'符合预期',condition:'每周按时输出报告'},{level:'低于预期',condition:'未按时完成'}]},
+    ]}],
+  },
+  'EMP0015':{name:'马丽',dept:'运营部',job:'内容运营',period:'2026年5月',status:'draft',statusLabel:'填写中',currentNode:'目标制定',flowIdx:0,
+    modules:[{name:'KPI',weight:25,color:'var(--pr)',goals:[
+      {name:'内容产出量',indicator:'内容产出',type:'quant',weight:25,target:20,challenge:25,baseline:15,unit:'篇',desc:'每月原创内容产出'},
+    ]},{name:'KPA',weight:35,color:'var(--em)',goals:[
+      {name:'内容质量',indicator:'内容质量',type:'qual',weight:35,desc:'内容阅读量、互动率、转化率达标',msLevels:[{level:'符合预期',condition:'阅读量/互动率/转化率全部达标'},{level:'低于预期',condition:'任一项未达标'}]},
+    ]}],
+  },
+
+  // 间接上级审批中
+  'EMP0002':{name:'李华',dept:'技术部',job:'高级工程师',period:'2026年6月',status:'submitted',statusLabel:'间接上级审批中',currentNode:'间接上级审批',flowIdx:1,
+    modules:[{name:'KPI',weight:35,color:'var(--pr)',goals:[
+      {name:'系统架构优化',indicator:'架构优化',type:'quant',weight:20,target:3,challenge:5,baseline:2,unit:'项',desc:'完成系统架构优化迭代'},
+      {name:'代码审查覆盖率',indicator:'CR覆盖率',type:'quant',weight:15,target:95,challenge:100,baseline:90,unit:'%',desc:'代码审查覆盖比例'},
+    ]},{name:'KPA',weight:50,color:'var(--em)',goals:[
+      {name:'技术方案输出',indicator:'技术方案',type:'qual',weight:30,desc:'关键项目技术方案设计评审通过',msLevels:[{level:'符合预期',condition:'所有方案评审通过'},{level:'低于预期',condition:'有方案未通过'}]},
+      {name:'团队技术成长',indicator:'团队成长',type:'qual',weight:20,desc:'组织技术分享、代码走查，提升团队能力',msLevels:[{level:'符合预期',condition:'每月至少2次分享'},{level:'低于预期',condition:'少于2次'}]},
+    ]}],
+  },
+  'EMP0008':{name:'吴强',dept:'市场部',job:'品牌专员',period:'2026年6月',status:'submitted',statusLabel:'间接上级审批中',currentNode:'间接上级审批',flowIdx:1,
+    modules:[{name:'KPI',weight:25,color:'var(--pr)',goals:[
+      {name:'品牌曝光量',indicator:'品牌曝光',type:'quant',weight:25,target:500,challenge:600,baseline:400,unit:'万次',desc:'全渠道品牌曝光量'},
+    ]},{name:'KPA',weight:35,color:'var(--em)',goals:[
+      {name:'品牌合作拓展',indicator:'品牌合作',type:'qual',weight:35,desc:'拓展品牌合作渠道，新增合作方不少于3家',msLevels:[{level:'符合预期',condition:'新增合作方≥3家'},{level:'低于预期',condition:'新增合作方<3家'}]},
+    ]}],
+  },
+  'EMP0014':{name:'何涛',dept:'设计部',job:'视觉设计师',period:'2026年5月',status:'submitted',statusLabel:'间接上级审批中',currentNode:'间接上级审批',flowIdx:1,
+    modules:[{name:'KPI',weight:20,color:'var(--pr)',goals:[
+      {name:'设计效率提升',indicator:'设计效率',type:'quant',weight:20,target:30,challenge:40,baseline:20,unit:'%',desc:'组件化设计覆盖率提升'},
+    ]},{name:'KPA',weight:40,color:'var(--em)',goals:[
+      {name:'视觉设计规范',indicator:'设计规范',type:'qual',weight:40,desc:'输出并推行HR ONE视觉设计规范2.0',msLevels:[{level:'符合预期',condition:'规范发布并推行落地'},{level:'低于预期',condition:'未发布或未推行'}]},
+    ]}],
+  },
+
+  // 直接上级审批中
+  'EMP0004':{name:'赵磊',dept:'设计部',job:'UI设计师',period:'2026年6月',status:'submitted',statusLabel:'直接上级审批中',currentNode:'直接上级审批',flowIdx:2,
+    modules:[{name:'KPI',weight:35,color:'var(--pr)',goals:[
+      {name:'UI组件库建设',indicator:'组件库',type:'quant',weight:20,target:30,challenge:40,baseline:20,unit:'个',desc:'完成UI组件库建设'},
+      {name:'用户满意度',indicator:'用户满意度',type:'quant',weight:15,target:90,challenge:95,baseline:85,unit:'%',desc:'用户满意度调研'},
+    ]},{name:'KPA',weight:50,color:'var(--em)',goals:[
+      {name:'交互体验优化',indicator:'交互优化',type:'qual',weight:35,desc:'完成核心流程交互体验优化方案并落地',msLevels:[{level:'符合预期',condition:'优化方案落地'},{level:'低于预期',condition:'未完成'}]},
+      {name:'设计评审通过率',indicator:'评审通过率',type:'qual',weight:15,desc:'设计方案一次评审通过率',msLevels:[{level:'符合预期',condition:'一次通过率≥80%'},{level:'低于预期',condition:'一次通过率<80%'}]},
+    ]}],
+  },
+  'EMP0009':{name:'郑丽',dept:'设计部',job:'交互设计师',period:'2026年6月',status:'submitted',statusLabel:'直接上级审批中',currentNode:'直接上级审批',flowIdx:2,
+    modules:[{name:'KPI',weight:20,color:'var(--pr)',goals:[
+      {name:'交互原型产出',indicator:'原型产出',type:'quant',weight:20,target:10,challenge:13,baseline:8,unit:'套',desc:'交互原型产出数量'},
+    ]},{name:'KPA',weight:40,color:'var(--em)',goals:[
+      {name:'用户研究',indicator:'用户研究',type:'qual',weight:40,desc:'完成至少2次用户研究，输出研究报告',msLevels:[{level:'符合预期',condition:'完成2次研究并输出报告'},{level:'低于预期',condition:'少于2次'}]},
+    ]}],
+  },
+  'EMP0012':{name:'黄波',dept:'技术部',job:'后端工程师',period:'2026年5月',status:'submitted',statusLabel:'直接上级审批中',currentNode:'直接上级审批',flowIdx:2,
+    modules:[{name:'KPI',weight:40,color:'var(--pr)',goals:[
+      {name:'API性能优化',indicator:'API性能',type:'quant',weight:20,target:200,challenge:150,baseline:300,unit:'ms',desc:'核心API响应时间优化'},
+      {name:'系统稳定性',indicator:'系统稳定性',type:'quant',weight:20,target:99.9,challenge:99.99,baseline:99.5,unit:'%',desc:'系统可用率'},
+    ]},{name:'KPA',weight:30,color:'var(--em)',goals:[
+      {name:'后端架构升级',indicator:'架构升级',type:'qual',weight:30,desc:'完成微服务拆分方案设计并启动迁移',msLevels:[{level:'符合预期',condition:'方案评审通过并启动迁移'},{level:'低于预期',condition:'未完成方案设计'}]},
+    ]}],
+  },
+
+  // 审批通过 / 目标生效
+  'EMP0003':{name:'王芳',dept:'市场部',job:'市场经理',period:'2026年6月',status:'approved',statusLabel:'目标生效',currentNode:'目标生效',flowIdx:3,
+    modules:[{name:'KPI',weight:40,color:'var(--pr)',goals:[
+      {name:'市场活动ROI',indicator:'活动ROI',type:'quant',weight:25,target:3,challenge:4,baseline:2,unit:'倍',desc:'市场活动投入产出比'},
+      {name:'渠道获客成本',indicator:'获客成本',type:'quant',weight:15,target:50,challenge:40,baseline:60,unit:'元',desc:'单客获取成本'},
+    ]},{name:'KPA',weight:45,color:'var(--em)',goals:[
+      {name:'品牌营销方案',indicator:'营销方案',type:'qual',weight:30,desc:'制定季度品牌营销方案并推动执行',msLevels:[{level:'符合预期',condition:'方案按时发布并执行'},{level:'低于预期',condition:'未按时完成'}]},
+      {name:'竞品分析',indicator:'竞品分析',type:'qual',weight:15,desc:'输出月度竞品分析报告',msLevels:[{level:'符合预期',condition:'每月按时输出报告'},{level:'低于预期',condition:'未按时完成'}]},
+    ]}],
+  },
+  'EMP0005':{name:'陈静',dept:'运营部',job:'运营主管',period:'2026年6月',status:'approved',statusLabel:'目标生效',currentNode:'目标生效',flowIdx:3,
+    modules:[{name:'KPI',weight:40,color:'var(--pr)',goals:[
+      {name:'用户留存率',indicator:'用户留存',type:'quant',weight:25,target:85,challenge:90,baseline:80,unit:'%',desc:'月度用户留存率'},
+      {name:'运营活动场次',indicator:'活动场次',type:'quant',weight:15,target:4,challenge:6,baseline:3,unit:'场',desc:'月度运营活动'},
+    ]},{name:'KPA',weight:45,color:'var(--em)',goals:[
+      {name:'用户运营策略',indicator:'运营策略',type:'qual',weight:30,desc:'制定用户分层运营策略并落地',msLevels:[{level:'符合预期',condition:'策略落地执行'},{level:'低于预期',condition:'未完成'}]},
+      {name:'社群活跃度',indicator:'社群活跃',type:'qual',weight:15,desc:'提升核心社群活跃度至60%以上',msLevels:[{level:'符合预期',condition:'活跃度≥60%'},{level:'低于预期',condition:'活跃度<60%'}]},
+    ]}],
+  },
+  'EMP0007':{name:'周婷',dept:'技术部',job:'前端工程师',period:'2026年6月',status:'approved',statusLabel:'目标生效',currentNode:'目标生效',flowIdx:3,
+    modules:[{name:'KPI',weight:35,color:'var(--pr)',goals:[
+      {name:'前端性能优化',indicator:'前端性能',type:'quant',weight:20,target:2,challenge:1.5,baseline:3,unit:'s',desc:'首屏加载时间优化'},
+      {name:'组件复用率',indicator:'组件复用',type:'quant',weight:15,target:70,challenge:80,baseline:60,unit:'%',desc:'组件复用率提升'},
+    ]},{name:'KPA',weight:50,color:'var(--em)',goals:[
+      {name:'前端工程化',indicator:'前端工程化',type:'qual',weight:30,desc:'完成前端工程化升级方案',msLevels:[{level:'符合预期',condition:'方案落地'},{level:'低于预期',condition:'未完成'}]},
+      {name:'新技术探索',indicator:'技术探索',type:'qual',weight:20,desc:'探索微前端方案并输出可行性报告',msLevels:[{level:'符合预期',condition:'报告输出并评审通过'},{level:'低于预期',condition:'未完成'}]},
+    ]}],
+  },
+  'EMP0016':{name:'朱伟',dept:'产品部',job:'产品总监',period:'2026年5月',status:'approved',statusLabel:'目标生效',currentNode:'目标生效',flowIdx:3,
+    modules:[{name:'KPI',weight:30,color:'var(--pr)',goals:[
+      {name:'产品线营收',indicator:'产品营收',type:'quant',weight:30,target:500,challenge:600,baseline:400,unit:'万',desc:'产品线季度营收目标'},
+    ]},{name:'KPA',weight:55,color:'var(--em)',goals:[
+      {name:'产品规划',indicator:'产品规划',type:'qual',weight:40,desc:'制定下半年产品路线图',msLevels:[{level:'符合预期',condition:'路线图发布'},{level:'低于预期',condition:'未完成'}]},
+      {name:'团队建设',indicator:'团队建设',type:'qual',weight:15,desc:'产品团队人员培养与梯队建设',msLevels:[{level:'符合预期',condition:'按计划完成'},{level:'低于预期',condition:'未完成'}]},
+    ]}],
+  },
+  'EMP0017':{name:'胡洁',dept:'技术部',job:'测试工程师',period:'2026年5月',status:'approved',statusLabel:'目标生效',currentNode:'目标生效',flowIdx:3,
+    modules:[{name:'KPI',weight:25,color:'var(--pr)',goals:[
+      {name:'自动化测试覆盖率',indicator:'测试覆盖率',type:'quant',weight:25,target:80,challenge:90,baseline:70,unit:'%',desc:'自动化测试覆盖率提升'},
+    ]},{name:'KPA',weight:60,color:'var(--em)',goals:[
+      {name:'测试流程优化',indicator:'测试流程',type:'qual',weight:35,desc:'优化测试流程，缩短回归测试周期',msLevels:[{level:'符合预期',condition:'回归周期缩短20%'},{level:'低于预期',condition:'未完成'}]},
+      {name:'质量度量体系',indicator:'质量度量',type:'qual',weight:25,desc:'建立质量度量指标体系',msLevels:[{level:'符合预期',condition:'指标体系上线'},{level:'低于预期',condition:'未完成'}]},
+    ]}],
+  },
+};
+
+var expandedMods=new Set([0,1]);
+var expandedGoals=new Set();
+
+function render(){
+  var emp=DATA[empId];
+  if(!emp){document.querySelector('.ct').innerHTML='<div style="text-align:center;padding:60px 20px"><p style="font:600 16px/1 var(--f);color:var(--c9);margin-bottom:8px">未找到该员工数据</p></div>';return;}
+
+  document.getElementById('breadName').textContent=emp.name+' · 目标详情';
+
+  // Status config
+  var stMap={notstarted:{cls:'notstarted',label:'未开始'},draft:{cls:'draft',label:'填写中'},submitted:{cls:'submitted',label:'审批中'},approved:{cls:'approved',label:'目标生效'}};
+  var st=stMap[emp.status]||stMap.notstarted;
+
+  // Header
+  document.getElementById('pgHd').innerHTML=
+    '<div class="pg-hd-top">'+
+      '<div style="display:flex;align-items:center;gap:10px">'+
+        '<div class="pg-hd-title">'+emp.name+' · 目标详情</div>'+
+        '<span class="form-status '+st.cls+'"><span class="dot"></span>'+emp.statusLabel+'</span>'+
+      '</div>'+
+      '<div class="pg-hd-actions"><button class="btn btn-s" onclick="history.back()">← 返回</button></div>'+
+    '</div>'+
+    '<div class="pg-hd-info">'+
+      '<div class="pg-hd-info-item"><span class="pg-hd-info-label">考核周期</span><span class="pg-hd-info-value">'+emp.period+'</span></div>'+
+      '<div class="pg-hd-info-item"><span class="pg-hd-info-label">员工</span><span class="pg-hd-info-value">'+emp.name+' ('+empId+')</span></div>'+
+      '<div class="pg-hd-info-item"><span class="pg-hd-info-label">部门</span><span class="pg-hd-info-value">'+emp.dept+'</span></div>'+
+      '<div class="pg-hd-info-item"><span class="pg-hd-info-label">职位</span><span class="pg-hd-info-value">'+emp.job+'</span></div>'+
+      '<div class="pg-hd-info-item"><span class="pg-hd-info-label">目标周期</span><span class="pg-hd-info-value">'+emp.period+'</span></div>'+
+      '<div class="pg-hd-info-item"><span class="pg-hd-info-label">状态</span><span class="pg-hd-info-value" style="color:var(--pr)">'+(emp.statusLabel||'—')+'</span></div>'+
+    '</div>';
+
+  // Summary
+  var modules=emp.modules||[];
+  var totalCount=0,totalWeight=0;
+  modules.forEach(function(m){m.goals.forEach(function(g){totalCount++;totalWeight+=g.weight;});});
+  var summaryHtml='<span class="sum-item">总权重: <span class="sum-val'+(totalWeight===100?'':' warn')+'">'+totalWeight+'%</span></span>'+
+    '<span class="sum-item">总目标数: <strong style="font-family:var(--m);font-weight:600;color:var(--c8)">'+totalCount+'</strong></span>';
+  if(modules.length===0){
+    summaryHtml+='<span class="sum-err"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>员工尚未填写目标</span>';
+  }else if(totalWeight===100){
+    summaryHtml+='<span class="sum-ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>权重校验通过</span>';
+  }
+  document.getElementById('pgHd').innerHTML+='<div class="pg-hd-summary">'+summaryHtml+'</div>';
+
+  // Modules
+  var modHtml='';
+  if(modules.length===0){
+    modHtml='<div class="mod-section"><div class="mod-body open" style="max-height:none"><div style="text-align:center;padding:40px 20px;color:var(--c4);font:400 13px/1 var(--f)">暂无目标数据，员工尚未开始填写</div></div></div>';
+  }else{
+    modules.forEach(function(m,mi){
+      var open=expandedMods.has(mi);
+      var tw=m.goals.reduce(function(s,g){return s+g.weight;},0);
+      modHtml+='<div class="mod-section">'+
+        '<div class="mod-hd" onclick="toggleMod('+mi+')">'+
+          '<div class="mod-hd-icon" style="background:'+m.color+'">'+I.target+'</div>'+
+          '<div class="mod-hd-title">'+m.name+'</div>'+
+          '<div class="mod-hd-stats"><span>权重 <strong>'+tw+'%</strong></span><span>'+m.goals.length+' 个目标</span></div>'+
+          '<div class="mod-hd-chevron'+(open?' open':'')+'">'+I.chevron+'</div>'+
+        '</div>'+
+        '<div class="mod-body'+(open?' open':'')+'">';
+      m.goals.forEach(function(g,gi){
+        var gOpen=expandedGoals.has(m.name+'-'+gi);
+        var isQ=g.type==='quant';
+        modHtml+='<div class="goal-row">'+
+          '<div class="goal-summary" onclick="toggleGoal(\''+m.name+'-'+gi+'\')">'+
+            '<div class="goal-icon" style="background:var(--pr50);color:var(--pr);font:700 12px/1 var(--m)">'+(gi+1)+'</div>'+
+            '<span class="goal-name">'+g.name+'</span>'+
+            '<span class="goal-weight">'+g.weight+'%</span>'+
+            '<span class="goal-type '+(isQ?'quant':'qual')+'">'+(isQ?'定量':'定性')+'</span>'+
+            '<div class="goal-chevron'+(gOpen?' open':'')+'">'+I.chevron+'</div>'+
+          '</div>'+
+          '<div class="goal-edit'+(gOpen?' open':'')+'"><div class="ge-form">';
+        if(isQ){
+          modHtml+='<div class="ge-sec"><div class="ge-row f3" style="grid-template-columns:100px 100px 100px 1fr">'+
+            '<div class="ge-fi"><span class="ge-fi-l">挑战值</span><span class="ge-fi-val mono">'+g.challenge+' '+g.unit+'</span></div>'+
+            '<div class="ge-fi"><span class="ge-fi-l">目标值</span><span class="ge-fi-val mono">'+g.target+' '+g.unit+'</span></div>'+
+            '<div class="ge-fi"><span class="ge-fi-l">保底值</span><span class="ge-fi-val mono">'+g.baseline+' '+g.unit+'</span></div>'+
+            '<div class="ge-fi"><span class="ge-fi-l">指标描述</span><span class="ge-fi-val">'+g.desc+'</span></div>'+
+          '</div></div>';
+        }else{
+          modHtml+='<div class="ge-sec">';
+          var levels=g.msLevels||[];
+          for(var l=0;l<levels.length;l++){
+            modHtml+='<div class="ge-fi" style="margin-top:'+(l>0?'8px':'0')+'"><span class="ge-fi-l">'+(l===0?'衡量标准-符合预期':l===1?'衡量标准-低于预期':'衡量标准')+'</span><span class="ge-fi-val">'+levels[l].condition+'</span></div>';
+          }
+          modHtml+='</div>';
+        }
+        modHtml+='</div></div></div>';
+      });
+      modHtml+='</div></div>';
+    });
+  }
+  document.getElementById('moduleContainer').innerHTML=modHtml;
+
+  // Approval flow
+  var flowHtml='<div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden">'+
+    '<div style="padding:16px 20px;border-bottom:1px solid var(--dv)"><span style="font:600 15px/1 var(--f);color:var(--c9)">审批流程</span></div>'+
+    '<div style="padding:0"><table style="width:100%;border-collapse:collapse"><thead><tr style="background:var(--c0)">'+
+    '<th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">节点</th>'+
+    '<th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">处理人</th>'+
+    '<th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">流入时间</th>'+
+    '<th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">流出时间</th>'+
+    '<th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">状态</th>'+
+    '<th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">原因/备注</th>'+
+    '</tr></thead><tbody>';
+
+  var handlers=['张明','刘VP','王总监','—'];
+  var flowStatuses=[];
+  for(var i=0;i<FLOW_NODES.length;i++){
+    var inactive=emp.flowIdx<0;
+    if(inactive||i<emp.flowIdx)flowStatuses.push('completed');
+    else if(i===emp.flowIdx)flowStatuses.push('active');
+    else flowStatuses.push('pending');
+  }
+
+  var badge={active:'<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)"><span style="width:6px;height:6px;border-radius:50%;background:var(--pr);animation:pulse 2s ease-in-out infinite"></span>处理中</span>',completed:'<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)"><span style="width:6px;height:6px;border-radius:50%;background:var(--em)"></span>已完成</span>',pending:'<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--c1);color:var(--c5)">待处理</span>'};
+
+  for(var i=0;i<FLOW_NODES.length;i++){
+    var fs=flowStatuses[i];
+    var isLast=i===FLOW_NODES.length-1;
+    var bg=fs==='active'?'background:var(--pr50)':'';
+    var inTime=fs==='completed'||fs==='active'?'2026-06-1'+(i+1)+' 09:00':'—';
+    var outTime=fs==='completed'?'2026-06-1'+(i+2)+' 09:00':'—';
+    var remark=fs==='active'?'当前节点':fs==='pending'?'—':'—';
+    flowHtml+='<tr style="'+bg+'"><td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:'+(fs==='pending'?'var(--c6)':'var(--c8)')+';border-bottom:'+(isLast?'none':'1px solid var(--dv)')+'">'+
+      '<div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:'+(fs==='active'?'var(--pr)':fs==='pending'?'var(--c3)':'var(--em)')+';flex-shrink:0"></span>'+FLOW_NODES[i]+'</div></td>'+
+      '<td style="padding:12px 16px;border-bottom:'+(isLast?'none':'1px solid var(--dv)')+'"><div style="display:flex;align-items:center;gap:6px"><span style="width:22px;height:22px;border-radius:50%;background:'+(fs==='pending'?'var(--c1)':'var(--pr)')+';display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:'+(fs==='pending'?'var(--c5)':'#FFF')+';flex-shrink:0">'+handlers[i].charAt(0)+'</span><span style="font:400 13px/1 var(--f);color:'+(fs==='pending'?'var(--c6)':'var(--c8)')+'">'+handlers[i]+'</span></div></td>'+
+      '<td style="padding:12px 16px;font:400 13px/1 var(--f);color:'+(inTime==='—'?'var(--c4)':'var(--c7)')+';border-bottom:'+(isLast?'none':'1px solid var(--dv)')+'">'+inTime+'</td>'+
+      '<td style="padding:12px 16px;font:400 13px/1 var(--f);color:'+(outTime==='—'?'var(--c4)':'var(--c7)')+';border-bottom:'+(isLast?'none':'1px solid var(--dv)')+'">'+outTime+'</td>'+
+      '<td style="padding:12px 16px;border-bottom:'+(isLast?'none':'1px solid var(--dv)')+'">'+badge[fs]+'</td>'+
+      '<td style="padding:12px 16px;font:400 13px/1 var(--f);color:'+(remark==='—'?'var(--c4)':'var(--c5)')+';border-bottom:'+(isLast?'none':'1px solid var(--dv)')+'">'+remark+'</td></tr>';
+  }
+  flowHtml+='</tbody></table></div></div>';
+  document.getElementById('approvalLog').innerHTML=flowHtml;
+}
+
+function toggleMod(mi){expandedMods.has(mi)?expandedMods.delete(mi):expandedMods.add(mi);render();}
+function toggleGoal(id){expandedGoals.has(id)?expandedGoals.delete(id):expandedGoals.add(id);render();}
+
+render();
+</script>
+<script src="../navigation.js"></script>
+<script>GHR_NAV.init('perf', '员工目标详情');</script>
+</body>
+</html>

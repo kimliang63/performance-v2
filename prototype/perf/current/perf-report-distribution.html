@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 绩效报表</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8"></script>
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --r1:6px;--r2:8px;--r3:10px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --m:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
+.btn svg{width:13px;height:13px}
+.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
+
+.fl-bar{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fl-sel{height:32px;padding:0 28px 0 10px;border:1px solid var(--c2);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c7);background:var(--sf) url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center;appearance:none;cursor:pointer;transition:all .12s;outline:none;-webkit-appearance:none;-moz-appearance:none}
+.fl-sel:focus{border-color:var(--pr)}
+.fl-actions{display:flex;gap:6px;margin-left:auto}
+
+.card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px;margin-bottom:16px}
+.card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card-title{font:600 14px/1 var(--f);color:var(--c9)}
+
+/* ═══ STAT CARDS ═══ */
+.st-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.st-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:16px 18px;border-top:3px solid transparent}
+.st-card-label{font:500 12px/1 var(--f);color:var(--c5);margin-bottom:6px}
+.st-card-value{font:700 26px/1 var(--m);margin-bottom:4px}
+.st-card-sub{font:400 11px/1 var(--f);color:var(--c4)}
+.st-card-sub .up{color:var(--em700)}
+.st-card-sub .down{color:var(--ro)}
+
+.chart-box{position:relative;height:360px}
+.chart-box canvas{display:block}
+
+.tbl-wrap{overflow-x:auto}
+.tbl-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden;margin-bottom:16px}
+table{width:100%;border-collapse:collapse;min-width:800px}
+thead th{background:var(--c0);font:600 12px/1 var(--f);color:var(--c5);text-align:left;padding:10px 14px;border-bottom:1px solid var(--dv);white-space:nowrap}
+tbody td{font:400 13px/1.4 var(--f);color:var(--c7);padding:10px 14px;border-bottom:1px solid var(--dv);text-align:center}
+tbody td:first-child{text-align:left;font-weight:500;color:var(--c9)}
+tbody tr:hover{background:var(--c0)}
+tbody tr:last-child td{border-bottom:none}
+.mono{font-family:var(--m);font-size:12px}
+
+.grade-S{color:#DC2626}.grade-A{color:#F97316}.grade-Bp{color:#F59E0B}.grade-B{color:#10B981}.grade-Bm{color:#6366F1}.grade-C{color:#71717A}.grade-D{color:#A1A1AA}
+
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fi{animation:fi .25s ease forwards}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="../navigation.js"></script>
+<script>
+GHR_NAV.init('perf', '绩效报表');
+
+var GRADES=['远低预期','低于预期','符合预期-','符合预期','符合预期+','超出预期','远超预期'];
+var GRADE_COLORS=['#A1A1AA','#71717A','#6366F1','#10B981','#F59E0B','#F97316','#DC2626'];
+var GRADE_CLASS=['grade-D','grade-C','grade-Bm','grade-B','grade-Bp','grade-A','grade-S'];
+var FORCE_DIST=[3,7,10,45,15,12,8]; // % per grade
+
+var MONTHS=['2025-07','2025-08','2025-09','2025-10','2025-11','2025-12','2026-01','2026-02','2026-03','2026-04','2026-05','2026-06'];
+var MONTH_OPTIONS=['2026年6月','2026年5月','2026年4月','2026年3月','2026年2月','2026年1月','2025年12月','2025年11月','2025年10月','2025年9月','2025年8月','2025年7月'];
+var MONTH_MAP={'2026年6月':'2026-06','2026年5月':'2026-05','2026年4月':'2026-04','2026年3月':'2026-03','2026年2月':'2026-02','2026年1月':'2026-01','2025年12月':'2025-12','2025年11月':'2025-11','2025年10月':'2025-10','2025年9月':'2025-09','2025年8月':'2025-08','2025年7月':'2025-07'};
+var GRADE_INDEX={'远低预期':1,'低于预期':2,'符合预期-':3,'符合预期':4,'符合预期+':5,'超出预期':6,'远超预期':7};
+var GRADE_NAMES=['','远低预期','低于预期','符合预期-','符合预期','符合预期+','超出预期','远超预期'];
+var DEPT_KEYS=['1级部门01','1级部门02','1级部门03','1级部门04','1级部门05','2级部门01','2级部门02','2级部门03','2级部门04','2级部门05','3级部门01','3级部门02','3级部门03','3级部门04','3级部门05'];
+var DEPTS=['全部'].concat(DEPT_KEYS);
+
+var SUB_DEPTS={
+  '1级部门01':['2级部门01','2级部门02','2级部门03'],
+  '1级部门02':['2级部门04','2级部门05','2级部门06'],
+  '1级部门03':['2级部门07','2级部门08','2级部门09'],
+  '1级部门04':['2级部门10','3级部门01','3级部门02'],
+  '1级部门05':['3级部门03','3级部门04','3级部门05'],
+};
+
+// Seeded random for deterministic monthly data
+function seedRand(seed){var x=Math.sin(seed)*10000;return x-Math.floor(x);}
+
+function genDeptData(monthIdx,deptIdx){
+  var seed=monthIdx*100+deptIdx*7;
+  var counts=[18,22,25,15,20,12,16,14,19,21,8,10,7,11,9];
+  var count=counts[deptIdx%counts.length]+Math.floor(seedRand(seed)*6);
+  // Base distribution biased toward center (符合预期 + 符合预期+)
+  var base=[seedRand(seed+1)*2,seedRand(seed+2)*3+1,seedRand(seed+3)*4+1,seedRand(seed+4)*6+5,seedRand(seed+5)*5+3,seedRand(seed+6)*3+1,seedRand(seed+7)*1];
+  var sum=base.reduce(function(a,b){return a+b;},0);
+  var init={},final={};
+  for(var g=0;g<GRADES.length;g++){
+    init[GRADES[g]]=Math.round(base[g]/sum*count);
+    // Final shifts slightly right (calibration effect)
+    var shift=g>=4?-Math.round(seedRand(seed+g+10)*1.5):g<=1?Math.round(seedRand(seed+g+10)*1.5):Math.round(seedRand(seed+g+10)*2-1);
+    final[GRADES[g]]=Math.max(0,init[GRADES[g]]+shift);
+  }
+  // Normalize final to match count
+  var fsum=0;for(var g=0;g<GRADES.length;g++)fsum+=final[GRADES[g]];
+  var diff=count-fsum;if(diff!==0){final[GRADES[3]]+=diff;} // adjust B
+  return {count:count,initial:init,final:final};
+}
+
+var MONTHLY_DATA={};
+for(var m=0;m<MONTHS.length;m++){
+  MONTHLY_DATA[MONTHS[m]]={};
+  for(var d=0;d<DEPT_KEYS.length;d++){
+    MONTHLY_DATA[MONTHS[m]][DEPT_KEYS[d]]=genDeptData(m,d);
+  }
+}
+
+// Trend: average grade index per month for sub-departments + parent
+function buildSubTrend(dept){
+  var subs=SUB_DEPTS[dept];
+  if(!subs){subs=[dept];} // 2级/3级 only show themselves
+  var result={_parent:[]}; // parent line first
+  for(var s=0;s<subs.length;s++){result[subs[s]]=[];}
+  for(var m=0;m<MONTHS.length;m++){
+    // Parent dept avg grade index
+    var pmd=MONTHLY_DATA[MONTHS[m]][dept];
+    var pavg=0;
+    if(pmd&&pmd.count){
+      var pts=0;for(var g=0;g<GRADES.length;g++)pts+=GRADE_INDEX[GRADES[g]]*(pmd.final[GRADES[g]]||0);
+      pavg=Math.round(pts/pmd.count*10)/10;
+    }
+    result._parent.push(pavg||null);
+    // Each sub
+    for(var s=0;s<subs.length;s++){
+      var r=pavg+(Math.sin(m*1.8+s*2.1)*0.8)+(Math.cos(s*3.7)*0.5);
+      result[subs[s]].push(Math.round(Math.max(1,Math.min(7,r))*10)/10);
+    }
+  }
+  return result;
+}
+
+function trendDeptLabel(dept){
+  if(SUB_DEPTS[dept])return dept;
+  return dept;
+}
+
+var currentMonth='2026-06';
+var currentDept='全部';
+
+function getDeptData(month,dept){
+  if(dept==='全部'){
+    var merged={count:0,initial:{},final:{}};
+    for(var g=0;g<GRADES.length;g++){merged.initial[GRADES[g]]=0;merged.final[GRADES[g]]=0;}
+    for(var d=0;d<DEPT_KEYS.length;d++){
+      var dd=MONTHLY_DATA[month][DEPT_KEYS[d]];
+      if(!dd)continue;
+      merged.count+=dd.count;
+      for(var g=0;g<GRADES.length;g++){merged.initial[GRADES[g]]+=dd.initial[GRADES[g]];merged.final[GRADES[g]]+=dd.final[GRADES[g]];}
+    }
+    return merged;
+  }
+  return MONTHLY_DATA[month][dept]||{count:0,initial:{},final:{}};
+}
+
+function renderFilters(){
+  var html='<span style="font:500 12px/1 var(--f);color:var(--c5);margin-right:4px">周期</span>'+
+    '<select class="fl-sel" onchange="setMonth(MONTH_MAP[this.value])">';
+  for(var i=0;i<MONTH_OPTIONS.length;i++){
+    var mk=MONTH_MAP[MONTH_OPTIONS[i]];
+    html+='<option value="'+MONTH_OPTIONS[i]+'"'+(mk===currentMonth?' selected':'')+'>'+MONTH_OPTIONS[i]+'</option>';
+  }
+  html+='</select>'+
+    '<span style="width:1px;height:20px;background:var(--c2);margin:0 8px"></span>'+
+    '<span style="font:500 12px/1 var(--f);color:var(--c5);margin-right:4px">部门</span>'+
+    '<select class="fl-sel" onchange="setDept(this.value)">';
+  for(var i=0;i<DEPTS.length;i++){
+    html+='<option value="'+DEPTS[i]+'"'+(DEPTS[i]===currentDept?' selected':'')+'>'+DEPTS[i]+'</option>';
+  }
+  html+='</select><div class="fl-actions"><button class="btn btn-s" onclick="resetFilters()">重置</button></div>';
+  document.getElementById('filterBar').innerHTML=html;
+}
+
+function renderDistChart(){
+  var dd=getDeptData(currentMonth,currentDept);
+  var initCounts=[],finalCounts=[];
+  for(var g=0;g<GRADES.length;g++){
+    initCounts.push(dd.initial[GRADES[g]]||0);
+    finalCounts.push(dd.final[GRADES[g]]||0);
+  }
+  var total=dd.count||1;
+  var maxCount=Math.max.apply(null,initCounts.concat(finalCounts));
+  var yMax=Math.ceil(maxCount*1.2)||10;
+  var ctx=document.getElementById('chartDist').getContext('2d');
+  if(window._chartDist)window._chartDist.destroy();
+  window._chartDist=new Chart(ctx,{
+    type:'bar',
+    data:{labels:GRADES,datasets:[
+      {label:'初评',data:initCounts,yAxisID:'yCount',backgroundColor:'rgba(37,99,235,.4)',borderColor:'#2563EB',borderWidth:1,borderRadius:4},
+      {label:'最终',data:finalCounts,yAxisID:'yCount',backgroundColor:'rgba(16,185,129,.5)',borderColor:'#10B981',borderWidth:1,borderRadius:4}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{usePointStyle:true,padding:16,font:{size:12}}}},scales:{x:{grid:{display:false}},yCount:{type:'linear',position:'left',title:{display:true,text:'人数',font:{size:12}},min:0,max:yMax,ticks:{stepSize:Math.max(1,Math.round(yMax/5))}},yPct:{type:'linear',position:'right',title:{display:true,text:'比例',font:{size:12}},min:0,max:yMax,grid:{drawOnChartArea:false},ticks:{stepSize:Math.max(1,Math.round(yMax/5)),callback:function(v){return (v/total*100).toFixed(2)+'%';}}}}}
+  });
+}
+
+function renderTrendChart(){
+  var dept=currentDept==='全部'?'1级部门01':currentDept;
+  var trendData=buildSubTrend(dept);
+  var keys=Object.keys(trendData).filter(function(k){return k!=='_parent';});
+  var subColors=['#93C5FD','#6EE7B7','#FCD34D','#FDA4AF','#C4B5FD'];
+  var datasets=[];
+  // Parent line — thick, dark, prominent
+  if(trendData._parent&&trendData._parent.length){
+    datasets.push({label:dept,data:trendData._parent,borderColor:'#1D4ED8',backgroundColor:'transparent',borderWidth:3,tension:.3,pointRadius:5,pointBackgroundColor:'#1D4ED8',pointBorderColor:'#FFF',pointBorderWidth:2,order:0});
+  }
+  var subBgColors=['rgba(147,197,253,.5)','rgba(110,231,183,.5)','rgba(252,211,77,.5)','rgba(253,164,175,.5)','rgba(196,181,253,.5)'];
+  // Sub-department bars
+  for(var s=0;s<keys.length;s++){
+    var sc=subColors[s%subColors.length];
+    var bg=subBgColors[s%subBgColors.length];
+    datasets.push({label:keys[s],data:trendData[keys[s]],backgroundColor:bg,borderColor:sc,borderWidth:1,borderRadius:3,type:'bar',order:1});
+  }
+  if(datasets.length===0)datasets.push({label:'无数据',data:MONTHS.map(function(){return 0;}),borderColor:'#A1A1AA'});
+
+  var ctx=document.getElementById('chartTrend').getContext('2d');
+  if(window._chartTrend)window._chartTrend.destroy();
+  window._chartTrend=new Chart(ctx,{
+    type:'line',
+    data:{labels:['7月','8月','9月','10月','11月','12月','1月','2月','3月','4月','5月','6月'],datasets:datasets},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{usePointStyle:true,padding:16,font:{size:12}}}},scales:{y:{min:1,max:7,ticks:{stepSize:1,callback:function(v){return GRADE_NAMES[Math.round(v)]||v;}}}}}
+  });
+}
+
+function renderFocusList(){
+  // Mock: 持续高绩效 — employees with B+ or above in last 3+ months
+  // Mock: 持续低绩效 — employees with B- or below in last 3+ months
+  var highList=[
+    {name:'张明',dept:'1级部门01',months:[{m:'4月',g:'符合预期+'},{m:'5月',g:'超出预期'},{m:'6月',g:'超出预期'}]},
+    {name:'李华',dept:'1级部门02',months:[{m:'4月',g:'超出预期'},{m:'5月',g:'符合预期+'},{m:'6月',g:'超出预期'}]},
+    {name:'王芳',dept:'1级部门03',months:[{m:'4月',g:'符合预期+'},{m:'5月',g:'符合预期+'},{m:'6月',g:'超出预期'}]},
+    {name:'赵磊',dept:'1级部门04',months:[{m:'4月',g:'符合预期+'},{m:'5月',g:'超出预期'},{m:'6月',g:'符合预期+'}]},
+    {name:'朱伟',dept:'2级部门01',months:[{m:'4月',g:'符合预期+'},{m:'5月',g:'符合预期+'},{m:'6月',g:'符合预期+'}]},
+  ];
+  var lowList=[
+    {name:'钱敏',dept:'1级部门01',months:[{m:'4月',g:'符合预期-'},{m:'5月',g:'符合预期-'},{m:'6月',g:'低于预期'}]},
+    {name:'林燕',dept:'1级部门03',months:[{m:'4月',g:'低于预期'},{m:'5月',g:'符合预期-'},{m:'6月',g:'符合预期-'}]},
+    {name:'沈云',dept:'1级部门05',months:[{m:'4月',g:'符合预期-'},{m:'5月',g:'低于预期'},{m:'6月',g:'远低预期'}]},
+    {name:'郭明',dept:'2级部门03',months:[{m:'4月',g:'符合预期-'},{m:'5月',g:'符合预期-'},{m:'6月',g:'符合预期-'}]},
+  ];
+
+  var gradeColor={'远超预期':'#DC2626','超出预期':'#F97316','符合预期+':'#F59E0B','符合预期':'#10B981','符合预期-':'#6366F1','低于预期':'#71717A','远低预期':'#A1A1AA'};
+
+  function gradeTag(g){return '<span style="font:500 11px/1 var(--f);color:'+gradeColor[g]+';white-space:nowrap">'+g+'</span>';}
+
+  function monthGrade(months){return months.map(function(mg){return '<span style="color:var(--c5);font-size:11px">'+mg.m+'</span> <span style="font:500 11px/1 var(--f);color:'+gradeColor[mg.g]+';white-space:nowrap">'+mg.g+'</span>';}).join(' <span style="color:var(--c3);margin:0 2px">→</span> ');}
+
+  var hh='';for(var i=0;i<highList.length;i++){var h=highList[i];hh+='<tr><td style="font-weight:500;color:var(--c9);white-space:nowrap">'+h.name+'</td><td style="color:var(--c6);white-space:nowrap">'+h.dept+'</td><td style="line-height:2.2">'+monthGrade(h.months)+'</td></tr>';}
+  var lh='';for(var i=0;i<lowList.length;i++){var l=lowList[i];lh+='<tr><td style="font-weight:500;color:var(--c9);white-space:nowrap">'+l.name+'</td><td style="color:var(--c6);white-space:nowrap">'+l.dept+'</td><td style="line-height:2.2">'+monthGrade(l.months)+'</td></tr>';}
+
+  var html='<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">'+
+    '<div class="card" style="margin-bottom:0"><div class="card-hd"><span class="card-title">持续高绩效</span><span style="font:400 12px/1 var(--f);color:var(--c5)">近3个月超出预期或以上</span></div><div class="tbl-wrap"><table style="min-width:auto;width:100%"><thead><tr><th style="white-space:nowrap">姓名</th><th style="white-space:nowrap">部门</th><th>近3个月绩效</th></tr></thead><tbody>'+hh+'</tbody></table></div></div>'+
+    '<div class="card" style="margin-bottom:0"><div class="card-hd"><span class="card-title">持续低绩效</span><span style="font:400 12px/1 var(--f);color:var(--c5)">近3个月符合预期-或以下</span></div><div class="tbl-wrap"><table style="min-width:auto;width:100%"><thead><tr><th style="white-space:nowrap">姓名</th><th style="white-space:nowrap">部门</th><th>近3个月绩效</th></tr></thead><tbody>'+lh+'</tbody></table></div></div>'+
+  '</div>';
+  document.getElementById('focusList').innerHTML=html;
+}
+
+function renderStats(){
+  var dd=getDeptData(currentMonth,currentDept);
+  var total=dd.count;
+  // Previous month
+  var curIdx=MONTHS.indexOf(currentMonth);
+  var prevMonth=curIdx>0?MONTHS[curIdx-1]:null;
+  var prevTotal=0,prevDone=0;
+  if(prevMonth){
+    var pd=getDeptData(prevMonth,currentDept);
+    prevTotal=pd.count;
+    // Mock: compute done rate for both months
+    var done=0;for(var g=3;g<GRADES.length;g++)done+=dd.final[GRADES[g]];
+    var pDone=0;for(var g=3;g<GRADES.length;g++)pDone+=pd.final[GRADES[g]];
+    prevDone=pDone;
+  }
+  // Sub dept count
+  var subCount=currentDept==='全部'?DEPT_KEYS.length:(SUB_DEPTS[currentDept]?SUB_DEPTS[currentDept].length:DEPT_KEYS.length);
+  // Completion rate: B及以上 / total (mock as on-time)
+  var done=0;for(var g=3;g<GRADES.length;g++)done+=dd.final[GRADES[g]];
+  var doneRate=total?(done/total*100).toFixed(1):'0.0';
+  var prevRate=prevTotal?(prevDone/prevTotal*100).toFixed(1):null;
+  // Appeal count: mock based on department size
+  var appealSeed=currentDept==='全部'?currentMonth.charCodeAt(6)*3+7:(currentMonth.charCodeAt(6)+DEPT_KEYS.indexOf(currentDept))*2;
+  var appeals=Math.max(0,Math.round(Math.sin(appealSeed)*3+2));
+
+  var totalChange=prevTotal?((total-prevTotal)/prevTotal*100).toFixed(1):null;
+  var totalArrow=totalChange!==null?(totalChange>=0?'<span class="up">↑ '+totalChange+'%</span>':'<span class="down">↓ '+Math.abs(totalChange)+'%</span>'):'';
+  var rateChange=prevRate!==null?((parseFloat(doneRate)-parseFloat(prevRate)).toFixed(1)):null;
+  var rateArrow=rateChange!==null?(rateChange>=0?'<span class="up">↑ +'+rateChange+'%</span>':'<span class="down">↓ '+rateChange+'%</span>'):'';
+
+  document.getElementById('stTotal').innerHTML=total+'<span style="font-size:14px"> 人</span>';
+  document.getElementById('stTotalSub').innerHTML='较上月 '+totalArrow;
+  document.getElementById('stSubCount').textContent=subCount;
+  document.getElementById('stSubCountSub').textContent=currentDept==='全部'?'全部部门':'下级部门';
+  document.getElementById('stDoneRate').innerHTML=doneRate+'<span style="font-size:14px">%</span>';
+  document.getElementById('stDoneSub').innerHTML='较上月 '+rateArrow;
+  document.getElementById('stAppeals').textContent=appeals;
+  document.getElementById('stAppealsSub').textContent='绩效申诉';
+}
+
+function setMonth(m){currentMonth=m;render();}
+function setDept(v){currentDept=v;render();}
+function resetFilters(){currentMonth='2026-06';currentDept='全部';render();}
+
+function render(){
+  renderStats();
+  renderFilters();
+  // Delay chart rendering for layout to settle — prevents blurry canvas
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      renderDistChart();
+      renderTrendChart();
+    });
+  });
+  renderFocusList();
+}
+
+function init(){
+  document.getElementById('app').innerHTML='<div class="fi">'+
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">'+
+      '<div><h1 style="font:700 20px/1.2 var(--f);color:var(--c9);margin-bottom:4px">绩效报表</h1></div>'+
+      '<div style="display:flex;gap:8px"><button class="btn btn-s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>导出</button></div>'+
+    '</div>'+
+    '<div class="fl-bar" id="filterBar"></div>'+
+    '<div class="st-row">'+
+      '<div class="st-card" style="border-top-color:var(--pr)"><div class="st-card-label">总人数</div><div class="st-card-value" style="color:var(--pr)" id="stTotal">0</div><div class="st-card-sub" id="stTotalSub"></div></div>'+
+      '<div class="st-card" style="border-top-color:var(--vi)"><div class="st-card-label">下级部门数</div><div class="st-card-value" style="color:var(--vi)" id="stSubCount">0</div><div class="st-card-sub" id="stSubCountSub"></div></div>'+
+      '<div class="st-card" style="border-top-color:var(--em)"><div class="st-card-label">按时完成率</div><div class="st-card-value" style="color:var(--em700)" id="stDoneRate">0</div><div class="st-card-sub" id="stDoneSub"></div></div>'+
+      '<div class="st-card" style="border-top-color:var(--ac)"><div class="st-card-label">绩效申诉人数</div><div class="st-card-value" style="color:var(--ac700)" id="stAppeals">0</div><div class="st-card-sub" id="stAppealsSub"></div></div>'+
+    '</div>'+
+    '<div class="card"><div class="card-hd"><span class="card-title">等级分布</span></div><div class="chart-box"><canvas id="chartDist"></canvas></div></div>'+
+    '<div class="card"><div class="card-hd"><span class="card-title">绩效趋势</span></div><div class="chart-box"><canvas id="chartTrend"></canvas></div></div>'+
+    '<div id="focusList"></div>'+
+  '</div>';
+  render();
+}
+init();
+</script>
+</body>
+</html>
