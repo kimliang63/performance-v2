@@ -3,183 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HR ONE 绩效管理 - 原型总览</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<title>HR ONE 绩效管理 · 原型总览</title>
+<meta http-equiv="refresh" content="0;url=https://kimliang63.github.io/performance-v2/prototype/perf/current/perf-scenario-nav.html">
 <style>
-:root{
-  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
-  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
-  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;--ac700:#B45309;
-  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
-  --vi:#8B5CF6;--vi50:#F5F3FF;
-  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
-  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
-  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
-  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
-  --fm:'JetBrains Mono','SF Mono',monospace;
-}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoothing:antialiased}
-.page{max-width:1200px;margin:0 auto;padding:40px 32px}
-
-/* Header */
-.hdr{text-align:center;margin-bottom:48px}
-.hdr-t{font:700 32px/1.2 var(--f);color:var(--c9);letter-spacing:-.5px;margin-bottom:8px}
-.hdr-s{font:400 15px/1.5 var(--f);color:var(--c5)}
-.hdr-badges{display:flex;justify-content:center;gap:8px;margin-top:16px;flex-wrap:wrap}
-.hdr-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:var(--r1);font:500 12px/1 var(--f)}
-.hdr-badge.pr{background:var(--pr50);border:1px solid var(--pr200);color:var(--pr)}
-.hdr-badge.em{background:var(--em50);border:1px solid var(--em100);color:var(--em700)}
-.hdr-badge.vi{background:var(--vi50);border:1px solid #DDD6FE;color:#7C3AED}
-
-/* Version bar */
-.ver-bar{display:flex;justify-content:center;gap:12px;margin-bottom:32px}
-.ver-btn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 28px;border-radius:var(--r3);cursor:pointer;text-decoration:none;transition:all .15s;min-width:180px}
-.ver-btn.current{background:var(--sf);border:1px solid var(--c2);color:var(--c7)}
-.ver-btn.current:hover{border-color:var(--pr200);box-shadow:0 4px 16px rgba(37,99,235,.08)}
-.ver-btn.new{background:var(--pr);color:#FFF}
-.ver-btn.new:hover{background:var(--pr700)}
-.ver-btn-label{font:600 15px/1 var(--f)}
-.ver-btn-url{font:400 11px/1 var(--f);opacity:.7}
-.ver-btn-dot{width:8px;height:8px;border-radius:50%}
-.ver-btn.current .ver-btn-dot{background:var(--em)}
-.ver-btn.new .ver-btn-dot{background:#FFF}
-
-/* Section */
-.sec{margin-bottom:40px}
-.sec-hd{display:flex;align-items:center;gap:10px;margin-bottom:16px}
-.sec-ic{width:32px;height:32px;border-radius:var(--r2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.sec-ic svg{width:16px;height:16px;color:#FFF}
-.sec-t{font:700 18px/1.2 var(--f);color:var(--c9)}
-.sec-s{font:400 13px/1 var(--f);color:var(--c5);margin-left:8px}
-
-/* Grid */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
-
-/* Card */
-.card{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);padding:20px;cursor:pointer;transition:all .15s;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:8px}
-.card:hover{border-color:var(--pr200);box-shadow:0 4px 16px rgba(37,99,235,.08);transform:translateY(-1px)}
-.card-hd{display:flex;align-items:flex-start;justify-content:space-between}
-.card-t{font:600 14px/1.3 var(--f);color:var(--c9)}
-.card-tag{font:500 10px/1 var(--f);padding:3px 8px;border-radius:4px;flex-shrink:0;white-space:nowrap}
-.card-tag.v1{background:var(--pr50);color:var(--pr)}
-.card-tag.v2{background:#FEF3C7;color:#92400E}
-.card-tag.v4{background:#D1FAE5;color:#065F46}
-.card-tag.v5{background:#EDE9FE;color:#7C3AED}
-.card-tag.emp{background:var(--pr50);color:var(--pr)}
-.card-tag.mgr{background:#EDE9FE;color:#7C3AED}
-.card-tag.mob{background:var(--em50);color:var(--em700)}
-.card-tag.ai{background:var(--ac50);color:var(--ac700)}
-.card-d{font:400 12px/1.5 var(--f);color:var(--c5);flex:1}
-
-/* Footer */
-.ft{text-align:center;padding:32px 0;font:400 13px/1 var(--f);color:var(--c4)}
+body{font-family:'Inter','Noto Sans SC',sans-serif;background:#F5F5F4;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}
+.box{text-align:center}
+.box h1{font-size:20px;color:#18181B;margin-bottom:8px}
+.box p{font-size:14px;color:#71717A;margin-bottom:24px}
+.box a{display:inline-block;padding:12px 28px;background:#2563EB;color:#FFF;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600}
 </style>
 </head>
 <body>
-
-<div class="page">
-  <!-- Version Navigation -->
-  <div class="ver-bar">
-    <a class="ver-btn current" href="index.html">
-      <span class="ver-btn-dot"></span>
-      <span class="ver-btn-label">当前线上版本</span>
-      <span class="ver-btn-url">localhost:8788</span>
-    </a>
-    <a class="ver-btn new" href="http://127.0.0.1:8789/index.html">
-      <span class="ver-btn-dot"></span>
-      <span class="ver-btn-label">全新 v2 版本</span>
-      <span class="ver-btn-url">localhost:8789</span>
-    </a>
-  </div>
-
-  <!-- Header -->
-  <div class="hdr">
-    <div class="hdr-t">HR ONE 绩效管理 · 原型总览</div>
-    <div class="hdr-s">所有原型页面的统一入口，按模块和角色分类</div>
-    <div class="hdr-badges">
-      <span class="hdr-badge pr">V1 基础配置 · 8页</span>
-      <span class="hdr-badge pr">V2 方案设计 · 2页</span>
-      <span class="hdr-badge em">V4 考核活动 · 2页</span>
-      <span class="hdr-badge vi">V5 工作台 · 4页</span>
-    </div>
-  </div>
-
-  <!-- V1 基础配置 -->
-  <div class="sec">
-    <div class="sec-hd">
-      <div class="sec-ic" style="background:var(--pr)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4a1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
-      <span class="sec-t">V1 基础配置</span>
-      <span class="sec-s">8 页 — COE维护的全局配置项</span>
-    </div>
-    <div class="grid">
-      <a class="card" href="perf-base-cycle.html"><div class="card-hd"><span class="card-t">绩效周期</span><span class="card-tag v1">V1</span></div><div class="card-d">月度/季度/半年度/年度周期管理</div></a>
-      <a class="card" href="perf-base-unit.html"><div class="card-hd"><span class="card-t">考核单位</span><span class="card-tag v1">V1</span></div><div class="card-d">部门/团队等考核组织单元</div></a>
-      <a class="card" href="perf-base-grade.html"><div class="card-hd"><span class="card-t">等级规则</span><span class="card-tag v1">V1</span></div><div class="card-d">S/A/B/C/D等级定义与分数区间</div></a>
-      <a class="card" href="perf-base-calc.html"><div class="card-hd"><span class="card-t">计算规则</span><span class="card-tag v1">V1</span></div><div class="card-d">定量指标公式配置</div></a>
-      <a class="card" href="perf-base-standard.html"><div class="card-hd"><span class="card-t">衡量标准</span><span class="card-tag v1">V1</span></div><div class="card-d">定性指标的评价标准库</div></a>
-      <a class="card" href="perf-base-indicator.html"><div class="card-hd"><span class="card-t">指标库</span><span class="card-tag v1">V1</span></div><div class="card-d">KPI/OKR指标统一管理</div></a>
-      <a class="card" href="perf-base-evaluation.html"><div class="card-hd"><span class="card-t">评价规则</span><span class="card-tag v1">V1</span></div><div class="card-d">定性指标等级→分数映射</div></a>
-      <a class="card" href="perf-forced-distribution.html"><div class="card-hd"><span class="card-t">强制分布</span><span class="card-tag v1">V1</span></div><div class="card-d">各等级人数比例控制</div></a>
-    </div>
-  </div>
-
-  <!-- V2 方案设计 -->
-  <div class="sec">
-    <div class="sec-hd">
-      <div class="sec-ic" style="background:#D97706"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-      <span class="sec-t">V2 方案设计</span>
-      <span class="sec-s">2 页 — 绩效方案配置与考核组管理</span>
-    </div>
-    <div class="grid">
-      <a class="card" href="perf-scheme-list.html"><div class="card-hd"><span class="card-t">方案列表</span><span class="card-tag v2">V2</span></div><div class="card-d">绩效方案 CRUD、状态流转、启用/停用</div></a>
-      <a class="card" href="perf-scheme-wizard.html"><div class="card-hd"><span class="card-t">方案向导</span><span class="card-tag v2">V2</span></div><div class="card-d">分步创建：基本信息→考核组→环节配置→强制分布</div></a>
-    </div>
-  </div>
-
-  <!-- V4 考核活动 -->
-  <div class="sec">
-    <div class="sec-hd">
-      <div class="sec-ic" style="background:var(--em)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-      <span class="sec-t">V4 考核活动</span>
-      <span class="sec-s">2 页 — 活动发起、过程管理、监控</span>
-    </div>
-    <div class="grid">
-      <a class="card" href="perf-activity.html"><div class="card-hd"><span class="card-t">活动管理</span><span class="card-tag v4">V4</span></div><div class="card-d">活动列表、发起、进度跟踪、AI监控</div></a>
-      <a class="card" href="perf-activity-progress.html"><div class="card-hd"><span class="card-t">考核进度</span><span class="card-tag v4">V4</span></div><div class="card-d">各环节完成率、异常提醒</div></a>
-    </div>
-  </div>
-
-  <!-- V5 工作台 + 报表 -->
-  <div class="sec">
-    <div class="sec-hd">
-      <div class="sec-ic" style="background:#7C3AED"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
-      <span class="sec-t">V5 工作台 + 报表</span>
-      <span class="sec-s">4 页 — 绩效首页、结果查看、分析报表</span>
-    </div>
-    <div class="grid">
-      <a class="card" href="perf-workbench-perf-home.html"><div class="card-hd"><span class="card-t">绩效工作台</span><span class="card-tag v5">V5</span></div><div class="card-d">待办任务、快捷入口、数据概览</div></a>
-      <a class="card" href="perf-result-view.html"><div class="card-hd"><span class="card-t">结果查看</span><span class="card-tag v5">V5</span></div><div class="card-d">绩效结果查询与导出</div></a>
-      <a class="card" href="perf-result-employee.html"><div class="card-hd"><span class="card-t">员工结果</span><span class="card-tag v5">V5</span></div><div class="card-d">个人绩效结果详情</div></a>
-      <a class="card" href="perf-report-analytics.html"><div class="card-hd"><span class="card-t">分析报表</span><span class="card-tag v5">V5</span></div><div class="card-d">绩效数据统计与可视化</div></a>
-    </div>
-  </div>
-
-  <!-- 业务流程演示 -->
-  <div class="sec">
-    <div class="sec-hd">
-      <div class="sec-ic" style="background:var(--c8)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-      <span class="sec-t">业务流程演示</span>
-      <span class="sec-s">按角色拆分的完整绩效流程</span>
-    </div>
-    <div class="grid">
-      <a class="card" href="demo-index.html"><div class="card-hd"><span class="card-t">📋 业务流程索引</span><span class="card-tag emp">35页</span></div><div class="card-d">员工端/管理者端/移动端/AI端全部演示页面</div></a>
-    </div>
-  </div>
-
-  <!-- Footer -->
-  <div class="ft">HR ONE 绩效管理 · 纯 HTML 原型 · 最后更新 2026-06-28</div>
+<div class="box">
+  <h1>HR ONE 绩效管理 · 原型总览</h1>
+  <p>正在跳转至全新 v2 版本…</p>
+  <a href="https://kimliang63.github.io/performance-v2/prototype/perf/current/perf-scenario-nav.html">进入业务场景全景图 →</a>
 </div>
-
 </body>
 </html>
