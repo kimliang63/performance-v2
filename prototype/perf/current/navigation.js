@@ -34,8 +34,8 @@ const GHR_NAV = {
   // Module data with file paths
   M: {
     perf:{n:'绩效管理',l:'Performance',ic:'target',groups:[
-      {n:'绩效基础配置',ic:'settings',items:[
-        {n:'绩效周期',ic:'calendar',file:'perf-base-cycle.html'},
+      {n:'📋 业务场景全景',ic:'settings',items:[
+        {n:'绩效周期',ic:'calendar',file:'perf-scenario-nav.html'},
         {n:'单位',ic:'building',file:'perf-base-unit.html'},
         {n:'等级规则',ic:'settings',file:'perf-base-grade.html'},
         {n:'计算规则',ic:'settings',file:'perf-base-calc.html'},
