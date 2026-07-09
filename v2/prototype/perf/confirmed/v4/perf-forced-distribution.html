@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GHR - 强制分布规则</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════
+   GHR Forced Distribution Rules — Quiet Precision
+   ═══════════════════════════════════════════════════════ */
+:root{
+  /* 主色系 */
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  /* 语义色 */
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  /* 灰色色阶 */
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  /* 背景 */
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  /* 阴影 */
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --shadow-card-hover:0 8px 20px -4px rgba(0,0,0,.08),0 2px 6px -2px rgba(0,0,0,.04);
+  --shadow-dropdown:0 10px 40px -10px rgba(0,0,0,.12),0 2px 10px -2px rgba(0,0,0,.04);
+  /* 尺寸 */
+  --header-h:52px;
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  /* 字体 */
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --m:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:var(--f);background:var(--bg);color:var(--c7);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;line-height:1.5;
+}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+/* ═══ HEADER ═══ */
+.hdr{
+  height:var(--header-h);background:var(--sf);
+  border-bottom:1px solid var(--dv);
+  display:flex;align-items:center;
+  padding:0 24px;gap:16px;
+  position:sticky;top:0;z-index:1100;
+}
+.hdr-l{display:flex;align-items:center;gap:14px}
+.logo{display:flex;align-items:center;gap:8px}
+.logo-i{
+  width:28px;height:28px;border-radius:6px;
+  background:var(--pr);display:flex;align-items:center;justify-content:center;
+}
+.logo-i svg{width:15px;height:15px;color:#FFF}
+.logo-t{font-size:15px;font-weight:700;color:var(--c9);letter-spacing:-.3px}
+.hdr-title{
+  font:600 14px/1 var(--f);color:var(--c7);
+  padding-left:14px;border-left:1px solid var(--c2);
+}
+.hdr-r{margin-left:auto;display:flex;align-items:center;gap:8px}
+.back-link{
+  display:inline-flex;align-items:center;gap:5px;
+  font:500 13px/1 var(--f);color:var(--c5);
+  text-decoration:none;padding:5px 10px;border-radius:var(--r1);
+  transition:all .12s;cursor:pointer;
+}
+.back-link:hover{color:var(--pr);background:var(--pr50)}
+.back-link svg{width:13px;height:13px}
+
+/* ═══ BUTTONS ═══ */
+.btn{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:0 14px;height:32px;border-radius:var(--r1);
+  font:500 13px/1 var(--f);cursor:pointer;
+  transition:all .12s;border:none;font-family:inherit;
+}
+.btn svg{width:13px;height:13px}
+.btn-p{background:var(--pr);color:#FFF}
+.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}
+.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
+.btn-d{background:var(--sf);color:var(--ro);border:1px solid var(--ro100)}
+.btn-d:hover{background:var(--ro50);border-color:var(--ro)}
+.btn-sm{height:26px;padding:0 10px;font-size:12px}
+.btn-sm svg{width:11px;height:11px}
+
+/* ═══ SECTION CARD ═══ */
+.sec{
+  background:var(--sf);border-radius:var(--r3);
+  box-shadow:var(--shadow-card);
+  margin-bottom:20px;overflow:hidden;
+}
+.sec-hd{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 24px;border-bottom:1px solid var(--dv);
+}
+.sec-hd-l{display:flex;align-items:center;gap:10px}
+.sec-hd-ic{
+  width:30px;height:30px;border-radius:var(--r1);
+  display:flex;align-items:center;justify-content:center;
+}
+.sec-hd-ic svg{width:15px;height:15px;color:#FFF}
+.sec-hd-ic.b{background:var(--pr)}
+.sec-hd-ic.g{background:var(--em)}
+.sec-hd-ic.y{background:var(--ac)}
+.sec-hd-ic.p{background:var(--vi)}
+.sec-hd-t{font:600 15px/1.2 var(--f);color:var(--c9)}
+.sec-hd-s{font:400 11px/1 var(--f);color:var(--c4);margin-top:2px}
+.sec-bd{padding:20px 24px}
+
+/* ═══ TABLE ═══ */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--c2);border-radius:var(--r2)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead{position:sticky;top:0;z-index:1}
+thead th{
+  background:var(--c0);padding:10px 14px;
+  font:600 12px/1 var(--f);color:var(--c5);text-align:left;
+  border-bottom:1px solid var(--c2);white-space:nowrap;
+  text-transform:uppercase;letter-spacing:.3px;
+}
+tbody td{
+  padding:10px 14px;border-bottom:1px solid var(--dv);
+  font:400 13px/1.4 var(--f);color:var(--c7);
+  vertical-align:middle;
+}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:nth-child(even){background:var(--c0)}
+tbody tr{transition:background .1s}
+tbody tr:hover{background:var(--pr50)}
+
+/* ═══ FORM ELEMENTS ═══ */
+.inp{
+  border:1px solid var(--c2);border-radius:var(--r1);
+  padding:6px 10px;font:400 13px/1 var(--f);color:var(--c9);
+  background:var(--sf);outline:none;transition:all .15s;
+  width:100%;
+}
+.inp:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr100)}
+.inp-sm{padding:4px 8px;font-size:12px;width:80px}
+.inp-err{border-color:var(--ro);box-shadow:0 0 0 2px var(--ro100)}
+textarea.inp{resize:vertical;min-height:60px;line-height:1.5}
+select.inp{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+label{font:500 13px/1 var(--f);color:var(--c6);display:block;margin-bottom:6px}
+.form-row{display:flex;gap:16px;margin-bottom:16px}
+.form-row:last-child{margin-bottom:0}
+.form-g{flex:1}
+.form-g label{margin-bottom:6px}
+
+/* ═══ RADIO TOGGLE ═══ */
+.radio-group{display:flex;gap:0;border:1px solid var(--c2);border-radius:var(--r1);overflow:hidden}
+.radio-group label{
+  flex:1;text-align:center;padding:7px 16px;
+  font:500 13px/1 var(--f);color:var(--c5);cursor:pointer;
+  background:var(--sf);transition:all .15s;border:none;margin:0;
+  position:relative;
+}
+.radio-group label:not(:last-child){border-right:1px solid var(--c2)}
+.radio-group input{display:none}
+.radio-group input:checked+label{
+  background:var(--pr);color:#FFF;
+}
+.radio-group label:hover{background:var(--c0)}
+.radio-group input:checked+label:hover{background:var(--pr700)}
+
+/* ═══ CHECKBOX ═══ */
+.chk-group{display:flex;flex-wrap:wrap;gap:8px}
+.chk-label{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 12px;border:1px solid var(--c2);border-radius:var(--r1);
+  font:400 13px/1 var(--f);color:var(--c6);cursor:pointer;
+  transition:all .12s;
+}
+.chk-label:hover{border-color:var(--pr200);color:var(--pr)}
+.chk-label input{display:none}
+.chk-label.checked{background:var(--pr50);border-color:var(--pr200);color:var(--pr);font-weight:500}
+.chk-dot{
+  width:14px;height:14px;border:1.5px solid var(--c3);border-radius:3px;
+  display:flex;align-items:center;justify-content:center;transition:all .12s;flex-shrink:0;
+}
+.chk-label.checked .chk-dot{background:var(--pr);border-color:var(--pr)}
+.chk-label.checked .chk-dot svg{width:10px;height:10px;color:#FFF}
+
+/* ═══ COLOR DOT ═══ */
+.color-dot{
+  width:10px;height:10px;border-radius:50%;display:inline-block;
+  margin-right:6px;vertical-align:middle;flex-shrink:0;
+}
+
+/* ═══ BADGE ═══ */
+.badge{
+  display:inline-flex;align-items:center;gap:4px;
+  font:600 11px/1 var(--f);padding:3px 8px;border-radius:var(--r1);
+}
+.badge-ok{color:var(--em700);background:var(--em50)}
+.badge-warn{color:#92400E;background:var(--ac50)}
+.badge-err{color:var(--ro);background:var(--ro50)}
+
+/* ═══ BAR CHART ═══ */
+.bar-chart{margin-top:20px}
+.bar-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.bar-row:last-child{margin-bottom:0}
+.bar-label{width:90px;font:500 12px/1 var(--f);color:var(--c6);text-align:right;flex-shrink:0}
+.bar-group{flex:1;display:flex;flex-direction:column;gap:3px}
+.bar-track{height:20px;background:var(--c1);border-radius:4px;overflow:hidden;position:relative}
+.bar-fill{height:100%;border-radius:4px;transition:width .4s ease;position:relative}
+.bar-fill.req{opacity:.4}
+.bar-fill.cur{opacity:.9}
+.bar-val{
+  position:absolute;right:6px;top:50%;transform:translateY(-50%);
+  font:600 10px/1 var(--m);color:var(--sf);white-space:nowrap;
+}
+.bar-val.outside{
+  position:relative;right:auto;top:auto;transform:none;
+  color:var(--c5);margin-left:6px;
+  display:inline-flex;align-items:center;
+}
+.bar-legend{display:flex;gap:16px;margin-top:16px;padding-top:12px;border-top:1px solid var(--dv)}
+.bar-legend-item{display:flex;align-items:center;gap:6px;font:400 12px/1 var(--f);color:var(--c5)}
+.bar-legend-dot{width:12px;height:6px;border-radius:2px}
+
+/* ═══ RULE CARDS ═══ */
+.rule-list{display:flex;flex-direction:column;gap:12px}
+.rule-card{
+  border:1px solid var(--c2);border-radius:var(--r2);
+  padding:16px 20px;transition:all .15s;
+}
+.rule-card:hover{border-color:var(--pr200);box-shadow:var(--shadow-card)}
+.rule-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.rule-name{font:600 14px/1 var(--f);color:var(--c9)}
+.rule-actions{display:flex;gap:6px}
+.rule-meta{display:flex;gap:16px;flex-wrap:wrap}
+.rule-tag{
+  display:inline-flex;align-items:center;gap:4px;
+  font:400 12px/1 var(--f);color:var(--c5);
+  background:var(--c0);padding:4px 10px;border-radius:var(--r1);
+}
+.rule-tag svg{width:12px;height:12px}
+.rule-tag.strong{color:var(--ro);background:var(--ro50)}
+.rule-tag.weak{color:var(--ac);background:var(--ac50)}
+.rule-desc{font:400 12px/1.4 var(--f);color:var(--c4);margin-top:8px;padding-top:8px;border-top:1px solid var(--dv)}
+
+/* ═══ PREVIEW ═══ */
+.preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-top:16px}
+.preview-item{
+  border:1px solid var(--c2);border-radius:var(--r2);padding:14px 16px;
+  text-align:center;transition:all .2s;
+}
+.preview-item:hover{border-color:var(--pr200);box-shadow:var(--shadow-card)}
+.preview-grade{font:600 13px/1 var(--f);color:var(--c7);margin-bottom:4px}
+.preview-code{font:600 20px/1 var(--m);color:var(--pr);margin-bottom:6px}
+.preview-count{font:400 12px/1 var(--f);color:var(--c5)}
+.preview-bar{height:4px;background:var(--c1);border-radius:2px;margin-top:8px;overflow:hidden}
+.preview-bar-fill{height:100%;border-radius:2px;transition:width .3s ease}
+
+/* ═══ VALIDATION MSG ═══ */
+.val-msg{
+  display:flex;align-items:center;gap:6px;
+  font:500 12px/1 var(--f);margin-top:10px;padding:8px 12px;
+  border-radius:var(--r1);transition:all .2s;
+}
+.val-msg.ok{color:var(--em700);background:var(--em50)}
+.val-msg.err{color:var(--ro);background:var(--ro50)}
+.val-msg svg{width:14px;height:14px;flex-shrink:0}
+
+/* ═══ MODAL ═══ */
+.modal-ov{
+  position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:2000;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .2s;
+}
+.modal-ov.on{opacity:1;pointer-events:all}
+.modal{
+  background:var(--sf);border-radius:var(--r4);
+  box-shadow:var(--shadow-dropdown);width:520px;max-height:80vh;
+  overflow-y:auto;transform:translateY(8px);transition:transform .2s;
+}
+.modal-ov.on .modal{transform:translateY(0)}
+.modal-hd{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 24px;border-bottom:1px solid var(--dv);
+}
+.modal-hd-t{font:600 16px/1 var(--f);color:var(--c9)}
+.modal-close{
+  width:28px;height:28px;border-radius:var(--r1);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--c4);background:transparent;border:none;
+  transition:all .12s;
+}
+.modal-close:hover{background:var(--c1);color:var(--c7)}
+.modal-close svg{width:14px;height:14px}
+.modal-bd{padding:20px 24px}
+.modal-ft{
+  display:flex;justify-content:flex-end;gap:8px;
+  padding:14px 24px;border-top:1px solid var(--dv);
+}
+
+/* ═══ ANIMATION ═══ */
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fi{animation:fi .2s ease forwards}
+</style>
+</head>
+<body>
+
+<!-- Navigation will be injected by navigation.js -->
+
+<div id="app"></div>
+
+<!-- Modal -->
+<div class="modal-ov" id="modalOv">
+  <div class="modal" id="modalBox"></div>
+</div>
+
+<script src="navigation.js"></script>
+<script>
+// ═══ 图标集 ═══
+const I={
+  settings:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+  chart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+  shield:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+  eye:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+  trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+  edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+  alert:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  target:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
+  calculator:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="8" y2="10.01"/><line x1="12" y1="10" x2="12" y2="10.01"/><line x1="16" y1="10" x2="16" y2="10.01"/><line x1="8" y1="14" x2="8" y2="14.01"/><line x1="12" y1="14" x2="12" y2="14.01"/><line x1="16" y1="14" x2="16" y2="14.01"/><line x1="8" y1="18" x2="16" y2="18"/></svg>',
+  x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+};
+
+// ═══ Mock 数据 ═══
+let GRADES = [
+  { name:'远超预期', code:'A', min:90, max:100, color:'--em', order:1 },
+  { name:'符合预期+', code:'B+', min:80, max:89, color:'--pr', order:2 },
+  { name:'符合预期', code:'B', min:70, max:79, color:'--pr', order:3 },
+  { name:'符合预期-', code:'B-', min:60, max:69, color:'--ac', order:4 },
+  { name:'低于预期', code:'C', min:0, max:59, color:'--ro', order:5 },
+];
+
+let DIST = [
+  { grade:'远超预期', required:10, requiredN:5, current:8, currentN:4 },
+  { grade:'符合预期+', required:20, requiredN:10, current:24, currentN:12 },
+  { grade:'符合预期', required:40, requiredN:20, current:36, currentN:18 },
+  { grade:'符合预期-', required:20, requiredN:10, current:22, currentN:11 },
+  { grade:'低于预期', required:10, requiredN:5, current:10, currentN:5 },
+];
+
+// FIXME: 跳过审定环节的员工是否纳入强制分布分母？如果纳入，等级从哪儿来？
+// TODO: 分布比例的计算基数 - 是按考核组内总人数还是按已提交人数？
+
+let RULES = [
+  { name:'年度考核强控规则', type:'strong', minHead:5, groups:['默认考核组','仓储特殊组'], desc:'年度考核强制分布，不允许超出比例限制' },
+  { name:'月度考核弱控规则', type:'weak', minHead:3, groups:['默认考核组'], desc:'月度考核提示性分布，超出比例时提醒' },
+];
+
+const ALL_GROUPS = ['默认考核组','仓储特殊组','销售精英组','管理层组'];
+let previewHeadcount = 50;
+
+// ═══ 渲染 ═══
+function render(){
+  const app = document.getElementById('app');
+  app.innerHTML = `
+    ${renderGradeSection()}
+    ${renderDistSection()}
+    ${renderRuleSection()}
+    ${renderPreviewSection()}
+  `;
+  bindEvents();
+}
+
+// ─── Section 1: 等级定义 ───
+function renderGradeSection(){
+  const rows = GRADES.map((g,i) => `
+    <tr data-idx="${i}">
+      <td><span class="color-dot" style="background:var(${g.color})"></span>${g.name}</td>
+      <td><span style="font-family:var(--m);font-weight:600">${g.code}</span></td>
+      <td><input class="inp inp-sm grade-min" type="number" value="${g.min}" min="0" max="100" data-idx="${i}"></td>
+      <td><input class="inp inp-sm grade-max" type="number" value="${g.max}" min="0" max="100" data-idx="${i}"></td>
+      <td><span class="color-dot" style="background:var(${g.color})"></span><span style="font-size:12px;color:var(--c5)">${g.color}</span></td>
+      <td><input class="inp inp-sm grade-order" type="number" value="${g.order}" min="1" data-idx="${i}" style="width:50px"></td>
+      <td>
+        <button class="btn btn-s btn-sm grade-del" data-idx="${i}" title="删除">
+          ${I.trash}
+        </button>
+      </td>
+    </tr>
+  `).join('');
+
+  return `
+    <div class="sec fi">
+      <div class="sec-hd">
+        <div class="sec-hd-l">
+          <div class="sec-hd-ic b">${I.settings}</div>
+          <div>
+            <div class="sec-hd-t">等级定义</div>
+            <div class="sec-hd-s">Grade Definition · 定义绩效等级及分数区间</div>
+          </div>
+        </div>
+        <button class="btn btn-s btn-sm" id="btnAddGrade">
+          ${I.plus} 添加等级
+        </button>
+      </div>
+      <div class="sec-bd">
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>等级名称</th>
+                <th>等级代码</th>
+                <th>分数区间(下限)</th>
+                <th>分数区间(上限)</th>
+                <th>颜色标识</th>
+                <th>排序</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="gradeBody">${rows}</tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ─── Section 2: 分布比例配置 ───
+function renderDistSection(){
+  const totalReq = DIST.reduce((s,d) => s + d.required, 0);
+  const totalCur = DIST.reduce((s,d) => s + d.current, 0);
+  const totalReqN = DIST.reduce((s,d) => s + d.requiredN, 0);
+  const totalCurN = DIST.reduce((s,d) => s + d.currentN, 0);
+  const sumValid = totalReq === 100;
+
+  const rows = DIST.map((d,i) => {
+    const diff = d.current - d.required;
+    let badgeClass = 'badge-ok', badgeText = '正常';
+    if(diff > 3){ badgeClass = 'badge-err'; badgeText = '超出'; }
+    else if(diff > 0){ badgeClass = 'badge-warn'; badgeText = '接近'; }
+    return `
+      <tr>
+        <td>${d.grade}</td>
+        <td><input class="inp inp-sm dist-req" type="number" value="${d.required}" min="0" max="100" data-idx="${i}" style="width:70px"> %</td>
+        <td>${d.requiredN}</td>
+        <td><span style="font-family:var(--m)">${d.current}%</span></td>
+        <td>${d.currentN}</td>
+        <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+      </tr>
+    `;
+  }).join('');
+
+  // Bar chart
+  const maxVal = Math.max(...DIST.map(d => Math.max(d.required, d.current)), 1);
+  const barRows = DIST.map(d => {
+    const gradeInfo = GRADES.find(g => g.name === d.grade);
+    const colorVar = gradeInfo ? gradeInfo.color : '--pr';
+    const diff = d.current - d.required;
+    let barColor = 'var(--em)';
+    if(diff > 3) barColor = 'var(--ro)';
+    else if(diff > 0) barColor = 'var(--ac)';
+    return `
+      <div class="bar-row">
+        <div class="bar-label">${d.grade}</div>
+        <div class="bar-group">
+          <div class="bar-track">
+            <div class="bar-fill req" style="width:${(d.required/maxVal)*100}%;background:var(${colorVar})">
+              <span class="bar-val">${d.required}%</span>
+            </div>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill cur" style="width:${(d.current/maxVal)*100}%;background:${barColor}">
+              <span class="bar-val">${d.current}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="sec fi" style="animation-delay:.05s">
+      <div class="sec-hd">
+        <div class="sec-hd-l">
+          <div class="sec-hd-ic g">${I.chart}</div>
+          <div>
+            <div class="sec-hd-t">分布比例配置</div>
+            <div class="sec-hd-s">Distribution Ratio Config · 配置各等级要求比例与实际分布</div>
+          </div>
+        </div>
+      </div>
+      <div class="sec-bd">
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>等级名称</th>
+                <th>要求比例</th>
+                <th>要求人数</th>
+                <th>当前比例</th>
+                <th>当前人数</th>
+                <th>状态</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+            <tfoot>
+              <tr style="background:var(--c0);font-weight:600">
+                <td>合计</td>
+                <td>
+                  <span style="font-family:var(--m);${sumValid?'':'color:var(--ro)'}">${totalReq}%</span>
+                </td>
+                <td>${totalReqN}</td>
+                <td><span style="font-family:var(--m)">${totalCur}%</span></td>
+                <td>${totalCurN}</td>
+                <td>
+                  ${sumValid
+                    ? '<span class="badge badge-ok">校验通过</span>'
+                    : '<span class="badge badge-err">比例不为100%</span>'}
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        ${!sumValid ? `
+          <div class="val-msg err" style="margin-top:12px">
+            ${I.alert}
+            <span>要求比例合计必须为 100%，当前为 ${totalReq}%，请调整</span>
+          </div>
+        ` : `
+          <div class="val-msg ok" style="margin-top:12px">
+            ${I.check}
+            <span>比例校验通过，合计 100%</span>
+          </div>
+        `}
+        <div class="bar-chart">
+          ${barRows}
+          <div class="bar-legend">
+            <div class="bar-legend-item">
+              <span class="bar-legend-dot" style="background:var(--pr);opacity:.4"></span>
+              要求比例
+            </div>
+            <div class="bar-legend-item">
+              <span class="bar-legend-dot" style="background:var(--em);opacity:.9"></span>
+              当前比例
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ─── Section 3: 执行规则配置 ───
+function renderRuleSection(){
+  const cards = RULES.map((r,i) => `
+    <div class="rule-card">
+      <div class="rule-hd">
+        <span class="rule-name">${r.name}</span>
+        <div class="rule-actions">
+          <button class="btn btn-s btn-sm rule-edit" data-idx="${i}">${I.edit} 编辑</button>
+          <button class="btn btn-d btn-sm rule-del" data-idx="${i}">${I.trash} 删除</button>
+        </div>
+      </div>
+      <div class="rule-meta">
+        <span class="rule-tag ${r.type}">
+          ${r.type === 'strong' ? I.shield : I.alert}
+          ${r.type === 'strong' ? '强控' : '弱控'}
+        </span>
+        <span class="rule-tag">${I.users} 最低人数: ${r.minHead}</span>
+        ${r.groups.map(g => `<span class="rule-tag">${I.target} ${g}</span>`).join('')}
+      </div>
+      <div class="rule-desc">${r.desc}</div>
+    </div>
+  `).join('');
+
+  return `
+    <div class="sec fi" style="animation-delay:.1s">
+      <div class="sec-hd">
+        <div class="sec-hd-l">
+          <div class="sec-hd-ic y">${I.shield}</div>
+          <div>
+            <div class="sec-hd-t">执行规则配置</div>
+            <div class="sec-hd-s">Execution Rules · 配置强制分布的执行策略</div>
+          </div>
+        </div>
+        <button class="btn btn-s btn-sm" id="btnAddRule2">
+          ${I.plus} 添加规则
+        </button>
+      </div>
+      <div class="sec-bd">
+        <div class="rule-list">${cards}</div>
+      </div>
+    </div>
+  `;
+}
+
+// ─── Section 4: 预览测试 ───
+function renderPreviewSection(){
+  const items = DIST.map(d => {
+    const count = Math.round(previewHeadcount * d.required / 100);
+    const gradeInfo = GRADES.find(g => g.name === d.grade);
+    const colorVar = gradeInfo ? gradeInfo.color : '--pr';
+    return `
+      <div class="preview-item">
+        <div class="preview-grade">${d.grade}</div>
+        <div class="preview-code">${count}</div>
+        <div class="preview-count">${d.required}% of ${previewHeadcount}</div>
+        <div class="preview-bar">
+          <div class="preview-bar-fill" style="width:${d.required}%;background:var(${colorVar})"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="sec fi" style="animation-delay:.15s">
+      <div class="sec-hd">
+        <div class="sec-hd-l">
+          <div class="sec-hd-ic p">${I.calculator}</div>
+          <div>
+            <div class="sec-hd-t">预览测试</div>
+            <div class="sec-hd-s">Preview · 输入人数预览分布结果</div>
+          </div>
+        </div>
+      </div>
+      <div class="sec-bd">
+        <div class="form-row" style="margin-bottom:16px">
+          <div class="form-g" style="flex:none;width:200px">
+            <label>样本人数</label>
+            <input class="inp" type="number" id="previewInput" value="${previewHeadcount}" min="1">
+          </div>
+          <div class="form-g" style="flex:none;display:flex;align-items:flex-end">
+            <button class="btn btn-p" id="btnCalc">
+              ${I.calculator} 计算
+            </button>
+          </div>
+        </div>
+        <div class="preview-grid" id="previewGrid">${items}</div>
+      </div>
+    </div>
+  `;
+}
+
+// ═══ 事件绑定 ═══
+function bindEvents(){
+  // Add grade
+  const btnAdd = document.getElementById('btnAddGrade');
+  if(btnAdd) btnAdd.onclick = () => {
+    GRADES.push({ name:'新等级', code:'D', min:0, max:0, color:'--c4', order:GRADES.length+1 });
+    render();
+  };
+
+  // Delete grade
+  document.querySelectorAll('.grade-del').forEach(btn => {
+    btn.onclick = () => {
+      const idx = parseInt(btn.dataset.idx);
+      if(GRADES.length <= 1) return;
+      if(confirm(`确定删除等级"${GRADES[idx].name}"吗？`)){
+        GRADES.splice(idx, 1);
+        render();
+      }
+    };
+  });
+
+  // Grade inline edit
+  document.querySelectorAll('.grade-min, .grade-max, .grade-order').forEach(inp => {
+    inp.onchange = () => {
+      const idx = parseInt(inp.dataset.idx);
+      const field = inp.classList.contains('grade-min') ? 'min' : inp.classList.contains('grade-max') ? 'max' : 'order';
+      GRADES[idx][field] = parseInt(inp.value) || 0;
+    };
+  });
+
+  // Dist ratio edit
+  document.querySelectorAll('.dist-req').forEach(inp => {
+    inp.onchange = () => {
+      const idx = parseInt(inp.dataset.idx);
+      DIST[idx].required = parseInt(inp.value) || 0;
+      DIST[idx].requiredN = Math.round(previewHeadcount * DIST[idx].required / 100);
+      render();
+    };
+  });
+
+  // Add rule
+  const btnAddRule = document.getElementById('btnAddRule2');
+  if(btnAddRule) btnAddRule.onclick = () => openRuleModal(-1);
+  const btnNewRule = document.getElementById('btnNewRule');
+  if(btnNewRule) btnNewRule.onclick = () => openRuleModal(-1);
+
+  // Edit rule
+  document.querySelectorAll('.rule-edit').forEach(btn => {
+    btn.onclick = () => openRuleModal(parseInt(btn.dataset.idx));
+  });
+
+  // Delete rule
+  document.querySelectorAll('.rule-del').forEach(btn => {
+    btn.onclick = () => {
+      const idx = parseInt(btn.dataset.idx);
+      openConfirmModal(
+        '删除规则',
+        `确定删除规则"${RULES[idx].name}"吗？此操作不可恢复。`,
+        () => { RULES.splice(idx, 1); closeModal(); render(); }
+      );
+    };
+  });
+
+  // Preview calc
+  const btnCalc = document.getElementById('btnCalc');
+  if(btnCalc) btnCalc.onclick = () => {
+    previewHeadcount = parseInt(document.getElementById('previewInput').value) || 50;
+    DIST.forEach(d => { d.requiredN = Math.round(previewHeadcount * d.required / 100); });
+    render();
+  };
+  const previewInput = document.getElementById('previewInput');
+  if(previewInput) previewInput.onkeydown = (e) => {
+    if(e.key === 'Enter') document.getElementById('btnCalc').click();
+  };
+}
+
+// ═══ Modal ═══
+function openModal(html){
+  document.getElementById('modalBox').innerHTML = html;
+  document.getElementById('modalOv').classList.add('on');
+}
+function closeModal(){
+  document.getElementById('modalOv').classList.remove('on');
+}
+document.getElementById('modalOv').onclick = (e) => {
+  if(e.target === document.getElementById('modalOv')) closeModal();
+};
+
+function openRuleModal(idx){
+  const isNew = idx < 0;
+  const r = isNew ? { name:'', type:'strong', minHead:5, groups:[], desc:'' } : {...RULES[idx]};
+  const groupChks = ALL_GROUPS.map(g => {
+    const checked = r.groups.includes(g);
+    return `
+      <label class="chk-label ${checked ? 'checked' : ''}" onclick="toggleCheck(this)">
+        <input type="checkbox" value="${g}" ${checked ? 'checked' : ''}>
+        <span class="chk-dot">${checked ? I.check : ''}</span>
+        ${g}
+      </label>
+    `;
+  }).join('');
+
+  openModal(`
+    <div class="modal-hd">
+      <span class="modal-hd-t">${isNew ? '新建规则' : '编辑规则'}</span>
+      <button class="modal-close" onclick="closeModal()">${I.x}</button>
+    </div>
+    <div class="modal-bd">
+      <div class="form-row">
+        <div class="form-g">
+          <label>规则名称</label>
+          <input class="inp" id="ruleName" value="${r.name}" placeholder="输入规则名称">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-g">
+          <label>控制类型</label>
+          <div class="radio-group">
+            <input type="radio" name="ruleType" id="rtStrong" value="strong" ${r.type==='strong'?'checked':''}>
+            <label for="rtStrong">强控</label>
+            <input type="radio" name="ruleType" id="rtWeak" value="weak" ${r.type==='weak'?'checked':''}>
+            <label for="rtWeak">弱控</label>
+          </div>
+          <div style="font:400 11px/1.4 var(--f);color:var(--c4);margin-top:6px" id="ruleTypeDesc">
+            ${r.type === 'strong'
+              ? '强控：当分布超出比例限制时，阻止提交考核结果'
+              : '弱控：当分布超出比例限制时，显示警告但允许继续提交'}
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-g">
+          <label>最低人数阈值</label>
+          <input class="inp" id="ruleMinHead" type="number" value="${r.minHead}" min="1" placeholder="参与考核的最低人数">
+          <div style="font:400 11px/1 var(--f);color:var(--c4);margin-top:4px">低于此人数时不启用强制分布</div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-g">
+          <label>适用考核组</label>
+          <div class="chk-group" id="ruleGroups">${groupChks}</div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-g">
+          <label>规则说明</label>
+          <textarea class="inp" id="ruleDesc" placeholder="输入规则说明">${r.desc}</textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-s" onclick="closeModal()">取消</button>
+      <button class="btn btn-p" id="btnSaveRule" data-idx="${idx}">保存</button>
+    </div>
+  `);
+
+  // Toggle control type description
+  document.querySelectorAll('input[name="ruleType"]').forEach(radio => {
+    radio.onchange = () => {
+      document.getElementById('ruleTypeDesc').textContent =
+        radio.value === 'strong'
+          ? '强控：当分布超出比例限制时，阻止提交考核结果'
+          : '弱控：当分布超出比例限制时，显示警告但允许继续提交';
+    };
+  });
+
+  // Save
+  document.getElementById('btnSaveRule').onclick = () => {
+    const name = document.getElementById('ruleName').value.trim();
+    if(!name){ alert('请输入规则名称'); return; }
+    const type = document.querySelector('input[name="ruleType"]:checked').value;
+    const minHead = parseInt(document.getElementById('ruleMinHead').value) || 1;
+    const groups = [];
+    document.querySelectorAll('#ruleGroups .chk-label.checked input').forEach(inp => groups.push(inp.value));
+    const desc = document.getElementById('ruleDesc').value.trim();
+
+    const data = { name, type, minHead, groups, desc };
+    if(isNew) RULES.push(data);
+    else RULES[idx] = data;
+    closeModal();
+    render();
+  };
+}
+
+function toggleCheck(label){
+  label.classList.toggle('checked');
+  const inp = label.querySelector('input');
+  inp.checked = !inp.checked;
+  const dot = label.querySelector('.chk-dot');
+  dot.innerHTML = inp.checked ? I.check : '';
+}
+
+function openConfirmModal(title, msg, onConfirm){
+  openModal(`
+    <div class="modal-hd">
+      <span class="modal-hd-t">${title}</span>
+      <button class="modal-close" onclick="closeModal()">${I.x}</button>
+    </div>
+    <div class="modal-bd">
+      <p style="font:400 14px/1.6 var(--f);color:var(--c7)">${msg}</p>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-s" onclick="closeModal()">取消</button>
+      <button class="btn btn-d" id="btnConfirmDel">确认删除</button>
+    </div>
+  `);
+  document.getElementById('btnConfirmDel').onclick = onConfirm;
+}
+
+// ═══ 初始化 ═══
+// Initialize navigation first to create the content container
+GHR_NAV.init('perf', '强制分布规则');
+render();
+</script>
+</body>
+</html>

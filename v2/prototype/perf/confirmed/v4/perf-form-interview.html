@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GHR - 结果面谈</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --shadow-card-hover:0 8px 20px -4px rgba(0,0,0,.08),0 2px 6px -2px rgba(0,0,0,.04);
+  --header-h:52px;--r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --m:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+.hdr{height:var(--header-h);background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:1100}
+.hdr-l{display:flex;align-items:center;gap:14px}
+.logo{display:flex;align-items:center;gap:8px;text-decoration:none}
+.logo-i{width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center}
+.logo-i svg{width:15px;height:15px;color:#FFF}
+.logo-t{font-size:15px;font-weight:700;color:var(--c9);letter-spacing:-.3px}
+.back-btn{display:inline-flex;align-items:center;gap:4px;padding:0 10px;height:30px;border-radius:var(--r1);font:500 12px/1 var(--f);color:var(--c6);background:transparent;border:1px solid var(--c2);cursor:pointer;transition:all .12s;font-family:inherit}
+.back-btn:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
+.back-btn svg{width:14px;height:14px}
+.page-title{font:600 15px/1 var(--f);color:var(--c9);margin-left:8px}
+
+.pg{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);width:100%;overflow:hidden}
+.pg-hd{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--dv)}
+.pg-hd-l{display:flex;align-items:center;gap:14px}
+.pg-hd-ic{width:36px;height:36px;border-radius:var(--r2);background:var(--pr);display:flex;align-items:center;justify-content:center}
+.pg-hd-ic svg{width:18px;height:18px;color:#FFF}
+.pg-hd-t{font:700 18px/1.2 var(--f);color:var(--c9);letter-spacing:-.2px}
+.pg-hd-s{font:400 12px/1 var(--f);color:var(--c5);margin-top:3px}
+
+.emp-selector{display:flex;gap:8px;padding:16px 24px;border-bottom:1px solid var(--dv);background:var(--c0)}
+.emp-btn{padding:6px 14px;border-radius:var(--r1);border:1px solid var(--c2);font:500 12px/1 var(--f);color:var(--c6);background:var(--sf);cursor:pointer;transition:all .12s;font-family:inherit}
+.emp-btn:hover{border-color:var(--c3);color:var(--c8)}
+.emp-btn.on{background:var(--pr50);color:var(--pr);border-color:var(--pr200)}
+
+.section{padding:20px 24px;border-bottom:1px solid var(--dv)}
+.section:last-child{border-bottom:none}
+.section-hd{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.section-hd-ic{width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--pr)}
+.section-hd-ic svg{width:16px;height:16px}
+.section-hd-t{font:600 14px/1 var(--f);color:var(--c9)}
+
+.info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.info-item{display:flex;flex-direction:column;gap:4px}
+.info-label{font:400 12px/1 var(--f);color:var(--c5)}
+.info-value{font:500 13px/1.3 var(--f);color:var(--c8);background:var(--c0);padding:8px 12px;border-radius:var(--r1);border:1px solid var(--dv)}
+.info-value.readonly{background:var(--c0);color:var(--c6)}
+
+.form-group{margin-bottom:16px}
+.form-group:last-child{margin-bottom:0}
+.form-label{display:block;font:500 13px/1 var(--f);color:var(--c7);margin-bottom:6px}
+.form-label .req{color:var(--ro);margin-left:2px}
+.form-input,.form-select{width:100%;height:36px;padding:0 12px;border:1px solid var(--c2);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c8);background:var(--sf);transition:border-color .12s}
+.form-input:focus,.form-select:focus{outline:none;border-color:var(--pr)}
+.form-input::placeholder{color:var(--c4)}
+.form-input.invalid,.form-select.invalid{border-color:var(--ro);background:var(--ro50)}
+.form-input:disabled,.form-select:disabled{background:var(--c0);color:var(--c6);cursor:not-allowed}
+.form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+.form-textarea{width:100%;min-height:100px;padding:10px 12px;border:1px solid var(--c2);border-radius:var(--r1);font:400 13px/1.5 var(--f);color:var(--c8);resize:vertical;transition:border-color .12s}
+.form-textarea:focus{outline:none;border-color:var(--pr)}
+.form-textarea::placeholder{color:var(--c4)}
+.form-textarea.invalid{border-color:var(--ro);background:var(--ro50)}
+.form-textarea:disabled{background:var(--c0);color:var(--c6);cursor:not-allowed}
+.form-hint{font:400 11px/1.4 var(--f);color:var(--c5);margin-top:4px}
+.form-hint.warn{color:var(--ac)}
+.form-hint.error{color:var(--ro)}
+
+.file-upload{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px dashed var(--c3);border-radius:var(--r1);background:var(--c0);cursor:pointer;transition:all .12s}
+.file-upload:hover{border-color:var(--pr);background:var(--pr50)}
+.file-upload svg{width:16px;height:16px;color:var(--pr)}
+.file-upload span{font:400 12px/1 var(--f);color:var(--c6)}
+.file-upload.on{display:none}
+.file-list{margin-top:8px;display:flex;flex-direction:column;gap:4px}
+.file-item{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:var(--c0);border-radius:var(--r1);font:400 12px/1 var(--f);color:var(--c7)}
+.file-item-remove{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:none;background:transparent;color:var(--c4);cursor:pointer;transition:all .12s}
+.file-item-remove:hover{color:var(--ro);background:var(--ro50)}
+.file-item-remove svg{width:12px;height:12px}
+
+.approval-section{background:var(--pr50);border:1px solid var(--pr100);border-radius:var(--r2);padding:16px;margin-top:12px}
+.approval-section .section-hd{margin-bottom:12px}
+
+.not-started{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 24px;text-align:center}
+.not-started-icon{width:64px;height:64px;border-radius:50%;background:var(--c1);display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.not-started-icon svg{width:28px;height:28px;color:var(--c4)}
+.not-started-t{font:600 16px/1.3 var(--f);color:var(--c8);margin-bottom:6px}
+.not-started-s{font:400 13px/1 var(--f);color:var(--c5)}
+
+.completed-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:var(--r1);font:600 13px/1 var(--f);color:#FFF;background:var(--em)}
+.completed-badge svg{width:14px;height:14px}
+
+.actions{display:flex;justify-content:flex-end;gap:12px;padding:20px 24px;border-top:1px solid var(--dv);background:var(--c0)}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 20px;height:36px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
+.btn svg{width:14px;height:14px}
+.btn-p{background:var(--pr);color:#FFF}
+.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c7);border:1px solid var(--c2)}
+.btn-s:hover{background:var(--c0);border-color:var(--c3)}
+.btn-danger{background:var(--sf);color:var(--ro);border:1px solid var(--ro100)}
+.btn-danger:hover{background:var(--ro50);border-color:var(--ro)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);padding:10px 20px;border-radius:var(--r2);font:500 13px/1 var(--f);color:#FFF;z-index:9999;animation:toastIn .25s ease forwards;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.toast.success{background:var(--em)}
+.toast.warning{background:var(--ac)}
+.toast.error{background:var(--ro)}
+.toast.info{background:var(--pr)}
+
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fi{animation:fadeIn .25s ease forwards}
+</style>
+</head>
+<body>
+
+<!-- Navigation will be injected by navigation.js -->
+
+<div class="pg fi">
+    <div class="pg-hd">
+      <div class="pg-hd-l">
+        <div class="pg-hd-ic">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <div>
+          <div class="pg-hd-t">结果面谈</div>
+          <div class="pg-hd-s" id="pgSub"></div>
+        </div>
+      </div>
+      <div class="pg-a" id="headerActions">
+        <div id="headerBadge"></div>
+      </div>
+    </div>
+
+    <div id="formContent"></div>
+  </div>
+
+<script src="navigation.js"></script>
+<script>
+// 本人填写模式：只显示当前员工，不显示其他员工
+// 通过 EMPLOYEE_IDX 切换查看不同状态（原型演示用）
+const EMPLOYEES = [
+  {id:'EMP001', name:'张三', dept:'技术部', title:'高级工程师', leader:'李四', status:'pending_employee_fill', cycle:'2026年度', startDate:'2026-05-28'},
+  {id:'EMP002', name:'王五', dept:'产品部', title:'产品经理', leader:'赵六', status:'pending_leader_review', cycle:'2026年度', startDate:'2026-05-27'},
+  {id:'EMP003', name:'陈七', dept:'设计部', title:'UI设计师', leader:'李四', status:'completed', cycle:'2026年度', startDate:'2026-05-20'},
+];
+
+// 原型演示：通过 URL 参数 ?idx=1 切换员工，默认显示第一个
+const currentIdx = parseInt(new URLSearchParams(window.location.search).get('idx') || '0');
+let uploadedFiles = [];
+
+const STATUS_CONFIG = {
+  not_started: {label:'未开始', color:'var(--c5)', bg:'var(--c1)'},
+  pending_employee_fill: {label:'待填写', color:'#92400E', bg:'var(--ac50)'},
+  pending_leader_review: {label:'待审批', color:'var(--pr)', bg:'var(--pr50)'},
+  completed: {label:'已完成', color:'var(--em700)', bg:'var(--em50)'},
+};
+
+function init() {
+  renderForm();
+}
+
+function renderForm() {
+  const emp = EMPLOYEES[currentIdx];
+  const container = document.getElementById('formContent');
+  const badge = document.getElementById('headerBadge');
+  const sub = document.getElementById('pgSub');
+  const cfg = STATUS_CONFIG[emp.status];
+
+  sub.textContent = `考核周期：${emp.cycle}`;
+  badge.innerHTML = `<span style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:var(--r1);font:500 12px/1 var(--f);background:${cfg.bg};color:${cfg.color}"><span style="width:6px;height:6px;border-radius:50%;background:${cfg.color}"></span>${cfg.label}</span>`;
+
+  if (emp.status === 'not_started') {
+    container.innerHTML = renderNotStarted();
+    return;
+  }
+
+  const isEmployeeFill = emp.status === 'pending_employee_fill';
+  const isLeaderReview = emp.status === 'pending_leader_review';
+  const isCompleted = emp.status === 'completed';
+  const readonly = !isEmployeeFill;
+
+  container.innerHTML = `
+    <!-- 基本信息 -->
+    <div class="section">
+      <div class="section-hd">
+        <div class="section-hd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <span class="section-hd-t">基本信息</span>
+      </div>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">考核周期</span>
+          <div class="info-value readonly">${emp.cycle}</div>
+        </div>
+        <div class="info-item">
+          <span class="info-label">发起日期</span>
+          <div class="info-value readonly">${emp.startDate}</div>
+        </div>
+        <div class="info-item">
+          <span class="info-label">被考核人</span>
+          <div class="info-value readonly">${emp.name}</div>
+        </div>
+        <div class="info-item">
+          <span class="info-label">部门</span>
+          <div class="info-value readonly">${emp.dept}</div>
+        </div>
+        <div class="info-item">
+          <span class="info-label">职位</span>
+          <div class="info-value readonly">${emp.title}</div>
+        </div>
+        <div class="info-item">
+          <span class="info-label">直接上级</span>
+          <div class="info-value readonly">${emp.leader}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 面谈内容 -->
+    <div class="section">
+      <div class="section-hd">
+        <div class="section-hd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+        <span class="section-hd-t">面谈内容</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">您的直线上级是否有跟您进行过年度绩效面谈？<span class="req">*</span></label>
+        <select class="form-select" id="f_held" ${readonly?'disabled':''}>
+          <option value="">请选择</option>
+          <option value="one_on_one" ${isCompleted?'selected':''}>是，一对一面谈</option>
+          <option value="phone">是，电话面谈</option>
+          <option value="other">是，其他形式面谈</option>
+          <option value="no">否</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">点三个赞<span class="req">*</span></label>
+        <textarea class="form-textarea" id="f_praise" placeholder="请列出3个工作中的亮点（每行一项）" ${readonly?'disabled':''}>${isCompleted?'主导完成微服务架构迁移，系统可用性从99.5%提升至99.95%\n优化CI/CD流水线，构建时间缩短40%\n带领新人完成3个模块的知识转移':''}</textarea>
+        <div class="form-hint" id="hint_praise">每行一项，至少填写3项</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">拍三个转<span class="req">*</span></label>
+        <textarea class="form-textarea" id="f_improve" placeholder="请列出3个待改进方面（每行一项）" ${readonly?'disabled':''}>${isCompleted?'技术方案文档化不足，影响团队协作效率\n跨部门沟通主动性有待加强\n时间管理需改进，偶有延期交付':''}</textarea>
+        <div class="form-hint" id="hint_improve">每行一项，至少填写3项</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">员工下一阶段规划<span class="req">*</span></label>
+        <textarea class="form-textarea" id="f_plan" placeholder="请描述下一阶段的工作规划" ${readonly?'disabled':''}>${isCompleted?'推进核心系统容器化改造，预计Q2完成；建立技术方案评审机制；参与架构师培训计划':''}</textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">提一个需求<span class="req">*</span></label>
+        <textarea class="form-textarea" id="f_needs" placeholder="请列出您的支持需求（至少1项）" ${readonly?'disabled':''}>${isCompleted?'希望参加云原生架构培训\n需要更多跨部门项目协作机会':''}</textarea>
+        <div class="form-hint" id="hint_needs">至少填写1项</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">附件</label>
+        ${readonly ? renderFileListReadonly() : renderFileUpload()}
+      </div>
+    </div>
+
+    <!-- 上级评语 -->
+    <div class="section">
+      <div class="section-hd">
+        <div class="section-hd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
+        <span class="section-hd-t">上级评语</span>
+      </div>
+      <div class="form-group">
+        <label class="form-label">上级评语${isLeaderReview?'<span class="req">*</span>':''}</label>
+        <textarea class="form-textarea" id="f_leader_comment" placeholder="${isLeaderReview?'请输入上级评语':'暂无评语'}" ${(isEmployeeFill||isCompleted)?'disabled':''}>${isCompleted?'面谈内容详实，亮点和不足分析到位，下阶段规划清晰可行。同意。':''}</textarea>
+        ${isCompleted?'<div class="form-hint" style="color:var(--em700)">审批人已确认</div>':''}
+      </div>
+    </div>
+
+  `;
+
+  // Render actions into header
+  document.getElementById('headerActions').innerHTML = renderActions(emp);
+
+  if (isEmployeeFill) {
+    bindLiveHints();
+  }
+}
+
+function renderNotStarted() {
+  return `
+    <div class="not-started">
+      <div class="not-started-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+      </div>
+      <div class="not-started-t">面谈尚未开始</div>
+      <div class="not-started-s">等待考核周期启动后方可填写面谈记录</div>
+    </div>
+  `;
+}
+
+function renderActions(emp) {
+  if (emp.status === 'pending_employee_fill') {
+    return `
+      <button class="btn btn-s" onclick="saveDraft()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        保存草稿
+      </button>
+      <button class="btn btn-p" onclick="submitForm()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        提交
+      </button>
+    `;
+  }
+  if (emp.status === 'pending_leader_review') {
+    return `
+      <button class="btn btn-danger" onclick="rejectForm()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        驳回
+      </button>
+      <button class="btn btn-p" onclick="approveForm()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        同意
+      </button>
+    `;
+  }
+  if (emp.status === 'completed') {
+    return `
+      <span class="completed-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        面谈已完成
+      </span>
+    `;
+  }
+  return '';
+}
+
+function renderFileUpload() {
+  return `
+    <div class="file-upload" onclick="document.getElementById('fileInput').click()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <span>点击上传附件（可选，支持多文件）</span>
+    </div>
+    <input type="file" id="fileInput" multiple style="display:none" onchange="handleFileSelect(event)">
+    <div class="file-list" id="fileList"></div>
+  `;
+}
+
+function renderFileListReadonly() {
+  return `<div style="font:400 13px/1 var(--f);color:var(--c5)">无附件</div>`;
+}
+
+function handleFileSelect(e) {
+  const files = Array.from(e.target.files);
+  files.forEach(f => {
+    if (!uploadedFiles.find(u => u.name === f.name && u.size === f.size)) {
+      uploadedFiles.push(f);
+    }
+  });
+  renderFileList();
+  e.target.value = '';
+}
+
+function renderFileList() {
+  const el = document.getElementById('fileList');
+  if (!el) return;
+  el.innerHTML = uploadedFiles.map((f, i) => `
+    <div class="file-item">
+      <span>${f.name} <span style="color:var(--c4);font-size:11px">(${(f.size/1024).toFixed(1)}KB)</span></span>
+      <button class="file-item-remove" onclick="removeFile(${i})">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+  `).join('');
+}
+
+function removeFile(idx) {
+  uploadedFiles.splice(idx, 1);
+  renderFileList();
+}
+
+function bindLiveHints() {
+  const fields = [
+    {id:'f_praise', hint:'hint_praise', min:3},
+    {id:'f_improve', hint:'hint_improve', min:3},
+    {id:'f_needs', hint:'hint_needs', min:1},
+  ];
+  fields.forEach(f => {
+    const el = document.getElementById(f.id);
+    if (!el) return;
+    const update = () => {
+      const count = countItems(el.value);
+      const hintEl = document.getElementById(f.hint);
+      if (!hintEl) return;
+      if (count < f.min) {
+        hintEl.className = 'form-hint warn';
+        hintEl.textContent = `已填 ${count} 项，至少需要 ${f.min} 项`;
+      } else {
+        hintEl.className = 'form-hint';
+        hintEl.textContent = `已填 ${count} 项，符合要求`;
+      }
+      el.classList.remove('invalid');
+    };
+    el.addEventListener('input', update);
+    update();
+  });
+}
+
+function countItems(val) {
+  return val.split('\n').map(s => s.trim()).filter(s => s.length > 0).length;
+}
+
+function validate() {
+  let valid = true;
+  const errors = [];
+  document.querySelectorAll('.invalid').forEach(el => el.classList.remove('invalid'));
+
+  const held = document.getElementById('f_held');
+  if (!held.value) {
+    held.classList.add('invalid');
+    errors.push('请选择是否进行过绩效面谈');
+    valid = false;
+  }
+
+  const praise = document.getElementById('f_praise');
+  const pCount = countItems(praise.value);
+  if (pCount < 3) {
+    praise.classList.add('invalid');
+    errors.push(`点三个赞至少需要3项（当前${pCount}项）`);
+    valid = false;
+  }
+
+  const improve = document.getElementById('f_improve');
+  const iCount = countItems(improve.value);
+  if (iCount < 3) {
+    improve.classList.add('invalid');
+    errors.push(`拍三个转至少需要3项（当前${iCount}项）`);
+    valid = false;
+  }
+
+  const plan = document.getElementById('f_plan');
+  if (!plan.value.trim()) {
+    plan.classList.add('invalid');
+    errors.push('请填写员工下一阶段规划');
+    valid = false;
+  }
+
+  const needs = document.getElementById('f_needs');
+  const nCount = countItems(needs.value);
+  if (nCount < 1) {
+    needs.classList.add('invalid');
+    errors.push(`提一个需求至少需要1项（当前${nCount}项）`);
+    valid = false;
+  }
+
+  if (!valid) toast(errors[0], 'error');
+  return valid;
+}
+
+function saveDraft() {
+  toast('草稿已保存', 'success');
+}
+
+function submitForm() {
+  if (!validate()) return;
+  const emp = EMPLOYEES[currentIdx];
+  emp.status = 'pending_leader_review';
+  toast('提交成功', 'success');
+  setTimeout(() => { renderForm(); }, 500);
+}
+
+function approveForm() {
+  const comment = document.getElementById('f_leader_comment');
+  if (!comment.value.trim()) {
+    comment.classList.add('invalid');
+    toast('请填写上级评语', 'error');
+    return;
+  }
+  const emp = EMPLOYEES[currentIdx];
+  emp.status = 'completed';
+  toast('审批通过', 'success');
+  setTimeout(() => { renderForm(); }, 500);
+}
+
+function rejectForm() {
+  const comment = document.getElementById('f_leader_comment');
+  if (!comment.value.trim()) {
+    comment.classList.add('invalid');
+    toast('驳回时必须填写上级评语', 'error');
+    return;
+  }
+  const emp = EMPLOYEES[currentIdx];
+  emp.status = 'pending_employee_fill';
+  toast('已驳回，员工需重新填写', 'warning');
+  setTimeout(() => { renderForm(); }, 500);
+}
+
+function toast(msg, type) {
+  const t = document.createElement('div');
+  t.className = `toast ${type||'info'}`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => { t.style.transition='opacity .2s'; t.style.opacity='0'; setTimeout(()=>t.remove(),200); }, 2500);
+}
+
+// Initialize navigation first to create the content container
+GHR_NAV.init('perf', '绩效表单');
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GHR 绩效管理 - 原型导航</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --shadow-card-hover:0 8px 20px -4px rgba(0,0,0,.08),0 2px 6px -2px rgba(0,0,0,.04);
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --m:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+.hdr{height:52px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:100}
+.logo{display:flex;align-items:center;gap:8px}
+.logo-i{width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center}
+.logo-i svg{width:15px;height:15px;color:#FFF}
+.logo-t{font-size:15px;font-weight:700;color:var(--c9);letter-spacing:-.3px}
+.hdr-r{margin-left:auto;display:flex;align-items:center;gap:12px}
+.hdr-tag{font:500 11px/1 var(--f);padding:3px 8px;border-radius:var(--r1);background:var(--pr50);color:var(--pr)}
+
+/* Hero */
+.hero{background:linear-gradient(135deg,var(--pr) 0%,var(--pr700) 100%);border-radius:var(--r4);padding:36px 40px;margin-bottom:28px;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:rgba(255,255,255,.08);border-radius:50%}
+.hero-t{font:700 24px/1.2 var(--f);color:#FFF;margin-bottom:6px;position:relative;z-index:1}
+.hero-s{font:400 14px/1.5 var(--f);color:rgba(255,255,255,.8);max-width:600px;position:relative;z-index:1}
+.hero-tags{display:flex;gap:8px;margin-top:16px;position:relative;z-index:1}
+.hero-tag{font:500 11px/1 var(--f);padding:4px 10px;border-radius:var(--r1);background:rgba(255,255,255,.18);color:#FFF}
+
+/* Section */
+.sec{margin-bottom:28px}
+.sec-t{font:600 15px/1.3 var(--f);color:var(--c9);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.sec-t::before{content:'';width:3px;height:16px;background:var(--pr);border-radius:2px}
+
+/* Card grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+.card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px;transition:all .2s;cursor:pointer;border:1px solid transparent;text-decoration:none;color:inherit;display:block}
+.card:hover{box-shadow:var(--shadow-card-hover);transform:translateY(-2px);border-color:var(--pr100)}
+.card-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.card-ic{width:36px;height:36px;border-radius:var(--r2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.card-ic svg{width:18px;height:18px;color:#FFF}
+.card-ic.b{background:var(--pr)}.card-ic.g{background:var(--em)}.card-ic.y{background:var(--ac)}.card-ic.p{background:var(--vi)}.card-ic.r{background:var(--ro)}
+.card-ver{font:500 10px/1 var(--f);padding:2px 7px;border-radius:3px}
+.card-ver.v2{color:var(--pr);background:var(--pr50)}
+.card-ver.v3{color:var(--vi);background:var(--vi50)}
+.card-n{font:600 14px/1.3 var(--f);color:var(--c9);margin-bottom:4px}
+.card-d{font:400 12px/1.5 var(--f);color:var(--c5);margin-bottom:12px}
+.card-ft{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.card-st{font:500 10px/1 var(--f);padding:2px 7px;border-radius:3px}
+.card-st.done{color:var(--em700);background:var(--em50)}
+.card-st.ready{color:var(--pr);background:var(--pr50)}
+.card-st.blocked{color:var(--ac);background:var(--ac50)}
+.card-st.p2{color:var(--c5);background:var(--c1)}
+
+/* Issues */
+.issues{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden}
+.iss{display:flex;align-items:flex-start;gap:12px;padding:12px 20px;border-bottom:1px solid var(--dv);transition:background .1s}
+.iss:last-child{border-bottom:none}
+.iss:hover{background:var(--c0)}
+.iss-ic{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.iss-ic svg{width:12px;height:12px}
+.iss-ic.fixme{background:var(--ro50);color:var(--ro)}
+.iss-ic.fixme svg{color:var(--ro)}
+.iss-ic.todo{background:var(--ac50);color:var(--ac)}
+.iss-ic.todo svg{color:var(--ac)}
+.iss-ic.done{background:var(--em50);color:var(--em700)}
+.iss-ic.done svg{color:var(--em700)}
+.iss-t{font:500 13px/1.4 var(--f);color:var(--c8)}
+.iss-d{font:400 12px/1.4 var(--f);color:var(--c5);margin-top:2px}
+.iss-tag{font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px;flex-shrink:0;margin-left:auto;margin-top:2px}
+.iss-tag.f{color:var(--ro);background:var(--ro50)}
+.iss-tag.t{color:var(--ac);background:var(--ac50)}
+.iss-tag.done{color:var(--em700);background:var(--em50)}
+
+/* Footer */
+.ft{text-align:center;padding:32px 0;font:400 12px/1 var(--f);color:var(--c4)}
+</style>
+</head>
+<body>
+
+<!-- Navigation will be injected by navigation.js -->
+
+<div class="hero">
+  <div class="hero-t">GHR 绩效管理原型</div>
+  <div class="hero-s">覆盖 V2 考核方案设计（28项）+ V3 考核表单（28项），共 56 项功能。纯 HTML 原型，可直接用于生成 PRD 文档。</div>
+  <div class="hero-tags">
+    <span class="hero-tag">V2 方案设计 28项</span>
+    <span class="hero-tag">V3 表单 28项</span>
+    <span class="hero-tag">排除: 流程引擎/消息/角色权限</span>
+    <span class="hero-tag">待确认: 全部 8 项已确认</span>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-t">原型页面</div>
+  <div class="grid" id="cards"></div>
+</div>
+
+<div class="sec">
+  <div class="sec-t">待确认逻辑（全部 8 项已确认）</div>
+  <div class="issues" id="issues"></div>
+</div>
+
+<div class="ft">GHR 绩效管理原型 · 生成于 2026-05-27 · 纯 HTML 无框架依赖</div>
+
+<script src="navigation.js"></script>
+<script>
+const PAGES=[
+  {f:'perf-scheme-list.html',n:'绩效方案列表',d:'方案 CRUD、启用/停用、复制、筛选搜索、分页',v:'v2',ic:'file',icb:'b',st:'ready',stl:'待开发'},
+  {f:'perf-scheme-wizard.html',n:'方案新增/编辑向导',d:'3步向导：基本信息 → 考核组 → 考核环节设计（含强制分布参数配置）',v:'v2',ic:'settings',icb:'p',st:'ready',stl:'待开发'},
+  {f:'perf-scheme-detail.html',n:'方案详情',d:'只读查看方案配置 + 关联活动列表',v:'v2',ic:'eye',icb:'g',st:'ready',stl:'待开发'},
+  {f:'perf-form-templates.html',n:'预置考核表单',d:'表单模板列表（PBC目标/绩效考核/结果审定/员工确认）',v:'v2',ic:'file',icb:'y',st:'ready',stl:'待开发'},
+  {f:'perf-form-pbc.html',n:'PBC目标制定表单',d:'基本信息 + 模块概览 + 右侧侧边栏目标填写 + 复制历史目标',v:'v3',ic:'target',icb:'p',st:'ready',stl:'待开发'},
+  {f:'perf-form-evaluation.html',n:'绩效考核表单',d:'单人评分 + 批量对比模式 + 批量导入 + 加减分事项',v:'v3',ic:'check',icb:'g',st:'ready',stl:'待开发'},
+  {f:'perf-form-ratification.html',n:'结果审定表单',d:'等级调整 + 实时强制分布展示 + 批量对比审定',v:'v3',ic:'chart',icb:'y',st:'ready',stl:'待开发'},
+  {f:'perf-form-confirmation.html',n:'员工确认表单',d:'绩效结果展示 + 确认/不确认处理',v:'v3',ic:'user',icb:'b',st:'ready',stl:'待开发'},
+  {f:'perf-form-interview.html',n:'绩效面谈表单',d:'员工填写面谈记录 + 上级审批 + 状态流转',v:'v3',ic:'check',icb:'p',st:'ready',stl:'待开发'},
+];
+
+const ISSUES=[
+  {t:'跳过审定环节的员工是否纳入强制分布分母？等级从哪来？',d:'已确认 BR-010/014：纳入分母，等级取方案配置的固定等级',type:'done'},
+  {t:'审定双流程模式（汇报线逐级/组织架构逐级）选择时机未定义',d:'已确认 BR-046：方案配置时选择，活动启动后不可变',type:'done'},
+  {t:'员工确认"不同意"后 HRBP 审批的完整闭环缺失',d:'已确认 BR-OPEN-05：HRBP 知会确认，流程结束，线下处理',type:'done'},
+  {t:'绩效面谈表单与确认表单字段冲突，数据流向不明',d:'已确认 BR-023：确认表单直接引用面谈数据，不重复存储',type:'done'},
+  {t:'批量评分提交是原子操作还是逐条？部分失败如何处理？',d:'已确认 BR-047：非原子，逐条处理，部分成功部分失败',type:'done'},
+  {t:'绩效申诉功能是否纳入 V2/V3',d:'已确认：V2/V3 不做，移除向导申诉开关',type:'done'},
+  {t:'配置目录完成状态判定边界条件',d:'已确认：所有必填字段填完才算完成',type:'done'},
+  {t:'V2 步骤5流程关联依赖 V3 流程引擎',d:'已确认：流程引擎已有，原型展示关联模拟流程数据',type:'done'},
+];
+
+const I={target:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',file:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',settings:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',eye:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',chart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',user:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',alert:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'};
+
+document.getElementById('cards').innerHTML=PAGES.map(p=>`
+  <a class="card" href="${p.f}">
+    <div class="card-hd">
+      <div class="card-ic ${p.icb}">${I[p.ic]}</div>
+      <span class="card-ver ${p.v}">${p.v.toUpperCase()}</span>
+    </div>
+    <div class="card-n">${p.n}</div>
+    <div class="card-d">${p.d}</div>
+    <div class="card-ft">
+      <span class="card-st ${p.st}">${p.stl}</span>
+    </div>
+  </a>
+`).join('');
+
+document.getElementById('issues').innerHTML=ISSUES.map(is=>`
+  <div class="iss">
+    <div class="iss-ic ${is.type}">
+      ${is.type==='f'?I.alert:is.type==='done'?I.check:I.info}
+    </div>
+    <div style="flex:1;min-width:0">
+      <div class="iss-t">${is.t}</div>
+      <div class="iss-d">${is.d}</div>
+    </div>
+    <span class="iss-tag ${is.type}">${is.type==='f'?'FIXME':is.type==='done'?'已确认':'TODO'}</span>
+  </div>
+`).join('');
+
+// Initialize navigation
+GHR_NAV.init('perf', '绩效方案');
+</script>
+</body>
+</html>

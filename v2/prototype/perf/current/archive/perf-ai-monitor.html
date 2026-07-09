@@ -1,0 +1,2033 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - AI 绩效活动</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
+.btn svg{width:13px;height:13px}
+.btn-p{background:var(--pr);color:#FFF}.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
+
+/* TOP INFO BAR */
+.top-bar{background:var(--sf);border-bottom:1px solid var(--dv);padding:20px 24px;display:flex;align-items:center;gap:16px}
+.top-bar-l{flex:1;min-width:0}
+.top-bar-name{font:700 20px/1.3 var(--f);color:var(--c9);margin-bottom:6px}
+.top-bar-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.top-bar-meta .sep{width:1px;height:14px;background:var(--c3)}
+.top-bar-meta span{font:400 12px/1 var(--f);color:var(--c5)}
+.top-bar-meta .tag{display:inline-flex;align-items:center;gap:4px;font:500 11px/1 var(--f);padding:3px 10px;border-radius:var(--r1)}
+.tag-pr{color:var(--pr);background:var(--pr50)}
+.tag-em{color:var(--em700);background:var(--em50)}
+.tag-ac{color:var(--ac700);background:var(--ac50)}
+.top-bar-r{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.act-switch{height:32px;padding:0 30px 0 12px;border:1px solid var(--c2);border-radius:var(--r1);font:500 13px/1 var(--f);color:var(--c8);background:var(--sf) url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center;appearance:none;cursor:pointer;outline:none;min-width:180px}
+.act-switch:focus{border-color:var(--pr)}
+
+/* TABS */
+.act-tabs{display:flex;padding:0 24px;border-bottom:1px solid var(--dv);gap:0;background:var(--sf)}
+.act-tab{padding:12px 20px;font:500 13px/1 var(--f);color:var(--c5);cursor:pointer;border-bottom:2px solid transparent;transition:all .12s;margin-bottom:-1px}
+.act-tab:hover{color:var(--c7)}
+.act-tab.on{color:var(--pr);border-bottom-color:var(--pr);font-weight:600}
+
+/* TAB CONTENT AREA */
+.tab-ct{padding:24px;overflow-y:auto;flex:1}
+.tab-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;gap:12px}
+.tab-placeholder svg{width:48px;height:48px;color:var(--c3)}
+.tab-placeholder .t{font:500 14px/1 var(--f);color:var(--c5)}
+.tab-placeholder .s{font:400 12px/1 var(--f);color:var(--c4)}
+
+/* INFO BANNER */
+.info-banner{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--pr50);border:1px solid var(--pr100);border-radius:var(--r2);margin-bottom:20px;font:400 13px/1.4 var(--f);color:var(--pr)}
+.info-banner svg{width:16px;height:16px;flex-shrink:0;color:var(--pr)}
+
+/* FORM SECTIONS */
+.form-sec{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:16px}
+.form-sec-t{font:600 14px/1.3 var(--f);color:var(--c9);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.form-sec-t::before{content:'';width:3px;height:14px;background:var(--pr);border-radius:2px}
+
+/* GRID LAYOUTS */
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.form-grp{display:flex;flex-direction:column;gap:5px}
+.form-lb{font:500 12px/1 var(--f);color:var(--c6)}
+.ro-val{font:400 13px/1.4 var(--f);color:var(--c9);padding:7px 10px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r1);min-height:34px;display:flex;align-items:center}
+
+/* TAGS */
+.tag-sm{display:inline-flex;align-items:center;font:500 11px/1 var(--f);padding:3px 10px;border-radius:var(--r1)}
+.tag-green{color:var(--em700);background:var(--em50)}
+.tag-gray{color:var(--c5);background:var(--c1)}
+
+/* GRADE TAGS */
+.grade-tags{display:flex;gap:6px;flex-wrap:wrap}
+.grade-tag{display:inline-flex;align-items:center;font:600 12px/1 var(--f);padding:4px 12px;border-radius:var(--r1);color:var(--sf);background:var(--pr)}
+.grade-tag.g-a{background:var(--ro)}
+.grade-tag.g-bp{background:var(--ac)}
+.grade-tag.g-b{background:var(--em)}
+.grade-tag.g-bm{background:var(--vi)}
+.grade-tag.g-c{background:var(--c5)}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font:600 12px/1 var(--f);color:var(--c5);text-align:left;padding:10px 12px;border-bottom:1px solid var(--dv);background:var(--c0)}
+.tbl td{padding:10px 12px;border-bottom:1px solid var(--dv);font:400 13px/1.3 var(--f);color:var(--c7)}
+.tbl tr:hover td{background:var(--c0)}
+
+/* EXPANDABLE SECTION */
+.exp-sec{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:12px;overflow:hidden}
+.exp-sec-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;cursor:pointer;transition:background .12s;user-select:none}
+.exp-sec-hd:hover{background:var(--c0)}
+.exp-sec-hd-l{display:flex;align-items:center;gap:10px}
+.exp-sec-hd-dot{width:8px;height:8px;border-radius:50%;background:var(--pr)}
+.exp-sec-hd-t{font:600 14px/1.3 var(--f);color:var(--c9)}
+.exp-sec-hd-s{font:400 12px/1 var(--f);color:var(--c5)}
+.exp-sec-hd svg{width:14px;height:14px;color:var(--c4);transition:transform .2s;flex-shrink:0}
+.exp-sec.open .exp-sec-hd svg{transform:rotate(180deg)}
+.exp-sec-bd{padding:0 20px;max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s ease}
+.exp-sec.open .exp-sec-bd{max-height:1200px;padding:16px 20px}
+.cfg-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px 24px}
+.cfg-item{display:flex;flex-direction:column;gap:3px}
+.cfg-item .k{font:500 12px/1 var(--f);color:var(--c5)}
+.cfg-item .v{font:400 13px/1.4 var(--f);color:var(--c9)}
+.cfg-item .v.mono{font-family:var(--fm);font-size:12px}
+.cfg-divider{grid-column:1/-1;height:1px;background:var(--dv);margin:4px 0}
+.cfg-sub-hd{grid-column:1/-1;font:600 13px/1 var(--f);color:var(--c8);margin-top:4px}
+
+/* WEIGHT NODES */
+.wt-nodes{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.wt-node{display:flex;align-items:center;gap:6px;padding:6px 12px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r1);font:400 12px/1 var(--f);color:var(--c7)}
+.wt-node .pct{font-family:var(--fm);font-weight:600;color:var(--pr)}
+
+/* GRADE RATIO */
+.grade-ratio{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.grade-ratio-item{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--r1);font:500 12px/1 var(--f)}
+.grade-ratio-item .label{color:var(--c7)}
+.grade-ratio-item .limit{font-family:var(--fm);color:var(--pr);font-weight:600}
+.grade-ratio-item.a{background:var(--ro50);border:1px solid var(--ro100)}
+.grade-ratio-item.a .label{color:var(--ro)}
+.grade-ratio-item.bp{background:var(--ac50);border:1px solid var(--ac100)}
+.grade-ratio-item.bp .label{color:var(--ac700)}
+.grade-ratio-item.b{background:var(--em50);border:1px solid var(--em100)}
+.grade-ratio-item.b .label{color:var(--em700)}
+.grade-ratio-item.bm{background:var(--vi50);border:1px solid #DDD6FE}
+.grade-ratio-item.bm .label{color:var(--vi)}
+.grade-ratio-item.c{background:var(--c1);border:1px solid var(--c2)}
+.grade-ratio-item.c .label{color:var(--c5)}
+
+/* MAIN WRAPPER */
+.page-wrap{display:flex;flex-direction:column;height:calc(100vh - 52px)}
+
+/* STAT CARDS (Tab 2) */
+.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
+.stat-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:16px 20px;display:flex;flex-direction:column;gap:4px;border-left:3px solid var(--c3)}
+.stat-card .stat-num{font:700 28px/1.1 var(--f)}
+.stat-card .stat-label{font:500 12px/1 var(--f);color:var(--c5)}
+.stat-card.sc-blue{border-left-color:var(--pr)}.stat-card.sc-blue .stat-num{color:var(--pr)}
+.stat-card.sc-green{border-left-color:var(--em)}.stat-card.sc-green .stat-num{color:var(--em)}
+.stat-card.sc-amber{border-left-color:var(--ac)}.stat-card.sc-amber .stat-num{color:var(--ac)}
+.stat-card.sc-red{border-left-color:var(--ro)}.stat-card.sc-red .stat-num{color:var(--ro)}
+.stat-card.sc-gray{border-left-color:var(--c4)}.stat-card.sc-gray .stat-num{color:var(--c4)}
+
+/* STAGE CARDS (Tab 2) */
+.stage-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:12px;overflow:hidden}
+.stage-card.dimmed{opacity:.5}
+.stage-card-hd{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--dv)}
+.stage-card-hd-name{font:600 14px/1.3 var(--f);color:var(--c9)}
+.stage-card-hd-meta{display:flex;align-items:center;gap:8px;margin-left:4px}
+.stage-card-hd-meta .sm{font:400 12px/1 var(--f);color:var(--c5)}
+.stage-card-hd-r{margin-left:auto;display:flex;align-items:center;gap:8px}
+.stage-card-bd{padding:16px 20px}
+.stage-tag{display:inline-flex;align-items:center;font:500 11px/1 var(--f);padding:3px 10px;border-radius:var(--r1)}
+.stage-tag.st-green{color:var(--em700);background:var(--em50)}
+.stage-tag.st-blue{color:var(--pr);background:var(--pr50)}
+.stage-tag.st-amber{color:var(--ac700);background:var(--ac50)}
+.stage-tag.st-gray{color:var(--c5);background:var(--c1)}
+
+/* PROGRESS (Tab 2) */
+.progress-wrap{margin-bottom:16px}
+.progress-bar-bg{height:8px;background:var(--c2);border-radius:4px;overflow:hidden;margin-bottom:8px}
+.progress-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--pr),#60A5FA);transition:width .4s ease}
+.progress-text{font:400 13px/1.3 var(--f);color:var(--c7);margin-bottom:12px}
+.group-breakdown{display:flex;flex-direction:column;gap:8px}
+.group-row{display:flex;align-items:center;gap:12px}
+.group-row .group-name{font:400 12px/1 var(--f);color:var(--c6);width:80px;flex-shrink:0}
+.group-row .group-bar-bg{flex:1;height:6px;background:var(--c2);border-radius:3px;overflow:hidden}
+.group-row .group-bar-fill{height:100%;border-radius:3px;background:var(--pr)}
+.group-row .group-bar-fill.gb-green{background:var(--em)}
+.group-row .group-bar-fill.gb-amber{background:var(--ac)}
+.group-row .group-pct{font:500 12px/1 var(--fm);color:var(--c6);width:44px;text-align:right;flex-shrink:0}
+.group-row .group-count{font:400 12px/1 var(--f);color:var(--c4);width:60px;text-align:right;flex-shrink:0}
+
+/* PENDING HINT (Tab 2) */
+.pending-hint{padding:12px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2);font:400 12px/1.4 var(--f);color:var(--c5)}
+
+/* BATCH BAR (Tab 2) */
+.batch-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.batch-bar-title{font:600 14px/1.3 var(--f);color:var(--c9);display:flex;align-items:center;gap:8px}
+.batch-bar-title::before{content:'';width:3px;height:14px;background:var(--pr);border-radius:2px}
+.batch-bar-btns{display:flex;gap:8px}
+.btn-outline-p{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;background:var(--sf);color:var(--pr);border:1px solid var(--pr)}.btn-outline-p:hover{background:var(--pr50)}
+.btn-outline-s{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;background:var(--sf);color:var(--c6);border:1px solid var(--c2)}.btn-outline-s:hover{border-color:var(--c3);color:var(--c8)}
+.btn-outline-s.danger{color:var(--ro);border-color:var(--ro100)}.btn-outline-s.danger:hover{background:var(--ro50);border-color:var(--ro)}
+.btn-disabled{opacity:.45;cursor:not-allowed;pointer-events:none}
+
+/* ═══ Tab 3: 考核人 ═══ */
+.rv-filter{display:flex;align-items:center;gap:10px;padding:0 0 16px;flex-wrap:wrap}
+.rv-filter .btn{height:30px;font-size:12px}
+.rv-filter input{height:30px;border:1px solid var(--c2);border-radius:var(--r1);padding:0 10px;font:400 12px/1 var(--f);color:var(--c7);outline:none;width:200px}
+.rv-filter input:focus{border-color:var(--pr)}
+.rv-tags{display:flex;gap:8px;padding:0 0 16px;flex-wrap:wrap}
+.rv-tag{display:inline-flex;align-items:center;gap:4px;padding:6px 14px;border-radius:var(--r1);font:500 12px/1 var(--f);cursor:pointer;transition:all .12s;background:var(--sf);color:var(--c6);border:1px solid var(--c2);user-select:none}
+.rv-tag:hover{border-color:var(--c3);color:var(--c8)}
+.rv-tag.on{background:var(--pr50);color:var(--pr);border-color:var(--pr200)}
+.rv-tag .cnt{font-family:var(--fm);font-weight:600;margin-left:2px}
+.rv-table{width:100%;border-collapse:collapse}
+.rv-table th{font:600 12px/1 var(--f);color:var(--c5);text-align:left;padding:10px 12px;border-bottom:1px solid var(--dv);background:var(--c0)}
+.rv-table td{padding:10px 12px;border-bottom:1px solid var(--dv);font:400 13px/1.3 var(--f);color:var(--c7)}
+.rv-table tr:hover td{background:var(--c0)}
+.rv-table .name-link{color:var(--pr);cursor:pointer;font-weight:500}
+.rv-table .name-link:hover{text-decoration:underline}
+.rv-table input[type="checkbox"]{width:14px;height:14px;cursor:pointer;accent-color:var(--pr)}
+.rv-ops{display:flex;gap:6px}
+.rv-ops a{font:500 12px/1 var(--f);color:var(--pr);cursor:pointer;white-space:nowrap}
+.rv-ops a:hover{text-decoration:underline}
+.rv-ops a.danger{color:var(--ro)}
+.rv-batch{display:flex;align-items:center;justify-content:space-between;padding:12px 0;margin-top:4px;border-top:1px solid var(--dv)}
+.rv-batch .left{font:400 12px/1 var(--f);color:var(--c5);display:flex;align-items:center;gap:8px}
+.rv-batch .left .cnt{font-family:var(--fm);font-weight:600;color:var(--pr)}
+.rv-batch .right{display:flex;gap:8px}
+.rv-detail{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden}
+.rv-hd{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--dv)}
+.rv-hd-l{display:flex;align-items:center;gap:16px}
+.rv-hd-name{font:700 18px/1.3 var(--f);color:var(--c9)}
+.rv-hd-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.rv-hd-meta span{font:400 12px/1 var(--f);color:var(--c5)}
+.rv-hd-meta .sep{width:1px;height:12px;background:var(--c3)}
+.rv-hd-r{display:flex;gap:8px}
+.tl-body{padding:24px}
+.tl-stage{border-left:2px solid var(--c2);padding:0 0 20px 20px;position:relative}
+.tl-stage:last-child{border-left-color:transparent;padding-bottom:0}
+.tl-stage::before{content:'';position:absolute;left:-6px;top:0;width:10px;height:10px;border-radius:50%;background:var(--c3);border:2px solid var(--sf)}
+.tl-stage.tl-done::before{background:var(--em)}
+.tl-stage.tl-active::before{background:var(--pr);box-shadow:0 0 0 3px var(--pr100)}
+.tl-stage-hd{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.tl-stage-hd-name{font:600 14px/1.3 var(--f);color:var(--c9)}
+.tl-stage-hd-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tl-stage-hd-meta .sm{font:400 12px/1 var(--f);color:var(--c5)}
+.tl-node{margin-left:16px;border-left:1px solid var(--c2);padding:0 0 16px 16px;position:relative}
+.tl-node:last-child{border-left-color:transparent;padding-bottom:0}
+.tl-node::before{content:'';position:absolute;left:-5px;top:4px;width:8px;height:8px;border-radius:50%;background:var(--c3);border:2px solid var(--sf)}
+.tl-node.tl-done::before{background:var(--em)}
+.tl-node.tl-pending::before{background:var(--ac)}
+.tl-node-hd{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.tl-node-hd-name{font:500 13px/1 var(--f);color:var(--c8)}
+.tl-node-hd-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tl-node-hd-meta .sm{font:400 11px/1 var(--f);color:var(--c5)}
+.tl-content{background:var(--c0);border:1px solid var(--dv);padding:12px 14px;border-radius:var(--r2);font:400 12px/1.6 var(--f);color:var(--c7);white-space:pre-line}
+.tl-content.pending-content{color:var(--c4);font-style:italic}
+
+/* ═══ Tab 4: 异常排查 ═══ */
+.an-subtabs{display:flex;border-bottom:1px solid var(--dv);gap:0;background:var(--sf);margin:-24px -24px 20px;padding:0 24px}
+.an-subtab{padding:12px 20px;font:500 13px/1 var(--f);color:var(--c5);cursor:pointer;border-bottom:2px solid transparent;transition:all .12s;margin-bottom:-1px}
+.an-subtab:hover{color:var(--c7)}
+.an-subtab.on{color:var(--pr);border-bottom-color:var(--pr);font-weight:600}
+.an-filter{display:flex;align-items:center;gap:10px;padding:0 0 16px;flex-wrap:wrap}
+.an-filter select{height:30px;border:1px solid var(--c2);border-radius:var(--r1);padding:0 10px;font:400 12px/1 var(--f);color:var(--c7);outline:none;background:var(--sf);cursor:pointer}
+.an-filter select:focus{border-color:var(--pr)}
+.an-filter input{height:30px;border:1px solid var(--c2);border-radius:var(--r1);padding:0 10px;font:400 12px/1 var(--f);color:var(--c7);outline:none;width:200px}
+.an-filter input:focus{border-color:var(--pr)}
+.an-table{width:100%;border-collapse:collapse}
+.an-table th{font:600 12px/1 var(--f);color:var(--c5);text-align:left;padding:10px 12px;border-bottom:1px solid var(--dv);background:var(--c0)}
+.an-table td{padding:10px 12px;border-bottom:1px solid var(--dv);font:400 13px/1.3 var(--f);color:var(--c7)}
+.an-table tr:hover td{background:var(--c0)}
+.an-table input[type="checkbox"]{width:14px;height:14px;cursor:pointer;accent-color:var(--pr)}
+.an-tag{display:inline-block;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f)}
+.an-ops{display:flex;gap:6px}
+.an-ops a{font:500 12px/1 var(--f);color:var(--pr);cursor:pointer;white-space:nowrap}
+.an-ops a:hover{text-decoration:underline}
+.an-pag{display:flex;align-items:center;justify-content:space-between;padding:12px 0;margin-top:4px}
+.an-pag .left{font:400 12px/1 var(--f);color:var(--c5)}
+.an-pag .left .cnt{font-family:var(--fm);font-weight:600;color:var(--pr)}
+.an-pag .right{display:flex;gap:4px}
+.an-pag .pg-btn{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:var(--r1);font:500 12px/1 var(--f);color:var(--c6);cursor:pointer;border:1px solid var(--c2);background:var(--sf);transition:all .12s}
+.an-pag .pg-btn:hover{border-color:var(--c3);color:var(--c8)}
+.an-pag .pg-btn.on{background:var(--pr);color:#FFF;border-color:var(--pr)}
+
+/* CONFIRM DIALOG */
+.cfm-ov{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:2100;display:flex;align-items:center;justify-content:center;animation:fi .15s ease}
+.cfm-box{background:var(--sf);border-radius:var(--r4);box-shadow:0 20px 60px rgba(0,0,0,.25);width:380px;padding:24px}
+.cfm-title{font:600 15px/1.3 var(--f);color:var(--c9);margin-bottom:8px}
+.cfm-msg{font:400 13px/1.5 var(--f);color:var(--c6);margin-bottom:20px}
+.cfm-btns{display:flex;justify-content:flex-end;gap:8px}
+.btn-danger{background:var(--ro);color:#FFF}.btn-danger:hover{background:#E11D48}
+
+/* ANIMATION */
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fi{animation:fi .2s ease forwards}
+
+/* ═══ Wizard Modal ═══ */
+.wiz-ov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:2000;display:flex;align-items:center;justify-content:center;animation:fi .15s ease}
+.wiz-modal{background:var(--sf);border-radius:var(--r4);box-shadow:0 20px 60px rgba(0,0,0,.2);width:520px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden}
+.wiz-modal.wide{width:680px}
+.wiz-modal.xwide{width:920px;max-height:85vh}
+.pick-filter{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--dv);flex-wrap:wrap}
+.pick-filter select{height:30px;padding:0 26px 0 10px;border:1px solid var(--c2);border-radius:var(--r1);font:400 12px/1 var(--f);color:var(--c7);background:var(--sf) url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 8px center;appearance:none;cursor:pointer;outline:none;-webkit-appearance:none}
+.pick-filter select:focus{border-color:var(--pr)}
+.pick-tbl{width:100%;border-collapse:collapse}
+.pick-tbl th{font:600 12px/1 var(--f);color:var(--c5);text-align:left;padding:10px 12px;border-bottom:1px solid var(--dv);background:var(--c0);white-space:nowrap}
+.pick-tbl td{padding:10px 12px;border-bottom:1px solid var(--dv);font:400 13px/1.3 var(--f);color:var(--c7)}
+.pick-tbl tr:hover td{background:var(--c0)}
+.pick-tbl input[type="checkbox"]{width:14px;height:14px;cursor:pointer;accent-color:var(--pr)}
+.pick-foot{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-top:1px solid var(--dv);margin-top:8px;font:400 12px/1 var(--f);color:var(--c5)}
+.pick-foot .sel-all{display:flex;align-items:center;gap:6px;cursor:pointer}
+.pick-foot .sel-all input{accent-color:var(--pr)}
+.pick-pg{display:flex;align-items:center;gap:4px}
+.pick-pg .pg-btn{min-width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:var(--r1);font:500 12px/1 var(--f);color:var(--c6);cursor:pointer;border:1px solid var(--c2);background:var(--sf);transition:all .12s;padding:0 6px}
+.pick-pg .pg-btn:hover{border-color:var(--c3);color:var(--c8)}
+.pick-pg .pg-btn.on{background:var(--pr);color:#FFF;border-color:var(--pr)}
+.pick-pg .pg-btn:disabled{opacity:.4;cursor:not-allowed}
+.pick-info{font:400 12px/1 var(--f);color:var(--c5);margin-right:12px}
+.pick-info .cnt{font-family:var(--fm);font-weight:600;color:var(--pr)}
+.wiz-hd{padding:20px 24px 0;border-bottom:1px solid var(--dv)}
+.wiz-hd-title{font:600 16px/1.3 var(--f);color:var(--c9);margin-bottom:16px}
+.wiz-steps{display:flex;gap:0;padding-bottom:0}
+.wiz-step{flex:1;text-align:center;padding:10px 0;font:500 12px/1 var(--f);color:var(--c4);border-bottom:2px solid transparent;position:relative;cursor:default}
+.wiz-step.on{color:var(--pr);border-bottom-color:var(--pr);font-weight:600}
+.wiz-step.done{color:var(--em);border-bottom-color:var(--em)}
+.wiz-step .num{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;font-size:11px;font-weight:600;margin-right:6px;border:1.5px solid var(--c3);color:var(--c5)}
+.wiz-step.on .num{background:var(--pr);color:#FFF;border-color:var(--pr)}
+.wiz-step.done .num{background:var(--em);color:#FFF;border-color:var(--em)}
+.wiz-bd{padding:20px 24px;overflow-y:auto;flex:1;min-height:200px}
+.wiz-ft{padding:16px 24px;border-top:1px solid var(--dv);display:flex;justify-content:flex-end;gap:8px}
+.wiz-method{border:1.5px solid var(--c2);border-radius:var(--r2);padding:16px;cursor:pointer;transition:all .15s;margin-bottom:10px}
+.wiz-method:hover{border-color:var(--pr);background:var(--pr50)}
+.wiz-method.sel{border-color:var(--pr);background:var(--pr50);box-shadow:0 0 0 2px var(--pr100)}
+.wiz-method-t{font:600 13px/1.3 var(--f);color:var(--c9);margin-bottom:4px}
+.wiz-method-d{font:400 12px/1.4 var(--f);color:var(--c5)}
+.wiz-info{background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2);padding:12px 14px;margin-bottom:16px}
+.wiz-info-row{display:flex;align-items:center;gap:8px;font:400 12px/1.4 var(--f);color:var(--c7)}
+.wiz-info-row .lbl{color:var(--c5);min-width:70px}
+.wiz-count{font:500 12px/1 var(--f);color:var(--pr);margin-bottom:12px}
+.import-area{border:2px dashed var(--c2);border-radius:var(--r2);padding:32px;text-align:center;cursor:pointer;transition:border-color .15s}
+.import-area:hover{border-color:var(--pr)}
+.import-area input[type="file"]{display:none}
+.import-area .icon{font-size:28px;margin-bottom:8px;color:var(--c4)}
+.import-area .txt{font:400 13px/1.4 var(--f);color:var(--c5)}
+.import-area .txt b{color:var(--pr)}
+.imp-tbl{width:100%;border-collapse:collapse;font-size:12px;margin-top:12px}
+.imp-tbl th{font:600 11px/1 var(--f);color:var(--c5);text-align:left;padding:8px;border-bottom:1px solid var(--dv);background:var(--c0)}
+.imp-tbl td{padding:8px;border-bottom:1px solid var(--dv);color:var(--c7)}
+.imp-tbl .err-row td{background:var(--ro50);color:var(--ro)}
+.imp-tbl .dup-row td{background:var(--ac50)}
+.imp-badge{display:inline-block;padding:2px 6px;border-radius:3px;font:500 10px/1 var(--f)}
+.imp-badge.ok{color:var(--em);background:var(--em50)}
+.imp-badge.err{color:var(--ro);background:var(--ro50)}
+.imp-badge.dup{color:var(--ac);background:var(--ac50)}
+.wiz-sum{font:500 13px/1 var(--f);color:var(--c7);margin-bottom:12px}
+.wiz-sum .cnt{color:var(--pr);font-weight:600}
+
+/* AI CHAT SIDEBAR */
+body.chat-open #ct{margin-right:380px;transition:margin .3s ease}
+.ai-chat{position:fixed;right:0;top:0;bottom:0;width:380px;background:var(--sf);box-shadow:-4px 0 20px rgba(0,0,0,.1);z-index:1500;transform:translateX(100%);transition:transform .3s ease;display:flex;flex-direction:column}
+body.chat-open .ai-chat{transform:translateX(0)}
+.ai-chat-hd{padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.ai-chat-hd-ic{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--vi),var(--pr));display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0}
+.ai-chat-hd-t{font:600 14px/1.2 var(--f);color:var(--c9)}
+.ai-chat-hd-s{font:400 11px/1 var(--f);color:var(--c5)}
+.ai-chat-close{margin-left:auto;width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:transparent;color:var(--c5);transition:all .12s}
+.ai-chat-close:hover{background:var(--c1);color:var(--c7)}
+.ai-chat-bd{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:12px}
+.ai-msg{max-width:90%}
+.ai-msg.bot{align-self:flex-start}
+.ai-msg.user{align-self:flex-end}
+.ai-msg-bd{padding:10px 14px;border-radius:var(--r3);font:400 13px/1.5 var(--f);word-break:break-word}
+.ai-msg.bot .ai-msg-bd{background:var(--c1);color:var(--c8);border-bottom-left-radius:4px}
+.ai-msg.user .ai-msg-bd{background:var(--pr);color:#fff;border-bottom-right-radius:4px}
+.ai-msg-time{font:400 10px/1 var(--f);color:var(--c4);margin-top:4px}
+.ai-msg.bot .ai-msg-time{text-align:left}
+.ai-msg.user .ai-msg-time{text-align:right}
+.ai-msg-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.ai-msg-btn{font:500 11px/1 var(--f);padding:5px 10px;border-radius:var(--r1);border:1px solid var(--c2);background:var(--sf);color:var(--c6);cursor:pointer;transition:all .12s;font-family:inherit}
+.ai-msg-btn:hover{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-msg-btn.primary{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-msg-card{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);padding:12px;margin-top:8px}
+.ai-msg-card-t{font:600 12px/1.3 var(--f);color:var(--c8);margin-bottom:4px}
+.ai-msg-card-d{font:400 12px/1.5 var(--f);color:var(--c5)}
+.ai-msg-card-tag{display:inline-block;font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px;margin-top:6px}
+.ai-msg-card-tag.em{color:var(--em700);background:var(--em50)}
+.ai-msg-card-tag.pr{color:var(--pr);background:var(--pr50)}
+.ai-msg-card-tag.ac{color:var(--ac);background:var(--ac50)}
+.ai-msg-card-tag.ro{color:var(--ro);background:var(--ro50)}
+.ai-chat-ft{padding:12px 16px;border-top:1px solid var(--dv);flex-shrink:0;display:flex;gap:8px;align-items:center}
+.ai-chat-input{flex:1;height:36px;border:1px solid var(--c2);border-radius:var(--r2);padding:0 12px;font:400 13px/1 var(--f);color:var(--c8);outline:none;transition:border .15s}
+.ai-chat-input:focus{border-color:var(--pr)}
+.ai-chat-send{width:36px;height:36px;border-radius:var(--r2);background:var(--pr);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#FFF;transition:all .12s;flex-shrink:0}
+.ai-chat-send:hover{background:var(--pr700)}
+.ai-toggle{position:fixed;right:20px;bottom:20px;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--vi),var(--pr));color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(124,92,252,.4);z-index:999;transition:transform .2s;border:none}
+.ai-toggle:hover{transform:scale(1.1)}
+body.chat-open .ai-toggle{display:none}
+.ai-tag{display:inline-flex;align-items:center;gap:3px;font:500 10px/1 var(--f);color:var(--vi);background:var(--vi50);padding:2px 6px;border-radius:4px;margin-left:6px}
+</style>
+</head>
+<body>
+
+<!-- Navigation injected by navigation.js -->
+<div id="app"></div>
+
+<script src="navigation.js"></script>
+<script>
+// ═══ SVG Icons ═══
+const I = {
+  info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
+  chevDown: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>',
+  download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+  upload: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>',
+  clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+  users: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  alert: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  folder: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>',
+};
+
+// ═══ Mock Activity Data ═══
+function getActivityFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const id = parseInt(params.get('id'));
+  const DB = {
+    1: { name:'2026年Q2绩效考核', cycle:'2026年Q2', plan:'年度绩效方案 v2', status:'进行中', statusClass:'tag-ac' },
+    2: { name:'2026年Q1绩效考核', cycle:'2026年Q1', plan:'半年度方案 v1', status:'已结束', statusClass:'tag-gray' },
+    3: { name:'2026年3月月度考核', cycle:'2026年3月', plan:'月度方案 v1', status:'已发布', statusClass:'tag-pr' },
+    4: { name:'2025年度绩效考核', cycle:'2025年度', plan:'年度绩效方案 v1', status:'已结束', statusClass:'tag-gray' },
+  };
+  return (id && DB[id]) ? DB[id] : { name:'2026年度绩效考核', cycle:'2026年度', plan:'年度绩效方案 v2', status:'进行中', statusClass:'tag-ac' };
+}
+const ACTIVITY = getActivityFromUrl();
+
+// ═══ Tab Definitions ═══
+const TABS = [
+  { id: 'plan', label: '方案信息' },
+  { id: 'process', label: '考核过程' },
+  { id: 'reviewers', label: '考核人' },
+  { id: 'exceptions', label: '异常列表' },
+  { id: 'oplog', label: '操作日志' },
+];
+
+// ═══ State ═══
+let curTab = 'plan';
+let openStages = { goal: true, eval: false, ratify: false, confirm: false, interview: false };
+
+// Wizard state
+let wizOpen=false, wizStep=1, wizMethod='', wizSelected=[], wizImportRows=[];
+
+// Employee picker state (for manual mode)
+const EMP_PICKER_DATA = [
+  {emp:'EMP001',name:'张三',dept:'技术部',position:'高级工程师',level:'P6',gender:'男',hireDate:'2022-03-15',workplace:'深圳'},
+  {emp:'EMP002',name:'李四',dept:'产品部',position:'产品经理',level:'P5',gender:'男',hireDate:'2021-07-01',workplace:'深圳'},
+  {emp:'EMP003',name:'王五',dept:'财务部',position:'财务总监',level:'M4',gender:'女',hireDate:'2019-01-10',workplace:'深圳'},
+  {emp:'EMP004',name:'孙八',dept:'技术部',position:'技术总监',level:'M3',gender:'男',hireDate:'2018-06-20',workplace:'深圳'},
+  {emp:'EMP005',name:'周九',dept:'产品部',position:'产品专员',level:'P3',gender:'女',hireDate:'2023-09-01',workplace:'北京'},
+  {emp:'EMP006',name:'吴十',dept:'市场部',position:'市场经理',level:'P7',gender:'男',hireDate:'2020-11-15',workplace:'上海'},
+  {emp:'EMP007',name:'郑十一',dept:'财务部',position:'会计',level:'P4',gender:'女',hireDate:'2022-05-10',workplace:'深圳'},
+  {emp:'EMP008',name:'陈十二',dept:'运营部',position:'运营专员',level:'P3',gender:'男',hireDate:'2024-01-08',workplace:'广州'},
+  {emp:'EMP009',name:'褚十三',dept:'技术部',position:'前端工程师',level:'P4',gender:'男',hireDate:'2023-03-20',workplace:'深圳'},
+  {emp:'EMP010',name:'卫十四',dept:'市场部',position:'品牌专员',level:'P3',gender:'女',hireDate:'2023-08-15',workplace:'上海'},
+  {emp:'EMP011',name:'蒋十五',dept:'运营部',position:'运营总监',level:'M3',gender:'男',hireDate:'2019-04-01',workplace:'深圳'},
+  {emp:'EMP012',name:'沈十六',dept:'技术部',position:'后端工程师',level:'P5',gender:'男',hireDate:'2022-01-10',workplace:'深圳'},
+  {emp:'EMP013',name:'韩十七',dept:'产品部',position:'产品总监',level:'M3',gender:'女',hireDate:'2018-09-01',workplace:'北京'},
+  {emp:'EMP014',name:'杨十八',dept:'市场部',position:'市场专员',level:'P3',gender:'男',hireDate:'2024-02-15',workplace:'广州'},
+  {emp:'EMP015',name:'赵六',dept:'市场部',position:'渠道经理',level:'P6',gender:'男',hireDate:'2021-03-01',workplace:'上海'},
+  {emp:'EMP016',name:'钱七',dept:'运营部',position:'运营经理',level:'P6',gender:'女',hireDate:'2020-06-15',workplace:'深圳'},
+  {emp:'EMP017',name:'冯十七',dept:'技术部',position:'测试工程师',level:'P4',gender:'男',hireDate:'2023-05-20',workplace:'深圳'},
+  {emp:'EMP018',name:'彭十九',dept:'产品部',position:'产品专员',level:'P3',gender:'女',hireDate:'2024-03-01',workplace:'北京'},
+  {emp:'EMP019',name:'吕二十',dept:'财务部',position:'财务经理',level:'P6',gender:'男',hireDate:'2020-08-10',workplace:'深圳'},
+  {emp:'EMP020',name:'马二一',dept:'运营部',position:'运营专员',level:'P3',gender:'女',hireDate:'2024-04-15',workplace:'广州'},
+];
+let pickFilter = { dept:'', level:'', hireYear:'', search:'' };
+let pickPage = 1;
+const PICK_PAGE_SIZE = 10;
+let pickSelectedIds = new Set();
+
+// Confirm dialog state
+let cfmOpen=false, cfmTitle='', cfmMsg='', cfmOnConfirm=null;
+function showConfirm(title, msg, onConfirm){cfmOpen=true;cfmTitle=title;cfmMsg=msg;cfmOnConfirm=onConfirm;render();}
+function closeConfirm(){cfmOpen=false;cfmOnConfirm=null;render();}
+function doConfirm(){if(cfmOnConfirm)cfmOnConfirm();cfmOpen=false;cfmOnConfirm=null;render();}
+
+// ═══ Render ═══
+function render() {
+  const app = document.getElementById('app');
+  app.innerHTML = renderTopBar() + renderTabs() + '<div class="tab-ct" id="tabCt">' + renderTabContent() + '</div>';
+  if (wizOpen) app.innerHTML += renderReviewerWizard();
+  if (cfmOpen) app.innerHTML += `<div class="cfm-ov" onclick="if(event.target===this)closeConfirm()"><div class="cfm-box"><div class="cfm-title">${cfmTitle}</div><div class="cfm-msg">${cfmMsg}</div><div class="cfm-btns"><button class="btn btn-s" onclick="closeConfirm()">取消</button><button class="btn btn-danger" onclick="doConfirm()">确认</button></div></div></div>`;
+  if (opDlgOpen) app.innerHTML += renderOpDlg();
+  if (importDlgOpen) app.innerHTML += renderImportDlg();
+  if (exportDlgOpen) app.innerHTML += renderExportDlg();
+}
+
+const ALL_ACTIVITIES = [
+  {id:1,name:'2026年Q2绩效考核',plan:'年度绩效方案 v2'},
+  {id:2,name:'2026年Q1绩效考核',plan:'半年度方案 v1'},
+  {id:3,name:'2026年3月月度考核',plan:'月度方案 v1'},
+  {id:4,name:'2025年度绩效考核',plan:'年度绩效方案 v1'},
+];
+function renderTopBar() {
+  const curId = parseInt(new URLSearchParams(window.location.search).get('id')) || 1;
+  const options = ALL_ACTIVITIES.map(a => `<option value="${a.id}"${a.id===curId?' selected':''}>${a.name}</option>`).join('');
+  return `<div class="top-bar">
+    <div class="top-bar-l">
+      <div style="margin-bottom:6px"><a href="perf-activity.html" style="font:400 12px/1 var(--f);color:var(--pr);text-decoration:none;cursor:pointer">← 活动管理</a></div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+        <select class="act-switch" onchange="switchActivity(this.value)">${options}</select>
+      </div>
+      <div class="top-bar-meta">
+        <span>${ACTIVITY.cycle}</span>
+        <div class="sep"></div>
+        <span class="tag tag-pr">${ACTIVITY.plan}</span>
+        <div class="sep"></div>
+        <span class="tag ${ACTIVITY.statusClass}">${ACTIVITY.status}</span>
+      </div>
+    </div>
+  </div>`;
+}
+function switchActivity(id) {
+  window.location.href = 'perf-ai-monitor.html?id=' + id;
+}
+
+function renderTabs() {
+  return `<div class="act-tabs">${TABS.map(t =>
+    `<div class="act-tab${curTab === t.id ? ' on' : ''}" onclick="switchTab('${t.id}')">${t.label}</div>`
+  ).join('')}</div>`;
+}
+
+function renderTabContent() {
+  if (curTab === 'plan') return renderPlanTab();
+  if (curTab === 'process') return renderProcessTab();
+  if (curTab === 'reviewers') return renderReviewersTab();
+  if (curTab === 'exceptions') return renderExceptionTab();
+  if (curTab === 'oplog') return renderOpLogTab();
+  return '';
+}
+
+// ═══ Tab 1: 方案信息 ═══
+function renderPlanTab() {
+  return `<div class="fi">
+    <div class="info-banner">
+      ${I.info}
+      <span>以下配置 copy 自绩效方案「${ACTIVITY.plan}」，仅展示不可编辑</span>
+    </div>
+
+    ${renderBasicInfo()}
+    ${renderAssessmentGroups()}
+    ${renderStageConfigs()}
+  </div>`;
+}
+
+function renderBasicInfo() {
+  return `<div class="form-sec">
+    <div class="form-sec-t">基本信息</div>
+    <div class="grid-3">
+      <div class="form-grp">
+        <label class="form-lb">方案名称</label>
+        <div class="ro-val">年度绩效方案</div>
+      </div>
+      <div class="form-grp">
+        <label class="form-lb">方案版本</label>
+        <div class="ro-val">v2</div>
+      </div>
+      <div class="form-grp">
+        <label class="form-lb">周期类型</label>
+        <div class="ro-val">年度</div>
+      </div>
+      <div class="form-grp">
+        <label class="form-lb">配置模式</label>
+        <div class="ro-val">按考核组配置</div>
+      </div>
+      <div class="form-grp">
+        <label class="form-lb">适用部门</label>
+        <div class="ro-val">纵腾网络</div>
+      </div>
+      <div class="form-grp">
+        <label class="form-lb">是否启用</label>
+        <div class="ro-val"><span class="tag-sm tag-green">已启用</span></div>
+      </div>
+      <div class="form-grp">
+        <label class="form-lb">动态考核</label>
+        <div class="ro-val"><span class="tag-sm tag-gray">关闭</span></div>
+      </div>
+      <div class="form-grp">
+        <label class="form-lb">绩效等级</label>
+        <div class="ro-val">
+          <div class="grade-tags">
+            <span class="grade-tag g-a">A</span>
+            <span class="grade-tag g-bp">B+</span>
+            <span class="grade-tag g-b">B</span>
+            <span class="grade-tag g-bm">B-</span>
+            <span class="grade-tag g-c">C</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderAssessmentGroups() {
+  return `<div class="form-sec">
+    <div class="form-sec-t">考核组</div>
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>考核组</th>
+          <th>优先级</th>
+          <th>匹配规则</th>
+          <th>排除人员</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tag-sm" style="color:var(--ro);background:var(--ro50)">管理层组</span></td>
+          <td style="font-family:var(--fm);font-size:12px;font-weight:600">1</td>
+          <td style="color:var(--c7)">职位 = 总监及以上</td>
+          <td style="color:var(--c4)">-</td>
+        </tr>
+        <tr>
+          <td><span class="tag-sm" style="color:var(--pr);background:var(--pr50)">员工组</span></td>
+          <td style="font-family:var(--fm);font-size:12px;font-weight:600">2</td>
+          <td style="color:var(--c7)">职级 = P1-P8</td>
+          <td style="color:var(--c4)">-</td>
+        </tr>
+        <tr>
+          <td><span class="tag-sm" style="color:var(--c5);background:var(--c1)">默认组</span></td>
+          <td style="font-family:var(--fm);font-size:12px;font-weight:600">99</td>
+          <td style="color:var(--c7)">兜底</td>
+          <td style="color:var(--c4)">-</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function renderStageConfigs() {
+  const planKey = Object.keys(STAGE_TEMPLATES).find(k => ACTIVITY.plan.includes(k)) || '年度绩效方案';
+  const activeIds = STAGE_TEMPLATES[planKey];
+  const stages = [
+    {
+      id: 'goal', name: '目标制定', summary: '5 项配置',
+      items: [
+        { k: '开启方式', v: '手动' },
+        { k: '结束方式', v: '超时自动结束' },
+        { k: '流程模板', v: '目标审批流程 v1' },
+        { k: '强制结束规则', v: '超时30天自动结束' },
+        { k: '表单模板', v: 'PBC目标制定表单' },
+      ],
+    },
+    {
+      id: 'eval', name: '绩效考核', summary: '7 项配置',
+      items: [
+        { k: '评价规则', v: 'KPI+360综合评价' },
+        { k: '开启方式', v: '手动' },
+        { k: '结束方式', v: '超时自动结束' },
+        { k: '流程模板', v: '考核评分流程 v1' },
+        { type: 'divider' },
+        { type: 'sub', v: '节点权重' },
+        { type: 'weights', nodes: [
+          { name: '自评', pct: '10%' },
+          { name: '上级', pct: '50%' },
+          { name: '同事', pct: '20%' },
+          { name: '下级', pct: '20%' },
+        ]},
+        { k: '强制结束规则', v: '超时15天自动结束' },
+        { k: '表单模板', v: '绩效考核表单' },
+      ],
+    },
+    {
+      id: 'ratify', name: '结果审定', summary: '7 项配置',
+      items: [
+        { k: '开启方式', v: '手动' },
+        { k: '结束方式', v: '手动' },
+        { k: '强制分布规则', v: '标准分布' },
+        { k: '控制模式', v: '强控' },
+        { type: 'divider' },
+        { type: 'sub', v: '等级配比' },
+        { type: 'grade-ratio', ratios: [
+          { label: 'A', limit: '≤10%', cls: 'a' },
+          { label: 'B+', limit: '≥15%', cls: 'bp' },
+          { label: 'B', limit: '≥30%', cls: 'b' },
+          { label: 'B-', limit: '不限', cls: 'bm' },
+          { label: 'C', limit: '≤5%', cls: 'c' },
+        ]},
+        { k: '强制结束规则', v: '超时7天自动结束' },
+        { k: '表单模板', v: '结果审定表单' },
+      ],
+    },
+    {
+      id: 'confirm', name: '结果确认', summary: '4 项配置',
+      items: [
+        { k: '开启方式', v: '自动（审定完成后）' },
+        { k: '结束方式', v: '超时自动结束' },
+        { k: '流程模板', v: '结果确认流程 v1' },
+        { k: '强制结束规则', v: '无' },
+        { k: '表单模板', v: '员工确认表单' },
+      ],
+    },
+    {
+      id: 'interview', name: '绩效面谈', summary: '5 项配置',
+      items: [
+        { k: '开启方式', v: '手动' },
+        { k: '结束方式', v: '手动' },
+        { k: '流程模板', v: '面谈记录流程 v1' },
+        { k: '强制结束规则', v: '超时10天自动结束' },
+        { k: '表单模板', v: '绩效面谈表单' },
+      ],
+    },
+  ];
+
+  return `<div style="margin-top:4px">
+    <div style="font:600 14px/1.3 var(--f);color:var(--c9);margin-bottom:12px;display:flex;align-items:center;gap:8px">
+      <span style="display:inline-block;width:3px;height:14px;background:var(--pr);border-radius:2px"></span>
+      考核环节配置
+    </div>
+    ${stages.filter(s => activeIds.includes(s.id)).map(s => renderStageSection(s)).join('')}
+  </div>`;
+}
+
+function renderStageSection(stage) {
+  const isOpen = openStages[stage.id];
+  let bodyHtml = '<div class="cfg-grid">';
+  stage.items.forEach(item => {
+    if (item.type === 'divider') {
+      bodyHtml += '<div class="cfg-divider"></div>';
+    } else if (item.type === 'sub') {
+      bodyHtml += `<div class="cfg-sub-hd">${item.v}</div>`;
+    } else if (item.type === 'weights') {
+      bodyHtml += `<div style="grid-column:1/-1"><div class="wt-nodes">${item.nodes.map(n =>
+        `<div class="wt-node"><span>${n.name}</span><span class="pct">${n.pct}</span></div>`
+      ).join('')}</div></div>`;
+    } else if (item.type === 'grade-ratio') {
+      bodyHtml += `<div style="grid-column:1/-1"><div class="grade-ratio">${item.ratios.map(r =>
+        `<div class="grade-ratio-item ${r.cls}"><span class="label">${r.label}</span><span class="limit">${r.limit}</span></div>`
+      ).join('')}</div></div>`;
+    } else {
+      bodyHtml += `<div class="cfg-item"><span class="k">${item.k}</span><span class="v">${item.v}</span></div>`;
+    }
+  });
+  bodyHtml += '</div>';
+
+  return `<div class="exp-sec${isOpen ? ' open' : ''}" id="stage-${stage.id}">
+    <div class="exp-sec-hd" onclick="toggleStage('${stage.id}')">
+      <div class="exp-sec-hd-l">
+        <div class="exp-sec-hd-dot"></div>
+        <span class="exp-sec-hd-t">${stage.name}</span>
+        <span class="exp-sec-hd-s">${stage.summary}</span>
+      </div>
+      ${I.chevDown}
+    </div>
+    <div class="exp-sec-bd">${bodyHtml}</div>
+  </div>`;
+}
+
+// ═══ Tab 2: 考核过程 ═══
+// Stage templates per plan type
+const STAGE_TEMPLATES = {
+  '年度绩效方案': ['ratify','confirm','interview'],
+  '半年度方案':   ['interview'],
+  '月度方案':     ['goal','eval','ratify','confirm'],
+};
+const STAGE_DEFS = {
+  goal:      { id:'goal',      name:'目标制定', hint:'建议在目标制定环节完成率达到 80% 后开启' },
+  eval:      { id:'eval',      name:'绩效考核', hint:'建议在目标制定环节完成率达到 80% 后开启' },
+  ratify:    { id:'ratify',    name:'结果审定' },
+  confirm:   { id:'confirm',   name:'结果确认' },
+  interview: { id:'interview', name:'绩效面谈' },
+};
+
+function initStages() {
+  const planKey = Object.keys(STAGE_TEMPLATES).find(k => ACTIVITY.plan.includes(k)) || '年度绩效方案';
+  const ids = STAGE_TEMPLATES[planKey];
+  return ids.map((id, idx) => {
+    const def = STAGE_DEFS[id];
+    // Give the first stage a running head start for demo
+    if (idx === 0) {
+      return { ...def, status:'active', openTime:'2026/04/01 09:00',
+        progress:{done:92,total:128},
+        groups:[{name:'管理层组',done:10,total:12},{name:'员工组',done:72,total:98},{name:'默认组',done:10,total:18}] };
+    }
+    return { ...def, status:'pending', openTime:null, progress:null, groups:[] };
+  });
+}
+let STAGES = initStages();
+
+function stageIsEnabled(i){ return i===0 || ['active','paused','closed'].includes(STAGES[i-1].status); }
+function stageStatusInfo(s){
+  if(s==='active') return {label:'进行中',cls:'st-green'};
+  if(s==='paused') return {label:'已暂停',cls:'st-amber'};
+  if(s==='closed') return {label:'已关闭',cls:'st-gray'};
+  return {label:'待开启',cls:'st-blue'};
+}
+function stageButtons(stage,i){
+  if(stage.status==='pending'){
+    const en=stageIsEnabled(i);
+    return [{label:'开启',cls:'btn-outline-p'+(en?'':' btn-disabled'),action:'open'}];
+  }
+  if(stage.status==='active') return [{label:'暂停',cls:'btn-outline-s',action:'pause'},{label:'关闭',cls:'btn-outline-s',action:'close'}];
+  if(stage.status==='paused') return [{label:'恢复',cls:'btn-outline-p',action:'resume'},{label:'关闭',cls:'btn-outline-s',action:'close'}];
+  if(stage.status==='closed') return [{label:'重开',cls:'btn-outline-p',action:'reopen'}];
+  return [];
+}
+function stagePct(s){ return s.progress&&s.progress.total?Math.round(s.progress.done/s.progress.total*100):0; }
+function formatNow(){ const d=new Date(),p=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}/${p(d.getMonth()+1)}/${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`; }
+
+let progressTimers = {};
+function startProgressSim(sid){
+  if(progressTimers[sid]) return;
+  const st=STAGES.find(s=>s.id===sid);
+  if(!st||st.status!=='active') return;
+  progressTimers[sid]=setInterval(()=>{
+    if(st.status!=='active'){clearInterval(progressTimers[sid]);delete progressTimers[sid];return;}
+    const g=st.groups[Math.floor(Math.random()*st.groups.length)];
+    if(g.done<g.total){g.done++;st.progress.done=st.groups.reduce((a,x)=>a+x.done,0);}
+    updateProgressDOM(st);
+    if(st.progress.done>=st.progress.total){clearInterval(progressTimers[sid]);delete progressTimers[sid];}
+  },2500);
+}
+function stopProgressSim(sid){ if(progressTimers[sid]){clearInterval(progressTimers[sid]);delete progressTimers[sid];} }
+function updateProgressDOM(st){
+  const pct=stagePct(st);
+  const card=document.getElementById('sp-'+st.id);
+  if(!card) return;
+  const fill=card.querySelector('.progress-bar-fill');
+  if(fill) fill.style.width=pct+'%';
+  const txt=card.querySelector('.progress-text');
+  if(txt) txt.textContent=`${st.progress.done} / ${st.progress.total}（${pct}%）`;
+  st.groups.forEach((g,gi)=>{
+    const gp=g.total?Math.round(g.done/g.total*100):0;
+    const gfill=card.querySelectorAll('.group-bar-fill')[gi];
+    if(gfill) gfill.style.width=gp+'%';
+    const gpct=card.querySelectorAll('.group-pct')[gi];
+    if(gpct) gpct.textContent=gp+'%';
+    const gc=card.querySelectorAll('.group-count')[gi];
+    if(gc) gc.textContent=g.done+'/'+g.total;
+  });
+  // Update stats row
+  const nums=document.querySelectorAll('.stat-card .stat-num');
+  if(nums.length>=3){nums[1].textContent=String(st.progress.done);nums[2].textContent=String(Math.max(0,128-st.progress.done));}
+}
+
+function handleStageAction(sid,action){
+  const st=STAGES.find(s=>s.id===sid);
+  if(!st) return;
+  if(action==='close'){
+    showConfirm('确认关闭',`确定要关闭「${st.name}」环节吗？关闭后该环节所有待处理流程将被终止。`,()=>{
+      st.status='closed';stopProgressSim(sid);
+      GHR_NAV.showToast(st.name+' 环节已关闭');
+      const el=document.getElementById('tabCt');if(el) el.innerHTML=renderProcessTab();
+    });
+    return;
+  }
+  if(action==='reopen'){
+    showConfirm('重开环节',`确定要重新开启「${st.name}」环节吗？`,()=>{
+      st.status='active';st.openTime=formatNow();
+      if(!st.progress){st.progress={done:0,total:128};st.groups=[{name:'管理层组',done:0,total:12},{name:'员工组',done:0,total:98},{name:'默认组',done:0,total:18}];}
+      startProgressSim(sid);
+      GHR_NAV.showToast(st.name+' 环节已重开');
+      const el=document.getElementById('tabCt');if(el) el.innerHTML=renderProcessTab();
+    });
+    return;
+  }
+  if(action==='open'){
+    st.status='active';st.openTime=formatNow();
+    st.progress={done:0,total:128};
+    st.groups=[{name:'管理层组',done:0,total:12},{name:'员工组',done:0,total:98},{name:'默认组',done:0,total:18}];
+    st.hint=null;
+    startProgressSim(sid);
+  } else if(action==='pause'){
+    st.status='paused';stopProgressSim(sid);
+  } else if(action==='resume'){
+    st.status='active';startProgressSim(sid);
+  }
+  GHR_NAV.showToast(st.name+' 环节已'+({open:'开启',pause:'暂停',resume:'恢复',close:'关闭',reopen:'重开'}[action]));
+  const el=document.getElementById('tabCt');
+  if(el) el.innerHTML=renderProcessTab();
+}
+
+// ═══ #6 批量开启/关闭 ═══
+function batchOpenStages(){
+  const pending=STAGES.filter(s=>s.status==='pending');
+  if(!pending.length){GHR_NAV.showToast('没有待开启的环节');return;}
+  showConfirm('批量开启',`确定要开启 ${pending.length} 个环节吗？`,()=>{
+    pending.forEach(s=>{s.status='active';s.openTime=formatNow();s.progress={done:0,total:128};s.groups=[{name:'管理层组',done:0,total:12},{name:'员工组',done:0,total:98},{name:'默认组',done:0,total:18}];startProgressSim(s.id);});
+    GHR_NAV.showToast(`已开启 ${pending.length} 个环节`);
+    const el=document.getElementById('tabCt');if(el) el.innerHTML=renderProcessTab();
+  });
+}
+function batchCloseStages(){
+  const active=STAGES.filter(s=>s.status==='active'||s.status==='paused');
+  if(!active.length){GHR_NAV.showToast('没有可关闭的环节');return;}
+  showConfirm('批量关闭',`确定要关闭 ${active.length} 个环节吗？关闭后待处理流程将被终止。`,()=>{
+    active.forEach(s=>{s.status='closed';stopProgressSim(s.id);});
+    GHR_NAV.showToast(`已关闭 ${active.length} 个环节`);
+    const el=document.getElementById('tabCt');if(el) el.innerHTML=renderProcessTab();
+  });
+}
+
+function batchRemind(){
+  const sel=PERSONS.filter(p=>rvSelectedIds.has(p.id));
+  if(!sel.length){GHR_NAV.showToast('请先选择人员');return;}
+  showConfirm('批量催办',`确定要向 ${sel.length} 人发送催办通知吗？`,()=>{
+    GHR_NAV.showToast(`已向 ${sel.length} 人发送催办通知`);
+    rvSelectedIds.clear();render();
+  });
+}
+function batchTransfer(){
+  const sel=PERSONS.filter(p=>rvSelectedIds.has(p.id));
+  if(!sel.length){GHR_NAV.showToast('请先选择人员');return;}
+  showOpDialog('transfer',sel[0]);
+}
+function batchTerminate(){
+  const sel=PERSONS.filter(p=>rvSelectedIds.has(p.id));
+  if(!sel.length){GHR_NAV.showToast('请先选择人员');return;}
+  showConfirm('批量强制终止',`确定要强制终止 ${sel.length} 人的当前流程吗？此操作不可恢复。`,()=>{
+    sel.forEach(p=>{p.status='已终止';});
+    GHR_NAV.showToast(`已强制终止 ${sel.length} 人的流程`);
+    rvSelectedIds.clear();render();
+  });
+}
+function renderProcessTab() {
+  const total=128;
+  const act=STAGES.find(s=>s.status==='active'||s.status==='paused');
+  const submitted=act&&act.progress?act.progress.done:0;
+  const stats=[
+    {label:'总参与人数',value:String(total),cls:'sc-blue'},
+    {label:'已提交',value:String(submitted),cls:'sc-green'},
+    {label:'待处理',value:String(Math.max(0,total-submitted)),cls:'sc-amber'},
+    {label:'已超时',value:'3',cls:'sc-red'},
+    {label:'已终止',value:'5',cls:'sc-gray'},
+  ];
+
+  let html = '<div class="fi">';
+  html += '<div class="stats-row">';
+  stats.forEach(s => {
+    html += `<div class="stat-card ${s.cls}"><div class="stat-num">${s.value}</div><div class="stat-label">${s.label}</div></div>`;
+  });
+  html += '</div>';
+
+  // AI Risk Panel
+  html += `<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+    <div class="form-sec" style="border-left:3px solid var(--ro)">
+      <div class="form-sec-t" style="color:var(--ro)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        AI 风险预警
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:var(--ro50);border-radius:var(--r2)">
+          <span class="tag-sm" style="color:var(--ro);background:var(--ro100);flex-shrink:0">高</span>
+          <div><div style="font:500 13px/1.4 var(--f);color:var(--c8)">技术部 3 人超时未提交目标</div><div style="font:400 12px/1.3 var(--f);color:var(--c5);margin-top:2px">张三、王五、郑十一 — 已超时 7 天</div></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:var(--ac50);border-radius:var(--r2)">
+          <span class="tag-sm" style="color:var(--ac700);background:var(--ac100);flex-shrink:0">中</span>
+          <div><div style="font:500 13px/1.4 var(--f);color:var(--c8)">绩效评分环节评分偏差较大</div><div style="font:400 12px/1.3 var(--f);color:var(--c5);margin-top:2px">李四的自评与上级评分差距 &gt; 30%</div></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:var(--ac50);border-radius:var(--r2)">
+          <span class="tag-sm" style="color:var(--ac700);background:var(--ac100);flex-shrink:0">中</span>
+          <div><div style="font:500 13px/1.4 var(--f);color:var(--c8)">默认组完成率偏低</div><div style="font:400 12px/1.3 var(--f);color:var(--c5);margin-top:2px">当前 56%，低于目标 80%</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="form-sec" style="border-left:3px solid var(--vi)">
+      <div class="form-sec-t" style="color:var(--vi)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        AI 洞察
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="padding:10px 12px;background:var(--vi50);border-radius:var(--r2)">
+          <div style="font:500 13px/1.4 var(--f);color:var(--c8)">目标制定环节预计 3 天后完成</div>
+          <div style="font:400 12px/1.3 var(--f);color:var(--c5);margin-top:2px">按当前提交速度，建议提前催办未提交人员</div>
+        </div>
+        <div style="padding:10px 12px;background:var(--vi50);border-radius:var(--r2)">
+          <div style="font:500 13px/1.4 var(--f);color:var(--c8)">管理层组评分进度领先</div>
+          <div style="font:400 12px/1.3 var(--f);color:var(--c5);margin-top:2px">完成率 83%，建议优先推进员工组</div>
+        </div>
+        <div style="padding:10px 12px;background:var(--vi50);border-radius:var(--r2)">
+          <div style="font:500 13px/1.4 var(--f);color:var(--c8)">强制分布预测：B+ 等级可能超标</div>
+          <div style="font:400 12px/1.3 var(--f);color:var(--c5);margin-top:2px">当前 B+ 占比 22%，上限 15%</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+
+  html += `<div class="batch-bar"><div class="batch-bar-title">考核环节</div><div class="batch-bar-btns">
+    <button class="btn-s" onclick="showImportDlg('goal')">${I.upload} 导入</button>
+    <button class="btn-s" onclick="showExportDlg('result')">${I.download} 导出</button>
+    <button class="btn-outline-p" onclick="batchOpenStages()">批量开启</button>
+    <button class="btn-outline-s" onclick="batchCloseStages()">批量关闭</button>
+  </div></div>`;
+
+  STAGES.forEach((stage,i) => {
+    const enabled=stageIsEnabled(i);
+    const dimmed=!enabled&&stage.status==='pending';
+    const si=stageStatusInfo(stage.status);
+    const btns=stageButtons(stage,i);
+    const pct=stagePct(stage);
+
+    html += `<div class="stage-card${dimmed?' dimmed':''}" id="sp-${stage.id}">`;
+    html += `<div class="stage-card-hd"><span class="stage-card-hd-name">${stage.name}</span>`;
+    html += `<span class="stage-tag ${si.cls}">${si.label}</span>`;
+    html += `<div class="stage-card-hd-meta"><span class="sm">开放时间：${stage.openTime||'-'}</span></div>`;
+    html += `<div class="stage-card-hd-r">`;
+    btns.forEach(b=>{ html+=`<button class="${b.cls}" onclick="handleStageAction('${stage.id}','${b.action}')">${b.label}</button>`; });
+    html += `</div></div>`;
+
+    html += `<div class="stage-card-bd">`;
+    if((stage.status==='active'||stage.status==='paused')&&stage.progress){
+      html += `<div class="progress-wrap">`;
+      html += `<div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%"></div></div>`;
+      html += `<div class="progress-text">${stage.progress.done} / ${stage.progress.total}（${pct}%）</div>`;
+      html += `<div class="group-breakdown">`;
+      stage.groups.forEach(g=>{
+        const gp=g.total?Math.round(g.done/g.total*100):0;
+        const bc=gp>=80?'gb-green':gp>=60?'':'gb-amber';
+        html += `<div class="group-row"><span class="group-name">${g.name}</span><div class="group-bar-bg"><div class="group-bar-fill ${bc}" style="width:${gp}%"></div></div><span class="group-pct">${gp}%</span><span class="group-count">${g.done}/${g.total}</span></div>`;
+      });
+      html += `</div></div>`;
+    }
+    if(stage.hint) html += `<div class="pending-hint">${stage.hint}</div>`;
+    html += `</div></div>`;
+  });
+
+  html += '</div>';
+  return html;
+}
+
+function renderPlaceholder(title, iconKey, desc) {
+  return `<div class="tab-placeholder">
+    ${I[iconKey.split('.')[1]] || I.clock}
+    <div class="t">${title} - 内容待实现</div>
+    <div class="s">${desc}</div>
+  </div>`;
+}
+
+// ═══ Interactions ═══
+function switchTab(id) {
+  curTab = id;
+  if (id === 'reviewers') { personView = 'list'; selectedPerson = null; rvStage = '全部'; rvGroup = 'all'; rvSearch = ''; rvSelectedIds = new Set(); }
+  if (id === 'exceptions') { anFilter = { type:'', status:'', stage:'', search:'' }; }
+  if (id === 'oplog') { opFilter = { type:'', search:'' }; }
+  render();
+}
+
+function toggleStage(id) {
+  openStages[id] = !openStages[id];
+  const el = document.getElementById('stage-' + id);
+  if (el) el.classList.toggle('open');
+}
+
+function handleImport() {
+  showImportDlg('goal');
+}
+
+function handleExport() {
+  showExportDlg('result');
+}
+
+// ═══ Tab 3: 考核人 ═══
+let personView = 'list';
+let selectedPerson = null;
+let rvStage = '全部';
+let rvGroup = 'all';
+let rvSearch = '';
+let rvSelectedIds = new Set();
+
+const PERSONS = [
+  {id:1,name:'张三',emp:'EMP001',dept:'技术部',group:'员工组',groupColor:'#10B981',role:'被考核人',stage:'目标制定',status:'submitted',
+   goal:'Q2核心项目交付率95%+',goalTime:'04/03 14:45',score:'92',grade:'A',审定等级:'A',confirmStatus:'已确认',面谈状态:'待安排',面谈日期:'-'},
+  {id:2,name:'李四',emp:'EMP002',dept:'产品部',group:'员工组',groupColor:'#10B981',role:'考核人',stage:'绩效考核',status:'suspended',
+   goal:'产品需求评审完成率100%',goalTime:'04/02 16:00',score:'-',grade:'-',审定等级:'-',confirmStatus:'-',面谈状态:'-',面谈日期:'-'},
+  {id:3,name:'王五',emp:'EMP003',dept:'财务部',group:'管理层组',groupColor:'#2563EB',role:'审定人',stage:'结果审定',status:'notstarted',
+   goal:'财务报表准时提交率100%',goalTime:'04/01 17:30',score:'88',grade:'B+',审定等级:'-',confirmStatus:'-',面谈状态:'-',面谈日期:'-'},
+  {id:4,name:'赵六',emp:'EMP015',dept:'市场部',group:'员工组',groupColor:'#10B981',role:'考核人',stage:'目标制定',status:'timeout',
+   goal:'市场活动执行完成率90%',goalTime:'-',score:'-',grade:'-',审定等级:'-',confirmStatus:'-',面谈状态:'-',面谈日期:'-'},
+  {id:5,name:'钱七',emp:'EMP020',dept:'运营部',group:'员工组',groupColor:'#10B981',role:'被考核人',stage:'目标制定',status:'terminated',
+   goal:'运营流程优化3项',goalTime:'04/05 11:00',score:'-',grade:'-',审定等级:'-',confirmStatus:'-',面谈状态:'-',面谈日期:'-'},
+  {id:6,name:'孙八',emp:'EMP004',dept:'技术部',group:'管理层组',groupColor:'#2563EB',role:'考核人',stage:'绩效考核',status:'submitted',
+   goal:'团队技术方案评审3项',goalTime:'04/02 10:00',score:'85',grade:'B+',审定等级:'-',confirmStatus:'-',面谈状态:'-',面谈日期:'-'},
+  {id:7,name:'周九',emp:'EMP005',dept:'产品部',group:'员工组',groupColor:'#10B981',role:'被考核人',stage:'绩效考核',status:'pending',
+   goal:'产品迭代按时交付率95%',goalTime:'04/03 09:30',score:'-',grade:'-',审定等级:'-',confirmStatus:'-',面谈状态:'-',面谈日期:'-'},
+  {id:8,name:'吴十',emp:'EMP006',dept:'市场部',group:'员工组',groupColor:'#10B981',role:'被考核人',stage:'目标制定',status:'submitted',
+   goal:'品牌曝光量提升30%',goalTime:'04/04 11:20',score:'-',grade:'-',审定等级:'-',confirmStatus:'-',面谈状态:'-',面谈日期:'-'},
+  {id:9,name:'郑十一',emp:'EMP007',dept:'财务部',group:'员工组',groupColor:'#10B981',role:'被考核人',stage:'绩效考核',status:'submitted',
+   goal:'月度财务报表准时率100%',goalTime:'04/01 16:00',score:'90',grade:'A',审定等级:'-',confirmStatus:'-',面谈状态:'-',面谈日期:'-'},
+  {id:10,name:'陈十二',emp:'EMP008',dept:'运营部',group:'员工组',groupColor:'#10B981',role:'被考核人',stage:'目标制定',status:'pending',
+   goal:'运营效率提升20%',goalTime:'-',score:'-',grade:'-',审定等级:'-',confirmStatus:'-',面谈状态:'-',面谈日期:'-'},
+];
+
+function getPersonDetail(name) {
+  const p = PERSONS.find(x => x.name === name);
+  if (!p) return null;
+  const stageOrder = ['目标制定','绩效考核','结果审定','结果确认','绩效面谈'];
+  const si = stageOrder.indexOf(p.stage);
+  const stages = stageOrder.map((sname, idx) => {
+    let status, start, end, duration, nodes;
+    if (idx < si) {
+      status = 'done'; start = '2026/04/0'+(idx+1)+' 09:00'; end = '2026/04/0'+(idx+2)+' 10:30'; duration = '1天1小时';
+      nodes = [{name:sname+'节点',status:'done',handler:p.name+'（本人）',start:'04/0'+(idx+1)+' 09:00',end:'04/0'+(idx+1)+' 10:00',duration:'1小时',content:'已完成'}];
+    } else if (idx === si) {
+      if (p.status === 'submitted') {
+        status = 'done'; start = '2026/04/0'+(idx+1)+' 09:00'; end = '2026/04/0'+(idx+2)+' 10:30'; duration = '1天1小时';
+        nodes = [{name:sname+'提交',status:'done',handler:p.name+'（本人）',start:'04/03 14:20',end:'04/03 14:45',duration:'25分钟',content:p.goal||'已完成提交'}];
+      } else if (p.status === 'suspended') {
+        status = 'active'; start = '2026/05/08 09:00'; end = '-'; duration = '已挂起';
+        nodes = [{name:sname+'处理',status:'pending',handler:p.name+'（本人）',start:'05/08 09:00',end:'-',duration:'-',content:'已挂起，等待恢复'}];
+      } else if (p.status === 'timeout') {
+        status = 'active'; start = '2026/04/01 09:00'; end = '-'; duration = '已超时';
+        nodes = [{name:sname+'处理',status:'pending',handler:p.name+'（本人）',start:'04/01 09:00',end:'-',duration:'-',content:'超时未处理'}];
+      } else if (p.status === 'terminated') {
+        status = 'done'; start = '2026/04/01 09:00'; end = '2026/04/05 11:00'; duration = '已终止';
+        nodes = [{name:sname+'处理',status:'done',handler:'管理员',start:'04/01 09:00',end:'04/05 11:00',duration:'4天',content:'已被管理员强制终止'}];
+      } else {
+        status = 'notstarted'; start = '-'; end = '-'; duration = '-'; nodes = [];
+      }
+    } else {
+      status = 'notstarted'; start = '-'; end = '-'; duration = '-'; nodes = [];
+    }
+    return {name:sname, status, start, end, duration, nodes};
+  });
+  return {name:p.name, emp:p.emp, group:p.group, role:p.role, dept:p.dept, stages};
+}
+
+const STATUS_MAP = {
+  submitted:  { label:'已提交', cls:'tag-green' },
+  pending:    { label:'待处理', cls:'tag-ac' },
+  notstarted: { label:'未开始', cls:'tag-gray' },
+  timeout:    { label:'已超时', cls:'tag-sm', inlineStyle:'color:var(--ro);background:var(--ro50)' },
+  terminated: { label:'已终止', cls:'tag-gray' },
+  suspended:  { label:'已挂起', cls:'tag-sm', inlineStyle:'color:var(--ac);background:var(--ac50)' },
+};
+
+function rvStatusTag(status) {
+  const s = STATUS_MAP[status];
+  if (!s) return '';
+  if (s.inlineStyle) return `<span class="tag-sm" style="${s.inlineStyle}">${s.label}</span>`;
+  return `<span class="tag-sm ${s.cls}">${s.label}</span>`;
+}
+
+function rvOps(status, personName) {
+  const parts = [];
+  if (status === 'submitted') {
+    parts.push(`<a onclick="showOpDialog('remind','${personName}')">催办</a>`);
+    parts.push(`<a onclick="showOpDialog('suspend','${personName}')">挂起</a>`);
+  } else if (status === 'pending') {
+    parts.push(`<a onclick="showOpDialog('remind','${personName}')">催办</a>`);
+    parts.push(`<a onclick="showOpDialog('transfer','${personName}')">转交</a>`);
+    parts.push(`<a onclick="showOpDialog('suspend','${personName}')">挂起</a>`);
+  } else if (status === 'timeout') {
+    parts.push(`<a onclick="showOpDialog('remind','${personName}')">催办</a>`);
+    parts.push(`<a onclick="showOpDialog('transfer','${personName}')">转交</a>`);
+    parts.push(`<a class="danger" onclick="confirmTerminate('${personName}')">强制终止</a>`);
+  } else if (status === 'suspended') {
+    parts.push(`<a onclick="showOpDialog('resume','${personName}')">恢复</a>`);
+    parts.push(`<a onclick="showOpDialog('transfer','${personName}')">转交</a>`);
+    parts.push(`<a class="danger" onclick="confirmTerminate('${personName}')">强制终止</a>`);
+  } else {
+    return '<span style="color:var(--c4)">-</span>';
+  }
+  return `<div class="rv-ops">${parts.join('')}</div>`;
+}
+function confirmTerminate(name) {
+  showConfirm('强制终止', `确定要强制终止「${name}」的当前流程吗？此操作不可撤销。`, () => {
+    GHR_NAV.showToast('已强制终止 ' + name);
+  });
+}
+
+// ═══ #10-13 操作弹窗 ═══
+let opDlgOpen=false, opDlgType='', opDlgPerson='';
+const OP_DLGS={
+  remind:{title:'催办通知',fields:[
+    {key:'method',label:'通知方式',type:'select',options:['系统消息','短信','邮件','企业微信']},
+    {key:'msg',label:'催办内容',type:'textarea',placeholder:'请输入催办内容…'},
+    {key:'auto',label:'定时催办',type:'select',options:['立即发送','每天提醒一次','超时后自动催办']},
+  ]},
+  transfer:{title:'流程转交',fields:[
+    {key:'target',label:'转交对象',type:'select',options:['请选择转交对象','孙八（技术总监）','王五（财务总监）','蒋十一（运营总监）','韩十七（产品总监）']},
+    {key:'reason',label:'转交原因',type:'select',options:['工作调整','出差/请假','职责变更','其他']},
+    {key:'remark',label:'备注说明',type:'textarea',placeholder:'请输入转交说明…'},
+  ]},
+  suspend:{title:'流程挂起',fields:[
+    {key:'reason',label:'挂起原因',type:'select',options:['等待审批结果','数据待确认','流程争议处理','其他']},
+    {key:'remark',label:'备注说明',type:'textarea',placeholder:'请输入挂起原因…'},
+    {key:'duration',label:'预计恢复时间',type:'select',options:['3天内','7天内','15天内','待定']},
+  ]},
+  resume:{title:'流程恢复',fields:[
+    {key:'remark',label:'恢复说明',type:'textarea',placeholder:'请输入恢复说明…'},
+  ]},
+};
+function showOpDialog(type,person){opDlgOpen=true;opDlgType=type;opDlgPerson=person;render();}
+function closeOpDlg(){opDlgOpen=false;render();}
+function confirmOpDlg(){
+  const titles={remind:'已发送催办',transfer:'已转交',suspend:'已挂起',resume:'已恢复'};
+  GHR_NAV.showToast(titles[opDlgType]+' '+opDlgPerson);
+  opDlgOpen=false;render();
+}
+function renderOpDlg(){
+  const cfg=OP_DLGS[opDlgType];if(!cfg) return '';
+  let h=`<div class="cfm-ov" onclick="if(event.target===this)closeOpDlg()"><div class="cfm-box" style="width:440px">`;
+  h+=`<div class="cfm-title">${cfg.title}</div>`;
+  h+=`<div style="font:400 12px/1 var(--f);color:var(--c5);margin-bottom:16px">操作对象：${opDlgPerson}</div>`;
+  cfg.fields.forEach(f=>{
+    h+=`<div style="margin-bottom:14px">`;
+    h+=`<div style="font:500 12px/1 var(--f);color:var(--c7);margin-bottom:6px">${f.label}</div>`;
+    if(f.type==='select'){
+      h+=`<select id="opf-${f.key}" style="width:100%;height:34px;padding:0 10px;border:1px solid var(--c2);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c7);background:var(--sf);outline:none">`;
+      f.options.forEach(o=>h+=`<option>${o}</option>`);
+      h+=`</select>`;
+    } else if(f.type==='textarea'){
+      h+=`<textarea style="width:100%;min-height:64px;padding:8px 10px;border:1px solid var(--c2);border-radius:var(--r1);font:400 13px/1.4 var(--f);color:var(--c9);outline:none;resize:vertical" placeholder="${f.placeholder||''}"></textarea>`;
+    }
+    h+=`</div>`;
+  });
+  h+=`<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px">`;
+  h+=`<button class="btn btn-s" onclick="closeOpDlg()">取消</button>`;
+  h+=`<button class="btn btn-p" onclick="confirmOpDlg()">确认</button>`;
+  h+=`</div></div></div>`;
+  return h;
+}
+
+// ═══ #14-17 #18 #20 #3b 数据导入导出弹窗 ═══
+let importDlgOpen=false, importDlgType='', importDlgStep=1, importDlgRows=[];
+const IMPORT_TYPES={
+  goal:{title:'目标数据导入',fields:['姓名','工号','部门','目标内容','权重'],mockRows:[
+    {row:1,name:'张三',emp:'EMP001',dept:'技术部',val:'Q2核心项目交付率95%+',weight:'40%',ok:true},
+    {row:2,name:'李四',emp:'EMP002',dept:'产品部',val:'产品需求评审完成率100%',weight:'100%',ok:true},
+    {row:3,name:'周九',emp:'EMP005',dept:'产品部',val:'产品迭代按时交付率95%',weight:'100%',ok:true},
+    {row:4,name:'赵六',emp:'EMP015',dept:'市场部',val:'',weight:'90%',ok:false,err:'目标内容为空'},
+  ]},
+  score:{title:'评分数据导入',fields:['姓名','工号','部门','评分人','分数','等级'],mockRows:[
+    {row:1,name:'张三',emp:'EMP001',dept:'技术部',val:'92 / A',weight:'自评',ok:true},
+    {row:2,name:'孙八',emp:'EMP004',dept:'技术部',val:'85 / B+',weight:'上级评',ok:true},
+    {row:3,name:'郑十一',emp:'EMP007',dept:'财务部',val:'90 / A',weight:'自评',ok:true},
+    {row:4,name:'-',emp:'EMP999',dept:'-',val:'- / -',weight:'-',ok:false,err:'工号不存在'},
+  ]},
+  ratify:{title:'审定结果导入',fields:['姓名','工号','部门','评分','审定等级','审定意见'],mockRows:[
+    {row:1,name:'张三',emp:'EMP001',dept:'技术部',val:'92 → A',weight:'同意评分',ok:true},
+    {row:2,name:'孙八',emp:'EMP004',dept:'技术部',val:'85 → B',weight:'降一级',ok:true},
+    {row:3,name:'周九',emp:'EMP005',dept:'产品部',val:'-',weight:'-',ok:false,err:'缺少评分数据'},
+  ]},
+  interview:{title:'面谈结果导入',fields:['姓名','工号','部门','面谈日期','面谈结果','面谈记录'],mockRows:[
+    {row:1,name:'张三',emp:'EMP001',dept:'技术部',val:'2026/05/20',weight:'已完成',ok:true},
+    {row:2,name:'孙八',emp:'EMP004',dept:'技术部',val:'2026/05/21',weight:'已完成',ok:true},
+    {row:3,name:'郑十一',emp:'EMP007',dept:'财务部',val:'-',weight:'待安排',ok:false,err:'面谈日期为空'},
+  ]},
+};
+let exportDlgOpen=false, exportDlgType='result';
+function showImportDlg(type){importDlgOpen=true;importDlgType=type;importDlgStep=1;importDlgRows=[];render();}
+function closeImportDlg(){importDlgOpen=false;render();}
+function doImportUpload(){
+  const cfg=IMPORT_TYPES[importDlgType];
+  importDlgRows=cfg.mockRows.map(r=>({...r}));
+  importDlgStep=2;render();
+}
+function doImportConfirm(){
+  const okCnt=importDlgRows.filter(r=>r.ok).length;
+  GHR_NAV.showToast(`已导入 ${okCnt} 条${IMPORT_TYPES[importDlgType].title.replace('导入','')}数据`);
+  importDlgOpen=false;render();
+}
+function showExportDlg(type){exportDlgOpen=true;exportDlgType=type;render();}
+function closeExportDlg(){exportDlgOpen=false;render();}
+function doExportConfirm(){
+  GHR_NAV.showToast('导出成功，文件已下载');
+  exportDlgOpen=false;render();
+}
+function renderImportDlg(){
+  if(!importDlgOpen) return '';
+  const cfg=IMPORT_TYPES[importDlgType];if(!cfg) return '';
+  let h=`<div class="cfm-ov" onclick="if(event.target===this)closeImportDlg()"><div class="cfm-box" style="width:640px;max-height:80vh;display:flex;flex-direction:column">`;
+  h+=`<div class="cfm-title">${cfg.title}</div>`;
+  if(importDlgStep===1){
+    h+=`<div style="margin-bottom:12px;font:400 13px/1.4 var(--f);color:var(--c6)">通过 Excel 模板批量导入数据，支持校验和预览</div>`;
+    h+=`<div style="margin-bottom:12px"><a href="javascript:void(0)" onclick="GHR_NAV.showToast('模板已下载')" style="font:500 13px/1 var(--f);color:var(--pr);text-decoration:none">📥 下载导入模板</a><span style="font:400 12px/1 var(--f);color:var(--c4);margin-left:8px">（#20 模板下载）</span></div>`;
+    h+=`<div class="import-area" onclick="doImportUpload()" style="margin-bottom:0">`;
+    h+=`<div class="icon">&#128196;</div>`;
+    h+=`<div class="txt">点击选择文件，或拖拽到此处<br><b>支持 .xlsx / .xls / .csv</b></div>`;
+    h+=`</div>`;
+    h+=`<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px"><button class="btn btn-s" onclick="closeImportDlg()">取消</button></div>`;
+  } else {
+    const okCnt=importDlgRows.filter(r=>r.ok).length;
+    const errCnt=importDlgRows.filter(r=>!r.ok).length;
+    h+=`<div style="font:500 12px/1 var(--f);color:var(--c7);margin-bottom:10px">${okCnt} 条有效，<span style="color:var(--ro)">${errCnt}</span> 条异常</div>`;
+    h+=`<div style="max-height:300px;overflow-y:auto;flex:1">`;
+    h+=`<table class="imp-tbl"><thead><tr><th>行</th>`;
+    cfg.fields.forEach(f=>h+=`<th>${f}</th>`);
+    h+=`<th>状态</th></tr></thead><tbody>`;
+    importDlgRows.forEach(r=>{
+      const cls=r.ok?'':'err-row';
+      h+=`<tr class="${cls}"><td>${r.row}</td><td>${r.name||'-'}</td><td style="font-family:var(--fm);font-size:12px">${r.emp}</td><td>${r.dept}</td>`;
+      if(cfg.fields.length>3) h+=`<td>${r.val}</td>`;
+      if(cfg.fields.length>4) h+=`<td>${r.weight}</td>`;
+      const badge=r.ok?'<span class="imp-badge ok">有效</span>':r.err.includes('重复')?'<span class="imp-badge dup">'+r.err+'</span>':'<span class="imp-badge err">'+r.err+'</span>';
+      h+=`<td>${badge}</td></tr>`;
+    });
+    h+=`</tbody></table></div>`;
+    h+=`<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px"><button class="btn btn-s" onclick="importDlgStep=1;importDlgRows=[];render()">重新选择</button><button class="btn btn-s" onclick="closeImportDlg()">取消</button><button class="btn btn-p" onclick="doImportConfirm()">确认导入</button></div>`;
+  }
+  h+=`</div></div>`;
+  return h;
+}
+function renderExportDlg(){
+  if(!exportDlgOpen) return '';
+  const titles={result:'结果数据导出',person:'人员数据导出',exception:'异常数据导出',oplog:'操作日志导出'};
+  const title=titles[exportDlgType]||'数据导出';
+  const exportData={
+    result:[
+      {name:'张三',emp:'EMP001',dept:'技术部',score:'92',grade:'A',审定等级:'A',confirmStatus:'已确认'},
+      {name:'孙八',emp:'EMP004',dept:'技术部',score:'85',grade:'B+',审定等级:'B',confirmStatus:'已确认'},
+      {name:'周九',emp:'EMP005',dept:'产品部',score:'-',grade:'-',审定等级:'-',confirmStatus:'-'},
+    ],
+    person:PERSONS.slice(0,5).map(p=>({name:p.name,emp:p.emp,dept:p.dept,group:p.group,role:p.role,status:p.status})),
+    exception:EXCEPTIONS.slice(0,3).map(e=>({time:e.time,type:e.type,stage:e.stage,desc:e.desc,status:e.status})),
+    oplog:OP_LOGS.slice(0,3).map(l=>({time:l.time,operator:l.operator,type:l.type,target:l.target})),
+  };
+  const cols={result:['姓名','工号','部门','分数','等级','审定等级','确认状态'],person:['姓名','工号','部门','考核组','角色','状态'],exception:['时间','类型','环节','描述','状态'],oplog:['时间','操作人','类型','对象']};
+  const data=exportData[exportDlgType]||[];
+  const headers=cols[exportDlgType]||[];
+  let h=`<div class="cfm-ov" onclick="if(event.target===this)closeExportDlg()"><div class="cfm-box" style="width:600px;max-height:80vh;display:flex;flex-direction:column">`;
+  h+=`<div class="cfm-title">${title}</div>`;
+  h+=`<div style="font:400 13px/1.4 var(--f);color:var(--c6);margin-bottom:12px">共 ${data.length} 条数据将被导出，预览如下：</div>`;
+  h+=`<div style="max-height:280px;overflow-y:auto;flex:1">`;
+  h+=`<table class="imp-tbl"><thead><tr>`;
+  headers.forEach(th=>h+=`<th>${th}</th>`);
+  h+=`</tr></thead><tbody>`;
+  data.forEach(row=>{
+    h+=`<tr>`;
+    headers.forEach((th,ci)=>{
+      const keys=Object.keys(row);
+      h+=`<td>${row[keys[ci]]||'-'}</td>`;
+    });
+    h+=`</tr>`;
+  });
+  h+=`</tbody></table></div>`;
+  h+=`<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px"><button class="btn btn-s" onclick="closeExportDlg()">取消</button><button class="btn btn-p" onclick="doExportConfirm()">📥 确认导出</button></div>`;
+  h+=`</div></div>`;
+  return h;
+}
+let anFilter = { type:'', status:'', stage:'', search:'' };
+// OpLog filter state
+let opFilter = { type:'', search:'' };
+
+function stageStatusTag(status) {
+  if (status === 'done') return '<span class="stage-tag st-green">已完成</span>';
+  if (status === 'active') return '<span class="stage-tag st-blue">进行中</span>';
+  return '<span class="tag-sm tag-gray">未开始</span>';
+}
+
+function nodeStatusTag(status) {
+  if (status === 'done') return '<span class="tag-sm tag-green">已完成</span>';
+  if (status === 'pending') return '<span class="tag-sm tag-ac">待处理</span>';
+  return '<span class="tag-sm tag-gray">未开始</span>';
+}
+
+function toggleRvSelect(id) {
+  if (rvSelectedIds.has(id)) rvSelectedIds.delete(id);
+  else rvSelectedIds.add(id);
+  render();
+}
+function toggleRvSelectAll() {
+  let filtered = PERSONS;
+  if (rvGroup !== 'all') filtered = filtered.filter(p => p.group === rvGroup);
+  if (rvSearch) { const q = rvSearch.toLowerCase(); filtered = filtered.filter(p => p.name.toLowerCase().includes(q) || p.emp.toLowerCase().includes(q)); }
+  const allChecked = filtered.length > 0 && filtered.every(p => rvSelectedIds.has(p.id));
+  if (allChecked) filtered.forEach(p => rvSelectedIds.delete(p.id));
+  else filtered.forEach(p => rvSelectedIds.add(p.id));
+  render();
+}
+
+function openPersonDetail(name) {
+  selectedPerson = name;
+  personView = 'detail';
+  const el = document.getElementById('tabCt');
+  if (el) el.innerHTML = renderReviewersTab();
+}
+
+function backToList() {
+  personView = 'list';
+  selectedPerson = null;
+  const el = document.getElementById('tabCt');
+  if (el) el.innerHTML = renderReviewersTab();
+}
+
+function renderReviewersTab() {
+  if (personView === 'detail') return renderPersonDetail();
+  return renderPersonList();
+}
+
+function renderPersonList() {
+  // Compute group counts from PERSONS
+  const groupCounts = { 'all': PERSONS.length };
+  PERSONS.forEach(p => { groupCounts[p.group] = (groupCounts[p.group]||0) + 1; });
+  const groups = [
+    { name:'all', label:'全部', count: groupCounts['all']||0 },
+    { name:'管理层组', label:'管理层组', count: groupCounts['管理层组']||0 },
+    { name:'员工组', label:'员工组', count: groupCounts['员工组']||0 },
+    { name:'默认组', label:'默认组', count: groupCounts['默认组']||0 },
+  ];
+
+  // Filter persons
+  let filtered = PERSONS;
+  if (rvGroup !== 'all') filtered = filtered.filter(p => p.group === rvGroup);
+  if (rvSearch) {
+    const q = rvSearch.toLowerCase();
+    filtered = filtered.filter(p => p.name.toLowerCase().includes(q) || p.emp.toLowerCase().includes(q));
+  }
+
+  const stages = ['全部','目标制定','绩效考核','结果审定','结果确认','绩效面谈'];
+
+  // Stage-based column definitions
+  const stageColumns = {
+    '全部':     ['姓名','工号','部门','考核组','角色','当前环节','状态','操作'],
+    '目标制定': ['姓名','工号','部门','考核组','角色','目标内容','提交时间','状态','操作'],
+    '绩效考核': ['姓名','工号','部门','考核组','角色','评分','等级','状态','操作'],
+    '结果审定': ['姓名','工号','部门','考核组','角色','评分','等级','审定等级','状态','操作'],
+    '结果确认': ['姓名','工号','部门','考核组','角色','审定等级','确认状态','状态','操作'],
+    '绩效面谈': ['姓名','工号','部门','考核组','角色','审定等级','面谈状态','面谈日期','操作'],
+  };
+
+  const cols = stageColumns[rvStage] || stageColumns['全部'];
+
+  function getCellValue(p, col) {
+    switch(col) {
+      case '姓名': return `<span class="name-link" onclick="openPersonDetail('${p.name}')">${p.name}</span>`;
+      case '工号': return `<span style="font-family:var(--fm);font-size:12px">${p.emp}</span>`;
+      case '部门': return p.dept;
+      case '考核组': return `<span class="tag-sm" style="color:${p.groupColor};background:${p.groupColor}14">${p.group}</span>`;
+      case '角色': return p.role;
+      case '当前环节': return p.stage;
+      case '状态': return rvStatusTag(p.status);
+      case '操作': return rvOps(p.status, p.name);
+      case '目标内容': return `<span style="color:var(--c7);font-size:12px">${p.goal}</span>`;
+      case '提交时间': return `<span style="font-family:var(--fm);font-size:12px;color:${p.goalTime==='-'?'var(--c4)':'var(--c7)'}">${p.goalTime}</span>`;
+      case '评分': return `<span style="font-family:var(--fm);font-size:12px;font-weight:600;color:${p.score==='-'?'var(--c4)':'var(--pr)'}">${p.score}</span>`;
+      case '等级': return `<span class="tag-sm" style="${p.grade==='-'?'color:var(--c4);background:var(--c1)':'color:var(--pr);background:var(--pr50)'}">${p.grade}</span>`;
+      case '审定等级': return `<span class="tag-sm" style="${p.审定等级==='-'?'color:var(--c4);background:var(--c1)':'color:var(--em);background:var(--em50)'}">${p.审定等级}</span>`;
+      case '确认状态': return p.confirmStatus==='-' ? '<span style="color:var(--c4)">-</span>' : `<span class="tag-sm tag-green">${p.confirmStatus}</span>`;
+      case '面谈状态': return p.面谈状态==='-' ? '<span style="color:var(--c4)">-</span>' : `<span class="tag-sm tag-ac">${p.面谈状态}</span>`;
+      case '面谈日期': return `<span style="font-family:var(--fm);font-size:12px;color:${p.面谈日期==='-'?'var(--c4)':'var(--c7)'}">${p.面谈日期}</span>`;
+      default: return '-';
+    }
+  }
+
+  let html = '<div class="fi">';
+
+  // Filter bar
+  html += `<div class="rv-filter">
+    <input type="text" placeholder="搜索姓名 / 工号..." value="${rvSearch}" oninput="rvSearch=this.value;render()" />
+    <select onchange="rvStage=this.value;render()" style="height:30px;border:1px solid var(--c2);border-radius:var(--r1);padding:0 10px;font:400 12px/1 var(--f);color:var(--c7);background:var(--sf)">
+      ${stages.map(s => `<option value="${s}"${rvStage===s?' selected':''}>${s}</option>`).join('')}
+    </select>
+    <button class="btn btn-s" onclick="openReviewerWizard('import')">${I.upload} 导入</button>
+    <button class="btn btn-s" onclick="showExportDlg('person')">${I.download} 导出</button>
+    <button class="btn btn-p" onclick="openReviewerWizard()">添加考核人</button>
+  </div>`;
+
+  // Group tags
+  html += `<div class="rv-tags">`;
+  groups.forEach(g => {
+    html += `<div class="rv-tag${rvGroup===g.name?' on':''}" onclick="rvGroup='${g.name}';render()">${g.label} <span class="cnt">${g.count}人</span></div>`;
+  });
+  html += `</div>`;
+
+  // Table
+  html += `<div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden">`;
+  const allChecked = filtered.length > 0 && filtered.every(p => rvSelectedIds.has(p.id));
+
+  html += `<table class="rv-table"><thead><tr>
+    <th style="width:36px"><input type="checkbox" ${allChecked?'checked':''} onchange="toggleRvSelectAll()" /></th>
+    ${cols.map(c => `<th>${c}</th>`).join('')}
+  </tr></thead><tbody>`;
+
+  filtered.forEach(p => {
+    html += `<tr>
+      <td><input type="checkbox" ${rvSelectedIds.has(p.id)?'checked':''} onchange="toggleRvSelect(${p.id})" /></td>
+      ${cols.map(c => `<td>${getCellValue(p, c)}</td>`).join('')}
+    </tr>`;
+  });
+
+  html += `</tbody></table></div>`;
+
+  // Batch bar - aligned with row operations
+  html += `<div class="rv-batch">
+    <div class="left"><input type="checkbox" ${allChecked?'checked':''} onchange="toggleRvSelectAll()" /> 已选 <span class="cnt">${rvSelectedIds.size}</span> 人</div>
+    <div class="right">
+      <button class="btn-outline-s${rvSelectedIds.size?'':' btn-disabled'}" onclick="batchRemind()">批量催办</button>
+      <button class="btn-outline-s${rvSelectedIds.size?'':' btn-disabled'}" onclick="batchTransfer()">批量转交</button>
+      <button class="btn-outline-s danger${rvSelectedIds.size?'':' btn-disabled'}" onclick="batchTerminate()">批量强制终止</button>
+    </div>
+  </div>`;
+
+  html += '</div>';
+  return html;
+}
+
+function renderPersonDetail() {
+  const d = getPersonDetail(selectedPerson);
+  if (!d) return renderPersonList();
+  let html = '<div class="fi">';
+
+  html += `<div class="rv-detail">`;
+
+  // Header
+  html += `<div class="rv-hd">
+    <div class="rv-hd-l">
+      <div class="rv-hd-name">${d.name}</div>
+      <div class="rv-hd-meta">
+        <span>${d.emp}</span><div class="sep"></div>
+        <span>${d.dept}</span><div class="sep"></div>
+        <span class="tag-sm" style="color:#10B981;background:#ECFDF5">${d.group}</span><div class="sep"></div>
+        <span>${d.role}</span>
+      </div>
+    </div>
+    <div class="rv-hd-r">
+      <button class="btn btn-s" onclick="backToList()">返回列表</button>
+    </div>
+  </div>`;
+
+  // Timeline body
+  html += `<div class="tl-body">`;
+
+  d.stages.forEach(stage => {
+    const stageCls = stage.status === 'done' ? 'tl-done' : stage.status === 'active' ? 'tl-active' : '';
+    html += `<div class="tl-stage ${stageCls}">`;
+    html += `<div class="tl-stage-hd">
+      <span class="tl-stage-hd-name">${stage.name}</span>
+      ${stageStatusTag(stage.status)}
+      <div class="tl-stage-hd-meta">
+        <span class="sm">开始：${stage.start}</span>
+        <span class="sm">结束：${stage.end}</span>
+        <span class="sm">耗时：${stage.duration}</span>
+      </div>
+    </div>`;
+
+    if (stage.nodes.length === 0) {
+      html += `<div style="margin-left:16px;font:400 12px/1 var(--f);color:var(--c4);padding:8px 0">暂无节点数据</div>`;
+    } else {
+      stage.nodes.forEach(node => {
+        const nodeCls = node.status === 'done' ? 'tl-done' : node.status === 'pending' ? 'tl-pending' : '';
+        html += `<div class="tl-node ${nodeCls}">`;
+        html += `<div class="tl-node-hd">
+          <span class="tl-node-hd-name">${node.name}</span>
+          ${nodeStatusTag(node.status)}
+          <div class="tl-node-hd-meta">
+            <span class="sm">处理人：${node.handler}</span>
+            <span class="sm">开始：${node.start}</span>
+            <span class="sm">结束：${node.end}</span>
+            <span class="sm">耗时：${node.duration}</span>
+          </div>
+        </div>`;
+        html += `<div class="tl-content${node.status === 'pending' || node.status === 'notstarted' ? ' pending-content' : ''}">${node.content}</div>`;
+        html += `</div>`;
+      });
+    }
+
+    html += `</div>`;
+  });
+
+  html += `</div>`; // tl-body
+  html += `</div>`; // rv-detail
+  html += `</div>`; // fi
+  return html;
+}
+
+// ═══ Tab 4: 异常列表 ═══
+const EXCEPTIONS = [
+  {time:'05/28 14:30',type:'人员异常',typeColor:'#F43F5E',typeBg:'#FFF1F2',stage:'目标制定',person:'赵六（考核人）→ 影响8人',desc:'考核人已离职，需重新分配',status:'待处理',statusColor:'#F43F5E'},
+  {time:'05/27 09:00',type:'超时提醒',typeColor:'#F59E0B',typeBg:'#FFFBEB',stage:'目标制定',person:'张三、周七等5人',desc:'超过截止时间未提交，已自动通知',status:'已通知',statusColor:'#F59E0B'},
+  {time:'05/26 18:00',type:'提交率预警',typeColor:'#F59E0B',typeBg:'#FFFBEB',stage:'目标制定',person:'-',desc:'提交率72%，低于预期进度',status:'已通知',statusColor:'#F59E0B'},
+  {time:'05/25 10:00',type:'进度滞后',typeColor:'#2563EB',typeBg:'#EFF6FF',stage:'目标制定',person:'管理层组（12人）',desc:'管理层组进度45%，落后于员工组73%',status:'已通知',statusColor:'#2563EB'},
+  {time:'05/20 16:00',type:'人员异常',typeColor:'#F43F5E',typeBg:'#FFF1F2',stage:'绩效考核',person:'吴八（被考核人）',desc:'被考核人已调岗至其他部门',status:'已处理',statusColor:'#10B981'},
+];
+
+const OP_LOGS = [
+  {time:'2026/05/28 14:35',operator:'Kim',type:'强制终止',typeColor:'#F43F5E',typeBg:'#FFF1F2',target:'赵六 → 8名被考核人',detail:'考核人离职，终止关联流程'},
+  {time:'2026/05/27 16:20',operator:'Kim',type:'催办',typeColor:'#2563EB',typeBg:'#EFF6FF',target:'目标制定 - 5人',detail:'发送催办通知'},
+  {time:'2026/05/20 16:10',operator:'Kim',type:'转交',typeColor:'#10B981',typeBg:'#ECFDF5',target:'吴八 → 钱七',detail:'被考核人调岗，考核人变更'},
+  {time:'2026/05/15 09:30',operator:'Kim',type:'暂停环节',typeColor:'#F59E0B',typeBg:'#FFFBEB',target:'目标制定 - 管理层组',detail:'暂停后恢复'},
+  {time:'2026/04/01 09:00',operator:'Kim',type:'开启环节',typeColor:'#2563EB',typeBg:'#EFF6FF',target:'目标制定 - 全部',detail:'手动开启目标制定环节'},
+];
+
+function anOps(status) {
+  const parts = [];
+  if (status === '待处理') {
+    parts.push(`<a onclick="showConfirm('处理异常','确认处理该异常？',()=>{GHR_NAV.showToast('异常已处理');render()})">处理</a>`);
+  } else if (status === '已通知') {
+    parts.push(`<a onclick="showOpDialog('remind',PERSONS[0])">催办</a>`);
+    parts.push(`<a onclick="showOpDialog('transfer',PERSONS[0])">转交</a>`);
+  } else if (status === '已处理') {
+    parts.push(`<a onclick="GHR_NAV.showToast('查看异常详情')">查看</a>`);
+  } else {
+    return '<span style="color:var(--c4)">-</span>';
+  }
+  return `<div class="an-ops">${parts.join('')}</div>`;
+}
+
+function renderExceptionTab() {
+  let html = '<div class="fi">';
+
+  // Filter data
+  let filtered = EXCEPTIONS;
+  if (anFilter.type) filtered = filtered.filter(e => e.type === anFilter.type);
+  if (anFilter.status) filtered = filtered.filter(e => e.status === anFilter.status);
+  if (anFilter.stage) filtered = filtered.filter(e => e.stage === anFilter.stage);
+  if (anFilter.search) { const q = anFilter.search.toLowerCase(); filtered = filtered.filter(e => e.desc.toLowerCase().includes(q) || e.person.toLowerCase().includes(q)); }
+
+  // Filter bar + action buttons
+  html += `<div class="an-filter">
+    <select onchange="anFilter.type=this.value;render()">
+      <option value=""${!anFilter.type?' selected':''}>全部类型</option>
+      <option value="人员异常"${anFilter.type==='人员异常'?' selected':''}>人员异常</option>
+      <option value="超时提醒"${anFilter.type==='超时提醒'?' selected':''}>超时提醒</option>
+      <option value="提交率预警"${anFilter.type==='提交率预警'?' selected':''}>提交率预警</option>
+      <option value="进度滞后"${anFilter.type==='进度滞后'?' selected':''}>进度滞后</option>
+    </select>
+    <select onchange="anFilter.status=this.value;render()">
+      <option value=""${!anFilter.status?' selected':''}>全部状态</option>
+      <option value="待处理"${anFilter.status==='待处理'?' selected':''}>待处理</option>
+      <option value="已通知"${anFilter.status==='已通知'?' selected':''}>已通知</option>
+      <option value="已处理"${anFilter.status==='已处理'?' selected':''}>已处理</option>
+      <option value="已忽略"${anFilter.status==='已忽略'?' selected':''}>已忽略</option>
+    </select>
+    <select onchange="anFilter.stage=this.value;render()">
+      <option value=""${!anFilter.stage?' selected':''}>全部环节</option>
+      <option value="目标制定"${anFilter.stage==='目标制定'?' selected':''}>目标制定</option>
+      <option value="绩效考核"${anFilter.stage==='绩效考核'?' selected':''}>绩效考核</option>
+      <option value="结果审定"${anFilter.stage==='结果审定'?' selected':''}>结果审定</option>
+      <option value="结果确认"${anFilter.stage==='结果确认'?' selected':''}>结果确认</option>
+      <option value="绩效面谈"${anFilter.stage==='绩效面谈'?' selected':''}>绩效面谈</option>
+    </select>
+    <input type="text" placeholder="搜索异常描述 / 人员..." value="${anFilter.search}" oninput="anFilter.search=this.value;render()" />
+    <button class="btn btn-s" onclick="showExportDlg('exception')">${I.download} 导出</button>
+  </div>`;
+
+  // Table
+  html += `<div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden">`;
+  html += `<table class="an-table"><thead><tr>
+    <th style="width:36px"><input type="checkbox" /></th>
+    <th>时间</th><th>异常类型</th><th>涉及环节</th><th>涉及人员</th><th>异常描述</th><th>状态</th><th>操作</th>
+  </tr></thead><tbody>`;
+
+  filtered.forEach(e => {
+    html += `<tr>
+      <td><input type="checkbox" /></td>
+      <td style="font-family:var(--fm);font-size:12px;white-space:nowrap">${e.time}</td>
+      <td><span class="an-tag" style="color:${e.typeColor};background:${e.typeBg}">${e.type}</span></td>
+      <td>${e.stage}</td>
+      <td>${e.person}</td>
+      <td>${e.desc}</td>
+      <td><span class="an-tag" style="color:${e.statusColor};background:${e.statusColor}14">${e.status}</span></td>
+      <td>${anOps(e.status)}</td>
+    </tr>`;
+  });
+
+  html += `</tbody></table></div>`;
+
+  // Pagination
+  html += `<div class="an-pag">
+    <div class="left">共 <span class="cnt">${filtered.length}</span> 条异常记录</div>
+    <div class="right">
+      <div class="pg-btn on">1</div>
+    </div>
+  </div>`;
+
+  html += '</div>';
+  return html;
+}
+
+function renderOpLogTab() {
+  let html = '<div class="fi">';
+
+  // Filter data
+  let filtered = OP_LOGS;
+  if (opFilter.type) filtered = filtered.filter(l => l.type === opFilter.type);
+  if (opFilter.search) { const q = opFilter.search.toLowerCase(); filtered = filtered.filter(l => l.target.toLowerCase().includes(q) || l.detail.toLowerCase().includes(q)); }
+
+  // Filter bar + action buttons
+  html += `<div class="an-filter">
+    <select onchange="opFilter.type=this.value;render()">
+      <option value=""${!opFilter.type?' selected':''}>全部操作类型</option>
+      <option value="强制终止"${opFilter.type==='强制终止'?' selected':''}>强制终止</option>
+      <option value="催办"${opFilter.type==='催办'?' selected':''}>催办</option>
+      <option value="转交"${opFilter.type==='转交'?' selected':''}>转交</option>
+      <option value="暂停环节"${opFilter.type==='暂停环节'?' selected':''}>暂停环节</option>
+      <option value="开启环节"${opFilter.type==='开启环节'?' selected':''}>开启环节</option>
+    </select>
+    <input type="text" placeholder="搜索操作对象 / 详情..." value="${opFilter.search}" oninput="opFilter.search=this.value;render()" />
+    <button class="btn btn-s" onclick="showExportDlg('oplog')">${I.download} 导出</button>
+  </div>`;
+
+  // Table
+  html += `<div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden">`;
+  html += `<table class="an-table"><thead><tr>
+    <th>时间</th><th>操作人</th><th>操作类型</th><th>操作对象</th><th>详情</th>
+  </tr></thead><tbody>`;
+
+  filtered.forEach(l => {
+    html += `<tr>
+      <td style="font-family:var(--fm);font-size:12px;white-space:nowrap">${l.time}</td>
+      <td>${l.operator}</td>
+      <td><span class="an-tag" style="color:${l.typeColor};background:${l.typeBg}">${l.type}</span></td>
+      <td>${l.target}</td>
+      <td>${l.detail}</td>
+    </tr>`;
+  });
+
+  html += `</tbody></table></div>`;
+
+  // Footer
+  html += `<div class="an-pag">
+    <div class="left">共 <span class="cnt">${filtered.length}</span> 条操作记录</div>
+    <div class="right"></div>
+  </div>`;
+
+  html += '</div>';
+  return html;
+}
+
+// ═══ Add Reviewer Wizard ═══
+const EMP_POOL=[
+  {id:'EMP021',name:'孙一',dept:'技术部',position:'工程师',level:'P5',group:'员工组'},
+  {id:'EMP022',name:'周二',dept:'技术部',position:'高级工程师',level:'P6',group:'员工组'},
+  {id:'EMP023',name:'吴三',dept:'产品部',position:'产品经理',level:'P5',group:'员工组'},
+  {id:'EMP024',name:'郑四',dept:'产品部',position:'总监',level:'M3',group:'管理层组'},
+  {id:'EMP025',name:'冯五',dept:'财务部',position:'会计',level:'P4',group:'员工组'},
+  {id:'EMP026',name:'陈六',dept:'财务部',position:'财务总监',level:'M4',group:'管理层组'},
+  {id:'EMP027',name:'楚七',dept:'市场部',position:'市场专员',level:'P3',group:'员工组'},
+  {id:'EMP028',name:'魏八',dept:'市场部',position:'市场经理',level:'P7',group:'员工组'},
+  {id:'EMP029',name:'蒋九',dept:'运营部',position:'运营专员',level:'P3',group:'员工组'},
+  {id:'EMP030',name:'沈十',dept:'运营部',position:'运营总监',level:'M3',group:'管理层组'},
+];
+const MATCH_RULES=[{group:'管理层组',rule:'职位 = 总监及以上'},{group:'员工组',rule:'职级 = P1-P8'}];
+
+function openReviewerWizard(method){wizOpen=true;wizStep=1;wizMethod=method||'';wizSelected=[];wizImportRows=[];pickFilter={dept:'',level:'',hireYear:'',search:''};pickPage=1;pickSelectedIds=new Set();render();}
+function closeWizard(){wizOpen=false;render();}
+function wizNext(){
+  if(wizStep===1&&!wizMethod) return;
+  if(wizStep===2){
+    wizSelected=collectWizSelected();
+    if(!wizSelected.length){GHR_NAV.showToast('请至少选择一名考核人');return;}
+  }
+  wizStep++;render();
+}
+function wizBack(){wizStep--;render();}
+function wizConfirm(){
+  wizSelected.forEach(emp=>{
+    if(!PERSONS.find(p=>p.emp===emp.id)){
+      PERSONS.push({id:PERSONS.length+1,name:emp.name,emp:emp.id,dept:emp.dept,
+        group:emp.group,groupColor:emp.group==='管理层组'?'#2563EB':'#10B981',
+        role:'被考核人',stage:'目标制定',status:'notstarted',
+        goal:'-',goalTime:'-',score:'-',grade:'-',审定等级:'-',confirmStatus:'-',面谈状态:'-',面谈日期:'-'});
+    }
+  });
+  GHR_NAV.showToast('已添加 '+wizSelected.length+' 名考核人');
+  closeWizard();
+}
+function collectWizSelected(){
+  const sel=[];
+  if(wizMethod==='manual'){
+    pickSelectedIds.forEach(id=>{
+      const emp=EMP_PICKER_DATA.find(e=>e.emp===id);
+      if(emp) sel.push({id:emp.emp,name:emp.name,dept:emp.dept,group:emp.level.startsWith('M')?'管理层组':'员工组'});
+    });
+  } else {
+    document.querySelectorAll('.wiz-cb:checked').forEach(cb=>{sel.push(JSON.parse(cb.dataset.emp));});
+  }
+  return sel;
+}
+function handleWizImport(){
+  wizImportRows=[
+    {row:1,name:'孙一',emp:'EMP021',dept:'技术部',group:'员工组',ok:true},
+    {row:2,name:'郑四',emp:'EMP024',dept:'产品部',group:'管理层组',ok:true},
+    {row:3,name:'',emp:'EMP025',dept:'财务部',group:'员工组',ok:false,err:'姓名为空'},
+    {row:4,name:'楚七',emp:'EMP027',dept:'市场部',group:'员工组',ok:true},
+    {row:5,name:'魏八',emp:'EMP028',dept:'市场部',group:'员工组',ok:false,err:'工号重复'},
+    {row:6,name:'沈十',emp:'EMP030',dept:'运营部',group:'管理层组',ok:true},
+  ];
+  render();
+}
+
+function renderReviewerWizard(){
+  if(!wizOpen) return '';
+  const isManualStep2 = wizMethod==='manual' && wizStep===2;
+  const wide = isManualStep2 ? 'xwide' : wizStep>=2 ? 'wide' : '';
+  let h='<div class="wiz-ov" onclick="if(event.target===this)closeWizard()">';
+  h+='<div class="wiz-modal '+wide+'">';
+  // Header
+  h+='<div class="wiz-hd"><div class="wiz-hd-title">添加考核人</div>';
+  h+='<div class="wiz-steps">';
+  ['选择方式','执行操作','确认添加'].forEach((l,i)=>{
+    const cls=i+1===wizStep?'on':i+1<wizStep?'done':'';
+    h+=`<div class="wiz-step ${cls}"><span class="num">${i+1<wizStep?'&#10003;':i+1}</span>${l}</div>`;
+  });
+  h+='</div></div>';
+  // Body
+  h+='<div class="wiz-bd">';
+  if(wizStep===1) h+=renderWizStep1();
+  else if(wizStep===2) h+=renderWizStep2();
+  else h+=renderWizStep3();
+  h+='</div>';
+  // Footer
+  h+='<div class="wiz-ft">';
+  h+='<button class="btn btn-s" onclick="closeWizard()">取消</button>';
+  if(wizStep>=2) h+='<button class="btn btn-s" onclick="wizBack()">上一步</button>';
+  if(wizStep<3) h+='<button class="btn btn-p" onclick="wizNext()">下一步</button>';
+  else h+='<button class="btn btn-p" onclick="wizConfirm()">确认添加</button>';
+  h+='</div></div></div>';
+  return h;
+}
+function renderWizStep1(){
+  const methods=[
+    {id:'auto',icon:'&#9881;',t:'按规则自动匹配',d:'根据方案配置的匹配规则（部门/职位/职级），自动匹配符合条件的人员'},
+    {id:'manual',icon:'&#9776;',t:'手动选择',d:'浏览组织架构树，手动勾选需要参与考核的人员'},
+    {id:'import',icon:'&#8682;',t:'导入',d:'通过 Excel 模板批量导入考核人员数据，支持校验和预览'},
+  ];
+  return methods.map(m=>`<div class="wiz-method${wizMethod===m.id?' sel':''}" onclick="wizMethod='${m.id}';render()"><div class="wiz-method-t">${m.icon} ${m.t}</div><div class="wiz-method-d">${m.d}</div></div>`).join('');
+}
+function renderWizStep2(){
+  if(wizMethod==='auto') return renderWizAuto();
+  if(wizMethod==='manual') return renderWizManual();
+  return renderWizImport();
+}
+function renderWizAuto(){
+  let h='<div class="wiz-info">';
+  MATCH_RULES.forEach(r=>{h+=`<div class="wiz-info-row"><span class="lbl">${r.group}</span><span>${r.rule}</span></div>`;});
+  h+='</div>';
+  const matched=EMP_POOL.filter(e=>e.position.includes('总监'));
+  h+=`<div class="wiz-count">已匹配 <b>${matched.length}</b> 人</div>`;
+  h+='<table class="imp-tbl"><thead><tr><th style="width:36px"><input type="checkbox" checked class="wiz-toggle-all" onclick="document.querySelectorAll(\'.wiz-cb\').forEach(c=>c.checked=this.checked)"></th><th>姓名</th><th>工号</th><th>部门</th><th>职位</th><th>考核组</th></tr></thead><tbody>';
+  matched.forEach(e=>{
+    h+=`<tr><td><input type="checkbox" checked class="wiz-cb" data-emp='${JSON.stringify(e)}'></td><td>${e.name}</td><td style="font-family:var(--fm);font-size:12px">${e.id}</td><td>${e.dept}</td><td>${e.position}</td><td><span class="tag-sm" style="color:${e.group==='管理层组'?'#2563EB':'#10B981'};background:${e.group==='管理层组'?'#EFF6FF':'#ECFDF5'}">${e.group}</span></td></tr>`;
+  });
+  h+='</tbody></table>';
+  return h;
+}
+function renderWizManual(){
+  // Filter data
+  let data = EMP_PICKER_DATA;
+  if(pickFilter.dept) data = data.filter(e => e.dept === pickFilter.dept);
+  if(pickFilter.level) data = data.filter(e => e.level.startsWith(pickFilter.level));
+  if(pickFilter.hireYear) data = data.filter(e => e.hireDate.startsWith(pickFilter.hireYear));
+  if(pickFilter.search) { const q = pickFilter.search.toLowerCase(); data = data.filter(e => e.name.toLowerCase().includes(q) || e.emp.toLowerCase().includes(q)); }
+
+  const totalPages = Math.ceil(data.length / PICK_PAGE_SIZE);
+  if(pickPage > totalPages) pickPage = totalPages || 1;
+  const pageData = data.slice((pickPage-1)*PICK_PAGE_SIZE, pickPage*PICK_PAGE_SIZE);
+  const allChecked = pageData.length > 0 && pageData.every(e => pickSelectedIds.has(e.emp));
+  const depts = [...new Set(EMP_PICKER_DATA.map(e => e.dept))];
+  const levels = [...new Set(EMP_PICKER_DATA.map(e => e.level.charAt(0)))].sort();
+  const years = [...new Set(EMP_PICKER_DATA.map(e => e.hireDate.substring(0,4)))].sort().reverse();
+
+  let h = '';
+  // Filter bar
+  h += `<div class="pick-filter">
+    <select onchange="pickFilter.dept=this.value;pickPage=1;render()"><option value="">全部部门</option>${depts.map(d=>`<option value="${d}"${pickFilter.dept===d?' selected':''}>${d}</option>`).join('')}</select>
+    <select onchange="pickFilter.level=this.value;pickPage=1;render()"><option value="">全部职族</option>${levels.map(l=>`<option value="${l}"${pickFilter.level===l?' selected':''}>${l}系列</option>`).join('')}</select>
+    <select onchange="pickFilter.hireYear=this.value;pickPage=1;render()"><option value="">全部入职日期</option>${years.map(y=>`<option value="${y}"${pickFilter.hireYear===y?' selected':''}>${y}年</option>`).join('')}</select>
+    <input type="text" placeholder="搜索姓名 / 工号..." value="${pickFilter.search}" oninput="pickFilter.search=this.value;pickPage=1;render()" style="height:30px;border:1px solid var(--c2);border-radius:var(--r1);padding:0 10px;font:400 12px/1 var(--f);color:var(--c7);outline:none;width:180px" />
+  </div>`;
+
+  // Table
+  h += `<div style="max-height:340px;overflow-y:auto;margin-top:4px">`;
+  h += `<table class="pick-tbl"><thead><tr>
+    <th style="width:36px"><input type="checkbox" ${allChecked?'checked':''} onchange="pickToggleAll(this.checked)" /></th>
+    <th>工号</th><th>姓名</th><th>部门</th><th>职位</th><th>职级</th><th>性别</th><th>入职日期</th><th>工作地点</th>
+  </tr></thead><tbody>`;
+
+  pageData.forEach(e => {
+    const checked = pickSelectedIds.has(e.emp);
+    h += `<tr>
+      <td><input type="checkbox" ${checked?'checked':''} onchange="pickToggle('${e.emp}')" /></td>
+      <td style="font-family:var(--fm);font-size:12px">${e.emp}</td>
+      <td style="font-weight:500;color:var(--c9)">${e.name}</td>
+      <td>${e.dept}</td>
+      <td>${e.position}</td>
+      <td><span class="tag-sm" style="color:var(--pr);background:var(--pr50)">${e.level}</span></td>
+      <td>${e.gender}</td>
+      <td style="font-family:var(--fm);font-size:12px">${e.hireDate}</td>
+      <td>${e.workplace}</td>
+    </tr>`;
+  });
+
+  if(pageData.length === 0) {
+    h += `<tr><td colspan="9" style="text-align:center;padding:32px;color:var(--c4);font-size:13px">暂无匹配的员工数据</td></tr>`;
+  }
+
+  h += `</tbody></table></div>`;
+
+  // Footer with count, select-all, pagination
+  h += `<div class="pick-foot">
+    <div style="display:flex;align-items:center;gap:16px">
+      <span>共 <span class="cnt" style="color:var(--pr);font-weight:600">${data.length}</span> 条</span>
+      <label class="sel-all"><input type="checkbox" ${allChecked?'checked':''} onchange="pickToggleAll(this.checked)" /> 选择全部</label>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <span class="pick-info">已选 <span class="cnt">${pickSelectedIds.size}</span> 人</span>
+      <div class="pick-pg">
+        <button class="pg-btn" ${pickPage<=1?'disabled':''} onclick="pickPage--;render()">上一页</button>`;
+  for(let i=1;i<=totalPages;i++){
+    h += `<button class="pg-btn${i===pickPage?' on':''}" onclick="pickPage=${i};render()">${i}</button>`;
+  }
+  h += `<button class="pg-btn" ${pickPage>=totalPages?'disabled':''} onclick="pickPage++;render()">下一页</button>
+      </div>
+    </div>
+  </div>`;
+
+  return h;
+}
+function pickToggle(emp){
+  if(pickSelectedIds.has(emp)) pickSelectedIds.delete(emp); else pickSelectedIds.add(emp);
+  render();
+}
+function pickToggleAll(checked){
+  let data = EMP_PICKER_DATA;
+  if(pickFilter.dept) data = data.filter(e => e.dept === pickFilter.dept);
+  if(pickFilter.level) data = data.filter(e => e.level.startsWith(pickFilter.level));
+  if(pickFilter.hireYear) data = data.filter(e => e.hireDate.startsWith(pickFilter.hireYear));
+  if(pickFilter.search) { const q = pickFilter.search.toLowerCase(); data = data.filter(e => e.name.toLowerCase().includes(q) || e.emp.toLowerCase().includes(q)); }
+  if(checked) data.forEach(e => pickSelectedIds.add(e.emp));
+  else data.forEach(e => pickSelectedIds.delete(e.emp));
+  render();
+}
+function renderWizImport(){
+  let h='';
+  if(!wizImportRows.length){
+    h+='<div class="import-area" onclick="document.getElementById(\'wiz-file\').click()">';
+    h+='<div class="icon">&#128196;</div>';
+    h+='<div class="txt">点击选择文件，或拖拽到此处<br><b>支持 .xlsx / .xls / .csv</b></div>';
+    h+='<input type="file" id="wiz-file" accept=".xlsx,.xls,.csv" onchange="handleWizImport()">';
+    h+='</div>';
+  } else {
+    const okCnt=wizImportRows.filter(r=>r.ok).length;
+    const errCnt=wizImportRows.filter(r=>!r.ok).length;
+    h+=`<div class="wiz-count">${okCnt} 条有效，<b style="color:var(--ro)">${errCnt}</b> 条异常</div>`;
+    h+='<table class="imp-tbl"><thead><tr><th>行</th><th>姓名</th><th>工号</th><th>部门</th><th>考核组</th><th>状态</th></tr></thead><tbody>';
+    wizImportRows.forEach(r=>{
+      const cls=r.ok?'':'err-row';
+      const badge=r.ok?'<span class="imp-badge ok">有效</span>':r.err.includes('重复')?'<span class="imp-badge dup">'+r.err+'</span>':'<span class="imp-badge err">'+r.err+'</span>';
+      h+=`<tr class="${cls}"><td>${r.row}</td><td>${r.name||'-'}</td><td style="font-family:var(--fm);font-size:12px">${r.emp}</td><td>${r.dept}</td><td>${r.group}</td><td>${badge}</td></tr>`;
+    });
+    h+='</tbody></table>';
+    h+='<div style="margin-top:10px;text-align:right"><button class="btn btn-s" onclick="wizImportRows=[];render()">重新选择</button></div>';
+  }
+  return h;
+}
+function renderWizStep3(){
+  let h=`<div class="wiz-sum">以下 <span class="cnt">${wizSelected.length}</span> 人将被添加为考核人：</div>`;
+  h+='<table class="imp-tbl"><thead><tr><th>姓名</th><th>工号</th><th>部门</th><th>考核组</th></tr></thead><tbody>';
+  wizSelected.forEach(e=>{
+    h+=`<tr><td>${e.name}</td><td style="font-family:var(--fm);font-size:12px">${e.id}</td><td>${e.dept}</td><td><span class="tag-sm" style="color:${e.group==='管理层组'?'#2563EB':'#10B981'};background:${e.group==='管理层组'?'#EFF6FF':'#ECFDF5'}">${e.group}</span></td></tr>`;
+  });
+  h+='</tbody></table>';
+  return h;
+}
+function updateWizCount(){const c=document.querySelectorAll('.wiz-cb:checked').length;const el=document.getElementById('wiz-sel-count');if(el) el.innerHTML='已选 <b>'+c+'</b> 人';}
+
+// ═══ AI Chat Sidebar ═══
+let aiChatOpen = false;
+const AI_IC = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 1 7 7c0 2.4-1.2 4.5-3 5.7V17a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2v-2.3C6.2 13.5 5 11.4 5 9a7 7 0 0 1 7-7z"/><path d="M10 21v1a2 2 0 0 0 4 0v-1"/></svg>`;
+const AI_EXAMPLES = [
+  '分析当前活动进度风险',
+  '哪些部门完成率偏低？',
+  '强制分布是否合规？',
+  '生成催办建议',
+];
+const AI_MSGS = [
+  { role:'bot', text:'你好，我是 AI 绩效助手。我可以帮你分析活动进度、识别风险、优化考核策略。', time:'14:30' },
+  { role:'bot', text:'当前活动「2026年Q2绩效考核」目标制定环节已完成 72%，预计 3 天后可进入下一环节。', time:'14:30',
+    cards:[{t:'技术部目标制定进度',d:'完成率 58%，低于平均 72%，建议重点跟进',tc:'ro',tag:'需关注'}],
+    actions:['查看风险详情','生成催办通知']
+  },
+  { role:'bot', text:'以下是你可以让我帮你做的事情：', time:'14:30',
+    actions: AI_EXAMPLES
+  },
+];
+
+function initAiChatSidebar() {
+  document.body.insertAdjacentHTML('beforeend', `
+    <button class="ai-toggle" onclick="toggleAiChat()">${AI_IC}</button>
+    <div class="ai-chat" id="aiChat">
+      <div class="ai-chat-hd">
+        <div class="ai-chat-hd-ic">${AI_IC}</div>
+        <div><div class="ai-chat-hd-t">AI 绩效助手</div><div class="ai-chat-hd-s">基于活动数据 + 历史绩效</div></div>
+        <button class="ai-chat-close" onclick="toggleAiChat()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+      <div class="ai-chat-bd" id="chatBd"></div>
+      <div class="ai-chat-ft">
+        <input class="ai-chat-input" id="chatInput" placeholder="询问绩效相关问题..." onkeydown="if(event.key==='Enter')sendAiMsg()"/>
+        <button class="ai-chat-send" onclick="sendAiMsg()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+      </div>
+    </div>
+  `);
+  renderAiChat();
+}
+
+function renderAiChat(){
+  const bd=document.getElementById('chatBd');if(!bd)return;
+  bd.innerHTML=AI_MSGS.map(m=>{
+    let html=`<div class="ai-msg ${m.role}"><div class="ai-msg-bd">${m.text.replace(/\n/g,'<br/>')}</div>`;
+    if(m.cards) html+=m.cards.map(c=>`<div class="ai-msg-card"><div class="ai-msg-card-t">${c.t}</div><div class="ai-msg-card-d">${c.d}</div><span class="ai-msg-card-tag ${c.tc}">${c.tag}</span></div>`).join('');
+    if(m.actions) html+=`<div class="ai-msg-actions">${m.actions.map(a=>`<button class="ai-msg-btn${a.includes('查看')||a.includes('生成')?' primary':''}" onclick="handleAiAction('${a}')">${a}</button>`).join('')}</div>`;
+    if(m.time) html+=`<div class="ai-msg-time">${m.time}</div>`;
+    html+=`</div>`;
+    return html;
+  }).join('');
+  bd.scrollTop=bd.scrollHeight;
+}
+
+function toggleAiChat(){
+  aiChatOpen=!aiChatOpen;
+  document.body.classList.toggle('chat-open',aiChatOpen);
+}
+
+function handleAiAction(action){
+  AI_MSGS.push({role:'user',text:action,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
+  renderAiChat();
+  setTimeout(()=>{
+    const responses={
+      '查看风险详情':'已为你生成风险分析报告：\n\n1. 技术部 3 人超时未提交（高风险）\n2. 评分偏差较大需关注（中风险）\n3. 默认组完成率偏低（中风险）\n\n建议优先处理超时问题。',
+      '生成催办通知':'已生成催办通知模板：\n\n📋 目标制定超时提醒\n发送对象：技术部 3 人\n内容：您的目标制定已超时 7 天，请尽快完成。',
+      '分析当前活动进度风险':'当前活动风险分析：\n\n⚠️ 目标制定环节进度 72%，预计 3 天后完成\n⚠️ 技术部完成率 58%，低于平均\n✅ 管理层组进度正常（83%）',
+      '哪些部门完成率偏低？':'部门完成率排名：\n\n1. 技术部：58% ⚠️\n2. 运营部：65% ⚠️\n3. 产品部：78%\n4. 市场部：82%\n5. 财务部：90%',
+      '强制分布是否合规？':'强制分布检查：\n\n✅ A 等级：8%（上限 10%）\n⚠️ B+ 等级：22%（上限 15%）超标\n✅ B 等级：35%（下限 30%）\n✅ B- 等级：28%\n✅ C 等级：3%（上限 5%）\n\n建议调整 B+ 等级分布。',
+      '生成催办建议':'催办建议：\n\n1. 技术部张三：目标制定超时 7 天\n2. 技术部王五：目标制定超时 5 天\n3. 技术部郑十一：目标制定超时 3 天\n\n建议发送催办通知并设置 3 天截止日期。',
+    };
+    AI_MSGS.push({role:'bot',text:responses[action]||'收到，正在处理你的请求...',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
+    renderAiChat();
+  },800);
+}
+
+function sendAiMsg(){
+  const input=document.getElementById('chatInput');const text=input.value.trim();if(!text)return;
+  AI_MSGS.push({role:'user',text,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});input.value='';renderAiChat();
+  setTimeout(()=>{AI_MSGS.push({role:'bot',text:'收到，正在分析你的需求...\n\n已根据当前活动数据为你生成分析报告，请查看左侧风险预警面板。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});renderAiChat();},800);
+}
+
+// ═══ Init ═══
+GHR_NAV.init('perf', 'AI 绩效活动');
+initAiChatSidebar();
+render();
+</script>
+</body>
+</html>

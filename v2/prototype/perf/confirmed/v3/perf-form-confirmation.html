@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GHR - 员工确认表单</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════
+   GHR 员工确认表单 — Quiet Precision
+   ═══════════════════════════════════════════════════════ */
+:root{
+  /* 主色系 */
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  /* 语义色 */
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  /* 灰色色阶 */
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  /* 背景 */
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  /* 侧边栏 */
+  --sb-bg:#FFF;--sb-hover:#F4F4F5;--sb-active-bg:#F0F5FF;--sb-active-l:#2563EB;
+  --sb-text:#71717A;--sb-text-hv:#3F3F46;--sb-text-act:#2563EB;
+  --sb-icon:#A1A1AA;--sb-icon-act:#2563EB;
+  /* 阴影 */
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --shadow-card-hover:0 8px 20px -4px rgba(0,0,0,.08),0 2px 6px -2px rgba(0,0,0,.04);
+  --shadow-dropdown:0 10px 40px -10px rgba(0,0,0,.12),0 2px 10px -2px rgba(0,0,0,.04);
+  /* 尺寸 */
+  --header-h:52px;--sidebar-w:240px;
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  /* 字体 */
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --m:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:var(--f);background:var(--bg);color:var(--c7);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;line-height:1.5;
+}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+/* ═══ HEADER ═══ */
+.hdr{
+  height:var(--header-h);background:var(--sf);
+  border-bottom:1px solid var(--dv);
+  display:flex;align-items:center;
+  padding:0 24px;gap:16px;
+  position:sticky;top:0;z-index:1100;
+}
+.hdr-l{display:flex;align-items:center;gap:14px}
+.logo{display:flex;align-items:center;gap:8px}
+.logo-i{
+  width:28px;height:28px;border-radius:6px;
+  background:var(--pr);display:flex;align-items:center;justify-content:center;
+}
+.logo-i svg{width:15px;height:15px;color:#FFF}
+.logo-t{font-size:15px;font-weight:700;color:var(--c9);letter-spacing:-.3px}
+
+/* ═══ BREADCRUMB ═══ */
+.breadcrumb{
+  display:flex;align-items:center;gap:6px;
+  font:400 13px/1 var(--f);color:var(--c5);
+}
+.breadcrumb-sep{color:var(--c3)}
+.breadcrumb-link{color:var(--c5);text-decoration:none;cursor:pointer}
+.breadcrumb-link:hover{color:var(--pr)}
+.breadcrumb-current{color:var(--c8);font-weight:500}
+
+/* ═══ FLOW STATUS ═══ */
+.flow-status{
+  margin-left:auto;
+  display:flex;align-items:center;gap:8px;
+}
+.status-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:4px 10px;border-radius:var(--r1);
+  font:500 12px/1 var(--f);
+}
+.status-badge.pending{
+  background:var(--ac50);color:#92400E;
+}
+.status-badge.confirmed{
+  background:var(--em50);color:var(--em700);
+}
+.status-badge.rejected{
+  background:var(--ro50);color:var(--ro);
+}
+.status-dot{
+  width:6px;height:6px;border-radius:50%;
+}
+.status-badge.pending .status-dot{background:var(--ac)}
+.status-badge.confirmed .status-dot{background:var(--em)}
+.status-badge.rejected .status-dot{background:var(--ro)}
+
+/* ═══ MAIN LAYOUT ═══ */
+.main{
+  max-width:1100px;
+  margin:24px auto;
+  padding:0 24px;
+}
+
+/* ═══ PAGE CARD ═══ */
+.pg{
+  background:var(--sf);border-radius:var(--r3);
+  box-shadow:var(--shadow-card);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.pg-hd{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 24px;border-bottom:1px solid var(--dv);
+}
+.pg-hd-l{display:flex;align-items:center;gap:14px}
+.pg-hd-ic{
+  width:36px;height:36px;border-radius:var(--r2);
+  background:var(--pr);display:flex;align-items:center;justify-content:center;
+}
+.pg-hd-ic svg{width:18px;height:18px;color:#FFF}
+.pg-hd-t{font:700 18px/1.2 var(--f);color:var(--c9);letter-spacing:-.2px}
+.pg-hd-s{font:400 12px/1 var(--f);color:var(--c5);margin-top:3px}
+
+/* ═══ SECTIONS ═══ */
+.section{
+  padding:20px 24px;
+  border-bottom:1px solid var(--dv);
+}
+.section:last-child{border-bottom:none}
+.section-hd{
+  display:flex;align-items:center;gap:8px;
+  margin-bottom:16px;
+}
+.section-hd-ic{
+  width:20px;height:20px;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--pr);
+}
+.section-hd-ic svg{width:16px;height:16px}
+.section-hd-t{font:600 14px/1 var(--f);color:var(--c9)}
+
+/* ═══ INFO GRID ═══ */
+.info-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+.info-item{
+  display:flex;flex-direction:column;gap:4px;
+}
+.info-label{
+  font:400 12px/1 var(--f);color:var(--c5);
+}
+.info-value{
+  font:500 13px/1.3 var(--f);color:var(--c8);
+  background:var(--c0);
+  padding:8px 12px;
+  border-radius:var(--r1);
+  border:1px solid var(--dv);
+}
+
+/* ═══ RESULTS TABLE ═══ */
+.results-table{
+  width:100%;
+  border-collapse:collapse;
+  margin-bottom:16px;
+}
+.results-table th{
+  font:500 12px/1 var(--f);color:var(--c5);
+  text-align:left;
+  padding:10px 12px;
+  background:var(--c0);
+  border-bottom:1px solid var(--dv);
+}
+.results-table th:first-child{border-radius:var(--r1) 0 0 0}
+.results-table th:last-child{border-radius:0 var(--r1) 0 0}
+.results-table td{
+  font:400 13px/1.3 var(--f);color:var(--c8);
+  padding:12px;
+  border-bottom:1px solid var(--dv);
+}
+.results-table tr:last-child td{border-bottom:none}
+.results-table tr:hover td{background:var(--c0)}
+
+.weight-bar{
+  display:flex;align-items:center;gap:8px;
+}
+.weight-bar-track{
+  flex:1;height:4px;background:var(--c1);border-radius:2px;overflow:hidden;
+}
+.weight-bar-fill{height:100%;border-radius:2px;background:var(--pr)}
+.weight-bar-label{font:500 11px/1 var(--m);color:var(--c5);min-width:30px;text-align:right}
+
+.progress-bar{
+  display:flex;align-items:center;gap:8px;
+}
+.progress-bar-track{
+  flex:1;height:4px;background:var(--c1);border-radius:2px;overflow:hidden;
+}
+.progress-bar-fill{height:100%;border-radius:2px}
+.progress-bar-label{font:500 11px/1 var(--m);color:var(--c5);min-width:36px;text-align:right}
+
+.module-row td{background:var(--c0);font:600 13px/1 var(--f);padding:8px 12px !important}
+
+.eval-tag{display:inline-block;padding:2px 8px;border-radius:3px;font:500 11px/1 var(--f)}
+.eval-tag.excellent{background:var(--em50);color:var(--em700)}
+.eval-tag.good{background:var(--pr50);color:var(--pr)}
+.eval-tag.normal{background:var(--c1);color:var(--c6)}
+.eval-tag.poor{background:var(--ro50);color:var(--ro)}
+
+.score-cell{font-family:var(--m);font-weight:600;color:var(--c9)}
+
+.eval-badge{
+  display:inline-flex;padding:3px 8px;border-radius:var(--r1);
+  font:500 11px/1 var(--f);
+}
+.eval-badge.excellent{background:var(--em50);color:var(--em700)}
+.eval-badge.good{background:var(--pr50);color:var(--pr)}
+.eval-badge.average{background:var(--ac50);color:#92400E}
+.eval-badge.poor{background:var(--ro50);color:var(--ro)}
+.eval-badge.na{background:var(--c1);color:var(--c4)}
+
+/* ═══ SUMMARY ═══ */
+.summary{
+  display:flex;gap:16px;
+  padding:16px;
+  background:var(--c0);
+  border-radius:var(--r2);
+}
+.summary-item{
+  flex:1;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:12px;
+  background:var(--sf);
+  border-radius:var(--r1);
+  box-shadow:var(--shadow-card);
+}
+.summary-label{font:400 12px/1 var(--f);color:var(--c5)}
+.summary-value{font:700 20px/1 var(--m);color:var(--c9)}
+.summary-value.total{color:var(--pr)}
+
+/* ═══ FINAL GRADE ═══ */
+.final-grade{
+  display:flex;align-items:center;gap:16px;
+  padding:16px;
+  background:var(--pr50);
+  border-radius:var(--r2);
+  border:1px solid var(--pr100);
+  margin-bottom:16px;
+}
+.final-grade-label{font:500 13px/1 var(--f);color:var(--c6)}
+.final-grade-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 14px;border-radius:var(--r1);
+  font:600 14px/1 var(--f);color:var(--sf);
+  background:var(--pr);
+}
+.final-grade-badge svg{width:14px;height:14px}
+
+/* ═══ COMMENT ═══ */
+.comment-box{
+  padding:14px 16px;
+  background:var(--c0);
+  border-radius:var(--r1);
+  border-left:3px solid var(--pr);
+  font:400 13px/1.6 var(--f);color:var(--c7);
+}
+
+/* ═══ INTERVIEW RECORD ═══ */
+.interview-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+.interview-item{
+  padding:12px 14px;
+  background:var(--c0);
+  border-radius:var(--r1);
+}
+.interview-item.full{grid-column:1/-1}
+.interview-label{
+  font:500 12px/1 var(--f);color:var(--c5);
+  margin-bottom:8px;
+  display:flex;align-items:center;gap:6px;
+}
+.interview-label svg{width:12px;height:12px;color:var(--pr)}
+.interview-value{
+  font:400 13px/1.5 var(--f);color:var(--c8);
+}
+
+/* ═══ ACTION BUTTONS ═══ */
+.actions{
+  display:flex;justify-content:flex-end;gap:12px;
+  padding:20px 24px;
+  border-top:1px solid var(--dv);
+  background:var(--c0);
+}
+.btn{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:0 20px;height:36px;border-radius:var(--r1);
+  font:500 13px/1 var(--f);cursor:pointer;
+  transition:all .12s;border:none;font-family:inherit;
+}
+.btn svg{width:14px;height:14px}
+.btn-p{background:var(--pr);color:#FFF}
+.btn-p:hover{background:var(--pr700)}
+.btn-danger{background:var(--sf);color:var(--ro);border:1px solid var(--ro100)}
+.btn-danger:hover{background:var(--ro50);border-color:var(--ro)}
+
+/* ═══ TEMPLATE SWITCHER ═══ */
+.tpl-btn{
+  padding:6px 14px;border-radius:var(--r1);border:1px solid var(--c2);
+  font:500 12px/1 var(--f);color:var(--c6);background:var(--sf);cursor:pointer;transition:all .12s;font-family:inherit;
+}
+.tpl-btn:hover{border-color:var(--c3);color:var(--c8)}
+.tpl-btn.on{background:var(--pr50);color:var(--pr);border-color:var(--pr200)}
+
+/* ═══ STATUS DISPLAY (after action) ═══ */
+.status-display{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 24px;
+  border-top:1px solid var(--dv);
+  background:var(--em50);
+}
+.status-display.rejected{background:var(--ro50)}
+.status-info{display:flex;align-items:center;gap:12px}
+.status-icon{
+  width:36px;height:36px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+}
+.status-icon.confirmed{background:var(--em);color:#FFF}
+.status-icon.rejected{background:var(--ro);color:#FFF}
+.status-icon svg{width:18px;height:18px}
+.status-text{display:flex;flex-direction:column;gap:2px}
+.status-title{font:600 14px/1.2 var(--f);color:var(--c9)}
+.status-time{font:400 12px/1 var(--f);color:var(--c5)}
+
+/* ═══ MODAL ═══ */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.4);
+  display:flex;align-items:center;justify-content:center;
+  z-index:2000;
+  opacity:0;pointer-events:none;
+  transition:opacity .2s;
+}
+.modal-overlay.on{opacity:1;pointer-events:all}
+.modal{
+  background:var(--sf);
+  border-radius:var(--r3);
+  box-shadow:var(--shadow-dropdown);
+  width:420px;
+  max-height:90vh;
+  overflow:auto;
+  transform:translateY(10px) scale(.98);
+  transition:transform .2s ease;
+}
+.modal-overlay.on .modal{transform:translateY(0) scale(1)}
+.modal-hd{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 20px;
+  border-bottom:1px solid var(--dv);
+}
+.modal-hd-t{font:600 15px/1.2 var(--f);color:var(--c9)}
+.modal-close{
+  width:28px;height:28px;border-radius:var(--r1);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--c5);background:transparent;border:none;
+  transition:all .12s;
+}
+.modal-close:hover{background:var(--c1);color:var(--c7)}
+.modal-close svg{width:16px;height:16px}
+.modal-bd{padding:20px}
+.modal-ft{
+  display:flex;justify-content:flex-end;gap:10px;
+  padding:16px 20px;
+  border-top:1px solid var(--dv);
+  background:var(--c0);
+}
+
+/* ═══ MODAL FORM ═══ */
+.form-group{margin-bottom:16px}
+.form-label{
+  display:block;
+  font:500 13px/1 var(--f);color:var(--c7);
+  margin-bottom:8px;
+}
+.form-label .required{color:var(--ro);margin-left:2px}
+.form-textarea{
+  width:100%;
+  min-height:100px;
+  padding:10px 12px;
+  border:1px solid var(--c2);
+  border-radius:var(--r1);
+  font:400 13px/1.5 var(--f);color:var(--c8);
+  resize:vertical;
+  transition:border-color .12s;
+}
+.form-textarea:focus{outline:none;border-color:var(--pr)}
+.form-textarea::placeholder{color:var(--c4)}
+.form-note{
+  font:400 12px/1.4 var(--f);color:var(--c5);
+  margin-top:8px;
+  display:flex;align-items:flex-start;gap:6px;
+}
+.form-note svg{width:14px;height:14px;color:var(--ac);flex-shrink:0;margin-top:1px}
+
+/* ═══ SUCCESS STATE ═══ */
+.success-state{
+  text-align:center;
+  padding:24px 0;
+}
+.success-icon{
+  width:56px;height:56px;
+  margin:0 auto 16px;
+  background:var(--em50);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+}
+.success-icon svg{width:28px;height:28px;color:var(--em)}
+.success-title{font:600 16px/1.3 var(--f);color:var(--c9);margin-bottom:8px}
+.success-time{font:400 13px/1 var(--f);color:var(--c5)}
+
+/* ═══ ANIMATION ═══ */
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fi{animation:fi .25s ease forwards}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.fade-in{animation:fadeIn .3s ease forwards}
+@keyframes checkPop{
+  0%{transform:scale(0)}
+  50%{transform:scale(1.2)}
+  100%{transform:scale(1)}
+}
+.check-pop{animation:checkPop .4s ease forwards}
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header class="hdr">
+  <div class="hdr-l">
+    <div class="logo">
+      <div class="logo-i">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <span class="logo-t">GHR</span>
+    </div>
+    <nav class="breadcrumb">
+      <span class="breadcrumb-link">绩效方案</span>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-link">2026年度方案</span>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current">结果确认</span>
+    </nav>
+  </div>
+  <div class="flow-status" id="flowStatus">
+    <span class="status-badge pending" id="statusBadge">
+      <span class="status-dot"></span>
+      待确认
+    </span>
+  </div>
+</header>
+
+<!-- ═══ MAIN CONTENT ═══ -->
+<div class="main">
+  <div class="pg fi">
+    <!-- Page Header -->
+    <div class="pg-hd">
+      <div class="pg-hd-l">
+        <div class="pg-hd-ic">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+          </svg>
+        </div>
+        <div>
+          <div class="pg-hd-t">员工确认表单</div>
+          <div class="pg-hd-s">绩效结果确认 · 2026年度</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Template Switcher -->
+    <div style="display:flex;gap:8px;padding:0 24px;margin-bottom:16px">
+      <button class="tpl-btn on" onclick="switchTpl('monthly')">月度考核（目标→考核→审定）</button>
+      <button class="tpl-btn" onclick="switchTpl('annual')">年度考核（面谈→审定）</button>
+    </div>
+
+    <!-- ═══ MONTHLY TEMPLATE ═══ -->
+    <div id="tplMonthly">
+      <!-- 基本信息 -->
+      <div class="section">
+        <div class="section-hd">
+          <div class="section-hd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+          <span class="section-hd-t">基本信息</span>
+        </div>
+        <div class="info-grid">
+          <div class="info-item"><span class="info-label">考核周期</span><div class="info-value">2026年Q2</div></div>
+          <div class="info-item"><span class="info-label">被考核人</span><div class="info-value">张明</div></div>
+          <div class="info-item"><span class="info-label">工号</span><div class="info-value">EMP001</div></div>
+          <div class="info-item"><span class="info-label">部门</span><div class="info-value">产品部</div></div>
+          <div class="info-item"><span class="info-label">职位</span><div class="info-value">高级产品经理</div></div>
+        </div>
+      </div>
+
+      <!-- 考核目标与结果（合并展示） -->
+      <div class="section">
+        <div class="section-hd">
+          <div class="section-hd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+          <span class="section-hd-t">考核目标与结果</span>
+        </div>
+        <table class="results-table">
+          <thead><tr>
+            <th style="width:100px">模块</th>
+            <th style="width:140px">目标名称</th>
+            <th style="width:60px">权重</th>
+            <th>衡量标准</th>
+            <th style="width:110px">完成值/完成情况</th>
+            <th style="width:80px">完成进度</th>
+            <th style="width:80px">评价结果</th>
+          </tr></thead>
+          <tbody>
+            <!-- 业绩目标 -->
+            <tr class="module-row"><td colspan="7" style="font-weight:600;color:var(--pr)">业绩目标（权重 60%）</td></tr>
+            <tr>
+              <td></td>
+              <td>Q1营收目标达成率</td>
+              <td>25%</td>
+              <td style="font:400 12px/1.4 var(--f);color:var(--c6)">目标 1200万 / 挑战 1500万 / 保底 900万<br>梯度评分 · 达成率≥120%:120分</td>
+              <td>1150万</td>
+              <td><div class="progress-bar"><div class="progress-bar-track"><div class="progress-bar-fill" style="width:96%;background:var(--em)"></div></div></div><span style="font:400 11px/1 var(--m);color:var(--c5)">96%</span></td>
+              <td><span class="eval-tag excellent">优秀</span></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>新客户拓展数量</td>
+              <td>20%</td>
+              <td style="font:400 12px/1.4 var(--f);color:var(--c6)">目标 15家 / 挑战 20家 / 保底 10家<br>线性评分</td>
+              <td>18家</td>
+              <td><div class="progress-bar"><div class="progress-bar-track"><div class="progress-bar-fill" style="width:100%;background:var(--em)"></div></div></div><span style="font:400 11px/1 var(--m);color:var(--c5)">100%</span></td>
+              <td><span class="eval-tag good">良好</span></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>客户满意度评分</td>
+              <td>15%</td>
+              <td style="font:400 12px/1.4 var(--f);color:var(--c6)">目标 ≥90分 / 挑战 ≥95分<br>梯度评分</td>
+              <td>92分</td>
+              <td><div class="progress-bar"><div class="progress-bar-track"><div class="progress-bar-fill" style="width:92%;background:var(--pr)"></div></div></div><span style="font:400 11px/1 var(--m);color:var(--c5)">92%</span></td>
+              <td><span class="eval-tag good">良好</span></td>
+            </tr>
+            <!-- 能力发展 -->
+            <tr class="module-row"><td colspan="7" style="font-weight:600;color:var(--ac)">能力发展（权重 25%）</td></tr>
+            <tr>
+              <td></td>
+              <td>专业技能提升</td>
+              <td>10%</td>
+              <td style="font:400 12px/1.4 var(--f);color:var(--c6)">完成2项技术认证</td>
+              <td>已完成2项认证</td>
+              <td><div class="progress-bar"><div class="progress-bar-track"><div class="progress-bar-fill" style="width:100%;background:var(--em)"></div></div></div><span style="font:400 11px/1 var(--m);color:var(--c5)">100%</span></td>
+              <td><span class="eval-tag good">良好</span></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>团队协作贡献</td>
+              <td>8%</td>
+              <td style="font:400 12px/1.4 var(--f);color:var(--c6)">主导1次跨部门项目</td>
+              <td>主导1次跨部门项目</td>
+              <td><div class="progress-bar"><div class="progress-bar-track"><div class="progress-bar-fill" style="width:100%;background:var(--em)"></div></div></div><span style="font:400 11px/1 var(--m);color:var(--c5)">100%</span></td>
+              <td><span class="eval-tag normal">符合预期</span></td>
+            </tr>
+            <!-- 价值观践行 -->
+            <tr class="module-row"><td colspan="7" style="font-weight:600;color:var(--vi)">价值观践行（权重 15%）</td></tr>
+            <tr>
+              <td></td>
+              <td>主动担责</td>
+              <td>5%</td>
+              <td style="font:400 12px/1.4 var(--f);color:var(--c6)">无推诿记录</td>
+              <td>无推诿记录</td>
+              <td><div class="progress-bar"><div class="progress-bar-track"><div class="progress-bar-fill" style="width:100%;background:var(--em)"></div></div></div><span style="font:400 11px/1 var(--m);color:var(--c5)">100%</span></td>
+              <td><span class="eval-tag good">良好</span></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>创新提案</td>
+              <td>5%</td>
+              <td style="font:400 12px/1.4 var(--f);color:var(--c6)">提交2条创新建议</td>
+              <td>已提交3条创新建议</td>
+              <td><div class="progress-bar"><div class="progress-bar-track"><div class="progress-bar-fill" style="width:100%;background:var(--em)"></div></div></div><span style="font:400 11px/1 var(--m);color:var(--c5)">100%</span></td>
+              <td><span class="eval-tag excellent">优秀</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="summary">
+          <div class="summary-item">
+            <span class="summary-label">加权总分</span>
+            <span class="summary-value total" id="totalScore">82.5</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">审定等级</span>
+            <span class="summary-value" id="finalGrade" style="color:var(--pr)">符合预期+</span>
+          </div>
+        </div>
+        <!-- 考核环节评语 -->
+        <div style="margin-top:16px">
+          <div style="font:600 13px/1 var(--f);color:var(--c8);margin-bottom:10px">各环节总评语</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="padding:10px 14px;background:var(--c0);border-radius:var(--r1);border-left:3px solid var(--pr)">
+              <div style="font:500 12px/1 var(--f);color:var(--pr);margin-bottom:4px">员工自评 — 张明</div>
+              <div style="font:400 13px/1.6 var(--f);color:var(--c7)">本季度完成了产品迭代核心功能上线，整体进度符合预期。在跨部门协作和业务理解方面还有提升空间。</div>
+            </div>
+            <div style="padding:10px 14px;background:var(--c0);border-radius:var(--r1);border-left:3px solid var(--em)">
+              <div style="font:500 12px/1 var(--f);color:var(--em);margin-bottom:4px">直线上级 — 王总</div>
+              <div style="font:400 13px/1.6 var(--f);color:var(--c7)">Q2完成3个核心功能上线，产品迭代目标达成率高。管理能力和业务理解有待提升，建议加强跨部门沟通。</div>
+            </div>
+            <div style="padding:10px 14px;background:var(--c0);border-radius:var(--r1);border-left:3px solid var(--vi)">
+              <div style="font:500 12px/1 var(--f);color:var(--vi);margin-bottom:4px">双线上级 — 李总</div>
+              <div style="font:400 13px/1.6 var(--f);color:var(--c7)">整体表现良好，产品交付质量稳定。建议后续重点关注团队协作和业务视野的拓展。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 审定结果 -->
+      <div class="section">
+        <div class="section-hd">
+          <div class="section-hd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <span class="section-hd-t">审定结果</span>
+        </div>
+        <div class="final-grade">
+          <span class="final-grade-label">最终绩效等级</span>
+          <span class="final-grade-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            符合预期+
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ ANNUAL TEMPLATE ═══ -->
+    <div id="tplAnnual" style="display:none">
+      <!-- 基本信息 -->
+      <div class="section">
+        <div class="section-hd">
+          <div class="section-hd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+          <span class="section-hd-t">基本信息</span>
+        </div>
+        <div class="info-grid">
+          <div class="info-item"><span class="info-label">考核周期</span><div class="info-value">2026年度</div></div>
+          <div class="info-item"><span class="info-label">被考核人</span><div class="info-value">张明</div></div>
+          <div class="info-item"><span class="info-label">工号</span><div class="info-value">EMP001</div></div>
+          <div class="info-item"><span class="info-label">部门</span><div class="info-value">产品部</div></div>
+          <div class="info-item"><span class="info-label">职位</span><div class="info-value">高级产品经理</div></div>
+        </div>
+      </div>
+
+      <!-- 绩效面谈记录 -->
+      <div class="section">
+        <div class="section-hd">
+          <div class="section-hd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+          <span class="section-hd-t">绩效面谈记录</span>
+        </div>
+        <div class="interview-grid">
+          <div class="interview-item">
+            <div class="interview-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>是否进行过年度绩效面谈</div>
+            <div class="interview-value">是</div>
+          </div>
+          <div class="interview-item">
+            <div class="interview-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>面谈时间</div>
+            <div class="interview-value">2026年5月20日</div>
+          </div>
+          <div class="interview-item">
+            <div class="interview-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>面谈人</div>
+            <div class="interview-value">王总（直线上级）</div>
+          </div>
+        </div>
+        <div style="margin-top:12px">
+          <div style="font:500 12px/1 var(--f);color:var(--c5);margin-bottom:6px">面谈要点</div>
+          <div style="font:400 13px/1.6 var(--f);color:var(--c7);padding:10px 14px;background:var(--c0);border-radius:var(--r1)">回顾年度目标达成情况，讨论职业发展规划，确认下年度重点方向。张明在产品迭代方面表现突出，建议加强团队管理和业务视野。</div>
+        </div>
+      </div>
+
+      <!-- 审定结果 -->
+      <div class="section">
+        <div class="section-hd">
+          <div class="section-hd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <span class="section-hd-t">审定结果</span>
+        </div>
+        <div class="final-grade">
+          <span class="final-grade-label">最终绩效等级</span>
+          <span class="final-grade-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            符合预期+
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 确认操作 -->
+    <div class="section" style="margin-top:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div style="font:500 13px/1 var(--f);color:var(--c6)">请确认以上绩效结果</div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-s" onclick="confirmResult('disagree')">不同意</button>
+          <button class="btn btn-p" onclick="confirmResult('agree')">确认无误</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+    </div>
+
+    <!-- Status Display (hidden initially) -->
+    <div class="status-display" id="statusDisplay" style="display:none">
+      <div class="status-info">
+        <div class="status-icon" id="statusIcon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <div class="status-text">
+          <span class="status-title" id="statusTitle">已确认</span>
+          <span class="status-time" id="statusTime"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// FIXME: 结果确认"不同意"后的完整闭环缺失 - HRBP审批后的处理路径未定义，谁去修改最终绩效等级？
+// FIXME: 绩效面谈表单与员工确认表单的字段冲突 - 两个表单包含相同的面谈字段集，数据流向未明确
+
+// ═══ MOCK DATA ═══
+const RESULTS = [
+  {module:'业绩目标',weight:50,progress:65,score:88,evaluation:'优秀'},
+  {module:'管理目标',weight:20,progress:40,score:75,evaluation:'良好'},
+  {module:'能力发展目标',weight:15,progress:20,score:70,evaluation:'良好'},
+  {module:'价值观目标',weight:15,progress:0,score:0,evaluation:'-'},
+];
+
+// ═══ TEMPLATE SWITCHER ═══
+function switchTpl(tpl) {
+  document.getElementById('tplMonthly').style.display = tpl === 'monthly' ? '' : 'none';
+  document.getElementById('tplAnnual').style.display = tpl === 'annual' ? '' : 'none';
+  document.querySelectorAll('.tpl-btn').forEach((b, i) => {
+    b.classList.toggle('on', (tpl === 'monthly' && i === 0) || (tpl === 'annual' && i === 1));
+  });
+}
+
+function confirmResult(action) {
+  if (action === 'disagree') {
+    showToast('已提交异议，等待 HRBP 处理');
+  } else {
+    showToast('确认成功', 'success');
+  }
+}
+
+// ═══ RENDER RESULTS TABLE ═══
+function renderResults() {
+  const tbody = document.getElementById('resultsBody');
+  tbody.innerHTML = RESULTS.map(r => {
+    const evalClass = getEvalClass(r.evaluation);
+    const progressColor = r.progress >= 80 ? 'var(--em)' : r.progress >= 50 ? 'var(--pr)' : r.progress >= 20 ? 'var(--ac)' : 'var(--c3)';
+    return `
+      <tr>
+        <td>${r.module}</td>
+        <td>
+          <div class="weight-bar">
+            <div class="weight-bar-track"><div class="weight-bar-fill" style="width:${r.weight}%"></div></div>
+            <span class="weight-bar-label">${r.weight}%</span>
+          </div>
+        </td>
+        <td>
+          <div class="progress-bar">
+            <div class="progress-bar-track"><div class="progress-bar-fill" style="width:${r.progress}%;background:${progressColor}"></div></div>
+            <span class="progress-bar-label">${r.progress}%</span>
+          </div>
+        </td>
+        <td class="score-cell">${r.score}</td>
+        <td><span class="eval-badge ${evalClass}">${r.evaluation}</span></td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function getEvalClass(evaluation) {
+  switch(evaluation) {
+    case '优秀': return 'excellent';
+    case '良好': return 'good';
+    case '合格': return 'average';
+    case '不合格': return 'poor';
+    default: return 'na';
+  }
+}
+
+// ═══ MODAL FUNCTIONS ═══
+function closeModal(id) {
+  document.getElementById(id).classList.remove('on');
+}
+
+function updateStatus(status) {
+  const badge = document.getElementById('statusBadge');
+  badge.className = `status-badge ${status === 'confirmed' ? 'confirmed' : 'rejected'}`;
+  badge.innerHTML = `<span class="status-dot"></span>${status === 'confirmed' ? '已确认' : '已拒绝'}`;
+}
+
+function formatTime(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  const h = String(date.getHours()).padStart(2, '0');
+  const min = String(date.getMinutes()).padStart(2, '0');
+  const s = String(date.getSeconds()).padStart(2, '0');
+  return `${y}-${m}-${d} ${h}:${min}:${s}`;
+}
+
+// ═══ TOAST ═══
+function showToast(msg, type) {
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);padding:10px 20px;border-radius:8px;font:500 13px/1 var(--f);color:#FFF;z-index:9999;animation:fadeIn .2s ease;background:' + (type==='success'?'var(--em)':'var(--pr)');
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 2500);
+}
+
+// ═══ INIT ═══
+renderResults();
+</script>
+</body>
+</html>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 衡量标准</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --shadow-card-hover:0 8px 20px -4px rgba(0,0,0,.08),0 2px 6px -2px rgba(0,0,0,.04);
+  --shadow-dropdown:0 10px 40px -10px rgba(0,0,0,.12),0 2px 10px -2px rgba(0,0,0,.04);
+  --header-h:52px;--r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --m:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+.hdr{height:var(--header-h);background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:1100}
+.hdr-l{display:flex;align-items:center;gap:14px}.logo{display:flex;align-items:center;gap:8px}
+.logo-i{width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center}
+.logo-i svg{width:15px;height:15px;color:#FFF}.logo-t{font-size:15px;font-weight:700;color:var(--c9);letter-spacing:-.3px}
+.hdr-title{font:600 14px/1 var(--f);color:var(--c7);padding-left:14px;border-left:1px solid var(--c2)}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
+.btn svg{width:13px;height:13px}.btn-p{background:var(--pr);color:#FFF}.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
+.btn-d{background:var(--sf);color:var(--ro);border:1px solid var(--ro100)}.btn-d:hover{background:var(--ro50);border-color:var(--ro)}
+.btn-sm{height:26px;padding:0 10px;font-size:12px}.btn-sm svg{width:11px;height:11px}
+.sec{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:20px;overflow:hidden}
+.sec-hd{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--dv)}
+.sec-hd-l{display:flex;align-items:center;gap:10px}
+.sec-hd-ic{width:30px;height:30px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center}
+.sec-hd-ic svg{width:15px;height:15px;color:#FFF}.sec-hd-ic.b{background:var(--pr)}
+.sec-hd-t{font:600 15px/1.2 var(--f);color:var(--c9)}.sec-hd-s{font:400 11px/1 var(--f);color:var(--c4);margin-top:2px}
+.sec-bd{padding:20px 24px}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--c2);border-radius:var(--r2)}
+table{width:100%;border-collapse:collapse;font-size:13px}thead{position:sticky;top:0;z-index:1}
+thead th{background:var(--c0);padding:10px 14px;font:600 12px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--c2);white-space:nowrap;text-transform:uppercase;letter-spacing:.3px}
+tbody td{padding:10px 14px;border-bottom:1px solid var(--dv);font:400 13px/1.4 var(--f);color:var(--c7);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}tbody tr:nth-child(even){background:var(--c0)}
+tbody tr{transition:background .1s}tbody tr:hover{background:var(--pr50)}
+.inp{border:1px solid var(--c2);border-radius:var(--r1);padding:6px 10px;font:400 13px/1 var(--f);color:var(--c9);background:var(--sf);outline:none;transition:all .15s;width:100%}
+.inp:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr100)}
+.inp-sm{padding:4px 8px;font-size:12px;width:70px}
+select.inp{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+label{font:500 13px/1 var(--f);color:var(--c6);display:block;margin-bottom:6px}
+.form-row{display:flex;gap:16px;margin-bottom:16px}.form-row:last-child{margin-bottom:0}.form-g{flex:1}
+.badge{display:inline-flex;align-items:center;gap:4px;font:600 11px/1 var(--f);padding:3px 8px;border-radius:var(--r1)}
+.badge-ok{color:var(--em700);background:var(--em50)}.badge-off{color:var(--c5);background:var(--c1)}
+.badge-blue{color:var(--pr);background:var(--pr50)}.badge-violet{color:var(--vi);background:var(--vi50)}.badge-amber{color:#92400E;background:var(--ac50)}
+.filter-bar{display:flex;align-items:flex-end;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.filter-bar .form-g{flex:none}
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:2000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-ov.on{opacity:1;pointer-events:all}
+.modal{background:var(--sf);border-radius:var(--r4);box-shadow:var(--shadow-dropdown);width:680px;max-height:85vh;overflow-y:auto;transform:translateY(8px);transition:transform .2s}
+.modal-ov.on .modal{transform:translateY(0)}
+.modal-hd{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--dv)}
+.modal-hd-t{font:600 16px/1 var(--f);color:var(--c9)}
+.modal-close{width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c4);background:transparent;border:none;transition:all .12s}
+.modal-close:hover{background:var(--c1);color:var(--c7)}.modal-close svg{width:14px;height:14px}
+.modal-bd{padding:20px 24px}.modal-ft{display:flex;justify-content:flex-end;gap:8px;padding:14px 24px;border-top:1px solid var(--dv)}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}.fi{animation:fi .25s ease forwards}
+.grade-tbl{margin-top:12px}.grade-tbl table{font-size:12px}.grade-tbl th{padding:8px 10px;font-size:11px}.grade-tbl td{padding:6px 10px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div class="modal-ov" id="modalOv"><div class="modal" id="modalBox"></div></div>
+<script src="navigation.js"></script>
+<script>
+const I={
+  target:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>',
+  refresh:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+  edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+  eye:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
+  trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+  x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+};
+
+let STANDARDS = [
+  { id:1, name:'目标完成率标准', dept:'中国区', type:'百分比', grades:[
+    {name:'卓越',min:100,max:100,desc:'超额完成所有目标'},
+    {name:'优秀',min:90,max:99,desc:'完成绝大部分目标'},
+    {name:'良好',min:75,max:89,desc:'完成大部分目标'},
+    {name:'合格',min:60,max:74,desc:'完成基本目标'},
+    {name:'待改进',min:0,max:59,desc:'未完成基本目标'},
+  ]},
+  { id:2, name:'客户满意度标准', dept:'华东大区', type:'分值', grades:[
+    {name:'非常满意',min:90,max:100,desc:'NPS>=9'},
+    {name:'满意',min:75,max:89,desc:'NPS 7-8'},
+    {name:'一般',min:60,max:74,desc:'NPS 5-6'},
+    {name:'不满意',min:0,max:59,desc:'NPS<=4'},
+  ]},
+  { id:3, name:'项目交付标准', dept:'中国区', type:'等级', grades:[
+    {name:'提前交付',min:100,max:100,desc:'提前>=5天完成'},
+    {name:'按时交付',min:80,max:99,desc:'按时完成'},
+    {name:'延期交付',min:50,max:79,desc:'延期<=3天'},
+    {name:'严重延期',min:0,max:49,desc:'延期>3天'},
+  ]},
+];
+let nextId = 4;
+let searchText = '';
+let filterDept = '';
+
+const TYPE_BADGE = { '百分比':'badge-blue', '分值':'badge-violet', '等级':'badge-amber' };
+
+function render(){
+  let filtered = STANDARDS.filter(s => {
+    if(searchText && !s.name.includes(searchText)) return false;
+    if(filterDept && s.dept !== filterDept) return false;
+    return true;
+  });
+  const rows = filtered.map((s,i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td style="font-weight:500;color:var(--c8)">${s.name}</td>
+      <td>${s.dept}</td>
+      <td><span class="badge ${TYPE_BADGE[s.type]||'badge-ok'}">${s.type}</span></td>
+      <td>${s.grades.length}</td>
+      <td>
+        <button class="btn btn-s btn-sm btn-view" data-id="${s.id}">${I.eye}</button>
+        <button class="btn btn-s btn-sm btn-edit" data-id="${s.id}">${I.edit}</button>
+        <button class="btn btn-d btn-sm btn-del" data-id="${s.id}">${I.trash}</button>
+      </td>
+    </tr>
+  `).join('');
+
+  document.getElementById('app').innerHTML = `
+    <div class="sec fi">
+      <div class="sec-hd">
+        <div class="sec-hd-l">
+          <div class="sec-hd-ic b">${I.target}</div>
+          <div><div class="sec-hd-t">衡量标准</div><div class="sec-hd-s">Measurement Standards · 管理绩效目标的衡量梯度标准</div></div>
+        </div>
+        <button class="btn btn-p" id="btnAdd">${I.plus} 新增标准</button>
+      </div>
+      <div class="sec-bd">
+        <div class="filter-bar">
+          <div class="form-g" style="width:200px"><label>标准名称</label><input class="inp" id="searchInp" placeholder="搜索标准名称" value="${searchText}"></div>
+          <div class="form-g" style="width:140px"><label>适用部门</label><select class="inp" id="filterDept"><option value="">全部</option><option value="中国区" ${filterDept==='中国区'?'selected':''}>中国区</option><option value="华东大区" ${filterDept==='华东大区'?'selected':''}>华东大区</option></select></div>
+          <button class="btn btn-s" id="btnSearch">${I.search} 搜索</button>
+          <button class="btn btn-s" id="btnReset">${I.refresh} 重置</button>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>序号</th><th>标准名称</th><th>适用部门</th><th>标准类型</th><th>梯度数</th><th>操作</th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  `;
+  bindEvents();
+}
+
+function bindEvents(){
+  document.getElementById('btnAdd').onclick = () => openModal(-1);
+  document.getElementById('btnSearch').onclick = () => { searchText = document.getElementById('searchInp').value.trim(); filterDept = document.getElementById('filterDept').value; render(); };
+  document.getElementById('btnReset').onclick = () => { searchText = ''; filterDept = ''; render(); };
+  document.querySelectorAll('.btn-view').forEach(b => b.onclick = () => openViewModal(parseInt(b.dataset.id)));
+  document.querySelectorAll('.btn-edit').forEach(b => b.onclick = () => openModal(parseInt(b.dataset.id)));
+  document.querySelectorAll('.btn-del').forEach(b => b.onclick = () => {
+    const id = parseInt(b.dataset.id);
+    const s = STANDARDS.find(x=>x.id===id);
+    if(confirm(`确定删除"${s.name}"吗？`)){ STANDARDS = STANDARDS.filter(x=>x.id!==id); render(); }
+  });
+}
+
+function gradeRowsHTML(grades, editable=true){
+  return grades.map((g,i) => `<tr>
+    <td><input class="inp inp-sm g-name" value="${g.name}" data-idx="${i}" ${editable?'':'readonly'}></td>
+    <td><input class="inp inp-sm g-min" type="number" value="${g.min}" data-idx="${i}" ${editable?'':'readonly'}></td>
+    <td><input class="inp inp-sm g-max" type="number" value="${g.max}" data-idx="${i}" ${editable?'':'readonly'}></td>
+    <td><input class="inp g-desc" value="${g.desc}" data-idx="${i}" style="font-size:12px" ${editable?'':'readonly'}></td>
+    ${editable?`<td><button class="btn btn-d btn-sm g-del" data-idx="${i}">${I.trash}</button></td>`:''}
+  </tr>`).join('');
+}
+
+function openModal(id){
+  const isNew = id < 0;
+  const s = isNew ? { name:'', dept:'中国区', type:'百分比', grades:[{name:'合格',min:60,max:100,desc:'达标'}] } : JSON.parse(JSON.stringify(STANDARDS.find(x=>x.id===id)));
+
+  openModalBox(`
+    <div class="modal-hd"><span class="modal-hd-t">${isNew?'新增标准':'编辑标准'}</span><button class="modal-close" onclick="closeModal()">${I.x}</button></div>
+    <div class="modal-bd">
+      <div class="form-row"><div class="form-g"><label>标准名称</label><input class="inp" id="mName" value="${s.name}" placeholder="输入标准名称"></div></div>
+      <div class="form-row">
+        <div class="form-g"><label>适用部门</label><select class="inp" id="mDept"><option ${s.dept==='中国区'?'selected':''}>中国区</option><option ${s.dept==='华东大区'?'selected':''}>华东大区</option><option ${s.dept==='华南大区'?'selected':''}>华南大区</option></select></div>
+        <div class="form-g"><label>标准类型</label><select class="inp" id="mType"><option ${s.type==='百分比'?'selected':''}>百分比</option><option ${s.type==='分值'?'selected':''}>分值</option><option ${s.type==='等级'?'selected':''}>等级</option></select></div>
+      </div>
+      <div class="grade-tbl">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <label style="margin:0">梯度定义</label>
+          <button class="btn btn-s btn-sm" id="btnAddGrade">${I.plus} 添加梯度</button>
+        </div>
+        <div class="tbl-wrap"><table><thead><tr><th>梯度名称</th><th>最低分</th><th>最高分</th><th>说明</th><th></th></tr></thead><tbody id="gradeBody">${gradeRowsHTML(s.grades)}</tbody></table></div>
+      </div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-s" onclick="closeModal()">取消</button><button class="btn btn-p" id="btnSave">保存</button></div>
+  `);
+
+  let grades = s.grades;
+  document.getElementById('btnAddGrade').onclick = () => { grades.push({name:'新梯度',min:0,max:0,desc:''}); document.getElementById('gradeBody').innerHTML = gradeRowsHTML(grades); };
+  document.getElementById('gradeBody').onclick = (e) => {
+    const del = e.target.closest('.g-del');
+    if(del){ grades.splice(parseInt(del.dataset.idx),1); document.getElementById('gradeBody').innerHTML = gradeRowsHTML(grades); }
+  };
+  document.getElementById('btnSave').onclick = () => {
+    const name = document.getElementById('mName').value.trim();
+    if(!name){ alert('请输入标准名称'); return; }
+    document.querySelectorAll('#gradeBody tr').forEach((tr,i) => {
+      grades[i].name = tr.querySelector('.g-name').value;
+      grades[i].min = parseInt(tr.querySelector('.g-min').value)||0;
+      grades[i].max = parseInt(tr.querySelector('.g-max').value)||0;
+      grades[i].desc = tr.querySelector('.g-desc').value;
+    });
+    const data = { name, dept:document.getElementById('mDept').value, type:document.getElementById('mType').value, grades };
+    if(isNew){ data.id = nextId++; STANDARDS.push(data); } else { Object.assign(STANDARDS.find(x=>x.id===id), data); }
+    closeModal(); render();
+  };
+}
+
+function openViewModal(id){
+  const s = STANDARDS.find(x=>x.id===id);
+  const gradeRows = s.grades.map(g => `<tr><td>${g.name}</td><td>${g.min}</td><td>${g.max}</td><td>${g.desc}</td></tr>`).join('');
+  openModalBox(`
+    <div class="modal-hd"><span class="modal-hd-t">查看标准</span><button class="modal-close" onclick="closeModal()">${I.x}</button></div>
+    <div class="modal-bd">
+      <div class="form-row"><div class="form-g"><label>标准名称</label><div style="font:400 14px/1.5 var(--f);color:var(--c8)">${s.name}</div></div></div>
+      <div class="form-row">
+        <div class="form-g"><label>适用部门</label><div style="font:400 14px/1.5 var(--f);color:var(--c8)">${s.dept}</div></div>
+        <div class="form-g"><label>标准类型</label><div><span class="badge ${TYPE_BADGE[s.type]||'badge-ok'}">${s.type}</span></div></div>
+      </div>
+      <div class="grade-tbl"><label>梯度定义</label><div class="tbl-wrap" style="margin-top:8px"><table><thead><tr><th>梯度名称</th><th>最低分</th><th>最高分</th><th>说明</th></tr></thead><tbody>${gradeRows}</tbody></table></div></div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-s" onclick="closeModal()">关闭</button></div>
+  `);
+}
+
+function openModalBox(html){ document.getElementById('modalBox').innerHTML = html; document.getElementById('modalOv').classList.add('on'); }
+function closeModal(){ document.getElementById('modalOv').classList.remove('on'); }
+document.getElementById('modalOv').onclick = (e) => { if(e.target === document.getElementById('modalOv')) closeModal(); };
+
+GHR_NAV.init('perf', '衡量标准');
+render();
+</script>
+</body>
+</html>

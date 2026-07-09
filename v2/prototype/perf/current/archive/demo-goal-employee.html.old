@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 目标制定·填写</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --shadow-card-hover:0 8px 20px -4px rgba(0,0,0,.08),0 2px 6px -2px rgba(0,0,0,.04);
+  --shadow-dropdown:0 10px 40px -10px rgba(0,0,0,.12),0 2px 10px -2px rgba(0,0,0,.04);
+  --shadow-modal:0 20px 60px -12px rgba(0,0,0,.18),0 4px 16px -4px rgba(0,0,0,.08);
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --m:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+/* ═══ HEADER ═══ */
+.hdr{height:52px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:1100}
+.hdr-l{display:flex;align-items:center;gap:14px}
+.logo{display:flex;align-items:center;gap:8px;cursor:pointer}
+.logo-i{width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center}
+.logo-i svg{width:15px;height:15px;color:#FFF}
+.logo-t{font-size:15px;font-weight:700;color:var(--c9);letter-spacing:-.3px}
+.hdr-sep{width:1px;height:20px;background:var(--c2);margin:0 2px}
+.breadcrumb{display:flex;align-items:center;gap:4px;font:500 13px/1 var(--f);color:var(--c5)}
+.breadcrumb span{cursor:pointer;transition:color .12s}
+.breadcrumb span:hover{color:var(--pr)}
+.breadcrumb .sep{color:var(--c3);cursor:default}
+.breadcrumb .cur{color:var(--c8);font-weight:600;cursor:default}
+.hdr-r{margin-left:auto;display:flex;align-items:center;gap:10px}
+.flow-badge{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:var(--r1);background:var(--pr50);border:1px solid var(--pr200);font:500 12px/1 var(--f);color:var(--pr)}
+.flow-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--pr);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* Page header */
+.pg-hd{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:16px}
+.pg-hd-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.pg-hd-title{font:700 20px/1.2 var(--f);color:var(--c9);letter-spacing:-.3px}
+.pg-hd-actions{display:flex;gap:8px}
+.pg-hd-info{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 24px;font:400 13px/1 var(--f);color:var(--c5);margin-bottom:12px;padding:12px 16px;background:var(--c0);border-radius:var(--r2)}
+.pg-hd-info-item{display:flex;flex-direction:column;gap:2px}
+.pg-hd-info-label{font:400 11px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px}
+.pg-hd-info-value{font:500 13px/1.3 var(--f);color:var(--c8)}
+.pg-hd-summary{display:flex;align-items:center;gap:24px;padding-top:12px;border-top:1px solid var(--dv)}
+.pg-hd-summary .sum-item{font:500 13px/1 var(--f);color:var(--c6)}
+.pg-hd-summary .sum-val{font-family:var(--m);font-weight:700;color:var(--pr)}
+.pg-hd-summary .sum-val.warn{color:var(--ro)}
+.pg-hd-summary #validSummary{display:inline}
+.pg-hd-summary .sum-err{display:inline-flex;align-items:center;gap:4px;font:500 11px/1 var(--f);color:var(--ro);background:var(--ro50);padding:3px 8px;border-radius:3px}
+.pg-hd-summary .sum-err svg{width:12px;height:12px}
+.pg-hd-summary .sum-ok{display:inline-flex;align-items:center;gap:4px;font:500 11px/1 var(--f);color:var(--em700);background:var(--em50);padding:3px 8px;border-radius:3px}
+.pg-hd-summary .sum-ok svg{width:12px;height:12px}
+
+/* ═══ MODULE SECTION ═══ */
+.mod-section{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden;border:1px solid var(--c2)}
+.mod-section.em{}
+.mod-section.ac{}
+.mod-section.vi{}
+.mod-section.ro{}
+
+.mod-hd{display:flex;align-items:center;padding:14px 20px;cursor:pointer;user-select:none;transition:background .12s;gap:12px}
+.mod-hd:hover{background:var(--c0)}
+.mod-hd-icon{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#FFF}
+.mod-hd-icon svg{width:13px;height:13px;color:#FFF}
+.mod-hd-title{font:500 12px/1 var(--f);color:var(--c5);flex:1;text-transform:uppercase;letter-spacing:.5px}
+.mod-hd-stats{display:flex;align-items:center;gap:12px;font:400 12px/1 var(--f);color:var(--c5)}
+.mod-hd-stats strong{font-family:var(--m);font-weight:600;color:var(--c8)}
+.mod-hd-sep{width:1px;height:14px;background:var(--c2)}
+.mod-hd-add{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:var(--r1);font:500 12px/1 var(--f);color:var(--pr);background:transparent;border:1px solid var(--pr200);cursor:pointer;transition:all .12s;font-family:inherit}
+.mod-hd-add:hover{background:var(--pr50);border-color:var(--pr)}
+.mod-hd-add svg{width:12px;height:12px}
+.mod-hd-chevron{width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--c4);transition:transform .25s;flex-shrink:0}
+.mod-hd-chevron.open{transform:rotate(180deg)}
+.mod-hd-chevron svg{width:14px;height:14px}
+
+.mod-body{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.mod-body.open{max-height:2000px}
+
+/* ═══ GOAL ROW ═══ */
+.goal-row{border-top:1px solid var(--dv);transition:background .1s}
+.goal-row:hover{background:var(--c0)}
+.goal-row:last-child{border-bottom:none}
+
+.goal-summary{display:flex;align-items:center;padding:12px 20px;gap:10px;cursor:pointer}
+.goal-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.goal-icon svg{width:14px;height:14px}
+.goal-icon.pr{background:var(--pr50);color:var(--pr)}
+.goal-icon.em{background:var(--em50);color:var(--em)}
+.goal-icon.vi{background:var(--vi50);color:var(--vi)}
+.goal-icon.ac{background:var(--ac50);color:var(--ac)}
+.goal-icon.filled{background:var(--em50);color:var(--em)}
+.goal-icon.pending{background:var(--ac50);color:var(--ac)}
+.goal-name{flex:1;font:600 14px/1.3 var(--f);color:var(--c9)}
+.goal-name-input{flex:1;padding:4px 8px;border:1px solid var(--pr);border-radius:var(--r1);font:600 14px/1.3 var(--f);color:var(--c9);background:var(--sf);outline:none;box-shadow:0 0 0 2px var(--pr50)}
+.goal-name-input.inp-err{border-color:var(--ro);box-shadow:0 0 0 2px var(--ro50)}
+.goal-meta{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.goal-type{font:500 11px/1 var(--f);padding:2px 7px;border-radius:3px;background:var(--c1);color:var(--c6)}
+.goal-type.quant{background:var(--pr50);color:var(--pr)}
+.goal-type.qual{background:var(--vi50);color:var(--vi)}
+.goal-weight{font:600 13px/1 var(--m);color:var(--pr);background:var(--pr50);padding:2px 8px;border-radius:var(--r1);flex-shrink:0}
+.goal-actions{display:flex;align-items:center;gap:4px}
+.goal-act{width:26px;height:26px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c4);background:transparent;border:none;transition:all .12s}
+.goal-act:hover{background:var(--c1);color:var(--c7)}
+.goal-act.edit:hover{color:var(--pr);background:var(--pr50)}
+.goal-act.del:hover{color:var(--ro);background:var(--ro50)}
+.goal-act svg{width:14px;height:14px}
+
+/* ═══ BUTTONS ═══ */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
+.btn svg{width:13px;height:13px}
+.btn-p{background:var(--pr);color:#FFF}
+.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}
+.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
+.btn-o{background:var(--sf);color:var(--pr);border:1px solid var(--pr200)}
+.btn-o:hover{background:var(--pr50);border-color:var(--pr)}
+.btn-sm{height:28px;padding:0 10px;font-size:12px}
+.btn-sm svg{width:12px;height:12px}
+
+/* ═══ ACTION BAR ═══ */
+.action-bar{position:fixed;bottom:0;left:0;right:0;background:var(--sf);border-top:1px solid var(--dv);box-shadow:0 -4px 12px rgba(0,0,0,.06);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;z-index:1000}
+.action-bar-l{display:flex;align-items:center;gap:16px}
+.action-bar-r{display:flex;align-items:center;gap:10px}
+.weight-total{display:flex;align-items:center;gap:6px;font:500 13px/1 var(--f);color:var(--c6)}
+.weight-total .v{font-family:var(--m);font-weight:700;font-size:16px}
+.weight-total .v.ok{color:var(--em700)}
+.weight-total .v.err{color:var(--ro)}
+.goal-total{font:400 13px/1 var(--f);color:var(--c5)}
+
+/* ═══ INLINE EDIT FORM ═══ */
+.goal-edit{padding:0 20px 12px 42px;display:none}
+.goal-edit.open{display:block;animation:fadeIn .2s ease}
+.ge-form{border-radius:var(--r2);padding:12px 0}
+.ge-sec{margin-bottom:10px}
+.ge-sec:last-child{margin-bottom:0}
+.ge-sec-title{font:600 12px/1 var(--f);color:var(--c6);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.ge-sec-title svg{width:13px;height:13px;color:var(--pr)}
+.ge-row{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px}
+.ge-row.f3{grid-template-columns:100px 100px 100px}
+.ge-row .full{grid-column:1/-1}
+.ge-fi{display:flex;flex-direction:column;gap:3px}
+.ge-fi-l{font:400 11px/1 var(--f);color:var(--c5);display:flex;align-items:center;gap:4px}
+.ge-fi-l .req{color:var(--ro);margin-left:2px}
+.ge-fi-val{font:500 13px/1.4 var(--f);color:var(--c8);padding:7px 0}
+.ai-tag{display:inline-flex;align-items:center;gap:2px;padding:1px 5px;border-radius:3px;font:500 9px/1 var(--f);background:linear-gradient(135deg,#8B5CF6 0%,#6366F1 100%);color:#FFF;flex-shrink:0}
+.ai-tag svg{width:8px;height:8px}
+.inp{width:100%;padding:7px 10px;border:1px solid var(--c2);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c9);background:var(--sf);transition:all .12s;outline:none}
+.inp:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
+.inp.num{font-family:var(--m);text-align:right}
+select.inp{-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:22px;cursor:pointer}
+textarea.inp{width:100%;min-height:60px;resize:vertical;font-family:var(--f);line-height:1.5}
+.ge-linked{display:flex;align-items:center;gap:4px;padding:5px 8px;background:var(--pr50);border:1px solid var(--pr200);border-radius:var(--r1);font:500 12px/1 var(--f);color:var(--pr)}
+.ge-linked svg{width:12px;height:12px;flex-shrink:0}
+.ge-linked-btn{margin-left:auto;font:500 10px/1 var(--f);color:var(--c5);background:none;border:none;cursor:pointer;padding:2px 4px;border-radius:3px;transition:all .12s}
+.ge-linked-btn:hover{color:var(--ro);background:var(--ro50)}
+
+/* ═══ MODAL ═══ */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:2000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--sf);border-radius:var(--r4);box-shadow:var(--shadow-modal);width:700px;max-height:80vh;display:flex;flex-direction:column;transform:scale(.96);transition:transform .2s ease}
+.modal-overlay.open .modal{transform:scale(1)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--dv)}
+.modal-title{font:600 16px/1 var(--f);color:var(--c9)}
+.modal-close{width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c4);background:transparent;border:none;transition:all .12s}
+.modal-close:hover{background:var(--c1);color:var(--c7)}
+.modal-close svg{width:16px;height:16px}
+.modal-body{flex:1;overflow-y:auto;padding:16px 24px}
+.modal-footer{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-top:1px solid var(--dv)}
+.modal-footer-l{font:400 12px/1 var(--f);color:var(--c5)}
+
+.hist-tbl{width:100%;border-collapse:collapse}
+.hist-tbl th{background:var(--c0);padding:8px 12px;font:500 12px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv)}
+.hist-tbl th:first-child{width:40px;text-align:center}
+.hist-tbl td{padding:10px 12px;font:400 13px/1.4 var(--f);color:var(--c7);border-bottom:1px solid var(--dv)}
+.hist-tbl td:first-child{text-align:center}
+.hist-tbl tr:last-child td{border-bottom:none}
+.hist-tbl tr:hover td{background:var(--pr50)}
+
+.chk{width:16px;height:16px;border-radius:3px;border:1.5px solid var(--c3);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all .12s}
+.chk.on{background:var(--pr);border-color:var(--pr)}
+.chk svg{width:10px;height:10px;color:#FFF;display:none}
+.chk.on svg{display:block}
+
+/* Picker */
+.picker-list{border:1px solid var(--c2);border-radius:var(--r2);max-height:360px;overflow-y:auto}
+.picker-item{padding:10px 14px;border-bottom:1px solid var(--dv);cursor:pointer;transition:background .12s}
+.picker-item:last-child{border-bottom:none}
+.picker-item:hover{background:var(--pr50)}
+.picker-item.selected{background:var(--pr50);border-left:3px solid var(--pr)}
+.picker-item-name{font:500 13px/1.3 var(--f);color:var(--c8);margin-bottom:3px}
+.picker-item-desc{font:400 11px/1.4 var(--f);color:var(--c5)}
+.picker-item-preview{margin-top:6px;padding:6px 8px;background:var(--c0);border-radius:var(--r1);font:400 11px/1.4 var(--m);color:var(--c6);border:1px solid var(--c2)}
+
+/* ═══ WEIGHT VALIDATION ═══ */
+.wt-err{display:inline-flex;align-items:center;gap:4px;font:500 11px/1 var(--f);color:var(--ro);background:var(--ro50);padding:3px 8px;border-radius:3px;margin-left:8px;animation:fadeIn .2s ease}
+.wt-err svg{width:12px;height:12px;flex-shrink:0}
+.mod-hd-stats .wt-err{margin-left:0}
+.sum-val.warn{color:var(--ro)}
+.sum-err{display:flex;align-items:center;gap:6px;font:400 12px/1 var(--f);color:var(--ro);margin-top:8px;padding:8px 12px;background:var(--ro50);border-radius:var(--r1);border:1px solid var(--ro100)}
+.sum-err svg{width:14px;height:14px;flex-shrink:0}
+.validate-toast{position:fixed;top:64px;left:50%;transform:translateX(-50%);background:var(--ro);color:#FFF;padding:10px 20px;border-radius:var(--r2);font:500 13px/1 var(--f);box-shadow:0 8px 24px rgba(244,63,94,.3);z-index:3000;opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:center;gap:8px}
+.validate-toast.show{opacity:1;pointer-events:all}
+.validate-toast svg{width:16px;height:16px}
+.validate-toast.success{background:var(--em);box-shadow:0 8px 24px rgba(16,185,129,.3)}
+.validate-toast.warn{background:var(--ac);box-shadow:0 8px 24px rgba(245,158,11,.3)}
+.inp-err{border-color:var(--ro)!important;box-shadow:0 0 0 2px var(--ro50)!important}
+
+/* ═══ CONFIRM MODAL ═══ */
+.confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:5000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.confirm-overlay.open{opacity:1;pointer-events:all}
+.confirm-box{background:var(--sf);border-radius:var(--r4);box-shadow:var(--shadow-modal);width:380px;padding:24px;transform:scale(.96);transition:transform .2s ease}
+.confirm-overlay.open .confirm-box{transform:scale(1)}
+.confirm-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.confirm-icon.warn{background:var(--ac50);color:var(--ac)}
+.confirm-icon.danger{background:var(--ro50);color:var(--ro)}
+.confirm-icon svg{width:20px;height:20px}
+.confirm-title{font:600 15px/1.3 var(--f);color:var(--c9);margin-bottom:6px}
+.confirm-desc{font:400 13px/1.5 var(--f);color:var(--c6);margin-bottom:20px}
+.confirm-actions{display:flex;justify-content:flex-end;gap:8px}
+
+/* ═══ TOOLTIP ═══ */
+.field-tip{position:relative;display:inline-flex;align-items:center;margin-left:4px;cursor:help}
+.field-tip-icon{width:14px;height:14px;border-radius:50%;background:var(--c2);color:var(--c5);display:flex;align-items:center;justify-content:center;font:600 9px/1 var(--f);flex-shrink:0;transition:all .12s}
+.field-tip:hover .field-tip-icon{background:var(--pr200);color:var(--pr)}
+.field-tip-text{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--c8);color:#FFF;font:400 11px/1.4 var(--f);padding:6px 10px;border-radius:var(--r1);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:100}
+.field-tip-text::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:var(--c8)}
+.field-tip:hover .field-tip-text{opacity:1}
+
+/* ═══ GLOBE / LANG ═══ */
+.field-with-lang{position:relative}
+.field-with-lang .inp{padding-right:28px}
+.field-with-lang .inp[readonly]{background:var(--c0);color:var(--c6);cursor:default}
+.lang-btn{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c4);background:transparent;border:1px solid transparent;transition:all .12s;padding:0}
+.lang-btn:hover{color:var(--pr);background:var(--pr50);border-color:var(--pr200)}
+.lang-btn.has{color:var(--pr);background:var(--pr50)}
+.lang-btn svg{width:14px;height:14px}
+
+/* ═══ KPI PICKER ═══ */
+.kpi-cat-bar{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.kpi-cat{padding:4px 10px;border-radius:var(--r1);font:500 12px/1 var(--f);color:var(--c6);background:var(--c1);cursor:pointer;border:1px solid transparent;transition:all .12s}
+.kpi-cat.on{background:var(--pr50);color:var(--pr);border-color:var(--pr200)}
+.kpi-card{padding:12px 14px;border:1px solid var(--c2);border-radius:var(--r2);cursor:pointer;transition:all .12s;margin-bottom:8px}
+.kpi-card:hover{border-color:var(--pr200);background:var(--pr50)}
+.kpi-card.selected{border-color:var(--pr);background:var(--pr50);box-shadow:0 0 0 2px var(--pr100)}
+.kpi-card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.kpi-card-name{font:500 13px/1.3 var(--f);color:var(--c8)}
+.kpi-card-cat{font:400 11px/1 var(--f);color:var(--c5);padding:1px 6px;background:var(--c1);border-radius:3px}
+.kpi-card-desc{font:400 12px/1.4 var(--f);color:var(--c5);margin-bottom:8px}
+.kpi-card-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+.kpi-tag{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:3px;font:400 10px/1 var(--f)}
+.kpi-tag.type{background:var(--pr50);color:var(--pr)}
+.kpi-tag.nature{background:var(--vi50);color:var(--vi)}
+.kpi-tag.unit{background:var(--ac50);color:var(--ac700)}
+.kpi-tag.rule{background:var(--c1);color:var(--c6)}
+.kpi-card-dept{display:flex;align-items:center;gap:4px;font:400 11px/1 var(--f);color:var(--c5)}
+.kpi-card-dept svg{width:12px;height:12px;color:var(--c4)}
+
+/* KPI Detail Panel */
+.kpi-detail{background:var(--c0);border:1px solid var(--c2);border-radius:var(--r2);padding:14px;margin-top:12px;animation:fadeIn .2s ease}
+.kpi-detail-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.kpi-detail-name{font:600 14px/1.3 var(--f);color:var(--c9)}
+.kpi-detail-close{width:24px;height:24px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c4);background:transparent;border:none;transition:all .12s}
+.kpi-detail-close:hover{background:var(--c1);color:var(--c7)}
+.kpi-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;margin-bottom:10px}
+.kpi-detail-item{display:flex;flex-direction:column;gap:2px}
+.kpi-detail-label{font:400 10px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px}
+.kpi-detail-value{font:400 12px/1.3 var(--f);color:var(--c7)}
+.kpi-detail-desc{font:400 12px/1.5 var(--f);color:var(--c6);padding-top:8px;border-top:1px solid var(--dv)}
+.kpi-cat-count{font:400 10px/1 var(--f);color:var(--c4);margin-left:2px}
+
+/* Goal type popup */
+.goal-type-popup{display:none;flex-direction:column;min-width:180px;padding:6px}
+.goal-type-popup.show{display:flex}
+.goal-type-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r1);cursor:pointer;transition:all .12s;border:1px solid transparent}
+.goal-type-item:hover{background:var(--pr50);border-color:var(--pr200)}
+.goal-type-item-icon{width:32px;height:32px;border-radius:var(--r2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.goal-type-item-icon.quant{background:var(--pr50);color:var(--pr)}
+.goal-type-item-icon.qual{background:var(--vi50);color:var(--vi)}
+.goal-type-item-icon svg{width:16px;height:16px}
+.goal-type-item-text{display:flex;flex-direction:column;gap:1px}
+.goal-type-item-name{font:500 13px/1.2 var(--f);color:var(--c8)}
+.goal-type-item-desc{font:400 11px/1.2 var(--f);color:var(--c5)}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .2s ease forwards}
+
+/* ═══ AI CHAT ═══ */
+.ai-chat{position:fixed;top:52px;right:0;width:380px;height:calc(100vh - 52px);background:var(--sf);border-left:1px solid var(--dv);z-index:900;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s ease}
+body.chat-open .ai-chat{transform:translateX(0)}
+.ai-chat-hd{padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:10px}
+.ai-chat-hd-ic{width:32px;height:32px;border-radius:var(--r2);background:linear-gradient(135deg,var(--pr) 0%,var(--vi) 100%);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ai-chat-hd-ic svg{width:16px;height:16px;color:#FFF}
+.ai-chat-hd-t{font:600 14px/1.2 var(--f);color:var(--c9)}
+.ai-chat-hd-s{font:400 11px/1 var(--f);color:var(--c5)}
+.ai-chat-close{margin-left:auto;width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:transparent;color:var(--c5);transition:all .12s}
+.ai-chat-close:hover{background:var(--c1);color:var(--c7)}
+.ai-chat-bd{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:16px}
+.ai-msg{max-width:92%;animation:aiMsgIn .3s ease}
+@keyframes aiMsgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.ai-msg.bot{align-self:flex-start}
+.ai-msg.user{align-self:flex-end}
+.ai-msg-bd{padding:12px 16px;border-radius:var(--r3);font:400 13px/1.6 var(--f)}
+.ai-msg.bot .ai-msg-bd{background:var(--c0);color:var(--c8);border-bottom-left-radius:4px}
+.ai-msg.user .ai-msg-bd{background:var(--pr);color:#FFF;border-bottom-right-radius:4px}
+.ai-msg-time{font:400 10px/1 var(--f);color:var(--c4);margin-top:4px}
+.ai-msg.user .ai-msg-time{text-align:right}
+.ai-msg-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.ai-msg-btn{font:500 11px/1 var(--f);padding:5px 10px;border-radius:var(--r1);border:1px solid var(--c2);background:var(--sf);color:var(--c6);cursor:pointer;transition:all .12s}
+.ai-msg-btn:hover{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-msg-btn.primary{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-msg-card{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);padding:12px;margin-top:8px}
+.ai-msg-card-t{font:600 12px/1.3 var(--f);color:var(--c8);margin-bottom:4px}
+.ai-msg-card-d{font:400 12px/1.5 var(--f);color:var(--c5)}
+.ai-msg-card-ft{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.ai-msg-card-tag{display:inline-block;font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px}
+.ai-msg-card-tag.em{color:var(--em700);background:var(--em50)}
+.ai-msg-card-tag.pr{color:var(--pr);background:var(--pr50)}
+.ai-msg-card-tag.ac{color:var(--ac);background:var(--ac50)}
+.ai-msg-card-apply{font:500 11px/1 var(--f);padding:4px 8px;border-radius:var(--r1);border:1px solid var(--pr200);background:var(--pr50);color:var(--pr);cursor:pointer;transition:all .12s}
+.ai-msg-card-apply:hover{background:var(--pr);color:#FFF}
+.ai-shortcuts{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.ai-shortcut{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);cursor:pointer;transition:all .12s}
+.ai-shortcut:hover{border-color:var(--pr200);background:var(--pr50)}
+.ai-shortcut-icon{font-size:18px;flex-shrink:0}
+.ai-shortcut-text{flex:1;min-width:0}
+.ai-shortcut-label{font:500 13px/1.2 var(--f);color:var(--c8)}
+.ai-shortcut-desc{font:400 11px/1.3 var(--f);color:var(--c5);margin-top:2px}
+.ai-indicators{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.ai-indicator-card{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);padding:12px;border-left:3px solid var(--pr)}
+.ai-ind-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.ai-ind-name{font:600 13px/1.2 var(--f);color:var(--c8)}
+.ai-ind-cat{font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px;background:var(--pr50);color:var(--pr)}
+.ai-ind-meta{display:flex;gap:12px;font:400 11px/1 var(--f);color:var(--c5);margin-bottom:6px}
+.ai-ind-meta strong{color:var(--pr);font-family:var(--m)}
+.ai-ind-desc{font:400 12px/1.4 var(--f);color:var(--c6);margin-bottom:6px}
+.ai-ind-tip{font:400 11px/1.4 var(--f);color:var(--em700);background:var(--em50);padding:6px 8px;border-radius:var(--r1)}
+.ai-chat-ft{padding:12px 16px;border-top:1px solid var(--dv);display:flex;gap:8px;align-items:center}
+.ai-chat-input{flex:1;height:36px;border:1px solid var(--c2);border-radius:var(--r2);padding:0 12px;font:400 13px/1 var(--f);color:var(--c8);outline:none;transition:border .15s}
+.ai-chat-input:focus{border-color:var(--pr)}
+.ai-chat-send{width:36px;height:36px;border-radius:var(--r2);background:var(--pr);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#FFF;transition:all .12s}
+.ai-chat-send:hover{background:var(--pr700)}
+.ai-chat-upload{width:36px;height:36px;border-radius:var(--r2);background:var(--sf);border:1px solid var(--c2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c5);transition:all .12s;position:relative}
+.ai-chat-upload:hover{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-chat-upload input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.ai-upload{border:2px dashed var(--c3);border-radius:var(--r2);padding:16px;text-align:center;cursor:pointer;transition:all .12s;margin-top:8px}
+.ai-upload:hover{border-color:var(--pr);background:var(--pr50)}
+.ai-upload.dragover{border-color:var(--pr);background:var(--pr50)}
+.ai-upload-icon{font-size:24px;margin-bottom:6px}
+.ai-upload-text{font:500 12px/1.3 var(--f);color:var(--c6)}
+.ai-upload-hint{font:400 11px/1.3 var(--f);color:var(--c4);margin-top:4px}
+.ai-upload-input{display:none}
+.ai-file-list{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.ai-file{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r1);font:400 12px/1 var(--f)}
+.ai-file-icon{font-size:14px}
+.ai-file-name{flex:1;color:var(--c8);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ai-file-size{color:var(--c4);font-family:var(--m);font-size:11px}
+.ai-file-status{font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px}
+.ai-file-status.parsed{color:var(--em700);background:var(--em50)}
+.ai-file-status.parsing{color:var(--pr);background:var(--pr50)}
+.ai-toggle{position:fixed;bottom:80px;right:24px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--pr) 0%,var(--vi) 100%);border:none;box-shadow:0 4px 16px rgba(37,99,235,.3);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:950;transition:all .2s}
+.ai-toggle:hover{transform:scale(1.08);box-shadow:0 6px 20px rgba(37,99,235,.4)}
+.ai-toggle svg{width:22px;height:22px;color:#FFF}
+body.chat-open .ai-toggle{display:none}
+</style>
+</head>
+<body>
+
+<!-- Navigation will be injected by navigation.js -->
+
+<!-- Main content -->
+<div class="ct fade-in">
+  <!-- Breadcrumb -->
+  <nav style="display:flex;align-items:center;gap:4px;font:500 12px/1 var(--f);color:var(--c5);margin-bottom:12px">
+    <a href="../demo-index.html" style="color:var(--c5);text-decoration:none;transition:color .12s" onmouseover="this.style.color='var(--pr)'" onmouseout="this.style.color='var(--c5)'">绩效工作台</a>
+    <span style="color:var(--c3)">/</span>
+    <span style="color:var(--c8);font-weight:600">员工制定</span>
+  </nav>
+
+  <!-- Page header -->
+  <div class="pg-hd">
+    <div class="pg-hd-top">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="pg-hd-title">目标制定</div>
+      </div>
+      <div class="pg-hd-actions">
+        <button class="btn btn-s" onclick="showToast('草稿已保存','success')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          保存草稿
+        </button>
+        <button class="btn btn-p" onclick="validateAndSubmit()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          提交
+        </button>
+      </div>
+    </div>
+    <div class="pg-hd-info">
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">考核周期</span><span class="pg-hd-info-value">2026年6月</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">员工</span><span class="pg-hd-info-value">张明 (EMP20240315)</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">部门</span><span class="pg-hd-info-value">产品部</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">职位</span><span class="pg-hd-info-value">高级产品经理</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">发起日期</span><span class="pg-hd-info-value">2026年6月</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">状态</span><span class="pg-hd-info-value" style="color:var(--pr)">● 填写中</span></div>
+    </div>
+    <div class="pg-hd-summary">
+      <span class="sum-item">总权重: <span class="sum-val" id="sumWeight">100%</span></span>
+      <span class="sum-item">总目标数: <strong id="sumGoals" style="font-family:var(--m);font-weight:600;color:var(--c8)">7</strong></span>
+      <span id="validSummary"></span>
+    </div>
+  </div>
+
+  <!-- Module sections -->
+  <div id="moduleContainer"></div>
+
+  <!-- Approval flow -->
+  <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:24px;overflow:hidden">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between">
+      <span style="font:600 15px/1 var(--f);color:var(--c9)">审批流程</span>
+    </div>
+    <div style="padding:0">
+      <table style="width:100%;border-collapse:collapse">
+        <thead>
+          <tr style="background:var(--c0)">
+            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">节点</th>
+            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">处理人</th>
+            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">流入时间</th>
+            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">流出时间</th>
+            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">状态</th>
+            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">原因/备注</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background:var(--pr50)">
+            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c8);border-bottom:1px solid var(--dv)">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="width:8px;height:8px;border-radius:50%;background:var(--pr);flex-shrink:0"></span>
+                目标填写
+              </div>
+            </td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="width:22px;height:22px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">张</span>
+                <span style="font:400 13px/1 var(--f);color:var(--c8)">张明</span>
+              </div>
+            </td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c7);border-bottom:1px solid var(--dv)">2026-06-01 09:00</td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)">
+              <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)">
+                <span style="width:6px;height:6px;border-radius:50%;background:var(--pr);animation:pulse 2s ease-in-out infinite"></span>
+                处理中
+              </span>
+            </td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c5);border-bottom:1px solid var(--dv)">当前节点</td>
+          </tr>
+          <tr>
+            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c6);border-bottom:1px solid var(--dv)">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="width:8px;height:8px;border-radius:50%;background:var(--c3);flex-shrink:0"></span>
+                直属上级审批
+              </div>
+            </td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="width:22px;height:22px;border-radius:50%;background:var(--c1);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:var(--c5);flex-shrink:0">李</span>
+                <span style="font:400 13px/1 var(--f);color:var(--c6)">李总</span>
+              </div>
+            </td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)">
+              <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--c1);color:var(--c5)">待处理</span>
+            </td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
+          </tr>
+          <tr>
+            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c6);border-bottom:1px solid var(--dv)">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="width:8px;height:8px;border-radius:50%;background:var(--c3);flex-shrink:0"></span>
+                间接上级审批
+              </div>
+            </td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="width:22px;height:22px;border-radius:50%;background:var(--c1);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:var(--c5);flex-shrink:0">王</span>
+                <span style="font:400 13px/1 var(--f);color:var(--c6)">王总</span>
+              </div>
+            </td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)">
+              <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--c1);color:var(--c5)">待处理</span>
+            </td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
+          </tr>
+          <tr>
+            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c6)">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="width:8px;height:8px;border-radius:50%;background:var(--c3);flex-shrink:0"></span>
+                HR确认
+              </div>
+            </td>
+            <td style="padding:12px 16px">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="width:22px;height:22px;border-radius:50%;background:var(--c1);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:var(--c5);flex-shrink:0">赵</span>
+                <span style="font:400 13px/1 var(--f);color:var(--c6)">赵HR</span>
+              </div>
+            </td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4)">—</td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4)">—</td>
+            <td style="padding:12px 16px">
+              <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--c1);color:var(--c5)">待处理</span>
+            </td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4)">—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══ COPY MODAL ═══ -->
+<div class="modal-overlay" id="copyModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">复制历史目标</span>
+      <button class="modal-close" onclick="closeModal('copyModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <select class="inp" style="width:160px" id="histPeriod" onchange="renderHistTable()">
+          <option>2026年5月</option><option>2026年4月</option><option>2026年3月</option>
+        </select>
+        <span style="font:400 12px/1 var(--f);color:var(--c5)">选择要复制的目标</span>
+        <span style="margin-left:auto;font:500 12px/1 var(--f);color:var(--pr)" id="histSelCount">已选 0 项</span>
+      </div>
+      <table class="hist-tbl" id="histTable"></table>
+    </div>
+    <div class="modal-footer">
+      <span class="modal-footer-l" id="copyModLabel">将复制到当前模块</span>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-s" onclick="closeModal('copyModal')">取消</button>
+        <button class="btn btn-p" onclick="confirmCopy()">确认复制</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PICKER MODALS ═══ -->
+<div class="modal-overlay" id="measureModal">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">引用衡量标准</span><button class="modal-close" onclick="closeModal('measureModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="modal-body"><div class="picker-list" id="measureList"></div></div>
+    <div class="modal-footer"><span></span><div style="display:flex;gap:8px"><button class="btn btn-s" onclick="closeModal('measureModal')">取消</button><button class="btn btn-p" onclick="confirmMeasure()">确定</button></div></div>
+  </div>
+</div>
+<div class="modal-overlay" id="ruleModal">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">引用计算规则</span><button class="modal-close" onclick="closeModal('ruleModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="modal-body"><div class="picker-list" id="ruleList"></div></div>
+    <div class="modal-footer"><span></span><div style="display:flex;gap:8px"><button class="btn btn-s" onclick="closeModal('ruleModal')">取消</button><button class="btn btn-p" onclick="confirmRule()">确定</button></div></div>
+  </div>
+</div>
+
+<!-- ═══ INDICATOR PICKER MODAL ═══ -->
+<div class="modal-overlay" id="indicatorModal">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">选择关联指标</span><button class="modal-close" onclick="closeModal('indicatorModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="modal-body">
+      <div style="margin-bottom:12px"><input class="inp" placeholder="搜索指标名称..." id="kpiSearch" oninput="filterKPI()"></div>
+      <div class="kpi-cat-bar" id="kpiCatBar"></div>
+      <div id="kpiDetail"></div>
+      <div id="kpiList"></div>
+    </div>
+    <div class="modal-footer"><span class="modal-footer-l" id="kpiSelLabel">未选择</span><div style="display:flex;gap:8px"><button class="btn btn-s" onclick="closeModal('indicatorModal')">取消</button><button class="btn btn-p" onclick="confirmIndicator()">确认选择</button></div></div>
+  </div>
+</div>
+
+<!-- ═══ LANGUAGE EDITOR MODAL ═══ -->
+<div class="modal-overlay" id="langModal">
+  <div class="modal" style="width:480px">
+    <div class="modal-header"><span class="modal-title">多语言编辑</span><button class="modal-close" onclick="closeModal('langModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="modal-body">
+      <div style="margin-bottom:12px;font:500 13px/1 var(--f);color:var(--c8)" id="langFieldLabel">字段</div>
+      <div class="ef-fi" style="margin-bottom:10px"><span class="ef-fi-l">中文</span><input class="inp" id="langZh"/></div>
+      <div class="ef-fi"><span class="ef-fi-l">英文</span><input class="inp" id="langEn"/></div>
+    </div>
+    <div class="modal-footer"><span></span><div style="display:flex;gap:8px"><button class="btn btn-s" onclick="closeModal('langModal')">取消</button><button class="btn btn-p" onclick="saveLang()">保存</button></div></div>
+  </div>
+</div>
+
+<div class="validate-toast" id="validateToast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span id="toastMsg"></span></div>
+
+<!-- ═══ CONFIRM MODAL ═══ -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-icon warn" id="confirmIcon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+    <div class="confirm-title" id="confirmTitle">确认操作</div>
+    <div class="confirm-desc" id="confirmDesc">确定要执行此操作吗？</div>
+    <div class="confirm-actions">
+      <button class="btn btn-s" id="confirmCancel">取消</button>
+      <button class="btn btn-p" id="confirmOk">确认</button>
+    </div>
+  </div>
+</div>
+
+<!-- Goal type choice popup -->
+<div id="addGoalPopup" style="position:fixed;z-index:1500;background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-dropdown)" class="goal-type-popup">
+  <div class="goal-type-item" onclick="pickGoalType('quant')">
+    <div class="goal-type-item-icon quant">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+    </div>
+    <div class="goal-type-item-text">
+      <span class="goal-type-item-name">定量目标</span>
+      <span class="goal-type-item-desc">可量化的指标型目标</span>
+    </div>
+  </div>
+  <div class="goal-type-item" onclick="pickGoalType('qual')">
+    <div class="goal-type-item-icon qual">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    </div>
+    <div class="goal-type-item-text">
+      <span class="goal-type-item-name">定性目标</span>
+      <span class="goal-type-item-desc">行为/能力类主观评价</span>
+    </div>
+  </div>
+</div>
+
+<script src="../navigation.js"></script>
+<script>
+const I={
+  chevron:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>',
+  drag:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg>',
+  edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+  trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+  link:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+  target:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
+  users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  star:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+  book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
+  chart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+  globe:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
+  ai:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg>',
+};
+
+const MODULES=[
+  {name:'KPI',weight:30,icon:'target',color:'var(--pr)',accent:'',goals:[
+    {id:'g1',name:'资源利用率（通用）',indicator:'资源利用率',type:'quant',weight:5,aiFilled:true,desc:'1.指标定义：人员的实际工作量饱和情况，数据来源：Devops\n2.计算逻辑：公式=当月实际任务工时（人天）/EHR实际出勤天数*100%',measure:'梯度评分',target:105,challenge:110,baseline:100,unit:'%',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',msLevels:[{level:'优秀',color:'var(--em)',score:'120分',condition:'利用率 >= 110%'},{level:'良好',color:'var(--pr)',score:'100分',condition:'利用率 >= 105%'},{level:'合格',color:'var(--ac)',score:'80分',condition:'利用率 >= 100%'},{level:'不合格',color:'var(--ro)',score:'0分',condition:'利用率 < 100%'}]},
+    {id:'g2',name:'HRASUAT用户验收首次通过率(产品)',indicator:'UAT首次通过率',type:'quant',weight:10,desc:'1.指标定义：需求首次业务验收通过的概率\n2.计算逻辑：公式=当月需求首次业务验收通过的迭代数量/当月业务验收的迭代总数*100%',measure:'梯度评分',target:98,challenge:100,baseline:95,unit:'百分比',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',msLevels:[{level:'优秀',color:'var(--em)',score:'120分',condition:'通过率 >= 100%'},{level:'良好',color:'var(--pr)',score:'100分',condition:'通过率 >= 98%'},{level:'合格',color:'var(--ac)',score:'80分',condition:'通过率 >= 95%'},{level:'不合格',color:'var(--ro)',score:'0分',condition:'通过率 < 95%'}]},
+    {id:'g3',name:'HRAS需求评审及时率(产品)',indicator:'需求评审及时率',type:'quant',weight:15,desc:'1.迭代版本评审的及时性情况\n2.计算逻辑：公式=统计周期内按时需求评审迭代数/计划评审迭代*100%\n备注：按需求个数的维度。',measure:'梯度评分',target:98,challenge:100,baseline:95,unit:'百分比',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',msLevels:[{level:'优秀',color:'var(--em)',score:'120分',condition:'及时率 >= 100%'},{level:'良好',color:'var(--pr)',score:'100分',condition:'及时率 >= 98%'},{level:'合格',color:'var(--ac)',score:'80分',condition:'及时率 >= 95%'},{level:'不合格',color:'var(--ro)',score:'0分',condition:'及时率 < 95%'}]},
+  ]},
+  {name:'KPA',weight:70,icon:'users',color:'var(--em)',accent:'em',goals:[
+    {id:'g4',name:'HRAS产品管理规范',indicator:'产品管理规范',type:'qual',weight:10,desc:'1、需求管理流程尊从规范（受理-澄清-方案-业务内审-技术评审-研发交付-产品验收-用户验收）\n2、产品需求规范（需求池需求管理、文档规范）\n3、迭代火车管理规范\n4、周会/月会前事项准时完成更新',measure:'定性评分',target:1,challenge:1,baseline:1,rule:'-',ruleFormula:'',msLevels:[{level:'符合预期',color:'var(--em)',score:'100分',condition:'4项全部符合规范'},{level:'低于预期',color:'var(--ro)',score:'0分',condition:'4项任何1项不符合规范'}]},
+    {id:'g5',name:'【产品设计】日常滚动需求响应',indicator:'日常需求响应',type:'qual',weight:10,aiFilled:true,desc:'根据业务日会需求优先级，滚动响应日常需求，输出产品解决方案，计划事项如下：\n05/18 已完成GOFO6月双周上半月迭代需求评审：费控系统对接需求、签字报表支持按薪酬制度区分\n06/12 完成GOFO6月双周上半月迭代需求验收',measure:'定性评分',target:1,challenge:1,baseline:1,rule:'-',ruleFormula:'',msLevels:[{level:'符合预期',color:'var(--em)',score:'100分',condition:'按时完成需求响应和验收'},{level:'低于预期',color:'var(--ro)',score:'0分',condition:'未按时完成'}]},
+    {id:'g6',name:'【产品设计】HR ONE 绩效重构事项推进',indicator:'绩效重构推进',type:'qual',weight:25,desc:'计划事项：\n06-10 输出AI+绩效核心用户页面原型，给新哥、蔡老师汇报整体内容，并确认后续版本页面落地方式\n06-19 完成绩效版本4（考核活动管理）需求内审\n06-24 完成绩效版本4（考核活动管理）需求评审',measure:'定性评分',target:1,challenge:1,baseline:1,rule:'-',ruleFormula:'',msLevels:[{level:'符合预期',color:'var(--em)',score:'100分',condition:'按时完成各里程碑'},{level:'低于预期',color:'var(--ro)',score:'0分',condition:'未按时完成'}]},
+    {id:'g7',name:'【应用探索】AI应用项目探索与落地推广',indicator:'AI应用落地',type:'qual',weight:25,desc:'06-05 输出ASSC采购侧AI项目管理应用1.0版本（登录、项目管理、节点管理），进行测试试用阶段\n06-12 对接LBU AI 应用场景需求，启动第一个试点应用落地\n06-26 完成ASSC采购侧AI项目管理应用1.1版本（私聊/群聊场景的对话式更新项目、节点进度）',measure:'定性评分',target:1,challenge:1,baseline:1,rule:'-',ruleFormula:'',msLevels:[{level:'符合预期',color:'var(--em)',score:'100分',condition:'按时完成各版本交付'},{level:'低于预期',color:'var(--ro)',score:'0分',condition:'未按时完成'}]},
+  ]},
+];
+
+const HISTORY={
+  '2026年5月':[
+    {name:'资源利用率（通用）',indicator:'资源利用率',module:'KPI',type:'quant',weight:5,target:105,challenge:110,baseline:100,unit:'%',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'人员的实际工作量饱和情况',msLevels:[]},
+    {name:'HRASUAT用户验收首次通过率(产品)',indicator:'UAT首次通过率',module:'KPI',type:'quant',weight:10,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'需求首次业务验收通过的概率',msLevels:[]},
+    {name:'HRAS需求评审及时率(产品)',indicator:'需求评审及时率',module:'KPI',type:'quant',weight:15,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'迭代版本评审的及时性情况',msLevels:[]},
+    {name:'HRAS产品管理规范',indicator:'产品管理规范',module:'KPA',type:'qual',weight:10,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'产品需求管理和迭代管理的规范',msLevels:[]},
+    {name:'【产品设计】日常滚动需求响应',indicator:'日常需求响应',module:'KPA',type:'qual',weight:10,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'滚动响应日常需求',msLevels:[]},
+    {name:'【产品设计】HR ONE 绩效重构事项推进',indicator:'绩效重构推进',module:'KPA',type:'qual',weight:25,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'绩效重构各里程碑推进',msLevels:[]},
+    {name:'【应用探索】AI应用项目探索与落地推广',indicator:'AI应用落地',module:'KPA',type:'qual',weight:25,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'AI应用版本交付和试点落地',msLevels:[]},
+  ],
+  '2026年4月':[
+    {name:'资源利用率（通用）',indicator:'资源利用率',module:'KPI',type:'quant',weight:5,target:105,challenge:110,baseline:100,unit:'%',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
+    {name:'HRASUAT用户验收首次通过率(产品)',indicator:'UAT首次通过率',module:'KPI',type:'quant',weight:10,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
+    {name:'HRAS需求评审及时率(产品)',indicator:'需求评审及时率',module:'KPI',type:'quant',weight:15,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
+    {name:'HRAS产品管理规范',indicator:'产品管理规范',module:'KPA',type:'qual',weight:10,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
+    {name:'【产品设计】日常滚动需求响应',indicator:'日常需求响应',module:'KPA',type:'qual',weight:10,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
+    {name:'【产品设计】HR ONE 绩效重构事项推进',indicator:'绩效重构推进',module:'KPA',type:'qual',weight:25,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
+    {name:'【应用探索】AI应用项目探索与落地推广',indicator:'AI应用落地',module:'KPA',type:'qual',weight:25,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
+  ],
+  '2026年3月':[
+    {name:'资源利用率（通用）',indicator:'资源利用率',module:'KPI',type:'quant',weight:5,target:105,challenge:110,baseline:100,unit:'%',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
+    {name:'HRASUAT用户验收首次通过率(产品)',indicator:'UAT首次通过率',module:'KPI',type:'quant',weight:10,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
+    {name:'HRAS需求评审及时率(产品)',indicator:'需求评审及时率',module:'KPI',type:'quant',weight:15,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
+    {name:'HRAS产品管理规范',indicator:'产品管理规范',module:'KPA',type:'qual',weight:10,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
+    {name:'【产品设计】日常滚动需求响应',indicator:'日常需求响应',module:'KPA',type:'qual',weight:10,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
+    {name:'【产品设计】HR ONE 绩效重构事项推进',indicator:'绩效重构推进',module:'KPA',type:'qual',weight:25,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
+    {name:'【应用探索】AI应用项目探索与落地推广',indicator:'AI应用落地',module:'KPA',type:'qual',weight:25,target:1,challenge:1,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
+  ],
+};
+
+const MEASURES=[
+  {name:'梯度评分',desc:'根据完成度分梯度评分',preview:'达成率>=120%: 120分\n达成率>=100%: 100分\n达成率>=80%: 80分\n达成率<80%: 0分'},
+  {name:'线性评分',desc:'根据实际值线性计算',preview:'得分 = (实际值 - 保底值) / (目标值 - 保底值) * 100'},
+  {name:'定性评分',desc:'由评价人主观评定',preview:'优秀: 120分\n良好: 100分\n合格: 80分\n不合格: 0分'},
+  {name:'是否达成',desc:'二值判断',preview:'达成: 100分\n未达成: 0分'},
+];
+const RULES=[
+  {name:'标准梯度计算',desc:'IF-THEN梯度',formula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))'},
+  {name:'线性插值计算',desc:'CLAMP线性',formula:'CLAMP((实际-保底)/(目标-保底)*100,0,120)'},
+  {name:'加权汇总计算',desc:'SUM加权',formula:'SUM(子项得分*子项权重)/SUM(子项权重)'},
+];
+
+const MOCK_INDICATORS=[
+  {id:'kpi1',name:'资源利用率（通用）',type:'定量',nature:'正向',category:'效率',unit:'%',desc:'人员的实际工作量饱和情况，数据来源：Devops'},
+  {id:'kpi2',name:'HRASUAT用户验收首次通过率(产品)',type:'定量',nature:'正向',category:'质量',unit:'百分比',desc:'需求首次业务验收通过的概率'},
+  {id:'kpi3',name:'HRAS需求评审及时率(产品)',type:'定量',nature:'正向',category:'效率',unit:'百分比',desc:'迭代版本评审的及时性情况'},
+  {id:'kpi4',name:'项目按时交付率',type:'定量',nature:'正向',category:'效率',unit:'%',desc:'衡量项目按时交付情况'},
+  {id:'kpi5',name:'客户满意度评分',type:'定量',nature:'正向',category:'质量',unit:'分',desc:'衡量客户满意度指标'},
+  {id:'kpi6',name:'产品迭代完成率',type:'定量',nature:'正向',category:'效率',unit:'%',desc:'衡量产品迭代计划完成率'},
+  {id:'kpi7',name:'代码缺陷密度',type:'定量',nature:'负向',category:'质量',unit:'个/千行',desc:'每千行代码的缺陷数量，越低越好'},
+  {id:'kpi8',name:'运营成本节约率',type:'定量',nature:'正向',category:'成本',unit:'%',desc:'实际成本相对预算的节约比例'},
+  {id:'kpi9',name:'产品管理规范',type:'定性',nature:'正向',category:'协作',unit:'-',desc:'需求管理流程规范性和文档完整性'},
+  {id:'kpi10',name:'创新方案提交数',type:'定量',nature:'正向',category:'创新',unit:'个',desc:'期内提交的创新方案或改进建议数量'},
+  {id:'kpi11',name:'跨部门协作评分',type:'定性',nature:'正向',category:'协作',unit:'分',desc:'由协作部门对协作响应速度和质量的综合评价'},
+  {id:'kpi12',name:'会议迟到次数',type:'加减分',nature:'负向',category:'协作',unit:'次',desc:'会议迟到或无故缺席次数，按次扣分'},
+  {id:'kpi13',name:'流程优化提案采纳数',type:'加减分',nature:'正向',category:'创新',unit:'个',desc:'提出的流程优化建议被采纳实施的数量'},
+  {id:'kpi14',name:'培训授课时长',type:'加减分',nature:'正向',category:'协作',unit:'小时',desc:'期内为团队进行内部培训的累计时长'},
+];
+
+let expandedMods=new Set([0,1]);
+let expandedGoals=new Set();
+let selectedMeasure=null, selectedRule=null;
+let histSelected=new Set();
+let langStore={};
+let selectedKpiId=null;
+let langFieldKey=null;
+let kpiFilterCat='全部', kpiFilterType='全部', kpiFilterNature='全部';
+
+// ═══ CUSTOM CONFIRM MODAL ═══
+function showConfirm({title='确认操作', desc='确定要执行此操作吗？', type='warn', okText='确认', onOk}) {
+  const overlay = document.getElementById('confirmOverlay');
+  const icon = document.getElementById('confirmIcon');
+  const titleEl = document.getElementById('confirmTitle');
+  const descEl = document.getElementById('confirmDesc');
+  const okBtn = document.getElementById('confirmOk');
+  const cancelBtn = document.getElementById('confirmCancel');
+
+  icon.className = 'confirm-icon ' + type;
+  titleEl.textContent = title;
+  descEl.textContent = desc;
+  okBtn.textContent = okText;
+
+  // 更新图标
+  const icons = {
+    warn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+    danger: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>'
+  };
+  icon.innerHTML = icons[type] || icons.warn;
+
+  return new Promise(resolve => {
+    const cleanup = () => {
+      overlay.classList.remove('open');
+      okBtn.onclick = null;
+      cancelBtn.onclick = null;
+      overlay.onclick = null;
+    };
+    okBtn.onclick = () => { cleanup(); resolve(true); onOk && onOk(); };
+    cancelBtn.onclick = () => { cleanup(); resolve(false); };
+    overlay.onclick = (e) => { if (e.target === overlay) { cleanup(); resolve(false); } };
+    overlay.classList.add('open');
+  });
+}
+
+// ═══ RENDER MODULES ═══
+function render(){
+  const c=document.getElementById('moduleContainer');
+  let h='';
+  MODULES.forEach((m,mi)=>{
+    const open=expandedMods.has(mi);
+    const tw=m.goals.reduce((s,g)=>s+g.weight,0);
+    h+=`<div class="mod-section ${m.accent}">
+      <div class="mod-hd" onclick="toggleMod(${mi})">
+        <div class="mod-hd-icon" style="background:${m.color}">${I[m.icon]||I.target}</div>
+        <div class="mod-hd-title">${m.name}</div>
+        <div class="mod-hd-stats">
+          <span>权重 <strong>${tw}%</strong></span>
+          <span>${m.goals.length} 个目标</span>
+        </div>
+        <div class="mod-hd-sep"></div>
+        <button class="mod-hd-add" onclick="event.stopPropagation();openIndicatorPicker(null,${mi})" title="从指标库选择">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          指标库选择
+        </button>
+        <button class="mod-hd-add" onclick="event.stopPropagation();openCopyModal(${mi})" title="复制历史目标">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          复制历史
+        </button>
+        <button class="mod-hd-add" onclick="event.stopPropagation();addGoal(${mi})">${I.plus} 新增</button>
+        <div class="mod-hd-chevron ${open?'open':''}">${I.chevron}</div>
+      </div>
+      <div class="mod-body ${open?'open':''}">`;
+    if(!m.goals.length){
+      h+=`<div style="padding:20px;text-align:center;color:var(--c4);font:400 13px/1.3 var(--f)">暂无目标，点击"新增"添加</div>`;
+    }else{
+      m.goals.forEach((g,gi)=>{
+        const isOpen=expandedGoals.has(g.id);
+        const typeLabel=g.type==='quant'?'定量':'定性';
+        const typeClass=g.type==='quant'?'quant':'qual';
+        const linked=g.linkedIndicatorId?MOCK_INDICATORS.find(k=>k.id===g.linkedIndicatorId):null;
+        const isFilled=g.type==='quant'?(g.target>0&&g.challenge>0&&g.baseline>0):(g.ms3&&g.ms3.trim().length>0);
+        h+=`<div class="goal-row" data-goal-id="${g.id}">
+          <div class="goal-summary" onclick="toggleGoal('${g.id}')">
+            <div class="goal-icon" style="background:var(--c1);color:var(--c6);font:600 11px/1 var(--m);width:24px;height:24px;border-radius:50%">${gi+1}</div>
+            ${isOpen?`<input class="goal-name-input" id="ge_name_${g.id}" value="${g.name}" onclick="event.stopPropagation()" oninput="syncGoalFromForm('${g.id}')" />`:`<span class="goal-name">${g.name}${g.aiFilled?aiTag():''}</span>`}
+            ${isOpen?`<span style="display:inline-flex;align-items:center;flex-shrink:0"><input type="number" min="0" max="100" value="${g.weight}" onclick="event.stopPropagation()" oninput="syncGoalFromForm('${g.id}')" id="ge_weight_${g.id}" style="width:42px;font:700 13px/1 var(--m);color:var(--pr);border:1px solid var(--pr200);border-radius:var(--r1) 0 0 var(--r1);padding:2px 2px 2px 4px;text-align:center;background:var(--pr50);outline:none" /><span style="padding:2px 5px;font:600 12px/1 var(--m);color:var(--pr);background:var(--pr100);border:1px solid var(--pr200);border-left:none;border-radius:0 var(--r1) var(--r1) 0">%</span></span>`:`<span class="goal-weight" onclick="event.stopPropagation();editWeightInline('${g.id}')" style="cursor:pointer" title="点击编辑权重">${g.weight}%</span>`}
+            <div class="goal-meta">
+              <span class="goal-type ${typeClass}">${typeLabel}</span>
+              <div class="goal-actions">
+                <button class="goal-act del" title="删除" onclick="event.stopPropagation();deleteGoal('${g.id}',${mi})">${I.trash}</button>
+              </div>
+            </div>
+          </div>
+          <div class="goal-edit ${isOpen?'open':''}">
+            <div class="ge-form">
+              ${g.type==='quant'?`
+              <div class="ge-sec">
+                <div class="ge-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>衡量标准</div>
+                <div class="ge-row f3">
+                  <div class="ge-fi"><span class="ge-fi-l">目标值 <span class="req">*</span>${(linked||g.aiFilled)?aiTag():''}</span><input class="inp num" id="ge_target_${g.id}" type="number" value="${g.target}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')"/></div>
+                  <div class="ge-fi"><span class="ge-fi-l">挑战值${(linked||g.aiFilled)?aiTag():''}</span><input class="inp num" id="ge_challenge_${g.id}" type="number" value="${g.challenge}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')"/></div>
+                  <div class="ge-fi"><span class="ge-fi-l">保底值${(linked||g.aiFilled)?aiTag():''}</span><input class="inp num" id="ge_baseline_${g.id}" type="number" value="${g.baseline}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')"/></div>
+                </div>
+              </div>
+              <div class="ge-sec">
+                <div class="ge-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>指标描述</div>
+                <div style="font:400 13px/1.6 var(--f);color:var(--c7);white-space:pre-line;word-break:break-word">${g.desc||'-'}</div>
+              </div>
+              `:`
+              <div class="ge-sec">
+                <div class="ge-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>衡量标准</div>
+                <div class="ge-fi" style="margin-bottom:8px"><span class="ge-fi-l">2分标准</span><textarea class="inp" id="ge_ms2_${g.id}" placeholder="请输入2分标准..." rows="2" oninput="syncGoalFromForm('${g.id}')">${g.ms2||''}</textarea></div>
+                <div class="ge-fi" style="margin-bottom:8px"><span class="ge-fi-l">3分标准 <span class="req">*</span>${g.aiFilled?aiTag():''}</span><textarea class="inp" id="ge_ms3_${g.id}" placeholder="请输入3分标准..." rows="2" oninput="syncGoalFromForm('${g.id}')">${g.ms3||''}</textarea></div>
+                <div class="ge-fi"><span class="ge-fi-l">4分标准</span><textarea class="inp" id="ge_ms4_${g.id}" placeholder="请输入4分标准..." rows="2" oninput="syncGoalFromForm('${g.id}')">${g.ms4||''}</textarea></div>
+              </div>
+              `}
+            </div>
+          </div>
+        </div>`;
+      });
+    }
+    h+=`</div></div>`;
+  });
+
+  c.innerHTML=h;
+  updateTotals();
+}
+
+// ═══ AUTO-SYNC ═══
+function syncGoalFromForm(id){
+  const d=findGoal(id);if(!d)return;
+  const g=d.goal;
+  const nameEl=document.getElementById('ge_name_'+id);
+  const weightEl=document.getElementById('ge_weight_'+id);
+  if(nameEl) g.name=nameEl.value;
+  if(weightEl) g.weight=parseInt(weightEl.value)||0;
+  if(g.type==='quant'){
+    const targetEl=document.getElementById('ge_target_'+id);
+    const challengeEl=document.getElementById('ge_challenge_'+id);
+    const baselineEl=document.getElementById('ge_baseline_'+id);
+    if(targetEl&&!targetEl.readOnly) g.target=parseFloat(targetEl.value)||0;
+    if(challengeEl&&!challengeEl.readOnly) g.challenge=parseFloat(challengeEl.value)||0;
+    if(baselineEl&&!baselineEl.readOnly) g.baseline=parseFloat(baselineEl.value)||0;
+  }else{
+    const ms2El=document.getElementById('ge_ms2_'+id);
+    const ms3El=document.getElementById('ge_ms3_'+id);
+    const ms4El=document.getElementById('ge_ms4_'+id);
+    if(ms2El) g.ms2=ms2El.value;
+    if(ms3El) g.ms3=ms3El.value;
+    if(ms4El) g.ms4=ms4El.value;
+  }
+  // 更新标题行的权重显示
+  const weightSpan=document.querySelector(`[data-goal-id="${id}"] .goal-weight`);
+  if(weightSpan) weightSpan.textContent=g.weight+'%';
+}
+
+function toggleMod(mi){expandedMods.has(mi)?expandedMods.delete(mi):expandedMods.add(mi);render()}
+function toggleGoal(id){expandedGoals.has(id)?expandedGoals.delete(id):expandedGoals.add(id);render()}
+
+let addGoalModIdx=null;
+function addGoal(mi){
+  addGoalModIdx=mi;
+  const popup=document.getElementById('addGoalPopup');
+  const btn=document.querySelectorAll('.mod-hd-add')[mi*2+1]||document.querySelectorAll('.mod-hd-add')[mi*2];
+  if(btn){
+    const r=btn.getBoundingClientRect();
+    popup.style.top=(r.bottom+4)+'px';
+    popup.style.left=(r.left)+'px';
+  }
+  popup.classList.add('show');
+}
+function pickGoalType(type){
+  const mi=addGoalModIdx;
+  const popup=document.getElementById('addGoalPopup');
+  popup.classList.remove('show');
+  if(mi===null)return;
+  const id='g'+Date.now();
+  MODULES[mi].goals.push({id,name:'新目标',indicator:'',type,weight:10,desc:'',measure:type==='quant'?'梯度评分':'',measureText:'',target:0,challenge:0,baseline:0,rule:'-',ruleFormula:'',msLevels:[],linkedIndicatorId:null,i18n:{}});
+  expandedMods.add(mi);
+  expandedGoals.add(id);
+  render();
+  if(type==='quant'){
+    openIndicatorPicker(id,mi);
+  }
+  // 定性目标直接展开编辑态
+}
+function closeGoalTypePopup(){document.getElementById('addGoalPopup').classList.remove('show')}
+
+function deleteGoal(id,mi){
+  const goal=MODULES[mi].goals.find(g=>g.id===id);
+  showConfirm({
+    title:'删除目标',
+    desc:`确定要删除「${goal?goal.name:'该目标'}」吗？此操作不可撤销。`,
+    type:'danger',
+    okText:'删除',
+    onOk:()=>{
+      MODULES[mi].goals=MODULES[mi].goals.filter(g=>g.id!==id);
+      expandedGoals.delete(id);
+      render();
+    }
+  });
+}
+
+function updateTotals(){
+  const tg=MODULES.reduce((s,m)=>s+m.goals.length,0);
+  const tw=MODULES.reduce((s,m)=>s+m.goals.reduce((gs,g)=>gs+g.weight,0),0);
+  document.getElementById('sumGoals').textContent=tg;
+  document.getElementById('sumWeight').textContent=tw+'%';
+  document.getElementById('sumWeight').className='sum-val'+(tw===100?'':' warn');
+
+  const el=document.getElementById('validSummary');
+  if(tw!==100){
+    el.innerHTML=`<span class="sum-err"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>总权重 ${tw}%，需等于 100%</span>`;
+  }else{
+    el.innerHTML=tg>0?`<span class="sum-ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>权重校验通过</span>`:'';
+  }
+}
+
+// ═══ EDIT SIDEBAR ═══
+function findGoal(id){for(const m of MODULES){const g=m.goals.find(g=>g.id===id);if(g)return{mod:m,goal:g}}return null}
+
+function langBtn(fieldKey){
+  const has=langStore[fieldKey]&&(langStore[fieldKey].zh||langStore[fieldKey].en);
+  return `<button class="lang-btn ${has?'has':''}" onclick="openLangModal('${fieldKey}')" title="多语言编辑">${I.globe}</button>`;
+}
+
+function roField(label,value){
+  return `<div class="ef-fi"><span class="ef-fi-l">${label}</span><div class="field-with-lang"><input class="inp" value="${value||''}" readonly/></div></div>`;
+}
+
+function linkedTip(){
+  return `<span class="field-tip"><span class="field-tip-icon">i</span><span class="field-tip-text">由关联指标自动填充，如需修改请先解除关联</span></span>`;
+}
+
+function aiTag(){
+  return `<span class="ai-tag">${I.ai} AI</span>`;
+}
+
+// ═══ INLINE EDIT ═══
+function editWeightInline(goalId){
+  const d=findGoal(goalId);if(!d)return;
+  const g=d.goal;
+  const el=document.querySelector(`[data-goal-id="${goalId}"] .goal-weight`);
+  if(!el)return;
+  const input=document.createElement('input');
+  input.className='goal-name-input';
+  input.type='number';
+  input.value=g.weight;
+  input.min=0;input.max=100;
+  input.style.width='60px';input.style.textAlign='center';
+  input.style.fontFamily='var(--m)';
+  input.style.fontWeight='700';
+  input.style.fontSize='13px';
+  el.replaceWith(input);
+  input.focus();input.select();
+  const save=()=>{
+    const v=parseInt(input.value)||0;
+    g.weight=Math.max(0,Math.min(100,v));
+    render();
+  };
+  input.addEventListener('blur',save);
+  input.addEventListener('keydown',e=>{if(e.key==='Enter')save();if(e.key==='Escape')render()});
+}
+
+function saveInlineEdit(id,mi){
+  const d=findGoal(id);if(!d)return;
+  const g=d.goal;
+  const nameEl=document.getElementById('ge_name_'+id);
+  const weightEl=document.getElementById('ge_weight_'+id);
+
+  // 清除错误样式
+  document.querySelectorAll('.goal-edit.open .inp-err, .goal-name-input.inp-err').forEach(el=>el.classList.remove('inp-err'));
+  let firstErr=null;
+
+  // 校验
+  if(!nameEl||!nameEl.value.trim()){if(nameEl)nameEl.classList.add('inp-err');if(!firstErr)firstErr='请填写目标名称';}
+  if(!weightEl||!weightEl.value||parseInt(weightEl.value)<=0){if(weightEl)weightEl.classList.add('inp-err');if(!firstErr)firstErr='请填写权重';}
+  if(g.type==='quant'){
+    if(!g.linkedIndicatorId){if(!firstErr)firstErr='请选择关联指标';}
+    const targetEl=document.getElementById('ge_target_'+id);
+    if(!targetEl||!targetEl.value){if(targetEl)targetEl.classList.add('inp-err');if(!firstErr)firstErr='请填写目标值';}
+  }else{
+    const ms3El=document.getElementById('ge_ms3_'+id);
+    if(!ms3El||!ms3El.value.trim()){if(ms3El)ms3El.classList.add('inp-err');if(!firstErr)firstErr='请填写3分标准';}
+  }
+  if(firstErr){showToast(firstErr);return}
+
+  // 保存数据
+  if(nameEl) g.name=nameEl.value;
+  if(weightEl) g.weight=parseInt(weightEl.value)||0;
+  if(g.type==='quant'){
+    const targetEl=document.getElementById('ge_target_'+id);
+    const challengeEl=document.getElementById('ge_challenge_'+id);
+    const baselineEl=document.getElementById('ge_baseline_'+id);
+    if(targetEl&&!targetEl.readOnly) g.target=parseFloat(targetEl.value)||0;
+    if(challengeEl&&!challengeEl.readOnly) g.challenge=parseFloat(challengeEl.value)||0;
+    if(baselineEl&&!baselineEl.readOnly) g.baseline=parseFloat(baselineEl.value)||0;
+  }else{
+    const ms2El=document.getElementById('ge_ms2_'+id);
+    const ms3El=document.getElementById('ge_ms3_'+id);
+    const ms4El=document.getElementById('ge_ms4_'+id);
+    if(ms2El) g.ms2=ms2El.value;
+    if(ms3El) g.ms3=ms3El.value;
+    if(ms4El) g.ms4=ms4El.value;
+  }
+
+  expandedGoals.delete(id);
+  render();
+  showToast('保存成功','success');
+}
+
+function unlinkIndicator(id){
+  const d=findGoal(id);if(!d)return;
+  d.goal.linkedIndicatorId=null;
+  render();
+  expandedGoals.add(id);
+}
+
+// ═══ COPY MODAL ═══
+let copyTargetModIdx=0;
+function openCopyModal(mi){
+  copyTargetModIdx=mi;
+  histSelected.clear();
+  document.getElementById('histPeriod').value='2026年5月';
+  document.getElementById('copyModLabel').textContent='将复制到「'+MODULES[mi].name+'」模块';
+  renderHistTable();
+  openModal('copyModal');
+}
+
+function renderHistTable(){
+  const period=document.getElementById('histPeriod').value;
+  const goals=HISTORY[period]||[];
+  let h=`<thead><tr><th><span class="chk ${histSelected.size===goals.length&&goals.length?'on':''}" onclick="toggleAllHist()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span></th><th>目标名称</th><th>模块</th><th>类型</th><th>权重</th><th>目标值</th></tr></thead><tbody>`;
+  goals.forEach((g,i)=>{
+    h+=`<tr onclick="toggleHistItem(${i})"><td><span class="chk ${histSelected.has(i)?'on':''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span></td><td style="font-weight:500;color:var(--c8)">${g.name}</td><td>${g.module}</td><td>${g.type==='quant'?'定量':'定性'}</td><td style="font-family:var(--m)">${g.weight}%</td><td style="font-family:var(--m)">${g.target}</td></tr>`;
+  });
+  h+='</tbody>';
+  document.getElementById('histTable').innerHTML=h;
+  document.getElementById('histSelCount').textContent='已选 '+histSelected.size+' 项';
+}
+
+function toggleHistItem(i){histSelected.has(i)?histSelected.delete(i):histSelected.add(i);renderHistTable()}
+function toggleAllHist(){
+  const period=document.getElementById('histPeriod').value;
+  const goals=HISTORY[period]||[];
+  if(histSelected.size===goals.length)histSelected.clear();
+  else{histSelected.clear();goals.forEach((_,i)=>histSelected.add(i))}
+  renderHistTable();
+}
+
+function confirmCopy(){
+  if(!histSelected.size){showToast('请至少选择一个目标');return}
+  const period=document.getElementById('histPeriod').value;
+  const goals=HISTORY[period]||[];
+  const mod=MODULES[copyTargetModIdx];
+  let count=0;
+  histSelected.forEach(i=>{
+    const src=goals[i];
+    const id='g'+Date.now()+'_'+count;
+    mod.goals.push({...src,id,msLevels:src.msLevels||[],linkedIndicatorId:null,i18n:{}});
+    count++;
+  });
+  expandedMods.add(copyTargetModIdx);
+  closeModal('copyModal');
+  render();
+}
+
+// ═══ MODALS ═══
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+
+function openMeasureModal(){
+  const d=findGoal(editGoalId);if(!d)return;
+  selectedMeasure=d.goal.measure;
+  document.getElementById('measureList').innerHTML=MEASURES.map(m=>`<div class="picker-item ${selectedMeasure===m.name?'selected':''}" onclick="pickMeasure('${m.name}',this)"><div class="picker-item-name">${m.name}</div><div class="picker-item-desc">${m.desc}</div><div class="picker-item-preview">${m.preview}</div></div>`).join('');
+  openModal('measureModal');
+}
+function pickMeasure(n,el){selectedMeasure=n;document.querySelectorAll('#measureList .picker-item').forEach(i=>i.classList.remove('selected'));el.classList.add('selected')}
+function confirmMeasure(){
+  if(selectedMeasure&&editGoalId){const d=findGoal(editGoalId);if(d)d.goal.measure=selectedMeasure}
+  closeModal('measureModal');if(editGoalId)openEdit(editGoalId,editModIdx);
+}
+
+function openRuleModal(){
+  const d=findGoal(editGoalId);if(!d)return;
+  selectedRule=d.goal.rule;
+  document.getElementById('ruleList').innerHTML=RULES.map(r=>`<div class="picker-item ${selectedRule===r.name?'selected':''}" onclick="pickRule('${r.name}',this)"><div class="picker-item-name">${r.name}</div><div class="picker-item-desc">${r.desc}</div><div class="picker-item-preview">${r.formula}</div></div>`).join('');
+  openModal('ruleModal');
+}
+function pickRule(n,el){selectedRule=n;document.querySelectorAll('#ruleList .picker-item').forEach(i=>i.classList.remove('selected'));el.classList.add('selected')}
+function confirmRule(){
+  if(selectedRule&&editGoalId){const d=findGoal(editGoalId);if(d){d.goal.rule=selectedRule;const r=RULES.find(r=>r.name===selectedRule);if(r)d.goal.ruleFormula=r.formula}}
+  closeModal('ruleModal');if(editGoalId)openEdit(editGoalId,editModIdx);
+}
+
+document.querySelectorAll('.modal-overlay').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open')})});
+document.addEventListener('click',e=>{const p=document.getElementById('addGoalPopup');if(p.classList.contains('show')&&!p.contains(e.target)&&!e.target.closest('.mod-hd-add'))p.classList.remove('show')});
+
+// ═══ INDICATOR PICKER ═══
+let kpiPickerGoalId=null, kpiPickerModIdx=null;
+function openIndicatorPicker(goalId,mi){
+  kpiPickerGoalId=goalId;kpiPickerModIdx=mi;
+  selectedKpiId=null;kpiFilterCat='全部';kpiFilterType='全部';kpiFilterNature='全部';
+  renderKpiList();
+  openModal('indicatorModal');
+}
+function renderKpiList(){
+  const q=(document.getElementById('kpiSearch')?.value||'').toLowerCase();
+  const allCats=MOCK_INDICATORS.map(k=>k.category);
+  const cats=['全部',...new Set(allCats)];
+  const types=['全部','定量','定性','加减分'];
+  const natures=['全部','正向','负向'];
+
+  // Filter bar
+  let filterHtml='';
+  filterHtml+='<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;align-items:center">';
+  filterHtml+='<span style="font:500 12px/1 var(--f);color:var(--c5);min-width:32px">分类:</span>';
+  filterHtml+=cats.map(c=>{
+    const count=c==='全部'?MOCK_INDICATORS.length:allCats.filter(x=>x===c).length;
+    return `<span class="kpi-cat ${kpiFilterCat===c?'on':''}" onclick="kpiFilterCat='${c}';renderKpiList()">${c}<span class="kpi-cat-count">(${count})</span></span>`;
+  }).join('');
+  filterHtml+='</div>';
+  filterHtml+='<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;align-items:center">';
+  filterHtml+='<span style="font:500 12px/1 var(--f);color:var(--c5);min-width:32px">类型:</span>';
+  filterHtml+=types.map(t=>{
+    return `<span class="kpi-cat ${kpiFilterType===t?'on':''}" onclick="kpiFilterType='${t}';renderKpiList()">${t}</span>`;
+  }).join('');
+  filterHtml+='<span style="font:500 12px/1 var(--f);color:var(--c5);min-width:32px;margin-left:8px">性质:</span>';
+  filterHtml+=natures.map(n=>{
+    return `<span class="kpi-cat ${kpiFilterNature===n?'on':''}" onclick="kpiFilterNature='${n}';renderKpiList()">${n}</span>`;
+  }).join('');
+  filterHtml+='</div>';
+  document.getElementById('kpiCatBar').innerHTML=filterHtml;
+
+  const filtered=MOCK_INDICATORS.filter(k=>{
+    if(kpiFilterCat!=='全部'&&k.category!==kpiFilterCat)return false;
+    if(kpiFilterType!=='全部'&&k.type!==kpiFilterType)return false;
+    if(kpiFilterNature!=='全部'&&k.nature!==kpiFilterNature)return false;
+    if(q&&!k.name.toLowerCase().includes(q))return false;
+    return true;
+  });
+
+  // 显示详情面板
+  const detailEl=document.getElementById('kpiDetail');
+  if(selectedKpiId){
+    const k=MOCK_INDICATORS.find(x=>x.id===selectedKpiId);
+    if(k){
+      detailEl.innerHTML=`<div class="kpi-detail">
+        <div class="kpi-detail-hd">
+          <span class="kpi-detail-name">${k.name}</span>
+          <button class="kpi-detail-close" onclick="selectedKpiId=null;renderKpiList()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+        <div class="kpi-detail-grid">
+          <div class="kpi-detail-item"><span class="kpi-detail-label">指标类型</span><span class="kpi-detail-value">${k.type}</span></div>
+          <div class="kpi-detail-item"><span class="kpi-detail-label">指标性质</span><span class="kpi-detail-value">${k.nature}</span></div>
+          <div class="kpi-detail-item"><span class="kpi-detail-label">指标分类</span><span class="kpi-detail-value">${k.category}</span></div>
+          <div class="kpi-detail-item"><span class="kpi-detail-label">计量单位</span><span class="kpi-detail-value">${k.unit}</span></div>
+        </div>
+        <div class="kpi-detail-desc">${k.desc}</div>
+      </div>`;
+    }
+  }else{
+    detailEl.innerHTML='';
+  }
+
+  document.getElementById('kpiList').innerHTML=filtered.map(k=>`<div class="kpi-card ${selectedKpiId===k.id?'selected':''}" onclick="selectedKpiId='${k.id}';renderKpiList()">
+    <div class="kpi-card-hd"><span class="kpi-card-name">${k.name}</span><span class="kpi-card-cat">${k.category}</span></div>
+    <div class="kpi-card-tags">
+      <span class="kpi-tag type">${k.type}</span>
+      <span class="kpi-tag nature">${k.nature}</span>
+      <span class="kpi-tag unit">单位: ${k.unit}</span>
+    </div>
+    <div class="kpi-card-desc">${k.desc}</div>
+  </div>`).join('');
+  document.getElementById('kpiSelLabel').textContent=selectedKpiId?'已选择 1 项':'未选择';
+}
+function filterKPI(){renderKpiList()}
+function confirmIndicator(){
+  if(!selectedKpiId){showToast('请选择一个指标');return}
+  const kpi=MOCK_INDICATORS.find(k=>k.id===selectedKpiId);
+  if(!kpi)return;
+  if(kpiPickerGoalId){
+    // 更新已有目标
+    const d=findGoal(kpiPickerGoalId);if(!d)return;
+    const g=d.goal;
+    g.name=kpi.name;g.indicator=kpi.name;g.type=kpi.type==='定量'?'quant':'qual';
+    g.unit=kpi.unit;g.rule=kpi.rule;g.desc=kpi.desc;
+    g.linkedIndicatorId=kpi.id;
+    closeModal('indicatorModal');
+    expandedGoals.add(kpiPickerGoalId);
+  }else{
+    // 新增目标（从模块头的指标库选择按钮）
+    const mi=kpiPickerModIdx;
+    const id='g'+Date.now();
+    const isQuant=kpi.type==='定量';
+    MODULES[mi].goals.push({
+      id,name:kpi.name,indicator:kpi.name,type:isQuant?'quant':'qual',
+      weight:10,desc:kpi.desc,measure:isQuant?'梯度评分':'定性评分',
+      target:0,challenge:0,baseline:0,unit:kpi.unit,
+      rule:kpi.rule,ruleFormula:'',msLevels:[],linkedIndicatorId:kpi.id,aiFilled:false
+    });
+    expandedMods.add(mi);
+    expandedGoals.add(id);
+    closeModal('indicatorModal');
+  }
+  render();
+}
+
+// ═══ LANGUAGE EDITOR ═══
+function openLangModal(fieldKey){
+  langFieldKey=fieldKey;
+  const data=langStore[fieldKey]||{zh:'',en:''};
+  const label=fieldKey.endsWith('_name')?'目标名称':'目标描述';
+  document.getElementById('langFieldLabel').textContent=label+' — 多语言';
+  document.getElementById('langZh').value=data.zh||'';
+  document.getElementById('langEn').value=data.en||'';
+  openModal('langModal');
+}
+function saveLang(){
+  if(!langFieldKey)return;
+  langStore[langFieldKey]={zh:document.getElementById('langZh').value,en:document.getElementById('langEn').value};
+  closeModal('langModal');
+  if(editGoalId)openEdit(editGoalId,editModIdx);
+}
+
+// ═══ VALIDATION ═══
+function validateWeights(){
+  const tw=MODULES.reduce((s,m)=>s+m.goals.reduce((gs,g)=>gs+g.weight,0),0);
+  if(tw!==100)return[`总权重 ${tw}%，需等于 100%`];
+  return [];
+}
+
+function validateAndSubmit(){
+  const totalGoals=MODULES.reduce((s,m)=>s+m.goals.length,0);
+  if(totalGoals<2){showToast('至少需要填写2个目标');return}
+  const errs=validateWeights();
+  if(errs.length){showToast(errs[0]);return}
+  showToast('提交成功','success');
+}
+
+function showToast(msg,type){
+  const t=document.getElementById('validateToast');
+  document.getElementById('toastMsg').textContent=msg;
+  t.className='validate-toast show'+(type==='success'?' success':type==='warn'?' warn':'');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// Initialize navigation first to create the content container
+GHR_NAV.init('perf', '目标制定·填写');
+render();
+
+// ═══ AI CHAT ═══
+const AI_SHORTCUTS=[
+  {icon:'📄',label:'解析文件生成目标',desc:'上传周报/工作计划，AI自动提取并生成目标'},
+  {icon:'📝',label:'优化目标描述',desc:'分析当前目标，给出描述优化建议'},
+  {icon:'📊',label:'检查权重分配',desc:'检查各模块权重是否合理'},
+  {icon:'🎯',label:'推荐指标',desc:'根据岗位推荐可关联的指标'},
+];
+const AI_MSGS=[
+  {role:'bot',text:'你好，我是 AI 目标助手 👋\n\n点击下方快捷指令，我可以帮你：\n• 上传文件，AI自动生成目标\n• 优化目标描述\n• 检查权重分配\n• 推荐关联指标',time:'09:00',shortcuts:true},
+];
+function renderAiChat(){
+  const bd=document.getElementById('chatBd');
+  if(!bd)return;
+  bd.innerHTML=AI_MSGS.map(m=>{
+    let html=`<div class="ai-msg ${m.role}">
+      <div class="ai-msg-bd">${m.text.replace(/\n/g,'<br/>')}</div>`;
+    if(m.shortcuts){
+      html+=`<div class="ai-shortcuts">${AI_SHORTCUTS.map(s=>`<div class="ai-shortcut" onclick="handleAiAction('${s.label}')"><span class="ai-shortcut-icon">${s.icon}</span><div class="ai-shortcut-text"><div class="ai-shortcut-label">${s.label}</div><div class="ai-shortcut-desc">${s.desc}</div></div></div>`).join('')}</div>`;
+    }
+    if(m.files){
+      html+=`<div class="ai-file-list">${m.files.map(f=>`<div class="ai-file"><span class="ai-file-icon">📄</span><span class="ai-file-name">${f.name}</span><span class="ai-file-size">${f.size}</span><span class="ai-file-status parsed">已解析</span></div>`).join('')}</div>`;
+    }
+    if(m.cards){
+      html+=m.cards.map(c=>`<div class="ai-msg-card"><div class="ai-msg-card-t">${c.t}</div><div class="ai-msg-card-d">${c.d}</div><div class="ai-msg-card-ft"><span class="ai-msg-card-tag ${c.tc}">${c.tag}</span>${c.apply?`<button class="ai-msg-card-apply" onclick="applyAiSuggestion('${c.apply}')">应用到当前目标</button>`:''}</div></div>`).join('');
+    }
+    if(m.indicators){
+      html+=`<div class="ai-indicators">${m.indicators.map(ind=>`<div class="ai-indicator-card">
+        <div class="ai-ind-hd"><span class="ai-ind-name">${ind.name}</span><span class="ai-ind-cat">${ind.cat}</span></div>
+        <div class="ai-ind-meta"><span>单位: ${ind.unit}</span><span>性质: ${ind.nature}</span><span>建议权重: <strong>${ind.weight}%</strong></span></div>
+        <div class="ai-ind-desc">${ind.desc}</div>
+        <div class="ai-ind-tip">${ind.suggestion}</div>
+      </div>`).join('')}</div>`}
+    if(m.actions){
+      html+=`<div class="ai-msg-actions">${m.actions.map(a=>`<button class="ai-msg-btn${a.includes('确认')||a.includes('采纳')?' primary':''}" onclick="handleAiAction('${a}')">${a}</button>`).join('')}</div>`;
+    }
+    if(m.time){
+      html+=`<div class="ai-msg-time">${m.time}</div>`;
+    }
+    html+=`</div>`;
+    return html;
+  }).join('');
+  bd.scrollTop=bd.scrollHeight;
+}
+
+// ═══ AI SUGGESTION APPLY ═══
+function applyAiSuggestion(type){
+  if(type==='weight'){
+    // 应用权重建议：资源利用率 5→8，绩效重构 25→22，AI探索 25→27
+    const weightMap={'g1':8,'g6':22,'g7':27};
+    Object.entries(weightMap).forEach(([id,w])=>{
+      for(const m of MODULES){
+        const goal=m.goals.find(g=>g.id===id);
+        if(goal){goal.weight=w;break;}
+      }
+    });
+    render();
+    showToast('权重建议已应用','success');
+  }else if(type==='desc'){
+    // 应用衡量标准建议到第一个定量目标
+    const g=MODULES[0].goals[0];
+    if(g){
+      g.desc='1. 指标定义：人员当月实际投入有效工作量占可用出勤时间的比例，反映工作饱和度\n2. 计算逻辑：公式=当月实际任务工时（人天）/EHR实际出勤天数×100%\n3. 数据来源：Devops系统自动采集\n4. 目标设定依据：参考行业标准及团队历史数据';
+      expandedGoals.add(g.id);
+      render();
+      showToast('衡量标准已更新','success');
+    }
+  }else if(type==='file-goals'){
+    showToast('文件解析目标已应用','success');
+  }
+}
+
+// 文件处理
+function handleChatFileSelect(e){
+  const files=Array.from(e.target.files);
+  if(!files.length)return;
+  processGoalFiles(files);
+  e.target.value='';
+}
+
+function processGoalFiles(files){
+  const fileList=files.map(f=>{
+    const size=f.size>1024*1024?(f.size/(1024*1024)).toFixed(1)+'MB':(f.size/1024).toFixed(0)+'KB';
+    return {name:f.name,size:size};
+  });
+  AI_MSGS.push({role:'user',text:'已上传 '+files.length+' 个文件：\n'+files.map(f=>'• '+f.name).join('\n')});
+  AI_MSGS.push({role:'bot',text:'正在解析文件内容，提取工作目标和关键成果…',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),files:fileList});
+  renderAiChat();
+
+  setTimeout(()=>{
+    AI_MSGS.push({role:'bot',text:'文件解析完成！已从文档中提取以下目标建议：\n\n📄 周报_张明_06月.docx:\n• 资源利用率目标: 105%\n• UAT通过率目标: 98%\n• 需求评审及时率: 98%\n\n📊 Q2工作计划.xlsx:\n• 产品管理规范: 4项规范落地\n• 日常需求响应: 完成GOFO迭代\n• 绩效重构: 3个里程碑\n• AI应用: 3个版本交付\n\n点击「应用到目标」一键填入。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
+      {t:'解析完成',d:'已提取 7 项目标建议，基于文档内容自动生成',tag:'AI 解析',tc:'pr',apply:'file-goals'}
+    ]});
+    renderAiChat();
+  },1500);
+}
+
+function sendAiMsg(){
+  const input=document.getElementById('chatInput');
+  const text=input.value.trim();
+  if(!text)return;
+  AI_MSGS.push({role:'user',text});
+  input.value='';
+  renderAiChat();
+  setTimeout(()=>{
+    AI_MSGS.push({role:'bot',text:'收到，正在分析目标数据…\n\n已根据你的描述生成建议，请查看更新结果。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
+    renderAiChat();
+  },800);
+}
+
+function handleAiAction(action){
+  // 添加用户消息
+  AI_MSGS.push({role:'user',text:action});
+  renderAiChat();
+
+  // 根据不同场景返回对应的AI回复
+  setTimeout(()=>{
+    let response='';
+    switch(action){
+      case '解析文件生成目标':
+        AI_MSGS.push({role:'bot',text:'请上传你的工作文档，AI 将自动解析并生成目标建议。\n\n支持的文件类型：\n• 周报/日报/月报（Word、TXT）\n• 工作计划（Excel）\n• 项目文档（PDF）\n\n上传后点击「应用到目标」即可自动填入。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),upload:true});
+        break;
+      case '检查权重分配':
+        response='当前权重分配分析：\n\n• 关键指标: 30%（3个目标）\n• 关键行动: 70%（4个目标）\n\n整体结构合理，关键行动占比偏高。建议：\n• 资源利用率权重偏低（5%），可适当提升\n• 绩效重构和AI探索各25%，单项权重较大';
+        AI_MSGS.push({role:'bot',text:response,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
+          {t:'权重建议',d:'资源利用率 5% → 8%，绩效重构 25% → 22%，AI探索 25% → 27%',tag:'建议调整',tc:'pr',apply:'weight'},
+        ]});
+        break;
+      case '优化目标描述':
+        response='建议优化以下目标描述：\n\n• "HRAS产品管理规范" → 补充具体规范清单和验收标准\n• "日常滚动需求响应" → 明确响应时效和输出物要求\n• "绩效重构事项推进" → 细化里程碑节点和交付物';
+        AI_MSGS.push({role:'bot',text:response,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
+          {t:'优化建议',d:'为每个目标补充：1.具体任务清单 2.完成标准 3.交付时间点',tag:'可应用',tc:'em',apply:'desc'},
+        ]});
+        break;
+      case '推荐指标':
+        response='根据您的岗位（高级产品经理）和部门（产品部），AI 推荐以下 4 个指标：';
+        AI_MSGS.push({role:'bot',text:response,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),indicators:[
+          {name:'需求交付周期',cat:'效率',unit:'天',nature:'过程型',desc:'从需求确认到上线的平均周期',weight:8,suggestion:'建议权重 8%，参考上月实际完成情况设定目标值'},
+          {name:'需求评审通过率',cat:'质量',unit:'%',nature:'结果型',desc:'首次评审通过的需求数量占比',weight:7,suggestion:'建议权重 7%，目标值可设为 90%'},
+          {name:'产品上线准时率',cat:'交付',unit:'%',nature:'过程型',desc:'按计划上线的迭代占比',weight:5,suggestion:'建议权重 5%，与现有资源利用率合并考虑'},
+          {name:'客户满意度评分',cat:'效果',unit:'分',nature:'结果型',desc:'产品使用满意度评分（1-5分）',weight:5,suggestion:'建议权重 5%，可替代部分定性指标'},
+        ],actions:['采纳全部','仅采纳指标名称']});
+        break;
+      case '采纳全部':
+        response='已将 4 个推荐指标完整添加到目标列表：\n\n✓ 需求交付周期（8%，天，过程型）\n✓ 需求评审通过率（7%，%，结果型）\n✓ 产品上线准时率（5%，%，过程型）\n✓ 客户满意度评分（5%，分，结果型）\n\n权重已自动分配，总权重保持 100%。';
+        AI_MSGS.push({role:'bot',text:response,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
+          {t:'已添加 4 个指标',d:'指标名称、权重、单位、衡量标准均已自动填充',tag:'完成',tc:'em'},
+        ]});
+        break;
+      case '仅采纳指标名称':
+        response='已将 4 个指标名称添加到目标列表，权重和衡量标准需手动填写：\n\n✓ 需求交付周期\n✓ 需求评审通过率\n✓ 产品上线准时率\n✓ 客户满意度评分\n\n请为每个目标设置权重和衡量标准。';
+        AI_MSGS.push({role:'bot',text:response,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
+          {t:'已添加 4 个指标名称',d:'仅复制了指标名称，其他字段待手动填写',tag:'部分完成',tc:'ac'},
+        ]});
+        break;
+      case '对标历史数据':
+        response='与上月（2026年5月）对比：\n\n• 目标数量: 7 → 7（持平）\n• 关键指标权重: 35% → 30%（下降5%）\n• 关键行动权重: 65% → 70%（上升5%）\n\n关注：关键指标权重下降，建议适当回调';
+        AI_MSGS.push({role:'bot',text:response,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
+          {t:'历史对比',d:'关键指标权重从35%降至30%，建议回调至33%',tag:'关注',tc:'ac'},
+        ]});
+        break;
+      case '智能拆分目标':
+        response='根据"HR ONE 绩效重构事项推进"目标，建议拆分为：\n\n1. 原型设计（权重10%）\n   - 06-10 输出AI+绩效核心用户页面原型\n   - 完成新哥、蔡老师汇报\n\n2. 需求评审（权重10%）\n   - 06-19 完成需求内审\n   - 06-24 完成需求评审\n\n3. 落地推广（权重5%）\n   - 版本发布和用户培训';
+        AI_MSGS.push({role:'bot',text:response,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
+          {t:'拆分方案',d:'将25%权重拆分为10%+10%+5%，更清晰可追踪',tag:'建议',tc:'pr'},
+        ]});
+        break;
+      default:
+        response='收到，正在分析目标数据…\n\n已根据你的描述生成建议，请查看更新结果。';
+        AI_MSGS.push({role:'bot',text:response,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
+    }
+    renderAiChat();
+  },800);
+}
+function toggleAiChat(){document.body.classList.toggle('chat-open')}
+
+document.body.insertAdjacentHTML('beforeend',`
+<div class="ai-chat" id="aiChat">
+  <div class="ai-chat-hd">
+    <div class="ai-chat-hd-ic">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg>
+    </div>
+    <div>
+      <div class="ai-chat-hd-t">AI 目标助手</div>
+      <div class="ai-chat-hd-s">优化目标 · 检查权重 · 对标数据</div>
+    </div>
+    <button class="ai-chat-close" onclick="toggleAiChat()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="ai-chat-bd" id="chatBd"></div>
+  <div class="ai-chat-ft">
+    <label class="ai-chat-upload" title="上传文件"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg><input type="file" multiple accept=".doc,.docx,.xls,.xlsx,.pdf,.txt" onchange="handleChatFileSelect(event)"/></label>
+    <input class="ai-chat-input" id="chatInput" placeholder="输入指令，如「优化衡量标准」「检查权重」…" onkeydown="if(event.key==='Enter')sendAiMsg()"/>
+    <button class="ai-chat-send" onclick="sendAiMsg()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>
+<button class="ai-toggle" onclick="toggleAiChat()">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg>
+</button>
+`);
+renderAiChat();
+</script>
+</body>
+</html>

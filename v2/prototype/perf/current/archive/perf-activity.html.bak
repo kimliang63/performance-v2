@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 活动管理</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════
+   GHR 活动管理列表 — Quiet Precision
+   ═══════════════════════════════════════════════════════ */
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --shadow-card-hover:0 8px 20px -4px rgba(0,0,0,.08),0 2px 6px -2px rgba(0,0,0,.04);
+  --shadow-dropdown:0 10px 40px -10px rgba(0,0,0,.12),0 2px 10px -2px rgba(0,0,0,.04);
+  --header-h:52px;
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --m:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:var(--f);background:var(--bg);color:var(--c7);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;line-height:1.5;
+}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+/* ═══ BUTTONS ═══ */
+.btn{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:0 14px;height:32px;border-radius:var(--r1);
+  font:500 13px/1 var(--f);cursor:pointer;
+  transition:all .12s;border:none;font-family:inherit;
+}
+.btn svg{width:13px;height:13px}
+.btn-p{background:var(--pr);color:#FFF}
+.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}
+.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
+.btn-t{background:transparent;color:var(--c6);border:none;padding:0 8px;height:28px;font-size:12px}
+.btn-t:hover{color:var(--pr);background:var(--pr50)}
+
+/* ═══ FILTER BAR ═══ */
+.fl-bar{
+  background:var(--sf);border-radius:var(--r3);
+  box-shadow:var(--shadow-card);
+  padding:16px 20px;margin-bottom:16px;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+}
+.fl-search{
+  display:flex;align-items:center;gap:6px;
+  background:var(--c0);border:1px solid var(--c2);
+  border-radius:var(--r1);padding:0 10px;height:32px;
+  min-width:240px;transition:all .15s;
+}
+.fl-search:focus-within{background:var(--sf);border-color:var(--pr)}
+.fl-search svg{color:var(--c4);flex-shrink:0;width:13px;height:13px}
+.fl-search input{
+  border:none;background:transparent;outline:none;
+  font:13px/1 var(--f);width:100%;color:var(--c9);
+}
+.fl-search input::placeholder{color:var(--c4)}
+.fl-sel{
+  height:32px;padding:0 28px 0 10px;border:1px solid var(--c2);
+  border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c7);
+  background:var(--sf) url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center;
+  appearance:none;cursor:pointer;transition:all .12s;outline:none;
+  -webkit-appearance:none;-moz-appearance:none;
+}
+.fl-sel:focus{border-color:var(--pr)}
+.fl-actions{display:flex;gap:6px;margin-left:auto}
+
+/* ═══ TABLE CARD ═══ */
+.tbl-card{
+  background:var(--sf);border-radius:var(--r3);
+  box-shadow:var(--shadow-card);overflow:hidden;
+}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:900px}
+thead{position:sticky;top:0;z-index:2}
+thead th{
+  background:var(--c0);font:600 12px/1 var(--f);color:var(--c5);
+  text-align:left;padding:10px 14px;border-bottom:1px solid var(--dv);
+  white-space:nowrap;letter-spacing:.2px;
+  text-transform:uppercase;
+}
+thead th.col-ck{width:36px;text-align:center}
+tbody td{
+  font:400 13px/1.4 var(--f);color:var(--c7);
+  padding:12px 14px;border-bottom:1px solid var(--dv);
+  vertical-align:middle;
+}
+tbody td.col-ck{text-align:center}
+tbody tr{transition:background .1s}
+tbody tr:hover{background:var(--c0)}
+tbody tr:nth-child(even){background:var(--c0)}
+tbody tr:nth-child(even):hover{background:var(--pr50)}
+tbody tr:last-child td{border-bottom:none}
+
+/* ═══ TABLE CELL STYLES ═══ */
+.cell-name{font-weight:500;color:var(--c9);min-width:180px}
+.cell-link{color:var(--pr);text-decoration:none;font-weight:500}
+.cell-link:hover{text-decoration:underline}
+.cell-status{
+  display:inline-flex;align-items:center;gap:4px;
+  font:500 11px/1 var(--f);padding:3px 10px;border-radius:var(--r1);
+  white-space:nowrap;
+}
+.cell-status.not-started{color:var(--ac700);background:var(--ac50)}
+.cell-status.active{color:var(--em700);background:var(--em50)}
+.cell-status.ended{color:var(--c5);background:var(--c1)}
+.cell-count{font-family:var(--m);font-weight:600;color:var(--c8)}
+.cell-creator{font:400 12px/1 var(--f);color:var(--c6)}
+.cell-date{font:400 12px/1 var(--f);color:var(--c5);font-family:var(--m);font-size:11px}
+.cell-actions{display:flex;align-items:center;gap:2px;white-space:nowrap}
+.cell-plan{font:400 12px/1 var(--f);color:var(--c6)}
+.cell-cycle{font:400 12px/1 var(--f);color:var(--c5);font-family:var(--m);font-size:11px}
+
+/* ═══ CHECKBOX ═══ */
+.ck{
+  width:16px;height:16px;border-radius:3px;border:1.5px solid var(--c3);
+  cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
+  transition:all .12s;background:var(--sf);flex-shrink:0;
+}
+.ck.on{background:var(--pr);border-color:var(--pr)}
+.ck svg{width:10px;height:10px;color:#FFF;display:none}
+.ck.on svg{display:block}
+
+/* ═══ PAGINATION ═══ */
+.pg-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 20px;border-top:1px solid var(--dv);
+  font:400 12px/1 var(--f);color:var(--c5);
+}
+.pg-info{display:flex;align-items:center;gap:16px}
+.pg-nav{display:flex;align-items:center;gap:4px}
+.pg-btn{
+  width:28px;height:28px;border-radius:var(--r1);
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--c2);background:var(--sf);cursor:pointer;
+  color:var(--c5);font:500 12px/1 var(--f);transition:all .12s;
+}
+.pg-btn:hover{border-color:var(--pr);color:var(--pr)}
+.pg-btn.on{background:var(--pr);border-color:var(--pr);color:#FFF}
+.pg-btn:disabled{opacity:.4;cursor:not-allowed}
+.pg-btn svg{width:12px;height:12px}
+
+/* ═══ MODAL ═══ */
+.modal-ov{
+  position:fixed;inset:0;background:rgba(0,0,0,.35);
+  z-index:2000;display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .2s;
+}
+.modal-ov.on{opacity:1;pointer-events:all}
+.modal{
+  background:var(--sf);border-radius:var(--r4);
+  box-shadow:0 20px 60px -15px rgba(0,0,0,.2);
+  width:520px;max-width:90vw;
+  transform:translateY(8px) scale(.98);transition:transform .2s ease;
+}
+.modal-ov.on .modal{transform:translateY(0) scale(1)}
+.modal-hd{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 22px 14px;border-bottom:1px solid var(--dv);
+}
+.modal-hd-t{font:600 15px/1.2 var(--f);color:var(--c9)}
+.modal-close{
+  width:28px;height:28px;border-radius:var(--r1);border:none;
+  background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  color:var(--c4);transition:all .12s;
+}
+.modal-close:hover{background:var(--c1);color:var(--c7)}
+.modal-close svg{width:16px;height:16px}
+.modal-bd{padding:18px 22px}
+.modal-ft{
+  display:flex;justify-content:flex-end;gap:8px;
+  padding:14px 22px 18px;border-top:1px solid var(--dv);
+}
+.modal-label{font:500 13px/1 var(--f);color:var(--c7);margin-bottom:8px}
+.modal-label .req{color:var(--ro);margin-left:2px}
+.modal-input{
+  width:100%;height:36px;padding:0 12px;border:1px solid var(--c2);
+  border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c9);
+  outline:none;transition:border-color .12s;
+}
+.modal-input:focus{border-color:var(--pr)}
+.modal-input.err{border-color:var(--ro)}
+.modal-textarea{
+  width:100%;min-height:80px;padding:8px 12px;border:1px solid var(--c2);
+  border-radius:var(--r1);font:400 13px/1.5 var(--f);color:var(--c9);
+  outline:none;transition:border-color .12s;resize:vertical;
+}
+.modal-textarea:focus{border-color:var(--pr)}
+.form-row{margin-bottom:16px}
+.form-row:last-child{margin-bottom:0}
+.form-err{font:400 11px/1 var(--f);color:var(--ro);margin-top:4px;display:none}
+.form-err.show{display:block}
+
+/* ═══ ANIMATION ═══ */
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fi{animation:fi .25s ease forwards}
+
+/* ═══ CONFIRM DIALOG ═══ */
+.cfm-ov{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:2100;display:flex;align-items:center;justify-content:center;animation:fi .15s ease}
+.cfm-box{background:var(--sf);border-radius:var(--r4);box-shadow:0 20px 60px rgba(0,0,0,.25);width:380px;padding:24px}
+.cfm-title{font:600 15px/1.3 var(--f);color:var(--c9);margin-bottom:8px}
+.cfm-msg{font:400 13px/1.5 var(--f);color:var(--c6);margin-bottom:20px}
+.cfm-btns{display:flex;justify-content:flex-end;gap:8px}
+.btn-danger{background:var(--ro);color:#FFF}.btn-danger:hover{background:#E11D48}
+
+/* ═══ BATCH BAR ═══ */
+.batch-info{display:flex;align-items:center;gap:8px;font:400 12px/1 var(--f);color:var(--c5);padding:0 20px 12px}
+.batch-info .cnt{font-family:var(--m);font-weight:600;color:var(--pr)}
+.batch-actions{display:flex;gap:8px;padding:0 20px 16px}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:768px){
+  .fl-bar{flex-direction:column;align-items:stretch}
+  .fl-search{min-width:auto}
+  .fl-actions{margin-left:0}
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation will be injected by navigation.js -->
+
+<script src="navigation.js"></script>
+<script>
+// ═══ 图标集 ═══
+const I={
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>',
+  eye:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
+  edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+  x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+  chevL:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>',
+  chevR:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+};
+
+// ═══ 状态常量 ═══
+const STATUS_MAP={
+  not_started:{label:'未开始',cls:'not-started'},
+  active:{label:'进行中',cls:'active'},
+  ended:{label:'已结束',cls:'ended'},
+};
+
+const PLANS=['年度绩效方案 v2','半年度方案 v1','月度方案 v1','年度绩效方案 v1'];
+const CYCLES=[
+  {id:'annual',label:'年度考核',start:'2026/01/01',end:'2026/12/31'},
+  {id:'semi',label:'半年度考核',start:'2026/01/01',end:'2026/06/30'},
+  {id:'q1',label:'Q1季度考核',start:'2026/01/01',end:'2026/03/31'},
+  {id:'q2',label:'Q2季度考核',start:'2026/04/01',end:'2026/06/30'},
+  {id:'q3',label:'Q3季度考核',start:'2026/07/01',end:'2026/09/30'},
+  {id:'q4',label:'Q4季度考核',start:'2026/10/01',end:'2026/12/31'},
+  {id:'mar',label:'3月月度考核',start:'2026/03/01',end:'2026/03/31'},
+  {id:'apr',label:'4月月度考核',start:'2026/04/01',end:'2026/04/30'},
+  {id:'may',label:'5月月度考核',start:'2026/05/01',end:'2026/05/31'},
+  {id:'jun',label:'6月月度考核',start:'2026/06/01',end:'2026/06/30'},
+];
+
+// ═══ 模拟数据 ═══
+let ACTIVITIES=[
+  {id:1,name:'2026年Q2绩效考核',plan:'年度绩效方案 v2',cycle:'Q2季度考核（2026/04/01 - 2026/06/30）',count:128,status:'active',creator:'Kim',createTime:'2026/03/15'},
+  {id:2,name:'2026年Q3绩效考核',plan:'年度绩效方案 v2',cycle:'Q3季度考核（2026/07/01 - 2026/09/30）',count:0,status:'not_started',creator:'Kim',createTime:'2026/06/20'},
+  {id:3,name:'2026年Q1绩效考核',plan:'半年度方案 v1',cycle:'Q1季度考核（2026/01/01 - 2026/03/31）',count:96,status:'ended',creator:'Kim',createTime:'2025/12/20'},
+  {id:4,name:'2025年度绩效考核',plan:'年度绩效方案 v1',cycle:'年度考核（2025/01/01 - 2025/12/31）',count:210,status:'ended',creator:'Kim',createTime:'2024/12/15'},
+];
+
+// ═══ 状态 ═══
+let filter={search:'',status:''};
+let modalState={type:null,data:null};
+let selectedIds=new Set();
+
+// Confirm dialog
+let cfmOpen=false,cfmTitle='',cfmMsg='',cfmOnConfirm=null;
+function showConfirm(title,msg,onConfirm){cfmOpen=true;cfmTitle=title;cfmMsg=msg;cfmOnConfirm=onConfirm;renderAll();}
+function closeConfirm(){cfmOpen=false;cfmOnConfirm=null;renderAll();}
+function doConfirm(){if(cfmOnConfirm)cfmOnConfirm();cfmOpen=false;cfmOnConfirm=null;renderAll();}
+
+// ═══ 渲染主入口 ═══
+function renderAll(){
+  renderApp();
+}
+
+function getFiltered(){
+  return ACTIVITIES.filter(a=>{
+    if(filter.search && !a.name.toLowerCase().includes(filter.search.toLowerCase())) return false;
+    if(filter.status && a.status!==filter.status) return false;
+    return true;
+  });
+}
+
+function renderApp(){
+  const data=getFiltered();
+  const ct=document.getElementById('ct') || document.getElementById('app');
+  if(!ct) return;
+
+  ct.innerHTML=`
+    <div class="fi">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <div>
+          <h1 style="font:700 20px/1.2 var(--f);color:var(--c9);margin-bottom:4px">活动管理</h1>
+          <p style="font:400 13px/1 var(--f);color:var(--c5)">管理绩效考核活动的发起与执行</p>
+        </div>
+        <button class="btn btn-p" onclick="openCreateModal()">${I.plus} 发起活动</button>
+      </div>
+      ${renderFilterBar()}
+      ${selectedIds.size>0?renderBatchBar():''}
+      ${renderTable(data)}
+    </div>
+    ${renderModals()}
+    ${cfmOpen?`<div class="cfm-ov" onclick="if(event.target===this)closeConfirm()"><div class="cfm-box"><div class="cfm-title">${cfmTitle}</div><div class="cfm-msg">${cfmMsg}</div><div class="cfm-btns"><button class="btn btn-s" onclick="closeConfirm()">取消</button><button class="btn btn-danger" onclick="doConfirm()">确认</button></div></div></div>`:''}
+  `;
+}
+
+function renderFilterBar(){
+  return `<div class="fl-bar">
+    <div class="fl-search">
+      ${I.search}
+      <input id="flSearch" placeholder="搜索活动名称…" value="${filter.search}" oninput="onSearchInput(this.value)" />
+    </div>
+    <select class="fl-sel" id="flStatus" onchange="onStatusChange(this.value)">
+      <option value=""${filter.status===''?' selected':''}>全部状态</option>
+      <option value="not_started"${filter.status==='not_started'?' selected':''}>未开始</option>
+      <option value="active"${filter.status==='active'?' selected':''}>进行中</option>
+      <option value="ended"${filter.status==='ended'?' selected':''}>已结束</option>
+    </select>
+    <div class="fl-actions">
+      <button class="btn btn-s" onclick="resetFilters()">${I.x} 重置</button>
+    </div>
+  </div>`;
+}
+
+function renderTable(data){
+  const allChecked=data.length>0 && data.every(a=>selectedIds.has(a.id));
+
+  const rows=data.map(a=>{
+    const st=STATUS_MAP[a.status];
+    const checked=selectedIds.has(a.id);
+    return `<tr>
+      <td class="col-ck">
+        <div class="ck${checked?' on':''}" onclick="toggleSelect(${a.id})">${I.check}</div>
+      </td>
+      <td class="cell-name"><a class="cell-link" href="javascript:void(0)" onclick="viewActivity(${a.id})">${a.name}</a></td>
+      <td class="cell-plan">${a.plan}</td>
+      <td class="cell-cycle">${a.cycle}</td>
+      <td class="cell-count">${a.count}</td>
+      <td><span class="cell-status ${st.cls}">${st.label}</span></td>
+      <td class="cell-creator">${a.creator}</td>
+      <td class="cell-date">${a.createTime}</td>
+      <td>
+        <div class="cell-actions">
+          <button class="btn btn-t" onclick="viewActivity(${a.id})" title="查看">${I.eye}</button>
+          ${a.status==='not_started'?`<button class="btn btn-t" onclick="editActivity(${a.id})" title="编辑">${I.edit}</button>`:''}
+          ${a.status==='not_started'||a.status==='ended'?`<button class="btn btn-t" onclick="deleteActivity(${a.id})" title="删除" style="color:var(--ro)">删除</button>`:''}
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  const pgText=data.length>0?`第 1-${data.length} 条，共 ${data.length} 条`:'暂无数据';
+
+  return `<div class="tbl-card">
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="col-ck">
+              <div class="ck${allChecked?' on':''}" onclick="toggleSelectAll()">${I.check}</div>
+            </th>
+            <th>活动名称</th>
+            <th>关联方案</th>
+            <th>考核周期</th>
+            <th>参与人数</th>
+            <th>状态</th>
+            <th>发起人</th>
+            <th>发起时间</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>${rows.length?rows:`<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--c4);font-size:13px">暂无匹配的考核活动</td></tr>`}</tbody>
+      </table>
+    </div>
+    <div class="pg-bar">
+      <div class="pg-info">
+        <span>${pgText}</span>
+        <span>每页 20 条</span>
+      </div>
+      <div class="pg-nav">
+        <button class="pg-btn" disabled>${I.chevL}</button>
+        <button class="pg-btn on">1</button>
+        <button class="pg-btn" disabled>${I.chevR}</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderBatchBar(){
+  const ids=[...selectedIds];
+  return `<div class="batch-bar" style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;padding:12px 20px">
+    <div class="batch-info">已选 <span class="cnt">${ids.length}</span> 项</div>
+    <div class="batch-actions">
+      <button class="btn btn-s" style="color:var(--ro)" onclick="batchDelete()">批量删除</button>
+      <button class="btn btn-s" onclick="selectedIds.clear();renderApp()">取消选择</button>
+    </div>
+  </div>`;
+}
+function batchDelete(){
+  const ids=[...selectedIds];
+  showConfirm('批量删除',`确定要删除 ${ids.length} 个活动吗？此操作不可撤销。`,()=>{
+    ACTIVITIES=ACTIVITIES.filter(a=>!selectedIds.has(a.id));
+    selectedIds.clear();renderApp();GHR_NAV.showToast(`已删除 ${ids.length} 个活动`);
+  });
+}
+function deleteActivity(id){
+  const a=ACTIVITIES.find(x=>x.id===id);
+  if(!a)return;
+  showConfirm('删除活动',`确定要删除「${a.name}」吗？此操作不可撤销。`,()=>{
+    ACTIVITIES=ACTIVITIES.filter(x=>x.id!==id);selectedIds.delete(id);renderApp();GHR_NAV.showToast('已删除');
+  });
+}
+
+// ═══ Modal 渲染 ═══
+function renderModals(){
+  let modalContent='';
+  if(modalState.type==='create'||modalState.type==='edit'){
+    const d=modalState.data||{};
+    const title=modalState.type==='create'?'发起活动':'编辑活动';
+    const planOptions=PLANS.map(p=>`<option value="${p}"${d.plan===p?' selected':''}>${p}</option>`).join('');
+    modalContent=`<div class="modal-hd">
+      <span class="modal-hd-t">${title}</span>
+      <button class="modal-close" onclick="closeModal()">${I.x}</button>
+    </div>
+    <div class="modal-bd">
+      <div class="form-row">
+        <div class="modal-label">活动名称<span class="req">*</span></div>
+        <input class="modal-input" id="fName" value="${d.name||''}" placeholder="请输入活动名称" />
+        <div class="form-err" id="errName">请输入活动名称</div>
+      </div>
+      <div class="form-row">
+        <div class="modal-label">关联方案<span class="req">*</span></div>
+        <select class="fl-sel" id="fPlan" style="width:100%;height:36px">
+          <option value="">请选择关联方案</option>
+          ${planOptions}
+        </select>
+        <div class="form-err" id="errPlan">请选择关联方案</div>
+      </div>
+      <div class="form-row">
+        <div class="modal-label">考核周期<span class="req">*</span></div>
+        <select class="fl-sel" id="fCycle" style="width:100%;height:36px">
+          <option value="">请选择考核周期</option>
+          <optgroup label="年度考核">
+            ${CYCLES.filter(c=>c.id==='annual').map(c=>`<option value="${c.label}" data-start="${c.start}" data-end="${c.end}"${d.cycleLabel===c.label?' selected':''}>${c.label}（${c.start} - ${c.end}）</option>`).join('')}
+          </optgroup>
+          <optgroup label="半年度考核">
+            ${CYCLES.filter(c=>c.id==='semi').map(c=>`<option value="${c.label}" data-start="${c.start}" data-end="${c.end}"${d.cycleLabel===c.label?' selected':''}>${c.label}（${c.start} - ${c.end}）</option>`).join('')}
+          </optgroup>
+          <optgroup label="季度考核">
+            ${CYCLES.filter(c=>c.id.startsWith('q')).map(c=>`<option value="${c.label}" data-start="${c.start}" data-end="${c.end}"${d.cycleLabel===c.label?' selected':''}>${c.label}（${c.start} - ${c.end}）</option>`).join('')}
+          </optgroup>
+          <optgroup label="月度考核">
+            ${CYCLES.filter(c=>!['annual','semi'].includes(c.id)&&!c.id.startsWith('q')).map(c=>`<option value="${c.label}" data-start="${c.start}" data-end="${c.end}"${d.cycleLabel===c.label?' selected':''}>${c.label}（${c.start} - ${c.end}）</option>`).join('')}
+          </optgroup>
+        </select>
+        <div class="form-err" id="errCycle">请选择考核周期</div>
+      </div>
+      <div class="form-row">
+        <div class="modal-label">活动说明</div>
+        <textarea class="modal-textarea" id="fDesc" placeholder="请输入活动说明（选填）">${d.desc||''}</textarea>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-s" onclick="closeModal()">取消</button>
+      <button class="btn btn-p" onclick="submitForm()">确认</button>
+    </div>`;
+  }
+
+  return `<div class="modal-ov${modalState.type?' on':''}" id="modalOv" onclick="onModalOverlayClick(event)">
+    <div class="modal">${modalContent}</div>
+  </div>`;
+}
+
+// ═══ 交互处理 ═══
+function onSearchInput(val){
+  filter.search=val.trim();
+  renderApp();
+  const el=document.getElementById('flSearch');
+  if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length)}
+}
+
+function onStatusChange(val){
+  filter.status=val;
+  renderApp();
+}
+
+function resetFilters(){
+  filter={search:'',status:''};
+  renderApp();
+}
+
+function toggleSelect(id){
+  if(selectedIds.has(id)) selectedIds.delete(id);
+  else selectedIds.add(id);
+  renderApp();
+}
+
+function toggleSelectAll(){
+  const data=getFiltered();
+  const allChecked=data.length>0 && data.every(a=>selectedIds.has(a.id));
+  if(allChecked){
+    data.forEach(a=>selectedIds.delete(a.id));
+  }else{
+    data.forEach(a=>selectedIds.add(a.id));
+  }
+  renderApp();
+}
+
+function openCreateModal(){
+  modalState={type:'create',data:{}};
+  renderApp();
+  setTimeout(()=>{
+    const el=document.getElementById('fName');
+    if(el) el.focus();
+  },50);
+}
+
+function editActivity(id){
+  const a=ACTIVITIES.find(x=>x.id===id);
+  if(!a) return;
+  const cycleLabel=a.cycle.split('（')[0]||'';
+  modalState={type:'edit',data:{...a,cycleLabel}};
+  renderApp();
+  setTimeout(()=>{
+    const el=document.getElementById('fName');
+    if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length)}
+  },50);
+}
+
+function viewActivity(id){
+  window.location.href = 'perf-activity-detail.html?id=' + id;
+}
+
+function submitForm(){
+  // 清除错误
+  ['errName','errPlan','errCycle'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.classList.remove('show');
+  });
+  document.querySelectorAll('.modal-input').forEach(el=>el.classList.remove('err'));
+
+  const name=document.getElementById('fName').value.trim();
+  const plan=document.getElementById('fPlan').value;
+  const cycleEl=document.getElementById('fCycle');
+  const cycleOpt=cycleEl.selectedOptions[0];
+  const cycleLabel=cycleEl.value;
+  const cycle=cycleLabel?cycleLabel+'（'+cycleOpt.dataset.start+' - '+cycleOpt.dataset.end+'）':'';
+
+  let hasErr=false;
+  if(!name){showErr('errName','fName');hasErr=true}
+  if(!plan){showErr('errPlan');hasErr=true}
+  if(!cycle){showErr('errCycle','fCycle');hasErr=true}
+  if(hasErr) return;
+
+  const now=new Date();
+  const timeStr=now.getFullYear()+'/'+String(now.getMonth()+1).padStart(2,'0')+'/'+String(now.getDate()).padStart(2,'0');
+
+  if(modalState.type==='create'){
+    const newId=ACTIVITIES.length?Math.max(...ACTIVITIES.map(a=>a.id))+1:1;
+    ACTIVITIES.unshift({
+      id:newId,name:name,plan:plan,cycle:cycle,count:0,
+      status:'not_started',creator:'当前用户',createTime:timeStr
+    });
+    modalState={type:null,data:null};
+    renderApp();
+    window.location.href = 'perf-activity-detail.html?id=' + newId;
+    return;
+  }else if(modalState.type==='edit'){
+    const a=ACTIVITIES.find(x=>x.id===modalState.data.id);
+    if(a){
+      a.name=name;a.plan=plan;a.cycle=cycle;
+    }
+  }
+
+  const wasEdit=modalState.type==='edit';
+  modalState={type:null,data:null};
+  renderApp();
+  if(wasEdit) GHR_NAV.showToast('编辑成功');
+}
+
+function showErr(errId,inputId){
+  const errEl=document.getElementById(errId);
+  if(errEl) errEl.classList.add('show');
+  if(inputId){
+    const inputEl=document.getElementById(inputId);
+    if(inputEl) inputEl.classList.add('err');
+  }
+}
+
+function closeModal(){
+  modalState={type:null,data:null};
+  renderApp();
+}
+
+function onModalOverlayClick(e){
+  if(e.target===e.currentTarget) closeModal();
+}
+
+// ESC 关闭弹窗
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape' && modalState.type) closeModal();
+});
+
+// ═══ 初始化 ═══
+GHR_NAV.init('perf','活动管理');
+renderAll();
+</script>
+</body>
+</html>

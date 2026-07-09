@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 目标制定</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#EFF6FF;--pr100:#DBEAFE;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#0F172A;--c8:#1E293B;--c7:#334155;--c6:#52525B;--c5:#64748B;--c4:#94A3B8;--c3:#CBD5E1;--c2:#E2E8F0;--c1:#F1F5F8;--c0:#F8FAFC;
+  --sf:#FFF;--bg:#F0F4F8;--dv:#F1F5F9;
+  --r1:10px;--r2:14px;--r3:18px;--r4:16px;
+  --f:'Inter','Noto Sans SC',system-ui,sans-serif;
+  --fm:'JetBrains Mono',monospace;
+  --sx:0 1px 2px rgba(0,0,0,.04);--sm:0 2px 8px rgba(0,0,0,.06);
+  --bd:rgba(15,23,42,.06);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:#E8E8ED;color:var(--c7);display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:20px;-webkit-font-smoothing:antialiased}
+
+.phone{width:393px;height:852px;background:var(--bg);border-radius:48px;box-shadow:0 25px 60px rgba(0,0,0,.3),0 0 0 5px #0F172A,0 0 0 8px #1E293B;overflow:hidden;position:relative;display:flex;flex-direction:column}
+.phone-notch{width:126px;height:34px;background:#0F172A;border-radius:0 0 18px 18px;position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:10}
+.phone-status{height:54px;background:var(--sf);display:flex;align-items:center;justify-content:space-between;padding:14px 24px 0;font:600 15px/1 var(--f);color:var(--c9)}
+.phone-status-r{display:flex;align-items:center;gap:6px}
+.phone-nav{height:44px;background:var(--sf);border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 16px;gap:12px}
+.phone-nav-back{width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c7);flex-shrink:0}
+.phone-nav-back svg{width:20px;height:20px}
+.phone-nav-t{flex:1;font:600 17px/1 var(--f);color:var(--c9);text-align:center}
+.phone-body{flex:1;overflow-y:auto;padding:16px 20px 100px;background:var(--bg)}
+.phone-body::-webkit-scrollbar{width:0}
+
+/* ===== Overview Card ===== */
+.ov-card{background:var(--sf);border-radius:var(--r4);box-shadow:var(--sx);border:1px solid var(--bd);padding:16px 20px;margin-bottom:16px}
+.ov-top{display:flex;align-items:center;gap:12px}
+.ov-avatar{width:44px;height:44px;border-radius:50%;background:var(--pr50);display:flex;align-items:center;justify-content:center;font:700 17px/1 var(--f);color:var(--pr);flex-shrink:0}
+.ov-info{flex:1;min-width:0}
+.ov-name{font:600 18px/1.2 var(--f);color:var(--c9)}
+.ov-role{font:400 13px/1 var(--f);color:var(--c5);margin-top:2px}
+.ov-cycle{font:600 13px/1 var(--f);color:var(--pr);background:var(--pr50);padding:4px 12px;border-radius:8px;flex-shrink:0;align-self:flex-start}
+.ov-meta{display:flex;align-items:center;gap:16px;margin-top:16px;padding-top:14px;border-top:1px solid var(--dv)}
+.ov-meta-item{font:500 13px/1 var(--f);color:var(--c6)}
+.ov-meta-item b{font-family:var(--fm);font-weight:600;color:var(--c9)}
+.ov-warn{display:flex;align-items:center;gap:6px;margin-top:10px;padding:8px 12px;background:var(--ac50);border-radius:var(--r1);font:400 12px/1.4 var(--f);color:var(--ac700)}
+.ov-warn svg{width:16px;height:16px;flex-shrink:0}
+
+/* ===== Section Title ===== */
+.sec-hd{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.sec-name{font:600 14px/1 var(--f);color:var(--c8)}
+.sec-right{margin-left:auto;font:500 12px/1 var(--f);color:var(--c5)}
+
+/* ===== Quantitative Goal Card ===== */
+.goal-q{background:var(--sf);border-radius:var(--r4);box-shadow:var(--sx);border:1px solid var(--bd);margin-bottom:8px;padding:14px 16px;cursor:pointer;transition:transform .12s}
+.goal-q:active{transform:scale(.98)}
+.goal-q-hd{display:flex;align-items:center;gap:8px}
+.goal-q-name{flex:1;font:600 14px/1.3 var(--f);color:var(--c9);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.goal-ai{font:700 9px/1 var(--f);color:var(--vi);background:var(--vi50);padding:2px 5px;border-radius:3px;flex-shrink:0}
+.goal-w-tag{font:500 11px/1 var(--f);padding:3px 8px;border-radius:6px;background:var(--pr50);color:var(--pr);flex-shrink:0}
+.goal-q-val{display:flex;align-items:baseline;gap:4px;margin-top:10px;font:500 13px/1 var(--f);color:var(--c5)}
+.goal-q-val .val-num{font-family:var(--fm);font-weight:700;font-size:13px}
+.goal-q-val .val-num.challenge{color:var(--ac700)}
+.goal-q-val .val-num.target{color:var(--pr)}
+.goal-q-val .val-num.baseline{color:var(--c5)}
+.goal-q-val .val-sep{color:var(--c3);font-size:11px;margin:0 2px}
+.goal-q-chevron{width:16px;height:16px;color:var(--c3);flex-shrink:0;margin-left:4px}
+.goal-q-chevron svg{width:14px;height:14px}
+
+/* ===== Qualitative Goal Card ===== */
+.goal-w{background:var(--sf);border-radius:var(--r4);box-shadow:var(--sx);border:1px solid var(--bd);margin-bottom:8px;padding:16px;cursor:pointer;transition:transform .12s}
+.goal-w:active{transform:scale(.98)}
+.goal-w-hd{display:flex;align-items:center;gap:8px}
+.goal-w-name{flex:1;font:600 14px/1.3 var(--f);color:var(--c9);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.goal-w-tag{font:500 11px/1 var(--f);padding:3px 8px;border-radius:6px;background:var(--em50);color:var(--em700);flex-shrink:0}
+.goal-w-desc{font:400 13px/1.3 var(--f);color:var(--c5);margin-top:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.goal-w-chevron{width:16px;height:16px;color:var(--c3);flex-shrink:0;margin-left:4px}
+.goal-w-chevron svg{width:14px;height:14px}
+
+/* ===== Approval Timeline ===== */
+/* ===== Approval Timeline ===== */
+.timeline{background:var(--sf);border-radius:var(--r4);box-shadow:var(--sx);border:1px solid var(--bd);padding:20px;margin-top:16px;position:relative;z-index:1}
+.tl-item{display:flex;gap:16px;position:relative}
+.tl-line{display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:20px}
+.tl-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;position:relative;z-index:1;margin-top:2px}
+.tl-dot.done{background:var(--em)}
+.tl-dot.active{background:var(--pr);box-shadow:0 0 0 4px rgba(37,99,235,.12)}
+.tl-dot.pending{background:var(--c3)}
+.tl-conn{width:1.5px;flex:1;min-height:32px;background:var(--c2)}
+.tl-body{flex:1;padding-bottom:32px;min-width:0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.tl-body:last-child{padding-bottom:0}
+.tl-left{min-width:0}
+.tl-name{font:600 14px/1 var(--f);color:var(--c9)}
+.tl-handler{font:400 12px/1 var(--f);color:var(--c5);margin-top:6px}
+.tl-time{font:400 12px/1 var(--f);color:var(--c4);flex-shrink:0;margin-top:2px}
+
+/* ===== Bottom Action Bar ===== */
+.action-bar{position:absolute;bottom:0;left:0;right:0;background:var(--sf);border-top:1px solid var(--bd);display:flex;align-items:center;padding:10px 20px;gap:10px;padding-bottom:34px;z-index:10}
+.action-bar .btn{height:44px;border-radius:var(--r4);font:600 14px/1 var(--f);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .12s}
+.action-bar .btn:active{transform:scale(.97)}
+.btn-draft{flex:1;background:var(--c1);color:var(--c7);border:1px solid var(--c2)}
+.btn-draft svg{width:16px;height:16px}
+.btn-submit{flex:1;background:var(--pr);color:#FFF;box-shadow:0 2px 8px rgba(37,99,235,.25)}
+
+/* ===== Sheet ===== */
+.sheet-ov{position:absolute;inset:0;background:rgba(0,0,0,.4);z-index:800;opacity:0;pointer-events:none;transition:opacity .25s}
+.sheet-ov.on{opacity:1;pointer-events:auto}
+.sheet{position:absolute;bottom:0;left:0;right:0;background:var(--sf);border-radius:20px 20px 0 0;z-index:810;transform:translateY(100%);transition:transform .3s ease;display:flex;flex-direction:column}
+.sheet-ov.on .sheet{transform:translateY(0)}
+.sheet-handle{width:36px;height:4px;background:var(--c3);border-radius:2px;margin:8px auto 0}
+.sheet-hd{padding:14px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between}
+.sheet-title{font:600 15px/1 var(--f);color:var(--c9)}
+.sheet-close{width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c5);background:none;border:none}
+.sheet-close svg{width:18px;height:18px}
+.sheet-bd{padding:20px;flex:1;overflow-y:auto}
+.sheet-ft{padding:12px 20px 34px;border-top:1px solid var(--dv);display:flex;gap:10px}
+.sheet-ft .btn{flex:1;height:44px;border-radius:var(--r4);font:600 14px/1 var(--f);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.sheet-ft .btn-cancel{background:var(--c1);color:var(--c7);border:1px solid var(--c2)}
+.sheet-ft .btn-confirm{background:var(--pr);color:#FFF}
+
+/* Edit field in sheet */
+.eff{display:flex;align-items:center;min-height:48px;border-bottom:1px solid var(--dv)}
+.eff:last-child{border-bottom:none}
+.eff-l{width:80px;flex-shrink:0;font:400 13px/1 var(--f);color:var(--c5)}
+.eff-r{flex:1;display:flex;justify-content:flex-end}
+.eff-input{width:100%;max-width:200px;border:none;background:transparent;font:500 14px/1.4 var(--f);color:var(--c9);text-align:right;outline:none;padding:12px 0}
+.eff-input::placeholder{color:var(--c4)}
+
+/* Indicator list sheet */
+.ind-item{display:flex;align-items:center;min-height:48px;border-bottom:1px solid var(--dv);cursor:pointer;transition:background .1s}
+.ind-item:active{background:var(--c0)}
+.ind-item-name{flex:1;font:500 14px/1.3 var(--f);color:var(--c9)}
+.ind-item-cat{font:400 11px/1 var(--f);color:var(--c5);margin-top:2px}
+.ind-item-check{width:20px;height:20px;border-radius:50%;border:2px solid var(--c3);flex-shrink:0;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.ind-item-check.on{border-color:var(--pr);background:var(--pr)}
+.ind-item-check svg{width:12px;height:12px;color:#FFF;opacity:0}
+.ind-item-check.on svg{opacity:1}
+
+/* Toast */
+.toast{position:absolute;top:70px;left:50%;transform:translateX(-50%);background:var(--c9);color:#FFF;padding:10px 22px;border-radius:22px;font:500 13px/1 var(--f);z-index:900;opacity:0;pointer-events:none;transition:opacity .2s}
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="phone-notch"></div>
+  <div class="phone-status">
+    <span>9:41</span>
+    <div class="phone-status-r">
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="var(--c9)"><rect x="0" y="6" width="3" height="6" rx="1"/><rect x="4.5" y="4" width="3" height="8" rx="1"/><rect x="9" y="1.5" width="3" height="10.5" rx="1"/><rect x="13.5" y="0" width="2.5" height="12" rx="1"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="var(--c9)"><path d="M8 2.4C5.6 2.4 3.4 3.3 1.8 4.8L0 3C2 1.1 4.9 0 8 0s6 1.1 8 3l-1.8 1.8C12.6 3.3 10.4 2.4 8 2.4z"/><path d="M8 6.4c-1.6 0-3 .6-4.1 1.6L2.1 6.2C3.6 4.8 5.7 4 8 4s4.4.8 5.9 2.2l-1.8 1.8C11 7 9.6 6.4 8 6.4z"/><path d="M8 10.4c-.8 0-1.6.3-2.1.9L8 14l2.1-2.7c-.5-.6-1.3-.9-2.1-.9z"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="2" stroke="var(--c9)"/><rect x="2" y="2" width="16" height="8" rx="1" fill="var(--c9)"/><path d="M23 4v4a2 2 0 0 0 0-4z" fill="var(--c9)"/></svg>
+    </div>
+  </div>
+
+  <div class="phone-nav">
+    <div class="phone-nav-back" onclick="history.back()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div class="phone-nav-t">目标制定</div>
+  </div>
+
+  <div class="phone-body" id="phoneBody"></div>
+
+  <!-- Action Bar -->
+  <div class="action-bar">
+    <button class="btn btn-draft" onclick="showToast('已保存草稿')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      保存草稿
+    </button>
+    <button class="btn btn-submit" onclick="showToast('已提交，进入审批流程')">提交审批</button>
+  </div>
+
+  <!-- Edit Goal Sheet -->
+  <div class="sheet-ov" id="editSheet" onclick="if(event.target===this)closeSheet('edit')">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-hd">
+        <span class="sheet-title" id="editTitle">编辑目标</span>
+        <button class="sheet-close" onclick="closeSheet('edit')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+      <div class="sheet-bd" id="editBody"></div>
+      <div class="sheet-ft">
+        <button class="btn btn-cancel" onclick="closeSheet('edit')">取消</button>
+        <button class="btn btn-confirm" onclick="saveGoal()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Indicator Selection Sheet -->
+  <div class="sheet-ov" id="indSheet" onclick="if(event.target===this)closeSheet('ind')">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-hd">
+        <span class="sheet-title">选择关联指标</span>
+        <button class="sheet-close" onclick="closeSheet('ind')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+      <div class="sheet-bd" id="indBody"></div>
+      <div class="sheet-ft">
+        <button class="btn btn-confirm" style="background:var(--pr)" onclick="confirmIndicator()">确认选择</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Indicator Detail Sheet -->
+  <div class="sheet-ov" id="detailSheet" onclick="if(event.target===this)closeSheet('detail')">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-hd">
+        <span class="sheet-title" id="detailTitle">指标详情</span>
+        <button class="sheet-close" onclick="closeSheet('detail')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+      <div class="sheet-bd" id="detailBody"></div>
+      <div class="sheet-ft">
+        <button class="btn btn-confirm" style="background:var(--pr)" onclick="closeSheet('detail')">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+const IC={
+  chevron:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>',
+  target:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
+  chart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+  msg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
+  warn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+};
+
+/* ===== DATA ===== */
+const EMP={name:'张明',emp:'EMP20240315',dept:'产品部',position:'高级产品经理',cycle:'2026Q2'};
+
+const GOALS=[
+  {id:1,name:'完成Q2产品迭代',type:'q',weight:30,indicator:'产品迭代完成率',target:100,challenge:120,baseline:80,measure:'按季度迭代计划统计完成百分比',aiFill:true,
+   indDetail:{def:'统计季度内迭代计划的完成百分比',rule:'标准梯度计算',measure:'迭代完成率',measureDetail:'按季度迭代计划统计完成百分比',levels:[{l:'优秀',s:'120分',d:'≥120%'},{l:'良好',s:'100分',d:'≥100%'},{l:'合格',s:'80分',d:'≥80%'},{l:'不合格',s:'0分',d:'<80%'}]}},
+  {id:2,name:'用户增长目标',type:'q',weight:20,indicator:'新增用户数',target:5000,challenge:7000,baseline:3000,measure:'按月统计新增注册用户总量',aiFill:true,
+   indDetail:{def:'统计月度新增注册用户总量',rule:'线性插值计算',measure:'新增用户数',measureDetail:'按月统计新增注册用户总量',levels:[{l:'优秀',s:'120分',d:'≥7000'},{l:'良好',s:'100分',d:'≥5000'},{l:'合格',s:'80分',d:'≥3000'},{l:'不合格',s:'0分',d:'<3000'}]}},
+  {id:3,name:'团队效能提升',type:'q',weight:10,indicator:'团队产出效率',target:110,challenge:130,baseline:100,measure:'团队产出/投入比值',aiFill:true,
+   indDetail:{def:'团队产出与投入的比值',rule:'标准梯度计算',measure:'产出效率比',measureDetail:'团队产出/投入比值',levels:[{l:'优秀',s:'120分',d:'≥130%'},{l:'良好',s:'100分',d:'≥110%'},{l:'合格',s:'80分',d:'≥100%'},{l:'不合格',s:'0分',d:'<100%'}]}},
+  {id:4,name:'人才培养',type:'w',weight:10,indicator:'下属成长指标',measure:'培养团队骨干，提升下属能力',aiFill:true,
+   indDetail:{def:'季度内获得晋升或能力认证的下属人数',rule:'-',measure:'成长人数',measureDetail:'季度内获得晋升或能力认证的下属人数'}},
+  {id:5,name:'技术能力提升',type:'w',weight:8,indicator:'技术认证',measure:'完成指定技术领域的专业认证',aiFill:true,
+   indDetail:{def:'获得行业认可的技术认证证书数',rule:'-',measure:'认证数量',measureDetail:'获得行业认可的技术认证证书数'}},
+];
+
+const STEPS=[
+  {name:'直属上级',handler:'王总监',status:'done',time:'2026-04-01 09:20'},
+  {name:'部门负责人',handler:'李VP',status:'active',time:'-'},
+  {name:'HRBP',handler:'赵HR',status:'pending',time:'-'},
+  {name:'最终确认',handler:'刘总',status:'pending',time:'-'},
+];
+
+let editingGoalIdx=-1;
+let selectedIndIdx=-1;
+
+/* ===== RENDER ===== */
+function render(){
+  const el=document.getElementById('phoneBody');
+  const qGoals=GOALS.filter(g=>g.type==='q');
+  const wGoals=GOALS.filter(g=>g.type==='w');
+  const totalWeight=GOALS.reduce((s,g)=>s+g.weight,0);
+  const weightOk=totalWeight===100;
+  let h='';
+
+  // Overview card — compact, no module titles
+  h+=`<div class="ov-card">
+    <div class="ov-top">
+      <div class="ov-avatar">${EMP.name[0]}</div>
+      <div class="ov-info">
+        <div class="ov-name">${EMP.name}</div>
+        <div class="ov-role">${EMP.position} · ${EMP.dept}</div>
+      </div>
+      <div class="ov-cycle">${EMP.cycle}</div>
+    </div>
+    <div class="ov-meta">
+      <span class="ov-meta-item">目标 <b>${GOALS.length}</b> 个</span>
+      <span class="ov-meta-item">总权重 <b>${totalWeight}%</b></span>
+    </div>
+    ${!weightOk?`<div class="ov-warn">${IC.warn}当前目标总权重未达到100%，还差${100-totalWeight}%</div>`:''}
+  </div>`;
+
+  // Quantitative goals
+  const qWeight=qGoals.reduce((s,g)=>s+g.weight,0);
+  h+=`<div class="sec-hd"><span class="sec-name">定量目标（${qGoals.length}）</span><span class="sec-right">合计权重 ${qWeight}%</span></div>`;
+  qGoals.forEach((g,i)=>{
+    h+=`<div class="goal-q" onclick="openEditSheet(${GOALS.indexOf(g)})">
+      <div class="goal-q-hd">
+        <span class="goal-q-name">${g.name}</span>
+        ${g.aiFill?`<span class="goal-ai">AI</span>`:''}
+        <span class="goal-w-tag">权重${g.weight}%</span>
+        <div class="goal-q-chevron">${IC.chevron}</div>
+      </div>
+      <div class="goal-q-val">
+        <span>挑战</span><span class="val-num challenge">${g.challenge}</span>
+        <span class="val-sep">·</span>
+        <span>目标</span><span class="val-num target">${g.target}</span>
+        <span class="val-sep">·</span>
+        <span>保底</span><span class="val-num baseline">${g.baseline}</span>
+      </div>
+    </div>`;
+  });
+
+  // Qualitative goals
+  const wWeight=wGoals.reduce((s,g)=>s+g.weight,0);
+  h+=`<div class="sec-hd" style="margin-top:12px"><span class="sec-name">定性目标（${wGoals.length}）</span><span class="sec-right">合计权重 ${wWeight}%</span></div>`;
+  wGoals.forEach((g,i)=>{
+    h+=`<div class="goal-w" onclick="openEditSheet(${GOALS.indexOf(g)})">
+      <div class="goal-w-hd">
+        <span class="goal-w-name">${g.name}</span>
+        ${g.aiFill?`<span class="goal-ai">AI</span>`:''}
+        <span class="goal-w-tag">权重${g.weight}%</span>
+        <div class="goal-w-chevron">${IC.chevron}</div>
+      </div>
+      <div class="goal-w-desc">${g.measure}</div>
+    </div>`;
+  });
+
+  // Approval timeline
+  h+=`<div class="sec-hd" style="margin-top:16px"><span class="sec-name">审批流</span></div>`;
+  h+=`<div class="timeline">`;
+  STEPS.forEach((s,i)=>{
+    const dotCls=s.status==='done'?'done':s.status==='active'?'active':'pending';
+    const isLast=i===STEPS.length-1;
+    h+=`<div class="tl-item">
+      <div class="tl-line">
+        <div class="tl-dot ${dotCls}"></div>
+        ${!isLast?`<div class="tl-conn"></div>`:''}
+      </div>
+      <div class="tl-body">
+        <div class="tl-left">
+          <div class="tl-name">${s.name}</div>
+          <div class="tl-handler">${s.handler}</div>
+        </div>
+        <div class="tl-time">${s.time}</div>
+      </div>
+    </div>`;
+  });
+  h+=`</div>`;
+  h+=`<div style="height:16px"></div>`;
+  el.innerHTML=h;
+}
+
+/* ===== EDIT SHEET ===== */
+function openEditSheet(idx){
+  editingGoalIdx=idx;
+  const g=GOALS[idx];
+  document.getElementById('editTitle').textContent='编辑';
+
+  let h=`
+    <div class="eff"><div class="eff-l">目标名称</div><div class="eff-r"><input class="eff-input" id="ef_name" value="${g.name}"></div></div>
+    <div class="eff"><div class="eff-l">关联指标</div><div class="eff-r"><input class="eff-input" id="ef_ind" value="${g.indicator}" readonly onclick="openIndicatorSheet(${idx})" style="cursor:pointer;color:var(--pr)"></div></div>
+    <div class="eff"><div class="eff-l">权重</div><div class="eff-r"><span style="display:inline-flex;align-items:center;gap:4px"><input class="eff-input" id="ef_weight" type="number" value="${g.weight}" style="width:60px;text-align:center"><span style="font:500 14px/1 var(--f);color:var(--c7)">%</span></span></div></div>`;
+  if(g.type==='q'){
+    h+=`<div class="eff"><div class="eff-l">目标值</div><div class="eff-r"><input class="eff-input" id="ef_target" type="number" value="${g.target}" style="font-family:var(--fm);font-weight:600"></div></div>
+    <div class="eff"><div class="eff-l">挑战值</div><div class="eff-r"><input class="eff-input" id="ef_challenge" type="number" value="${g.challenge}" style="font-family:var(--fm);font-weight:600"></div></div>
+    <div class="eff"><div class="eff-l">保底值</div><div class="eff-r"><input class="eff-input" id="ef_baseline" type="number" value="${g.baseline}" style="font-family:var(--fm);font-weight:600"></div></div>`;
+  }else{
+    h+=`<div class="eff"><div class="eff-l">衡量标准</div><div class="eff-r"><input class="eff-input" id="ef_measure" value="${g.measure}"></div></div>`;
+  }
+
+  h+=`<div class="eff" style="cursor:default"><div class="eff-l">计算规则</div><div class="eff-r"><span class="eff-input" style="color:var(--c5)">${g.indDetail.rule}</span></div></div>
+  <div class="eff" style="cursor:default"><div class="eff-l">衡量方式</div><div class="eff-r"><span class="eff-input" style="color:var(--c5)">${g.indDetail.measure}</span></div></div>
+  <div class="eff" style="cursor:default"><div class="eff-l">指标定义</div><div class="eff-r"><span class="eff-input" style="color:var(--c5)">${g.indDetail.def}</span></div></div>`;
+
+  document.getElementById('editBody').innerHTML=h;
+  document.getElementById('editSheet').classList.add('on');
+}
+
+function saveGoal(){
+  const g=GOALS[editingGoalIdx];
+  g.name=document.getElementById('ef_name').value;
+  g.indicator=document.getElementById('ef_ind').value;
+  g.weight=parseInt(document.getElementById('ef_weight').value)||0;
+  g.target=parseFloat(document.getElementById('ef_target').value)||0;
+  g.challenge=parseFloat(document.getElementById('ef_challenge').value)||0;
+  if(g.type==='q') g.baseline=parseFloat(document.getElementById('ef_baseline').value)||0;
+  if(g.type==='w') g.measure=document.getElementById('ef_measure')?.value||'';
+  closeSheet('edit');
+  showToast('已保存');
+  render();
+}
+
+/* ===== INDICATOR SHEET ===== */
+function openIndicatorSheet(goalIdx){
+  editingGoalIdx=goalIdx;
+  selectedIndIdx=-1;
+  let h='';
+  INDICATORS.forEach((ind,i)=>{
+    h+=`<div class="ind-item" onclick="selectIndicator(${i})">
+      <div style="flex:1"><div class="ind-item-name">${ind.name}</div><div class="ind-item-cat">${ind.cat}</div></div>
+      <div class="ind-item-check" id="indCheck${i}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+    </div>`;
+  });
+  document.getElementById('indBody').innerHTML=h;
+  document.getElementById('indSheet').classList.add('on');
+}
+
+function selectIndicator(i){
+  selectedIndIdx=i;
+  INDICATORS.forEach((_,j)=>{
+    document.getElementById('indCheck'+j).classList.toggle('on',j===i);
+  });
+}
+
+function confirmIndicator(){
+  if(selectedIndIdx<0){showToast('请选择一个指标');return;}
+  const ind=INDICATORS[selectedIndIdx];
+  if(editingGoalIdx>=0){
+    GOALS[editingGoalIdx].indicator=ind.name;
+  }
+  closeSheet('ind');
+  if(editingGoalIdx>=0) openEditSheet(editingGoalIdx);
+  showToast('已选择：'+ind.name);
+}
+
+/* ===== DETAIL SHEET ===== */
+function openDetailSheet(idx){
+  const g=GOALS[idx];
+  document.getElementById('detailTitle').textContent=g.indicator+' — 指标详情';
+  let h=`
+    <div class="eff" style="cursor:default"><div class="eff-l">指标名称</div><div class="eff-r"><span class="eff-input" style="color:var(--c9)">${g.indicator}</span></div></div>
+    <div class="eff" style="cursor:default"><div class="eff-l">指标定义</div><div class="eff-r"><span class="eff-input" style="color:var(--c5)">${g.indDetail.def}</span></div></div>
+    <div class="eff" style="cursor:default"><div class="eff-l">衡量方式</div><div class="eff-r"><span class="eff-input" style="color:var(--c5)">${g.indDetail.measure}</span></div></div>
+    <div class="eff" style="cursor:default"><div class="eff-l">衡量说明</div><div class="eff-r"><span class="eff-input" style="color:var(--c5)">${g.indDetail.measureDetail}</span></div></div>
+    <div class="eff" style="cursor:default"><div class="eff-l">计算规则</div><div class="eff-r"><span class="eff-input" style="color:var(--c5)">${g.indDetail.rule}</span></div></div>`;
+  if(g.indDetail.levels){
+    h+=`<div style="font:600 13px/1 var(--f);color:var(--c8);margin:16px 0 10px">等级标准</div>`;
+    g.indDetail.levels.forEach(l=>{
+      h+=`<div class="eff" style="cursor:default"><div class="eff-l" style="font-weight:500;color:var(--c8)">${l.l}</div><div class="eff-r" style="display:flex;justify-content:flex-end;gap:12px"><span class="eff-input" style="color:var(--c6);width:auto">${l.d}</span><span class="eff-input" style="color:var(--c9);width:auto;font-family:var(--fm);font-weight:600">${l.s}</span></div></div>`;
+    });
+  }
+  document.getElementById('detailBody').innerHTML=h;
+  document.getElementById('detailSheet').classList.add('on');
+}
+
+/* ===== UTILS ===== */
+const INDICATORS=[
+  {name:'产品迭代完成率',cat:'产品类'},
+  {name:'新增用户数',cat:'增长类'},
+  {name:'团队产出效率',cat:'管理类'},
+  {name:'下属成长指标',cat:'管理类'},
+  {name:'技术认证',cat:'能力类'},
+  {name:'业务分析报告',cat:'能力类'},
+  {name:'客户满意度',cat:'服务类'},
+  {name:'NPS 净推荐值',cat:'服务类'},
+  {name:'营收贡献',cat:'业绩类'},
+  {name:'需求交付周期',cat:'效率类'},
+];
+
+function closeSheet(id){document.getElementById(id+'Sheet').classList.remove('on');}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.style.opacity='1';
+  setTimeout(()=>{t.style.opacity='0';},2000);
+}
+
+render();
+</script>
+</body>
+</html>

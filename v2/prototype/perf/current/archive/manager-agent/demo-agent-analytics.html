@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AI 绩效分析 · 团队</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--em:#10B981;--em50:#ECFDF5;--em700:#047857;--ac:#F59E0B;--ac50:#FFFBEB;--ac700:#B45309;--ro:#F43F5E;--ro50:#FFF1F2;--vi:#8B5CF6;--vi50:#F5F3FF;--c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;--sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;--r1:6px;--r2:8px;--r3:10px;--r4:14px;--f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;--fm:'JetBrains Mono','SF Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c9);-webkit-font-smoothing:antialiased}
+.main{display:flex;height:calc(100vh - 52px)}
+.content{flex:1;overflow-y:auto;padding:24px}
+.ai-panel{width:380px;background:var(--sf);border-left:1px solid var(--dv);display:flex;flex-direction:column;flex-shrink:0}
+.ai-hd{padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:10px}
+.ai-hd-ic{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--pr),var(--vi));display:flex;align-items:center;justify-content:center;color:#fff}
+.ai-hd-info{flex:1}
+.ai-hd-t{font:600 14px/1.2 var(--f);color:var(--c9)}
+.ai-hd-s{font:400 11px/1 var(--f);color:var(--c5)}
+.ai-bd{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:12px}
+.ai-msg{max-width:92%;animation:msgIn .3s ease}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.ai-msg.bot{align-self:flex-start}
+.ai-msg.user{align-self:flex-end}
+.ai-msg-bd{padding:10px 14px;border-radius:var(--r3);font:400 13px/1.6 var(--f);word-break:break-word}
+.ai-msg.bot .ai-msg-bd{background:var(--c0);color:var(--c8);border-bottom-left-radius:4px}
+.ai-msg.user .ai-msg-bd{background:var(--pr);color:#fff;border-bottom-right-radius:4px}
+.ai-msg-time{font:400 10px/1 var(--f);color:var(--c4);margin-top:4px}
+.ai-msg.user .ai-msg-time{text-align:right}
+.ai-msg-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.ai-msg-btn{font:500 11px/1 var(--f);padding:5px 10px;border-radius:var(--r1);border:1px solid var(--c2);background:var(--sf);color:var(--c6);cursor:pointer;transition:all .12s}
+.ai-msg-btn:hover{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-msg-card{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);padding:12px;margin-top:8px}
+.ai-msg-card-t{font:600 12px/1.3 var(--f);color:var(--c8);margin-bottom:6px}
+.ai-msg-card-row{display:flex;justify-content:space-between;padding:4px 0;font:400 12px/1.4 var(--f);color:var(--c6)}
+.ai-msg-card-row .v{font-weight:600;color:var(--c8)}
+.ai-ft{padding:12px 16px;border-top:1px solid var(--dv);display:flex;gap:8px;align-items:center}
+.ai-input{flex:1;height:36px;border:1px solid var(--c2);border-radius:var(--r2);padding:0 12px;font:400 13px/1 var(--f);color:var(--c8);outline:none;transition:border .15s}
+.ai-input:focus{border-color:var(--pr)}
+.ai-send{width:36px;height:36px;border-radius:var(--r2);background:var(--pr);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#FFF;transition:all .12s}
+.ai-send:hover{background:var(--pr700)}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px}
+.stat-card{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);padding:20px}
+.stat-label{font:400 12px/1 var(--f);color:var(--c5);margin-bottom:8px}
+.stat-val{font:700 28px/1 var(--f);color:var(--c9)}
+.stat-sub{font:400 11px/1 var(--f);color:var(--c5);margin-top:6px;display:flex;align-items:center;gap:4px}
+.stat-trend{display:inline-flex;align-items:center;gap:3px;font:500 11px/1 var(--f);padding:2px 6px;border-radius:4px}
+.stat-trend.up{color:var(--em);background:var(--em50)}
+.section{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);margin-bottom:16px}
+.section-hd{padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between}
+.section-t{font:600 14px/1.2 var(--f);color:var(--c9)}
+.section-bd{padding:20px}
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.chart-box{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);padding:20px}
+.chart-title{font:600 13px/1.2 var(--f);color:var(--c8);margin-bottom:16px}
+.bar-chart{display:flex;align-items:flex-end;gap:20px;height:160px;padding-top:10px}
+.bar-col{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1}
+.bar{width:100%;border-radius:4px 4px 0 0;transition:height .3s;position:relative;min-height:4px}
+.bar.s{background:linear-gradient(180deg,#F59E0B,#D97706)}
+.bar.a{background:linear-gradient(180deg,#2563EB,#1D4ED8)}
+.bar.bp{background:linear-gradient(180deg,#10B981,#047857)}
+.bar.b{background:linear-gradient(180deg,#8B5CF6,#7C3AED)}
+.bar.c{background:linear-gradient(180deg,var(--c4),var(--c5))}
+.bar-label{font:500 11px/1 var(--f);color:var(--c6)}
+.bar-val{font:600 12px/1 var(--fm);color:var(--c8)}
+.line-chart{position:relative;height:160px;padding:10px 0}
+.line-chart svg{width:100%;height:100%}
+.line-legend{display:flex;gap:16px;margin-top:12px;justify-content:center}
+.line-legend-item{display:flex;align-items:center;gap:6px;font:400 11px/1 var(--f);color:var(--c6)}
+.line-legend-dot{width:8px;height:8px;border-radius:50%}
+.radar-chart{display:flex;justify-content:center;padding:10px 0}
+.radar-chart svg{width:220px;height:200px}
+.radar-legend{display:flex;gap:12px;margin-top:12px;justify-content:center;flex-wrap:wrap}
+.radar-legend-item{display:flex;align-items:center;gap:5px;font:400 11px/1 var(--f);color:var(--c6)}
+.radar-legend-dot{width:8px;height:8px;border-radius:50%}
+.anomaly-list{display:flex;flex-direction:column;gap:8px}
+.anomaly-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--r2);border:1px solid var(--c2)}
+.anomaly-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.anomaly-info{flex:1}
+.anomaly-title{font:500 12px/1.2 var(--f);color:var(--c8)}
+.anomaly-desc{font:400 11px/1.3 var(--f);color:var(--c5);margin-top:2px}
+.anomaly-tag{font:500 10px/1 var(--f);padding:2px 8px;border-radius:10px;flex-shrink:0}
+.anomaly-tag.warn{background:var(--ac50);color:var(--ac700)}
+.anomaly-tag.ro{background:var(--ro50);color:var(--ro)}
+</style>
+</head>
+<body>
+<div style="height:52px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:1100">
+  <div style="display:flex;align-items:center;gap:14px">
+    <a href="../demo-index.html" style="text-decoration:none;display:flex;align-items:center;gap:8px">
+      <div style="width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <span style="font-size:15px;font-weight:700;color:var(--c9)">HR ONE</span>
+    </a>
+    <div style="width:1px;height:20px;background:var(--c2)"></div>
+    <span style="font:500 13px/1 var(--f);color:var(--c5)">业务演示 - 管理者端</span>
+    <span style="color:var(--c3)">&#8250;</span>
+    <span style="font:600 13px/1 var(--f);color:var(--c8)">AI 绩效分析 · 团队</span>
+  </div>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+    <div style="width:30px;height:30px;border-radius:50%;background:var(--vi);display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--f);color:#FFF">王</div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="content">
+    <!-- 概览卡片 -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">团队平均分</div>
+        <div class="stat-val">85.2</div>
+        <div class="stat-sub">
+          <span class="stat-trend up">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>
+            +3.1 vs Q1
+          </span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">中位数</div>
+        <div class="stat-val">84.0</div>
+        <div class="stat-sub">分布较集中</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">标准差</div>
+        <div class="stat-val">4.8</div>
+        <div class="stat-sub">离散度正常（< 8）</div>
+      </div>
+    </div>
+
+    <!-- 图表区 -->
+    <div class="charts-grid">
+      <!-- 等级分布柱状图 -->
+      <div class="chart-box">
+        <div class="chart-title">等级分布</div>
+        <div class="bar-chart">
+          <div class="bar-col">
+            <div class="bar-val">1</div>
+            <div class="bar s" style="height:40px"></div>
+            <div class="bar-label">S</div>
+          </div>
+          <div class="bar-col">
+            <div class="bar-val">2</div>
+            <div class="bar a" style="height:80px"></div>
+            <div class="bar-label">A</div>
+          </div>
+          <div class="bar-col">
+            <div class="bar-val">2</div>
+            <div class="bar bp" style="height:80px"></div>
+            <div class="bar-label">B+</div>
+          </div>
+          <div class="bar-col">
+            <div class="bar-val">1</div>
+            <div class="bar b" style="height:40px"></div>
+            <div class="bar-label">B</div>
+          </div>
+          <div class="bar-col">
+            <div class="bar-val">0</div>
+            <div class="bar c" style="height:4px"></div>
+            <div class="bar-label">C</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 跨周期趋势 -->
+      <div class="chart-box">
+        <div class="chart-title">跨周期趋势</div>
+        <div class="line-chart">
+          <svg viewBox="0 0 300 140" preserveAspectRatio="none">
+            <!-- Grid lines -->
+            <line x1="40" y1="10" x2="40" y2="120" stroke="var(--c2)" stroke-width="1"/>
+            <line x1="40" y1="120" x2="280" y2="120" stroke="var(--c2)" stroke-width="1"/>
+            <line x1="40" y1="85" x2="280" y2="85" stroke="var(--c1)" stroke-width="1" stroke-dasharray="4"/>
+            <line x1="40" y1="50" x2="280" y2="50" stroke="var(--c1)" stroke-width="1" stroke-dasharray="4"/>
+            <line x1="40" y1="15" x2="280" y2="15" stroke="var(--c1)" stroke-width="1" stroke-dasharray="4"/>
+            <!-- Y axis labels -->
+            <text x="30" y="123" font-size="9" fill="var(--c5)" text-anchor="end" font-family="var(--f)">70</text>
+            <text x="30" y="88" font-size="9" fill="var(--c5)" text-anchor="end" font-family="var(--f)">80</text>
+            <text x="30" y="53" font-size="9" fill="var(--c5)" text-anchor="end" font-family="var(--f)">90</text>
+            <text x="30" y="18" font-size="9" fill="var(--c5)" text-anchor="end" font-family="var(--f)">100</text>
+            <!-- X axis labels -->
+            <text x="100" y="135" font-size="9" fill="var(--c5)" text-anchor="middle" font-family="var(--f)">Q1</text>
+            <text x="200" y="135" font-size="9" fill="var(--c5)" text-anchor="middle" font-family="var(--f)">Q2</text>
+            <!-- Team avg line -->
+            <polyline points="100,88 200,72" fill="none" stroke="var(--pr)" stroke-width="2.5"/>
+            <circle cx="100" cy="88" r="4" fill="var(--pr)"/>
+            <circle cx="200" cy="72" r="4" fill="var(--pr)"/>
+            <text x="100" y="82" font-size="9" fill="var(--pr)" text-anchor="middle" font-weight="600" font-family="var(--fm)">82.1</text>
+            <text x="200" y="66" font-size="9" fill="var(--pr)" text-anchor="middle" font-weight="600" font-family="var(--fm)">85.2</text>
+            <!-- Median line -->
+            <polyline points="100,92 200,78" fill="none" stroke="var(--em)" stroke-width="2" stroke-dasharray="6 3"/>
+            <circle cx="100" cy="92" r="3" fill="var(--em)"/>
+            <circle cx="200" cy="78" r="3" fill="var(--em)"/>
+            <text x="100" y="103" font-size="9" fill="var(--em)" text-anchor="middle" font-family="var(--fm)">81.0</text>
+            <text x="200" y="90" font-size="9" fill="var(--em)" text-anchor="middle" font-family="var(--fm)">84.0</text>
+          </svg>
+        </div>
+        <div class="line-legend">
+          <div class="line-legend-item"><div class="line-legend-dot" style="background:var(--pr)"></div>平均分</div>
+          <div class="line-legend-item"><div class="line-legend-dot" style="background:var(--em)"></div>中位数</div>
+        </div>
+      </div>
+
+      <!-- 能力维度雷达图 -->
+      <div class="chart-box">
+        <div class="chart-title">能力维度对比</div>
+        <div class="radar-chart">
+          <svg viewBox="0 0 220 200">
+            <!-- Radar polygons -->
+            <polygon points="110,20 186,65 155,155 65,155 34,65" fill="none" stroke="var(--c2)" stroke-width="1"/>
+            <polygon points="110,40 170,72 145,145 75,145 50,72" fill="none" stroke="var(--c2)" stroke-width="1"/>
+            <polygon points="110,60 154,79 135,135 85,135 66,79" fill="none" stroke="var(--c2)" stroke-width="1"/>
+            <!-- Q1 area -->
+            <polygon points="110,48 162,76 140,138 80,138 56,76" fill="var(--vi)" fill-opacity="0.1" stroke="var(--vi)" stroke-width="1.5"/>
+            <!-- Q2 area -->
+            <polygon points="110,35 174,68 148,142 72,142 46,68" fill="var(--pr)" fill-opacity="0.1" stroke="var(--pr)" stroke-width="2"/>
+            <!-- Axis lines -->
+            <line x1="110" y1="100" x2="110" y2="20" stroke="var(--c2)" stroke-width="1"/>
+            <line x1="110" y1="100" x2="186" y2="65" stroke="var(--c2)" stroke-width="1"/>
+            <line x1="110" y1="100" x2="155" y2="155" stroke="var(--c2)" stroke-width="1"/>
+            <line x1="110" y1="100" x2="65" y2="155" stroke="var(--c2)" stroke-width="1"/>
+            <line x1="110" y1="100" x2="34" y2="65" stroke="var(--c2)" stroke-width="1"/>
+            <!-- Labels -->
+            <text x="110" y="12" font-size="10" fill="var(--c7)" text-anchor="middle" font-family="var(--f)">业绩</text>
+            <text x="195" y="65" font-size="10" fill="var(--c7)" text-anchor="start" font-family="var(--f)">管理</text>
+            <text x="162" y="165" font-size="10" fill="var(--c7)" text-anchor="start" font-family="var(--f)">能力</text>
+            <text x="58" y="165" font-size="10" fill="var(--c7)" text-anchor="end" font-family="var(--f)">价值观</text>
+            <text x="25" y="65" font-size="10" fill="var(--c7)" text-anchor="end" font-family="var(--f)">协作</text>
+            <!-- Dots Q2 -->
+            <circle cx="110" cy="35" r="3" fill="var(--pr)"/>
+            <circle cx="174" cy="68" r="3" fill="var(--pr)"/>
+            <circle cx="148" cy="142" r="3" fill="var(--pr)"/>
+            <circle cx="72" cy="142" r="3" fill="var(--pr)"/>
+            <circle cx="46" cy="68" r="3" fill="var(--pr)"/>
+            <!-- Dots Q1 -->
+            <circle cx="110" cy="48" r="3" fill="var(--vi)"/>
+            <circle cx="162" cy="76" r="3" fill="var(--vi)"/>
+            <circle cx="140" cy="138" r="3" fill="var(--vi)"/>
+            <circle cx="80" cy="138" r="3" fill="var(--vi)"/>
+            <circle cx="56" cy="76" r="3" fill="var(--vi)"/>
+          </svg>
+        </div>
+        <div class="radar-legend">
+          <div class="radar-legend-item"><div class="radar-legend-dot" style="background:var(--pr)"></div>Q2</div>
+          <div class="radar-legend-item"><div class="radar-legend-dot" style="background:var(--vi)"></div>Q1</div>
+        </div>
+      </div>
+
+      <!-- 异常数据点 -->
+      <div class="chart-box">
+        <div class="chart-title">异常数据标记</div>
+        <div class="anomaly-list">
+          <div class="anomaly-item">
+            <div class="anomaly-dot" style="background:var(--ac)"></div>
+            <div class="anomaly-info">
+              <div class="anomaly-title">王浩然评分低于团队均值15%</div>
+              <div class="anomaly-desc">综合得分72分，团队均值85.2分</div>
+            </div>
+            <span class="anomaly-tag warn">需关注</span>
+          </div>
+          <div class="anomaly-item">
+            <div class="anomaly-dot" style="background:var(--ro)"></div>
+            <div class="anomaly-info">
+              <div class="anomaly-title">周婷连续2周期低于B+水平</div>
+              <div class="anomaly-desc">Q1: B(76分) → Q2: B(76分)</div>
+            </div>
+            <span class="anomaly-tag ro">风险</span>
+          </div>
+          <div class="anomaly-item">
+            <div class="anomaly-dot" style="background:var(--em)"></div>
+            <div class="anomaly-info">
+              <div class="anomaly-title">李雪连续2周期评级A</div>
+              <div class="anomaly-desc">Q1: A(88分) → Q2: A(89分)，稳定高绩效</div>
+            </div>
+            <span class="anomaly-tag" style="background:var(--em50);color:var(--em700)">正向</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Chat 面板 -->
+  <div class="ai-panel">
+    <div class="ai-hd">
+      <div class="ai-hd-ic">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Z"/><path d="M12 6v6l4 2"/></svg>
+      </div>
+      <div class="ai-hd-info">
+        <div class="ai-hd-t">AI 分析助手</div>
+        <div class="ai-hd-s">团队绩效洞察与建议</div>
+      </div>
+    </div>
+    <div class="ai-bd">
+      <div class="ai-msg bot">
+        <div class="ai-msg-bd">团队Q2平均分 <strong>85.2</strong>，较Q1提升 <strong>3.1分</strong>，整体表现良好。</div>
+        <div class="ai-msg-time">15:00</div>
+        <div class="ai-msg-card">
+          <div class="ai-msg-card-t">Q2 vs Q1 对比</div>
+          <div class="ai-msg-card-row"><span>平均分</span><span class="v">82.1 → 85.2 (+3.1)</span></div>
+          <div class="ai-msg-card-row"><span>中位数</span><span class="v">81.0 → 84.0 (+3.0)</span></div>
+          <div class="ai-msg-card-row"><span>A级以上占比</span><span class="v">40% → 50%</span></div>
+        </div>
+      </div>
+      <div class="ai-msg bot">
+        <div class="ai-msg-bd"><strong>李雪</strong>连续2个周期评级A，建议关注晋升机会。其业绩维度得分持续领先团队均值。</div>
+        <div class="ai-msg-time">15:01</div>
+        <div class="ai-msg-actions">
+          <button class="ai-msg-btn">查看李雪详情</button>
+          <button class="ai-msg-btn">标记晋升候选人</button>
+        </div>
+      </div>
+      <div class="ai-msg bot">
+        <div class="ai-msg-bd"><strong>周婷</strong>评分低于团队均值15%，建议制定IDP（个人发展计划）。<br><br>核心问题：能力发展维度得分偏低，目标完成质量有待提升。</div>
+        <div class="ai-msg-time">15:02</div>
+        <div class="ai-msg-actions">
+          <button class="ai-msg-btn">生成IDP模板</button>
+          <button class="ai-msg-btn">安排辅导计划</button>
+          <button class="ai-msg-btn">查看周婷详情</button>
+        </div>
+      </div>
+      <div class="ai-msg user">
+        <div class="ai-msg-bd">团队整体发展趋势怎么样？</div>
+        <div class="ai-msg-time">15:10</div>
+      </div>
+      <div class="ai-msg bot">
+        <div class="ai-msg-bd">团队发展趋势分析：<br><br>1. <strong>整体上升</strong>：平均分和中位数均有提升，说明团队整体在进步<br>2. <strong>梯队分化</strong>：高绩效者（张明、李雪）与低绩效者（周婷）差距拉大<br>3. <strong>能力维度</strong>：业绩维度提升明显，管理维度略有下降<br><br>建议：重点关注中间梯队（王浩然、吴强）的能力提升，缩小团队内差距。</div>
+        <div class="ai-msg-time">15:10</div>
+        <div class="ai-msg-actions">
+          <button class="ai-msg-btn">生成团队报告</button>
+          <button class="ai-msg-btn">制定提升计划</button>
+        </div>
+      </div>
+    </div>
+    <div class="ai-ft">
+      <input class="ai-input" placeholder="输入问题...">
+      <button class="ai-send">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

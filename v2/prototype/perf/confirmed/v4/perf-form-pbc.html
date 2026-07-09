@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GHR - PBC目标制定表单</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --shadow-card-hover:0 8px 20px -4px rgba(0,0,0,.08),0 2px 6px -2px rgba(0,0,0,.04);
+  --shadow-dropdown:0 10px 40px -10px rgba(0,0,0,.12),0 2px 10px -2px rgba(0,0,0,.04);
+  --shadow-modal:0 20px 60px -12px rgba(0,0,0,.18),0 4px 16px -4px rgba(0,0,0,.08);
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --m:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+/* ═══ HEADER ═══ */
+.hdr{height:52px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:1100}
+.hdr-l{display:flex;align-items:center;gap:14px}
+.logo{display:flex;align-items:center;gap:8px;cursor:pointer}
+.logo-i{width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center}
+.logo-i svg{width:15px;height:15px;color:#FFF}
+.logo-t{font-size:15px;font-weight:700;color:var(--c9);letter-spacing:-.3px}
+.hdr-sep{width:1px;height:20px;background:var(--c2);margin:0 2px}
+.breadcrumb{display:flex;align-items:center;gap:4px;font:500 13px/1 var(--f);color:var(--c5)}
+.breadcrumb span{cursor:pointer;transition:color .12s}
+.breadcrumb span:hover{color:var(--pr)}
+.breadcrumb .sep{color:var(--c3);cursor:default}
+.breadcrumb .cur{color:var(--c8);font-weight:600;cursor:default}
+.hdr-r{margin-left:auto;display:flex;align-items:center;gap:10px}
+.flow-badge{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:var(--r1);background:var(--pr50);border:1px solid var(--pr200);font:500 12px/1 var(--f);color:var(--pr)}
+.flow-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--pr);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* Page header */
+.pg-hd{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:16px}
+.pg-hd-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.pg-hd-title{font:700 20px/1.2 var(--f);color:var(--c9);letter-spacing:-.3px}
+.pg-hd-actions{display:flex;gap:8px}
+.pg-hd-info{display:flex;align-items:center;gap:24px;font:400 13px/1 var(--f);color:var(--c5);margin-bottom:12px}
+.pg-hd-info span{display:flex;align-items:center;gap:4px}
+.pg-hd-info strong{font-weight:600;color:var(--c8)}
+.pg-hd-summary{display:flex;align-items:center;gap:24px;padding-top:12px;border-top:1px solid var(--dv)}
+.pg-hd-summary .sum-item{font:500 13px/1 var(--f);color:var(--c6)}
+.pg-hd-summary .sum-val{font-family:var(--m);font-weight:700;color:var(--pr)}
+.pg-hd-summary .sum-val.warn{color:var(--ro)}
+
+/* ═══ MODULE SECTION ═══ */
+.mod-section{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden;border-left:3px solid var(--pr)}
+.mod-section.em{border-left-color:var(--em)}
+.mod-section.ac{border-left-color:var(--ac)}
+.mod-section.vi{border-left-color:var(--vi)}
+.mod-section.ro{border-left-color:var(--ro)}
+
+.mod-hd{display:flex;align-items:center;padding:14px 20px;cursor:pointer;user-select:none;transition:background .12s;gap:12px}
+.mod-hd:hover{background:var(--c0)}
+.mod-hd-title{font:600 15px/1 var(--f);color:var(--c9);flex:1}
+.mod-hd-stats{display:flex;align-items:center;gap:16px;font:400 13px/1 var(--f);color:var(--c5)}
+.mod-hd-stats strong{font-family:var(--m);font-weight:600;color:var(--pr)}
+.mod-hd-sep{width:1px;height:16px;background:var(--c2)}
+.mod-hd-add{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:var(--r1);font:500 12px/1 var(--f);color:var(--pr);background:transparent;border:1px solid var(--pr200);cursor:pointer;transition:all .12s;font-family:inherit}
+.mod-hd-add:hover{background:var(--pr50);border-color:var(--pr)}
+.mod-hd-add svg{width:12px;height:12px}
+.mod-hd-chevron{width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--c4);transition:transform .25s;flex-shrink:0}
+.mod-hd-chevron.open{transform:rotate(180deg)}
+.mod-hd-chevron svg{width:14px;height:14px}
+
+.mod-body{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.mod-body.open{max-height:2000px}
+
+/* ═══ GOAL ROW ═══ */
+.goal-row{border-top:1px solid var(--dv);transition:background .1s}
+.goal-row:hover{background:var(--c0)}
+.goal-row:last-child{border-bottom:none}
+
+.goal-summary{display:flex;align-items:center;padding:12px 20px;gap:12px;cursor:pointer}
+.goal-drag{color:var(--c3);cursor:grab;flex-shrink:0;display:flex;align-items:center}
+.goal-drag svg{width:14px;height:14px}
+.goal-name{flex:1;font:500 14px/1.3 var(--f);color:var(--c8)}
+.goal-meta{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.goal-type{font:500 11px/1 var(--f);padding:2px 7px;border-radius:3px;background:var(--c1);color:var(--c6)}
+.goal-type.quant{background:var(--pr50);color:var(--pr)}
+.goal-type.qual{background:var(--vi50);color:var(--vi)}
+.goal-weight{font:500 13px/1 var(--m);color:var(--c7)}
+.goal-actions{display:flex;align-items:center;gap:4px}
+.goal-act{width:26px;height:26px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c4);background:transparent;border:none;transition:all .12s}
+.goal-act:hover{background:var(--c1);color:var(--c7)}
+.goal-act.edit:hover{color:var(--pr);background:var(--pr50)}
+.goal-act.del:hover{color:var(--ro);background:var(--ro50)}
+.goal-act svg{width:14px;height:14px}
+
+/* Goal detail inline */
+.goal-detail{padding:0 20px 14px 46px;display:none}
+.goal-detail.open{display:block}
+.goal-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 24px}
+.gd-item{display:flex;flex-direction:column;gap:2px}
+.gd-label{font:400 11px/1 var(--f);color:var(--c4)}
+.gd-value{font:400 13px/1.4 var(--f);color:var(--c7)}
+.gd-value.mono{font-family:var(--m);font-weight:500}
+.gd-value strong{font-weight:600;color:var(--c8)}
+.gd-bar{display:flex;align-items:center;gap:6px;margin-top:4px}
+.gd-bar-track{flex:1;height:4px;background:var(--c1);border-radius:2px;overflow:hidden}
+.gd-bar-fill{height:100%;border-radius:2px}
+.gd-bar-text{font:500 11px/1 var(--m);color:var(--c5)}
+
+/* ═══ BUTTONS ═══ */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
+.btn svg{width:13px;height:13px}
+.btn-p{background:var(--pr);color:#FFF}
+.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}
+.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
+.btn-o{background:var(--sf);color:var(--pr);border:1px solid var(--pr200)}
+.btn-o:hover{background:var(--pr50);border-color:var(--pr)}
+.btn-sm{height:28px;padding:0 10px;font-size:12px}
+.btn-sm svg{width:12px;height:12px}
+
+/* ═══ ACTION BAR ═══ */
+.action-bar{position:fixed;bottom:0;left:0;right:0;background:var(--sf);border-top:1px solid var(--dv);box-shadow:0 -4px 12px rgba(0,0,0,.06);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;z-index:1000}
+.action-bar-l{display:flex;align-items:center;gap:16px}
+.action-bar-r{display:flex;align-items:center;gap:10px}
+.weight-total{display:flex;align-items:center;gap:6px;font:500 13px/1 var(--f);color:var(--c6)}
+.weight-total .v{font-family:var(--m);font-weight:700;font-size:16px}
+.weight-total .v.ok{color:var(--em700)}
+.weight-total .v.err{color:var(--ro)}
+.goal-total{font:400 13px/1 var(--f);color:var(--c5)}
+
+/* ═══ EDIT SIDEBAR ═══ */
+.sb-overlay{position:fixed;inset:0;background:rgba(0,0,0,.25);z-index:1200;opacity:0;pointer-events:none;transition:opacity .25s}
+body.edit-open .sb-overlay{opacity:1;pointer-events:all}
+
+.edit-sidebar{position:fixed;top:52px;right:0;bottom:0;width:520px;background:var(--sf);box-shadow:-4px 0 24px rgba(0,0,0,.1);z-index:1300;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1)}
+body.edit-open .edit-sidebar{transform:translateX(0)}
+body.edit-open .ct{margin-right:520px;transition:margin-right .3s ease}
+body.edit-open .action-bar{right:520px;transition:right .3s ease}
+
+.esb-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--dv);flex-shrink:0}
+.esb-hd-title{font:600 15px/1 var(--f);color:var(--c9)}
+.esb-close{width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c4);background:transparent;border:none;transition:all .12s}
+.esb-close:hover{background:var(--c1);color:var(--c7)}
+.esb-close svg{width:16px;height:16px}
+
+.esb-body{flex:1;overflow-y:auto;padding:20px}
+
+/* Edit form */
+.ef-sec{background:var(--c0);border-radius:var(--r2);padding:14px 16px;margin-bottom:12px}
+.ef-sec-title{font:600 13px/1 var(--f);color:var(--c8);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.ef-sec-title svg{width:14px;height:14px;color:var(--pr)}
+.ef-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ef-grid.f3{grid-template-columns:1fr 1fr 1fr}
+.ef-grid .full{grid-column:1/-1}
+.ef-fi{display:flex;flex-direction:column;gap:3px}
+.ef-fi-l{font:400 11px/1 var(--f);color:var(--c5)}
+.ef-fi-l .req{color:var(--ro);margin-left:2px}
+.inp{width:100%;padding:6px 8px;border:1px solid var(--c2);border-radius:var(--r1);font:400 12px/1 var(--f);color:var(--c9);background:var(--sf);transition:all .12s;outline:none}
+.inp:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
+.inp.num{font-family:var(--m);text-align:right}
+select.inp{-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 6px center;padding-right:20px;cursor:pointer}
+textarea.inp{min-height:48px;resize:vertical;font-family:var(--f)}
+
+/* Measure table in edit sidebar */
+.ms-tbl{width:100%;border-collapse:collapse;margin-top:6px}
+.ms-tbl th{background:var(--sf);padding:6px 8px;font:500 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv)}
+.ms-tbl td{padding:7px 8px;font:400 12px/1.3 var(--f);color:var(--c7);border-bottom:1px solid var(--dv)}
+.ms-tbl tr:last-child td{border-bottom:none}
+.ms-tbl .lv{display:inline-flex;align-items:center;gap:4px}
+.ms-tbl .lv-dot{width:7px;height:7px;border-radius:50%}
+
+.rule-box{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r1);padding:8px 10px;margin-top:6px}
+.rule-box code{font:400 11px/1.5 var(--m);color:var(--c8);white-space:pre-wrap;word-break:break-all}
+.rule-box-lbl{font:500 10px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+
+.esb-ft{padding:12px 20px;border-top:1px solid var(--dv);display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-shrink:0}
+
+/* ═══ MODAL ═══ */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:2000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--sf);border-radius:var(--r4);box-shadow:var(--shadow-modal);width:700px;max-height:80vh;display:flex;flex-direction:column;transform:scale(.96);transition:transform .2s ease}
+.modal-overlay.open .modal{transform:scale(1)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--dv)}
+.modal-title{font:600 16px/1 var(--f);color:var(--c9)}
+.modal-close{width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c4);background:transparent;border:none;transition:all .12s}
+.modal-close:hover{background:var(--c1);color:var(--c7)}
+.modal-close svg{width:16px;height:16px}
+.modal-body{flex:1;overflow-y:auto;padding:16px 24px}
+.modal-footer{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-top:1px solid var(--dv)}
+.modal-footer-l{font:400 12px/1 var(--f);color:var(--c5)}
+
+.hist-tbl{width:100%;border-collapse:collapse}
+.hist-tbl th{background:var(--c0);padding:8px 12px;font:500 12px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv)}
+.hist-tbl th:first-child{width:40px;text-align:center}
+.hist-tbl td{padding:10px 12px;font:400 13px/1.4 var(--f);color:var(--c7);border-bottom:1px solid var(--dv)}
+.hist-tbl td:first-child{text-align:center}
+.hist-tbl tr:last-child td{border-bottom:none}
+.hist-tbl tr:hover td{background:var(--pr50)}
+
+.chk{width:16px;height:16px;border-radius:3px;border:1.5px solid var(--c3);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all .12s}
+.chk.on{background:var(--pr);border-color:var(--pr)}
+.chk svg{width:10px;height:10px;color:#FFF;display:none}
+.chk.on svg{display:block}
+
+/* Picker */
+.picker-list{border:1px solid var(--c2);border-radius:var(--r2);max-height:360px;overflow-y:auto}
+.picker-item{padding:10px 14px;border-bottom:1px solid var(--dv);cursor:pointer;transition:background .12s}
+.picker-item:last-child{border-bottom:none}
+.picker-item:hover{background:var(--pr50)}
+.picker-item.selected{background:var(--pr50);border-left:3px solid var(--pr)}
+.picker-item-name{font:500 13px/1.3 var(--f);color:var(--c8);margin-bottom:3px}
+.picker-item-desc{font:400 11px/1.4 var(--f);color:var(--c5)}
+.picker-item-preview{margin-top:6px;padding:6px 8px;background:var(--c0);border-radius:var(--r1);font:400 11px/1.4 var(--m);color:var(--c6);border:1px solid var(--c2)}
+
+/* ═══ WEIGHT VALIDATION ═══ */
+.wt-err{display:inline-flex;align-items:center;gap:4px;font:500 11px/1 var(--f);color:var(--ro);background:var(--ro50);padding:3px 8px;border-radius:3px;margin-left:8px;animation:fadeIn .2s ease}
+.wt-err svg{width:12px;height:12px;flex-shrink:0}
+.mod-hd-stats .wt-err{margin-left:0}
+.sum-val.warn{color:var(--ro)}
+.sum-err{display:flex;align-items:center;gap:6px;font:400 12px/1 var(--f);color:var(--ro);margin-top:8px;padding:8px 12px;background:var(--ro50);border-radius:var(--r1);border:1px solid var(--ro100)}
+.sum-err svg{width:14px;height:14px;flex-shrink:0}
+.validate-toast{position:fixed;top:64px;left:50%;transform:translateX(-50%);background:var(--ro);color:#FFF;padding:10px 20px;border-radius:var(--r2);font:500 13px/1 var(--f);box-shadow:0 8px 24px rgba(244,63,94,.3);z-index:3000;opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:center;gap:8px}
+.validate-toast.show{opacity:1;pointer-events:all}
+.validate-toast svg{width:16px;height:16px}
+.validate-toast.success{background:var(--em);box-shadow:0 8px 24px rgba(16,185,129,.3)}
+.validate-toast.warn{background:var(--ac);box-shadow:0 8px 24px rgba(245,158,11,.3)}
+.inp-err{border-color:var(--ro)!important;box-shadow:0 0 0 2px var(--ro50)!important}
+
+/* ═══ GLOBE / LANG ═══ */
+.field-with-lang{position:relative}
+.field-with-lang .inp{padding-right:28px}
+.field-with-lang .inp[readonly]{background:var(--c0);color:var(--c6);cursor:default}
+.lang-btn{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:20px;height:20px;border-radius:3px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c3);background:transparent;border:none;transition:all .12s;padding:0}
+.lang-btn:hover{color:var(--pr);background:var(--pr50)}
+.lang-btn.has{color:var(--pr)}
+.lang-btn svg{width:14px;height:14px}
+
+/* ═══ BONUS SECTION ═══ */
+.bonus-section{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;border-left:3px solid var(--ro);overflow:hidden}
+.bonus-hd{display:flex;align-items:center;padding:14px 20px;gap:12px}
+.bonus-hd-title{font:600 15px/1 var(--f);color:var(--c9);flex:1}
+.bonus-row{display:flex;align-items:center;padding:10px 20px;gap:12px;border-top:1px solid var(--dv);transition:background .1s}
+.bonus-row:hover{background:var(--c0)}
+.bonus-tag{font:500 11px/1 var(--f);padding:2px 7px;border-radius:3px}
+.bonus-tag.bonus{background:var(--em50);color:var(--em700)}
+.bonus-tag.penalty{background:var(--ro50);color:var(--ro)}
+.bonus-reason{flex:1;font:400 13px/1.3 var(--f);color:var(--c7)}
+.bonus-score{font:600 14px/1 var(--m);min-width:50px;text-align:right}
+.bonus-score.pos{color:var(--em700)}
+.bonus-score.neg{color:var(--ro)}
+
+/* ═══ KPI PICKER ═══ */
+.kpi-cat-bar{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.kpi-cat{padding:4px 10px;border-radius:var(--r1);font:500 12px/1 var(--f);color:var(--c6);background:var(--c1);cursor:pointer;border:1px solid transparent;transition:all .12s}
+.kpi-cat.on{background:var(--pr50);color:var(--pr);border-color:var(--pr200)}
+.kpi-card{padding:12px 14px;border:1px solid var(--c2);border-radius:var(--r2);cursor:pointer;transition:all .12s;margin-bottom:8px}
+.kpi-card:hover{border-color:var(--pr200);background:var(--pr50)}
+.kpi-card.selected{border-color:var(--pr);background:var(--pr50);box-shadow:0 0 0 2px var(--pr100)}
+.kpi-card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.kpi-card-name{font:500 13px/1.3 var(--f);color:var(--c8)}
+.kpi-card-cat{font:400 11px/1 var(--f);color:var(--c5);padding:1px 6px;background:var(--c1);border-radius:3px}
+.kpi-card-desc{font:400 12px/1.4 var(--f);color:var(--c5);margin-bottom:6px}
+.kpi-card-meta{display:flex;gap:16px;font:400 11px/1 var(--f);color:var(--c4)}
+.kpi-card-meta span{display:flex;align-items:center;gap:3px}
+
+/* Goal type popup */
+.goal-type-popup{display:none;flex-direction:row}
+.goal-type-popup.show{display:flex}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .2s ease forwards}
+</style>
+</head>
+<body>
+
+<!-- Navigation will be injected by navigation.js -->
+
+<!-- Edit sidebar overlay -->
+<div class="sb-overlay" onclick="closeEdit()"></div>
+
+<!-- Edit sidebar -->
+<div class="edit-sidebar" id="editSidebar">
+  <div class="esb-hd">
+    <span class="esb-hd-title" id="esbTitle">编辑目标</span>
+    <button class="esb-close" onclick="closeEdit()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+  <div class="esb-body" id="esbBody"></div>
+  <div class="esb-ft">
+    <button class="btn btn-s" onclick="closeEdit()">取消</button>
+    <button class="btn btn-p" onclick="saveEdit()">保存</button>
+  </div>
+</div>
+
+<!-- Main content -->
+<div class="ct fade-in">
+  <!-- Page header -->
+  <div class="pg-hd">
+    <div class="pg-hd-top">
+      <div class="pg-hd-title">目标制定</div>
+      <div class="pg-hd-actions">
+        <button class="btn btn-s" onclick="showToast('已驳回','warn')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+          驳回
+        </button>
+        <button class="btn btn-p" onclick="validateAndSubmit()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          提交
+        </button>
+      </div>
+    </div>
+    <div class="pg-hd-info">
+      <span>考核周期: <strong>2026年Q2</strong></span>
+      <span>员工: <strong>张明(EMP20240315)</strong></span>
+      <span>部门: <strong>产品部</strong></span>
+      <span>职位: <strong>高级产品经理</strong></span>
+      <span>发起日期: <strong>2026年5月</strong></span>
+    </div>
+    <div class="pg-hd-summary">
+      <span class="sum-item">总权重: <span class="sum-val" id="sumWeight">100%</span></span>
+      <span class="sum-item">总目标数: <strong id="sumGoals" style="font-family:var(--m);font-weight:600;color:var(--c8)">6</strong></span>
+    </div>
+    <div id="validSummary"></div>
+  </div>
+
+  <!-- Module sections -->
+  <div id="moduleContainer"></div>
+</div>
+
+<div class="action-bar">
+  <div class="action-bar-l">
+    <span class="weight-total">总权重: <span class="v ok" id="barWeight">100%</span></span>
+    <span class="goal-total">总目标数: <strong id="barGoals" style="font-family:var(--m);font-weight:600">6</strong></span>
+  </div>
+  <div class="action-bar-r">
+    <button class="btn btn-s" onclick="showToast('草稿已保存','success')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      保存草稿
+    </button>
+    <button class="btn btn-p" onclick="validateAndSubmit()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      提交
+    </button>
+  </div>
+</div>
+
+<!-- ═══ COPY MODAL ═══ -->
+<div class="modal-overlay" id="copyModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">复制历史目标</span>
+      <button class="modal-close" onclick="closeModal('copyModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <select class="inp" style="width:160px" id="histPeriod" onchange="renderHistTable()">
+          <option>2026年Q1</option><option>2025年Q4</option><option>2025年Q3</option><option>2025年度</option>
+        </select>
+        <span style="font:400 12px/1 var(--f);color:var(--c5)">选择要复制的目标</span>
+        <span style="margin-left:auto;font:500 12px/1 var(--f);color:var(--pr)" id="histSelCount">已选 0 项</span>
+      </div>
+      <table class="hist-tbl" id="histTable"></table>
+    </div>
+    <div class="modal-footer">
+      <span class="modal-footer-l" id="copyModLabel">将复制到当前模块</span>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-s" onclick="closeModal('copyModal')">取消</button>
+        <button class="btn btn-p" onclick="confirmCopy()">确认复制</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PICKER MODALS ═══ -->
+<div class="modal-overlay" id="measureModal">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">引用衡量标准</span><button class="modal-close" onclick="closeModal('measureModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="modal-body"><div class="picker-list" id="measureList"></div></div>
+    <div class="modal-footer"><span></span><div style="display:flex;gap:8px"><button class="btn btn-s" onclick="closeModal('measureModal')">取消</button><button class="btn btn-p" onclick="confirmMeasure()">确定</button></div></div>
+  </div>
+</div>
+<div class="modal-overlay" id="ruleModal">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">引用计算规则</span><button class="modal-close" onclick="closeModal('ruleModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="modal-body"><div class="picker-list" id="ruleList"></div></div>
+    <div class="modal-footer"><span></span><div style="display:flex;gap:8px"><button class="btn btn-s" onclick="closeModal('ruleModal')">取消</button><button class="btn btn-p" onclick="confirmRule()">确定</button></div></div>
+  </div>
+</div>
+
+<!-- ═══ INDICATOR PICKER MODAL ═══ -->
+<div class="modal-overlay" id="indicatorModal">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">选择关联指标</span><button class="modal-close" onclick="closeModal('indicatorModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="modal-body">
+      <div style="margin-bottom:12px"><input class="inp" placeholder="搜索指标名称..." id="kpiSearch" oninput="filterKPI()"></div>
+      <div class="kpi-cat-bar" id="kpiCatBar"></div>
+      <div id="kpiList"></div>
+    </div>
+    <div class="modal-footer"><span class="modal-footer-l" id="kpiSelLabel">未选择</span><div style="display:flex;gap:8px"><button class="btn btn-s" onclick="closeModal('indicatorModal')">取消</button><button class="btn btn-p" onclick="confirmIndicator()">确认选择</button></div></div>
+  </div>
+</div>
+
+<!-- ═══ LANGUAGE EDITOR MODAL ═══ -->
+<div class="modal-overlay" id="langModal">
+  <div class="modal" style="width:480px">
+    <div class="modal-header"><span class="modal-title">多语言编辑</span><button class="modal-close" onclick="closeModal('langModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="modal-body">
+      <div style="margin-bottom:12px;font:500 13px/1 var(--f);color:var(--c8)" id="langFieldLabel">字段</div>
+      <div class="ef-fi" style="margin-bottom:10px"><span class="ef-fi-l">中文</span><input class="inp" id="langZh"/></div>
+      <div class="ef-fi"><span class="ef-fi-l">英文</span><input class="inp" id="langEn"/></div>
+    </div>
+    <div class="modal-footer"><span></span><div style="display:flex;gap:8px"><button class="btn btn-s" onclick="closeModal('langModal')">取消</button><button class="btn btn-p" onclick="saveLang()">保存</button></div></div>
+  </div>
+</div>
+
+<div class="validate-toast" id="validateToast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span id="toastMsg"></span></div>
+
+<!-- Goal type choice popup -->
+<div id="addGoalPopup" style="position:fixed;z-index:1500;background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-dropdown);padding:8px;gap:6px" class="goal-type-popup">
+  <button class="btn btn-o" onclick="pickGoalType('quant')" style="flex:1;justify-content:center">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+    定量目标
+  </button>
+  <button class="btn btn-o" onclick="pickGoalType('qual')" style="flex:1;justify-content:center">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    定性目标
+  </button>
+</div>
+
+<script src="navigation.js"></script>
+<script>
+const I={
+  chevron:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>',
+  drag:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg>',
+  edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+  trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+  link:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+  target:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
+  users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  star:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+  book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
+  chart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+  globe:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
+};
+
+const MODULES=[
+  {name:'业绩目标',weight:50,icon:'target',color:'var(--pr)',accent:'',goals:[
+    {id:'g1',name:'完成Q2产品迭代',indicator:'产品迭代完成率',type:'quant',weight:30,desc:'完成3个核心功能迭代',measure:'梯度评分',target:100,challenge:120,baseline:80,rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',msLevels:[{level:'优秀',color:'var(--em)',score:'120分',condition:'达成率 >= 120%'},{level:'良好',color:'var(--pr)',score:'100分',condition:'达成率 >= 100%'},{level:'合格',color:'var(--ac)',score:'80分',condition:'达成率 >= 80%'},{level:'不合格',color:'var(--ro)',score:'0分',condition:'达成率 < 80%'}]},
+    {id:'g2',name:'用户增长目标',indicator:'新增用户数',type:'quant',weight:20,desc:'Q2新增注册用户',measure:'线性评分',target:5000,challenge:7000,baseline:3000,rule:'线性插值计算',ruleFormula:'CLAMP((实际-保底)/(目标-保底)*100,0,120)',msLevels:[{level:'优秀',color:'var(--em)',score:'120分',condition:'新增 >= 7000'},{level:'良好',color:'var(--pr)',score:'100分',condition:'新增 >= 5000'},{level:'合格',color:'var(--ac)',score:'80分',condition:'新增 >= 3000'},{level:'不合格',color:'var(--ro)',score:'0分',condition:'新增 < 3000'}]},
+  ]},
+  {name:'管理目标',weight:20,icon:'users',color:'var(--em)',accent:'em',goals:[
+    {id:'g3',name:'团队效能提升',indicator:'团队产出效率',type:'quant',weight:10,desc:'提升团队交付速度',measure:'梯度评分',target:110,challenge:130,baseline:100,rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',msLevels:[{level:'优秀',color:'var(--em)',score:'120分',condition:'效率 >= 130%'},{level:'良好',color:'var(--pr)',score:'100分',condition:'效率 >= 110%'},{level:'合格',color:'var(--ac)',score:'80分',condition:'效率 >= 100%'},{level:'不合格',color:'var(--ro)',score:'0分',condition:'效率 < 100%'}]},
+    {id:'g4',name:'人才培养',indicator:'下属成长指标',type:'qual',weight:10,desc:'培养2名骨干',measure:'定性评分',target:2,challenge:3,baseline:1,rule:'-',ruleFormula:'',msLevels:[{level:'优秀',color:'var(--em)',score:'120分',condition:'培养 >= 3人'},{level:'良好',color:'var(--pr)',score:'100分',condition:'培养 >= 2人'},{level:'合格',color:'var(--ac)',score:'80分',condition:'培养 >= 1人'},{level:'不合格',color:'var(--ro)',score:'0分',condition:'培养 < 1人'}]},
+  ]},
+  {name:'能力发展目标',weight:15,icon:'star',color:'var(--ac)',accent:'ac',goals:[
+    {id:'g5',name:'技术能力提升',indicator:'技术认证',type:'qual',weight:8,desc:'完成云原生架构认证',measure:'是否达成',target:1,challenge:2,baseline:1,rule:'-',ruleFormula:'',msLevels:[{level:'达成',color:'var(--em)',score:'100分',condition:'完成认证'},{level:'未达成',color:'var(--ro)',score:'0分',condition:'未完成'}]},
+    {id:'g6',name:'业务理解深化',indicator:'业务分析报告',type:'quant',weight:7,desc:'输出2份业务分析',measure:'梯度评分',target:2,challenge:3,baseline:1,rule:'加权汇总计算',ruleFormula:'SUM(子项得分*子项权重)/SUM(子项权重)',msLevels:[{level:'优秀',color:'var(--em)',score:'120分',condition:'报告 >= 3份'},{level:'良好',color:'var(--pr)',score:'100分',condition:'报告 >= 2份'},{level:'合格',color:'var(--ac)',score:'80分',condition:'报告 >= 1份'},{level:'不合格',color:'var(--ro)',score:'0分',condition:'报告 < 1份'}]},
+  ]},
+  {name:'价值观目标',weight:15,icon:'book',color:'var(--vi)',accent:'vi',goals:[]},
+];
+
+const HISTORY={
+  '2026年Q1':[
+    {name:'完成Q1产品迭代',indicator:'产品迭代完成率',module:'业绩目标',type:'quant',weight:30,target:100,challenge:120,baseline:80,measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'Q1产品迭代',msLevels:[{level:'优秀',color:'var(--em)',score:'120分',condition:'达成率 >= 120%'},{level:'良好',color:'var(--pr)',score:'100分',condition:'达成率 >= 100%'},{level:'合格',color:'var(--ac)',score:'80分',condition:'达成率 >= 80%'},{level:'不合格',color:'var(--ro)',score:'0分',condition:'达成率 < 80%'}]},
+    {name:'用户增长Q1目标',indicator:'新增用户数',module:'业绩目标',type:'quant',weight:20,target:4000,challenge:6000,baseline:2500,measure:'线性评分',rule:'线性插值计算',ruleFormula:'CLAMP((实际-保底)/(目标-保底)*100,0,120)',desc:'',msLevels:[]},
+    {name:'团队季度产出',indicator:'团队产出效率',module:'管理目标',type:'quant',weight:10,target:105,challenge:120,baseline:95,measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
+    {name:'新人培养',indicator:'下属成长指标',module:'管理目标',type:'qual',weight:10,target:1,challenge:2,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
+    {name:'云原生培训',indicator:'培训完成率',module:'能力发展目标',type:'qual',weight:8,target:1,challenge:1,baseline:1,measure:'是否达成',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
+  ],
+  '2025年Q4':[
+    {name:'Q4产品上线',indicator:'产品迭代完成率',module:'业绩目标',type:'quant',weight:35,target:100,challenge:115,baseline:85,measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
+    {name:'年终客户增长',indicator:'新增用户数',module:'业绩目标',type:'quant',weight:15,target:8000,challenge:10000,baseline:5000,measure:'线性评分',rule:'线性插值计算',ruleFormula:'CLAMP((实际-保底)/(目标-保底)*100,0,120)',desc:'',msLevels:[]},
+    {name:'年度人才盘点',indicator:'下属成长指标',module:'管理目标',type:'qual',weight:10,target:3,challenge:4,baseline:2,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
+  ],
+  '2025年Q3':[
+    {name:'Q3产品交付',indicator:'产品迭代完成率',module:'业绩目标',type:'quant',weight:30,target:100,challenge:110,baseline:80,measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
+    {name:'团队效能',indicator:'团队产出效率',module:'管理目标',type:'quant',weight:15,target:100,challenge:115,baseline:90,measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
+  ],
+  '2025年度':[
+    {name:'年度营收目标',indicator:'营收达成率',module:'业绩目标',type:'quant',weight:40,target:100,challenge:120,baseline:80,measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
+    {name:'年度团队建设',indicator:'团队满意度',module:'管理目标',type:'quant',weight:10,target:90,challenge:95,baseline:80,measure:'线性评分',rule:'线性插值计算',ruleFormula:'CLAMP((实际-保底)/(目标-保底)*100,0,120)',desc:'',msLevels:[]},
+    {name:'专业认证',indicator:'技术认证',module:'能力发展目标',type:'qual',weight:10,target:2,challenge:3,baseline:1,measure:'是否达成',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
+  ],
+};
+
+const MEASURES=[
+  {name:'梯度评分',desc:'根据完成度分梯度评分',preview:'达成率>=120%: 120分\n达成率>=100%: 100分\n达成率>=80%: 80分\n达成率<80%: 0分'},
+  {name:'线性评分',desc:'根据实际值线性计算',preview:'得分 = (实际值 - 保底值) / (目标值 - 保底值) * 100'},
+  {name:'定性评分',desc:'由评价人主观评定',preview:'优秀: 120分\n良好: 100分\n合格: 80分\n不合格: 0分'},
+  {name:'是否达成',desc:'二值判断',preview:'达成: 100分\n未达成: 0分'},
+];
+const RULES=[
+  {name:'标准梯度计算',desc:'IF-THEN梯度',formula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))'},
+  {name:'线性插值计算',desc:'CLAMP线性',formula:'CLAMP((实际-保底)/(目标-保底)*100,0,120)'},
+  {name:'加权汇总计算',desc:'SUM加权',formula:'SUM(子项得分*子项权重)/SUM(子项权重)'},
+];
+
+const MOCK_INDICATORS=[
+  {id:'kpi1',name:'Q1营收目标达成率',dept:'财务部',publicDown:true,publishStatus:'已发布',type:'定量',nature:'结果型',category:'财务',unit:'万',rule:'标准梯度计算',desc:'衡量Q1营收目标的完成情况'},
+  {id:'kpi2',name:'成本控制达成率',dept:'财务部',publicDown:true,publishStatus:'已发布',type:'定量',nature:'结果型',category:'财务',unit:'%',rule:'标准梯度计算',desc:'衡量成本控制目标的完成情况'},
+  {id:'kpi3',name:'客户满意度评分',dept:'客户成功部',publicDown:false,publishStatus:'已发布',type:'定量',nature:'过程型',category:'客户',unit:'分',rule:'标准梯度计算',desc:'衡量客户满意度指标'},
+  {id:'kpi4',name:'NPS净推荐值',dept:'客户成功部',publicDown:true,publishStatus:'已发布',type:'定量',nature:'结果型',category:'客户',unit:'%',rule:'线性插值计算',desc:'衡量客户推荐意愿'},
+  {id:'kpi5',name:'新增用户数',dept:'增长部',publicDown:true,publishStatus:'已发布',type:'定量',nature:'结果型',category:'增长',unit:'人',rule:'线性插值计算',desc:'衡量用户增长情况'},
+  {id:'kpi6',name:'产品迭代完成率',dept:'产品部',publicDown:true,publishStatus:'已发布',type:'定量',nature:'过程型',category:'运营',unit:'%',rule:'标准梯度计算',desc:'衡量产品迭代计划完成率'},
+  {id:'kpi7',name:'项目按时交付率',dept:'项目管理部',publicDown:false,publishStatus:'已发布',type:'定量',nature:'过程型',category:'运营',unit:'%',rule:'标准梯度计算',desc:'衡量项目按时交付情况'},
+  {id:'kpi8',name:'员工留存率',dept:'人力资源部',publicDown:true,publishStatus:'已发布',type:'定量',nature:'结果型',category:'HR',unit:'%',rule:'标准梯度计算',desc:'衡量核心员工留存情况'},
+  {id:'kpi9',name:'团队培训完成率',dept:'人力资源部',publicDown:false,publishStatus:'草稿',type:'定性',nature:'过程型',category:'HR',unit:'%',rule:'-',desc:'衡量团队培训计划完成率'},
+  {id:'kpi10',name:'创新项目孵化数',dept:'创新中心',publicDown:true,publishStatus:'已发布',type:'定量',nature:'结果型',category:'创新',unit:'个',rule:'标准梯度计算',desc:'衡量创新项目孵化成果'},
+];
+
+let expandedMods=new Set([0,1,2]);
+let expandedGoals=new Set();
+let editGoalId=null, editModIdx=null;
+let selectedMeasure=null, selectedRule=null;
+let histSelected=new Set();
+let bonusItems=[{reason:'',type:'bonus',score:0}];
+let langStore={};
+let selectedKpiId=null;
+let langFieldKey=null;
+let kpiFilterCat='全部';
+
+// ═══ RENDER MODULES ═══
+function render(){
+  const c=document.getElementById('moduleContainer');
+  let h='';
+  MODULES.forEach((m,mi)=>{
+    const open=expandedMods.has(mi);
+    const tw=m.goals.reduce((s,g)=>s+g.weight,0);
+    h+=`<div class="mod-section ${m.accent}">
+      <div class="mod-hd" onclick="toggleMod(${mi})">
+        <div class="mod-hd-title">${m.name}</div>
+        <div class="mod-hd-stats">
+          <span>合计权重: <strong>${tw}%</strong></span>
+          <span>目标数: <strong>${m.goals.length}</strong></span>
+        </div>
+        <div class="mod-hd-sep"></div>
+        <button class="mod-hd-add" onclick="event.stopPropagation();openCopyModal(${mi})" title="复制历史目标">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          复制历史
+        </button>
+        <button class="mod-hd-add" onclick="event.stopPropagation();addGoal(${mi})">${I.plus} 新增</button>
+        <div class="mod-hd-chevron ${open?'open':''}">${I.chevron}</div>
+      </div>
+      <div class="mod-body ${open?'open':''}">`;
+    if(!m.goals.length){
+      h+=`<div style="padding:20px;text-align:center;color:var(--c4);font:400 13px/1.3 var(--f)">暂无目标，点击"新增"添加</div>`;
+    }else{
+      m.goals.forEach((g,gi)=>{
+        const isOpen=expandedGoals.has(g.id);
+        const typeLabel=g.type==='quant'?'定量':'定性';
+        const typeClass=g.type==='quant'?'quant':'qual';
+        const linked=g.linkedIndicatorId?MOCK_INDICATORS.find(k=>k.id===g.linkedIndicatorId):null;
+        h+=`<div class="goal-row">
+          <div class="goal-summary" onclick="toggleGoal('${g.id}')">
+            <span class="goal-drag">${I.drag}</span>
+            <span class="goal-name">${g.name}${linked?'<span style="font:400 11px/1 var(--f);color:var(--pr);margin-left:6px">'+linked.name+'</span>':''}</span>
+            <div class="goal-meta">
+              <span class="goal-type ${typeClass}">${typeLabel}</span>
+              <span class="goal-weight">权重: ${g.weight}%</span>
+              <div class="goal-actions">
+                <button class="goal-act edit" title="编辑" onclick="event.stopPropagation();openEdit('${g.id}',${mi})">${I.edit}</button>
+                <button class="goal-act del" title="删除" onclick="event.stopPropagation();deleteGoal('${g.id}',${mi})">${I.trash}</button>
+              </div>
+            </div>
+          </div>
+          <div class="goal-detail ${isOpen?'open':''}">
+            <div class="goal-detail-grid">
+              ${g.type==='qual'?`<div class="gd-item"><span class="gd-label">衡量标准</span><span class="gd-value">${g.measure}</span></div>`:''}
+              ${g.type!=='quant'?`<div class="gd-item"><span class="gd-label">目标描述</span><span class="gd-value">${g.desc||'-'}</span></div>`:''}
+              ${g.type==='quant'?`
+              <div class="gd-item"><span class="gd-label">挑战值</span><span class="gd-value mono">${g.challenge}</span></div>
+              <div class="gd-item"><span class="gd-label">目标值</span><span class="gd-value mono">${g.target}</span></div>
+              <div class="gd-item"><span class="gd-label">保底值</span><span class="gd-value mono">${g.baseline}</span></div>
+              <div class="gd-item"><span class="gd-label">计算规则</span><span class="gd-value">${g.rule||'-'}</span></div>
+              `:''}
+            </div>
+            ${g.msLevels&&g.msLevels.length?`
+            <div style="margin-top:10px">
+              <span class="gd-label">等级标准</span>
+              <table class="ms-tbl" style="margin-top:4px"><thead><tr><th>等级</th><th>分值</th><th>条件</th></tr></thead><tbody>
+              ${g.msLevels.map(l=>`<tr><td><span class="lv"><span class="lv-dot" style="background:${l.color}"></span>${l.level}</span></td><td style="font-family:var(--m);font-weight:600">${l.score}</td><td>${l.condition}</td></tr>`).join('')}
+              </tbody></table>
+            </div>`:''}
+          </div>
+        </div>`;
+      });
+    }
+    h+=`</div></div>`;
+  });
+
+  // Bonus section (inline editing)
+  h+=`<div class="bonus-section">
+    <div class="bonus-hd">
+      <div class="bonus-hd-title">加减分项</div>
+    </div>
+    <div style="padding:12px 20px">
+      <div style="display:grid;grid-template-columns:1fr 120px 100px 32px;gap:8px;align-items:end;margin-bottom:8px">
+        <div><span class="ef-fi-l">原因说明</span><input class="inp" value="${bonusItems[0]?.reason||''}" onchange="bonusItems[0].reason=this.value" placeholder="请输入加减分原因..."/></div>
+        <div><span class="ef-fi-l">扣/加分</span><select class="inp" onchange="bonusItems[0].type=this.value;bonusItems[0].score=this.value==='penalty'?-Math.abs(bonusItems[0].score):Math.abs(bonusItems[0].score);render()"><option value="bonus" ${bonusItems[0]?.type==='bonus'?'selected':''}>加分</option><option value="penalty" ${bonusItems[0]?.type==='penalty'?'selected':''}>减分</option></select></div>
+        <div><span class="ef-fi-l">分值</span><input class="inp num" type="number" step="0.5" min="0" value="${Math.abs(bonusItems[0]?.score||0)}" onchange="bonusItems[0].score=bonusItems[0].type==='penalty'?-Math.abs(parseFloat(this.value)||0):Math.abs(parseFloat(this.value)||0);render()"/></div>
+        <div></div>
+      </div>
+    </div>
+  </div>`;
+
+  c.innerHTML=h;
+  updateTotals();
+}
+
+function toggleMod(mi){expandedMods.has(mi)?expandedMods.delete(mi):expandedMods.add(mi);render()}
+function toggleGoal(id){expandedGoals.has(id)?expandedGoals.delete(id):expandedGoals.add(id);render()}
+
+let addGoalModIdx=null;
+function addGoal(mi){
+  addGoalModIdx=mi;
+  const popup=document.getElementById('addGoalPopup');
+  const btn=document.querySelectorAll('.mod-hd-add')[mi*2+1]||document.querySelectorAll('.mod-hd-add')[mi*2];
+  if(btn){
+    const r=btn.getBoundingClientRect();
+    popup.style.top=(r.bottom+4)+'px';
+    popup.style.left=(r.left)+'px';
+  }
+  popup.classList.add('show');
+}
+function pickGoalType(type){
+  const mi=addGoalModIdx;
+  const popup=document.getElementById('addGoalPopup');
+  popup.classList.remove('show');
+  if(mi===null)return;
+  const id='g'+Date.now();
+  MODULES[mi].goals.push({id,name:'新目标',indicator:'',type,weight:10,desc:'',measure:type==='quant'?'梯度评分':'',measureText:'',target:0,challenge:0,baseline:0,rule:'-',ruleFormula:'',msLevels:[],linkedIndicatorId:null,i18n:{}});
+  expandedMods.add(mi);
+  expandedGoals.add(id);
+  render();
+  if(type==='quant'){
+    openIndicatorPicker(id,mi);
+  }else{
+    openEdit(id,mi);
+  }
+}
+function closeGoalTypePopup(){document.getElementById('addGoalPopup').classList.remove('show')}
+
+function deleteGoal(id,mi){
+  if(!confirm('确定删除该目标？'))return;
+  MODULES[mi].goals=MODULES[mi].goals.filter(g=>g.id!==id);
+  expandedGoals.delete(id);
+  render();
+}
+
+function updateTotals(){
+  const tg=MODULES.reduce((s,m)=>s+m.goals.length,0);
+  const tw=MODULES.reduce((s,m)=>s+m.goals.reduce((gs,g)=>gs+g.weight,0),0);
+  document.getElementById('sumGoals').textContent=tg;
+  document.getElementById('sumWeight').textContent=tw+'%';
+  document.getElementById('sumWeight').className='sum-val'+(tw===100?'':' warn');
+  document.getElementById('barGoals').textContent=tg;
+  const bw=document.getElementById('barWeight');
+  bw.textContent=tw+'%';
+  bw.className='v '+(tw===100?'ok':'err');
+
+  const el=document.getElementById('validSummary');
+  if(tw!==100){
+    el.innerHTML=`<div class="sum-err"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>总权重 ${tw}%，需等于 100%</div>`;
+  }else{
+    el.innerHTML=tg>0?`<div style="display:flex;align-items:center;gap:6px;font:400 12px/1 var(--f);color:var(--em700);margin-top:8px;padding:8px 12px;background:var(--em50);border-radius:var(--r1);border:1px solid var(--em100)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg>权重校验通过</div>`:'';
+  }
+}
+
+// ═══ EDIT SIDEBAR ═══
+function findGoal(id){for(const m of MODULES){const g=m.goals.find(g=>g.id===id);if(g)return{mod:m,goal:g}}return null}
+
+function langBtn(fieldKey){
+  const has=langStore[fieldKey]&&(langStore[fieldKey].zh||langStore[fieldKey].en);
+  return `<button class="lang-btn ${has?'has':''}" onclick="openLangModal('${fieldKey}')" title="多语言编辑">${I.globe}</button>`;
+}
+
+function roField(label,value){
+  return `<div class="ef-fi"><span class="ef-fi-l">${label}</span><div class="field-with-lang"><input class="inp" value="${value||''}" readonly/></div></div>`;
+}
+
+function openEdit(id,mi){
+  editGoalId=id;editModIdx=mi;
+  const d=findGoal(id);if(!d)return;
+  const g=d.goal;
+  const linked=g.linkedIndicatorId?MOCK_INDICATORS.find(k=>k.id===g.linkedIndicatorId):null;
+  const isQuant=g.type==='quant';
+  document.getElementById('esbTitle').textContent='编辑目标 — '+g.name;
+  const msRows=(g.msLevels||[]).map(l=>`<tr><td><span class="lv"><span class="lv-dot" style="background:${l.color}"></span>${l.level}</span></td><td style="font-family:var(--m);font-weight:600">${l.score}</td><td>${l.condition}</td></tr>`).join('');
+
+  let html='';
+  if(isQuant){
+    // Quant: show linked indicator or prompt to link
+    html+=`<div class="ef-sec">
+      <div class="ef-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>目标信息</div>
+      <div class="ef-grid">
+        <div class="ef-fi"><span class="ef-fi-l">目标名称<span class="req">*</span></span><div class="field-with-lang"><input class="inp" id="ef_name" value="${g.name}" ${linked?'readonly':''}/>${langBtn(g.id+'_name')}</div></div>
+        <div class="ef-fi"><span class="ef-fi-l">关联指标<span class="req">*</span></span><div style="display:flex;gap:6px;align-items:center">${linked?`<span style="flex:1;font:500 12px/1 var(--f);color:var(--pr);padding:6px 8px;background:var(--pr50);border:1px solid var(--pr200);border-radius:var(--r1)">${linked.name}</span><button class="btn btn-s btn-sm" onclick="openIndicatorPicker('${g.id}',${mi})">更换</button>`:`<button class="btn btn-o btn-sm" onclick="openIndicatorPicker('${g.id}',${mi})">${I.link} 选择指标</button>`}</div></div>
+        <div class="ef-fi"><span class="ef-fi-l">权重(%)<span class="req">*</span></span><input class="inp num" id="ef_weight" type="number" value="${g.weight}" min="0" max="100"/></div>
+      </div>
+    </div>`;
+    // Target value config (readonly if linked)
+    html+=`<div class="ef-sec">
+      <div class="ef-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>目标值配置</div>
+      <div class="ef-grid f3">
+        <div class="ef-fi"><span class="ef-fi-l">目标值<span class="req">*</span></span><input class="inp num" id="ef_target" type="number" value="${g.target}" ${linked?'readonly':''}/></div>
+        <div class="ef-fi"><span class="ef-fi-l">挑战值</span><input class="inp num" id="ef_challenge" type="number" value="${g.challenge}" ${linked?'readonly':''}/></div>
+        <div class="ef-fi"><span class="ef-fi-l">保底值</span><input class="inp num" id="ef_baseline" type="number" value="${g.baseline}" ${linked?'readonly':''}/></div>
+      </div>
+    </div>`;
+    // Measurement + Rule (readonly from indicator)
+    html+=`<div class="ef-sec">
+      <div class="ef-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>衡量标准与计算规则（由指标自动带入）</div>
+      <div class="ef-grid" style="margin-bottom:8px">
+        <div class="ef-fi"><span class="ef-fi-l">衡量方式</span><input class="inp" value="${g.measure}" readonly/></div>
+        <div class="ef-fi"><span class="ef-fi-l">计算规则</span><input class="inp" value="${g.rule||'-'}" readonly/></div>
+      </div>
+      ${g.ruleFormula?`<div class="rule-box"><div class="rule-box-lbl">计算公式</div><code>${g.ruleFormula}</code></div>`:''}
+      ${msRows?`<table class="ms-tbl" style="margin-top:8px"><thead><tr><th>等级</th><th>分值</th><th>条件</th></tr></thead><tbody>${msRows}</tbody></table>`:''}
+    </div>`;
+  }else{
+    // Qual: name/weight/measure as text input
+    html+=`<div class="ef-sec">
+      <div class="ef-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>目标信息</div>
+      <div class="ef-grid">
+        <div class="ef-fi full"><span class="ef-fi-l">目标名称<span class="req">*</span></span><div class="field-with-lang"><input class="inp" id="ef_name" value="${g.name}"/>${langBtn(g.id+'_name')}</div></div>
+        <div class="ef-fi"><span class="ef-fi-l">权重(%)<span class="req">*</span></span><input class="inp num" id="ef_weight" type="number" value="${g.weight}" min="0" max="100"/></div>
+      </div>
+    </div>`;
+    html+=`<div class="ef-sec">
+      <div class="ef-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>衡量标准</div>
+      <div class="ef-fi full"><span class="ef-fi-l">衡量标准说明</span><div class="field-with-lang"><textarea class="inp" id="ef_measure" rows="2" placeholder="请输入衡量标准...">${g.measureText||g.measure||''}</textarea>${langBtn(g.id+'_measure')}</div></div>
+    </div>`;
+  }
+
+  document.getElementById('esbBody').innerHTML=html;
+  document.body.classList.add('edit-open');
+}
+
+function closeEdit(){document.body.classList.remove('edit-open');editGoalId=null}
+
+function saveEdit(){
+  if(!editGoalId)return;
+  const d=findGoal(editGoalId);if(!d)return;
+  const g=d.goal;
+  const nameEl=document.getElementById('ef_name');
+  const weightEl=document.getElementById('ef_weight');
+  // Clear previous error borders
+  document.querySelectorAll('#esbBody .inp-err').forEach(el=>el.classList.remove('inp-err'));
+  // Validate required fields
+  let firstErr=null;
+  if(!nameEl||!nameEl.value.trim()){if(nameEl)nameEl.classList.add('inp-err');if(!firstErr)firstErr='请填写目标名称';}
+  if(!weightEl||!weightEl.value||parseInt(weightEl.value)<=0){if(weightEl)weightEl.classList.add('inp-err');if(!firstErr)firstErr='请填写权重';}
+  if(g.type==='quant'){
+    if(!g.linkedIndicatorId){if(!firstErr)firstErr='请选择关联指标';}
+    const targetEl=document.getElementById('ef_target');
+    if(!targetEl||!targetEl.value){if(targetEl)targetEl.classList.add('inp-err');if(!firstErr)firstErr='请填写目标值';}
+  }
+  if(firstErr){showToast(firstErr);return}
+  // Save values
+  if(nameEl&&!nameEl.readOnly) g.name=nameEl.value;
+  if(weightEl) g.weight=parseInt(weightEl.value)||0;
+  if(g.type==='quant'){
+    const targetEl=document.getElementById('ef_target');
+    const challengeEl=document.getElementById('ef_challenge');
+    const baselineEl=document.getElementById('ef_baseline');
+    if(targetEl&&!targetEl.readOnly) g.target=parseFloat(targetEl.value)||0;
+    if(challengeEl&&!challengeEl.readOnly) g.challenge=parseFloat(challengeEl.value)||0;
+    if(baselineEl&&!baselineEl.readOnly) g.baseline=parseFloat(baselineEl.value)||0;
+  }else{
+    const measureEl=document.getElementById('ef_measure');
+    if(measureEl) g.measureText=measureEl.value;
+  }
+  closeEdit();
+  render();
+}
+
+// ═══ COPY MODAL ═══
+let copyTargetModIdx=0;
+function openCopyModal(mi){
+  copyTargetModIdx=mi;
+  histSelected.clear();
+  document.getElementById('histPeriod').value='2026年Q1';
+  document.getElementById('copyModLabel').textContent='将复制到「'+MODULES[mi].name+'」模块';
+  renderHistTable();
+  openModal('copyModal');
+}
+
+function renderHistTable(){
+  const period=document.getElementById('histPeriod').value;
+  const goals=HISTORY[period]||[];
+  let h=`<thead><tr><th><span class="chk ${histSelected.size===goals.length&&goals.length?'on':''}" onclick="toggleAllHist()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span></th><th>目标名称</th><th>模块</th><th>类型</th><th>权重</th><th>目标值</th></tr></thead><tbody>`;
+  goals.forEach((g,i)=>{
+    h+=`<tr onclick="toggleHistItem(${i})"><td><span class="chk ${histSelected.has(i)?'on':''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span></td><td style="font-weight:500;color:var(--c8)">${g.name}</td><td>${g.module}</td><td>${g.type==='quant'?'定量':'定性'}</td><td style="font-family:var(--m)">${g.weight}%</td><td style="font-family:var(--m)">${g.target}</td></tr>`;
+  });
+  h+='</tbody>';
+  document.getElementById('histTable').innerHTML=h;
+  document.getElementById('histSelCount').textContent='已选 '+histSelected.size+' 项';
+}
+
+function toggleHistItem(i){histSelected.has(i)?histSelected.delete(i):histSelected.add(i);renderHistTable()}
+function toggleAllHist(){
+  const period=document.getElementById('histPeriod').value;
+  const goals=HISTORY[period]||[];
+  if(histSelected.size===goals.length)histSelected.clear();
+  else{histSelected.clear();goals.forEach((_,i)=>histSelected.add(i))}
+  renderHistTable();
+}
+
+function confirmCopy(){
+  if(!histSelected.size){showToast('请至少选择一个目标');return}
+  const period=document.getElementById('histPeriod').value;
+  const goals=HISTORY[period]||[];
+  const mod=MODULES[copyTargetModIdx];
+  let count=0;
+  histSelected.forEach(i=>{
+    const src=goals[i];
+    const id='g'+Date.now()+'_'+count;
+    mod.goals.push({...src,id,msLevels:src.msLevels||[],linkedIndicatorId:null,i18n:{}});
+    count++;
+  });
+  expandedMods.add(copyTargetModIdx);
+  closeModal('copyModal');
+  render();
+}
+
+// ═══ MODALS ═══
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+
+function openMeasureModal(){
+  const d=findGoal(editGoalId);if(!d)return;
+  selectedMeasure=d.goal.measure;
+  document.getElementById('measureList').innerHTML=MEASURES.map(m=>`<div class="picker-item ${selectedMeasure===m.name?'selected':''}" onclick="pickMeasure('${m.name}',this)"><div class="picker-item-name">${m.name}</div><div class="picker-item-desc">${m.desc}</div><div class="picker-item-preview">${m.preview}</div></div>`).join('');
+  openModal('measureModal');
+}
+function pickMeasure(n,el){selectedMeasure=n;document.querySelectorAll('#measureList .picker-item').forEach(i=>i.classList.remove('selected'));el.classList.add('selected')}
+function confirmMeasure(){
+  if(selectedMeasure&&editGoalId){const d=findGoal(editGoalId);if(d)d.goal.measure=selectedMeasure}
+  closeModal('measureModal');if(editGoalId)openEdit(editGoalId,editModIdx);
+}
+
+function openRuleModal(){
+  const d=findGoal(editGoalId);if(!d)return;
+  selectedRule=d.goal.rule;
+  document.getElementById('ruleList').innerHTML=RULES.map(r=>`<div class="picker-item ${selectedRule===r.name?'selected':''}" onclick="pickRule('${r.name}',this)"><div class="picker-item-name">${r.name}</div><div class="picker-item-desc">${r.desc}</div><div class="picker-item-preview">${r.formula}</div></div>`).join('');
+  openModal('ruleModal');
+}
+function pickRule(n,el){selectedRule=n;document.querySelectorAll('#ruleList .picker-item').forEach(i=>i.classList.remove('selected'));el.classList.add('selected')}
+function confirmRule(){
+  if(selectedRule&&editGoalId){const d=findGoal(editGoalId);if(d){d.goal.rule=selectedRule;const r=RULES.find(r=>r.name===selectedRule);if(r)d.goal.ruleFormula=r.formula}}
+  closeModal('ruleModal');if(editGoalId)openEdit(editGoalId,editModIdx);
+}
+
+document.querySelectorAll('.modal-overlay').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open')})});
+document.addEventListener('click',e=>{const p=document.getElementById('addGoalPopup');if(p.classList.contains('show')&&!p.contains(e.target)&&!e.target.closest('.mod-hd-add'))p.classList.remove('show')});
+
+// ═══ INDICATOR PICKER ═══
+let kpiPickerGoalId=null, kpiPickerModIdx=null;
+function openIndicatorPicker(goalId,mi){
+  kpiPickerGoalId=goalId;kpiPickerModIdx=mi;
+  selectedKpiId=null;kpiFilterCat='全部';
+  renderKpiList();
+  openModal('indicatorModal');
+}
+function renderKpiList(){
+  const q=(document.getElementById('kpiSearch')?.value||'').toLowerCase();
+  const cats=['全部',...new Set(MOCK_INDICATORS.map(k=>k.category))];
+  document.getElementById('kpiCatBar').innerHTML=cats.map(c=>`<span class="kpi-cat ${kpiFilterCat===c?'on':''}" onclick="kpiFilterCat='${c}';renderKpiList()">${c}</span>`).join('');
+  const filtered=MOCK_INDICATORS.filter(k=>{
+    if(kpiFilterCat!=='全部'&&k.category!==kpiFilterCat)return false;
+    if(q&&!k.name.toLowerCase().includes(q))return false;
+    return true;
+  });
+  document.getElementById('kpiList').innerHTML=filtered.map(k=>`<div class="kpi-card ${selectedKpiId===k.id?'selected':''}" onclick="selectedKpiId='${k.id}';renderKpiList()">
+    <div class="kpi-card-hd"><span class="kpi-card-name">${k.name}</span><span class="kpi-card-cat">${k.category}</span></div>
+    <div class="kpi-card-meta">
+      <span>${k.dept}</span><span>${k.type}</span><span>${k.nature}</span><span>单位: ${k.unit}</span><span>${k.rule}</span>
+    </div>
+    <div class="kpi-card-desc">${k.desc}</div>
+  </div>`).join('');
+  document.getElementById('kpiSelLabel').textContent=selectedKpiId?'已选择 1 项':'未选择';
+}
+function filterKPI(){renderKpiList()}
+function confirmIndicator(){
+  if(!selectedKpiId||!kpiPickerGoalId){showToast('请选择一个指标');return}
+  const d=findGoal(kpiPickerGoalId);if(!d)return;
+  const g=d.goal;
+  const kpi=MOCK_INDICATORS.find(k=>k.id===selectedKpiId);
+  // Auto-fill name, type, unit, rule, desc from indicator; target values are user input
+  g.name=kpi.name;g.indicator=kpi.name;g.type=kpi.type==='定量'?'quant':'qual';
+  g.unit=kpi.unit;g.rule=kpi.rule;g.desc=kpi.desc;
+  g.linkedIndicatorId=kpi.id;
+  closeModal('indicatorModal');
+  render();
+  openEdit(kpiPickerGoalId,kpiPickerModIdx);
+}
+
+// ═══ LANGUAGE EDITOR ═══
+function openLangModal(fieldKey){
+  langFieldKey=fieldKey;
+  const data=langStore[fieldKey]||{zh:'',en:''};
+  const label=fieldKey.endsWith('_name')?'目标名称':'目标描述';
+  document.getElementById('langFieldLabel').textContent=label+' — 多语言';
+  document.getElementById('langZh').value=data.zh||'';
+  document.getElementById('langEn').value=data.en||'';
+  openModal('langModal');
+}
+function saveLang(){
+  if(!langFieldKey)return;
+  langStore[langFieldKey]={zh:document.getElementById('langZh').value,en:document.getElementById('langEn').value};
+  closeModal('langModal');
+  if(editGoalId)openEdit(editGoalId,editModIdx);
+}
+
+// ═══ TOTAL SCORE ═══
+function gradeToScore(grade){
+  const map={'优秀':120,'良好':100,'合格':80,'不合格':0,'远超预期':120,'符合预期+':100,'符合预期':80,'符合预期-':70,'未达预期':0};
+  return map[grade]||0;
+}
+
+function calcTotalScore(){
+  let total=0;
+  MODULES.forEach(m=>{
+    m.goals.forEach(g=>{
+      let score=0;
+      if(g.type==='qual'){
+        score=gradeToScore(g.grade||'');
+      }else{
+        score=g.target>0?Math.round((g.completedRate||g.target)/g.target*100):0;
+        score=Math.min(score,120);
+      }
+      total+=score*(g.weight/100);
+    });
+  });
+  bonusItems.forEach(b=>{total+=b.score});
+  return Math.round(total*10)/10;
+}
+
+// ═══ VALIDATION ═══
+function validateWeights(){
+  const tw=MODULES.reduce((s,m)=>s+m.goals.reduce((gs,g)=>gs+g.weight,0),0);
+  if(tw!==100)return[`总权重 ${tw}%，需等于 100%`];
+  return [];
+}
+
+function validateAndSubmit(){
+  const totalGoals=MODULES.reduce((s,m)=>s+m.goals.length,0);
+  if(totalGoals<2){showToast('至少需要填写2个目标');return}
+  const errs=validateWeights();
+  if(errs.length){showToast(errs[0]);return}
+  showToast('提交成功','success');
+}
+
+function showToast(msg,type){
+  const t=document.getElementById('validateToast');
+  document.getElementById('toastMsg').textContent=msg;
+  t.className='validate-toast show'+(type==='success'?' success':type==='warn'?' warn':'');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// Initialize navigation first to create the content container
+GHR_NAV.init('perf', '绩效表单');
+render();
+</script>
+</body>
+</html>

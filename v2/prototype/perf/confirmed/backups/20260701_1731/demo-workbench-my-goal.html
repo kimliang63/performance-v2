@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 我的目标</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --r1:6px;--r2:8px;--r3:10px;
+  --f:'Inter','Noto Sans SC',-apple-system,sans-serif;
+  --m:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+
+
+
+
+
+.hdr-r{margin-left:auto;display:flex;align-items:center;gap:10px}
+.avatar{width:30px;height:30px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--f);color:#FFF}
+
+
+.breadcrumb a{color:var(--c5);text-decoration:none;transition:color .12s}
+.breadcrumb a:hover{color:var(--pr)}
+.breadcrumb .sep{color:var(--c3)}
+.breadcrumb .cur{color:var(--c8);font-weight:600}
+
+.ct{padding:24px}
+.pg{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden}
+
+.pg-hd{padding:20px 24px;border-bottom:1px solid var(--dv)}
+.pg-hd-top{display:flex;align-items:center;justify-content:space-between}
+.pg-hd-left{display:flex;align-items:center;gap:10px}
+.pg-hd-title{font:700 20px/1.2 var(--f);color:var(--c9)}
+.pg-hd-sub{font:400 13px/1 var(--f);color:var(--c5);margin-top:4px}
+.pg-hd-actions{display:flex;gap:8px}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit;text-decoration:none}
+.btn svg{width:13px;height:13px}
+.btn-p{background:var(--pr);color:#FFF}
+.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}
+.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
+.btn-o{background:var(--sf);color:var(--pr);border:1px solid var(--pr200)}
+.btn-o:hover{background:var(--pr50);border-color:var(--pr)}
+
+.form-status{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:var(--r1);font:500 12px/1 var(--f)}
+.form-status .dot{width:7px;height:7px;border-radius:50%}
+.form-status.active{background:var(--em50);color:var(--em700)}
+.form-status.active .dot{background:var(--em);animation:pulse 2s ease-in-out infinite}
+.form-status.submitted{background:var(--pr50);color:var(--pr)}
+.form-status.submitted .dot{background:var(--pr);animation:pulse 2s ease-in-out infinite}
+.form-status.approved{background:var(--em50);color:var(--em700)}
+.form-status.approved .dot{background:var(--em)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.cycle-tabs{display:flex;gap:6px;margin-top:14px}
+.cycle-tab{padding:6px 16px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:1px solid var(--c2);color:var(--c6);background:var(--sf)}
+.cycle-tab.on{background:var(--pr);color:#FFF;border-color:var(--pr)}
+.cycle-tab:hover:not(.on){border-color:var(--pr);color:var(--pr)}
+
+.summary{display:flex;gap:24px;padding:14px 24px;background:var(--c0);border-bottom:1px solid var(--dv)}
+.sum-item{font:500 13px/1 var(--f);color:var(--c6)}
+.sum-item strong{font-family:var(--m);font-weight:700;color:var(--pr);margin-left:4px}
+
+/* Module */
+.mod{border-bottom:1px solid var(--dv)}
+.mod:last-child{border-bottom:none}
+.mod-hd{display:flex;align-items:center;padding:14px 24px;gap:10px;cursor:pointer;transition:background .12s}
+.mod-hd:hover{background:var(--c0)}
+.mod-icon{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.mod-name{font:600 14px/1 var(--f);color:var(--c9);flex:1}
+.mod-stats{font:400 12px/1 var(--f);color:var(--c5)}
+.mod-stats strong{font-family:var(--m);font-weight:600;color:var(--c7)}
+.mod-chevron{width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:var(--c4);transition:transform .2s}
+.mod-chevron.open{transform:rotate(180deg)}
+.mod-chevron svg{width:14px;height:14px}
+.mod-body{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.mod-body.open{max-height:2000px}
+
+/* Goal row */
+.goal{border-top:1px solid var(--dv);transition:background .12s}
+.goal:hover{background:var(--c0)}
+.goal-top{display:flex;align-items:center;padding:14px 20px;gap:12px;cursor:pointer}
+.goal-name{flex:1;font:500 14px/1.3 var(--f);color:var(--c8)}
+.goal-tag{font:500 11px/1 var(--f);padding:2px 8px;border-radius:3px}
+.goal-tag.quant{background:var(--pr50);color:var(--pr)}
+.goal-tag.qual{background:#F5F3FF;color:#8B5CF6}
+.goal-seq{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--pr50);color:var(--pr);font:700 12px/1 var(--m)}
+.goal-weight{font:700 14px/1 var(--m);color:var(--pr);background:var(--pr50);padding:3px 8px;border-radius:var(--r1);flex-shrink:0}
+.goal-chevron{width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:var(--c4);transition:transform .2s;flex-shrink:0}
+.goal-chevron.open{transform:rotate(180deg)}
+.goal-chevron svg{width:12px;height:12px}
+
+/* Goal detail */
+.goal-detail{display:none;padding:0 20px 16px 60px}
+.goal-detail.open{display:block}
+.gd-form{background:var(--c0);border-radius:var(--r2);padding:16px;border:1px solid var(--c2)}
+.gd-sec{margin-bottom:14px}
+.gd-sec:last-child{margin-bottom:0}
+.gd-sec-title{font:600 12px/1 var(--f);color:var(--c6);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:6px}
+.gd-sec-title svg{width:13px;height:13px;color:var(--pr)}
+.gd-row{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px}
+.gd-row.f3{grid-template-columns:1fr 1fr 1fr}
+.gd-fi{display:flex;flex-direction:column;gap:3px}
+.gd-fi-l{font:400 11px/1 var(--f);color:var(--c5)}
+.gd-fi-v{font:500 13px/1.4 var(--f);color:var(--c8)}
+.gd-fi-v.mono{font-family:var(--m)}
+.gd-rule-box{margin-top:8px;padding:8px 10px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r1)}
+.gd-rule-box code{font:400 11px/1.5 var(--m);color:var(--c8);white-space:pre-wrap;word-break:break-all}
+.gd-rule-lbl{font:500 10px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.gd-desc{font:400 13px/1.6 var(--f);color:var(--c7);white-space:pre-line}
+
+.toast{position:fixed;top:64px;left:50%;transform:translateX(-50%) translateY(-10px);padding:10px 20px;border-radius:var(--r2);font:500 13px/1 var(--f);background:var(--em);color:#FFF;box-shadow:0 8px 24px rgba(16,185,129,.3);z-index:3000;opacity:0;pointer-events:none;transition:all .25s}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+
+<div class="ct">
+  <nav class="breadcrumb">
+    <a href="../demo-index.html">绩效工作台</a>
+    <span class="sep">/</span>
+    <span class="cur">我的目标</span>
+  </nav>
+
+  <div class="pg">
+    <div class="pg-hd">
+      <div class="pg-hd-top">
+        <div class="pg-hd-left">
+          <div class="pg-hd-title">我的目标</div>
+          <span class="form-status" id="formStatus"></span>
+        </div>
+        <div class="pg-hd-actions">
+          <a href="demo-workbench-approval.html" class="btn btn-o">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            审批记录
+          </a>
+          <a href="demo-goal-employee.html" class="btn btn-s">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            编辑目标
+          </a>
+        </div>
+      </div>
+      <div class="pg-hd-sub">张明 (EMP20240315) · 产品部 · 高级产品经理 · 考核周期 <span id="cycleLabel">2026年6月</span></div>
+      <div class="cycle-tabs">
+        <div class="cycle-tab on" onclick="switchCycle(this,'202606')">2026年6月</div>
+        <div class="cycle-tab" onclick="switchCycle(this,'202605')">2026年5月</div>
+        <div class="cycle-tab" onclick="switchCycle(this,'202604')">2026年4月</div>
+      </div>
+    </div>
+
+    <div class="summary" id="summary"></div>
+    <div id="goalList"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const DATA = {
+  '202606': {
+    status:'active', statusLabel:'生效中',
+    modules: [
+      {name:'KPI',color:'var(--pr)',goals:[
+        {name:'资源利用率（通用）',type:'quant',weight:5,target:105,challenge:110,baseline:100,unit:'%',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',linkedIndicator:'资源利用率'},
+        {name:'HRASUAT用户验收首次通过率(产品)',type:'quant',weight:10,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',linkedIndicator:'UAT首次通过率'},
+        {name:'HRAS需求评审及时率(产品)',type:'quant',weight:15,target:98,challenge:100,baseline:95,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',linkedIndicator:'需求评审及时率'},
+      ]},
+      {name:'KPA',color:'var(--em)',goals:[
+        {name:'HRAS产品管理规范',type:'qual',weight:10,measure:'定性评分',desc:'1、需求管理流程尊从规范\n2、产品需求规范\n3、迭代火车管理规范\n4、周会/月会前事项准时完成更新'},
+        {name:'【产品设计】日常滚动需求响应',type:'qual',weight:10,measure:'定性评分',desc:'根据业务日会需求优先级，滚动响应日常需求，输出产品解决方案'},
+        {name:'【产品设计】HR ONE 绩效重构事项推进',type:'qual',weight:25,measure:'定性评分',desc:'06-10 输出AI+绩效核心用户页面原型\n06-19 完成绩效版本4需求内审\n06-24 完成绩效版本4需求评审'},
+        {name:'【应用探索】AI应用项目探索与落地推广',type:'qual',weight:25,measure:'定性评分',desc:'06-05 输出ASSC采购侧AI项目管理应用1.0版本\n06-12 对接LBU AI应用场景需求\n06-26 完成1.1版本'},
+      ]}
+    ]
+  },
+  '202605': {
+    status:'approved', statusLabel:'已审批',
+    modules: [
+      {name:'KPI',color:'var(--pr)',goals:[
+        {name:'资源利用率（通用）',type:'quant',weight:5,target:100,challenge:110,baseline:90,unit:'%',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',linkedIndicator:'资源利用率'},
+        {name:'HRASUAT用户验收首次通过率(产品)',type:'quant',weight:10,target:95,challenge:100,baseline:90,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',linkedIndicator:'UAT首次通过率'},
+        {name:'HRAS需求评审及时率(产品)',type:'quant',weight:15,target:95,challenge:100,baseline:90,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',linkedIndicator:'需求评审及时率'},
+      ]},
+      {name:'KPA',color:'var(--em)',goals:[
+        {name:'HRAS产品管理规范',type:'qual',weight:10,measure:'定性评分',desc:'产品需求管理和迭代管理的规范'},
+        {name:'【产品设计】日常滚动需求响应',type:'qual',weight:10,measure:'定性评分',desc:'滚动响应日常需求'},
+        {name:'【产品设计】HR ONE 绩效重构事项推进',type:'qual',weight:25,measure:'定性评分',desc:'绩效重构各里程碑推进'},
+        {name:'【应用探索】AI应用项目探索与落地推广',type:'qual',weight:25,measure:'定性评分',desc:'AI应用版本交付和试点落地'},
+      ]}
+    ]
+  },
+  '202604': {
+    status:'approved', statusLabel:'已审批',
+    modules: [
+      {name:'KPI',color:'var(--pr)',goals:[
+        {name:'资源利用率（通用）',type:'quant',weight:5,target:95,challenge:105,baseline:85,unit:'%',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',linkedIndicator:'资源利用率'},
+        {name:'HRASUAT用户验收首次通过率(产品)',type:'quant',weight:10,target:90,challenge:95,baseline:85,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',linkedIndicator:'UAT首次通过率'},
+        {name:'HRAS需求评审及时率(产品)',type:'quant',weight:15,target:90,challenge:95,baseline:85,unit:'百分比',measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',linkedIndicator:'需求评审及时率'},
+      ]},
+      {name:'KPA',color:'var(--em)',goals:[
+        {name:'HRAS产品管理规范',type:'qual',weight:10,measure:'定性评分',desc:'产品需求管理和迭代管理的规范'},
+        {name:'【产品设计】日常滚动需求响应',type:'qual',weight:10,measure:'定性评分',desc:'滚动响应日常需求'},
+        {name:'【产品设计】HR ONE 绩效重构事项推进',type:'qual',weight:25,measure:'定性评分',desc:'绩效重构各里程碑推进'},
+        {name:'【应用探索】AI应用项目探索与落地推广',type:'qual',weight:25,measure:'定性评分',desc:'AI应用版本交付和试点落地'},
+      ]}
+    ]
+  }
+};
+
+const STATUS_CFG={active:{label:'生效中',cls:'active'},submitted:{label:'已提交',cls:'submitted'},approved:{label:'已审批',cls:'approved'}};
+let currentCycle='202606';
+let expandedMods=new Set([0,1]);
+let expandedGoals=new Set();
+
+function render(){
+  const data=DATA[currentCycle];
+  const st=STATUS_CFG[data.status];
+  document.getElementById('formStatus').innerHTML=`<span class="dot"></span>${st.label}`;
+
+  let count=0,weight=0;
+  data.modules.forEach(m=>m.goals.forEach(g=>{count++;weight+=g.weight}));
+  document.getElementById('summary').innerHTML=`
+    <div class="sum-item">目标数量<strong>${count}</strong></div>
+    <div class="sum-item">权重合计<strong>${weight}%</strong></div>`;
+
+  let h='';
+  data.modules.forEach((m,mi)=>{
+    const open=expandedMods.has(mi);
+    const tw=m.goals.reduce((s,g)=>s+g.weight,0);
+    h+=`<div class="mod">
+      <div class="mod-hd" onclick="toggleMod(${mi})">
+        <div class="mod-icon" style="background:${m.color}"></div>
+        <span class="mod-name">${m.name}</span>
+        <span class="mod-stats">合计 <strong>${tw}%</strong> · ${m.goals.length}个目标</span>
+        <div class="mod-chevron ${open?'open':''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="mod-body ${open?'open':''}">`;
+    m.goals.forEach((g,gi)=>{
+      const gid=currentCycle+'_'+mi+'_'+gi;
+      const gOpen=expandedGoals.has(gid);
+      const isQ=g.type==='quant';
+      h+=`<div class="goal">
+        <div class="goal-top" onclick="toggleGoal('${gid}')">
+          <span class="goal-seq">${gi+1}</span>
+          <span class="goal-name">${g.name}</span>
+          <span class="goal-weight">${g.weight}%</span>
+          <span class="goal-tag ${isQ?'quant':'qual'}">${isQ?'定量':'定性'}</span>
+          <div class="goal-chevron ${gOpen?'open':''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+        </div>
+        <div class="goal-detail ${gOpen?'open':''}">
+          <div class="gd-form">
+            <div class="gd-sec">
+              <div class="gd-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>目标信息</div>
+            </div>
+            ${isQ?`
+            <div class="gd-sec">
+              <div class="gd-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>指标描述 <span style="cursor:pointer;font-size:12px;color:var(--c4);margin-left:4px" onclick="event.stopPropagation();showMeasureDesc('${gid}')" title="点击查看指标描述">ⓘ</span></div>
+              <div class="gd-row f3">
+                <div class="gd-fi"><span class="gd-fi-l">挑战值</span><span class="gd-fi-v mono">${g.challenge} ${g.unit||''}</span></div>
+                <div class="gd-fi"><span class="gd-fi-l">目标值</span><span class="gd-fi-v mono">${g.target} ${g.unit||''}</span></div>
+                <div class="gd-fi"><span class="gd-fi-l">完成值</span><span class="gd-fi-v mono">${g.baseline} ${g.unit||''}</span></div>
+              </div>
+            </div>
+            `:`
+            <div class="gd-sec">
+              <div class="gd-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>衡量标准</div>
+              <div class="gd-fi"><span class="gd-fi-l">衡量标准-评价梯度2</span><span class="gd-fi-v">${(g.msLevels&&g.msLevels[0])?g.msLevels[0].condition:'-'}</span></div>
+              <div class="gd-fi" style="margin-top:8px"><span class="gd-fi-l">衡量标准-评价梯度3 <span style="color:var(--ro)">*</span></span><span class="gd-fi-v">${(g.msLevels&&g.msLevels[1])?g.msLevels[1].condition:'-'}</span></div>
+              <div class="gd-fi" style="margin-top:8px"><span class="gd-fi-l">衡量标准-评价梯度4</span><span class="gd-fi-v">${(g.msLevels&&g.msLevels[2])?g.msLevels[2].condition:'-'}</span></div>
+            </div>
+            `}
+          </div>
+        </div>
+      </div>`;
+    });
+    h+=`</div></div>`;
+  });
+  document.getElementById('goalList').innerHTML=h;
+}
+
+function toggleMod(mi){expandedMods.has(mi)?expandedMods.delete(mi):expandedMods.add(mi);render()}
+function toggleGoal(id){expandedGoals.has(id)?expandedGoals.delete(id):expandedGoals.add(id);render()}
+function switchCycle(el,cycle){
+  document.querySelectorAll('.cycle-tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  currentCycle=cycle;
+  document.getElementById('cycleLabel').textContent=el.textContent;
+  expandedMods=new Set([0,1]);
+  expandedGoals.clear();
+  render();
+  showToast('已切换到 '+el.textContent);
+}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000)}
+function showMeasureDesc(gid){const p=gid.split('_');const cycle=p[0];const mi=parseInt(p[1]);const gi=parseInt(p[2]);const g=DATA[cycle]?.modules[mi]?.goals[gi];showToast(g?.desc||'暂无指标描述')}
+
+render();
+</script>
+<script src="../navigation.js"></script>
+<script>GHR_NAV.init('perf', '我的目标');</script>
+</body>
+</html>

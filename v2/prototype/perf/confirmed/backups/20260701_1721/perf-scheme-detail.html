@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 方案详情</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --m:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
+.btn svg{width:13px;height:13px}
+.btn-p{background:var(--pr);color:#FFF}.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
+.btn-t{background:transparent;color:var(--c6);border:none;padding:0 8px;height:28px;font-size:12px}.btn-t:hover{color:var(--pr);background:var(--pr50)}
+.card{background:var(--sf);border:1px solid var(--c3);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px;margin-bottom:16px}
+.card-hd{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.card-bar{width:3px;height:14px;border-radius:2px;flex-shrink:0}
+.card-title{font:600 14px/1.3 var(--f);color:var(--c9)}
+ lbl{font:500 12px/1 var(--f);color:var(--c5);margin-bottom:4px;display:block}
+val{font:400 13px/1.4 var(--f);color:var(--c9);display:block}
+.sep{border-top:1px solid var(--dv);padding-top:16px;margin-top:16px}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fi{animation:fi .25s ease forwards}
+</style>
+</head>
+<body>
+<script src="navigation.js"></script>
+<script>
+const I={chevL:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>'};
+
+const SCHEME={
+  name:'年度绩效方案 v2',code:'PERF-2026-001',version:'v2',enabled:true,desc:'适用于全公司季度绩效考核，采用360度评估方式，包含目标制定、绩效考核、结果审定、结果确认、绩效面谈五个环节。',
+  cycleType:'季度',gradeRule:'标准五级',downward:true,
+  grades:[
+    {name:'远超预期',code:'A',min:90,max:100,color:'var(--ro)',bg:'var(--ro50)'},
+    {name:'符合预期+',code:'B+',min:80,max:89,color:'var(--ac700)',bg:'var(--ac50)'},
+    {name:'符合预期',code:'B',min:70,max:79,color:'var(--em700)',bg:'var(--em50)'},
+    {name:'符合预期-',code:'B-',min:60,max:69,color:'var(--vi)',bg:'var(--vi50)'},
+    {name:'低于预期',code:'C',min:0,max:59,color:'var(--c6)',bg:'var(--c1)'},
+  ],
+  groups:[
+    {name:'默认考核组',isDefault:true,rules:'部门 属于 产品部,技术部,市场部',evalRule:'通用评价规则',excluded:'-',autoRemove:{enabled:true,conditions:['resignation']}},
+    {name:'仓储特殊组',isDefault:false,rules:'部门 等于 仓储部 且 职级 属于 L5,L6',evalRule:'仓储评价规则',excluded:'张三',autoRemove:{enabled:false,conditions:[]}},
+  ],
+  stages:[
+    {name:'目标制定',desc:'员工/上级填写绩效目标',flow:'通用目标制定流程',enabled:true,autoStart:{enabled:false,ref:'cycleStart',days:0}},
+    {name:'绩效考核',desc:'考核人评分',flow:'通用绩效考核流程',enabled:true,autoStart:{enabled:true,ref:'prevStageEnd',days:3}},
+    {name:'结果审定',desc:'审定人调整等级',flow:'汇报线逐级审定',enabled:true,autoStart:{enabled:false,ref:'prevStageEnd',days:0}},
+    {name:'结果确认',desc:'员工确认绩效结果',flow:'员工确认流程',enabled:true,autoStart:{enabled:false,ref:'prevStageEnd',days:0}},
+    {name:'绩效面谈',desc:'上级与员工面谈',flow:'绩效面谈流程',enabled:true,autoStart:{enabled:false,ref:'prevStageEnd',days:0}},
+  ],
+  forcedDist:{name:'标准强制分布',grades:[
+    {code:'A',name:'远超预期',op:'不超过',pct:10},
+    {code:'B+',name:'符合预期+',op:'不超过',pct:20},
+    {code:'B',name:'符合预期',op:'不低于',pct:40},
+    {code:'B-',name:'符合预期-',op:'不超过',pct:20},
+    {code:'C',name:'低于预期',op:'不低于',pct:10},
+  ]},
+  autoCreate:{enabled:true,cycleType:'季度',timing:{direction:'前',days:7}},
+};
+
+function render(){
+  const s=SCHEME;
+  const ct=document.getElementById('ct')||document.getElementById('app');
+  if(!ct) return;
+  ct.innerHTML=`<div style="max-width:1120px" class="fi">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;font:400 13px/1 var(--f);color:var(--c6)">
+      <a href="perf-scheme-list.html" style="color:var(--pr);text-decoration:none;cursor:pointer">← 返回方案列表</a>
+      <span style="color:var(--c4)">/</span><span>${s.name}</span>
+    </div>
+
+    <!-- 基本信息 -->
+    <div class="card">
+      <div class="card-hd"><span class="card-bar" style="background:var(--pr)"></span><span class="card-title">基本信息</span></div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+        <div><lbl>方案名称</lbl><val>${s.name}</val></div>
+        <div><lbl>方案编号</lbl><val style="font-family:var(--m)">${s.code}</val></div>
+        <div><lbl>方案版本</lbl><val>${s.version}</val></div>
+        <div><lbl>启用状态</lbl><val style="color:var(--em)">已启用</val></div>
+        <div><lbl>周期类型</lbl><val>${s.cycleType}</val></div>
+        <div><lbl>等级规则</lbl><val>${s.gradeRule}</val></div>
+        <div><lbl>向下公开</lbl><val>${s.downward?'开启':'关闭'}</val></div>
+        <div><lbl>强制分布</lbl><val>${s.forcedDist.name}</val></div>
+        <div style="grid-column:1/-1"><lbl>方案描述</lbl><val>${s.desc}</val></div>
+        ${s.autoCreate?`
+        <div><lbl>自动创建活动</lbl><val style="color:var(--em)">${s.autoCreate.enabled?'已开启':'已关闭'}</val></div>
+        <div><lbl>创建时间</lbl><val>${s.autoCreate.enabled?`周期开始${s.autoCreate.timing.direction} ${s.autoCreate.timing.days} 天`:'—'}</val></div>
+        `:''}
+      </div>
+    </div>
+
+    <!-- 绩效等级 -->
+    <div class="card">
+      <div class="card-hd"><span class="card-bar" style="background:var(--ro)"></span><span class="card-title">绩效等级 · ${s.gradeRule}</span></div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        ${s.grades.map(g=>`<span style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:var(--r1);font:500 13px/1 var(--f);background:${g.bg};color:${g.color}"><strong>${g.code}</strong> ${g.name} <span style="font:400 11px/1 var(--f);opacity:.7">${g.min}-${g.max}分</span></span>`).join('')}
+      </div>
+    </div>
+
+    <!-- 考核组 -->
+    <div class="card">
+      <div class="card-hd"><span class="card-bar" style="background:var(--vi)"></span><span class="card-title">考核组</span></div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        ${s.groups.map(g=>`<div style="padding:12px 16px;border:1px solid var(--dv);border-radius:var(--r1)">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font:600 13px/1 var(--f);color:var(--c9)">${g.name}</span>${g.isDefault?'<span style="font:500 10px/1 var(--f);padding:1px 6px;border-radius:3px;background:var(--pr50);color:var(--pr)">默认</span>':''}</div>
+          <div style="font:400 12px/1 var(--f);color:var(--c6);margin-top:6px">适用规则：${g.rules}</div>
+          <div style="font:400 12px/1 var(--f);color:var(--c6);margin-top:2px">评价规则：${g.evalRule}</div>
+          <div style="font:400 12px/1 var(--f);color:var(--c6);margin-top:2px">排除人员：${g.excluded}</div>
+          ${g.autoRemove&&g.autoRemove.enabled?`<div style="font:400 12px/1 var(--f);color:var(--c6);margin-top:2px">自动移除规则：${g.autoRemove.conditions.map(c=>c==='resignation'?'员工离职':c==='transfer'?'调岗':c==='orgChange'?'组织架构变更':c).join('、')}</div>`:''}
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- 考核环节 -->
+    <div class="card">
+      <div class="card-hd"><span class="card-bar" style="background:var(--ac)"></span><span class="card-title">考核环节</span></div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        ${s.stages.map(st=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--dv);border-radius:var(--r1)">
+          <div><span style="font:500 13px/1 var(--f);color:var(--c9)">${st.name}</span><span style="font:400 12px/1 var(--f);color:var(--c5);margin-left:8px">${st.desc}</span></div>
+          <div style="display:flex;align-items:center;gap:10px"><span style="font:400 11px/1 var(--f);color:var(--c5);font-family:var(--m)">${st.flow}</span><span style="font:500 11px/1 var(--f);padding:2px 8px;border-radius:3px;background:var(--em50);color:var(--em700)">${st.enabled?'已启用':'已停用'}</span>${st.autoStart&&st.autoStart.enabled?`<span style="font:400 11px/1 var(--f);color:var(--pr);margin-left:4px">定时: ${st.autoStart.ref==='prevStageEnd'?'上一环节后':'周期开始后'} ${st.autoStart.days}天</span>`:''}</div>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- 强制分布 -->
+    <div class="card">
+      <div class="card-hd"><span class="card-bar" style="background:var(--em)"></span><span class="card-title">强制分布 · ${s.forcedDist.name}</span></div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px">
+        ${s.forcedDist.grades.map(d=>`<span style="font:500 13px/1 var(--f);color:var(--c7)"><strong>${d.code}</strong> ${d.name} <span style="color:var(--c5)">${d.op} ${d.pct}%</span></span>`).join('<span style="color:var(--c3)">|</span>')}
+      </div>
+    </div>
+  </div>`;
+}
+
+GHR_NAV.init('perf','绩效方案');
+render();
+</script>
+</body>
+</html>

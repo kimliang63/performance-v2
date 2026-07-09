@@ -1,0 +1,1650 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - AI 表单辅助</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#4461d2;--pr50:#F0F3FB;--pr100:#DEE5F7;--pr200:#B8C5EE;--pr700:#3249a8;--pr900:#1E2F6E;
+  --em:#3da453;--em50:#EFF8F1;--em100:#D4EEDB;--em200:#A8DDB6;--em700:#2D7E3F;
+  --ac:#e8930c;--ac50:#FDF6E8;--ac100:#F9E6BD;--ac200:#F0CC7A;--ac700:#B06D06;
+  --ro:#d94059;--ro50:#FDF0F2;--ro100:#F8D5DA;--ro200:#F0AAB5;--ro700:#A52F42;
+  --vi:#7c5cfc;--vi50:#F3F0FE;--vi100:#E1DAFD;--vi200:#C2B4FB;--vi700:#5A3CD0;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#f3f4f6;--dv:#F4F4F5;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05);
+  --shadow-card-hover:0 8px 20px -4px rgba(0,0,0,.08),0 2px 6px -2px rgba(0,0,0,.04);
+  --shadow-dropdown:0 10px 40px -10px rgba(0,0,0,.12),0 2px 10px -2px rgba(0,0,0,.04);
+  --shadow-modal:0 20px 60px -12px rgba(0,0,0,.18),0 4px 16px -4px rgba(0,0,0,.08);
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',sans-serif;
+  --fm:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+/* Tab Bar */
+.demo-tabs{display:flex;align-items:center;gap:0;padding:0 20px;background:var(--sf);border-bottom:1px solid var(--dv)}
+.demo-tab{padding:12px 20px;font:500 13px/1 var(--f);color:var(--c5);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit}
+.demo-tab:hover{color:var(--c8)}
+.demo-tab.on{color:var(--pr);border-bottom-color:var(--pr);font-weight:600}
+
+/* Page Header */
+.pg{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);width:100%;overflow:hidden}
+.pg-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid var(--dv)}
+.pg-hd-l{display:flex;align-items:center;gap:14px}
+.pg-hd-t{font:700 17px/1.2 var(--f);color:var(--c9);letter-spacing:-.2px}
+.pg-hd-s{font:400 12px/1 var(--f);color:var(--c5);margin-top:3px}
+.pg-a{display:flex;gap:8px;align-items:center}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
+.btn svg{width:13px;height:13px}
+.btn-p{background:var(--pr);color:#FFF}.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
+.btn-w{background:var(--ac);color:#FFF}.btn-w:hover{background:var(--ac700)}
+.btn-o{background:var(--sf);color:var(--pr);border:1px solid var(--pr200)}
+.btn-o:hover{background:var(--pr50);border-color:var(--pr)}
+.btn-d{background:transparent;color:var(--c5);border:1px solid transparent;padding:0 8px;height:28px}
+.btn-d:hover{color:var(--ro);background:var(--ro50)}
+.btn-sm{height:28px;padding:0 10px;font-size:12px}.btn-sm svg{width:12px;height:12px}
+
+/* Inputs */
+.inp{width:100%;padding:7px 10px;border:1px solid var(--c2);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c9);background:var(--sf);transition:all .12s;outline:none}
+.inp:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
+.inp.num{font-family:var(--fm);text-align:right}
+select.inp{-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:24px;cursor:pointer}
+textarea.inp{min-height:60px;resize:vertical;font-family:var(--f)}
+.edit-cell{width:100%;border:1px solid var(--c2);border-radius:4px;padding:6px 8px;font:400 13px/1 var(--f);color:var(--c9);background:var(--sf);transition:all .12s;font-family:inherit}
+.edit-cell:focus{outline:none;border-color:var(--pr);box-shadow:0 0 0 3px rgba(68,97,210,.1)}
+select.edit-cell{-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:24px}
+textarea.edit-cell{resize:vertical;min-height:36px;line-height:1.4}
+
+/* Module Section */
+.mod-section{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden;border-left:3px solid var(--pr)}
+.mod-section.em{border-left-color:var(--em)}
+.mod-section.ac{border-left-color:var(--ac)}
+.mod-section.vi{border-left-color:var(--vi)}
+.mod-section.ro{border-left-color:var(--ro)}
+
+.mod-hd{display:flex;align-items:center;padding:14px 20px;cursor:pointer;user-select:none;transition:background .12s;gap:12px}
+.mod-hd:hover{background:var(--c0)}
+.mod-hd-title{font:600 15px/1 var(--f);color:var(--c9);flex:1}
+.mod-hd-weight{font:500 13px/1 var(--fm);color:var(--c5);padding:3px 10px;border-radius:var(--r1);background:var(--c1)}
+.mod-hd-add{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:var(--r1);font:500 12px/1 var(--f);color:var(--pr);background:transparent;border:1px solid var(--pr200);cursor:pointer;transition:all .12s;font-family:inherit}
+.mod-hd-add:hover{background:var(--pr50);border-color:var(--pr)}
+.mod-hd-add svg{width:12px;height:12px}
+.mod-hd-chevron{width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--c4);transition:transform .25s;flex-shrink:0}
+.mod-hd-chevron.open{transform:rotate(180deg)}
+.mod-hd-chevron svg{width:14px;height:14px}
+
+.mod-body{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.mod-body.open{max-height:4000px}
+
+/* Goal Row */
+.goal-row{border-top:1px solid var(--dv);transition:background .1s}
+.goal-row:hover{background:var(--c0)}
+
+.goal-summary{display:flex;align-items:center;padding:12px 20px;gap:12px;cursor:pointer}
+.goal-name{flex:1;font:500 14px/1.3 var(--f);color:var(--c8)}
+.goal-meta{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.goal-type{font:500 11px/1 var(--f);padding:2px 7px;border-radius:3px;background:var(--c1);color:var(--c6)}
+.goal-type.quant{background:var(--pr50);color:var(--pr)}
+.goal-type.qual{background:var(--vi50);color:var(--vi)}
+.goal-weight{font:500 13px/1 var(--fm);color:var(--c7)}
+.goal-chevron{width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--c4);transition:transform .25s;flex-shrink:0}
+.goal-chevron.open{transform:rotate(90deg)}
+.goal-chevron svg{width:14px;height:14px}
+.goal-actions{display:flex;align-items:center;gap:4px}
+.goal-act{width:26px;height:26px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c4);background:transparent;border:none;transition:all .12s}
+.goal-act:hover{background:var(--c1);color:var(--c7)}
+.goal-act.del:hover{color:var(--ro);background:var(--ro50)}
+.goal-act svg{width:14px;height:14px}
+
+/* Goal Detail */
+.goal-detail{padding:0 20px 16px 20px;display:none;border-top:1px solid var(--dv)}
+.goal-detail.open{display:block}
+.goal-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 24px;margin-bottom:16px}
+.gd-item{display:flex;flex-direction:column;gap:2px}
+.gd-label{font:400 11px/1 var(--f);color:var(--c5)}
+.gd-value{font:400 13px/1.4 var(--f);color:var(--c7)}
+.gd-value.mono{font-family:var(--fm);font-weight:500}
+.gd-value strong{font-weight:600;color:var(--c8)}
+
+/* Measure Table */
+.ms-table{width:100%;border-collapse:collapse;margin-top:8px}
+.ms-table th{background:var(--c0);padding:8px 12px;font:500 12px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv)}
+.ms-table td{padding:10px 12px;font:400 13px/1.4 var(--f);color:var(--c7);border-bottom:1px solid var(--dv)}
+.ms-table tr:last-child td{border-bottom:none}
+.ms-table tr:hover td{background:var(--c0)}
+.ms-table .level{display:inline-flex;align-items:center;gap:4px}
+.ms-table .level-dot{width:8px;height:8px;border-radius:50%}
+
+/* Rule Box */
+.rule-box{background:var(--c0);border:1px solid var(--c2);border-radius:var(--r2);padding:12px 16px;margin-top:8px}
+.rule-box-code{font:400 13px/1.5 var(--fm);color:var(--c8);white-space:pre-wrap;word-break:break-all}
+.rule-box-label{font:500 11px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+
+/* Detail Sub-Section */
+.detail-sub{margin-top:16px}
+.detail-sub-hd{font:600 13px/1 var(--f);color:var(--c8);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.detail-sub-hd svg{width:14px;height:14px;color:var(--pr)}
+
+/* Total Weight */
+.total-weight{display:flex;align-items:center;gap:8px;padding:6px 14px;background:var(--c0);border-radius:var(--r1);font:500 13px/1 var(--f);color:var(--c6)}
+.total-weight .value{font-family:var(--fm);font-weight:600;font-size:15px}
+.total-weight .value.valid{color:var(--em700)}
+.total-weight .value.invalid{color:var(--ro)}
+
+/* Info Grid */
+.info-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:20px 24px;border-bottom:1px solid var(--dv)}
+.info-item{display:flex;flex-direction:column;gap:4px}
+.info-label{font:500 11px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px}
+.info-value{font:500 14px/1.3 var(--f);color:var(--c9)}
+
+/* Indicator Table */
+.ind-table{width:100%;border-collapse:collapse}
+.ind-table th{background:var(--c0);padding:10px 12px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.ind-table td{padding:10px 12px;font:400 13px/1.4 var(--f);color:var(--c7);border-bottom:1px solid var(--dv);vertical-align:top}
+.ind-table tr:last-child td{border-bottom:none}
+.ind-table tr:hover td{background:var(--c0)}
+.ind-name{font-weight:500;color:var(--c9)}
+.ind-weight{font-family:var(--fm);font-weight:500;color:var(--c6);font-size:12px}
+.ind-target{color:var(--c6);font-size:12px}
+.module-row td{background:var(--pr50);font:600 12px/1 var(--f);color:var(--pr);padding:8px 12px;border-bottom:1px solid var(--pr100)}
+.module-row td:first-child{border-left:3px solid var(--pr)}
+
+/* Bottom Section */
+.bottom-section{padding:20px 24px;border-top:1px solid var(--dv);background:var(--c0)}
+
+/* Stats Row */
+.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;padding:20px 24px}
+.stats-card{display:flex;flex-direction:column;gap:4px;padding:16px;background:var(--c0);border-radius:var(--r2)}
+.stats-card-label{font:500 12px/1 var(--f);color:var(--c5)}
+.stats-card-value{font:700 24px/1 var(--fm);color:var(--c9)}
+.stats-card-sub{font:400 11px/1 var(--f);color:var(--c4)}
+.stats-card.highlight{background:var(--vi50);border:1px solid var(--vi100)}
+.stats-card.highlight .stats-card-value{color:var(--vi)}
+
+/* Distribution Bars */
+.dist-bars{padding:16px 24px;margin-bottom:16px}
+.dist-bars-hd{font:600 14px/1 var(--f);color:var(--c9);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.dist-bars-hd svg{width:16px;height:16px;color:var(--pr)}
+.dist-bar-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.dist-bar-label{font:500 12px/1 var(--f);color:var(--c7);width:80px;text-align:right;flex-shrink:0}
+.dist-bar-track{flex:1;height:24px;background:var(--c1);border-radius:4px;position:relative;overflow:hidden}
+.dist-bar-fill{height:100%;border-radius:4px;transition:width .4s ease}
+.dist-bar-nums{font:500 12px/1 var(--fm);color:var(--c5);width:100px;flex-shrink:0;display:flex;gap:8px}
+.dist-bar-cur{font-weight:600}
+.dist-bar-cur.ok{color:var(--em700)}.dist-bar-cur.warn{color:var(--ac700)}.dist-bar-cur.error{color:var(--ro)}
+
+/* Status Tabs */
+.status-tabs{display:flex;align-items:center;gap:6px;padding:0 24px 12px}
+.status-tab{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:var(--r1);font:500 12px/1 var(--f);color:var(--c5);cursor:pointer;border:1px solid var(--c2);background:var(--sf);transition:all .12s;font-family:inherit}
+.status-tab:hover{border-color:var(--c3);color:var(--c7)}
+.status-tab.on{background:var(--pr50);border-color:var(--pr200);color:var(--pr)}
+.status-tab-count{font-family:var(--fm);font-size:11px;padding:1px 5px;border-radius:3px;background:var(--c1);color:var(--c6)}
+.status-tab.on .status-tab-count{background:var(--pr100);color:var(--pr)}
+
+/* Grade Tags */
+.grade-tag{padding:2px 8px;border-radius:var(--r1);font:500 11px/1 var(--f)}
+.grade-tag.exceed{background:var(--ac50);color:var(--ac700)}
+.grade-tag.expect-plus{background:var(--em50);color:var(--em700)}
+.grade-tag.expect{background:var(--pr50);color:var(--pr)}
+.grade-tag.expect-minus{background:var(--vi50);color:var(--vi700)}
+.grade-tag.below{background:var(--ro50);color:var(--ro)}
+.grade-exceed{color:var(--ac700);background:var(--ac50)}
+.grade-meet-plus{color:var(--em700);background:var(--em50)}
+.grade-meet{color:var(--pr);background:var(--pr50)}
+.grade-meet-minus{color:var(--vi700);background:var(--vi50)}
+.grade-fail{color:var(--ro);background:var(--ro50)}
+
+.change-mark{display:inline-flex;align-items:center;gap:4px;font:500 11px/1 var(--f);color:var(--ac);background:var(--ac50);padding:2px 8px;border-radius:var(--r1)}
+.change-mark svg{width:12px;height:12px}
+.emp-status-tag{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:var(--r1);font:500 11px/1 var(--f)}
+.emp-status-tag.submitted{background:var(--em50);color:var(--em700)}
+.emp-status-tag.not-submitted{background:var(--ro50);color:var(--ro)}
+.emp-status-tag.pending{background:var(--ac50);color:var(--ac700)}
+
+/* Batch Table */
+.batch-table{width:100%;border-collapse:collapse}
+.batch-table th{position:sticky;top:0;z-index:10;background:var(--c0);font:600 12px/1 var(--f);color:var(--c5);padding:12px 16px;text-align:left;border-bottom:1px solid var(--c2);white-space:nowrap}
+.batch-table td{padding:12px 16px;font:400 13px/1.4 var(--f);color:var(--c7);border-bottom:1px solid var(--dv);transition:background .1s}
+.batch-table tr:hover td{background:var(--c0)}
+.batch-table .name-cell{font-weight:500;color:var(--c9);cursor:pointer}
+.batch-table .name-cell:hover{color:var(--pr)}
+.batch-table .score-cell{font-family:var(--fm);font-weight:600}
+
+/* Expanded Row */
+.expand-row td{padding:0!important;background:var(--pr50)}
+.expand-content{padding:16px 20px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;animation:slideDown .2s ease}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.expand-item{display:flex;flex-direction:column;gap:4px}
+.expand-item-label{font:500 11px/1 var(--f);color:var(--c5)}
+.expand-item-value{font:400 13px/1.3 var(--f);color:var(--c9)}
+
+/* Batch Container */
+.batch-container{display:flex;gap:20px;padding:0 24px 24px}
+.batch-table-wrap{flex:1;overflow:auto;max-height:500px}
+
+/* Action Cell */
+.action-cell{display:flex;gap:4px}
+.action-btn{width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .12s;border:none;background:transparent;color:var(--c4)}
+.action-btn:hover{background:var(--pr50);color:var(--pr)}
+.action-btn svg{width:14px;height:14px}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:2000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--sf);border-radius:var(--r4);box-shadow:var(--shadow-modal);width:560px;max-height:80vh;display:flex;flex-direction:column;transform:scale(.96);transition:transform .2s ease}
+.modal-overlay.open .modal{transform:scale(1)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--dv)}
+.modal-title{font:600 16px/1 var(--f);color:var(--c9)}
+.modal-close{width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c4);background:transparent;border:none;transition:all .12s}
+.modal-close:hover{background:var(--c1);color:var(--c7)}
+.modal-close svg{width:16px;height:16px}
+.modal-body{flex:1;overflow-y:auto;padding:16px 24px}
+.modal-footer{display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:14px 24px;border-top:1px solid var(--dv)}
+
+/* Picker */
+.picker-list{border:1px solid var(--c2);border-radius:var(--r2);max-height:400px;overflow-y:auto}
+.picker-item{padding:12px 16px;border-bottom:1px solid var(--dv);cursor:pointer;transition:background .12s}
+.picker-item:last-child{border-bottom:none}
+.picker-item:hover{background:var(--pr50)}
+.picker-item.selected{background:var(--pr50);border-left:3px solid var(--pr)}
+.picker-item-name{font:500 13px/1.3 var(--f);color:var(--c8);margin-bottom:4px}
+.picker-item-desc{font:400 12px/1.4 var(--f);color:var(--c5)}
+.picker-item-preview{margin-top:8px;padding:8px 10px;background:var(--c0);border-radius:var(--r1);font:400 12px/1.4 var(--fm);color:var(--c6);border:1px solid var(--c2)}
+
+/* Toast */
+.toast{position:fixed;top:70px;right:24px;padding:12px 18px;border-radius:var(--r2);font:500 13px/1.3 var(--f);box-shadow:var(--shadow-dropdown);z-index:3000;transform:translateX(120%);transition:transform .25s ease}
+.toast.on{transform:translateX(0)}
+.toast.success{background:var(--em);color:#FFF}
+.toast.error{background:var(--ro);color:#FFF}
+
+/* Animations */
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .2s ease forwards}
+.hidden{display:none!important}
+
+/* AI Chat Sidebar */
+body.chat-open #ct{margin-right:380px;transition:margin .3s ease}
+.ai-chat{position:fixed;top:52px;right:0;width:380px;height:calc(100vh - 52px);background:var(--sf);border-left:1px solid var(--dv);z-index:900;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s ease}
+body.chat-open .ai-chat{transform:translateX(0)}
+.ai-chat-hd{padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:10px}
+.ai-chat-hd-ic{width:32px;height:32px;border-radius:var(--r2);background:linear-gradient(135deg,var(--pr) 0%,var(--vi) 100%);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ai-chat-hd-ic svg{width:16px;height:16px;color:#FFF}
+.ai-chat-hd-t{font:600 14px/1.2 var(--f);color:var(--c9)}
+.ai-chat-hd-s{font:400 11px/1 var(--f);color:var(--c5)}
+.ai-chat-close{margin-left:auto;width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:transparent;color:var(--c5);transition:all .12s}
+.ai-chat-close:hover{background:var(--c1);color:var(--c7)}
+.ai-chat-bd{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:16px}
+.ai-msg{max-width:92%;animation:aiMsgIn .3s ease}
+@keyframes aiMsgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.ai-msg.bot{align-self:flex-start}
+.ai-msg.user{align-self:flex-end}
+.ai-msg-bd{padding:12px 16px;border-radius:var(--r3);font:400 13px/1.6 var(--f)}
+.ai-msg.bot .ai-msg-bd{background:var(--c0);color:var(--c8);border-bottom-left-radius:4px}
+.ai-msg.user .ai-msg-bd{background:var(--pr);color:#FFF;border-bottom-right-radius:4px}
+.ai-msg-time{font:400 10px/1 var(--f);color:var(--c4);margin-top:4px}
+.ai-msg.user .ai-msg-time{text-align:right}
+.ai-msg-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.ai-msg-btn{font:500 11px/1 var(--f);padding:5px 10px;border-radius:var(--r1);border:1px solid var(--c2);background:var(--sf);color:var(--c6);cursor:pointer;transition:all .12s}
+.ai-msg-btn:hover{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-msg-btn.primary{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-msg-card{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);padding:12px;margin-top:8px}
+.ai-msg-card-t{font:600 12px/1.3 var(--f);color:var(--c8);margin-bottom:4px}
+.ai-msg-card-d{font:400 12px/1.5 var(--f);color:var(--c5)}
+.ai-msg-card-tag{display:inline-block;font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px;margin-top:6px}
+.ai-msg-card-tag.em{color:var(--em700);background:var(--em50)}
+.ai-msg-card-tag.pr{color:var(--pr);background:var(--pr50)}
+.ai-msg-card-tag.ac{color:var(--ac);background:var(--ac50)}
+.ai-msg-card-tag.ro{color:var(--ro);background:var(--ro50)}
+.ai-chat-ft{padding:12px 16px;border-top:1px solid var(--dv);display:flex;gap:8px;align-items:center}
+.ai-chat-upload{width:36px;height:36px;border-radius:var(--r2);border:1px solid var(--c2);background:var(--sf);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c5);transition:all .12s;flex-shrink:0}
+.ai-chat-upload:hover{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-chat-input{flex:1;height:36px;border:1px solid var(--c2);border-radius:var(--r2);padding:0 12px;font:400 13px/1 var(--f);color:var(--c8);outline:none;transition:border .15s}
+.ai-chat-input:focus{border-color:var(--pr)}
+.ai-chat-send{width:36px;height:36px;border-radius:var(--r2);background:var(--pr);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#FFF;transition:all .12s}
+.ai-chat-send:hover{background:var(--pr700)}
+.ai-toggle{position:fixed;bottom:80px;right:24px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--pr) 0%,var(--vi) 100%);border:none;box-shadow:0 4px 16px rgba(68,97,210,.3);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:950;transition:all .2s}
+.ai-toggle:hover{transform:scale(1.08);box-shadow:0 6px 20px rgba(68,97,210,.4)}
+.ai-toggle svg{width:22px;height:22px;color:#FFF}
+body.chat-open .ai-toggle{display:none}
+
+/* AI Suggest Banner */
+.ai-suggest{background:linear-gradient(135deg,var(--pr50) 0%,var(--vi50) 100%);border:1px solid var(--pr100);border-radius:var(--r3);padding:16px 20px;margin-bottom:16px;display:flex;align-items:flex-start;gap:14px}
+.ai-suggest-ic{width:40px;height:40px;border-radius:var(--r2);background:linear-gradient(135deg,var(--pr) 0%,var(--vi) 100%);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ai-suggest-ic svg{width:20px;height:20px;color:#FFF}
+.ai-suggest-t{font:600 14px/1.3 var(--f);color:var(--c9);margin-bottom:4px}
+.ai-suggest-d{font:400 13px/1.5 var(--f);color:var(--c6);margin-bottom:10px}
+.ai-suggest-actions{display:flex;gap:8px}
+
+/* AI Filled Tag */
+.ai-tag{display:inline-flex;align-items:center;gap:3px;font:600 9px/1 var(--f);color:var(--vi);background:var(--vi50);border:1px solid rgba(124,92,252,.2);padding:2px 5px;border-radius:3px;vertical-align:middle;margin-left:4px;white-space:nowrap}
+.ai-tag svg{width:9px;height:9px}
+.ai-cell-wrap{position:relative;display:flex;align-items:center;gap:4px}
+.ai-cell-wrap .edit-cell,.ai-cell-wrap input,.ai-cell-wrap select,.ai-cell-wrap textarea{flex:1}
+
+/* ═══ EDIT SIDEBAR ═══ */
+.sb-overlay{position:fixed;inset:0;background:rgba(0,0,0,.25);z-index:1200;opacity:0;pointer-events:none;transition:opacity .25s}
+body.edit-open .sb-overlay{opacity:1;pointer-events:all}
+
+.edit-sidebar{position:fixed;top:52px;right:0;bottom:0;width:520px;background:var(--sf);box-shadow:-4px 0 24px rgba(0,0,0,.1);z-index:1300;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1)}
+body.edit-open .edit-sidebar{transform:translateX(0)}
+body.edit-open #ct{margin-right:520px;transition:margin-right .3s ease}
+body.edit-open .action-bar{right:520px;transition:right .3s ease}
+
+.esb-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--dv);flex-shrink:0}
+.esb-hd-title{font:600 15px/1 var(--f);color:var(--c9)}
+.esb-close{width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c4);background:transparent;border:none;transition:all .12s}
+.esb-close:hover{background:var(--c1);color:var(--c7)}
+
+.esb-body{flex:1;overflow-y:auto;padding:20px}
+
+.ef-sec{background:var(--c0);border-radius:var(--r2);padding:14px 16px;margin-bottom:12px}
+.ef-sec-title{font:600 13px/1 var(--f);color:var(--c8);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.ef-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ef-grid.f3{grid-template-columns:1fr 1fr 1fr}
+.ef-grid .full{grid-column:1/-1}
+.ef-fi{display:flex;flex-direction:column;gap:3px}
+.ef-fi-l{font:400 11px/1 var(--f);color:var(--c5)}
+.ef-fi-l .req{color:var(--ro);margin-left:2px}
+
+.ms-tbl{width:100%;border-collapse:collapse;margin-top:6px}
+.ms-tbl th{background:var(--sf);padding:6px 8px;font:500 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv)}
+.ms-tbl td{padding:7px 8px;font:400 12px/1.3 var(--f);color:var(--c7);border-bottom:1px solid var(--dv)}
+.ms-tbl tr:last-child td{border-bottom:none}
+.ms-tbl .lv{display:inline-flex;align-items:center;gap:4px}
+.ms-tbl .lv-dot{width:7px;height:7px;border-radius:50%}
+
+.rule-box code{font:400 11px/1.5 var(--fm);color:var(--c8);white-space:pre-wrap;word-break:break-all}
+
+.esb-ft{padding:12px 20px;border-top:1px solid var(--dv);display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-shrink:0}
+
+.goal-act.edit{color:var(--pr)}
+.goal-act.edit:hover{background:var(--pr50);color:var(--pr700)}
+
+/* ═══ ACTION BAR ═══ */
+.action-bar{position:fixed;bottom:0;left:0;right:0;height:56px;background:var(--sf);border-top:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:1000}
+.action-bar-l{display:flex;align-items:center;gap:16px}
+.weight-total{font:500 13px/1 var(--f);color:var(--c6)}
+.weight-total .v{font-family:var(--fm);font-weight:600;color:var(--c8)}
+.weight-total .v.ok{color:var(--em)}
+.weight-total .v.warn{color:var(--ac)}
+.action-bar-r{display:flex;gap:8px}
+
+/* PBC-matching page header additions */
+.pg .pg-hd{display:block;padding:20px 24px;background:transparent;border-bottom:none;box-shadow:none}
+.pg-hd-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.pg-hd-title{font:700 20px/1.2 var(--f);color:var(--c9);letter-spacing:-.3px}
+.pg-hd-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.pg-hd-info{display:flex;align-items:center;gap:24px;font:400 13px/1 var(--f);color:var(--c5);margin-bottom:12px}
+.pg-hd-info span{display:flex;align-items:center;gap:4px}
+.pg-hd-info strong{font-weight:600;color:var(--c8)}
+.pg-hd-summary{display:flex;align-items:center;gap:24px;padding-top:12px;border-top:1px solid var(--dv)}
+.pg-hd-summary .sum-item{font:500 13px/1 var(--f);color:var(--c6)}
+.pg-hd-summary .sum-val{font-family:var(--fm);font-weight:700;color:var(--pr)}
+.pg-hd-summary .sum-val.warn{color:var(--ro)}
+.sum-err{display:flex;align-items:center;gap:6px;font:400 12px/1 var(--f);color:var(--ro);margin-top:8px;padding:8px 12px;background:var(--ro50);border-radius:var(--r1);border:1px solid var(--ro100)}
+.sum-err svg{width:14px;height:14px;flex-shrink:0}
+.mod-hd-stats{display:flex;align-items:center;gap:16px;font:400 13px/1 var(--f);color:var(--c5)}
+.mod-hd-stats strong{font-family:var(--fm);font-weight:600;color:var(--pr)}
+.mod-hd-sep{width:1px;height:16px;background:var(--c2)}
+.goal-drag{color:var(--c3);cursor:grab;flex-shrink:0;display:flex;align-items:center}
+.goal-drag svg{width:14px;height:14px}
+.goal-row:last-child{border-bottom:none}
+.hist-tbl{width:100%;border-collapse:collapse}
+.hist-tbl th{background:var(--c0);padding:8px 12px;font:500 12px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv)}
+.hist-tbl th:first-child{width:40px;text-align:center}
+.hist-tbl td{padding:10px 12px;font:400 13px/1.4 var(--f);color:var(--c7);border-bottom:1px solid var(--dv)}
+.hist-tbl td:first-child{text-align:center}
+.hist-tbl tr:last-child td{border-bottom:none}
+.hist-tbl tr:hover td{background:var(--pr50)}
+.chk{width:16px;height:16px;border-radius:3px;border:1.5px solid var(--c3);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all .12s}
+.chk.on{background:var(--pr);border-color:var(--pr)}
+.chk svg{width:10px;height:10px;color:#FFF;display:none}
+.chk.on svg{display:block}
+.kpi-cat-bar{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.kpi-cat{padding:4px 10px;border-radius:var(--r1);font:500 12px/1 var(--f);color:var(--c6);background:var(--c1);cursor:pointer;border:1px solid transparent;transition:all .12s}
+.kpi-cat.on{background:var(--pr50);color:var(--pr);border-color:var(--pr200)}
+.kpi-card{padding:12px 14px;border:1px solid var(--c2);border-radius:var(--r2);cursor:pointer;transition:all .12s;margin-bottom:8px}
+.kpi-card:hover{border-color:var(--pr200);background:var(--pr50)}
+.kpi-card.selected{border-color:var(--pr);background:var(--pr50);box-shadow:0 0 0 2px var(--pr100)}
+.kpi-card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.kpi-card-name{font:500 13px/1.3 var(--f);color:var(--c8)}
+.kpi-card-cat{font:400 11px/1 var(--f);color:var(--c5);padding:1px 6px;background:var(--c1);border-radius:3px}
+.kpi-card-desc{font:400 12px/1.4 var(--f);color:var(--c5);margin-bottom:6px}
+.kpi-card-meta{display:flex;gap:16px;font:400 11px/1 var(--f);color:var(--c4)}
+.kpi-card-meta span{display:flex;align-items:center;gap:3px}
+.goal-type-popup{display:none;flex-direction:row}
+.goal-type-popup.show{display:flex}
+.wt-err{display:inline-flex;align-items:center;gap:4px;font:500 11px/1 var(--f);color:var(--ro);background:var(--ro50);padding:3px 8px;border-radius:3px;margin-left:8px;animation:fadeIn .2s ease}
+.wt-err svg{width:12px;height:12px;flex-shrink:0}
+.mod-hd-stats .wt-err{margin-left:0}
+.validate-toast{position:fixed;top:64px;left:50%;transform:translateX(-50%);background:var(--ro);color:#FFF;padding:10px 20px;border-radius:var(--r2);font:500 13px/1 var(--f);box-shadow:0 8px 24px rgba(212,64,89,.3);z-index:3000;opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:center;gap:8px}
+.validate-toast.show{opacity:1;pointer-events:all}
+.validate-toast svg{width:16px;height:16px}
+.validate-toast.success{background:var(--em);box-shadow:0 8px 24px rgba(61,164,83,.3)}
+.validate-toast.warn{background:var(--ac);box-shadow:0 8px 24px rgba(232,147,12,.3)}
+.inp-err{border-color:var(--ro)!important;box-shadow:0 0 0 2px var(--ro50)!important}
+.modal-footer-l{font:400 12px/1 var(--f);color:var(--c5)}
+.gd-bar{display:flex;align-items:center;gap:6px;margin-top:4px}
+.gd-bar-track{flex:1;height:4px;background:var(--c1);border-radius:2px;overflow:hidden}
+.gd-bar-fill{height:100%;border-radius:2px}
+.gd-bar-text{font:500 11px/1 var(--fm);color:var(--c5)}
+
+/* Upload modal */
+.upload-modal{position:fixed;inset:0;z-index:9000;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.4)}
+.upload-modal.on{display:flex}
+.upload-box{background:var(--sf);border-radius:var(--r4);padding:32px;width:480px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,.15);animation:fadeIn .3s ease}
+.upload-drop{border:2px dashed var(--c3);border-radius:var(--r3);padding:40px 24px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:20px}
+.upload-drop:hover{border-color:var(--pr);background:var(--pr50)}
+.upload-drop-icon{width:48px;height:48px;border-radius:50%;background:var(--c1);display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+.upload-drop-icon svg{width:24px;height:24px;color:var(--c5)}
+.upload-drop-t{font:600 14px/1 var(--f);color:var(--c8);margin-bottom:4px}
+.upload-drop-d{font:400 12px/1.4 var(--f);color:var(--c5)}
+.upload-file{display:flex;align-items:center;gap:12px;padding:12px;background:var(--c0);border-radius:var(--r2);margin-bottom:16px}
+.upload-file-icon{width:40px;height:48px;background:linear-gradient(135deg,var(--pr),var(--pr700));border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.upload-file-icon svg{width:20px;height:20px;color:#FFF}
+.upload-file-info{flex:1;min-width:0}
+.upload-file-name{font:500 13px/1.3 var(--f);color:var(--c8);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.upload-file-meta{font:400 11px/1 var(--f);color:var(--c5);margin-top:2px}
+.upload-progress{height:4px;background:var(--c2);border-radius:2px;overflow:hidden;margin-bottom:16px}
+.upload-progress-bar{height:100%;background:var(--pr);border-radius:2px;width:0;transition:width .6s ease}
+.upload-result{padding:12px;background:var(--em50);border:1px solid var(--em100);border-radius:var(--r2);margin-bottom:16px;display:none}
+.upload-result.on{display:block}
+.upload-result-t{font:600 13px/1 var(--f);color:var(--em700);margin-bottom:4px}
+.upload-result-d{font:400 12px/1.4 var(--f);color:var(--c7)}
+.upload-actions{display:flex;gap:8px;justify-content:flex-end}
+</style>
+</head>
+<body>
+<div class="sb-overlay" onclick="closeEdit()"></div>
+<div class="edit-sidebar" id="editSidebar">
+  <div class="esb-hd">
+    <span class="esb-hd-title" id="esbTitle">编辑目标</span>
+    <button class="esb-close" onclick="closeEdit()">✕</button>
+  </div>
+  <div class="esb-body" id="esbBody"></div>
+  <div class="esb-ft">
+    <button class="btn btn-s" onclick="closeEdit()">取消</button>
+    <button class="btn btn-p" onclick="saveEdit()">保存</button>
+  </div>
+</div>
+
+<!-- ═══ COPY MODAL ═══ -->
+<div class="modal-overlay" id="copyModal">
+  <div class="modal" style="width:700px">
+    <div class="modal-header">
+      <span class="modal-title">复制历史目标</span>
+      <button class="modal-close" onclick="closeModal('copyModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <select class="inp" style="width:160px" id="histPeriod" onchange="renderHistTable()">
+          <option>2026年Q1</option><option>2025年Q4</option><option>2025年Q3</option><option>2025年度</option>
+        </select>
+        <span style="font:400 12px/1 var(--f);color:var(--c5)">选择要复制的目标</span>
+        <span style="margin-left:auto;font:500 12px/1 var(--f);color:var(--pr)" id="histSelCount">已选 0 项</span>
+      </div>
+      <table class="hist-tbl" id="histTable"></table>
+    </div>
+    <div class="modal-footer">
+      <span class="modal-footer-l" id="copyModLabel">将复制到当前模块</span>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-s" onclick="closeModal('copyModal')">取消</button>
+        <button class="btn btn-p" onclick="confirmCopy()">确认复制</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ INDICATOR PICKER MODAL ═══ -->
+<div class="modal-overlay" id="indicatorModal">
+  <div class="modal" style="width:700px">
+    <div class="modal-header"><span class="modal-title">选择关联指标</span><button class="modal-close" onclick="closeModal('indicatorModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="modal-body">
+      <div style="margin-bottom:12px"><input class="inp" placeholder="搜索指标名称..." id="kpiSearch" oninput="filterKPI()"></div>
+      <div class="kpi-cat-bar" id="kpiCatBar"></div>
+      <div id="kpiList"></div>
+    </div>
+    <div class="modal-footer"><span class="modal-footer-l" id="kpiSelLabel">未选择</span><div style="display:flex;gap:8px"><button class="btn btn-s" onclick="closeModal('indicatorModal')">取消</button><button class="btn btn-p" onclick="confirmIndicator()">确认选择</button></div></div>
+  </div>
+</div>
+
+<!-- Goal type choice popup -->
+<div id="addGoalPopup" style="position:fixed;z-index:1500;background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-dropdown);padding:8px;gap:6px" class="goal-type-popup">
+  <button class="btn btn-o" onclick="pickGoalType('quant')" style="flex:1;justify-content:center">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+    定量目标
+  </button>
+  <button class="btn btn-o" onclick="pickGoalType('qual')" style="flex:1;justify-content:center">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    定性目标
+  </button>
+</div>
+
+<div class="validate-toast" id="validateToast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span id="toastMsg"></span></div>
+
+<script src="navigation.js"></script>
+<script>
+// ========== ICONS ==========
+const I={
+  chevron:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>',
+  drag:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg>',
+  edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+  trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+  link:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+  target:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
+  users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  star:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+  book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
+  chart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+  globe:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
+  eye:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
+  warning:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  checkCircle:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+  arrowRight:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+  download:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+  forward:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 17 20 12 15 7"/><path d="M4 18v-2a4 4 0 0 1 4-4h12"/></svg>',
+};
+
+const AI_IC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg>';
+const AI_TAG='<span class="ai-tag">'+AI_IC+'AI</span>';
+
+// ========== GOAL DATA (Tab 1) ==========
+const GOAL_MODULES=[
+  {name:'业绩目标',weight:50,icon:'target',colorVar:'var(--pr)',accent:'',desc:'核心业务指标',goals:[
+    {id:'g1',name:'完成Q2产品迭代',indicator:'产品迭代完成率',type:'quant',weight:30,desc:'完成3个核心功能迭代，覆盖用户管理、数据看板、消息通知模块',measure:'梯度评分',target:100,challenge:120,baseline:80,rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',msLevels:[{level:'优秀',color:'var(--em)',score:'120分',condition:'达成率 >= 120%'},{level:'良好',color:'var(--pr)',score:'100分',condition:'达成率 >= 100%'},{level:'合格',color:'var(--ac)',score:'80分',condition:'达成率 >= 80%'},{level:'不合格',color:'var(--ro)',score:'0分',condition:'达成率 < 80%'}],aiFilled:true,linkedIndicatorId:'kpi6',i18n:{}},
+    {id:'g2',name:'用户增长目标',indicator:'新增用户数',type:'quant',weight:20,desc:'Q2新增注册用户5000人',measure:'线性评分',target:5000,challenge:7000,baseline:3000,rule:'线性插值计算',ruleFormula:'CLAMP((实际-保底)/(目标-保底)*100,0,120)',msLevels:[{level:'优秀',color:'var(--em)',score:'120分',condition:'新增 >= 7000'},{level:'良好',color:'var(--pr)',score:'100分',condition:'新增 >= 5000'},{level:'合格',color:'var(--ac)',score:'80分',condition:'新增 >= 3000'},{level:'不合格',color:'var(--ro)',score:'0分',condition:'新增 < 3000'}],aiFilled:true,linkedIndicatorId:'kpi5',i18n:{}},
+  ]},
+  {name:'管理目标',weight:20,icon:'users',colorVar:'var(--em)',accent:'em',desc:'团队管理与协作',goals:[
+    {id:'g3',name:'团队效能提升',indicator:'团队产出效率',type:'quant',weight:10,desc:'提升团队交付速度15%',measure:'梯度评分',target:110,challenge:130,baseline:100,rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',msLevels:[{level:'优秀',color:'var(--em)',score:'120分',condition:'效率 >= 130%'},{level:'良好',color:'var(--pr)',score:'100分',condition:'效率 >= 110%'},{level:'合格',color:'var(--ac)',score:'80分',condition:'效率 >= 100%'},{level:'不合格',color:'var(--ro)',score:'0分',condition:'效率 < 100%'}],aiFilled:true,linkedIndicatorId:null,i18n:{}},
+    {id:'g4',name:'人才培养',indicator:'下属成长指标',type:'qual',weight:10,desc:'培养2名骨干成员',measure:'定性评分',target:2,challenge:3,baseline:1,rule:'-',ruleFormula:'',msLevels:[{level:'优秀',color:'var(--em)',score:'120分',condition:'培养 >= 3人'},{level:'良好',color:'var(--pr)',score:'100分',condition:'培养 >= 2人'},{level:'合格',color:'var(--ac)',score:'80分',condition:'培养 >= 1人'},{level:'不合格',color:'var(--ro)',score:'0分',condition:'培养 < 1人'}],aiFilled:true,linkedIndicatorId:null,i18n:{}},
+  ]},
+  {name:'能力发展目标',weight:15,icon:'star',colorVar:'var(--ac)',accent:'ac',desc:'个人能力提升',goals:[
+    {id:'g5',name:'技术能力提升',indicator:'技术认证',type:'qual',weight:8,desc:'完成云原生架构认证',measure:'是否达成',target:1,challenge:2,baseline:1,rule:'-',ruleFormula:'',msLevels:[{level:'达成',color:'var(--em)',score:'100分',condition:'完成认证'},{level:'未达成',color:'var(--ro)',score:'0分',condition:'未完成'}],aiFilled:true,linkedIndicatorId:null,i18n:{}},
+    {id:'g6',name:'业务理解深化',indicator:'业务分析报告',type:'quant',weight:7,desc:'输出2份业务分析报告',measure:'梯度评分',target:2,challenge:3,baseline:1,rule:'加权汇总计算',ruleFormula:'SUM(子项得分*子项权重)/SUM(子项权重)',msLevels:[{level:'优秀',color:'var(--em)',score:'120分',condition:'报告 >= 3份'},{level:'良好',color:'var(--pr)',score:'100分',condition:'报告 >= 2份'},{level:'合格',color:'var(--ac)',score:'80分',condition:'报告 >= 1份'},{level:'不合格',color:'var(--ro)',score:'0分',condition:'报告 < 1份'}],aiFilled:true,linkedIndicatorId:null,i18n:{}},
+  ]},
+  {name:'价值观目标',weight:15,icon:'book',colorVar:'var(--vi)',accent:'vi',desc:'企业价值观践行',goals:[]},
+];
+const MEASURES=[{name:'梯度评分',desc:'根据完成度分梯度评分',preview:'达成率>=120%: 120分\n达成率>=100%: 100分\n达成率>=80%: 80分\n达成率<80%: 0分'},{name:'线性评分',desc:'根据实际值线性计算',preview:'得分 = (实际值 - 保底值) / (目标值 - 保底值) * 100'},{name:'定性评分',desc:'由评价人主观评定',preview:'优秀: 120分\n良好: 100分\n合格: 80分\n不合格: 0分'},{name:'是否达成',desc:'二值判断',preview:'达成: 100分\n未达成: 0分'}];
+const RULES=[{name:'标准梯度计算',desc:'IF-THEN梯度',formula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))'},{name:'线性插值计算',desc:'CLAMP线性',formula:'CLAMP((实际-保底)/(目标-保底)*100,0,120)'},{name:'加权汇总计算',desc:'SUM加权',formula:'SUM(子项得分*子项权重)/SUM(子项权重)'}];
+
+const HISTORY={
+  '2026年Q1':[
+    {name:'完成Q1产品迭代',indicator:'产品迭代完成率',module:'业绩目标',type:'quant',weight:30,target:100,challenge:120,baseline:80,measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'Q1产品迭代',msLevels:[{level:'优秀',color:'var(--em)',score:'120分',condition:'达成率 >= 120%'},{level:'良好',color:'var(--pr)',score:'100分',condition:'达成率 >= 100%'},{level:'合格',color:'var(--ac)',score:'80分',condition:'达成率 >= 80%'},{level:'不合格',color:'var(--ro)',score:'0分',condition:'达成率 < 80%'}]},
+    {name:'用户增长Q1目标',indicator:'新增用户数',module:'业绩目标',type:'quant',weight:20,target:4000,challenge:6000,baseline:2500,measure:'线性评分',rule:'线性插值计算',ruleFormula:'CLAMP((实际-保底)/(目标-保底)*100,0,120)',desc:'',msLevels:[]},
+    {name:'团队季度产出',indicator:'团队产出效率',module:'管理目标',type:'quant',weight:10,target:105,challenge:120,baseline:95,measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
+    {name:'新人培养',indicator:'下属成长指标',module:'管理目标',type:'qual',weight:10,target:1,challenge:2,baseline:1,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
+    {name:'云原生培训',indicator:'培训完成率',module:'能力发展目标',type:'qual',weight:8,target:1,challenge:1,baseline:1,measure:'是否达成',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
+  ],
+  '2025年Q4':[
+    {name:'Q4产品上线',indicator:'产品迭代完成率',module:'业绩目标',type:'quant',weight:35,target:100,challenge:115,baseline:85,measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
+    {name:'年终客户增长',indicator:'新增用户数',module:'业绩目标',type:'quant',weight:15,target:8000,challenge:10000,baseline:5000,measure:'线性评分',rule:'线性插值计算',ruleFormula:'CLAMP((实际-保底)/(目标-保底)*100,0,120)',desc:'',msLevels:[]},
+    {name:'年度人才盘点',indicator:'下属成长指标',module:'管理目标',type:'qual',weight:10,target:3,challenge:4,baseline:2,measure:'定性评分',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
+  ],
+  '2025年Q3':[
+    {name:'Q3产品交付',indicator:'产品迭代完成率',module:'业绩目标',type:'quant',weight:30,target:100,challenge:110,baseline:80,measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
+    {name:'团队效能',indicator:'团队产出效率',module:'管理目标',type:'quant',weight:15,target:100,challenge:115,baseline:90,measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
+  ],
+  '2025年度':[
+    {name:'年度营收目标',indicator:'营收达成率',module:'业绩目标',type:'quant',weight:40,target:100,challenge:120,baseline:80,measure:'梯度评分',rule:'标准梯度计算',ruleFormula:'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))',desc:'',msLevels:[]},
+    {name:'年度团队建设',indicator:'团队满意度',module:'管理目标',type:'quant',weight:10,target:90,challenge:95,baseline:80,measure:'线性评分',rule:'线性插值计算',ruleFormula:'CLAMP((实际-保底)/(目标-保底)*100,0,120)',desc:'',msLevels:[]},
+    {name:'专业认证',indicator:'技术认证',module:'能力发展目标',type:'qual',weight:10,target:2,challenge:3,baseline:1,measure:'是否达成',rule:'-',ruleFormula:'',desc:'',msLevels:[]},
+  ],
+};
+
+const MOCK_INDICATORS=[
+  {id:'kpi1',name:'Q1营收目标达成率',dept:'财务部',publicDown:true,publishStatus:'已发布',type:'定量',nature:'结果型',category:'财务',unit:'万',rule:'标准梯度计算',desc:'衡量Q1营收目标的完成情况'},
+  {id:'kpi2',name:'成本控制达成率',dept:'财务部',publicDown:true,publishStatus:'已发布',type:'定量',nature:'结果型',category:'财务',unit:'%',rule:'标准梯度计算',desc:'衡量成本控制目标的完成情况'},
+  {id:'kpi3',name:'客户满意度评分',dept:'客户成功部',publicDown:false,publishStatus:'已发布',type:'定量',nature:'过程型',category:'客户',unit:'分',rule:'标准梯度计算',desc:'衡量客户满意度指标'},
+  {id:'kpi4',name:'NPS净推荐值',dept:'客户成功部',publicDown:true,publishStatus:'已发布',type:'定量',nature:'结果型',category:'客户',unit:'%',rule:'线性插值计算',desc:'衡量客户推荐意愿'},
+  {id:'kpi5',name:'新增用户数',dept:'增长部',publicDown:true,publishStatus:'已发布',type:'定量',nature:'结果型',category:'增长',unit:'人',rule:'线性插值计算',desc:'衡量用户增长情况'},
+  {id:'kpi6',name:'产品迭代完成率',dept:'产品部',publicDown:true,publishStatus:'已发布',type:'定量',nature:'过程型',category:'运营',unit:'%',rule:'标准梯度计算',desc:'衡量产品迭代计划完成率'},
+  {id:'kpi7',name:'项目按时交付率',dept:'项目管理部',publicDown:false,publishStatus:'已发布',type:'定量',nature:'过程型',category:'运营',unit:'%',rule:'标准梯度计算',desc:'衡量项目按时交付情况'},
+  {id:'kpi8',name:'员工留存率',dept:'人力资源部',publicDown:true,publishStatus:'已发布',type:'定量',nature:'结果型',category:'HR',unit:'%',rule:'标准梯度计算',desc:'衡量核心员工留存情况'},
+  {id:'kpi9',name:'团队培训完成率',dept:'人力资源部',publicDown:false,publishStatus:'草稿',type:'定性',nature:'过程型',category:'HR',unit:'%',rule:'-',desc:'衡量团队培训计划完成率'},
+  {id:'kpi10',name:'创新项目孵化数',dept:'创新中心',publicDown:true,publishStatus:'已发布',type:'定量',nature:'结果型',category:'创新',unit:'个',rule:'标准梯度计算',desc:'衡量创新项目孵化成果'},
+];
+
+// ========== EVAL DATA (Tab 2) ==========
+const EVAL_EMPLOYEES=[
+  {id:'E001',name:'张明',dept:'产品部',title:'高级产品经理',score:87.5,grade:'符合预期+',status:'scored'},
+  {id:'E002',name:'李雪',dept:'产品部',title:'产品经理',score:78,grade:'符合预期',status:'scored'},
+  {id:'E003',name:'王浩然',dept:'产品部',title:'产品助理',score:0,grade:'-',status:'pending'},
+  {id:'E004',name:'周婷',dept:'产品部',title:'高级产品经理',score:92,grade:'远超预期',status:'scored'},
+  {id:'E005',name:'吴强',dept:'技术部',title:'前端工程师',score:65,grade:'符合预期-',status:'partial'},
+  {id:'E006',name:'刘洋',dept:'技术部',title:'后端工程师',score:0,grade:'-',status:'pending'},
+  {id:'E007',name:'陈静',dept:'市场部',title:'市场专员',score:81,grade:'符合预期+',status:'scored'},
+  {id:'E008',name:'赵伟',dept:'市场部',title:'市场经理',score:0,grade:'-',status:'pending'},
+];
+const EVAL_MODULES=[
+  {name:'业绩维度',weight:60,colorVar:'var(--pr)',accent:'',indicators:[
+    {name:'Q1营收目标达成率',type:'quant',weight:25,target:'1200万',unit:'万',completed:'',grade:'',comment:''},
+    {name:'新客户拓展数量',type:'quant',weight:20,target:'15家',unit:'家',completed:'',grade:'',comment:''},
+    {name:'客户满意度评分',type:'quant',weight:15,target:'>=90分',unit:'分',completed:'',grade:'',comment:''},
+  ]},
+  {name:'能力维度',weight:25,colorVar:'var(--em)',accent:'em',indicators:[
+    {name:'专业技能提升',type:'qual',weight:10,target:'完成2项认证',completed:'',grade:'',comment:''},
+    {name:'团队协作贡献',type:'qual',weight:8,target:'主导1次跨部门项目',completed:'',grade:'',comment:''},
+    {name:'知识分享与传承',type:'qual',weight:7,target:'完成3次内部分享',completed:'',grade:'',comment:''},
+  ]},
+  {name:'价值观维度',weight:15,colorVar:'var(--vi)',accent:'vi',indicators:[
+    {name:'主动担责',type:'qual',weight:5,target:'无推诿记录',completed:'',grade:'',comment:''},
+    {name:'创新提案',type:'qual',weight:5,target:'提交2条创新建议',completed:'',grade:'',comment:''},
+    {name:'合规与诚信',type:'qual',weight:5,target:'零违规',completed:'',grade:'',comment:''},
+  ]},
+  {name:'加减分事项',weight:0,colorVar:'var(--c4)',accent:'',indicators:[{name:'',type:'bonus',weight:0,target:'',completed:'',bonus:0,bonusType:'bonus',comment:''}]},
+];
+const GRADE_OPTIONS=['远超预期','符合预期+','符合预期','符合预期-','未达预期'];
+const gradeScores={'远超预期':100,'符合预期+':90,'符合预期':80,'符合预期-':70,'未达预期':60};
+
+// Per-employee scoring data
+const empScores={};
+EVAL_EMPLOYEES.forEach(e=>{
+  empScores[e.id]=JSON.parse(JSON.stringify(EVAL_MODULES));
+  if(e.status==='scored'||e.status==='partial'){
+    const factors={92:1.0,87.5:0.95,81:0.88,78:0.82,65:0.68};
+    const f=factors[e.score]||0.8;
+    empScores[e.id].forEach(m=>{m.indicators.forEach(ind=>{
+      if(ind.type==='bonus')return;
+      const r=Math.random();
+      ind.grade=r<f?GRADE_OPTIONS[Math.min(Math.floor((1-f)*5),4)]:GRADE_OPTIONS[2];
+      ind.completed=Math.round(parseFloat(ind.target)*f*10)/10+(ind.target.replace(/[0-9.>=]/g,'')||'');
+      ind.comment='表现良好，继续努力';
+      ind.aiFilled=true;
+    })});
+  }
+});
+
+// ========== RATIFICATION DATA (Tab 3) ==========
+const RAT_EMPLOYEES=[
+  {id:'EMP001',name:'张明',dept:'产品部',title:'高级产品经理',score:87.5,grade:'符合预期+',adjusted:'符合预期+',changed:false,status:'已提交',aiFilled:true},
+  {id:'EMP002',name:'李雪',dept:'产品部',title:'产品经理',score:78,grade:'符合预期',adjusted:'符合预期',changed:false,status:'已提交',aiFilled:true},
+  {id:'EMP003',name:'王浩然',dept:'产品部',title:'产品助理',score:62,grade:'符合预期-',adjusted:'低于预期',changed:true,reason:'本季度目标完成率偏低',status:'已提交',aiFilled:false},
+  {id:'EMP004',name:'周婷',dept:'产品部',title:'高级产品经理',score:92,grade:'远超预期',adjusted:'远超预期',changed:false,status:'已提交',aiFilled:true},
+  {id:'EMP005',name:'吴强',dept:'技术部',title:'前端工程师',score:65,grade:'符合预期-',adjusted:'符合预期-',changed:false,status:'未提交',aiFilled:true},
+  {id:'EMP006',name:'刘洋',dept:'技术部',title:'后端工程师',score:55,grade:'低于预期',adjusted:'低于预期',changed:false,status:'未提交',aiFilled:true},
+  {id:'EMP007',name:'陈静',dept:'市场部',title:'市场专员',score:81,grade:'符合预期+',adjusted:'符合预期+',changed:false,status:'已提交',aiFilled:true},
+  {id:'EMP008',name:'赵伟',dept:'市场部',title:'市场经理',score:73,grade:'符合预期',adjusted:'符合预期',changed:false,status:'待提交',aiFilled:true},
+  {id:'EMP009',name:'孙丽',dept:'市场部',title:'品牌专员',score:88,grade:'符合预期+',adjusted:'远超预期',changed:true,reason:'品牌项目超额完成',status:'已提交',aiFilled:false},
+  {id:'EMP010',name:'钱程',dept:'仓储部',title:'仓储主管',score:70,grade:'符合预期',adjusted:'符合预期',changed:false,status:'待提交',aiFilled:true},
+];
+const DISTRIBUTION=[
+  {grade:'远超预期',required:10,requiredN:5,color:'var(--ac)'},
+  {grade:'符合预期+',required:20,requiredN:10,color:'var(--em)'},
+  {grade:'符合预期',required:40,requiredN:20,color:'var(--pr)'},
+  {grade:'符合预期-',required:20,requiredN:10,color:'var(--vi)'},
+  {grade:'低于预期',required:10,requiredN:5,color:'var(--ro)'},
+];
+const GRADES=['远超预期','符合预期+','符合预期','符合预期-','低于预期'];
+
+// ========== AI MESSAGES ==========
+const AI_MSGS={
+  goal:[
+    {role:'bot',text:'你好！我是 AI 填写助手。我可以帮你快速完成 PBC 目标制定：自动匹配指标库、填充目标值三值、配置计算规则和等级标准。',time:'09:30',actions:['从 Q1 目标继承','基于指标库推荐','对话式创建新目标']},
+    {role:'user',text:'帮我基于 Q1 目标生成 Q2 PBC'},
+    {role:'bot',text:'已读取你 2026-Q1 的目标数据，为你继承并优化了 6 条目标：\n\n- 业绩目标 2 条（产品迭代、用户增长）\n- 管理目标 2 条（团队效能、人才培养）\n- 能力发展目标 2 条（技术认证、业务理解）\n\n每条目标已自动匹配指标、填充三值、配置规则。',time:'09:31',cards:[{t:'业绩目标: 2/2 条已填充',d:'产品迭代完成率(30%) + 新增用户数(20%)',tag:'已填充',tc:'em'},{t:'管理目标: 2/2 条已填充',d:'团队产出效率(10%) + 下属成长指标(10%)',tag:'已填充',tc:'em'},{t:'能力发展: 2/2 条已填充',d:'技术认证(8%) + 业务分析报告(7%)',tag:'已填充',tc:'em'}]},
+    {role:'user',text:'价值观目标模块也帮我填充'},
+    {role:'bot',text:'AI 建议基于你的岗位职级添加 2 条价值观目标：\n- 客户第一（8%）- 客户满意度评分\n- 团队协作（7%）- 360度协作评价\n\n合计 15%，与模块权重一致。',time:'09:32',actions:['确认添加','调整权重','跳过']},
+    {role:'user',text:'帮我检查一下目标合规性'},
+    {role:'bot',text:'合规检查完成：\n\n- 必填字段完整性 - 全部通过\n- 权重总和 - 100%（达标）\n- 指标关联性 - 已匹配指标库\n- 等级配比 - A级占比偏低，建议调整\n\n整体合规率 90%，可提交。',time:'09:33',cards:[{t:'合规检查',d:'10/11 项通过，1 项建议优化',tag:'基本达标',tc:'ac'}],actions:['查看偏离项','直接提交','调整等级配比']},
+  ],
+  eval:[
+    {role:'bot',text:'你好！我是 AI 评分助手。我可以帮你完成绩效评分：基于目标完成度自动计算得分、生成评语、校验评分一致性。',time:'09:30',actions:['AI 自动评分','查看完成度详情','批量生成评语']},
+    {role:'user',text:'帮我自动评分'},
+    {role:'bot',text:'已根据目标完成度 + 计算规则为 6 条目标自动评分：',time:'09:31',cards:[{t:'产品迭代完成率: 108%',d:'目标100 / 挑战120 - 得分 100（良好）',tag:'100分',tc:'em'},{t:'新增用户数: 6200人',d:'目标5000 / 挑战7000 - 得分 110（良好偏上）',tag:'110分',tc:'em'},{t:'团队产出效率: 115%',d:'目标110 / 挑战130 - 得分 100（良好）',tag:'100分',tc:'em'}],actions:['确认评分','调整偏差','查看加权总分']},
+    {role:'user',text:'查看加权总分'},
+    {role:'bot',text:'加权总分计算结果：\n\n- 业绩目标: 100x30% + 110x20% = 52 分\n- 管理目标: 100x10% + 100x10% = 20 分\n- 能力发展: 100x8% + 100x7% = 15 分\n\n当前加权总分: 87 / 100',time:'09:32',cards:[{t:'加权总分: 87分',d:'等级建议: B+（良好）',tag:'AI 建议',tc:'pr'}]},
+    {role:'user',text:'人才培养那条我打了 90 分，帮我重新算'},
+    {role:'bot',text:'已更新人才培养评分为 90 分，重新计算加权总分：\n\n- 业绩目标: 52 分（不变）\n- 管理目标: 100x10% + 90x10% = 19 分\n- 能力发展: 15 分（不变）\n\n加权总分: 86 / 100 - 等级建议: B+（良好）',time:'09:33',cards:[{t:'更新后总分: 86分',d:'等级仍为 B+，无变化',tag:'已更新',tc:'em'}]},
+    {role:'user',text:'帮我批量生成评语'},
+    {role:'bot',text:'已为 6 条目标生成评语，基于完成度 + 目标值对比。评语已自动填入各目标评语栏。',time:'09:34',actions:['查看评语','调整措辞','确认提交']},
+  ],
+  ratify:[
+    {role:'bot',text:'你好！我是 AI 审定助手。我可以帮你完成结果审定：自动分配等级、校验强制分布、调整等级配比。',time:'09:30',actions:['自动填充全部','校验强制分布','查看偏离人员']},
+    {role:'user',text:'帮我自动填充所有人的审定等级'},
+    {role:'bot',text:'已根据评分 + 强制分布规则为 10 人分配等级：',time:'09:31',cards:[{t:'A 级: 2 人 (20%)',d:'张明(87.5分)、周婷(92分)',tag:'达标',tc:'em'},{t:'B+ 级: 3 人 (30%)',d:'李雪(78分)、陈静(81分)、孙丽(88分)',tag:'达标',tc:'pr'},{t:'B 级: 3 人 (30%)',d:'王浩然(62分)、吴强(65分)、赵伟(73分)',tag:'达标',tc:'pr'}],actions:['确认应用','微调分布','查看偏离']},
+    {role:'user',text:'A 级占比太低了，帮我调整'},
+    {role:'bot',text:'当前 A 级 20%，目标 25%。建议将孙丽(88分)从 B+ 调整为 A 级。',cards:[{t:'调整方案',d:'孙丽: B+ -> A (88分，高于A级门槛85分)',tag:'建议',tc:'ac'}],actions:['采纳建议','保持不变']},
+    {role:'user',text:'采纳建议'},
+    {role:'bot',text:'已将孙丽等级调整为 A，当前分布更新：\n\n- A 级: 30%（目标 25%）\n- B+: 20%（目标 20%）\n- B: 30%（目标 30%）\n- B-: 10%（目标 15%）偏低\n- C: 10%（目标 10%）\n\n整体分布基本达标。',time:'09:33',cards:[{t:'分布校验结果',d:'4/5 等级达标，B- 级偏低 5%',tag:'基本达标',tc:'em'}]},
+    {role:'user',text:'全部确认提交'},
+    {role:'bot',text:'已提交 10 人的审定结果，强制分布校验通过。',time:'09:35',actions:['查看通知模板','导出审定表','返回活动总览']},
+  ],
+};
+
+// ========== STATE ==========
+let activeTab='goal';
+let goalExpandedMods=new Set([0,1,2,3]);
+let goalExpandedRows=new Set();
+let selectedMeasure=null;
+let selectedRule=null;
+let evalMode='single';
+let evalSelectedEmp='E001';
+let ratExpandedRows=new Set();
+let ratEmployees=JSON.parse(JSON.stringify(RAT_EMPLOYEES));
+let ratStatusFilter='all';
+let editGoalId=null, editModIdx=0;
+let histSelected=new Set();
+let addGoalModIdx=null;
+let kpiPickerGoalId=null, kpiPickerModIdx=null;
+let selectedKpiId=null;
+let kpiFilterCat='全部';
+
+// ========== INIT ==========
+GHR_NAV.init('perf','AI 表单辅助');
+renderPage();
+document.body.insertAdjacentHTML('beforeend', getAiChatHTML());
+renderAiChat();
+
+// ========== TAB BAR ==========
+function renderPage(){
+  const ct=document.getElementById('ct');
+  let html='<div class="demo-tabs">';
+  [['goal','目标制定'],['eval','绩效评分'],['ratify','结果审定']].forEach(([k,l])=>{
+    html+=`<button class="demo-tab${activeTab===k?' on':''}" onclick="switchTab('${k}')">${l}</button>`;
+  });
+  html+='</div><div id="tabContent"></div>';
+  ct.innerHTML=html;
+  renderTabContent();
+}
+
+function switchTab(tab){
+  activeTab=tab;
+  document.querySelectorAll('.demo-tab').forEach(t=>t.classList.toggle('on',t.dataset.tab===tab));
+  // Re-render tabs to update on state
+  document.querySelectorAll('.demo-tab').forEach(t=>{
+    const map={goal:'目标制定',eval:'绩效评分',ratify:'结果审定'};
+    t.classList.toggle('on',t.textContent.trim()===map[tab]);
+  });
+  document.getElementById('tabContent').innerHTML='';
+  renderTabContent();
+  updateAiChat();
+}
+
+function renderTabContent(){
+  const el=document.getElementById('tabContent');
+  if(activeTab==='goal') renderGoalTab(el);
+  else if(activeTab==='eval') renderEvalTab(el);
+  else renderRatifyTab(el);
+}
+
+// ========== TAB 1: GOAL SETTING ==========
+function renderGoalTab(container){
+  const totalWeight=GOAL_MODULES.reduce((s,m)=>s+m.goals.reduce((gs,g)=>gs+g.weight,0),0);
+  const totalGoals=GOAL_MODULES.reduce((s,m)=>s+m.goals.length,0);
+
+  // AI Suggest Banner
+  const aiSuggest=`<div class="ai-suggest"><div class="ai-suggest-ic">${AI_IC}</div><div style="flex:1"><div class="ai-suggest-t">AI 已基于历史目标 + 指标库预填 6 条目标</div><div class="ai-suggest-d">参考了你 Q1 目标、部门指标库和团队 OKR，自动匹配关联指标、填写目标值三值体系、配置计算规则和等级标准。</div><div class="ai-suggest-actions"><button class="btn btn-p btn-sm" onclick="confirmAiGoals()">一键确认全部</button><button class="btn btn-s btn-sm" onclick="toggleAiChat()">逐项审核</button><button class="btn btn-s btn-sm">撤销 AI 填写</button></div></div></div>`;
+
+  // Page Header (PBC-matching structure)
+  const headerBar=`<div class="pg-hd">
+    <div class="pg-hd-top">
+      <div class="pg-hd-title">目标制定</div>
+      <div class="pg-hd-actions">
+        <button class="btn btn-s" onclick="showToast('已驳回','warn')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+          驳回
+        </button>
+        <button class="btn btn-p" onclick="goalValidateAndSubmit()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          提交
+        </button>
+      </div>
+    </div>
+    <div class="pg-hd-info">
+      <span>考核周期: <strong>2026年Q2</strong></span>
+      <span>员工: <strong>张明(EMP20240315)</strong></span>
+      <span>部门: <strong>产品部</strong></span>
+      <span>职位: <strong>高级产品经理</strong></span>
+      <span>发起日期: <strong>2026年5月</strong></span>
+    </div>
+    <div class="pg-hd-summary">
+      <span class="sum-item">总权重: <span class="sum-val" id="sumWeight">${totalWeight}%</span></span>
+      <span class="sum-item">总目标数: <strong id="sumGoals" style="font-family:var(--fm);font-weight:600;color:var(--c8)">${totalGoals}</strong></span>
+    </div>
+    <div id="validSummary"></div>
+  </div>`;
+
+  // Module Sections (PBC-matching structure)
+  let modulesHtml='';
+  GOAL_MODULES.forEach((mod,mi)=>{
+    const isOpen=goalExpandedMods.has(mi);
+    const tw=mod.goals.reduce((s,g)=>s+g.weight,0);
+    modulesHtml+=`<div class="mod-section ${mod.accent}">`;
+    modulesHtml+=`<div class="mod-hd" onclick="goalToggleMod(${mi})">`;
+    modulesHtml+=`<div class="mod-hd-title">${mod.name}</div>`;
+    modulesHtml+=`<div class="mod-hd-stats">`;
+    modulesHtml+=`<span>合计权重: <strong>${tw}%</strong></span>`;
+    modulesHtml+=`<span>目标数: <strong>${mod.goals.length}</strong></span>`;
+    modulesHtml+=`</div>`;
+    modulesHtml+=`<div class="mod-hd-sep"></div>`;
+    modulesHtml+=`<button class="mod-hd-add" onclick="event.stopPropagation();openCopyModal(${mi})" title="复制历史目标">`;
+    modulesHtml+=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+    modulesHtml+=`复制历史</button>`;
+    modulesHtml+=`<button class="mod-hd-add" onclick="event.stopPropagation();goalAdd(${mi})">${I.plus} 新增</button>`;
+    modulesHtml+=`<div class="mod-hd-chevron ${isOpen?'open':''}">${I.chevron}</div>`;
+    modulesHtml+=`</div>`;
+    modulesHtml+=`<div class="mod-body ${isOpen?'open':''}">`;
+
+    if(mod.goals.length===0){
+      modulesHtml+=`<div style="padding:20px;text-align:center;color:var(--c4);font:400 13px/1.3 var(--f)">暂无目标，点击"新增"添加</div>`;
+    } else {
+      mod.goals.forEach(g=>{
+        const isRowExpanded=goalExpandedRows.has(g.id);
+        const typeLabel=g.type==='quant'?'定量':'定性';
+        const typeClass=g.type==='quant'?'quant':'qual';
+        const linked=g.linkedIndicatorId?MOCK_INDICATORS.find(k=>k.id===g.linkedIndicatorId):null;
+        modulesHtml+=`<div class="goal-row">`;
+        modulesHtml+=`<div class="goal-summary" onclick="goalToggleRow('${g.id}')">`;
+        modulesHtml+=`<span class="goal-drag">${I.drag}</span>`;
+        modulesHtml+=`<span class="goal-name">${g.name}${g.aiFilled?AI_TAG:''}${linked?'<span style="font:400 11px/1 var(--f);color:var(--pr);margin-left:6px">'+linked.name+'</span>':''}</span>`;
+        modulesHtml+=`<div class="goal-meta">`;
+        modulesHtml+=`<span class="goal-type ${typeClass}">${typeLabel}</span>`;
+        modulesHtml+=`<span class="goal-weight">权重: ${g.weight}%</span>`;
+        modulesHtml+=`<div class="goal-actions">`;
+        modulesHtml+=`<button class="goal-act edit" title="编辑" onclick="event.stopPropagation();openEdit('${g.id}',${mi})">${I.edit}</button>`;
+        modulesHtml+=`<button class="goal-act del" title="删除" onclick="event.stopPropagation();goalDelete('${g.id}',${mi})">${I.trash}</button>`;
+        modulesHtml+=`</div>`;
+        modulesHtml+=`</div>`;
+        modulesHtml+=`</div>`;
+
+        // Goal Detail (PBC-matching inline detail)
+        modulesHtml+=`<div class="goal-detail ${isRowExpanded?'open':''}">`;
+        modulesHtml+=`<div class="goal-detail-grid">`;
+        modulesHtml+=`<div class="gd-item"><span class="gd-label">名称</span><span class="gd-value"><strong>${g.name}</strong>${g.aiFilled?AI_TAG:''}</span></div>`;
+        modulesHtml+=`<div class="gd-item"><span class="gd-label">关联指标</span><span class="gd-value">${g.indicator||'-'}${g.aiFilled?AI_TAG:''}</span></div>`;
+        modulesHtml+=`<div class="gd-item"><span class="gd-label">权重</span><span class="gd-value mono">${g.weight}%${g.aiFilled?AI_TAG:''}</span></div>`;
+        modulesHtml+=`<div class="gd-item"><span class="gd-label">衡量方式</span><span class="gd-value">${g.measure||'-'}${g.aiFilled?AI_TAG:''}</span></div>`;
+        modulesHtml+=`<div class="gd-item" style="grid-column:1/-1"><span class="gd-label">描述</span><span class="gd-value">${g.desc||'-'}${g.aiFilled?AI_TAG:''}</span></div>`;
+        modulesHtml+=`</div>`;
+
+        if(g.type==='quant'){
+          modulesHtml+=`<div class="goal-detail-grid" style="margin-top:8px">`;
+          modulesHtml+=`<div class="gd-item"><span class="gd-label">目标值</span><span class="gd-value mono"><strong>${g.target}</strong>${g.aiFilled?AI_TAG:''}</span></div>`;
+          modulesHtml+=`<div class="gd-item"><span class="gd-label">挑战值</span><span class="gd-value mono">${g.challenge}${g.aiFilled?AI_TAG:''}</span></div>`;
+          modulesHtml+=`<div class="gd-item"><span class="gd-label">保底值</span><span class="gd-value mono">${g.baseline}${g.aiFilled?AI_TAG:''}</span></div>`;
+          modulesHtml+=`<div class="gd-item"><span class="gd-label">计算规则</span><span class="gd-value">${g.rule||'-'}${g.aiFilled?AI_TAG:''}</span></div>`;
+          modulesHtml+=`</div>`;
+        }
+
+        if(g.msLevels&&g.msLevels.length){
+          modulesHtml+=`<div style="margin-top:10px"><span class="gd-label">等级标准</span>`;
+          modulesHtml+=`<table class="ms-tbl" style="margin-top:4px"><thead><tr><th>等级</th><th>分值</th><th>条件</th></tr></thead><tbody>`;
+          modulesHtml+=g.msLevels.map(l=>`<tr><td><span class="lv"><span class="lv-dot" style="background:${l.color}"></span>${l.level}</span></td><td style="font-family:var(--fm);font-weight:600">${l.score}</td><td>${l.condition}</td></tr>`).join('');
+          modulesHtml+=`</tbody></table></div>`;
+        }
+
+        modulesHtml+=`</div>`; // .goal-detail
+        modulesHtml+=`</div>`; // .goal-row
+      });
+    }
+
+    modulesHtml+=`</div></div>`; // .mod-body + .mod-section
+  });
+
+  // Action Bar (PBC-matching)
+  const actionBar=`<div class="action-bar">
+    <div class="action-bar-l">
+      <span class="weight-total">总权重: <span class="v ${totalWeight===100?'ok':'warn'}" id="barWeight">${totalWeight}%</span></span>
+      <span style="font:400 13px/1 var(--f);color:var(--c5)">总目标数: <strong id="barGoals" style="font-family:var(--fm);font-weight:600">${totalGoals}</strong></span>
+    </div>
+    <div class="action-bar-r">
+      <button class="btn btn-s" onclick="showToast('草稿已保存','success')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        保存草稿
+      </button>
+      <button class="btn btn-p" onclick="goalValidateAndSubmit()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        提交
+      </button>
+    </div>
+  </div>`;
+
+  container.innerHTML=`<div class="pg" style="margin-bottom:16px">${headerBar}${aiSuggest}</div><div style="padding:0 24px 24px">${modulesHtml}</div>`;
+  goalUpdateTotals();
+}
+
+function goalToggleMod(mi){
+  goalExpandedMods.has(mi)?goalExpandedMods.delete(mi):goalExpandedMods.add(mi);
+  renderTabContent();
+}
+
+function goalToggleRow(id){
+  goalExpandedRows.has(id)?goalExpandedRows.delete(id):goalExpandedRows.add(id);
+  renderTabContent();
+}
+
+function goalAdd(mi){
+  addGoalModIdx=mi;
+  const popup=document.getElementById('addGoalPopup');
+  const btn=document.querySelectorAll('.mod-hd-add')[mi*2+1]||document.querySelectorAll('.mod-hd-add')[mi*2];
+  if(btn){
+    const r=btn.getBoundingClientRect();
+    popup.style.top=(r.bottom+4)+'px';
+    popup.style.left=(r.left)+'px';
+  }
+  popup.classList.add('show');
+}
+
+function pickGoalType(type){
+  const mi=addGoalModIdx;
+  const popup=document.getElementById('addGoalPopup');
+  popup.classList.remove('show');
+  if(mi===null)return;
+  const id='g'+Date.now();
+  GOAL_MODULES[mi].goals.push({id,name:'新目标',indicator:'',type,weight:10,desc:'',measure:type==='quant'?'梯度评分':'',measureText:'',target:0,challenge:0,baseline:0,rule:'-',ruleFormula:'',msLevels:[],aiFilled:false,linkedIndicatorId:null,i18n:{}});
+  goalExpandedMods.add(mi);
+  goalExpandedRows.add(id);
+  renderTabContent();
+  if(type==='quant'){
+    openIndicatorPicker(id,mi);
+  }else{
+    openEdit(id,mi);
+  }
+}
+
+function closeGoalTypePopup(){document.getElementById('addGoalPopup').classList.remove('show')}
+
+function goalDelete(id,mi){
+  if(!confirm('确定删除该目标？'))return;
+  GOAL_MODULES[mi].goals=GOAL_MODULES[mi].goals.filter(g=>g.id!==id);
+  goalExpandedRows.delete(id);
+  renderTabContent();
+}
+
+function goalUpdateTotals(){
+  const tg=GOAL_MODULES.reduce((s,m)=>s+m.goals.length,0);
+  const tw=GOAL_MODULES.reduce((s,m)=>s+m.goals.reduce((gs,g)=>gs+g.weight,0),0);
+  const sumWeightEl=document.getElementById('sumWeight');
+  const sumGoalsEl=document.getElementById('sumGoals');
+  if(sumWeightEl){sumWeightEl.textContent=tw+'%';sumWeightEl.className='sum-val'+(tw===100?'':' warn');}
+  if(sumGoalsEl)sumGoalsEl.textContent=tg;
+  const barWeightEl=document.getElementById('barWeight');
+  const barGoalsEl=document.getElementById('barGoals');
+  if(barWeightEl){barWeightEl.textContent=tw+'%';barWeightEl.className='v '+(tw===100?'ok':'warn');}
+  if(barGoalsEl)barGoalsEl.textContent=tg;
+  const el=document.getElementById('validSummary');
+  if(el){
+    if(tw!==100){
+      el.innerHTML=`<div class="sum-err"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>总权重 ${tw}%，需等于 100%</div>`;
+    }else{
+      el.innerHTML=tg>0?`<div style="display:flex;align-items:center;gap:6px;font:400 12px/1 var(--f);color:var(--em700);margin-top:8px;padding:8px 12px;background:var(--em50);border-radius:var(--r1);border:1px solid var(--em100)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg>权重校验通过</div>`:'';
+    }
+  }
+}
+
+function goalValidateWeights(){
+  const tw=GOAL_MODULES.reduce((s,m)=>s+m.goals.reduce((gs,g)=>gs+g.weight,0),0);
+  if(tw!==100)return[`总权重 ${tw}%，需等于 100%`];
+  return [];
+}
+
+function goalValidateAndSubmit(){
+  const totalGoals=GOAL_MODULES.reduce((s,m)=>s+m.goals.length,0);
+  if(totalGoals<2){showToast('至少需要填写2个目标');return}
+  const errs=goalValidateWeights();
+  if(errs.length){showToast(errs[0]);return}
+  showToast('提交成功','success');
+}
+
+function confirmAiGoals(){
+  GOAL_MODULES.forEach(m=>m.goals.forEach(g=>{g.aiFilled=true;}));
+  renderTabContent();
+  showToast('AI 填写已确认','success');
+}
+
+// ═══ COPY MODAL ═══
+let copyTargetModIdx=0;
+function openCopyModal(mi){
+  copyTargetModIdx=mi;
+  histSelected.clear();
+  document.getElementById('histPeriod').value='2026年Q1';
+  document.getElementById('copyModLabel').textContent='将复制到「'+GOAL_MODULES[mi].name+'」模块';
+  renderHistTable();
+  openModal('copyModal');
+}
+
+function renderHistTable(){
+  const period=document.getElementById('histPeriod').value;
+  const goals=HISTORY[period]||[];
+  let h=`<thead><tr><th><span class="chk ${histSelected.size===goals.length&&goals.length?'on':''}" onclick="toggleAllHist()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span></th><th>目标名称</th><th>模块</th><th>类型</th><th>权重</th><th>目标值</th></tr></thead><tbody>`;
+  goals.forEach((g,i)=>{
+    h+=`<tr onclick="toggleHistItem(${i})"><td><span class="chk ${histSelected.has(i)?'on':''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span></td><td style="font-weight:500;color:var(--c8)">${g.name}</td><td>${g.module}</td><td>${g.type==='quant'?'定量':'定性'}</td><td style="font-family:var(--fm)">${g.weight}%</td><td style="font-family:var(--fm)">${g.target}</td></tr>`;
+  });
+  h+='</tbody>';
+  document.getElementById('histTable').innerHTML=h;
+  document.getElementById('histSelCount').textContent='已选 '+histSelected.size+' 项';
+}
+
+function toggleHistItem(i){histSelected.has(i)?histSelected.delete(i):histSelected.add(i);renderHistTable()}
+function toggleAllHist(){
+  const period=document.getElementById('histPeriod').value;
+  const goals=HISTORY[period]||[];
+  if(histSelected.size===goals.length)histSelected.clear();
+  else{histSelected.clear();goals.forEach((_,i)=>histSelected.add(i))}
+  renderHistTable();
+}
+
+function confirmCopy(){
+  if(!histSelected.size){showToast('请至少选择一个目标');return}
+  const period=document.getElementById('histPeriod').value;
+  const goals=HISTORY[period]||[];
+  const mod=GOAL_MODULES[copyTargetModIdx];
+  let count=0;
+  histSelected.forEach(i=>{
+    const src=goals[i];
+    const id='g'+Date.now()+'_'+count;
+    mod.goals.push({...src,id,msLevels:src.msLevels||[],linkedIndicatorId:null,i18n:{},aiFilled:false});
+    count++;
+  });
+  goalExpandedMods.add(copyTargetModIdx);
+  closeModal('copyModal');
+  renderTabContent();
+}
+
+// ═══ MODALS ═══
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+
+// ═══ INDICATOR PICKER ═══
+function openIndicatorPicker(goalId,mi){
+  kpiPickerGoalId=goalId;kpiPickerModIdx=mi;
+  selectedKpiId=null;kpiFilterCat='全部';
+  renderKpiList();
+  openModal('indicatorModal');
+}
+function renderKpiList(){
+  const q=(document.getElementById('kpiSearch')?.value||'').toLowerCase();
+  const cats=['全部',...new Set(MOCK_INDICATORS.map(k=>k.category))];
+  document.getElementById('kpiCatBar').innerHTML=cats.map(c=>`<span class="kpi-cat ${kpiFilterCat===c?'on':''}" onclick="kpiFilterCat='${c}';renderKpiList()">${c}</span>`).join('');
+  const filtered=MOCK_INDICATORS.filter(k=>{
+    if(kpiFilterCat!=='全部'&&k.category!==kpiFilterCat)return false;
+    if(q&&!k.name.toLowerCase().includes(q))return false;
+    return true;
+  });
+  document.getElementById('kpiList').innerHTML=filtered.map(k=>`<div class="kpi-card ${selectedKpiId===k.id?'selected':''}" onclick="selectedKpiId='${k.id}';renderKpiList()">
+    <div class="kpi-card-hd"><span class="kpi-card-name">${k.name}</span><span class="kpi-card-cat">${k.category}</span></div>
+    <div class="kpi-card-meta">
+      <span>${k.dept}</span><span>${k.type}</span><span>${k.nature}</span><span>单位: ${k.unit}</span><span>${k.rule}</span>
+    </div>
+    <div class="kpi-card-desc">${k.desc}</div>
+  </div>`).join('');
+  document.getElementById('kpiSelLabel').textContent=selectedKpiId?'已选择 1 项':'未选择';
+}
+function filterKPI(){renderKpiList()}
+function confirmIndicator(){
+  if(!selectedKpiId||!kpiPickerGoalId){showToast('请选择一个指标');return}
+  const d=goalFindGoal(kpiPickerGoalId);if(!d)return;
+  const g=d.goal;
+  const kpi=MOCK_INDICATORS.find(k=>k.id===selectedKpiId);
+  g.name=kpi.name;g.indicator=kpi.name;g.type=kpi.type==='定量'?'quant':'qual';
+  g.rule=kpi.rule;g.desc=kpi.desc;
+  g.linkedIndicatorId=kpi.id;
+  closeModal('indicatorModal');
+  renderTabContent();
+  openEdit(kpiPickerGoalId,kpiPickerModIdx);
+}
+
+function goalFindGoal(id){
+  for(const m of GOAL_MODULES){const g=m.goals.find(g=>g.id===id);if(g)return{mod:m,goal:g}}
+  return null;
+}
+
+// Close popup on outside click
+document.addEventListener('click',e=>{const p=document.getElementById('addGoalPopup');if(p&&!p.contains(e.target)&&!e.target.closest('.mod-hd-add'))p.classList.remove('show')});
+document.querySelectorAll('.modal-overlay').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open')})});
+
+// ========== EDIT SIDEBAR ==========
+function openEdit(id, mi){
+  editGoalId=id; editModIdx=mi;
+  const g = GOAL_MODULES[mi].goals.find(g => g.id === id);
+  if(!g) return;
+  const linked=g.linkedIndicatorId?MOCK_INDICATORS.find(k=>k.id===g.linkedIndicatorId):null;
+
+  document.getElementById('esbTitle').textContent = '编辑目标 — ' + g.name;
+
+  let html = '';
+  if(g.type === 'quant'){
+    html += `<div class="ef-sec">
+      <div class="ef-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>目标信息</div>
+      <div class="ef-grid">
+        <div class="ef-fi"><span class="ef-fi-l">目标名称<span class="req">*</span></span><input class="inp" id="ef_name" value="${g.name}" ${linked?'readonly':''}/></div>
+        <div class="ef-fi"><span class="ef-fi-l">关联指标<span class="req">*</span></span><div style="display:flex;gap:6px;align-items:center">${linked?`<span style="flex:1;font:500 12px/1 var(--f);color:var(--pr);padding:6px 8px;background:var(--pr50);border:1px solid var(--pr200);border-radius:var(--r1)">${linked.name}</span><button class="btn btn-s btn-sm" onclick="openIndicatorPicker('${g.id}',${mi})">更换</button>`:`<button class="btn btn-o btn-sm" onclick="openIndicatorPicker('${g.id}',${mi})">${I.link} 选择指标</button>`}</div></div>
+        <div class="ef-fi"><span class="ef-fi-l">权重(%)<span class="req">*</span></span><input class="inp num" id="ef_weight" type="number" value="${g.weight}" min="0" max="100"/></div>
+      </div>
+    </div>`;
+    html += `<div class="ef-sec">
+      <div class="ef-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>目标值配置</div>
+      <div class="ef-grid f3">
+        <div class="ef-fi"><span class="ef-fi-l">目标值<span class="req">*</span></span><input class="inp num" id="ef_target" type="number" value="${g.target}" ${linked?'readonly':''}/></div>
+        <div class="ef-fi"><span class="ef-fi-l">挑战值</span><input class="inp num" id="ef_challenge" type="number" value="${g.challenge}" ${linked?'readonly':''}/></div>
+        <div class="ef-fi"><span class="ef-fi-l">保底值</span><input class="inp num" id="ef_baseline" type="number" value="${g.baseline}" ${linked?'readonly':''}/></div>
+      </div>
+    </div>`;
+    html += `<div class="ef-sec">
+      <div class="ef-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>衡量标准与计算规则${linked?'（由指标自动带入）':''}</div>
+      <div class="ef-grid" style="margin-bottom:8px">
+        <div class="ef-fi"><span class="ef-fi-l">衡量方式</span><input class="inp" value="${g.measure}" readonly/></div>
+        <div class="ef-fi"><span class="ef-fi-l">计算规则</span><input class="inp" value="${g.rule||'-'}" readonly/></div>
+      </div>
+      ${g.ruleFormula?`<div class="rule-box"><div class="rule-box-label">计算公式</div><code>${g.ruleFormula}</code></div>`:''}
+      ${g.msLevels&&g.msLevels.length?`<table class="ms-tbl" style="margin-top:8px"><thead><tr><th>等级</th><th>分值</th><th>条件</th></tr></thead><tbody>${g.msLevels.map(l=>`<tr><td><span class="lv"><span class="lv-dot" style="background:${l.color}"></span>${l.level}</span></td><td style="font-family:var(--fm);font-weight:600">${l.score}</td><td>${l.condition}</td></tr>`).join('')}</tbody></table>`:''}
+    </div>`;
+  } else {
+    html += `<div class="ef-sec">
+      <div class="ef-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>目标信息</div>
+      <div class="ef-grid">
+        <div class="ef-fi full"><span class="ef-fi-l">目标名称<span class="req">*</span></span><input class="inp" id="ef_name" value="${g.name}"/></div>
+        <div class="ef-fi"><span class="ef-fi-l">权重(%)<span class="req">*</span></span><input class="inp num" id="ef_weight" type="number" value="${g.weight}" min="0" max="100"/></div>
+      </div>
+    </div>`;
+    html += `<div class="ef-sec">
+      <div class="ef-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>衡量标准</div>
+      <div class="ef-fi full"><span class="ef-fi-l">衡量标准说明</span><textarea class="inp" id="ef_measure" rows="3">${g.measureText||g.measure||''}</textarea></div>
+    </div>`;
+  }
+
+  document.getElementById('esbBody').innerHTML = html;
+  document.body.classList.add('edit-open');
+}
+
+function closeEdit(){
+  document.body.classList.remove('edit-open');
+  editGoalId = null;
+}
+
+function saveEdit(){
+  if(!editGoalId) return;
+  const g = GOAL_MODULES[editModIdx].goals.find(g => g.id === editGoalId);
+  if(!g) return;
+
+  const nameEl = document.getElementById('ef_name');
+  const weightEl = document.getElementById('ef_weight');
+
+  // Clear previous error borders
+  document.querySelectorAll('#esbBody .inp-err').forEach(el=>el.classList.remove('inp-err'));
+
+  // Validate required fields
+  let firstErr = null;
+  if(!nameEl || !nameEl.value.trim()) { if(nameEl) nameEl.classList.add('inp-err'); if(!firstErr) firstErr = '请填写目标名称'; }
+  if(!weightEl || !weightEl.value || parseInt(weightEl.value) <= 0) { if(weightEl) weightEl.classList.add('inp-err'); if(!firstErr) firstErr = '请填写权重'; }
+  if(g.type==='quant'){
+    if(!g.linkedIndicatorId){if(!firstErr)firstErr='请选择关联指标';}
+    const targetEl=document.getElementById('ef_target');
+    if(!targetEl||!targetEl.value){if(targetEl)targetEl.classList.add('inp-err');if(!firstErr)firstErr='请填写目标值';}
+  }
+  if(firstErr) { showToast(firstErr); return; }
+
+  if(nameEl && !nameEl.readOnly) g.name = nameEl.value;
+  if(weightEl) g.weight = parseInt(weightEl.value) || 0;
+
+  if(g.type === 'quant'){
+    const targetEl = document.getElementById('ef_target');
+    const challengeEl = document.getElementById('ef_challenge');
+    const baselineEl = document.getElementById('ef_baseline');
+    if(targetEl && !targetEl.readOnly) g.target = parseFloat(targetEl.value) || 0;
+    if(challengeEl && !challengeEl.readOnly) g.challenge = parseFloat(challengeEl.value) || 0;
+    if(baselineEl && !baselineEl.readOnly) g.baseline = parseFloat(baselineEl.value) || 0;
+  } else {
+    const measureEl = document.getElementById('ef_measure');
+    if(measureEl) g.measureText = measureEl.value;
+  }
+
+  closeEdit();
+  renderTabContent();
+}
+
+// ========== TAB 2: EVAL SCORING ==========
+function renderEvalTab(container){
+  const aiSuggest=`<div class="ai-suggest"><div class="ai-suggest-ic">${AI_IC}</div><div style="flex:1"><div class="ai-suggest-t">AI 已根据目标完成度自动计算得分</div><div class="ai-suggest-d">基于目标三值体系 + 计算规则，自动匹配完成度并计算分值。AI 建议等级: B+（良好），加权总分 87 分。</div><div class="ai-suggest-actions"><button class="btn btn-p btn-sm" onclick="confirmAiScore()">确认 AI 评分</button><button class="btn btn-s btn-sm" onclick="toggleAiChat()">逐项审核</button><button class="btn btn-s btn-sm">撤销 AI 评分</button></div></div></div>`;
+
+  let html=`<div class="pg fi">`;
+  html+=`<div class="pg-hd">
+    <div class="pg-hd-top">
+      <div class="pg-hd-title">绩效评分</div>
+      <div class="pg-hd-actions">
+        <div style="display:flex;align-items:center;background:var(--c1);border-radius:var(--r1);padding:2px"><button class="btn btn-sm${evalMode==='single'?' btn-p':' btn-s'}" style="border:none;border-radius:4px" onclick="evalSwitchMode('single')">单人评分</button><button class="btn btn-sm${evalMode==='batch'?' btn-p':' btn-s'}" style="border:none;border-radius:4px" onclick="evalSwitchMode('batch')">批量评分</button></div>
+        <button class="btn btn-s" onclick="showToast('批量导入功能开发中')">${I.download} 批量导入</button>
+        <button class="btn btn-s" onclick="showToast('模板已导出','success')">${I.download} 导出</button>
+        <button class="btn btn-s" onclick="showToast('已驳回','warn')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+          驳回
+        </button>
+        <button class="btn btn-s" onclick="showToast('已转交','success')">${I.forward} 转交</button>
+        <button class="btn btn-p" onclick="evalSubmitSingle()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          提交
+        </button>
+      </div>
+    </div>
+    <div class="pg-hd-info">
+      <span>绩效周期: <strong>2026年Q2</strong></span>
+      <span>发起日期: <strong>2026年5月</strong></span>
+      <span>处理人: <strong>张明</strong></span>
+      <span>部门: <strong>产品部</strong></span>
+      <span>职位: <strong>高级产品经理</strong></span>
+    </div>
+  </div>`;
+  html+=aiSuggest;
+
+  if(evalMode==='single'){
+    html+=renderEvalSingle(evalSelectedEmp);
+  } else {
+    html+=renderEvalBatch();
+  }
+  html+='</div>';
+  container.innerHTML=html;
+  if(evalMode==='batch') renderEvalEmpList();
+}
+
+function renderEvalSingle(empId){
+  const emp=EVAL_EMPLOYEES.find(e=>e.id===empId);
+  if(!emp)return '';
+  const scores=empScores[empId];
+
+  // Employee Info Card
+  let html=`<div class="info-grid"><div class="info-item"><span class="info-label">被考核人</span><span class="info-value">${emp.name}</span></div><div class="info-item"><span class="info-label">部门</span><span class="info-value">${emp.dept}</span></div><div class="info-item"><span class="info-label">职位</span><span class="info-value">${emp.title}</span></div><div class="info-item"><span class="info-label">考核周期</span><span class="info-value">2026年度</span></div></div>`;
+
+  // Module Sections with scoring tables
+  scores.forEach((mod,mi)=>{
+    const accentMap={'业绩维度':'','能力维度':'em','价值观维度':'vi','加减分事项':''};
+    const accent=accentMap[mod.name]||'';
+    html+=`<div style="padding:0 24px"><div class="mod-section ${accent}" style="margin-bottom:16px">`;
+    html+=`<div class="mod-hd" style="cursor:default"><span class="mod-hd-title">${mod.name}</span><span class="mod-hd-weight">${mod.weight}%</span></div>`;
+    html+=`<div class="mod-body open" style="max-height:2000px"><div style="overflow-x:auto"><table class="ind-table"><thead><tr><th style="width:200px">指标名称</th><th style="width:70px">权重</th><th style="width:100px">目标值</th><th style="width:130px">完成值/评价</th><th style="min-width:180px">评语</th></tr></thead><tbody>`;
+
+    mod.indicators.forEach((ind,i)=>{
+      if(ind.type==='bonus'){
+        html+=`<tr><td><input class="edit-cell" value="${ind.name}" placeholder="加减分原因" onchange="evalUpdateScore('${empId}','${mod.name}',${i},'name',this.value)"></td><td colspan="2"><select class="edit-cell" onchange="evalUpdateScore('${empId}','${mod.name}',${i},'bonusType',this.value)"><option value="bonus" ${ind.bonusType==='bonus'?'selected':''}>加分</option><option value="penalty" ${ind.bonusType==='penalty'?'selected':''}>减分</option></select></td><td><input class="edit-cell" type="number" step="0.5" value="${ind.bonus}" onchange="evalUpdateScore('${empId}','${mod.name}',${i},'bonus',this.value)"></td><td></td></tr>`;
+      } else {
+        let cc;
+        if(ind.type==='quant'){
+          cc=`<td><div class="ai-cell-wrap"><input class="edit-cell" type="number" step="any" value="${ind.completed}" onchange="evalUpdateScore('${empId}','${mod.name}',${i},'completed',this.value)" style="flex:1">${ind.aiFilled?AI_TAG:''}<span style="font:400 12px/1 var(--f);color:var(--c5)">${ind.unit||''}</span></div></td>`;
+        } else {
+          cc=`<td><div class="ai-cell-wrap"><select class="edit-cell" onchange="evalUpdateScore('${empId}','${mod.name}',${i},'grade',this.value)"><option value="">请选择</option>${GRADE_OPTIONS.map(g=>`<option value="${g}" ${ind.grade===g?'selected':''}>${g}</option>`).join('')}</select>${ind.aiFilled?AI_TAG:''}</div></td>`;
+        }
+        html+=`<tr><td><span class="ind-name">${ind.name}</span></td><td><span class="ind-weight">${ind.weight}%</span></td><td><span class="ind-target">${ind.target}</span></td>${cc}<td><div class="ai-cell-wrap"><textarea class="edit-cell" rows="1" placeholder="评语" onchange="evalUpdateScore('${empId}','${mod.name}',${i},'comment',this.value)">${ind.comment}</textarea>${ind.aiFilled?AI_TAG:''}</div></td></tr>`;
+      }
+    });
+
+    html+=`</tbody></table></div></div></div></div>`;
+  });
+
+  // Weighted Total Score
+  html+=`<div style="padding:0 24px 24px"><div class="bottom-section" style="border-radius:var(--r3)"><div style="display:flex;align-items:baseline;gap:8px;padding:12px 16px;background:var(--sf);border-radius:var(--r2);box-shadow:var(--shadow-card)"><span style="font:500 13px/1 var(--f);color:var(--c6)">加权总分</span><span id="evalTotalScore" style="font-family:var(--fm);font-size:20px;font-weight:700;color:var(--pr)">${emp.score>0?emp.score.toFixed(1):'0.0'}</span></div></div></div>`;
+
+  return html;
+}
+
+function renderEvalBatch(){
+  return `<div style="padding:0 24px 24px"><div style="display:flex;gap:16px">`+
+    `<div style="width:280px;flex-shrink:0;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);overflow:hidden;display:flex;flex-direction:column;max-height:600px">`+
+    `<div style="padding:12px;border-bottom:1px solid var(--dv)"><input class="inp" placeholder="搜索员工..." oninput="evalSearchEmp(this.value)" style="font-size:12px"></div>`+
+    `<div class="emp-list" id="evalEmpList" style="flex:1;overflow-y:auto"></div></div>`+
+    `<div style="flex:1" id="evalBatchRight"><div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:400px;color:var(--c4)"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom:12px"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div style="font:500 14px/1.3 var(--f)">请从左侧选择员工</div></div></div></div></div>`;
+}
+
+function renderEvalEmpList(){
+  const list=document.getElementById('evalEmpList');
+  if(!list)return;
+  const colors=['#4461d2','#7c5cfc','#e8930c','#3da453','#d94059','#6366F1','#EC4899','#14B8A6'];
+  const filtered=EVAL_EMPLOYEES;
+  list.innerHTML=filtered.map((e,i)=>`<div style="padding:10px 12px;border-bottom:1px solid var(--dv);cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .12s;${e.id===evalSelectedEmp?'background:var(--pr50);border-left:3px solid var(--pr);padding-left:9px':''}" onclick="evalSelectEmp('${e.id}')"><div style="width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 11px/1 var(--f);color:#FFF;background:${colors[i%8]};flex-shrink:0">${e.name[0]}</div><div style="flex:1;min-width:0"><div style="font:500 13px/1.2 var(--f);color:var(--c9)">${e.name}</div><div style="font:400 11px/1 var(--f);color:var(--c4);margin-top:2px">${e.dept}</div></div><div style="text-align:right;flex-shrink:0"><div style="font-family:var(--fm);font-weight:600;font-size:13px;color:var(--c9)">${e.score>0?e.score:'-'}</div><div class="emp-grade ${getGradeClass(e.grade)}" style="font:500 10px/1 var(--f);margin-top:2px;padding:1px 5px;border-radius:3px;display:inline-block">${e.grade}</div></div><div style="width:8px;height:8px;border-radius:50%;flex-shrink:0;background:${e.status==='scored'?'var(--em)':e.status==='pending'?'var(--c3)':'var(--ac)'}"></div></div>`).join('');
+
+  // Render batch form for selected employee
+  const right=document.getElementById('evalBatchRight');
+  if(right&&evalSelectedEmp){
+    const emp=EVAL_EMPLOYEES.find(e=>e.id===evalSelectedEmp);
+    if(emp){
+      const scores=empScores[evalSelectedEmp];
+      let tbody='';
+      scores.forEach(mod=>{
+        tbody+=`<tr class="module-row"><td colspan="5">${mod.name}（权重 ${mod.weight}%）</td></tr>`;
+        mod.indicators.forEach((ind,i)=>{
+          if(ind.type==='bonus'){
+            tbody+=`<tr><td><input class="edit-cell" value="${ind.name}" onchange="evalUpdateScore('${evalSelectedEmp}','${mod.name}',${i},'name',this.value)"></td><td colspan="2"><select class="edit-cell" onchange="evalUpdateScore('${evalSelectedEmp}','${mod.name}',${i},'bonusType',this.value)"><option value="bonus" ${ind.bonusType==='bonus'?'selected':''}>加分</option><option value="penalty" ${ind.bonusType==='penalty'?'selected':''}>减分</option></select></td><td><input class="edit-cell" type="number" step="0.5" value="${ind.bonus}" onchange="evalUpdateScore('${evalSelectedEmp}','${mod.name}',${i},'bonus',this.value)"></td><td></td></tr>`;
+          }else{
+            let cc;
+            if(ind.type==='quant') cc=`<td><input class="edit-cell" type="number" step="any" value="${ind.completed}" onchange="evalUpdateScore('${evalSelectedEmp}','${mod.name}',${i},'completed',this.value)"></td>`;
+            else cc=`<td><select class="edit-cell" onchange="evalUpdateScore('${evalSelectedEmp}','${mod.name}',${i},'grade',this.value)"><option value="">请选择</option>${GRADE_OPTIONS.map(g=>`<option value="${g}" ${ind.grade===g?'selected':''}>${g}</option>`).join('')}</select></td>`;
+            tbody+=`<tr><td><span class="ind-name">${ind.name}</span></td><td><span class="ind-weight">${ind.weight}%</span></td><td><span class="ind-target">${ind.target}</span></td>${cc}<td><textarea class="edit-cell" rows="1" onchange="evalUpdateScore('${evalSelectedEmp}','${mod.name}',${i},'comment',this.value)">${ind.comment}</textarea></td></tr>`;
+          }
+        });
+      });
+      right.innerHTML=`<div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden"><div class="info-grid"><div class="info-item"><span class="info-label">被考核人</span><span class="info-value">${emp.name}</span></div><div class="info-item"><span class="info-label">部门</span><span class="info-value">${emp.dept}</span></div><div class="info-item"><span class="info-label">职位</span><span class="info-value">${emp.title}</span></div><div class="info-item"><span class="info-label">考核周期</span><span class="info-value">2026年度</span></div></div><div style="overflow-x:auto"><table class="ind-table"><thead><tr><th style="width:200px">指标名称</th><th style="width:70px">权重</th><th style="width:100px">目标值</th><th style="width:130px">完成值/评价</th><th style="min-width:180px">评语</th></tr></thead><tbody>${tbody}</tbody></table></div><div class="bottom-section"><div style="display:flex;align-items:baseline;gap:8px;padding:12px 16px;background:var(--sf);border-radius:var(--r2);box-shadow:var(--shadow-card)"><span style="font:500 13px/1 var(--f);color:var(--c6)">加权总分</span><span style="font-family:var(--fm);font-size:20px;font-weight:700;color:var(--pr)">${emp.score>0?emp.score.toFixed(1):'0.0'}</span></div></div></div>`;
+    }
+  }
+}
+
+function getGradeClass(g){if(g==='远超预期')return'grade-exceed';if(g==='符合预期+')return'grade-meet-plus';if(g==='符合预期')return'grade-meet';if(g==='符合预期-')return'grade-meet-minus';if(g==='未达预期')return'grade-fail';return'';}
+
+function evalSwitchMode(m){evalMode=m;renderTabContent();}
+function evalSelectEmp(id){evalSelectedEmp=id;renderEvalEmpList();}
+function evalSearchEmp(q){
+  // Simple filter for batch mode
+  renderEvalEmpList();
+}
+function evalUpdateScore(empId,modName,idx,field,value){const s=empScores[empId];const mod=s.find(m=>m.name===modName);if(mod){mod.indicators[idx][field]=value;if(field==='bonusType'){const v=Math.abs(parseFloat(mod.indicators[idx].bonus)||0);mod.indicators[idx].bonus=value==='penalty'?-v:v;}evalCalcTotal(empId);if(evalMode==='batch')renderEvalEmpList();}}
+function evalCalcTotal(empId){const s=empScores[empId];let tw=0,tv=0,bs=0;s.forEach(m=>m.indicators.forEach(ind=>{if(ind.type==='bonus'){bs+=(ind.bonus||0);return;}const sc=gradeScores[ind.grade]||0;if(sc>0){tv+=sc*(ind.weight/100);tw+=ind.weight;}}));const base=tw>0?(tv/tw*100):0;const total=(base+bs).toFixed(1);const emp=EVAL_EMPLOYEES.find(e=>e.id===empId);if(emp)emp.score=parseFloat(total)||0;const el=document.getElementById('evalTotalScore');if(el)el.textContent=total;}
+function confirmAiScore(){const s=empScores[evalSelectedEmp];s.forEach(m=>m.indicators.forEach(ind=>{if(ind.type!=='bonus')ind.aiFilled=true;}));renderTabContent();showToast('AI 评分已确认','success');}
+function evalSubmitSingle(){const emp=EVAL_EMPLOYEES.find(e=>e.id===evalSelectedEmp);if(!emp)return;if(emp.score===0){showToast('请先完成评分再提交','error');return;}emp.status='scored';showToast(`已提交 ${emp.name} 的评分`,'success');}
+
+// ========== TAB 3: RATIFICATION ==========
+function gradeClass(g){if(g==='远超预期')return'exceed';if(g==='符合预期+')return'expect-plus';if(g==='符合预期')return'expect';if(g==='符合预期-')return'expect-minus';if(g==='低于预期')return'below';return'';}
+function ratCalcDist(){const dist={};GRADES.forEach(g=>dist[g]=0);ratEmployees.forEach(e=>dist[e.adjusted]++);return dist;}
+function distStatus(req,cur){if(req===0)return'ok';const r=cur/req;if(r>1)return'error';if(r>.8)return'warn';return'ok';}
+
+function renderRatifyTab(container){
+  const dist=ratCalcDist();
+  const counts={all:ratEmployees.length,'已提交':0,'未提交':0,'待提交':0};
+  ratEmployees.forEach(e=>{if(counts[e.status]!==undefined)counts[e.status]++;});
+  const filtered=ratStatusFilter==='all'?ratEmployees:ratEmployees.filter(e=>e.status===ratStatusFilter);
+
+  let html=`<div class="pg fi" style="min-height:auto">`;
+  // Page Header
+  html+=`<div class="pg-hd">
+    <div class="pg-hd-top">
+      <div class="pg-hd-title">结果审定</div>
+      <div class="pg-hd-actions">
+        <button class="btn btn-s" onclick="showToast('批量导入功能开发中')">${I.download} 批量导入</button>
+        <button class="btn btn-s" onclick="ratExport()">${I.download} 导出</button>
+        <button class="btn btn-s" onclick="ratReset()">重置</button>
+        <button class="btn btn-s" onclick="showToast('已驳回','warn')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+          驳回
+        </button>
+        <button class="btn btn-s" onclick="showToast('已转交','success')">${I.forward} 转交</button>
+        <button class="btn btn-p" onclick="ratSubmit()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          提交
+        </button>
+      </div>
+    </div>
+    <div class="pg-hd-info">
+      <span>绩效周期: <strong>2026年Q2</strong></span>
+      <span>发起日期: <strong>2026年5月</strong></span>
+      <span>处理人: <strong>张明</strong></span>
+      <span>部门: <strong>产品部</strong></span>
+      <span>职位: <strong>高级产品经理</strong></span>
+    </div>
+  </div>`;
+
+  // AI Suggest
+  html+=`<div style="padding:16px 24px 0"><div class="ai-suggest" style="margin-bottom:0"><div class="ai-suggest-ic">${AI_IC}</div><div style="flex:1"><div class="ai-suggest-t">AI 已为 10 人自动分配审定等级</div><div class="ai-suggest-d">基于评分 + 强制分布规则，所有等级已分配。强制分布达标。</div><div class="ai-suggest-actions"><button class="btn btn-p btn-sm" onclick="ratConfirmAi()">确认全部</button><button class="btn btn-s btn-sm" onclick="toggleAiChat()">逐项审核</button><button class="btn btn-s btn-sm">撤销 AI 分配</button></div></div></div></div>`;
+
+  // Stats Row (5-column grid)
+  const totalAssigned=ratEmployees.filter(e=>e.adjusted).length;
+  const totalUnassigned=ratEmployees.length-totalAssigned;
+  const distOk=DISTRIBUTION.every(d=>(dist[d.grade]||0)<=d.requiredN);
+  html+=`<div class="stats-row">`;
+  html+=`<div class="stats-card"><span class="stats-card-label">总人数</span><span class="stats-card-value">${ratEmployees.length}</span></div>`;
+  html+=`<div class="stats-card"><span class="stats-card-label">已分配</span><span class="stats-card-value" style="color:var(--em)">${totalAssigned}</span></div>`;
+  html+=`<div class="stats-card"><span class="stats-card-label">未分配</span><span class="stats-card-value" style="color:${totalUnassigned>0?'var(--ac)':'var(--c4)'}">${totalUnassigned}</span></div>`;
+  html+=`<div class="stats-card"><span class="stats-card-label">分布状态</span><span class="stats-card-value" style="font-size:14px;color:${distOk?'var(--em)':'var(--ro)'}">${distOk?'达标':'偏离'}</span></div>`;
+  html+=`<div class="stats-card highlight"><span class="stats-card-label">AI 建议</span><span class="stats-card-value" style="font-size:14px">2 项调整</span><span class="stats-card-sub">点击查看建议</span></div>`;
+  html+=`</div>`;
+
+  // Distribution Visualization (horizontal comparison bars)
+  html+=`<div style="padding:0 24px"><div class="dist-bars" style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px;margin-bottom:16px">`;
+  html+=`<div class="dist-bars-hd">${I.chart} 分布对比</div>`;
+  DISTRIBUTION.forEach(d=>{
+    const actual=dist[d.grade]||0;
+    const status=distStatus(d.requiredN,actual);
+    const pct=Math.min(actual/d.requiredN*100,100);
+    html+=`<div class="dist-bar-row">`;
+    html+=`<span class="dist-bar-label">${d.grade}</span>`;
+    html+=`<div class="dist-bar-track"><div class="dist-bar-fill" style="width:${pct}%;background:${d.color}"></div></div>`;
+    html+=`<div class="dist-bar-nums"><span class="dist-bar-cur ${status}">${actual}人</span><span>/ ${d.requiredN}人</span></div>`;
+    html+=`</div>`;
+  });
+  html+=`</div></div>`;
+
+  // Status Filter Tabs
+  html+=`<div class="status-tabs">${['all','已提交','未提交','待提交'].map(k=>`<button class="status-tab ${ratStatusFilter===k?'on':''}" onclick="ratSetFilter('${k}')">${k==='all'?'全部':k}<span class="status-tab-count">${counts[k]}</span></button>`).join('')}</div>`;
+
+  // Employee Ratification Table
+  html+=`<div style="padding:0 24px 24px;overflow-x:auto"><table class="batch-table"><thead><tr><th><input type="checkbox" onclick="toggleCheckAll(this)"></th><th>姓名</th><th>部门</th><th>职位</th><th>考核得分</th><th>当前等级</th><th>调整后等级</th><th>提交状态</th><th>变更</th><th>操作</th></tr></thead><tbody>`;
+
+  filtered.forEach(emp=>{
+    const idx=ratEmployees.indexOf(emp);
+    html+=`<tr><td><input type="checkbox"></td>`;
+    html+=`<td class="name-cell" onclick="ratToggleExpand(${idx})">${emp.name}${emp.aiFilled?AI_TAG:''}</td>`;
+    html+=`<td>${emp.dept}</td><td>${emp.title}</td>`;
+    html+=`<td class="score-cell">${emp.score}</td>`;
+    html+=`<td><span class="grade-tag ${gradeClass(emp.grade)}">${emp.grade}</span></td>`;
+    html+=`<td><select style="font:400 12px/1 var(--f);padding:4px 24px 4px 8px;height:28px;border-radius:4px;border:1px solid var(--c2)" onchange="ratGradeChange(${idx},this.value)">${GRADES.map(g=>`<option value="${g}" ${g===emp.adjusted?'selected':''}>${g}</option>`).join('')}</select></td>`;
+    html+=`<td><span class="emp-status-tag ${{'已提交':'submitted','未提交':'not-submitted','待提交':'pending'}[emp.status]}">${emp.status}</span></td>`;
+    html+=`<td>${emp.changed?'<span class="change-mark">'+I.arrowRight+' 已调整</span>':'<span style="color:var(--c4);font:400 11px/1 var(--f)">-</span>'}</td>`;
+    html+=`<td class="action-cell"><button class="action-btn" onclick="ratToggleExpand(${idx})" title="详情">${I.eye}</button></td></tr>`;
+
+    if(ratExpandedRows.has(idx)){
+      html+=`<tr class="expand-row"><td colspan="10"><div class="expand-content">`;
+      html+=`<div class="expand-item"><span class="expand-item-label">原始等级</span><span class="expand-item-value"><span class="grade-tag ${gradeClass(emp.grade)}">${emp.grade}</span></span></div>`;
+      html+=`<div class="expand-item"><span class="expand-item-label">调整后等级</span><span class="expand-item-value"><span class="grade-tag ${gradeClass(emp.adjusted)}">${emp.adjusted}</span></span></div>`;
+      html+=`<div class="expand-item"><span class="expand-item-label">调整原因</span><span class="expand-item-value">${emp.reason||'-'}</span></div>`;
+      html+=`</div></td></tr>`;
+    }
+  });
+
+  html+=`</tbody></table></div></div>`;
+  container.innerHTML=html;
+}
+
+function ratToggleExpand(idx){ratExpandedRows.has(idx)?ratExpandedRows.delete(idx):ratExpandedRows.add(idx);renderTabContent();}
+function ratGradeChange(idx,val){ratEmployees[idx].adjusted=val;ratEmployees[idx].changed=val!==ratEmployees[idx].grade;renderTabContent();}
+function ratSetFilter(f){ratStatusFilter=f;renderTabContent();}
+function ratReset(){ratEmployees=JSON.parse(JSON.stringify(RAT_EMPLOYEES));ratExpandedRows.clear();renderTabContent();}
+function ratConfirmAi(){ratEmployees.forEach(e=>{e.aiFilled=true;});renderTabContent();showToast('AI 分配已确认','success');}
+function ratExport(){showToast('模板已导出','success');}
+function toggleCheckAll(el){/* no-op for prototype */}
+function ratSubmit(){
+  const dist=ratCalcDist();
+  const warnings=[];
+  DISTRIBUTION.forEach(d=>{const actual=dist[d.grade]||0;if(actual>d.requiredN)warnings.push(`${d.grade}：要求<=${d.requiredN}人，当前${actual}人`);});
+  if(warnings.length>0){
+    const ov=document.createElement('div');ov.className='modal-overlay open';
+    ov.innerHTML=`<div class="modal" style="width:400px"><div class="modal-header"><span class="modal-title">强制分布校验</span><button class="modal-close" onclick="this.closest('.modal-overlay').remove()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body"><p>以下等级超出强制分布限制：</p><ul style="margin:12px 0;padding-left:20px">${warnings.map(w=>`<li style="color:var(--ac);margin-bottom:6px;font:500 13px/1.4 var(--f)">${w}</li>`).join('')}</ul><p style="color:var(--ac);font-weight:500;margin-top:8px">弱控制模式下可继续提交但需确认。</p></div><div class="modal-footer"><button class="btn btn-s" onclick="this.closest('.modal-overlay').remove()">返回修改</button><button class="btn btn-w" onclick="this.closest('.modal-overlay').remove();showToast('已强制提交','success')">确认提交</button></div></div>`;
+    document.body.appendChild(ov);
+  } else {
+    showToast('批量提交成功！','success');
+  }
+}
+
+// ========== TOAST ==========
+function showToast(msg,type){
+  const t=document.getElementById('validateToast');
+  if(t){
+    document.getElementById('toastMsg').textContent=msg;
+    t.className='validate-toast show'+(type==='success'?' success':type==='warn'?' warn':'');
+    setTimeout(()=>t.classList.remove('show'),3000);
+  }else{
+    let t2=document.getElementById('toast');
+    if(!t2){t2=document.createElement('div');t2.id='toast';t2.className='toast';document.body.appendChild(t2);}
+    t2.textContent=msg;t2.className='toast '+(type||'success');
+    setTimeout(()=>t2.classList.add('on'),10);setTimeout(()=>t2.classList.remove('on'),2500);
+  }
+}
+
+// ========== AI CHAT ==========
+function getAiChatHTML(){
+  return `
+  <div class="ai-chat" id="aiChat">
+    <div class="ai-chat-hd">
+      <div class="ai-chat-hd-ic">${AI_IC}</div>
+      <div><div class="ai-chat-hd-t" id="chatHdTitle">AI 填写助手</div><div class="ai-chat-hd-s" id="chatHdSub">基于历史目标 + 指标库 + 业务规则</div></div>
+      <button class="ai-chat-close" onclick="toggleAiChat()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="ai-chat-bd" id="chatBd"></div>
+    <div class="ai-chat-ft">
+      <div class="ai-chat-upload" onclick="openUploadModal()" title="上传文件">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+      </div>
+      <input class="ai-chat-input" id="chatInput" placeholder="描述你的目标，AI 帮你填写..." onkeydown="if(event.key==='Enter')sendAiMsg()"/>
+      <button class="ai-chat-send" onclick="sendAiMsg()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+    </div>
+  </div>
+  <button class="ai-toggle" onclick="toggleAiChat()">${AI_IC}</button>`;
+}
+
+function renderAiChat(){
+  const bd=document.getElementById('chatBd');if(!bd)return;
+  const msgs=AI_MSGS[activeTab]||[];
+  bd.innerHTML=msgs.map(m=>{
+    let html=`<div class="ai-msg ${m.role}"><div class="ai-msg-bd">${m.text.replace(/\n/g,'<br/>')}</div>`;
+    if(m.cards) html+=m.cards.map(c=>`<div class="ai-msg-card"><div class="ai-msg-card-t">${c.t}</div><div class="ai-msg-card-d">${c.d}</div><span class="ai-msg-card-tag ${c.tc}">${c.tag}</span></div>`).join('');
+    if(m.actions) html+=`<div class="ai-msg-actions">${m.actions.map(a=>`<button class="ai-msg-btn${a.includes('确认')||a.includes('采纳')?' primary':''}">${a}</button>`).join('')}</div>`;
+    if(m.time) html+=`<div class="ai-msg-time">${m.time}</div>`;
+    html+=`</div>`;
+    return html;
+  }).join('');
+  bd.scrollTop=bd.scrollHeight;
+}
+
+function updateAiChat(){
+  const titles={goal:'AI 填写助手',eval:'AI 评分助手',ratify:'AI 审定助手'};
+  const subs={goal:'基于历史目标 + 指标库 + 业务规则',eval:'基于目标完成度 + 历史评分',ratify:'基于评分 + 强制分布规则'};
+  const placeholders={goal:'描述你的目标，AI 帮你填写...',eval:'输入评分指令...',ratify:'输入审定指令...'};
+  const t=document.getElementById('chatHdTitle');if(t)t.textContent=titles[activeTab];
+  const s=document.getElementById('chatHdSub');if(s)s.textContent=subs[activeTab];
+  const p=document.getElementById('chatInput');if(p)p.placeholder=placeholders[activeTab];
+  renderAiChat();
+}
+
+function sendAiMsg(){
+  const input=document.getElementById('chatInput');const text=input.value.trim();if(!text)return;
+  AI_MSGS[activeTab].push({role:'user',text});input.value='';renderAiChat();
+  setTimeout(()=>{AI_MSGS[activeTab].push({role:'bot',text:'收到，正在分析你的需求...\n\n已根据你的描述更新内容，请查看表单中的变更。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});renderAiChat();},800);
+}
+
+function toggleAiChat(){document.body.classList.toggle('chat-open');}
+
+/* ========== FILE UPLOAD ========== */
+const PC_UPLOAD_DOCS={
+  0:{name:'Q1述职报告_张明.pdf',size:'2.3 MB',
+    title:'文档解析完成 — 目标数据',
+    result:'已从述职报告中提取 6 条目标 + Q1 完成数据',
+    detail:'产品迭代完成率(30%)、新增用户数(20%)、团队效能提升(10%)、人才培养(10%)、技术能力提升(8%)、业务理解深化(7%)'},
+  1:{name:'Q1述职报告_张明.pdf',size:'2.3 MB',
+    title:'文档解析完成 — 评分数据',
+    result:'已从述职报告中提取完成数据，生成评分建议',
+    detail:'产品迭代 108%→符合预期+、用户增长 4800→符合预期、营收 245万→远超预期'},
+  2:{name:'部门绩效汇总_产品部.xlsx',size:'156 KB',
+    title:'文档解析完成 — 审定数据',
+    result:'已从汇总表中提取 10 人评分 + 等级建议',
+    detail:'张三92→A、李四85→B+、赵六88→A、王五78→B、周八91→A'}
+};
+
+let uploadTimer=null;
+
+function openUploadModal(){
+  const doc=PC_UPLOAD_DOCS[activeTab];
+  const modal=document.getElementById('uploadModal');
+  document.getElementById('uploadFileName').textContent=doc.name;
+  document.getElementById('uploadFileMeta').textContent=doc.size+' · PDF 文档';
+  document.getElementById('uploadBar').style.width='0';
+  document.getElementById('uploadBar').style.background='var(--pr)';
+  document.getElementById('uploadResult').classList.remove('on');
+  document.getElementById('uploadProgress').style.display='block';
+  document.getElementById('uploadDropArea').style.display='none';
+  document.getElementById('uploadFileArea').style.display='flex';
+  document.getElementById('uploadApplyBtn').style.display='none';
+  modal.classList.add('on');
+  /* Animate progress */
+  setTimeout(()=>document.getElementById('uploadBar').style.width='40%',100);
+  setTimeout(()=>document.getElementById('uploadBar').style.width='70%',600);
+  setTimeout(()=>document.getElementById('uploadBar').style.width='100%',1200);
+  setTimeout(()=>{
+    document.getElementById('uploadBar').style.background='var(--em)';
+    document.getElementById('uploadProgress').style.display='none';
+    const res=document.getElementById('uploadResult');
+    res.classList.add('on');
+    document.getElementById('uploadResultT').textContent=doc.title;
+    document.getElementById('uploadResultD').textContent=doc.result+'\n'+doc.detail;
+    document.getElementById('uploadApplyBtn').style.display='inline-flex';
+  },1600);
+}
+
+function closeUploadModal(){
+  document.getElementById('uploadModal').classList.remove('on');
+}
+
+function applyUploadData(){
+  const doc=PC_UPLOAD_DOCS[activeTab];
+  closeUploadModal();
+  /* Add user message in chat */
+  AI_MSGS[activeTab].push({role:'user',text:'📎 已上传 '+doc.name,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
+  if(activeTab===0){
+    /* Goal tab: fill goals */
+    const vg=MODULES.find(m=>m.name==='价值观目标');
+    if(vg&&vg.goals.length===0){
+      vg.goals.push({name:'客户第一',indicator:'客户满意度',type:'q',weight:8,target:4.5,challenge:5,baseline:4,rule:'标准梯度计算',levels:[{l:'优秀',c:'var(--em)',s:'120分',d:'≥5.0'},{l:'良好',c:'var(--pr)',s:'100分',d:'≥4.5'},{l:'合格',c:'var(--ac)',s:'80分',d:'≥4.0'},{l:'不合格',c:'var(--ro)',s:'0分',d:'<4.0'}]});
+      vg.goals.push({name:'团队协作',indicator:'跨部门协作项目',type:'q',weight:7,target:2,challenge:3,baseline:1,rule:'标准梯度计算',levels:[{l:'优秀',c:'var(--em)',s:'120分',d:'≥3个'},{l:'良好',c:'var(--pr)',s:'100分',d:'≥2个'},{l:'合格',c:'var(--ac)',s:'80分',d:'≥1个'},{l:'不合格',c:'var(--ro)',s:'0分',d:'<1个'}]});
+    }
+    renderGoalTab(document.getElementById('tabContent'));
+    AI_MSGS[activeTab].push({role:'bot',text:'文档解析完成！已从 '+doc.name+' 中提取 6 条目标 + Q1 完成数据。\n\n价值观目标「客户第一」「团队协作」已自动填入，请查看表单。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
+  } else if(activeTab===1){
+    /* Eval tab: apply AI grades */
+    EVAL_MODULES.forEach(m=>{m.items.forEach(it=>{it.grade=it.aiFill?'符合预期+':'符合预期';it.score=GRADE_SCORES[it.grade];});});
+    renderEvalTab(document.getElementById('tabContent'));
+    AI_MSGS[activeTab].push({role:'bot',text:'文档解析完成！已从述职报告中提取完成数据：\n\n- 产品迭代 108% → 符合预期+\n- 用户增长 4800 → 符合预期\n- 营收 245万 → 远超预期\n\n评分已自动更新，请查看表单。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
+  } else {
+    /* Ratify tab: apply AI grades */
+    RAT_PERSONS.forEach(p=>{p.grade=p.aiGrade;p.aiMatch=true;});
+    recalcDistribution();
+    renderRatifyTab(document.getElementById('tabContent'));
+    AI_MSGS[activeTab].push({role:'bot',text:'文档解析完成！已从汇总表中提取 10 人评分数据，等级已自动分配。\n\n强制分布已校验，发现 2 处偏离，AI 已给出调整建议。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
+  }
+  renderAiChat();
+  showToast('已应用文档数据','success');
+}
+
+function triggerPcUpload(){
+  closeUploadModal();
+  openUploadModal();
+}
+</script>
+
+<!-- Upload Modal -->
+<div class="upload-modal" id="uploadModal" onclick="if(event.target===this)closeUploadModal()">
+  <div class="upload-box">
+    <div id="uploadDropArea" class="upload-drop" onclick="triggerPcUpload()">
+      <div class="upload-drop-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      </div>
+      <div class="upload-drop-t">点击选择文件 或 拖拽到此处</div>
+      <div class="upload-drop-d">支持 PDF、Excel、Word 格式，单文件不超过 10MB</div>
+    </div>
+    <div id="uploadFileArea" class="upload-file" style="display:none">
+      <div class="upload-file-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      </div>
+      <div class="upload-file-info">
+        <div class="upload-file-name" id="uploadFileName">文件名</div>
+        <div class="upload-file-meta" id="uploadFileMeta">大小</div>
+      </div>
+    </div>
+    <div id="uploadProgress" class="upload-progress" style="display:none">
+      <div class="upload-progress-bar" id="uploadBar"></div>
+    </div>
+    <div class="upload-result" id="uploadResult">
+      <div class="upload-result-t" id="uploadResultT"></div>
+      <div class="upload-result-d" id="uploadResultD" style="white-space:pre-line"></div>
+    </div>
+    <div class="upload-actions">
+      <button class="btn btn-s" onclick="closeUploadModal()">取消</button>
+      <button class="btn btn-p" id="uploadApplyBtn" style="display:none" onclick="applyUploadData()">应用到表单</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

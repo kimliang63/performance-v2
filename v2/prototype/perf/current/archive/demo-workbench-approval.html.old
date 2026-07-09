@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 审批记录</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --r1:6px;--r2:8px;--r3:10px;
+  --f:'Inter','Noto Sans SC',-apple-system,sans-serif;
+  --m:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+.hdr{height:52px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:1100}
+.hdr-l{display:flex;align-items:center;gap:14px}
+.logo{display:flex;align-items:center;gap:8px;cursor:pointer;text-decoration:none}
+.logo-i{width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center}
+.logo-i svg{width:15px;height:15px;color:#FFF}
+.logo-t{font-size:15px;font-weight:700;color:var(--c9);letter-spacing:-.3px}
+.hdr-sep{width:1px;height:20px;background:var(--c2);margin:0 2px}
+.hdr-r{margin-left:auto;display:flex;align-items:center;gap:10px}
+.avatar{width:30px;height:30px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--f);color:#FFF}
+
+.breadcrumb{display:flex;align-items:center;gap:4px;font:500 12px/1 var(--f);color:var(--c5);margin-bottom:12px}
+.breadcrumb a{color:var(--c5);text-decoration:none;transition:color .12s}
+.breadcrumb a:hover{color:var(--pr)}
+.breadcrumb .sep{color:var(--c3)}
+.breadcrumb .cur{color:var(--c8);font-weight:600}
+
+.ct{padding:24px}
+.pg{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden}
+
+.pg-hd{padding:20px 24px;border-bottom:1px solid var(--dv)}
+.pg-hd-title{font:700 20px/1.2 var(--f);color:var(--c9)}
+.pg-hd-sub{font:400 13px/1 var(--f);color:var(--c5);margin-top:4px}
+
+/* Timeline */
+.timeline{padding:24px}
+.tl-item{display:flex;gap:16px;position:relative;padding-bottom:24px}
+.tl-item:last-child{padding-bottom:0}
+.tl-item:not(:last-child)::after{content:'';position:absolute;left:15px;top:36px;bottom:0;width:2px;background:var(--c2)}
+.tl-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font:600 12px/1 var(--f);color:#FFF;z-index:1}
+.tl-dot.done{background:var(--em)}
+.tl-dot.active{background:var(--ac);animation:pulse 2s ease-in-out infinite}
+.tl-dot.pending{background:var(--c3);color:var(--c5)}
+.tl-dot.rejected{background:var(--ro)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+
+.tl-content{flex:1;min-width:0}
+.tl-head{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.tl-name{font:600 14px/1 var(--f);color:var(--c9)}
+.tl-role{font:400 12px/1 var(--f);color:var(--c5)}
+.tl-badge{font:500 11px/1 var(--f);padding:2px 8px;border-radius:3px;margin-left:auto}
+.tl-badge.done{background:var(--em50);color:var(--em700)}
+.tl-badge.active{background:var(--ac50);color:var(--ac700)}
+.tl-badge.pending{background:var(--c1);color:var(--c5)}
+.tl-badge.rejected{background:var(--ro50);color:var(--ro)}
+.tl-time{font:400 12px/1 var(--m);color:var(--c4)}
+.tl-comment{margin-top:6px;padding:8px 12px;background:var(--c0);border-radius:var(--r1);font:400 13px/1.5 var(--f);color:var(--c7)}
+
+/* Info row */
+.info-bar{display:flex;gap:24px;padding:14px 24px;background:var(--c0);border-bottom:1px solid var(--dv);font:500 13px/1 var(--f);color:var(--c6)}
+.info-bar strong{font-family:var(--m);font-weight:600;color:var(--c7);margin-left:4px}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-l">
+    <a href="../demo-index.html" class="logo">
+      <div class="logo-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      <span class="logo-t">HR ONE</span>
+    </a>
+    <div class="hdr-sep"></div>
+    <span style="font:500 13px/1 var(--f);color:var(--c5)">绩效工作台</span>
+  </div>
+  <div class="hdr-r"><div class="avatar">张</div></div>
+</div>
+
+<div class="ct">
+  <nav class="breadcrumb">
+    <a href="../demo-index.html">绩效工作台</a>
+    <span class="sep">/</span>
+    <a href="demo-workbench-my-goal.html">我的目标</a>
+    <span class="sep">/</span>
+    <span class="cur">审批记录</span>
+  </nav>
+
+  <div class="pg">
+    <div class="pg-hd">
+      <div class="pg-hd-title">审批记录</div>
+      <div class="pg-hd-sub">2026年6月 · 员工制定 · 共4个审批节点</div>
+    </div>
+
+    <div class="info-bar">
+      <span>员工<strong>张明</strong></span>
+      <span>部门<strong>产品部</strong></span>
+      <span>发起时间<strong>2026-06-01 09:00</strong></span>
+    </div>
+
+    <div class="timeline">
+      <!-- 节点1: 已完成 -->
+      <div class="tl-item">
+        <div class="tl-dot done">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="tl-content">
+          <div class="tl-head">
+            <span class="tl-name">张明</span>
+            <span class="tl-role">员工填写</span>
+            <span class="tl-badge done">已提交</span>
+          </div>
+          <div class="tl-time">2026-06-01 09:00</div>
+          <div class="tl-comment">提交Q2季度目标，共7个目标，权重合计100%</div>
+        </div>
+      </div>
+
+      <!-- 节点2: 审批中 -->
+      <div class="tl-item">
+        <div class="tl-dot active">
+          <span style="font-size:12px">2</span>
+        </div>
+        <div class="tl-content">
+          <div class="tl-head">
+            <span class="tl-name">李总</span>
+            <span class="tl-role">直属上级审批</span>
+            <span class="tl-badge active">审批中</span>
+          </div>
+          <div class="tl-time">等待审批中...</div>
+        </div>
+      </div>
+
+      <!-- 节点3: 待处理 -->
+      <div class="tl-item">
+        <div class="tl-dot pending">
+          <span style="font-size:12px">3</span>
+        </div>
+        <div class="tl-content">
+          <div class="tl-head">
+            <span class="tl-name">王总</span>
+            <span class="tl-role">间接上级审批</span>
+            <span class="tl-badge pending">待处理</span>
+          </div>
+          <div class="tl-time">-</div>
+        </div>
+      </div>
+
+      <!-- 节点4: 待处理 -->
+      <div class="tl-item">
+        <div class="tl-dot pending">
+          <span style="font-size:12px">4</span>
+        </div>
+        <div class="tl-content">
+          <div class="tl-head">
+            <span class="tl-name">赵HR</span>
+            <span class="tl-role">HR确认</span>
+            <span class="tl-badge pending">待处理</span>
+          </div>
+          <div class="tl-time">-</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

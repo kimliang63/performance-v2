@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AI 申诉处理</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--em:#10B981;--em50:#ECFDF5;--em700:#047857;--ac:#F59E0B;--ac50:#FFFBEB;--ac700:#B45309;--ro:#F43F5E;--ro50:#FFF1F2;--vi:#8B5CF6;--vi50:#F5F3FF;--c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;--sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;--r1:6px;--r2:8px;--r3:10px;--r4:14px;--f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;--fm:'JetBrains Mono','SF Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c9);-webkit-font-smoothing:antialiased}
+.main{display:flex;height:calc(100vh - 52px)}
+.content{flex:1;overflow-y:auto;padding:24px}
+.ai-panel{width:380px;background:var(--sf);border-left:1px solid var(--dv);display:flex;flex-direction:column;flex-shrink:0}
+.ai-hd{padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:10px}
+.ai-hd-ic{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--pr),var(--vi));display:flex;align-items:center;justify-content:center;color:#fff}
+.ai-hd-info{flex:1}
+.ai-hd-t{font:600 14px/1.2 var(--f);color:var(--c9)}
+.ai-hd-s{font:400 11px/1 var(--f);color:var(--c5)}
+.ai-bd{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:12px}
+.ai-msg{max-width:92%;animation:msgIn .3s ease}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.ai-msg.bot{align-self:flex-start}
+.ai-msg.user{align-self:flex-end}
+.ai-msg-bd{padding:10px 14px;border-radius:var(--r3);font:400 13px/1.6 var(--f);word-break:break-word}
+.ai-msg.bot .ai-msg-bd{background:var(--c0);color:var(--c8);border-bottom-left-radius:4px}
+.ai-msg.user .ai-msg-bd{background:var(--pr);color:#fff;border-bottom-right-radius:4px}
+.ai-msg-time{font:400 10px/1 var(--f);color:var(--c4);margin-top:4px}
+.ai-msg.user .ai-msg-time{text-align:right}
+.ai-msg-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.ai-msg-btn{font:500 11px/1 var(--f);padding:5px 10px;border-radius:var(--r1);border:1px solid var(--c2);background:var(--sf);color:var(--c6);cursor:pointer;transition:all .12s}
+.ai-msg-btn:hover{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-msg-card{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);padding:12px;margin-top:8px}
+.ai-msg-card-t{font:600 12px/1.3 var(--f);color:var(--c8);margin-bottom:6px}
+.ai-msg-card-row{display:flex;justify-content:space-between;padding:4px 0;font:400 12px/1.4 var(--f);color:var(--c6)}
+.ai-msg-card-row .v{font-weight:600;color:var(--c8)}
+.ai-ft{padding:12px 16px;border-top:1px solid var(--dv);display:flex;gap:8px;align-items:center}
+.ai-input{flex:1;height:36px;border:1px solid var(--c2);border-radius:var(--r2);padding:0 12px;font:400 13px/1 var(--f);color:var(--c8);outline:none;transition:border .15s}
+.ai-input:focus{border-color:var(--pr)}
+.ai-send{width:36px;height:36px;border-radius:var(--r2);background:var(--pr);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#FFF;transition:all .12s}
+.ai-send:hover{background:var(--pr700)}
+.appeal-layout{display:grid;grid-template-columns:300px 1fr;gap:16px;height:100%}
+.appeal-list-panel{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);overflow:hidden;display:flex;flex-direction:column}
+.appeal-list-hd{padding:14px 16px;border-bottom:1px solid var(--dv);font:600 13px/1.2 var(--f);color:var(--c9);display:flex;align-items:center;justify-content:space-between}
+.appeal-count{font:500 10px/1 var(--f);padding:2px 8px;border-radius:10px;background:var(--ac50);color:var(--ac700)}
+.appeal-list-bd{flex:1;overflow-y:auto}
+.appeal-item{padding:12px 16px;border-bottom:1px solid var(--dv);cursor:pointer;transition:background .12s}
+.appeal-item:hover{background:var(--c0)}
+.appeal-item.active{background:var(--pr50);border-left:3px solid var(--pr)}
+.appeal-item-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.appeal-name{font:500 13px/1.2 var(--f);color:var(--c8)}
+.appeal-status{font:500 10px/1 var(--f);padding:2px 8px;border-radius:10px}
+.appeal-status.pending{background:var(--ac50);color:var(--ac700)}
+.appeal-status.resolved{background:var(--em50);color:var(--em700)}
+.appeal-status.reviewing{background:var(--pr50);color:var(--pr)}
+.appeal-reason{font:400 11px/1.4 var(--f);color:var(--c5);margin-top:2px}
+.appeal-time{font:400 10px/1 var(--f);color:var(--c4);margin-top:4px}
+.detail-panel{display:flex;flex-direction:column;gap:16px}
+.detail-section{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3)}
+.detail-hd{padding:14px 16px;border-bottom:1px solid var(--dv);font:600 13px/1.2 var(--f);color:var(--c9);display:flex;align-items:center;gap:8px}
+.detail-bd{padding:16px}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.detail-item{display:flex;flex-direction:column;gap:4px}
+.detail-label{font:400 11px/1 var(--f);color:var(--c5)}
+.detail-val{font:500 13px/1.3 var(--f);color:var(--c8)}
+.detail-val.highlight{color:var(--pr)}
+.detail-val.warn{color:var(--ro)}
+.detail-text{font:400 13px/1.7 var(--f);color:var(--c7);margin-top:8px}
+.evidence-list{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.evidence-item{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:var(--r2);border:1px solid var(--c2);background:var(--c0)}
+.evidence-icon{width:28px;height:28px;border-radius:6px;background:var(--pr50);display:flex;align-items:center;justify-content:center;color:var(--pr);flex-shrink:0}
+.evidence-name{font:400 12px/1 var(--f);color:var(--c7)}
+.evidence-size{font:400 10px/1 var(--f);color:var(--c4);margin-left:auto}
+.ai-analysis{background:linear-gradient(135deg,var(--pr50),var(--vi50));border:1px solid var(--pr200);border-radius:var(--r3);padding:16px}
+.ai-analysis-hd{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.ai-analysis-icon{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--pr),var(--vi));display:flex;align-items:center;justify-content:center;color:#fff}
+.ai-analysis-title{font:600 13px/1.2 var(--f);color:var(--c9)}
+.ai-analysis-body{display:flex;flex-direction:column;gap:10px}
+.ai-analysis-row{display:flex;gap:10px;align-items:flex-start}
+.ai-analysis-marker{width:6px;height:6px;border-radius:50%;margin-top:6px;flex-shrink:0}
+.ai-analysis-text{font:400 12px/1.5 var(--f);color:var(--c7)}
+.ai-analysis-suggestion{margin-top:8px;padding:10px 12px;background:var(--sf);border-radius:var(--r2);border:1px solid var(--c2)}
+.ai-analysis-suggestion-title{font:600 11px/1 var(--f);color:var(--c8);margin-bottom:6px}
+.ai-analysis-suggestion-text{font:400 12px/1.5 var(--f);color:var(--c7)}
+.action-bar{display:flex;gap:10px;padding:16px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);align-items:center;justify-content:space-between}
+.action-left{display:flex;gap:8px}
+.btn{font:500 12px/1 var(--f);padding:8px 16px;border-radius:var(--r1);border:none;cursor:pointer;transition:all .12s;display:inline-flex;align-items:center;gap:6px}
+.btn.primary{background:var(--pr);color:#fff}
+.btn.primary:hover{background:var(--pr700)}
+.btn.success{background:var(--em);color:#fff}
+.btn.success:hover{background:var(--em700)}
+.btn.danger{background:var(--ro);color:#fff}
+.btn.danger:hover{background:#E11D48}
+.btn.ghost{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}
+.btn.ghost:hover{border-color:var(--pr);color:var(--pr)}
+.btn.warn{background:var(--ac);color:#fff}
+.btn.warn:hover{background:var(--ac700)}
+</style>
+</head>
+<body>
+<div style="height:52px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:1100">
+  <div style="display:flex;align-items:center;gap:14px">
+    <a href="../demo-index.html" style="text-decoration:none;display:flex;align-items:center;gap:8px">
+      <div style="width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <span style="font-size:15px;font-weight:700;color:var(--c9)">HR ONE</span>
+    </a>
+    <div style="width:1px;height:20px;background:var(--c2)"></div>
+    <span style="font:500 13px/1 var(--f);color:var(--c5)">业务演示 - 管理者端</span>
+    <span style="color:var(--c3)">&#8250;</span>
+    <span style="font:600 13px/1 var(--f);color:var(--c8)">AI 申诉处理</span>
+  </div>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+    <div style="width:30px;height:30px;border-radius:50%;background:var(--vi);display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--f);color:#FFF">王</div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="content">
+    <div class="appeal-layout">
+      <!-- 左侧：申诉列表 -->
+      <div class="appeal-list-panel">
+        <div class="appeal-list-hd">
+          申诉列表
+          <span class="appeal-count">3</span>
+        </div>
+        <div class="appeal-list-bd">
+          <div class="appeal-item active">
+            <div class="appeal-item-hd">
+              <span class="appeal-name">周婷</span>
+              <span class="appeal-status pending">待处理</span>
+            </div>
+            <div class="appeal-reason">目标权重分配不合理</div>
+            <div class="appeal-time">2026-06-12 14:30</div>
+          </div>
+          <div class="appeal-item">
+            <div class="appeal-item-hd">
+              <span class="appeal-name">王浩然</span>
+              <span class="appeal-status reviewing">审核中</span>
+            </div>
+            <div class="appeal-reason">评分标准理解偏差</div>
+            <div class="appeal-time">2026-06-11 10:15</div>
+          </div>
+          <div class="appeal-item">
+            <div class="appeal-item-hd">
+              <span class="appeal-name">吴强</span>
+              <span class="appeal-status resolved">已处理</span>
+            </div>
+            <div class="appeal-reason">过程评分遗漏</div>
+            <div class="appeal-time">2026-06-10 09:00</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右侧：申诉详情 -->
+      <div class="detail-panel">
+        <!-- 员工信息 -->
+        <div class="detail-section">
+          <div class="detail-hd">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            申诉人信息
+          </div>
+          <div class="detail-bd">
+            <div class="detail-grid">
+              <div class="detail-item">
+                <span class="detail-label">姓名</span>
+                <span class="detail-val">周婷</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">岗位</span>
+                <span class="detail-val">产品专员</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">原始评分</span>
+                <span class="detail-val warn">76分 · B级</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">申诉时间</span>
+                <span class="detail-val">2026-06-12 14:30</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">所属部门</span>
+                <span class="detail-val">产品部</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">直属上级</span>
+                <span class="detail-val">王建华</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 申诉理由 -->
+        <div class="detail-section">
+          <div class="detail-hd">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ac)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            申诉理由
+          </div>
+          <div class="detail-bd">
+            <div class="detail-text">
+              我认为Q2绩效评分中目标权重分配不合理。具体问题：<br><br>
+              1. 能力发展目标（权重10%）设定过低，未能体现我在团队知识沉淀方面的贡献<br>
+              2. 目标二（用户调研报告）的评分标准未在期初明确，导致完成质量评估存在主观性<br>
+              3. Q2期间额外承担了2个临时项目，但未纳入绩效评估范围
+            </div>
+            <div class="evidence-list">
+              <div class="evidence-item">
+                <div class="evidence-icon">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                </div>
+                <span class="evidence-name">Q2工作成果汇总.pdf</span>
+                <span class="evidence-size">2.3MB</span>
+              </div>
+              <div class="evidence-item">
+                <div class="evidence-icon">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                </div>
+                <span class="evidence-name">临时项目参与证明.docx</span>
+                <span class="evidence-size">156KB</span>
+              </div>
+              <div class="evidence-item">
+                <div class="evidence-icon">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                </div>
+                <span class="evidence-name">知识沉淀文档截图.png</span>
+                <span class="evidence-size">890KB</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI分析结果 -->
+        <div class="ai-analysis">
+          <div class="ai-analysis-hd">
+            <div class="ai-analysis-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Z"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <span class="ai-analysis-title">AI 申诉分析</span>
+          </div>
+          <div class="ai-analysis-body">
+            <div class="ai-analysis-row">
+              <div class="ai-analysis-marker" style="background:var(--ac)"></div>
+              <div class="ai-analysis-text"><strong>申诉评估：部分合理</strong></div>
+            </div>
+            <div class="ai-analysis-row">
+              <div class="ai-analysis-marker" style="background:var(--pr)"></div>
+              <div class="ai-analysis-text">能力发展目标权重（10%）确实偏低，同类岗位标准建议15-20%</div>
+            </div>
+            <div class="ai-analysis-row">
+              <div class="ai-analysis-marker" style="background:var(--pr)"></div>
+              <div class="ai-analysis-text">临时项目贡献有据可查，建议纳入评估或给予额外加分</div>
+            </div>
+            <div class="ai-analysis-row">
+              <div class="ai-analysis-marker" style="background:var(--em)"></div>
+              <div class="ai-analysis-text">目标二评分标准有邮件记录为证，该项评分维持不变</div>
+            </div>
+            <div class="ai-analysis-suggestion">
+              <div class="ai-analysis-suggestion-title">建议处理方案</div>
+              <div class="ai-analysis-suggestion-text">
+                1. 将能力发展权重从10%调整至15%（+5%），从业绩目标中扣除<br>
+                2. 临时项目贡献给予+2分加分<br>
+                3. 调整后总分：76 → 80分，等级B → B+<br>
+                4. 调整后等级分布仍在强制分布规则范围内
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 操作区 -->
+        <div class="action-bar">
+          <div class="action-left">
+            <button class="btn success">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              同意调整
+            </button>
+            <button class="btn danger">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              维持原判
+            </button>
+            <button class="btn warn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              转交HR
+            </button>
+          </div>
+          <button class="btn ghost">导出分析报告</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Chat 面板 -->
+  <div class="ai-panel">
+    <div class="ai-hd">
+      <div class="ai-hd-ic">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Z"/><path d="M12 6v6l4 2"/></svg>
+      </div>
+      <div class="ai-hd-info">
+        <div class="ai-hd-t">AI 申诉助手</div>
+        <div class="ai-hd-s">智能分析与方案建议</div>
+      </div>
+    </div>
+    <div class="ai-bd">
+      <div class="ai-msg bot">
+        <div class="ai-msg-bd">已分析周婷的绩效申诉。<br><br><strong>申诉理由：</strong>目标权重分配不合理</div>
+        <div class="ai-msg-time">15:30</div>
+      </div>
+      <div class="ai-msg bot">
+        <div class="ai-msg-bd"><strong>评估结果：申诉部分合理</strong><br><br>建议将能力发展权重从10%调整至15%（+5%），临时项目贡献给予+2分加分。</div>
+        <div class="ai-msg-time">15:31</div>
+        <div class="ai-msg-card">
+          <div class="ai-msg-card-t">评分调整方案</div>
+          <div class="ai-msg-card-row"><span>原总分</span><span class="v">76分</span></div>
+          <div class="ai-msg-card-row"><span>权重调整</span><span class="v">+2分</span></div>
+          <div class="ai-msg-card-row"><span>临时项目加分</span><span class="v">+2分</span></div>
+          <div class="ai-msg-card-row"><span>调整后总分</span><span class="v" style="color:var(--em)">80分</span></div>
+          <div class="ai-msg-card-row"><span>调整后等级</span><span class="v" style="color:var(--em)">B+</span></div>
+        </div>
+      </div>
+      <div class="ai-msg bot">
+        <div class="ai-msg-bd">调整后等级分布仍在强制分布规则范围内，不会影响团队整体分布合规性。</div>
+        <div class="ai-msg-time">15:31</div>
+        <div class="ai-msg-actions">
+          <button class="ai-msg-btn">查看分布影响</button>
+          <button class="ai-msg-btn">确认调整</button>
+          <button class="ai-msg-btn">驳回申诉</button>
+        </div>
+      </div>
+      <div class="ai-msg user">
+        <div class="ai-msg-bd">这个调整对团队分布有什么影响？</div>
+        <div class="ai-msg-time">15:35</div>
+      </div>
+      <div class="ai-msg bot">
+        <div class="ai-msg-bd">调整前后团队分布对比：<br><br><strong>调整前：</strong>S(1) A(2) B+(2) B(1)<br><strong>调整后：</strong>S(1) A(2) B+(2) B(0) + 新增B+(1)<br><br>最终：S(1) A(2) <strong>B+(3)</strong> B(0)<br><br>B+占比60%，在允许范围内（上限70%），分布合规。</div>
+        <div class="ai-msg-time">15:35</div>
+        <div class="ai-msg-actions">
+          <button class="ai-msg-btn">确认通过</button>
+          <button class="ai-msg-btn">继续分析</button>
+        </div>
+      </div>
+    </div>
+    <div class="ai-ft">
+      <input class="ai-input" placeholder="输入问题...">
+      <button class="ai-send">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

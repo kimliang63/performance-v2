@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 绩效考核·自评</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --shadow-dropdown:0 10px 40px -10px rgba(0,0,0,.12),0 2px 10px -2px rgba(0,0,0,.04);
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --m:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+/* ═══ PAGE HEADER ═══ */
+.pg-hd{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:16px}
+.pg-hd-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.pg-hd-title{font:700 20px/1.2 var(--f);color:var(--c9);letter-spacing:-.3px}
+.pg-hd-actions{display:flex;gap:8px}
+.pg-hd-info{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 24px;font:400 13px/1 var(--f);color:var(--c5);margin-bottom:12px;padding:12px 16px;background:var(--c0);border-radius:var(--r2)}
+.pg-hd-info-item{display:flex;flex-direction:column;gap:2px}
+.pg-hd-info-label{font:400 11px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px}
+.pg-hd-info-value{font:500 13px/1.3 var(--f);color:var(--c8)}
+
+/* ═══ EVAL TABLE ═══ */
+.eval-list{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden}
+.eval-list table{width:100%;border-collapse:collapse}
+.eval-list thead{position:sticky;top:0;z-index:10}
+.eval-list th{background:var(--c0);padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.eval-list td{padding:10px 16px;font:400 13px/1.4 var(--f);color:var(--c7);border-bottom:1px solid var(--dv);vertical-align:top}
+.eval-list tr:last-child td{border-bottom:none}
+.eval-list tr:hover td{background:var(--c0)}
+.eval-list .mod-row td{background:var(--c0);padding:10px 16px;border-bottom:1px solid var(--dv)}
+.eval-list .mod-row:hover td{background:var(--c0)}
+.eval-mod{display:flex;align-items:center;gap:8px}
+.eval-mod-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.eval-mod-name{font:600 13px/1 var(--f);color:var(--c8)}
+.eval-mod-weight{font-family:var(--m);font-weight:500;font-size:12px;color:var(--c5);background:var(--c1);padding:2px 8px;border-radius:4px}
+.eval-type-tag{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:3px;font:500 11px/1 var(--f)}
+.eval-type-tag.quant{background:var(--pr50);color:var(--pr)}
+.eval-type-tag.qual{background:var(--vi50);color:var(--vi)}
+.eval-weight{font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px}
+.eval-target{color:var(--c6);font-size:12px}
+.eval-score{font:600 13px/1 var(--m)}.eval-score.high{color:var(--em700)}.eval-score.mid{color:var(--pr)}.eval-score.low{color:var(--ac700)}.eval-score.zero{color:var(--ro)}
+
+textarea.edit-cell{width:100%;border:1px solid var(--c2);border-radius:var(--r1);padding:6px 8px;font:400 13px/1.4 var(--f);color:var(--c9);background:var(--sf);transition:all .12s;font-family:var(--f);resize:vertical;min-height:56px;outline:none}
+textarea.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
+textarea.edit-cell::placeholder{color:var(--c4)}
+input.edit-cell{border:1px solid var(--c2);border-radius:var(--r1);padding:5px 8px;font:400 13px/1 var(--f);color:var(--c9);background:var(--sf);transition:all .12s;width:100%;outline:none}
+input.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
+input.edit-cell::placeholder{color:var(--c4)}
+input.edit-cell[type="number"]{font-family:var(--m);text-align:right;width:100px}
+textarea.edit-cell-sm{width:100%;border:1px solid var(--c2);border-radius:var(--r1);padding:6px 8px;font:400 13px/1.4 var(--f);color:var(--c9);background:var(--sf);transition:all .12s;font-family:var(--f);resize:vertical;min-height:48px;outline:none}
+textarea.edit-cell-sm:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
+textarea.edit-cell-sm::placeholder{color:var(--c4)}
+select.edit-cell{appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:22px;cursor:pointer;font-family:var(--f);border:1px solid var(--c2);border-radius:var(--r1);padding:6px 28px 6px 10px;font:500 12px/1 var(--f);color:var(--c8);background-color:var(--sf);transition:all .12s;width:100%;outline:none}
+select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
+.grade-select{position:relative;display:inline-block;width:100%}
+.grade-select select{width:100%;appearance:none;background-image:none;padding:6px 28px 6px 10px;border:1px solid var(--c2);border-radius:var(--r1);font:500 12px/1 var(--f);color:var(--c8);background-color:var(--sf);cursor:pointer;outline:none;transition:all .12s;white-space:nowrap}
+.grade-select select:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
+.grade-select::after{content:'';position:absolute;right:8px;top:50%;transform:translateY(-50%);width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid var(--c4);pointer-events:none}
+.grade-select select option{padding:8px 12px;font:400 13px/1.4 var(--f)}
+.grade-select select option[value="超出预期"]{color:var(--em700)}
+.grade-select select option[value="符合预期+"]{color:var(--pr)}
+.grade-select select option[value="符合预期"]{color:var(--c8)}
+.grade-select select option[value="符合预期-"]{color:var(--ac)}
+.grade-select select option[value="低于预期"]{color:var(--ro)}
+
+/* ═══ STAR RATING ═══ */
+.star-rating{display:flex;flex-direction:column;gap:6px;align-items:flex-start;min-width:220px}
+.star-row{display:flex;align-items:center;gap:4px;height:24px}
+.star{width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:20px;line-height:1;cursor:pointer;color:#D1D5DB;transition:color .12s}
+.star.active{color:#F59E0B}
+.star:hover{color:#F59E0B}
+.star-tip{font:400 11px/1.3 var(--f);color:var(--pr);height:18px;transition:all .12s}
+.score-cell{min-width:260px}
+
+/* ═══ HISTORY CARD ═══ */
+.hist-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:16px}
+.hist-hd{font:600 14px/1 var(--f);color:var(--c9);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.hist-hd svg{width:16px;height:16px;color:var(--pr)}
+.hist-body{display:flex;gap:20px;align-items:stretch}
+.hist-annual{min-width:160px;padding:16px 20px;background:linear-gradient(135deg,var(--pr50),var(--vi50));border-radius:var(--r2);display:flex;flex-direction:column;justify-content:center;align-items:center;border:1px solid var(--pr100)}
+.hist-annual-label{font:500 11px/1 var(--f);color:var(--c5);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.hist-annual-grade{font:700 28px/1 var(--f);color:var(--pr)}
+.hist-divider{width:1px;background:var(--c2);flex-shrink:0}
+.hist-monthly{flex:1;display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.hist-month{padding:10px 8px;border:1px solid var(--c2);border-radius:var(--r2);text-align:center;transition:all .12s}
+.hist-month:hover{border-color:var(--pr200);box-shadow:0 2px 8px rgba(37,99,235,.06)}
+.hist-month-label{font:500 11px/1 var(--f);color:var(--c5);margin-bottom:6px}
+.hist-month-grade{font:600 13px/1 var(--f);padding:3px 8px;border-radius:4px;display:inline-block}
+.hist-month-grade.excellent{background:var(--em50);color:var(--em700)}
+.hist-month-grade.good{background:var(--pr50);color:var(--pr)}
+.hist-month-grade.normal{background:var(--c1);color:var(--c6)}
+.hist-month-grade.pending{color:var(--c4)}
+
+.ai-tag{display:inline-flex;align-items:center;gap:2px;padding:1px 5px;border-radius:3px;font:500 9px/1 var(--f);background:linear-gradient(135deg,#8B5CF6 0%,#6366F1 100%);color:#FFF;flex-shrink:0}
+.ai-tag svg{width:8px;height:8px}
+
+/* ═══ BUTTONS ═══ */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
+.btn svg{width:13px;height:13px}
+.btn-p{background:var(--pr);color:#FFF}
+.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}
+.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
+.btn-o{background:var(--sf);color:var(--pr);border:1px solid var(--pr200)}
+.btn-o:hover{background:var(--pr50);border-color:var(--pr)}
+.btn-sm{height:28px;padding:0 10px;font-size:12px}
+.btn-sm svg{width:12px;height:12px}
+
+
+/* ═══ AI CHAT ═══ */
+.ai-chat{position:fixed;top:52px;right:0;width:380px;height:calc(100vh - 52px);background:var(--sf);border-left:1px solid var(--dv);z-index:900;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s ease}
+body.chat-open .ai-chat{transform:translateX(0)}
+.ai-chat-hd{padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:10px}
+.ai-chat-hd-ic{width:32px;height:32px;border-radius:var(--r2);background:linear-gradient(135deg,var(--pr) 0%,var(--vi) 100%);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ai-chat-hd-ic svg{width:16px;height:16px;color:#FFF}
+.ai-chat-hd-t{font:600 14px/1.2 var(--f);color:var(--c9)}
+.ai-chat-hd-s{font:400 11px/1 var(--f);color:var(--c5)}
+.ai-chat-close{margin-left:auto;width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:transparent;color:var(--c5);transition:all .12s}
+.ai-chat-close:hover{background:var(--c1);color:var(--c7)}
+.ai-chat-bd{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:16px}
+.ai-msg{max-width:92%;animation:aiMsgIn .3s ease}
+@keyframes aiMsgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.ai-msg.bot{align-self:flex-start}
+.ai-msg.user{align-self:flex-end}
+.ai-msg-bd{padding:12px 16px;border-radius:var(--r3);font:400 13px/1.6 var(--f)}
+.ai-msg.bot .ai-msg-bd{background:var(--c0);color:var(--c8);border-bottom-left-radius:4px}
+.ai-msg.user .ai-msg-bd{background:var(--pr);color:#FFF;border-bottom-right-radius:4px}
+.ai-msg-time{font:400 10px/1 var(--f);color:var(--c4);margin-top:4px}
+.ai-msg.user .ai-msg-time{text-align:right}
+.ai-msg-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.ai-msg-btn{font:500 11px/1 var(--f);padding:5px 10px;border-radius:var(--r1);border:1px solid var(--c2);background:var(--sf);color:var(--c6);cursor:pointer;transition:all .12s}
+.ai-msg-btn:hover{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-msg-btn.primary{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-msg-card{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);padding:12px;margin-top:8px}
+.ai-msg-card-t{font:600 12px/1.3 var(--f);color:var(--c8);margin-bottom:4px}
+.ai-msg-card-d{font:400 12px/1.5 var(--f);color:var(--c5)}
+.ai-msg-card-ft{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.ai-msg-card-tag{display:inline-block;font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px}
+.ai-msg-card-tag.em{color:var(--em700);background:var(--em50)}
+.ai-msg-card-tag.pr{color:var(--pr);background:var(--pr50)}
+.ai-msg-card-tag.ac{color:var(--ac);background:var(--ac50)}
+.ai-msg-card-apply{font:500 11px/1 var(--f);padding:4px 8px;border-radius:var(--r1);border:1px solid var(--pr200);background:var(--pr50);color:var(--pr);cursor:pointer;transition:all .12s}
+.ai-msg-card-apply:hover{background:var(--pr);color:#FFF}
+.ai-shortcuts{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.ai-shortcut{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);cursor:pointer;transition:all .12s}
+.ai-shortcut:hover{border-color:var(--pr200);background:var(--pr50)}
+.ai-shortcut-icon{font-size:18px;flex-shrink:0}
+.ai-shortcut-text{flex:1;min-width:0}
+.ai-shortcut-label{font:500 13px/1.2 var(--f);color:var(--c8)}
+.ai-shortcut-desc{font:400 11px/1.3 var(--f);color:var(--c5);margin-top:2px}
+.ai-chat-ft{padding:12px 16px;border-top:1px solid var(--dv);display:flex;gap:8px;align-items:center}
+.ai-chat-input{flex:1;height:36px;border:1px solid var(--c2);border-radius:var(--r2);padding:0 12px;font:400 13px/1 var(--f);color:var(--c8);outline:none;transition:border .15s}
+.ai-chat-input:focus{border-color:var(--pr)}
+.ai-chat-send{width:36px;height:36px;border-radius:var(--r2);background:var(--pr);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#FFF;transition:all .12s}
+.ai-chat-send:hover{background:var(--pr700)}
+.ai-chat-upload{width:36px;height:36px;border-radius:var(--r2);background:var(--sf);border:1px solid var(--c2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c5);transition:all .12s;position:relative}
+.ai-chat-upload:hover{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-chat-upload input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.ai-upload{border:2px dashed var(--c3);border-radius:var(--r2);padding:16px;text-align:center;cursor:pointer;transition:all .12s;margin-top:8px}
+.ai-upload:hover{border-color:var(--pr);background:var(--pr50)}
+.ai-upload.dragover{border-color:var(--pr);background:var(--pr50)}
+.ai-upload-icon{font-size:24px;margin-bottom:6px}
+.ai-upload-text{font:500 12px/1.3 var(--f);color:var(--c6)}
+.ai-upload-hint{font:400 11px/1.3 var(--f);color:var(--c4);margin-top:4px}
+.ai-upload-input{display:none}
+.ai-file-list{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.ai-file{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r1);font:400 12px/1 var(--f)}
+.ai-file-icon{font-size:14px}
+.ai-file-name{flex:1;color:var(--c8);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ai-file-size{color:var(--c4);font-family:var(--m);font-size:11px}
+.ai-file-status{font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px}
+.ai-file-status.parsed{color:var(--em700);background:var(--em50)}
+.ai-file-status.parsing{color:var(--pr);background:var(--pr50)}
+.ai-toggle{position:fixed;bottom:80px;right:24px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--pr) 0%,var(--vi) 100%);border:none;box-shadow:0 4px 16px rgba(37,99,235,.3);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:950;transition:all .2s}
+.ai-toggle:hover{transform:scale(1.08);box-shadow:0 6px 20px rgba(37,99,235,.4)}
+.ai-toggle svg{width:22px;height:22px;color:#FFF}
+body.chat-open .ai-toggle{display:none}
+
+/* ═══ TOAST ═══ */
+.validate-toast{position:fixed;top:64px;left:50%;transform:translateX(-50%);background:var(--em);color:#FFF;padding:10px 20px;border-radius:var(--r2);font:500 13px/1 var(--f);box-shadow:0 8px 24px rgba(16,185,129,.3);z-index:3000;opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:center;gap:8px}
+.validate-toast.show{opacity:1;pointer-events:all}
+.validate-toast svg{width:16px;height:16px}
+.validate-toast.error{background:var(--ro);box-shadow:0 8px 24px rgba(244,63,94,.3)}
+.validate-toast.warn{background:var(--ac);box-shadow:0 8px 24px rgba(245,158,11,.3)}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .2s ease forwards}
+</style>
+</head>
+<body>
+
+<!-- Navigation will be injected by navigation.js -->
+
+<!-- Main content -->
+<div class="ct fade-in">
+  <!-- Breadcrumb -->
+  <nav style="display:flex;align-items:center;gap:4px;font:500 12px/1 var(--f);color:var(--c5);margin-bottom:12px">
+    <a href="../demo-index.html" style="color:var(--c5);text-decoration:none;transition:color .12s" onmouseover="this.style.color='var(--pr)'" onmouseout="this.style.color='var(--c5)'">绩效工作台</a>
+    <span style="color:var(--c3)">/</span>
+    <span style="color:var(--c8);font-weight:600">绩效自评</span>
+  </nav>
+
+  <!-- Page header -->
+  <div class="pg-hd">
+    <div class="pg-hd-top">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="pg-hd-title">绩效自评</div>
+        <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)">
+          <span style="width:6px;height:6px;border-radius:50%;background:var(--pr);animation:pulse 2s ease-in-out infinite"></span>
+          填写中
+        </span>
+      </div>
+      <div class="pg-hd-actions">
+        <button class="btn btn-s" onclick="showToast('草稿已保存','success')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          保存草稿
+        </button>
+        <button class="btn btn-p" onclick="submitSelfEval()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          提交
+        </button>
+      </div>
+    </div>
+    <div class="pg-hd-info">
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">考核方案</span><span class="pg-hd-info-value">产品部2026年Q2绩效考核</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">考核周期</span><span class="pg-hd-info-value">2026年4-6月</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">员工姓名</span><span class="pg-hd-info-value">张明</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">部门</span><span class="pg-hd-info-value">产品部</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">岗位</span><span class="pg-hd-info-value">高级产品经理</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">截止日期</span><span class="pg-hd-info-value" style="color:var(--ac)">2026-06-20 18:00</span></div>
+    </div>
+  </div>
+
+  <!-- Module sections -->
+  <div id="moduleContainer"></div>
+
+  <!-- Approval flow -->
+  <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between">
+      <span style="font:600 15px/1 var(--f);color:var(--c9)">审批流程</span>
+    </div>
+    <div style="padding:0">
+      <table style="width:100%;border-collapse:collapse">
+        <thead>
+          <tr style="background:var(--c0)">
+            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">节点</th>
+            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">处理人</th>
+            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">流入时间</th>
+            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">流出时间</th>
+            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">状态</th>
+            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">原因/备注</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background:var(--pr50)">
+            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c8);border-bottom:1px solid var(--dv)">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="width:8px;height:8px;border-radius:50%;background:var(--pr);flex-shrink:0"></span>
+                被考核人自评分
+              </div>
+            </td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="width:22px;height:22px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">张</span>
+                <span style="font:400 13px/1 var(--f);color:var(--c8)">张明</span>
+              </div>
+            </td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c7);border-bottom:1px solid var(--dv)">2026-06-15 09:00</td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)">
+              <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)">
+                <span style="width:6px;height:6px;border-radius:50%;background:var(--pr);animation:pulse 2s ease-in-out infinite"></span>
+                处理中
+              </span>
+            </td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c5);border-bottom:1px solid var(--dv)">当前节点</td>
+          </tr>
+          <tr>
+            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c6);border-bottom:1px solid var(--dv)">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="width:8px;height:8px;border-radius:50%;background:var(--c3);flex-shrink:0"></span>
+                双线上级评分
+              </div>
+            </td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="width:22px;height:22px;border-radius:50%;background:var(--c1);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:var(--c5);flex-shrink:0">刘</span>
+                <span style="font:400 13px/1 var(--f);color:var(--c6)">刘VP</span>
+              </div>
+            </td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)">
+              <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--c1);color:var(--c5)">待处理</span>
+            </td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
+          </tr>
+          <tr>
+            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c6)">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="width:8px;height:8px;border-radius:50%;background:var(--c3);flex-shrink:0"></span>
+                直线上级评分
+              </div>
+            </td>
+            <td style="padding:12px 16px">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="width:22px;height:22px;border-radius:50%;background:var(--c1);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:var(--c5);flex-shrink:0">王</span>
+                <span style="font:400 13px/1 var(--f);color:var(--c6)">王总监</span>
+              </div>
+            </td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4)">—</td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4)">—</td>
+            <td style="padding:12px 16px">
+              <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--c1);color:var(--c5)">待处理</span>
+            </td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4)">—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<div class="validate-toast" id="validateToast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span id="toastMsg"></span></div>
+
+<script src="../navigation.js"></script>
+<script>
+GHR_NAV.init('perf', '绩效自评');
+
+// ═══ MOCK DATA — 来自目标制定表单 ═══
+var MODULES=[
+  {name:'KPI',weight:30,color:'var(--pr)',goals:[
+    {id:'g1',name:'资源利用率（通用）',indicator:'资源利用率',type:'quant',weight:5,target:105,challenge:110,baseline:100,unit:'%',desc:'人员实际工作量饱和情况，数据来源：Devops',completed:''},
+    {id:'g2',name:'HRAS UAT用户验收首次通过率',indicator:'UAT首次通过率',type:'quant',weight:10,target:98,challenge:100,baseline:95,unit:'%',desc:'需求首次业务验收通过的概率',completed:''},
+    {id:'g3',name:'HRAS需求评审及时率',indicator:'需求评审及时率',type:'quant',weight:15,target:98,challenge:100,baseline:95,unit:'%',desc:'迭代版本评审的及时性情况',completed:''}
+  ]},
+  {name:'KPA',weight:70,color:'var(--em)',goals:[
+    {id:'g4',name:'HRAS产品管理规范',indicator:'产品管理规范',type:'qual',weight:10,measureDesc:'需求管理流程规范、产品需求规范、迭代火车管理规范、周会/月会准时完成',completed:''},
+    {id:'g5',name:'日常滚动需求响应',indicator:'日常需求响应',type:'qual',weight:10,measureDesc:'根据业务日会需求优先级，滚动响应日常需求，输出产品解决方案',completed:''},
+    {id:'g6',name:'HR ONE 绩效重构事项推进',indicator:'绩效重构推进',type:'qual',weight:25,measureDesc:'06-10 输出AI+绩效核心页面原型；06-19 完成绩效版本4需求内审；06-24 完成需求评审',completed:''},
+    {id:'g7',name:'AI应用项目探索与落地推广',indicator:'AI应用落地',type:'qual',weight:25,measureDesc:'06-05 完成ASSC采购侧AI应用1.0版本；06-12 对接LBU试点应用；06-26 完成1.1版本',completed:''}
+  ]}
+];
+var overallComment='';
+
+function renderModuleContainer(){
+  var html='<div class="eval-list"><table><thead><tr>'+
+    '<th style="width:180px">名称</th>'+
+    '<th style="width:55px">权重</th>'+
+    '<th style="width:60px">类型</th>'+
+    '<th style="min-width:220px">完成值/衡量标准</th>'+
+    '<th style="min-width:220px">完成值/完成情况</th>'+
+    '<th style="min-width:160px">评价/得分</th>'+
+    '</tr></thead><tbody>';
+  MODULES.forEach(function(mod,mi){
+    html+='<tr class="mod-row"><td colspan="6"><div class="eval-mod">'+
+      '<div class="eval-mod-dot" style="background:'+mod.color+'"></div>'+
+      '<span class="eval-mod-name">'+mod.name+'</span>'+
+      '<span class="eval-mod-weight">'+mod.weight+'%</span>'+
+      '</div></td></tr>';
+    mod.goals.forEach(function(g,gi){
+      var isQuant=g.type==='quant';
+      html+='<tr>'+
+        '<td><span style="font-weight:500;color:var(--c8)">'+g.name+'</span></td>'+
+        '<td><span class="eval-weight">'+g.weight+'%</span></td>'+
+        '<td><span class="eval-type-tag '+(isQuant?'quant':'qual')+'">'+(isQuant?'定量':'定性')+'</span></td>';
+      if(isQuant){
+        html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">'+g.desc+'<br>挑战值: <span style="font-family:var(--m);color:var(--c7)">'+g.challenge+g.unit+'</span> / 目标值: <span style="font-family:var(--m);color:var(--c7)">'+g.target+g.unit+'</span></td>';
+        html+='<td><input class="edit-cell" type="number" id="completed_'+mi+'_'+gi+'" placeholder="输入完成值" oninput="updateCompleted('+mi+','+gi+')"></td>';
+        html+='<td id="score_'+mi+'_'+gi+'" class="eval-score">—</td>';
+      }else{
+        html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">'+g.measureDesc+'</td>';
+        html+='<td><textarea class="edit-cell-sm" id="completed_'+mi+'_'+gi+'" placeholder="描述完成情况…" oninput="updateCompleted('+mi+','+gi+')">'+g.completed+'</textarea></td>';
+        html+='<td class="score-cell"><div class="star-rating" id="stars_'+mi+'_'+gi+'" data-value="'+(g.stars||0)+'"><div class="star-row">';
+        for(var si=1;si<=5;si++){
+          html+='<span class="star'+(si<=(g.stars||0)?' active':'')+'" data-v="'+si+'" onclick="setStar(this,'+mi+','+gi+','+si+')" onmouseenter="starHover(this,1)" onmouseleave="starHover(this,0)">★</span>';
+        }
+        html+='</div><div class="star-tip" id="starTip_'+mi+'_'+gi+'"></div></div></td>';
+      }
+      html+='</tr>';
+    });
+  });
+  html+='</tbody></table></div>';
+  html+='<div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-top:16px;padding:20px 24px">'+
+    '<div style="font:600 14px/1 var(--f);color:var(--c9);margin-bottom:12px;display:flex;align-items:center;gap:6px">'+
+    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>'+
+    '员工总评语</div>'+
+    '<textarea class="edit-cell" id="overallComment" placeholder="请对本季度整体工作进行总结评价，包括主要成果、不足之处及改进方向…" style="min-height:100px" oninput="overallComment=this.value">'+overallComment+'</textarea>'+
+    '</div>';
+  document.getElementById('moduleContainer').innerHTML=html;
+}
+
+// 定量目标自动计算得分
+function calcScore(g,completedVal){
+  var v=parseFloat(completedVal);
+  if(isNaN(v))return null;
+  if(v>=g.challenge)return 120;
+  if(v>=g.target)return 100;
+  if(v>=g.baseline)return 80;
+  return 0;
+}
+
+function updateCompleted(mi,gi){
+  var g=MODULES[mi].goals[gi];
+  var val=document.getElementById('completed_'+mi+'_'+gi).value;
+  g.completed=val;
+  if(g.type==='quant'){
+    var score=calcScore(g,val);
+    var el=document.getElementById('score_'+mi+'_'+gi);
+    if(score!==null){
+      el.textContent=score+'分';
+      el.className='eval-score '+(score>=100?'high':score>=80?'mid':'low');
+    }else{
+      el.textContent='—';
+      el.className='eval-score';
+    }
+  }
+}
+
+var STAR_TIPS={1:'低于预期',2:'符合预期-',3:'符合预期',4:'符合预期+',5:'超出预期'};
+
+function setStar(el,mi,gi,val){
+  MODULES[mi].goals[gi].stars=val;
+  var rating=el.closest('.star-rating');
+  rating.dataset.value=val;
+  rating.querySelectorAll('.star').forEach(function(s,i){
+    s.classList.toggle('active',i<val);
+  });
+  var tip=rating.querySelector('.star-tip');
+  if(tip)tip.textContent=STAR_TIPS[val]||'';
+}
+
+function starHover(el,entering){
+  var rating=el.closest('.star-rating');
+  var tip=rating.querySelector('.star-tip');
+  if(entering){
+    var val=parseInt(el.dataset.v);
+    rating.querySelectorAll('.star').forEach(function(s,i){
+      s.classList.toggle('active',i<val);
+    });
+    if(tip)tip.textContent=STAR_TIPS[val]||'';
+  }else{
+    var saved=parseInt(rating.dataset.value);
+    rating.querySelectorAll('.star').forEach(function(s,i){
+      s.classList.toggle('active',i<saved);
+    });
+    if(tip)tip.textContent=saved?STAR_TIPS[saved]||'':'';
+  }
+}
+
+function submitSelfEval(){
+  showToast('自评已提交，等待上级评审','success');
+}
+
+function showToast(msg,type){
+  var t=document.getElementById('validateToast');
+  document.getElementById('toastMsg').textContent=msg;
+  t.className='validate-toast show'+(type==='success'?'':type==='warn'?' warn':' error');
+  setTimeout(function(){t.classList.remove('show')},3000);
+}
+
+// ═══ AI CHAT ═══
+var AI_SHORTCUTS=[
+  {icon:'📄',label:'解析文件自动填写',desc:'上传周报/日报/项目文档，AI自动提取进度和完成情况'},
+  {icon:'📝',label:'批量填写完成情况',desc:'根据目标完成度自动填入完成值和评价'},
+  {icon:'📊',label:'查看完成度详情',desc:'逐项分析目标完成情况'}
+];
+var AI_MSGS=[
+  {role:'bot',text:'你好，我是 AI 绩效助手 👋\n\n我可以帮你完成绩效自评：\n• 上传文件，AI自动解析并填写\n• 基于目标完成度自动填入完成值\n• 分析各目标完成情况',time:'09:30',shortcuts:true}
+];
+function renderAiChat(){
+  var bd=document.getElementById('chatBd');
+  if(!bd)return;
+  bd.innerHTML=AI_MSGS.map(function(m){
+    var html='<div class="ai-msg '+m.role+'"><div class="ai-msg-bd">'+m.text.replace(/\n/g,'<br/>')+'</div>';
+    if(m.shortcuts){html+='<div class="ai-shortcuts">'+AI_SHORTCUTS.map(function(s){return '<div class="ai-shortcut" onclick="handleAiAction(\''+s.label+'\')"><span class="ai-shortcut-icon">'+s.icon+'</span><div class="ai-shortcut-text"><div class="ai-shortcut-label">'+s.label+'</div><div class="ai-shortcut-desc">'+s.desc+'</div></div></div>';}).join('')+'</div>';}
+    if(m.upload){html+='<div class="ai-upload" id="aiUpload" onclick="document.getElementById(\'aiFileInput\').click()" ondragover="event.preventDefault();this.classList.add(\'dragover\')" ondragleave="this.classList.remove(\'dragover\')" ondrop="event.preventDefault();this.classList.remove(\'dragover\');handleFileDrop(event)"><div class="ai-upload-icon">📎</div><div class="ai-upload-text">点击或拖拽上传文件</div><div class="ai-upload-hint">支持 Word、Excel、PDF、TXT，可多选</div><input type="file" id="aiFileInput" class="ai-upload-input" multiple accept=".doc,.docx,.xls,.xlsx,.pdf,.txt" onchange="handleFileSelect(event)"></div>';}
+    if(m.files){html+='<div class="ai-file-list">'+m.files.map(function(f){return '<div class="ai-file"><span class="ai-file-icon">📄</span><span class="ai-file-name">'+f.name+'</span><span class="ai-file-size">'+f.size+'</span><span class="ai-file-status parsed">已解析</span></div>';}).join('')+'</div>';}
+    if(m.cards){html+=m.cards.map(function(c){return '<div class="ai-msg-card"><div class="ai-msg-card-t">'+c.t+'</div><div class="ai-msg-card-d">'+c.d+'</div><div class="ai-msg-card-ft"><span class="ai-msg-card-tag '+c.tc+'">'+c.tag+'</span>'+(c.apply?'<button class="ai-msg-card-apply" onclick="applyAiSuggestion(\''+c.apply+'\')">应用到表格</button>':'')+'</div></div>';}).join('');}
+    if(m.actions){html+='<div class="ai-msg-actions">'+m.actions.map(function(a){return '<button class="ai-msg-btn'+(a.indexOf('确认')>=0||a.indexOf('应用')>=0?' primary':'')+'" onclick="handleAiAction(\''+a+'\')">'+a+'</button>';}).join('')+'</div>';}
+    if(m.time){html+='<div class="ai-msg-time">'+m.time+'</div>';}
+    html+='</div>';
+    return html;
+  }).join('');
+  bd.scrollTop=bd.scrollHeight;
+}
+
+// 文件处理
+function handleChatFileSelect(e){
+  var files=Array.from(e.target.files);
+  if(!files.length)return;
+  processFiles(files);
+  e.target.value='';
+}
+
+function handleFileSelect(e){
+  var files=Array.from(e.target.files);
+  if(!files.length)return;
+  processFiles(files);
+}
+
+function handleFileDrop(e){
+  var files=Array.from(e.dataTransfer.files);
+  if(!files.length)return;
+  processFiles(files);
+}
+
+function processFiles(files){
+  var fileList=files.map(function(f){
+    var size=f.size>1024*1024?(f.size/(1024*1024)).toFixed(1)+'MB':(f.size/1024).toFixed(0)+'KB';
+    return {name:f.name,size:size};
+  });
+  AI_MSGS.push({role:'user',text:'已上传 '+files.length+' 个文件：\n'+files.map(function(f){return '• '+f.name;}).join('\n')});
+  AI_MSGS.push({role:'bot',text:'正在解析文件内容，提取目标进度和完成情况…',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),files:fileList});
+  renderAiChat();
+
+  setTimeout(function(){
+    AI_MSGS.push({role:'bot',text:'文件解析完成！已从文档中提取以下信息：\n\n📄 周报_张明_Q2_W12.docx:\n• 资源利用率: 实际108%（Devops数据）\n• UAT通过率: 本迭代3个需求首次通过2个\n• 需求评审: 本周完成2次评审，均按时\n\n📊 绩效自评素材.xlsx:\n• 产品管理规范: 4项规范全部落地\n• 日常需求: 完成GOFO 6月迭代验收\n• 绩效重构: 3个里程碑按时交付\n• AI应用: 3个版本按时发布\n\n点击「应用到表格」一键填入。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
+      {t:'解析完成',d:'已提取 7 项目标的完成数据和进度信息',tag:'AI 解析',tc:'pr',apply:'batch'}
+    ]});
+    renderAiChat();
+  },1500);
+}
+
+function applyAiSuggestion(type){
+  if(type==='batch'){
+    var comments=[
+      {mi:0,gi:0,completed:'108'},
+      {mi:0,gi:1,completed:'97'},
+      {mi:0,gi:2,completed:'96'},
+      {mi:1,gi:3,completed:'4项规范全部符合，团队遵从度95%以上',stars:4},
+      {mi:1,gi:4,completed:'按时完成GOFO 6月迭代需求评审和验收',stars:4},
+      {mi:1,gi:5,completed:'3个里程碑按时交付，无延期',stars:5},
+      {mi:1,gi:6,completed:'3个版本按时发布，1个试点应用已落地',stars:5}
+    ];
+    comments.forEach(function(c){
+      MODULES[c.mi].goals[c.gi].completed=c.completed;
+      if(MODULES[c.mi].goals[c.gi].type==='qual' && c.stars){
+        MODULES[c.mi].goals[c.gi].stars=c.stars;
+      }
+      var comp=document.getElementById('completed_'+c.mi+'_'+c.gi);
+      if(comp){
+        if(MODULES[c.mi].goals[c.gi].type==='quant'){
+          comp.value=c.completed;
+          updateCompleted(c.mi,c.gi);
+        }else{
+          comp.value=c.completed;
+          if(c.stars){
+            var rating=document.getElementById('stars_'+c.mi+'_'+c.gi);
+            if(rating){
+              var starEl=rating.querySelector('.star[data-v="'+c.stars+'"]');
+              if(starEl){setStar(starEl,c.mi,c.gi,c.stars);}
+            }
+          }
+        }
+      }
+    });
+    overallComment='本季度整体工作完成情况良好。KPI方面，资源利用率达标，UAT通过率和需求评审及时率略低于目标，已制定改进措施。KPA方面，产品管理规范落地执行，日常需求响应及时，绩效重构和AI应用项目均按里程碑计划推进完成。下一季度将持续优化评审流程，提升指标达成率。';
+    var oc=document.getElementById('overallComment');
+    if(oc)oc.value=overallComment;
+    showToast('已为7项目标 + 总评语自动生成','success');
+  }
+}
+
+function sendAiMsg(){
+  var input=document.getElementById('chatInput');
+  var text=input.value.trim();
+  if(!text)return;
+  AI_MSGS.push({role:'user',text:text});
+  input.value='';
+  renderAiChat();
+  setTimeout(function(){
+    AI_MSGS.push({role:'bot',text:'收到，正在分析目标数据…\n\n已根据你的描述生成建议，请查看更新结果。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
+    renderAiChat();
+  },800);
+}
+
+function handleAiAction(action){
+  AI_MSGS.push({role:'user',text:action});
+  renderAiChat();
+
+  setTimeout(function(){
+    switch(action){
+      case '解析文件自动填写':
+        AI_MSGS.push({role:'bot',text:'请上传你的工作文档，AI 将自动解析并提取目标进度和完成情况。\n\n支持的文件类型：\n• 周报/日报/月报（Word、TXT）\n• 项目进度表（Excel）\n• 工作总结（PDF）',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),upload:true});
+        break;
+      case '批量填写完成情况':
+        AI_MSGS.push({role:'bot',text:'已根据目标制定表的 7 项目标 + 完成度数据自动填入：\n\nKPI（30%）:\n• 资源利用率 → 108%（得分100分）\n• UAT首次通过率 → 97%（得分80分）\n• 需求评审及时率 → 96%（得分80分）\n\nKPA（70%）:\n• 产品管理规范 → 符合预期\n• 日常需求响应 → 符合预期\n• 绩效重构推进 → 符合预期+\n• AI应用落地 → 符合预期+\n\n点击「应用到表格」一键填入。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
+          {t:'批量填写完成',d:'7 项已完成填入，基于目标制定数据 + 完成度自动生成',tag:'AI 生成',tc:'pr',apply:'batch'}
+        ]});
+        break;
+      case '查看完成度详情':
+        AI_MSGS.push({role:'bot',text:'各目标完成度详情：\n\nKPI:\n• 资源利用率: 108% (保底100/目标105/挑战110) → 100分\n• UAT通过率: 97% (保底95/目标98/挑战100) → 80分\n• 评审及时率: 96% (保底95/目标98/挑战100) → 80分\n\nKPA:\n• 产品管理规范 → 符合预期\n• 日常需求响应 → 符合预期\n• 绩效重构推进 → 符合预期+\n• AI应用落地 → 符合预期+',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
+          {t:'完成度分析',d:'1项100分，2项80分，4项符合预期',tag:'整体达标',tc:'em'}
+        ]});
+        break;
+      case '填写建议':
+        AI_MSGS.push({role:'bot',text:'填写建议：\n\n• 定量目标：输入实际完成值，系统自动计算得分\n• 定性目标：描述具体完成情况，选择对应评价等级\n• 总评语：总结本季度整体工作，80-150字为宜',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
+          {t:'填写建议',d:'定量输入数值 + 定性选评价 + 总评语总结',tag:'建议',tc:'ac'}
+        ]});
+        break;
+      default:
+        AI_MSGS.push({role:'bot',text:'收到，正在分析绩效数据…\n\n已根据你的描述生成建议，请查看更新结果。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
+    }
+    renderAiChat();
+  },800);
+}
+
+function toggleAiChat(){document.body.classList.toggle('chat-open');}
+
+renderModuleContainer();
+
+document.body.insertAdjacentHTML('beforeend',
+'<div class="ai-chat" id="aiChat">'+
+  '<div class="ai-chat-hd">'+
+    '<div class="ai-chat-hd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg></div>'+
+    '<div><div class="ai-chat-hd-t">AI 绩效助手</div><div class="ai-chat-hd-s">自评评语 · 完成度分析 · 评语优化</div></div>'+
+    '<button class="ai-chat-close" onclick="toggleAiChat()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>'+
+  '</div>'+
+  '<div class="ai-chat-bd" id="chatBd"></div>'+
+  '<div class="ai-chat-ft">'+
+    '<label class="ai-chat-upload" title="上传文件"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg><input type="file" multiple accept=".doc,.docx,.xls,.xlsx,.pdf,.txt" onchange="handleChatFileSelect(event)"/></label>'+
+    '<input class="ai-chat-input" id="chatInput" placeholder="输入指令，如「批量评分」「查看偏差」…" onkeydown="if(event.key===\'Enter\')sendAiMsg()"/>'+
+    '<button class="ai-chat-send" onclick="sendAiMsg()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>'+
+  '</div>'+
+'</div>'+
+'<button class="ai-toggle" onclick="toggleAiChat()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg></button>');
+renderAiChat();
+</script>
+</body>
+</html>

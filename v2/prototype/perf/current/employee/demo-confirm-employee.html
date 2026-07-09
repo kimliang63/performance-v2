@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 绩效结果确认</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --shadow-dropdown:0 10px 40px -10px rgba(0,0,0,.12),0 2px 10px -2px rgba(0,0,0,.04);
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --m:'JetBrains Mono','SF Mono',monospace;
+  --sp-sm:8px;--sp-md:16px;--sp-lg:24px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+/* ═══ PAGE HEADER ═══ */
+.pg-hd{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:16px}
+.pg-hd-top{display:flex;align-items:center;justify-content:space-between}
+.pg-hd-title{font:700 20px/1.2 var(--f);color:var(--c9);letter-spacing:-.3px}
+.pg-hd-actions{display:flex;gap:8px}
+.pg-hd-meta{font:500 13px/1 var(--f);color:var(--c5)}
+.pg-hd-meta .dot{color:var(--c3);margin:0 2px}
+.status-pending{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--ac50);color:var(--ac700)}
+.status-pending::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--ac);animation:pulse 2s ease-in-out infinite}
+
+/* ═══ CARD ═══ */
+.card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card)}
+.card-hd{padding:16px 20px;border-bottom:1px solid var(--dv)}
+.card-t{font:600 15px/1 var(--f);color:var(--c9)}
+.card-bd{padding:20px}
+
+/* ═══ RESULTS TABLE ═══ */
+.results-list{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden}
+.results-list table{width:100%;border-collapse:collapse}
+.results-list th{background:var(--c0);padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.results-list td{padding:10px 16px;font:400 13px/1.4 var(--f);color:var(--c7);border-bottom:1px solid var(--dv);vertical-align:top}
+.results-list tr:last-child td{border-bottom:none}
+.results-list tr:hover td{background:var(--c0)}
+.results-list .mod-row td{background:var(--c0);padding:10px 16px;border-bottom:1px solid var(--dv)}
+.results-list .mod-row:hover td{background:var(--c0)}
+.results-mod{display:flex;align-items:center;gap:8px}
+.results-mod-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.results-mod-name{font:600 13px/1 var(--f);color:var(--c8)}
+.results-mod-weight{font-family:var(--m);font-weight:500;font-size:12px;color:var(--c5);background:var(--c1);padding:2px 8px;border-radius:4px}
+.score-badge{display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:24px;border-radius:var(--r1);font:600 13px/1 var(--m)}
+.score-badge.high{background:var(--em50);color:var(--em700)}
+.score-badge.mid{background:var(--pr50);color:var(--pr)}
+.score-badge.low{background:var(--ac50);color:var(--ac700)}
+
+/* ═══ CONFIRM BAR ═══ */
+.confirm-bar{padding:20px 24px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--dv)}
+.confirm-status{display:flex;align-items:center;gap:8px;font:500 13px/1 var(--f);color:var(--ac700)}
+.confirm-status .dot{width:8px;height:8px;border-radius:50%;background:var(--ac)}
+
+/* ═══ BUTTONS ═══ */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
+.btn svg{width:13px;height:13px}
+.btn-p{background:var(--pr);color:#FFF}
+.btn-p:hover{background:var(--pr700)}
+.btn-r{background:var(--ro);color:#FFF}
+.btn-r:hover{background:#E11D48}
+.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}
+.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
+
+/* ═══ TOAST ═══ */
+.validate-toast{position:fixed;top:64px;left:50%;transform:translateX(-50%);background:var(--em);color:#FFF;padding:10px 20px;border-radius:var(--r2);font:500 13px/1 var(--f);box-shadow:0 8px 24px rgba(16,185,129,.3);z-index:3000;opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:center;gap:8px}
+.validate-toast.show{opacity:1;pointer-events:all}
+.validate-toast svg{width:16px;height:16px}
+.validate-toast.warn{background:var(--ac);box-shadow:0 8px 24px rgba(245,158,11,.3)}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.fade-in{animation:fadeIn .2s ease forwards}
+
+/* ═══ EVAL TAG ═══ */
+.eval-tag{display:inline-block;padding:2px 8px;border-radius:3px;font:500 11px/1 var(--f)}
+.eval-tag.excellent{background:var(--em50);color:var(--em700)}
+.eval-tag.good{background:var(--pr50);color:var(--pr)}
+.eval-tag.normal{background:var(--c1);color:var(--c6)}
+.eval-tag.poor{background:var(--ro50);color:var(--ro)}
+
+/* ═══ CONFIRM BUTTONS ═══ */
+.confirm-btn{flex:1;height:48px;border-radius:var(--r2);font:600 15px/1 var(--f);cursor:pointer;border:2px solid transparent;transition:all .12s;display:flex;align-items:center;justify-content:center}
+.confirm-agree{border-color:var(--em);color:var(--em700);background:var(--sf)}
+.confirm-agree:hover{background:var(--em50)}
+.confirm-agree.sel{background:var(--em);color:#FFF;border-color:var(--em)}
+.confirm-disagree{border-color:var(--ro);color:var(--ro);background:var(--sf)}
+.confirm-disagree:hover{background:var(--ro50)}
+.confirm-disagree.sel{background:var(--ro);color:#FFF;border-color:var(--ro)}
+.confirm-submit{background:var(--pr);color:#FFF;border-color:var(--pr)}
+.confirm-submit:hover{background:var(--pr700)}
+
+/* ═══ AI CHAT ═══ */
+.ai-chat{position:fixed;top:52px;right:0;width:380px;height:calc(100vh - 52px);background:var(--sf);border-left:1px solid var(--dv);z-index:900;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s ease}
+body.chat-open .ai-chat{transform:translateX(0)}
+.ai-chat-hd{padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:10px}
+.ai-chat-hd-ic{width:32px;height:32px;border-radius:var(--r2);background:linear-gradient(135deg,var(--pr),var(--vi));display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ai-chat-hd-ic svg{width:16px;height:16px;color:#FFF}
+.ai-chat-hd-t{font:600 14px/1.2 var(--f);color:var(--c9)}
+.ai-chat-hd-s{font:400 11px/1 var(--f);color:var(--c5)}
+.ai-chat-close{margin-left:auto;width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:transparent;color:var(--c5);transition:all .12s}
+.ai-chat-close:hover{background:var(--c1);color:var(--c7)}
+.ai-chat-bd{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:16px}
+.ai-msg{max-width:92%;animation:aiMsgIn .3s ease}
+@keyframes aiMsgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.ai-msg.bot{align-self:flex-start}
+.ai-msg.user{align-self:flex-end}
+.ai-msg-bd{padding:12px 16px;border-radius:var(--r3);font:400 13px/1.6 var(--f)}
+.ai-msg.bot .ai-msg-bd{background:var(--c0);color:var(--c8);border-bottom-left-radius:4px}
+.ai-msg.user .ai-msg-bd{background:var(--pr);color:#FFF;border-bottom-right-radius:4px}
+.ai-msg-time{font:400 10px/1 var(--f);color:var(--c4);margin-top:4px}
+.ai-msg-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.ai-msg-btn{font:500 11px/1 var(--f);padding:5px 10px;border-radius:var(--r1);border:1px solid var(--c2);background:var(--sf);color:var(--c6);cursor:pointer;transition:all .12s}
+.ai-msg-btn:hover{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-msg-card{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);padding:12px;margin-top:8px}
+.ai-msg-card-t{font:600 12px/1.3 var(--f);color:var(--c8);margin-bottom:4px}
+.ai-msg-card-d{font:400 12px/1.5 var(--f);color:var(--c5)}
+.ai-msg-card-ft{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.ai-msg-card-tag{display:inline-block;font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px}
+.ai-msg-card-tag.em{color:var(--em700);background:var(--em50)}
+.ai-msg-card-tag.pr{color:var(--pr);background:var(--pr50)}
+.ai-msg-card-tag.ac{color:var(--ac700);background:var(--ac50)}
+.ai-shortcuts{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.ai-shortcut{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);cursor:pointer;transition:all .12s}
+.ai-shortcut:hover{border-color:var(--pr200);background:var(--pr50)}
+.ai-shortcut-icon{font-size:18px;flex-shrink:0}
+.ai-shortcut-text{flex:1;min-width:0}
+.ai-shortcut-label{font:500 13px/1.2 var(--f);color:var(--c8)}
+.ai-shortcut-desc{font:400 11px/1.3 var(--f);color:var(--c5);margin-top:2px}
+.ai-chat-ft{padding:12px 16px;border-top:1px solid var(--dv);display:flex;gap:8px;align-items:center}
+.ai-chat-input{flex:1;height:36px;border:1px solid var(--c2);border-radius:var(--r2);padding:0 12px;font:400 13px/1 var(--f);color:var(--c8);outline:none;transition:border .15s}
+.ai-chat-input:focus{border-color:var(--pr)}
+.ai-chat-send{width:36px;height:36px;border-radius:var(--r2);background:var(--pr);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#FFF;transition:all .12s}
+.ai-chat-send:hover{background:var(--pr700)}
+.ai-toggle{position:fixed;bottom:80px;right:24px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--pr),var(--vi));border:none;box-shadow:0 4px 16px rgba(37,99,235,.3);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:950;transition:all .2s}
+.ai-toggle:hover{transform:scale(1.08);box-shadow:0 6px 20px rgba(37,99,235,.4)}
+.ai-toggle svg{width:22px;height:22px;color:#FFF}
+body.chat-open .ai-toggle{display:none}
+
+/* ═══ APPEAL MODAL ITEMS ═══ */
+.appeal-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--dv);cursor:pointer;transition:background .12s}
+.appeal-item:last-child{border-bottom:none}
+.appeal-item:hover{background:var(--c0)}
+.appeal-item.sel{background:var(--pr50)}
+.appeal-item-ck{width:18px;height:18px;border-radius:4px;border:2px solid var(--c3);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.appeal-item.sel .appeal-item-ck{background:var(--pr);border-color:var(--pr)}
+.appeal-item-ck svg{width:11px;height:11px;color:#FFF;display:none}
+.appeal-item.sel .appeal-item-ck svg{display:block}
+.appeal-item-info{flex:1;min-width:0}
+.appeal-item-name{font:500 13px/1.3 var(--f);color:var(--c8)}
+.appeal-item-meta{font:400 11px/1 var(--f);color:var(--c5);margin-top:2px}
+
+.appeal-textarea{width:100%;min-height:100px;border:1px solid var(--c2);border-radius:var(--r1);padding:10px 12px;font:400 13px/1.5 var(--f);color:var(--c8);outline:none;resize:vertical;transition:border-color .15s}
+.appeal-textarea:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
+
+/* ═══ APPEAL FILE UPLOAD ═══ */
+.appeal-file{border:2px dashed var(--c2);border-radius:var(--r2);padding:16px 10px;text-align:center;cursor:pointer;transition:all .12s;display:flex;flex-direction:column;align-items:center;gap:4px}
+.appeal-file:hover{border-color:var(--pr);background:var(--pr50)}
+.appeal-file.uploaded{border-style:solid;border-color:var(--em);background:var(--em50)}
+.appeal-file-icon{width:28px;height:28px;border-radius:50%;background:var(--c1);display:flex;align-items:center;justify-content:center;font:600 16px/1 var(--f);color:var(--c4);transition:all .12s}
+.appeal-file.uploaded .appeal-file-icon{background:var(--em);color:#FFF}
+.appeal-file-label{font:500 12px/1 var(--f);color:var(--c6)}
+.appeal-file-hint{font:400 10px/1 var(--f);color:var(--c4)}
+.appeal-file-name{font:400 10px/1 var(--f);color:var(--em700);max-width:90%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px}
+</style>
+</head>
+<body>
+
+<!-- Navigation will be injected by navigation.js -->
+
+<!-- Main content -->
+<div class="ct fade-in">
+  <!-- Breadcrumb -->
+  <nav style="display:flex;align-items:center;gap:4px;font:500 12px/1 var(--f);color:var(--c5);margin-bottom:12px">
+    <a href="../demo-index.html" style="color:var(--c5);text-decoration:none;transition:color .12s" onmouseover="this.style.color='var(--pr)'" onmouseout="this.style.color='var(--c5)'">绩效工作台</a>
+    <span style="color:var(--c3)">/</span>
+    <span style="color:var(--c8);font-weight:600">结果确认</span>
+  </nav>
+
+  <!-- Page header -->
+  <div class="pg-hd">
+    <div class="pg-hd-top">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="pg-hd-title">绩效结果确认</div>
+        <span class="status-pending">待确认</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Result Card -->
+  <div class="card" style="margin-bottom:var(--sp-lg)">
+    <div class="card-bd" style="display:flex;align-items:center;gap:16px">
+      <!-- 综合等级 -->
+      <div style="text-align:center;flex:1">
+        <div style="font:400 13px/1 var(--f);color:var(--c5);margin-bottom:4px">综合等级</div>
+        <div style="font:700 28px/1 var(--f);color:var(--em700)">符合预期+</div>
+      </div>
+      <!-- 人员信息 -->
+      <div style="flex:1;min-width:0;padding:0 16px;border-left:1px solid var(--dv)">
+        <div style="font:500 15px/1.3 var(--f);color:var(--c8);margin-bottom:4px">张明</div>
+        <div style="font:400 13px/1.4 var(--f);color:var(--c6)">产品部 · 高级产品经理</div>
+        <div style="font:400 13px/1 var(--f);color:var(--c5);margin-top:2px">2026年Q2</div>
+      </div>
+      <!-- 三按钮 -->
+      <div style="flex:2;display:flex;gap:12px">
+        <button class="confirm-btn confirm-agree sel" id="btnAgree" onclick="selectOpt(1)">认可结果</button>
+        <button class="confirm-btn confirm-disagree" id="btnDisagree" onclick="selectOpt(2)">有异议，申请申诉</button>
+        <button class="confirm-btn confirm-submit" onclick="submitConfirm()">提交</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Auto-confirm hint -->
+  <div style="display:flex;align-items:center;gap:8px;padding:10px 16px;margin-bottom:16px;background:var(--ac50);border:1px solid var(--ac100);border-radius:var(--r2);font:400 13px/1.4 var(--f);color:var(--ac700)">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    提示：如未在 5 个工作日内确认结果，系统将自动视为认可并完成确认。
+  </div>
+
+  <!-- Results Table -->
+  <div class="results-list" style="margin-bottom:16px">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--dv)">
+      <span style="font:600 15px/1 var(--f);color:var(--c9)">得分明细</span>
+      <span id="appealHint" style="display:none;font:400 12px/1 var(--f);color:var(--ro);margin-left:12px">请勾选有异议的得分项</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:180px">名称</th>
+          <th style="width:55px">权重</th>
+          <th style="width:80px">类型</th>
+          <th style="min-width:180px">衡量标准</th>
+          <th style="min-width:160px">完成值/完成情况</th>
+          <th style="width:120px">评价</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="mod-row"><td colspan="6"><div class="results-mod">
+          <div class="results-mod-dot" style="background:var(--pr)"></div>
+          <span class="results-mod-name">KPI</span>
+          <span class="results-mod-weight">30%</span>
+        </div></td></tr>
+        <tr>
+          <td><span style="font-weight:500;color:var(--c8)">资源利用率（通用）</span></td>
+          <td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">5%</span></td>
+          <td><span style="display:inline-block;padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)">定量</span></td>
+          <td style="font:400 12px/1.6 var(--f);color:var(--c6)">人员实际工作量饱和情况<br>挑战值: <span style="font-family:var(--m);color:var(--c7)">110%</span> / 目标值: <span style="font-family:var(--m);color:var(--c7)">105%</span></td>
+          <td style="font-family:var(--m);font-weight:500;color:var(--c8)">108%</td>
+          <td><span class="eval-tag excellent">符合预期+</span></td>
+        </tr>
+        <tr>
+          <td><span style="font-weight:500;color:var(--c8)">HRAS UAT用户验收首次通过率</span></td>
+          <td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">10%</span></td>
+          <td><span style="display:inline-block;padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)">定量</span></td>
+          <td style="font:400 12px/1.6 var(--f);color:var(--c6)">需求首次业务验收通过的概率<br>挑战值: <span style="font-family:var(--m);color:var(--c7)">100%</span> / 目标值: <span style="font-family:var(--m);color:var(--c7)">98%</span></td>
+          <td style="font-family:var(--m);font-weight:500;color:var(--c8)">97%</td>
+          <td><span class="eval-tag good">符合预期</span></td>
+        </tr>
+        <tr>
+          <td><span style="font-weight:500;color:var(--c8)">HRAS需求评审及时率</span></td>
+          <td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">15%</span></td>
+          <td><span style="display:inline-block;padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)">定量</span></td>
+          <td style="font:400 12px/1.6 var(--f);color:var(--c6)">迭代版本评审的及时性情况<br>挑战值: <span style="font-family:var(--m);color:var(--c7)">100%</span> / 目标值: <span style="font-family:var(--m);color:var(--c7)">98%</span></td>
+          <td style="font-family:var(--m);font-weight:500;color:var(--c8)">96%</td>
+          <td><span class="eval-tag good">符合预期</span></td>
+        </tr>
+        <tr class="mod-row"><td colspan="6"><div class="results-mod">
+          <div class="results-mod-dot" style="background:var(--em)"></div>
+          <span class="results-mod-name">KPA</span>
+          <span class="results-mod-weight">70%</span>
+        </div></td></tr>
+        <tr>
+          <td><span style="font-weight:500;color:var(--c8)">HRAS产品管理规范</span></td>
+          <td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">10%</span></td>
+          <td><span style="display:inline-block;padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">定性</span></td>
+          <td style="font:400 12px/1.6 var(--f);color:var(--c6)">需求管理流程规范、产品需求规范、迭代火车管理规范、周会/月会准时完成</td>
+          <td style="font:400 13px/1.5 var(--f);color:var(--c8)">4项规范全部符合，团队遵从度95%以上</td>
+          <td><span class="eval-tag excellent">符合预期+</span></td>
+        </tr>
+        <tr>
+          <td><span style="font-weight:500;color:var(--c8)">日常滚动需求响应</span></td>
+          <td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">10%</span></td>
+          <td><span style="display:inline-block;padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">定性</span></td>
+          <td style="font:400 12px/1.6 var(--f);color:var(--c6)">根据业务日会需求优先级，滚动响应日常需求，输出产品解决方案</td>
+          <td style="font:400 13px/1.5 var(--f);color:var(--c8)">按时完成GOFO 6月迭代需求评审和验收</td>
+          <td><span class="eval-tag excellent">符合预期+</span></td>
+        </tr>
+        <tr>
+          <td><span style="font-weight:500;color:var(--c8)">HR ONE 绩效重构事项推进</span></td>
+          <td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">25%</span></td>
+          <td><span style="display:inline-block;padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">定性</span></td>
+          <td style="font:400 12px/1.6 var(--f);color:var(--c6)">06-10 输出AI+绩效核心页面原型；06-19 完成绩效版本4需求内审；06-24 完成需求评审</td>
+          <td style="font:400 13px/1.5 var(--f);color:var(--c8)">3个里程碑按时交付，无延期</td>
+          <td><span class="eval-tag excellent">符合预期+</span></td>
+        </tr>
+        <tr>
+          <td><span style="font-weight:500;color:var(--c8)">AI应用项目探索与落地推广</span></td>
+          <td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">25%</span></td>
+          <td><span style="display:inline-block;padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">定性</span></td>
+          <td style="font:400 12px/1.6 var(--f);color:var(--c6)">06-05 完成ASSC采购侧AI应用1.0版本；06-12 对接LBU试点应用；06-26 完成1.1版本</td>
+          <td style="font:400 13px/1.5 var(--f);color:var(--c8)">3个版本按时发布，1个试点应用已落地</td>
+          <td><span class="eval-tag excellent">符合预期+</span></td>
+        </tr>
+      </tbody>
+    </table>
+</div>
+</div>
+
+
+<!-- Appeal Modal -->
+<div id="appealModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:2000;align-items:center;justify-content:center">
+  <div style="background:var(--sf);border-radius:var(--r4);box-shadow:0 20px 60px rgba(0,0,0,.15);width:560px;max-height:80vh;overflow-y:auto">
+    <div style="padding:18px 24px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between">
+      <span style="font:600 16px/1 var(--f);color:var(--c9)">绩效结果申诉</span>
+      <button onclick="closeAppealModal()" style="width:28px;height:28px;border:none;background:transparent;cursor:pointer;color:var(--c4);font-size:18px">&times;</button>
+    </div>
+    <div style="padding:20px 24px">
+      <!-- 异议项 -->
+      <div style="margin-bottom:16px">
+        <div style="font:500 12px/1 var(--f);color:var(--c6);margin-bottom:8px">选择异议项 <span style="color:var(--ro)">*</span></div>
+        <div id="appealItems" style="max-height:200px;overflow-y:auto;border:1px solid var(--c2);border-radius:var(--r1)"></div>
+        <div id="appealItemCount" style="font:400 11px/1 var(--f);color:var(--c5);margin-top:4px">已选 0 项</div>
+      </div>
+      <!-- 申诉原因 -->
+      <div style="margin-bottom:16px">
+        <div style="font:500 12px/1 var(--f);color:var(--c6);margin-bottom:8px">申诉原因 <span style="color:var(--ro)">*</span></div>
+        <textarea class="appeal-textarea" id="appealReason" placeholder="请说明不同意的原因，至少10个字..."></textarea>
+        <div id="appealReasonErr" style="font:400 11px/1 var(--f);color:var(--ro);margin-top:4px;display:none">请至少输入 10 个字</div>
+      </div>
+      <!-- 附件 -->
+      <div>
+        <div style="font:500 12px/1 var(--f);color:var(--c6);margin-bottom:8px">佐证材料（选填，最多 5 份）</div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px" id="appealFilesGrid"></div>
+      </div>
+    </div>
+    <div style="padding:14px 24px;border-top:1px solid var(--dv);display:flex;justify-content:flex-end;gap:8px">
+      <button class="btn btn-s" onclick="closeAppealModal()">取消</button>
+      <button class="btn btn-p" onclick="submitAppeal()">提交申诉</button>
+    </div>
+  </div>
+</div>
+
+<div class="validate-toast" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span id="toastMsg"></span></div>
+
+<script src="../navigation.js"></script>
+<script>
+GHR_NAV.init('perf', '结果确认');
+
+var selectedOpt = 1;
+
+// ═══ 申诉数据 ═══
+var SCORE_ITEMS = [
+  {id:1, module:'KPI', name:'资源利用率（通用）', type:'定量', score:'108%', grade:'符合预期+', gradeCls:'excellent'},
+  {id:2, module:'KPI', name:'HRAS UAT用户验收首次通过率', type:'定量', score:'97%', grade:'符合预期', gradeCls:'good'},
+  {id:3, module:'KPI', name:'HRAS需求评审及时率', type:'定量', score:'96%', grade:'符合预期', gradeCls:'good'},
+  {id:4, module:'KPA', name:'HRAS产品管理规范', type:'定性', grade:'符合预期+', gradeCls:'excellent'},
+  {id:5, module:'KPA', name:'日常滚动需求响应', type:'定性', grade:'符合预期+', gradeCls:'excellent'},
+  {id:6, module:'KPA', name:'HR ONE 绩效重构事项推进', type:'定性', grade:'符合预期+', gradeCls:'excellent'},
+  {id:7, module:'KPA', name:'AI应用项目探索与落地推广', type:'定性', grade:'符合预期+', gradeCls:'excellent'},
+];
+var selectedItems = [];
+var uploadedFiles = [null, null, null, null, null];
+
+// ═══ 选择选项联动 ═══
+function selectOpt(n) {
+  selectedOpt = n;
+  selectedItems = [];
+  uploadedFiles = [null, null, null, null, null];
+  document.getElementById('btnAgree').classList.toggle('sel', n === 1);
+  document.getElementById('btnDisagree').classList.toggle('sel', n === 2);
+}
+
+function openAppealModal() {
+  selectedItems = [];
+  uploadedFiles = [null, null, null, null, null];
+  document.getElementById('appealReason').value = '';
+  document.getElementById('appealReasonErr').style.display = 'none';
+  renderAppealItems();
+  renderAppealFiles();
+  document.getElementById('appealModal').style.display = 'flex';
+}
+
+function closeAppealModal() {
+  document.getElementById('appealModal').style.display = 'none';
+}
+
+function toggleAppealItem(id) {
+  var idx = selectedItems.indexOf(id);
+  if (idx >= 0) { selectedItems.splice(idx, 1); }
+  else { selectedItems.push(id); }
+  renderAppealItems();
+}
+
+function renderAppealItems() {
+  var html = '';
+  SCORE_ITEMS.forEach(function(item) {
+    var sel = selectedItems.includes(item.id);
+    html += '<div class="appeal-item' + (sel ? ' sel' : '') + '" onclick="toggleAppealItem(' + item.id + ')">';
+    html += '<div class="appeal-item-ck"><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2.5\'><polyline points=\'20 6 9 17 4 12\'/></svg></div>';
+    html += '<div class="appeal-item-info"><div class="appeal-item-name">' + item.module + ' · ' + item.name + '</div><div class="appeal-item-meta">' + item.type + (item.score ? ' → ' + item.score : '') + '</div></div>';
+    html += '<span class="appeal-item-grade eval-tag ' + item.gradeCls + '">' + item.grade + '</span>';
+    html += '</div>';
+  });
+  document.getElementById('appealItems').innerHTML = html;
+  document.getElementById('appealItemCount').textContent = '已选 ' + selectedItems.length + ' 项';
+}
+
+
+
+// ═══ 文件上传 ═══
+function renderAppealFiles() {
+  var grid = document.getElementById('appealFilesGrid');
+  var html = '';
+  for (var i = 1; i <= 5; i++) {
+    html += '<div class="appeal-file" id="appealFile' + i + '" onclick="triggerFile(' + i + ')">' +
+      '<div class="appeal-file-icon">+</div>' +
+      '<div class="appeal-file-label">上传材料 ' + i + '</div>' +
+      '<div class="appeal-file-hint">PDF / 图片</div>' +
+      '<input type="file" id="fileInput' + i + '" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFile(' + i + ',this)" style="display:none">' +
+    '</div>';
+  }
+  grid.innerHTML = html;
+}
+
+function triggerFile(slot) { document.getElementById('fileInput' + slot).click(); }
+
+function handleFile(slot, input) {
+  if (input.files.length > 0) {
+    uploadedFiles[slot - 1] = input.files[0];
+    var el = document.getElementById('appealFile' + slot);
+    el.classList.add('uploaded');
+    el.querySelector('.appeal-file-label').textContent = '已上传';
+    var old = el.querySelector('.appeal-file-name');
+    if (old) old.remove();
+    var n = document.createElement('div');
+    n.className = 'appeal-file-name';
+    n.textContent = input.files[0].name;
+    el.appendChild(n);
+  }
+}
+
+// ═══ 提交 ═══
+function submitConfirm() {
+  if (selectedOpt === 1) {
+    showToast('已确认绩效结果', 'success');
+  } else {
+    openAppealModal();
+  }
+}
+
+function submitAppeal() {
+  var reason = document.getElementById('appealReason').value.trim();
+  var hasErr = false;
+  if (selectedItems.length === 0) {
+    showToast('请至少选择 1 项异议得分项', 'warn');
+    hasErr = true;
+  }
+  if (reason.length < 10) {
+    document.getElementById('appealReasonErr').style.display = 'block';
+    hasErr = true;
+  } else {
+    document.getElementById('appealReasonErr').style.display = 'none';
+  }
+  if (hasErr) return;
+  var fileCount = uploadedFiles.filter(Boolean).length;
+  closeAppealModal();
+  showToast('已提交申诉 · ' + selectedItems.length + ' 项异议' + (fileCount > 0 ? ' · ' + fileCount + ' 份材料' : '') + ' · HRBP将在3个工作日内处理', 'warn');
+}
+
+// ═══ AI CHAT ═══
+var AI_SHORTCUTS=[
+  {icon:'📊',label:'分析我的绩效',desc:'查看各指标得分和等级详情'},
+  {icon:'📈',label:'查看成长趋势',desc:'对比近期绩效变化'},
+  {icon:'❓',label:'有异议怎么办',desc:'了解申诉流程和注意事项'}
+];
+var AI_MSGS=[
+  {role:'bot',text:'你好，我是 AI 确认助手 👋\n\n我可以帮你：\n• 分析绩效结果的合理性\n• 查看成长趋势和历史对比\n• 了解申诉流程',time:'15:00',shortcuts:true}
+];
+
+function aiNow(){return new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});}
+
+function renderAiChat(){
+  var bd=document.getElementById('chatBd');
+  if(!bd)return;
+  bd.innerHTML=AI_MSGS.map(function(m){
+    var html='<div class="ai-msg '+m.role+'"><div class="ai-msg-bd">'+m.text.replace(/\n/g,'<br/>')+'</div>';
+    if(m.shortcuts){html+='<div class="ai-shortcuts">'+AI_SHORTCUTS.map(function(s){return '<div class="ai-shortcut" onclick="handleAiAction(\''+s.label+'\')"><span class="ai-shortcut-icon">'+s.icon+'</span><div class="ai-shortcut-text"><div class="ai-shortcut-label">'+s.label+'</div><div class="ai-shortcut-desc">'+s.desc+'</div></div></div>';}).join('')+'</div>';}
+    if(m.cards){html+=m.cards.map(function(c){return '<div class="ai-msg-card"><div class="ai-msg-card-t">'+c.t+'</div><div class="ai-msg-card-d">'+c.d+'</div><div class="ai-msg-card-ft"><span class="ai-msg-card-tag '+c.tc+'">'+c.tag+'</span></div></div>';}).join('');}
+    if(m.actions){html+='<div class="ai-msg-actions">'+m.actions.map(function(a){return '<button class="ai-msg-btn" onclick="handleAiAction(\''+a+'\')">'+a+'</button>';}).join('')+'</div>';}
+    if(m.time){html+='<div class="ai-msg-time">'+m.time+'</div>';}
+    html+='</div>';
+    return html;
+  }).join('');
+  bd.scrollTop=bd.scrollHeight;
+}
+
+function sendAiMsg(){
+  var input=document.getElementById('chatInput');
+  var text=input.value.trim();
+  if(!text)return;
+  AI_MSGS.push({role:'user',text:text});
+  input.value='';
+  renderAiChat();
+  setTimeout(function(){
+    AI_MSGS.push({role:'bot',text:'收到，正在分析你的绩效数据…\n\n已根据你的描述生成建议，请查看更新结果。',time:aiNow(),actions:['分析我的绩效','查看成长趋势','有异议怎么办']});
+    renderAiChat();
+  },800);
+}
+
+function handleAiAction(action){
+  AI_MSGS.push({role:'user',text:action});
+  renderAiChat();
+  setTimeout(function(){
+    switch(action){
+      case '分析我的绩效':
+        AI_MSGS.push({role:'bot',text:'📊 你的Q2绩效分析：\n\n综合得分：87.5分 → 符合预期+\n\n各维度表现：\n• KPI（30%）：资源利用率108%优秀，UAT通过率97%略低，评审及时率96%需改进\n• KPA（70%）：产品管理规范、需求响应、绩效重构、AI应用均表现良好\n\n💡 总结：整体表现优秀，KPA板块是主要得分来源。',time:aiNow(),cards:[
+          {t:'绩效分析',d:'综合87.5分，符合预期+',tag:'整体优秀',tc:'em'}
+        ],actions:['查看成长趋势','有异议怎么办']});
+        break;
+      case '查看成长趋势':
+        AI_MSGS.push({role:'bot',text:'📈 近期绩效趋势：\n\n• 2026年Q2：3.82 → 3.70 → 3.95（上升）\n• 2025年H2：3.50 → 3.80 → 4.10（持续上升）\n\n同比去年Q2：+10%\n环比上季度：+5%\n\n趋势向好，你的绩效在持续改善。',time:aiNow(),cards:[
+          {t:'趋势分析',d:'同比+10%，环比+5%',tag:'趋势向好',tc:'em'}
+        ],actions:['分析我的绩效','有异议怎么办']});
+        break;
+      case '有异议怎么办':
+        AI_MSGS.push({role:'bot',text:'❓ 如果你对绩效结果有异议：\n\n1. 选择「我对考核结果有异议」\n2. 勾选有异议的得分项\n3. 填写申诉原因（至少10个字）\n4. 可选上传佐证材料\n5. 点击提交，HRBP将在3个工作日内处理\n\n💡 建议：\n• 先冷静分析，确认是否有误解\n• 准备具体数据或事实依据\n• 异议不影响后续绩效改进计划',time:aiNow(),cards:[
+          {t:'申诉指引',d:'3个工作日内HRBP处理',tag:'流程说明',tc:'pr'}
+        ],actions:['分析我的绩效','查看成长趋势']});
+        break;
+      default:
+        AI_MSGS.push({role:'bot',text:'收到，正在分析你的绩效数据…\n\n已根据你的描述生成建议，请查看更新结果。',time:aiNow(),actions:['分析我的绩效','查看成长趋势','有异议怎么办']});
+    }
+    renderAiChat();
+  },800);
+}
+
+function toggleAiChat(){document.body.classList.toggle('chat-open');}
+
+renderAiChat();
+function showToast(msg,type){
+  var t=document.getElementById('toast');
+  document.getElementById('toastMsg').textContent=msg;
+  t.className='validate-toast show'+(type==='warn'?' warn':'');
+  setTimeout(function(){t.classList.remove('show')},3000);
+}
+
+// 初始化文件上传格
+renderAppealFiles();
+</script>
+
+<!-- AI Chat Panel -->
+<div class="ai-chat" id="aiChat">
+  <div class="ai-chat-hd">
+    <div class="ai-chat-hd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg></div>
+    <div><div class="ai-chat-hd-t">AI 确认助手</div><div class="ai-chat-hd-s">绩效分析 · 趋势对比 · 申诉指引</div></div>
+    <button class="ai-chat-close" onclick="toggleAiChat()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+  <div class="ai-chat-bd" id="chatBd"></div>
+  <div class="ai-chat-ft">
+    <input class="ai-chat-input" id="chatInput" placeholder="输入问题，如「分析我的绩效」…" onkeydown="if(event.key==='Enter')sendAiMsg()"/>
+    <button class="ai-chat-send" onclick="sendAiMsg()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+  </div>
+</div>
+<button class="ai-toggle" onclick="toggleAiChat()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg></button>
+</body>
+</html>

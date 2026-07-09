@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GHR - 绩效考核表单</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════
+   GHR 绩效考核表单 — Quiet Precision
+   ═══════════════════════════════════════════════════════ */
+:root{
+  /* 主色系 */
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  /* 语义色 */
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  /* 灰色色阶 */
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  /* 背景 */
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  /* 侧边栏 */
+  --sb-bg:#FFF;--sb-hover:#F4F4F5;--sb-active-bg:#F0F5FF;--sb-active-l:#2563EB;
+  --sb-text:#71717A;--sb-text-hv:#3F3F46;--sb-text-act:#2563EB;
+  --sb-icon:#A1A1AA;--sb-icon-act:#2563EB;
+  /* 阴影 */
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --shadow-card-hover:0 8px 20px -4px rgba(0,0,0,.08),0 2px 6px -2px rgba(0,0,0,.04);
+  --shadow-dropdown:0 10px 40px -10px rgba(0,0,0,.12),0 2px 10px -2px rgba(0,0,0,.04);
+  /* 尺寸 */
+  --header-h:52px;
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  /* 字体 */
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --m:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:var(--f);background:var(--bg);color:var(--c7);
+  -webkit-font-smoothing:antialiased;line-height:1.5;
+}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+  display:flex;align-items:center;
+  padding:0 24px;gap:16px;
+  position:sticky;top:0;z-index:1100;
+}
+.hdr-l{display:flex;align-items:center;gap:14px}
+.logo{display:flex;align-items:center;gap:8px}
+.logo-i{
+  width:28px;height:28px;border-radius:6px;
+  background:var(--pr);display:flex;align-items:center;justify-content:center;
+}
+.logo-i svg{width:15px;height:15px;color:#FFF}
+.logo-t{font-size:15px;font-weight:700;color:var(--c9);letter-spacing:-.3px}
+.logo-sep{width:1px;height:20px;background:var(--c2);margin:0 4px}
+
+/* 面包屑 */
+.breadcrumb{display:flex;align-items:center;gap:6px;font:400 13px/1 var(--f)}
+.breadcrumb a{color:var(--c5);text-decoration:none;transition:color .12s}
+.breadcrumb a:hover{color:var(--pr)}
+.breadcrumb .sep{color:var(--c3);font-size:11px}
+.breadcrumb .current{color:var(--c9);font-weight:500}
+
+/* 流程状态 */
+.flow-status{
+  display:flex;align-items:center;gap:8px;
+  margin-left:auto;
+}
+.flow-step{
+  display:flex;align-items:center;gap:5px;
+  font:500 11px/1 var(--f);color:var(--c4);
+}
+.flow-step.done{color:var(--em700)}
+.flow-step.active{color:var(--pr);font-weight:600}
+.flow-step-dot{
+  width:18px;height:18px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--c3);font-size:9px;font-weight:600;
+}
+.flow-step.done .flow-step-dot{border-color:var(--em);background:var(--em);color:#FFF}
+.flow-step.active .flow-step-dot{border-color:var(--pr);background:var(--pr50);color:var(--pr)}
+.flow-step-line{width:20px;height:1px;background:var(--c2)}
+
+/* 模式切换 */
+.mode-toggle{
+  display:flex;align-items:center;
+  background:var(--c1);border-radius:var(--r1);
+  padding:2px;margin-left:16px;
+}
+.mode-btn{
+  padding:5px 14px;border-radius:4px;
+  font:500 12px/1 var(--f);color:var(--c5);
+  cursor:pointer;border:none;background:transparent;
+  transition:all .15s;font-family:inherit;
+}
+.mode-btn.on{background:var(--sf);color:var(--pr);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.mode-btn:hover:not(.on){color:var(--c7)}
+
+/* ═══ MAIN AREA ═══ */
+.main-area{
+  padding:20px 24px;
+  display:flex;flex-direction:column;
+  height:calc(100vh - var(--header-h));
+  overflow:hidden;
+}
+
+/* ═══ PAGE CARD ═══ */
+.pg{
+  background:var(--sf);border-radius:var(--r3);
+  box-shadow:var(--shadow-card);
+  width:100%;
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.pg-hd{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 24px;border-bottom:1px solid var(--dv);
+}
+.pg-hd-l{display:flex;align-items:center;gap:14px}
+.pg-hd-ic{
+  width:36px;height:36px;border-radius:var(--r2);
+  background:var(--pr);display:flex;align-items:center;justify-content:center;
+}
+.pg-hd-ic svg{width:18px;height:18px;color:#FFF}
+.pg-hd-t{font:700 17px/1.2 var(--f);color:var(--c9);letter-spacing:-.2px}
+.pg-hd-s{font:400 12px/1 var(--f);color:var(--c5);margin-top:3px}
+.pg-a{display:flex;gap:8px}
+
+/* ═══ BUTTONS ═══ */
+.btn{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:0 14px;height:32px;border-radius:var(--r1);
+  font:500 13px/1 var(--f);cursor:pointer;
+  transition:all .12s;border:none;font-family:inherit;
+}
+.btn svg{width:13px;height:13px}
+.btn-p{background:var(--pr);color:#FFF}
+.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}
+.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
+.btn-w{background:var(--ac);color:#FFF}
+.btn-w:hover{background:#D97706}
+.btn-d{background:var(--c1);color:var(--c6);border:1px solid var(--c2)}
+.btn-d:hover{background:var(--c2)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* ═══ SINGLE MODE LAYOUT ═══ */
+.single-wrap{
+  flex:1;overflow-y:auto;
+}
+
+/* ═══ BASIC INFO ═══ */
+.info-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:16px;padding:20px 24px;
+  border-bottom:1px solid var(--dv);
+}
+.info-item{display:flex;flex-direction:column;gap:4px}
+.info-label{font:500 11px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px}
+.info-value{font:500 14px/1.3 var(--f);color:var(--c9)}
+
+/* ═══ INDICATOR TABLE ═══ */
+.ind-table{width:100%;border-collapse:collapse}
+.ind-table thead{position:sticky;top:0;z-index:10}
+.ind-table th{
+  background:var(--c0);
+  padding:10px 12px;
+  font:600 11px/1 var(--f);color:var(--c5);
+  text-align:left;border-bottom:1px solid var(--dv);
+  text-transform:uppercase;letter-spacing:.5px;
+  white-space:nowrap;
+}
+.ind-table td{
+  padding:10px 12px;
+  font:400 13px/1.4 var(--f);color:var(--c7);
+  border-bottom:1px solid var(--dv);
+  vertical-align:top;
+}
+.ind-table tr:last-child td{border-bottom:none}
+.ind-table tr:hover td{background:var(--c0)}
+
+.ind-name{font-weight:500;color:var(--c9)}
+.ind-weight{
+  font-family:var(--m);font-weight:500;
+  color:var(--c6);font-size:12px;
+}
+.ind-target{color:var(--c6);font-size:12px}
+
+/* 可编辑单元格 */
+.edit-cell{
+  width:100%;border:1px solid var(--c2);border-radius:4px;
+  padding:6px 8px;font:400 13px/1 var(--f);color:var(--c9);
+  background:var(--sf);transition:all .12s;font-family:inherit;
+}
+.edit-cell:focus{
+  outline:none;border-color:var(--pr);
+  box-shadow:0 0 0 3px rgba(37,99,235,.1);
+}
+.edit-cell::placeholder{color:var(--c4)}
+
+select.edit-cell{
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 8px center;
+  padding-right:24px;
+}
+
+textarea.edit-cell{
+  resize:vertical;min-height:36px;line-height:1.4;
+}
+
+.score-input{
+  width:70px;
+}
+
+/* 模块分组行 */
+.module-row td{
+  background:var(--pr50);
+  font:600 12px/1 var(--f);color:var(--pr);
+  padding:8px 12px;
+  border-bottom:1px solid var(--pr100);
+}
+.module-row td:first-child{border-left:3px solid var(--pr)}
+
+/* 分数显示 */
+.score-display{
+  font-family:var(--m);font-weight:600;
+  color:var(--c9);font-size:14px;
+}
+
+/* ═══ BOTTOM SECTION ═══ */
+.bottom-section{
+  padding:20px 24px;
+  border-top:1px solid var(--dv);
+  background:var(--c0);
+  display:flex;gap:24px;align-items:flex-end;
+}
+.bottom-field{display:flex;flex-direction:column;gap:6px;flex:1}
+.bottom-label{font:600 12px/1 var(--f);color:var(--c6)}
+.bottom-actions{display:flex;gap:8px;align-self:flex-end}
+
+/* ═══ BATCH MODE LAYOUT ═══ */
+.batch-wrap{
+  flex:1;display:flex;overflow:hidden;
+}
+
+/* 左侧面板 */
+.batch-left{
+  width:280px;flex-shrink:0;
+  border-right:1px solid var(--dv);
+  display:flex;flex-direction:column;
+  background:var(--sf);
+}
+
+/* 搜索和过滤 */
+.batch-filter{
+  padding:12px 16px;border-bottom:1px solid var(--dv);
+  display:flex;gap:8px;
+}
+.batch-search{
+  flex:1;border:1px solid var(--c2);border-radius:var(--r1);
+  padding:0 10px;height:30px;
+  font:400 12px/1 var(--f);color:var(--c9);
+  background:var(--sf);transition:all .12s;font-family:inherit;
+}
+.batch-search:focus{outline:none;border-color:var(--pr)}
+.batch-search::placeholder{color:var(--c4)}
+.filter-btn{
+  padding:0 10px;height:30px;border-radius:var(--r1);
+  border:1px solid var(--c2);background:var(--sf);
+  font:500 11px/1 var(--f);color:var(--c5);
+  cursor:pointer;transition:all .12s;font-family:inherit;
+}
+.filter-btn.on{background:var(--pr50);border-color:var(--pr200);color:var(--pr)}
+
+/* 员工列表 */
+.emp-list{flex:1;overflow-y:auto}
+.emp-item{
+  padding:10px 16px;
+  border-bottom:1px solid var(--dv);
+  cursor:pointer;transition:all .12s;
+  display:flex;align-items:center;gap:10px;
+}
+.emp-item:hover{background:var(--c0)}
+.emp-item.on{background:var(--pr50);border-left:3px solid var(--pr);padding-left:13px}
+.emp-avatar{
+  width:32px;height:32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font:600 12px/1 var(--f);color:#FFF;flex-shrink:0;
+}
+.emp-info{flex:1;min-width:0}
+.emp-name{font:500 13px/1.2 var(--f);color:var(--c9)}
+.emp-dept{font:400 11px/1 var(--f);color:var(--c4);margin-top:2px}
+.emp-score-col{text-align:right;flex-shrink:0}
+.emp-score{
+  font-family:var(--m);font-weight:600;font-size:14px;
+  color:var(--c9);
+}
+.emp-grade{
+  font:500 10px/1 var(--f);margin-top:2px;
+  padding:1px 5px;border-radius:3px;display:inline-block;
+}
+.emp-status{
+  width:8px;height:8px;border-radius:50%;flex-shrink:0;
+}
+.emp-status.scored{background:var(--em)}
+.emp-status.pending{background:var(--c3)}
+.emp-status.partial{background:var(--ac)}
+
+/* 批量操作栏 */
+.batch-actions{
+  padding:12px 16px;border-top:1px solid var(--dv);
+  display:flex;gap:8px;
+}
+
+/* 右侧表单区 */
+.batch-right{
+  flex:1;overflow-y:auto;
+  padding:0;
+}
+
+/* ═══ MODAL ═══ */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.4);
+  z-index:2000;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity .2s;
+}
+.modal-overlay.on{opacity:1;pointer-events:all}
+.modal{
+  background:var(--sf);border-radius:var(--r4);
+  box-shadow:0 20px 60px -15px rgba(0,0,0,.2);
+  width:720px;max-height:85vh;
+  display:flex;flex-direction:column;
+  transform:translateY(10px);transition:transform .2s;
+}
+.modal-overlay.on .modal{transform:translateY(0)}
+.modal-hd{
+  padding:18px 24px;
+  border-bottom:1px solid var(--dv);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.modal-title{font:600 16px/1.2 var(--f);color:var(--c9)}
+.modal-close{
+  width:28px;height:28px;border-radius:var(--r1);
+  border:none;background:transparent;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--c4);transition:all .12s;
+}
+.modal-close:hover{background:var(--c1);color:var(--c7)}
+.modal-bd{flex:1;overflow-y:auto;padding:24px}
+.modal-ft{
+  padding:16px 24px;border-top:1px solid var(--dv);
+  display:flex;justify-content:flex-end;gap:8px;
+}
+
+/* 上传区域 */
+.upload-zone{
+  border:2px dashed var(--c2);border-radius:var(--r2);
+  padding:32px;text-align:center;
+  cursor:pointer;transition:all .15s;
+  background:var(--c0);
+}
+.upload-zone:hover{border-color:var(--pr);background:var(--pr50)}
+.upload-zone.drag-over{border-color:var(--pr);background:var(--pr50)}
+.upload-icon{
+  width:40px;height:40px;border-radius:var(--r2);
+  background:var(--pr50);display:flex;align-items:center;justify-content:center;
+  margin:0 auto 12px;
+}
+.upload-icon svg{color:var(--pr);width:20px;height:20px}
+.upload-text{font:500 13px/1.3 var(--f);color:var(--c6)}
+.upload-hint{font:400 11px/1 var(--f);color:var(--c4);margin-top:6px}
+
+/* 预览表格 */
+.preview-table{width:100%;border-collapse:collapse;margin-top:16px}
+.preview-table th{
+  background:var(--c0);padding:8px 10px;
+  font:600 11px/1 var(--f);color:var(--c5);
+  text-align:left;border-bottom:1px solid var(--dv);
+  white-space:nowrap;
+}
+.preview-table td{
+  padding:7px 10px;
+  font:400 12px/1.3 var(--f);color:var(--c7);
+  border-bottom:1px solid var(--dv);
+}
+.preview-table tr:last-child td{border-bottom:none}
+.row-valid{color:var(--em700)}
+.row-invalid{color:var(--ro)}
+.status-badge{
+  display:inline-flex;align-items:center;gap:3px;
+  padding:2px 6px;border-radius:3px;
+  font:500 10px/1 var(--f);
+}
+.status-badge.ok{color:var(--em700);background:var(--em50)}
+.status-badge.err{color:var(--ro);background:var(--ro50)}
+
+/* 验证结果 */
+.validation-result{
+  margin-top:16px;padding:12px 14px;border-radius:var(--r2);
+  font:400 12px/1.4 var(--f);
+}
+.validation-result.success{background:var(--em50);color:var(--em700);border:1px solid var(--em100)}
+.validation-result.error{background:var(--ro50);color:var(--ro);border:1px solid var(--ro100)}
+
+/* ═══ TOAST ═══ */
+.toast{
+  position:fixed;top:70px;right:24px;
+  padding:12px 18px;border-radius:var(--r2);
+  font:500 13px/1.3 var(--f);
+  box-shadow:var(--shadow-dropdown);
+  z-index:3000;
+  transform:translateX(120%);transition:transform .25s ease;
+}
+.toast.on{transform:translateX(0)}
+.toast.success{background:var(--em);color:#FFF}
+.toast.error{background:var(--ro);color:#FFF}
+
+/* ═══ ANIMATION ═══ */
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fi{animation:fi .2s ease forwards}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.fade-in{animation:fadeIn .2s ease}
+
+/* ═══ UTIL ═══ */
+.hidden{display:none!important}
+.grade-exceed{color:#B45309;background:var(--ac50)}
+.grade-meet-plus{color:var(--em700);background:var(--em50)}
+.grade-meet{color:var(--pr);background:var(--pr50)}
+.grade-meet-minus{color:var(--vi);background:var(--vi50)}
+.grade-fail{color:var(--ro);background:var(--ro50)}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<!-- Navigation will be injected by navigation.js -->
+
+<!-- MAIN AREA -->
+<div class="main-area">
+  <!-- SINGLE MODE -->
+  <div class="pg fi" id="singleMode">
+    <div class="pg-hd">
+      <div class="pg-hd-l">
+        <div class="pg-hd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+        <div>
+          <div class="pg-hd-t">绩效考核表单</div>
+          <div class="pg-hd-s">2026年度方案 &middot; 考核评分阶段</div>
+        </div>
+      </div>
+      <div class="pg-a">
+        <button class="btn btn-s" onclick="showToast('表单已保存为草稿','success')">暂存</button>
+        <button class="btn btn-p" onclick="submitSingle()">提交评分</button>
+      </div>
+    </div>
+
+    <div class="single-wrap">
+      <!-- 基本信息 -->
+      <div class="info-grid" id="singleInfo"></div>
+
+      <!-- 指标评分表 -->
+      <div style="overflow-x:auto">
+        <table class="ind-table" id="singleTable">
+          <thead>
+            <tr>
+              <th style="width:200px">目标名称</th>
+              <th style="width:70px">权重</th>
+              <th style="width:100px">目标值</th>
+              <th style="width:130px" id="thCompleted">完成值/评价</th>
+              <th style="min-width:180px">评语</th>
+            </tr>
+          </thead>
+          <tbody id="singleBody"></tbody>
+        </table>
+      </div>
+
+      <!-- 底部总评 -->
+      <div class="bottom-section">
+        <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:12px;padding:12px 16px;background:var(--c0);border-radius:var(--r2)">
+          <span style="font:500 13px/1 var(--f);color:var(--c6)">加权总分</span>
+          <span id="totalScore" style="font-family:var(--m);font-size:20px;font-weight:700;color:var(--pr)">0.0</span>
+        </div>
+        <div style="display:flex;gap:16px;margin-bottom:12px">
+          <div class="bottom-field" style="flex:1">
+            <label class="bottom-label">总评价结果</label>
+            <select class="edit-cell" id="overallGrade" onchange="updateOverallGrade(this.value)">
+              <option value="">请选择</option>
+              ${GRADE_OPTIONS.map(g=>`<option value="${g}">${g}</option>`).join('')}
+            </select>
+          </div>
+          <div class="bottom-field" style="flex:2">
+            <label class="bottom-label">总评语</label>
+            <textarea class="edit-cell" id="overallComment" rows="2" placeholder="请输入对该员工的整体评价..."></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BATCH MODE -->
+  <div class="pg fi hidden" id="batchMode">
+    <div class="pg-hd">
+      <div class="pg-hd-l">
+        <div class="pg-hd-ic" style="background:var(--vi)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <div>
+          <div class="pg-hd-t">批量对比评分</div>
+          <div class="pg-hd-s">选择员工进行评分，支持批量导入</div>
+        </div>
+      </div>
+      <div class="pg-a">
+        <button class="btn btn-s" onclick="exportTemplate()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 模板导出</button>
+        <button class="btn btn-s" onclick="openImportModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> 批量导入</button>
+        <button class="btn btn-p" onclick="submitBatch()">批量提交</button>
+      </div>
+    </div>
+
+    <div class="batch-wrap">
+      <!-- 左侧面板 -->
+      <div class="batch-left">
+        <div class="batch-filter">
+          <input class="batch-search" placeholder="搜索员工..." oninput="filterEmployees(this.value)">
+          <button class="filter-btn" id="filterAll" onclick="setFilter('all')">全部</button>
+          <button class="filter-btn on" id="filterPending" onclick="setFilter('pending')">待评</button>
+        </div>
+        <div class="emp-list" id="empList"></div>
+        <div class="batch-actions">
+          <button class="btn btn-d" style="flex:1" onclick="setFilter('all')">显示全部</button>
+        </div>
+      </div>
+
+      <!-- 右侧表单 -->
+      <div class="batch-right" id="batchRight">
+        <div id="batchEmpty" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--c4)">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom:12px"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <div style="font:500 14px/1.3 var(--f)">请从左侧选择员工</div>
+          <div style="font:400 12px/1 var(--f);margin-top:4px">选择后将显示考核表单</div>
+        </div>
+        <div id="batchForm" class="hidden">
+          <!-- 动态填充 -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- IMPORT MODAL -->
+<div class="modal-overlay" id="importModal">
+  <div class="modal">
+    <div class="modal-hd">
+      <span class="modal-title">批量导入评分</span>
+      <button class="modal-close" onclick="closeImportModal()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-bd">
+      <div class="upload-zone" id="uploadZone" onclick="simulateImport()">
+        <div class="upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+        <div class="upload-text">点击或拖拽文件到此区域上传</div>
+        <div class="upload-hint">支持 .xlsx / .csv 格式，单次最多导入 200 条</div>
+      </div>
+
+      <div id="importPreview" class="hidden">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div style="font:600 13px/1 var(--f);color:var(--c9)">预览数据（前10条）</div>
+          <div style="font:400 11px/1 var(--f);color:var(--c4)">共 8 条记录</div>
+        </div>
+        <div style="overflow-x:auto;border:1px solid var(--dv);border-radius:var(--r2)">
+          <table class="preview-table" id="previewTable"></table>
+        </div>
+        <div class="validation-result success" id="validationResult">
+          <strong>校验通过：</strong>8 条记录格式正确，可以导入。
+        </div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-s" onclick="closeImportModal()">取消</button>
+      <button class="btn btn-p hidden" id="confirmImportBtn" onclick="confirmImport()">确认导入</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="navigation.js"></script>
+<script>
+// ═══ Mock 数据 ═══
+const EMPLOYEES = [
+  {id:'E001',name:'张明',dept:'产品部',title:'高级产品经理',score:87.5,grade:'符合预期+',status:'scored'},
+  {id:'E002',name:'李雪',dept:'产品部',title:'产品经理',score:78,grade:'符合预期',status:'scored'},
+  {id:'E003',name:'王浩然',dept:'产品部',title:'产品助理',score:0,grade:'-',status:'pending'},
+  {id:'E004',name:'周婷',dept:'产品部',title:'高级产品经理',score:92,grade:'远超预期',status:'scored'},
+  {id:'E005',name:'吴强',dept:'技术部',title:'前端工程师',score:65,grade:'符合预期-',status:'partial'},
+  {id:'E006',name:'刘洋',dept:'技术部',title:'后端工程师',score:0,grade:'-',status:'pending'},
+  {id:'E007',name:'陈静',dept:'市场部',title:'市场专员',score:81,grade:'符合预期+',status:'scored'},
+  {id:'E008',name:'赵伟',dept:'市场部',title:'市场经理',score:0,grade:'-',status:'pending'},
+];
+
+// 考核指标（type: quant=定量目标填完成值, qual=定性目标选自评等级）
+const MODULES = [
+  {name:'业绩目标',weight:60,indicators:[
+    {name:'Q1营收目标达成率',type:'quant',weight:25,target:'1200万',unit:'万',completed:'',grade:'',comment:''},
+    {name:'新客户拓展数量',type:'quant',weight:20,target:'15家',unit:'家',completed:'',grade:'',comment:''},
+    {name:'客户满意度评分',type:'quant',weight:15,target:'≥90分',unit:'分',completed:'',grade:'',comment:''},
+  ]},
+  {name:'能力发展',weight:25,indicators:[
+    {name:'专业技能提升',type:'qual',weight:10,target:'完成2项认证',completed:'',grade:'',comment:''},
+    {name:'团队协作贡献',type:'qual',weight:8,target:'主导1次跨部门项目',completed:'',grade:'',comment:''},
+    {name:'知识分享与传承',type:'qual',weight:7,target:'完成3次内部分享',completed:'',grade:'',comment:''},
+  ]},
+  {name:'价值观践行',weight:15,indicators:[
+    {name:'主动担责',type:'qual',weight:5,target:'无推诿记录',completed:'',grade:'',comment:''},
+    {name:'创新提案',type:'qual',weight:5,target:'提交2条创新建议',completed:'',grade:'',comment:''},
+    {name:'合规与诚信',type:'qual',weight:5,target:'零违规',completed:'',grade:'',comment:''},
+  ]},
+  {name:'加减分事项',weight:0,indicators:[{name:'',type:'bonus',weight:0,target:'',completed:'',bonus:0,bonusType:'bonus',comment:''}]},
+];
+
+const GRADE_OPTIONS = ['远超预期','符合预期+','符合预期','符合预期-','未达预期'];
+
+// 每个员工独立的评分数据
+const empScores = {};
+EMPLOYEES.forEach(e => {
+  empScores[e.id] = JSON.parse(JSON.stringify(MODULES));
+  // 已评分的员工填入模拟数据
+  if (e.status === 'scored' || e.status === 'partial') {
+    const factors = {92:1.0,87.5:0.95,81:0.88,78:0.82,65:0.68};
+    const f = factors[e.score] || 0.8;
+    empScores[e.id].forEach(m => {
+      m.indicators.forEach(ind => {
+        if (ind.type === 'bonus') return; // 加减分事项不自动填充
+        const r = Math.random();
+        if (r < f) ind.grade = GRADE_OPTIONS[Math.min(Math.floor((1-f)*5),4)];
+        else ind.grade = GRADE_OPTIONS[2]; // 符合预期
+        ind.completed = Math.round(parseFloat(ind.target)*f*10)/10 + (ind.target.replace(/[0-9.≥]/g,'')||'');
+        ind.comment = '表现良好，继续努力';
+      });
+    });
+  }
+});
+
+// ═══ 状态 ═══
+let currentMode = 'single';
+let selectedEmpId = 'E001';
+let currentFilter = 'pending';
+let searchQuery = '';
+
+// ═══ 模式切换 ═══
+function switchMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('on', b.dataset.mode === mode));
+  document.getElementById('singleMode').classList.toggle('hidden', mode !== 'single');
+  document.getElementById('batchMode').classList.toggle('hidden', mode !== 'batch');
+  if (mode === 'batch') {
+    renderEmpList();
+  }
+}
+
+// ═══ 单人评分模式 ═══
+function renderSingleForm(empId) {
+  const emp = EMPLOYEES.find(e => e.id === empId);
+  if (!emp) return;
+
+  // 基本信息
+  document.getElementById('singleInfo').innerHTML = `
+    <div class="info-item"><span class="info-label">被考核人</span><span class="info-value">${emp.name}</span></div>
+    <div class="info-item"><span class="info-label">部门</span><span class="info-value">${emp.dept}</span></div>
+    <div class="info-item"><span class="info-label">职位</span><span class="info-value">${emp.title}</span></div>
+    <div class="info-item"><span class="info-label">考核周期</span><span class="info-value">2026年度</span></div>
+  `;
+
+  // 指标表格
+  const scores = empScores[empId];
+  let html = '';
+  scores.forEach(mod => {
+    const isBonus = mod.name === '加减分事项';
+    html += `<tr class="module-row"><td colspan="5">${mod.name}（权重 ${mod.weight}%）</td></tr>`;
+    mod.indicators.forEach((ind, i) => {
+      const idx = mod.name + '_' + i;
+      if (ind.type === 'bonus') {
+        html += `<tr>
+          <td><input class="edit-cell" value="${ind.name}" placeholder="加减分原因" onchange="updateScore('${empId}','${mod.name}',${i},'name',this.value)"></td>
+          <td colspan="2"><select class="edit-cell" onchange="updateScore('${empId}','${mod.name}',${i},'bonusType',this.value)"><option value="bonus" ${ind.bonusType==='bonus'?'selected':''}>加分</option><option value="penalty" ${ind.bonusType==='penalty'?'selected':''}>减分</option></select></td>
+          <td><input class="edit-cell" type="number" step="0.5" value="${ind.bonus}" placeholder="分值" onchange="updateScore('${empId}','${mod.name}',${i},'bonus',this.value)"></td>
+          <td></td>
+        </tr>`;
+      } else {
+        // 定量填完成值，定性选自评等级
+        let completedCell;
+        if (ind.type === 'quant') {
+          completedCell = `<td><div style="display:flex;align-items:center;gap:4px"><input class="edit-cell" type="number" step="any" value="${ind.completed}" placeholder="输入完成值" onchange="updateScore('${empId}','${mod.name}',${i},'completed',this.value)" style="flex:1"><span style="font:400 12px/1 var(--f);color:var(--c5);white-space:nowrap">${ind.unit||''}</span></div></td>`;
+        } else {
+          completedCell = `<td><select class="edit-cell" onchange="updateScore('${empId}','${mod.name}',${i},'grade',this.value)"><option value="">请选择</option>${GRADE_OPTIONS.map(g=>`<option value="${g}" ${ind.grade===g?'selected':''}>${g}</option>`).join('')}</select></td>`;
+        }
+        html += `<tr>
+          <td><span class="ind-name">${ind.name}</span></td>
+          <td><span class="ind-weight">${ind.weight}%</span></td>
+          <td><span class="ind-target">${ind.target}</span></td>
+          ${completedCell}
+          <td><textarea class="edit-cell" rows="1" placeholder="评语" onchange="updateScore('${empId}','${mod.name}',${i},'comment',this.value)">${ind.comment}</textarea></td>
+        </tr>`;
+      }
+    });
+  });
+  document.getElementById('singleBody').innerHTML = html;
+
+  // 总分
+  updateTotalScore(empId);
+}
+
+function updateScore(empId, modName, idx, field, value) {
+  const scores = empScores[empId];
+  const mod = scores.find(m => m.name === modName);
+  if (mod) {
+    mod.indicators[idx][field] = value;
+    // 加减分类型切换时调整分值符号
+    if (field === 'bonusType') {
+      const v = Math.abs(parseFloat(mod.indicators[idx].bonus) || 0);
+      mod.indicators[idx].bonus = value === 'penalty' ? -v : v;
+    }
+    // 更新单项得分
+    const scoreEl = document.getElementById('indScore_' + modName + '_' + idx);
+    if (scoreEl) scoreEl.textContent = calcIndScore(mod.indicators[idx]);
+    updateTotalScore(empId);
+    // 如果在批量模式，更新员工分数显示
+    if (currentMode === 'batch') {
+      const emp = EMPLOYEES.find(e => e.id === empId);
+      if (emp) {
+        emp.score = parseFloat(document.getElementById('totalScore').textContent) || 0;
+        renderEmpList();
+      }
+    }
+  }
+}
+
+function calcIndScore(ind) {
+  const gradeScores = {'远超预期':100,'符合预期+':90,'符合预期':80,'符合预期-':70,'未达预期':60};
+  const base = gradeScores[ind.grade] || 0;
+  return base > 0 ? base.toFixed(1) : '-';
+}
+
+function updateTotalScore(empId) {
+  const scores = empScores[empId];
+  let totalWeight = 0;
+  let totalWeighted = 0;
+  let bonusSum = 0;
+  scores.forEach(mod => {
+    mod.indicators.forEach(ind => {
+      if (ind.type === 'bonus') {
+        bonusSum += (ind.bonus || 0);
+        return;
+      }
+      const s = parseFloat(calcIndScore(ind));
+      if (!isNaN(s)) {
+        totalWeighted += s * (ind.weight / 100);
+        totalWeight += ind.weight;
+      }
+    });
+  });
+  const base = totalWeight > 0 ? (totalWeighted / totalWeight * 100) : 0;
+  const total = (base + bonusSum).toFixed(1);
+  document.getElementById('totalScore').textContent = total;
+
+  // 更新员工数据
+  const emp = EMPLOYEES.find(e => e.id === empId);
+  if (emp) {
+    emp.score = parseFloat(total) || 0;
+  }
+}
+
+function updateOverallGrade(value) {
+  const emp = EMPLOYEES.find(e => e.id === selectedEmpId);
+  if (emp) emp.grade = value;
+  if (currentMode === 'batch') renderEmpList();
+}
+
+function submitSingle() {
+  const emp = EMPLOYEES.find(e => e.id === selectedEmpId);
+  if (!emp) return;
+  if (emp.score === 0) { showToast('请先完成评分再提交','error'); return; }
+  emp.status = 'scored';
+  showToast(`已提交 ${emp.name} 的评分`,'success');
+}
+
+// ═══ 批量模式 ═══
+function renderEmpList() {
+  const list = document.getElementById('empList');
+  const filtered = EMPLOYEES.filter(e => {
+    if (searchQuery && !e.name.includes(searchQuery) && !e.dept.includes(searchQuery)) return false;
+    if (currentFilter === 'pending' && e.status === 'scored') return false;
+    if (currentFilter === 'scored' && e.status !== 'scored') return false;
+    return true;
+  });
+
+  const colors = ['#2563EB','#8B5CF6','#F59E0B','#10B981','#F43F5E','#6366F1','#EC4899','#14B8A6'];
+  list.innerHTML = filtered.map((e, i) => `
+    <div class="emp-item ${e.id === selectedEmpId ? 'on' : ''}" onclick="selectEmployee('${e.id}')">
+      <div class="emp-avatar" style="background:${colors[i % 8]}">${e.name[0]}</div>
+      <div class="emp-info">
+        <div class="emp-name">${e.name}</div>
+        <div class="emp-dept">${e.dept} &middot; ${e.title}</div>
+      </div>
+      <div class="emp-score-col">
+        <div class="emp-score">${e.score > 0 ? e.score : '-'}</div>
+        <div class="emp-grade ${getGradeClass(e.grade)}">${e.grade}</div>
+      </div>
+      <div class="emp-status ${e.status}" title="${{scored:'已评分',pending:'待评分',partial:'部分评分'}[e.status]}"></div>
+    </div>
+  `).join('');
+}
+
+function getGradeClass(grade) {
+  if (grade === '远超预期') return 'grade-exceed';
+  if (grade === '符合预期+') return 'grade-meet-plus';
+  if (grade === '符合预期') return 'grade-meet';
+  if (grade === '符合预期-') return 'grade-meet-minus';
+  if (grade === '未达预期') return 'grade-fail';
+  return '';
+}
+
+function selectEmployee(empId) {
+  selectedEmpId = empId;
+  renderEmpList();
+  renderBatchForm(empId);
+}
+
+function renderBatchForm(empId) {
+  const emp = EMPLOYEES.find(e => e.id === empId);
+  if (!emp) return;
+
+  document.getElementById('batchEmpty').classList.add('hidden');
+  const form = document.getElementById('batchForm');
+  form.classList.remove('hidden');
+
+  const scores = empScores[empId];
+  let tableHtml = '';
+  scores.forEach(mod => {
+    const isBonus = mod.name === '加减分事项';
+    tableHtml += `<tr class="module-row"><td colspan="5">${mod.name}（权重 ${mod.weight}%）</td></tr>`;
+    mod.indicators.forEach((ind, i) => {
+      if (ind.type === 'bonus') {
+        tableHtml += `<tr>
+          <td><input class="edit-cell" value="${ind.name}" placeholder="加减分原因" onchange="updateScore('${empId}','${mod.name}',${i},'name',this.value)"></td>
+          <td colspan="2"><select class="edit-cell" onchange="updateScore('${empId}','${mod.name}',${i},'bonusType',this.value)"><option value="bonus" ${ind.bonusType==='bonus'?'selected':''}>加分</option><option value="penalty" ${ind.bonusType==='penalty'?'selected':''}>减分</option></select></td>
+          <td><input class="edit-cell" type="number" step="0.5" value="${ind.bonus}" placeholder="分值" onchange="updateScore('${empId}','${mod.name}',${i},'bonus',this.value)"></td>
+          <td></td>
+        </tr>`;
+      } else {
+        let completedCell;
+        if (ind.type === 'quant') {
+          completedCell = `<td><div style="display:flex;align-items:center;gap:4px"><input class="edit-cell" type="number" step="any" value="${ind.completed}" placeholder="输入完成值" onchange="updateScore('${empId}','${mod.name}',${i},'completed',this.value)" style="flex:1"><span style="font:400 12px/1 var(--f);color:var(--c5);white-space:nowrap">${ind.unit||''}</span></div></td>`;
+        } else {
+          completedCell = `<td><select class="edit-cell" onchange="updateScore('${empId}','${mod.name}',${i},'grade',this.value)"><option value="">请选择</option>${GRADE_OPTIONS.map(g=>`<option value="${g}" ${ind.grade===g?'selected':''}>${g}</option>`).join('')}</select></td>`;
+        }
+        tableHtml += `<tr>
+          <td><span class="ind-name">${ind.name}</span></td>
+          <td><span class="ind-weight">${ind.weight}%</span></td>
+          <td><span class="ind-target">${ind.target}</span></td>
+          ${completedCell}
+          <td><textarea class="edit-cell" rows="1" placeholder="评语" onchange="updateScore('${empId}','${mod.name}',${i},'comment',this.value)">${ind.comment}</textarea></td>
+        </tr>`;
+      }
+    });
+  });
+
+  form.innerHTML = `
+    <div class="pg-hd" style="border-bottom:none">
+      <div class="pg-hd-l">
+        <div class="pg-hd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <div>
+          <div class="pg-hd-t">${emp.name} 的考核表单</div>
+          <div class="pg-hd-s">${emp.dept} &middot; ${emp.title} &middot; 2026年度</div>
+        </div>
+      </div>
+    </div>
+    <div class="info-grid">
+      <div class="info-item"><span class="info-label">被考核人</span><span class="info-value">${emp.name}</span></div>
+      <div class="info-item"><span class="info-label">部门</span><span class="info-value">${emp.dept}</span></div>
+      <div class="info-item"><span class="info-label">职位</span><span class="info-value">${emp.title}</span></div>
+      <div class="info-item"><span class="info-label">考核周期</span><span class="info-value">2026年度</span></div>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="ind-table">
+        <thead><tr>
+          <th style="width:200px">目标名称</th><th style="width:70px">权重</th>
+          <th style="width:100px">目标值</th><th style="width:130px">完成值/评价</th>
+          <th style="min-width:180px">评语</th>
+        </tr></thead>
+        <tbody>${tableHtml}</tbody>
+      </table>
+    </div>
+    <div class="bottom-section">
+      <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:12px;padding:12px 16px;background:var(--c0);border-radius:var(--r2)">
+        <span style="font:500 13px/1 var(--f);color:var(--c6)">加权总分</span>
+        <span id="totalScore" style="font-family:var(--m);font-size:20px;font-weight:700;color:var(--pr)">${emp.score > 0 ? emp.score.toFixed(1) : '0.0'}</span>
+      </div>
+      <div class="bottom-field">
+        <label class="bottom-label">总评语</label>
+        <textarea class="edit-cell" rows="2" placeholder="请输入对该员工的整体评价..."></textarea>
+      </div>
+      <div class="bottom-actions">
+        <button class="btn btn-p" onclick="submitEmpScore('${empId}')">提交评分</button>
+      </div>
+    </div>
+  `;
+}
+
+function submitEmpScore(empId) {
+  const emp = EMPLOYEES.find(e => e.id === empId);
+  if (!emp) return;
+  if (emp.score === 0) { showToast('请先完成评分再提交','error'); return; }
+  emp.status = 'scored';
+  renderEmpList();
+  showToast(`已提交 ${emp.name} 的评分`,'success');
+}
+
+function submitBatch() {
+  // FIXME: 批量提交一致性 - 批量评分提交是原子操作还是逐条？部分失败如何处理？
+  const scored = EMPLOYEES.filter(e => e.status === 'scored');
+  if (scored.length === 0) { showToast('暂无已评分的员工','error'); return; }
+  showToast(`已批量提交 ${scored.length} 条评分`,'success');
+}
+
+// ═══ 过滤和搜索 ═══
+function filterEmployees(query) {
+  searchQuery = query;
+  renderEmpList();
+}
+
+function setFilter(filter) {
+  currentFilter = filter;
+  document.getElementById('filterAll').classList.toggle('on', filter === 'all');
+  document.getElementById('filterPending').classList.toggle('on', filter === 'pending');
+  renderEmpList();
+}
+
+// ═══ 模板导出 ═══
+function exportTemplate() {
+  const headers = ['员工姓名','员工ID','部门','职位','目标名称','权重','目标值','完成值','评价等级','评语'];
+  const rows = [headers.join(',')];
+  // 示例数据
+  const sampleEmp = EMPLOYEES[0];
+  const scores = empScores[sampleEmp.id];
+  scores.forEach(mod => {
+    mod.indicators.forEach(ind => {
+      if (ind.type === 'bonus') return;
+      rows.push([sampleEmp.name,sampleEmp.id,sampleEmp.dept,sampleEmp.title,ind.name,ind.weight+'%',ind.target,'','',''].join(','));
+    });
+  });
+  const blob = new Blob(['﻿'+rows.join('\n')], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '绩效考核评分模板.csv';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('模板已导出','success');
+}
+
+// ═══ 导入弹窗 ═══
+function openImportModal() {
+  document.getElementById('importModal').classList.add('on');
+  document.getElementById('importPreview').classList.add('hidden');
+  document.getElementById('confirmImportBtn').classList.add('hidden');
+}
+
+function closeImportModal() {
+  document.getElementById('importModal').classList.remove('on');
+}
+
+function simulateImport() {
+  document.getElementById('uploadZone').classList.add('hidden');
+  document.getElementById('importPreview').classList.remove('hidden');
+  document.getElementById('confirmImportBtn').classList.remove('hidden');
+
+  const table = document.getElementById('previewTable');
+  const rows = EMPLOYEES.map(e => {
+    const valid = e.name !== '';
+    return `<tr>
+      <td>${e.id}</td>
+      <td>${e.name}</td>
+      <td>${e.dept}</td>
+      <td>${e.title}</td>
+      <td>${e.score > 0 ? e.score : '-'}</td>
+      <td>${e.grade}</td>
+      <td><span class="status-badge ${valid?'ok':'err'}">${valid?'校验通过':'格式错误'}</span></td>
+    </tr>`;
+  });
+
+  table.innerHTML = `
+    <thead><tr>
+      <th>工号</th><th>姓名</th><th>部门</th><th>职位</th><th>评分</th><th>等级</th><th>状态</th>
+    </tr></thead>
+    <tbody>${rows.join('')}</tbody>
+  `;
+}
+
+function confirmImport() {
+  EMPLOYEES.forEach(e => {
+    if (e.score > 0) e.status = 'scored';
+  });
+  closeImportModal();
+  renderEmpList();
+  showToast('导入成功，已更新 8 条评分数据','success');
+}
+
+// ═══ Toast ═══
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + type;
+  setTimeout(() => t.classList.add('on'), 10);
+  setTimeout(() => t.classList.remove('on'), 2500);
+}
+
+// ═══ 拖拽上传 ═══
+const uploadZone = document.getElementById('uploadZone');
+if (uploadZone) {
+  uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+  uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+  uploadZone.addEventListener('drop', e => { e.preventDefault(); uploadZone.classList.remove('drag-over'); simulateImport(); });
+}
+
+// ═══ 初始化 ═══
+renderSingleForm('E001');
+
+// Initialize navigation
+GHR_NAV.init('perf', '绩效表单');
+</script>
+</body>
+</html>

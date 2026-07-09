@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 绩效评分·双线上级</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --shadow-dropdown:0 10px 40px -10px rgba(0,0,0,.12),0 2px 10px -2px rgba(0,0,0,.04);
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --m:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+/* ═══ PAGE HEADER ═══ */
+.pg-hd{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:16px}
+.pg-hd-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.pg-hd-title{font:700 20px/1.2 var(--f);color:var(--c9);letter-spacing:-.3px}
+.pg-hd-actions{display:flex;gap:8px}
+.pg-hd-info{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 24px;font:400 13px/1 var(--f);color:var(--c5);padding:12px 16px;background:var(--c0);border-radius:var(--r2)}
+.pg-hd-info-item{display:flex;flex-direction:column;gap:2px}
+.pg-hd-info-label{font:400 11px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px}
+.pg-hd-info-value{font:500 13px/1.3 var(--f);color:var(--c8)}
+
+/* ═══ EVAL TABLE ═══ */
+.eval-list{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden}
+.eval-list table{width:100%;border-collapse:collapse}
+.eval-list thead{position:sticky;top:0;z-index:10}
+.eval-list th{background:var(--c0);padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.eval-list td{padding:10px 16px;font:400 13px/1.4 var(--f);color:var(--c7);border-bottom:1px solid var(--dv);vertical-align:top}
+.eval-list tr:last-child td{border-bottom:none}
+.eval-list tr:hover td{background:var(--c0)}
+.eval-list .mod-row td{background:var(--c0);padding:10px 16px;border-bottom:1px solid var(--dv)}
+.eval-list .mod-row:hover td{background:var(--c0)}
+.eval-mod{display:flex;align-items:center;gap:8px}
+.eval-mod-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.eval-mod-name{font:600 13px/1 var(--f);color:var(--c8)}
+.eval-mod-weight{font-family:var(--m);font-weight:500;font-size:12px;color:var(--c5);background:var(--c1);padding:2px 8px;border-radius:4px}
+.eval-mod-readonly{font:500 11px/1 var(--f);padding:2px 8px;border-radius:4px;background:var(--c1);color:var(--c4)}
+
+/* ═══ INPUT ═══ */
+input.edit-cell{border:1px solid var(--c2);border-radius:var(--r1);padding:5px 8px;font:400 13px/1 var(--f);color:var(--c9);background:var(--sf);transition:all .12s;width:80px;outline:none;text-align:center;font-family:var(--m)}
+input.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
+select.edit-cell{appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:22px;cursor:pointer;font-family:var(--f);border:1px solid var(--c2);border-radius:var(--r1);padding:6px 28px 6px 10px;font:500 12px/1 var(--f);color:var(--c8);background-color:var(--sf);transition:all .12s;outline:none}
+select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
+textarea.edit-cell{width:100%;border:1px solid var(--c2);border-radius:var(--r1);padding:6px 8px;font:400 13px/1.4 var(--f);color:var(--c9);background:var(--sf);transition:all .12s;font-family:var(--f);resize:vertical;min-height:48px;outline:none}
+textarea.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
+textarea.edit-cell::placeholder{color:var(--c4)}
+
+/* ═══ GRADE SELECT ═══ */
+.grade-select{position:relative;display:inline-block;width:100px}
+.grade-select select{width:100%;appearance:none;background-image:none;padding:6px 28px 6px 10px;border:1px solid var(--c2);border-radius:var(--r1);font:500 12px/1 var(--f);color:var(--c8);background-color:var(--sf);cursor:pointer;outline:none;transition:all .12s;white-space:nowrap}
+.grade-select select:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
+.grade-select::after{content:'';position:absolute;right:8px;top:50%;transform:translateY(-50%);width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid var(--c4);pointer-events:none}
+.grade-select select option{padding:8px 12px;font:400 13px/1.4 var(--f)}
+.grade-select select option[value="超出预期"]{color:var(--em700)}
+.grade-select select option[value="符合预期+"]{color:var(--pr)}
+.grade-select select option[value="符合预期"]{color:var(--c8)}
+.grade-select select option[value="符合预期-"]{color:var(--ac)}
+.grade-select select option[value="远超预期"]{color:#065F46}
+.grade-select select option[value="低于预期"]{color:var(--ro)}
+.grade-select select option[value="远低预期"]{color:#9F1239}
+
+/* ═══ GRADE BUTTON GROUP ═══ */
+.grade-btn-group{display:flex;flex-wrap:wrap;gap:4px}
+.grade-btn{padding:4px 10px;border-radius:var(--r1);font:500 12px/1 var(--f);border:1px solid var(--c2);cursor:pointer;transition:all .12s;background:var(--sf);color:var(--c6)}
+.grade-btn[data-grade="超出预期"]{color:var(--em700);background:var(--em50)}
+.grade-btn[data-grade="符合预期+"]{color:var(--pr);background:var(--pr50)}
+.grade-btn[data-grade="符合预期"]{color:var(--c8);background:var(--c1)}
+.grade-btn[data-grade="符合预期-"]{color:var(--ac700);background:var(--ac50)}
+.grade-btn[data-grade="低于预期"]{color:var(--ro);background:var(--ro50)}
+.grade-btn[data-grade="远超预期"]{color:#065F46;background:var(--em100)}
+.grade-btn[data-grade="远低预期"]{color:#9F1239;background:var(--ro100)}
+.grade-btn:hover{border-color:var(--pr200);background:var(--pr50)}
+.grade-btn.active{font-weight:600;border-color:currentColor}
+.grade-btn.faded{opacity:0.4;background:var(--c1);color:var(--c4)}
+
+/* ═══ HISTORY CARD ═══ */
+.hist-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:16px 24px;margin-bottom:16px}
+.hist-card-title{font:600 14px/1 var(--f);color:var(--c9);margin-bottom:12px}
+.hist-row{display:flex;align-items:center;gap:6px;margin-bottom:10px;font:400 13px/1.4 var(--f);color:var(--c7)}
+.hist-months{display:flex;flex-wrap:wrap;gap:8px}
+.hist-month{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;background:var(--c0);border-radius:var(--r2);min-width:64px}
+.hist-month-label{font:500 11px/1 var(--f);color:var(--c5)}
+.hist-month-badge{font:500 11px/1 var(--f);padding:2px 8px;border-radius:3px}
+
+/* ═══ INITIAL GRADE CARD ═══ */
+.init-grade-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:16px 24px;margin-bottom:16px}
+.init-grade-card-title{font:600 14px/1 var(--f);color:var(--c9);margin-bottom:4px}
+.init-grade-card-desc{font:400 12px/1.4 var(--f);color:var(--c5);margin-bottom:12px}
+
+/* ═══ BUTTONS ═══ */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
+.btn svg{width:13px;height:13px}
+.btn-p{background:var(--pr);color:#FFF}
+.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}
+.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
+
+/* ═══ AI CHAT ═══ */
+.ai-chat{position:fixed;top:52px;right:0;width:380px;height:calc(100vh - 52px);background:var(--sf);border-left:1px solid var(--dv);z-index:900;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s ease}
+body.chat-open .ai-chat{transform:translateX(0)}
+.ai-chat-hd{padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:10px}
+.ai-chat-hd-ic{width:32px;height:32px;border-radius:var(--r2);background:linear-gradient(135deg,var(--pr) 0%,var(--vi) 100%);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ai-chat-hd-ic svg{width:16px;height:16px;color:#FFF}
+.ai-chat-hd-t{font:600 14px/1.2 var(--f);color:var(--c9)}
+.ai-chat-hd-s{font:400 11px/1 var(--f);color:var(--c5)}
+.ai-chat-close{margin-left:auto;width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:transparent;color:var(--c5);transition:all .12s}
+.ai-chat-close:hover{background:var(--c1);color:var(--c7)}
+.ai-chat-bd{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:16px}
+.ai-msg{max-width:92%;animation:aiMsgIn .3s ease}
+@keyframes aiMsgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.ai-msg.bot{align-self:flex-start}
+.ai-msg.user{align-self:flex-end}
+.ai-msg-bd{padding:12px 16px;border-radius:var(--r3);font:400 13px/1.6 var(--f)}
+.ai-msg.bot .ai-msg-bd{background:var(--c0);color:var(--c8);border-bottom-left-radius:4px}
+.ai-msg.user .ai-msg-bd{background:var(--pr);color:#FFF;border-bottom-right-radius:4px}
+.ai-msg-time{font:400 10px/1 var(--f);color:var(--c4);margin-top:4px}
+.ai-msg.user .ai-msg-time{text-align:right}
+.ai-msg-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.ai-msg-btn{font:500 11px/1 var(--f);padding:5px 10px;border-radius:var(--r1);border:1px solid var(--c2);background:var(--sf);color:var(--c6);cursor:pointer;transition:all .12s}
+.ai-msg-btn:hover{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-msg-btn.primary{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-msg-card{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);padding:12px;margin-top:8px}
+.ai-msg-card-t{font:600 12px/1.3 var(--f);color:var(--c8);margin-bottom:4px}
+.ai-msg-card-d{font:400 12px/1.5 var(--f);color:var(--c5)}
+.ai-msg-card-ft{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.ai-msg-card-tag{display:inline-block;font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px}
+.ai-msg-card-tag.em{color:var(--em700);background:var(--em50)}
+.ai-msg-card-tag.pr{color:var(--pr);background:var(--pr50)}
+.ai-msg-card-tag.ac{color:var(--ac);background:var(--ac50)}
+.ai-msg-card-apply{font:500 11px/1 var(--f);padding:4px 8px;border-radius:var(--r1);border:1px solid var(--pr200);background:var(--pr50);color:var(--pr);cursor:pointer;transition:all .12s}
+.ai-msg-card-apply:hover{background:var(--pr);color:#FFF}
+.ai-shortcuts{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.ai-shortcut{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);cursor:pointer;transition:all .12s}
+.ai-shortcut:hover{border-color:var(--pr200);background:var(--pr50)}
+.ai-shortcut-icon{font-size:18px;flex-shrink:0}
+.ai-shortcut-text{flex:1;min-width:0}
+.ai-shortcut-label{font:500 13px/1.2 var(--f);color:var(--c8)}
+.ai-shortcut-desc{font:400 11px/1.3 var(--f);color:var(--c5);margin-top:2px}
+.ai-chat-ft{padding:12px 16px;border-top:1px solid var(--dv);display:flex;gap:8px;align-items:center}
+.ai-chat-input{flex:1;height:36px;border:1px solid var(--c2);border-radius:var(--r2);padding:0 12px;font:400 13px/1 var(--f);color:var(--c8);outline:none;transition:border .15s}
+.ai-chat-input:focus{border-color:var(--pr)}
+.ai-chat-send{width:36px;height:36px;border-radius:var(--r2);background:var(--pr);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#FFF;transition:all .12s}
+.ai-chat-send:hover{background:var(--pr700)}
+.ai-chat-upload{width:36px;height:36px;border-radius:var(--r2);background:var(--sf);border:1px solid var(--c2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c5);transition:all .12s;position:relative}
+.ai-chat-upload:hover{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-chat-upload input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.ai-upload{border:2px dashed var(--c3);border-radius:var(--r2);padding:16px;text-align:center;cursor:pointer;transition:all .12s;margin-top:8px}
+.ai-upload:hover{border-color:var(--pr);background:var(--pr50)}
+.ai-upload.dragover{border-color:var(--pr);background:var(--pr50)}
+.ai-upload-icon{font-size:24px;margin-bottom:6px}
+.ai-upload-text{font:500 12px/1.3 var(--f);color:var(--c6)}
+.ai-upload-hint{font:400 11px/1.3 var(--f);color:var(--c4);margin-top:4px}
+.ai-upload-input{display:none}
+.ai-file-list{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.ai-file{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r1);font:400 12px/1 var(--f)}
+.ai-file-icon{font-size:14px}
+.ai-file-name{flex:1;color:var(--c8);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ai-file-size{color:var(--c4);font-family:var(--m);font-size:11px}
+.ai-file-status{font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px}
+.ai-file-status.parsed{color:var(--em700);background:var(--em50)}
+.ai-file-status.parsing{color:var(--pr);background:var(--pr50)}
+.ai-toggle{position:fixed;bottom:80px;right:24px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--pr) 0%,var(--vi) 100%);border:none;box-shadow:0 4px 16px rgba(37,99,235,.3);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:950;transition:all .2s}
+.ai-toggle:hover{transform:scale(1.08);box-shadow:0 6px 20px rgba(37,99,235,.4)}
+.ai-toggle svg{width:22px;height:22px;color:#FFF}
+body.chat-open .ai-toggle{display:none}
+
+/* ═══ TOAST ═══ */
+.validate-toast{position:fixed;top:64px;left:50%;transform:translateX(-50%);background:var(--em);color:#FFF;padding:10px 20px;border-radius:var(--r2);font:500 13px/1 var(--f);box-shadow:0 8px 24px rgba(16,185,129,.3);z-index:3000;opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:center;gap:8px}
+.validate-toast.show{opacity:1;pointer-events:all}
+.validate-toast svg{width:16px;height:16px}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .2s ease forwards}
+.star-rating{display:flex;flex-direction:column;gap:6px;align-items:flex-start;min-width:220px}
+.star-row{display:flex;align-items:center;gap:4px;height:24px}
+.star{width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:20px;line-height:1;cursor:pointer;color:#D1D5DB;transition:color .12s}
+.star.active{color:#F59E0B}
+.star:hover{color:#F59E0B}
+.star-legend{font-size:11px;line-height:1.45;color:#64748B;max-width:360px}
+.score-cell{min-width:260px}
+.eval-score{font:600 13px/1 var(--m)}.eval-score.high{color:var(--em700)}.eval-score.mid{color:var(--pr)}.eval-score.low{color:var(--ac700)}.eval-score.zero{color:var(--ro)}
+</style>
+</head>
+<body>
+
+<!-- Navigation will be injected by navigation.js -->
+
+<!-- Main content -->
+<div class="ct fade-in">
+  <!-- Breadcrumb -->
+  <nav style="display:flex;align-items:center;gap:4px;font:500 12px/1 var(--f);color:var(--c5);margin-bottom:12px">
+    <a href="../demo-index.html" style="color:var(--c5);text-decoration:none;transition:color .12s" onmouseover="this.style.color='var(--pr)'" onmouseout="this.style.color='var(--c5)'">绩效工作台</a>
+    <span style="color:var(--c3)">/</span>
+    <span style="color:var(--c8);font-weight:600">绩效评分</span>
+  </nav>
+
+  <!-- Page header -->
+  <div class="pg-hd">
+    <div class="pg-hd-top">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="pg-hd-title">双线上级评分</div>
+        <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)">
+          <span style="width:6px;height:6px;border-radius:50%;background:var(--pr);animation:pulse 2s ease-in-out infinite"></span>
+          双线上级评分
+        </span>
+      </div>
+      <div class="pg-hd-actions">
+        <button class="btn btn-s" onclick="showToast('草稿已保存','success')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          保存草稿
+        </button>
+        <button class="btn btn-s" style="color:var(--ro);border-color:var(--ro100)" onclick="rejectEval()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          驳回
+        </button>
+        <button class="btn btn-s" onclick="transferEval()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+          转交
+        </button>
+        <button class="btn btn-p" onclick="submitEval()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          提交评分
+        </button>
+      </div>
+    </div>
+    <div class="pg-hd-info">
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">考核方案</span><span class="pg-hd-info-value">产品部2026年Q2绩效考核</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">考核周期</span><span class="pg-hd-info-value">2026年4-6月</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">被评人</span><span class="pg-hd-info-value">张明</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">部门</span><span class="pg-hd-info-value">产品部</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">岗位</span><span class="pg-hd-info-value">高级产品经理</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">评分范围</span><span class="pg-hd-info-value">能力发展、价值观</span></div>
+    </div>
+  </div>
+
+  <!-- 历史绩效统计 -->
+  <div class="hist-card">
+    <div class="hist-card-title">历史绩效统计</div>
+    <div class="hist-row">上年年度绩效结果：<span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:3px;font:500 12px/1 var(--f);color:var(--pr);background:var(--pr50)">2025年度 符合预期+</span></div>
+    <div style="font:500 12px/1 var(--f);color:var(--c6);margin-bottom:8px">今年月度绩效结果</div>
+    <div class="hist-months">
+      <div class="hist-month"><span class="hist-month-label">2026年1月</span><span class="hist-month-badge" style="color:var(--c8);background:var(--c1)">符合预期</span></div>
+      <div class="hist-month"><span class="hist-month-label">2026年2月</span><span class="hist-month-badge" style="color:var(--c8);background:var(--c1)">符合预期</span></div>
+      <div class="hist-month"><span class="hist-month-label">2026年3月</span><span class="hist-month-badge" style="color:var(--pr);background:var(--pr50)">符合预期+</span></div>
+      <div class="hist-month"><span class="hist-month-label">2026年4月</span><span class="hist-month-badge" style="color:var(--pr);background:var(--pr50)">符合预期+</span></div>
+      <div class="hist-month"><span class="hist-month-label">2026年5月</span><span class="hist-month-badge" style="color:var(--em700);background:var(--em50)">超出预期</span></div>
+      <div class="hist-month"><span class="hist-month-label">2026年6月</span><span class="hist-month-badge" style="color:var(--c4);background:var(--c1)">当前，未出</span></div>
+    </div>
+  </div>
+
+  <!-- Module sections -->
+  <div id="moduleContainer"></div>
+
+  <!-- Approval flow -->
+  <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between">
+      <span style="font:600 15px/1 var(--f);color:var(--c9)">审批流程</span>
+    </div>
+    <div style="padding:0">
+      <table style="width:100%;border-collapse:collapse">
+        <thead>
+          <tr style="background:var(--c0)">
+            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">节点</th>
+            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">处理人</th>
+            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">流入时间</th>
+            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">流出时间</th>
+            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">状态</th>
+            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">原因/备注</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background:var(--em50)">
+            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c8);border-bottom:1px solid var(--dv)">
+              <div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--em);flex-shrink:0"></span>被考核人自评分</div>
+            </td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><div style="display:flex;align-items:center;gap:6px"><span style="width:22px;height:22px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">张</span><span style="font:400 13px/1 var(--f);color:var(--c8)">张明</span></div></td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c7);border-bottom:1px solid var(--dv)">2026-06-15 09:00</td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--em700);border-bottom:1px solid var(--dv)">2026-06-15 14:30</td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">✓ 已完成</span></td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c5);border-bottom:1px solid var(--dv)">自评已提交</td>
+          </tr>
+          <tr style="background:var(--pr50)">
+            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c8);border-bottom:1px solid var(--dv)">
+              <div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--pr);flex-shrink:0"></span>双线上级评分</div>
+            </td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><div style="display:flex;align-items:center;gap:6px"><span style="width:22px;height:22px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">刘</span><span style="font:400 13px/1 var(--f);color:var(--c8)">刘VP</span></div></td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c7);border-bottom:1px solid var(--dv)">2026-06-15 14:30</td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)"><span style="width:6px;height:6px;border-radius:50%;background:var(--pr);animation:pulse 2s ease-in-out infinite"></span>处理中</span></td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c5);border-bottom:1px solid var(--dv)">当前节点</td>
+          </tr>
+          <tr>
+            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c6)"><div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--c3);flex-shrink:0"></span>直接上级评分</div></td>
+            <td style="padding:12px 16px"><div style="display:flex;align-items:center;gap:6px"><span style="width:22px;height:22px;border-radius:50%;background:var(--c1);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:var(--c5);flex-shrink:0">王</span><span style="font:400 13px/1 var(--f);color:var(--c6)">王总监</span></div></td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4)">—</td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4)">—</td>
+            <td style="padding:12px 16px"><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--c1);color:var(--c5)">待处理</span></td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4)">—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="validate-toast" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span id="toastMsg"></span></div>
+
+<script src="../navigation.js"></script>
+<script>
+GHR_NAV.init('perf', '绩效评分');
+
+// ═══ MOCK DATA — 同步自员工自评 ═══
+var MODULES=[
+  {name:'KPI',weight:30,color:'var(--pr)',goals:[
+    {id:'g1',name:'资源利用率',indicator:'资源利用率',type:'quant',weight:5,target:105,challenge:110,baseline:100,unit:'%',desc:'人员实际工作量饱和情况',completed:'112',employeeGrade:'符合预期+'},
+    {id:'g2',name:'UAT首次通过率',indicator:'UAT首次通过率',type:'quant',weight:10,target:98,challenge:100,baseline:95,unit:'%',desc:'需求首次业务验收通过的概率',completed:'99',employeeGrade:'符合预期'},
+    {id:'g3',name:'需求评审及时率',indicator:'需求评审及时率',type:'quant',weight:15,target:98,challenge:100,baseline:95,unit:'%',desc:'迭代版本评审的及时性情况',completed:'96',employeeGrade:'符合预期'}
+  ]},
+  {name:'KPA',weight:70,color:'var(--em)',goals:[
+    {id:'g4',name:'产品管理规范',indicator:'产品管理规范',type:'qual',weight:10,measureDesc:'需求管理流程规范、产品需求规范、迭代火车管理规范、周会/月会准时完成',completed:'',employeeGrade:'符合预期'},
+    {id:'g5',name:'日常需求响应',indicator:'日常需求响应',type:'qual',weight:10,measureDesc:'根据业务日会需求优先级，滚动响应日常需求，输出产品解决方案',completed:'',employeeGrade:'符合预期'},
+    {id:'g6',name:'绩效重构',indicator:'绩效重构推进',type:'qual',weight:25,measureDesc:'06-10 输出AI+绩效核心页面原型；06-19 完成绩效版本4需求内审；06-24 完成需求评审',completed:'',employeeGrade:'符合预期+'},
+    {id:'g7',name:'AI应用落地',indicator:'AI应用落地',type:'qual',weight:25,measureDesc:'06-05 完成ASSC采购侧AI应用1.0版本；06-12 对接LBU试点应用；06-26 完成1.1版本',completed:'',employeeGrade:'符合预期+'}
+  ]}
+];
+function calcScore(g,completedVal){
+  var v=parseFloat(completedVal);
+  if(isNaN(v))return null;
+  if(v>=g.challenge)return 5.0;
+  if(v>=g.target)return parseFloat((4.0+(v-g.target)/(g.challenge-g.target)).toFixed(1));
+  if(v>=g.baseline)return parseFloat((2.0+2*(v-g.baseline)/(g.target-g.baseline)).toFixed(1));
+  return parseFloat(Math.max(0,2*v/g.baseline).toFixed(1));
+}
+function gradeToScore(grade){
+  var map={'远超预期':5.0,'超出预期':4.5,'符合预期+':4.0,'符合预期':3.0,'符合预期-':2.0,'低于预期':1.0,'远低预期':0.0};
+  return map[grade]!==undefined?map[grade]:null;
+}
+
+var employeeComment='本季度整体工作完成情况良好。KPI方面，资源利用率达标，UAT通过率和需求评审及时率略低于目标，已制定改进措施。KPA方面，产品管理规范落地执行，日常需求响应及时，绩效重构和AI应用项目均按里程碑计划推进完成。';
+var indirectComment='';
+
+function renderModuleContainer(){
+  var html='<div class="eval-list"><table><thead><tr>'+
+    '<th style="width:180px">名称</th>'+
+    '<th style="width:55px">权重</th>'+
+    '<th>完成值/衡量标准</th>'+
+    '<th style="width:80px">员工自评</th>'+
+    '<th style="width:80px">双线上级</th>'+
+    '</tr></thead><tbody>';
+  MODULES.forEach(function(mod,mi){
+    html+='<tr class="mod-row"><td colspan="5"><div class="eval-mod">'+
+      '<div class="eval-mod-dot" style="background:'+mod.color+'"></div>'+
+      '<span class="eval-mod-name">'+mod.name+'</span>'+
+      '<span class="eval-mod-weight">'+mod.weight+'%</span>'+
+      '</div></td></tr>';
+    mod.goals.forEach(function(g,gi){
+      var isQuant=g.type==='quant';
+      html+='<tr>'+
+        '<td><span style="font-weight:500;color:var(--c8)">'+g.name+'</span></td>'+
+        '<td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">'+g.weight+'%</span></td>';
+      if(isQuant){
+        var score=calcScore(g,g.completed);
+        var empScore=gradeToScore(g.employeeGrade);
+        html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">'+g.desc+'<br>完成值: <span style="font-family:var(--m);font-weight:600;color:var(--c8)">'+g.completed+g.unit+'</span> / 挑战值: <span style="font-family:var(--m);color:var(--c7)">'+g.challenge+g.unit+'</span> / 目标值: <span style="font-family:var(--m);color:var(--c7)">'+g.target+g.unit+'</span><br><span style="font-family:var(--m);font-weight:600;color:var(--pr)">'+(empScore!==null?empScore.toFixed(1):'—')+' ｜ '+(score!==null?score.toFixed(1):'—')+'</span></td>';
+      }else{
+        html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">'+g.measureDesc+'</td>';
+      }
+      html+='<td><span style="font-family:var(--m);font-weight:600;font-size:13px;color:var(--c8)">'+(isQuant&&gradeToScore(g.employeeGrade)!==null?gradeToScore(g.employeeGrade).toFixed(1):'—')+'</span></td>';
+      if(isQuant){
+        var score=calcScore(g,g.completed);
+        html+='<td><span style="font-family:var(--m);font-weight:600;font-size:13px;color:var(--pr)">'+(score!==null?score.toFixed(1):'—')+'</span></td>';
+      }else{
+        html+='<td class="score-cell"><div class="star-rating" data-value="'+(g.indirectStar||0)+'"><div class="star-row">';
+        for(var si=1;si<=5;si++){
+          html+='<span class="star'+(si<=(g.indirectStar||0)?' active':'')+'" data-v="'+si+'" onclick="setIndirectStar(this,'+mi+','+gi+','+si+')" onmouseenter="starHover(this,1)" onmouseleave="starHover(this,0)">★</span>';
+        }
+        html+='</div><div class="star-legend">2分:部分达标 · 3分:基本达标 · 4分:良好 · 5分:卓越</div></div></td>';
+      }
+      html+='</tr>';
+    });
+  });
+  html+='</tbody></table></div>';
+
+  // 初评等级
+  html+='<div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-top:16px;padding:20px 24px">'+
+    '<div style="font:600 14px/1 var(--f);color:var(--c9);margin-bottom:6px">初评等级</div>'+
+    '<div style="font:400 12px/1 var(--f);color:var(--c5);margin-bottom:12px">请根据被考核人表现选择初评等级</div>'+
+    '<div class="grade-btn-group" id="initGradeGroup">'+
+      '<button type="button" class="grade-btn" data-grade="远超预期" onclick="selectInitGrade(this)">远超预期</button>'+
+      '<button type="button" class="grade-btn" data-grade="超出预期" onclick="selectInitGrade(this)">超出预期</button>'+
+      '<button type="button" class="grade-btn" data-grade="符合预期+" onclick="selectInitGrade(this)">符合预期+</button>'+
+      '<button type="button" class="grade-btn" data-grade="符合预期" onclick="selectInitGrade(this)">符合预期</button>'+
+      '<button type="button" class="grade-btn" data-grade="符合预期-" onclick="selectInitGrade(this)">符合预期-</button>'+
+      '<button type="button" class="grade-btn" data-grade="低于预期" onclick="selectInitGrade(this)">低于预期</button>'+
+      '<button type="button" class="grade-btn" data-grade="远低预期" onclick="selectInitGrade(this)">远低预期</button>'+
+    '</div>'+
+    '<input type="hidden" id="initGradeValue" value="">'+
+  '</div>';
+
+  // 总评语区域
+  html+='<div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-top:16px;overflow:hidden">'+
+    '<div style="padding:16px 20px;border-bottom:1px solid var(--dv)"><span style="font:600 15px/1 var(--f);color:var(--c9)">总评语</span></div>'+
+    '<div style="padding:16px 20px;border-bottom:1px solid var(--dv)">'+
+      '<div style="font:500 13px/1 var(--f);color:var(--c8);margin-bottom:8px;display:flex;align-items:center;gap:6px">'+
+        '<span style="width:22px;height:22px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">张</span>'+
+        '员工评语'+
+      '</div>'+
+      '<div style="font:400 13px/1.6 var(--f);color:var(--c7);padding-left:28px">'+employeeComment+'</div>'+
+    '</div>'+
+    '<div style="padding:16px 20px">'+
+      '<div style="font:500 13px/1 var(--f);color:var(--c8);margin-bottom:8px;display:flex;align-items:center;gap:6px">'+
+        '<span style="width:22px;height:22px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">刘</span>'+
+        '双线上级评语'+
+      '</div>'+
+      '<textarea class="edit-cell" id="indirectComment" placeholder="填写双线上级评语…" oninput="indirectComment=this.value" style="margin-left:28px;width:calc(100% - 28px)">'+indirectComment+'</textarea>'+
+    '</div>'+
+  '</div>';
+
+  document.getElementById('moduleContainer').innerHTML=html;
+}
+
+function updateGrade(mi,gi,btn){
+  var val=btn.getAttribute('data-grade');
+  document.getElementById('grade_'+mi+'_'+gi).value=val;
+  MODULES[mi].goals[gi].grade=val;
+  var group=btn.parentElement;
+  group.querySelectorAll('.grade-btn').forEach(function(b){
+    if(b===btn){b.classList.add('active');b.classList.remove('faded');}
+    else{b.classList.remove('active');b.classList.add('faded');}
+  });
+}
+
+function selectInitGrade(btn){
+  var group=document.getElementById('initGradeGroup');
+  group.querySelectorAll('.grade-btn').forEach(function(b){
+    if(b===btn){b.classList.add('active');b.classList.remove('faded');}
+    else{b.classList.remove('active');b.classList.add('faded');}
+  });
+  document.getElementById('initGradeValue').value=btn.getAttribute('data-grade');
+}
+
+function setIndirectStar(el,mi,gi,val){
+  MODULES[mi].goals[gi].indirectStar=val;
+  var rating=el.closest('.star-rating');
+  rating.dataset.value=val;
+  rating.querySelectorAll('.star').forEach(function(s,i){
+    s.classList.toggle('active',i<val);
+  });
+}
+
+function starHover(el,entering){
+  var rating=el.closest('.star-rating');
+  if(entering){
+    var val=parseInt(el.dataset.v);
+    rating.querySelectorAll('.star').forEach(function(s,i){
+      s.classList.toggle('active',i<val);
+    });
+  }else{
+    var saved=parseInt(rating.dataset.value);
+    rating.querySelectorAll('.star').forEach(function(s,i){
+      s.classList.toggle('active',i<saved);
+    });
+  }
+}
+
+function submitEval(){showToast('评分已提交','success');}
+function rejectEval(){showToast('已驳回，将退回给员工重新自评','warn');}
+function transferEval(){showToast('已转交，等待其他管理者处理','success');}
+function showToast(msg,type){
+  var t=document.getElementById('toast');
+  document.getElementById('toastMsg').textContent=msg;
+  t.className='validate-toast show';
+  setTimeout(function(){t.classList.remove('show')},3000);
+}
+
+renderModuleContainer();
+
+// ═══ AI CHAT ═══
+var AI_SHORTCUTS=[
+  {icon:'📄',label:'解析文件辅助评分',desc:'上传员工工作文档，AI辅助分析完成情况'},
+  {icon:'📝',label:'批量填写评价',desc:'根据员工自评和完成情况，AI推荐评价等级'},
+  {icon:'📊',label:'查看评分建议',desc:'分析各目标完成情况，给出评分建议'}
+];
+var AI_MSGS=[
+  {role:'bot',text:'你好，我是 AI 评分助手 👋\n\n我可以帮你完成双线上级评分：\n• 上传文件，AI辅助分析完成情况\n• 基于员工自评推荐评价等级\n• 分析各目标完成情况',time:'09:30',shortcuts:true}
+];
+function renderAiChat(){
+  var bd=document.getElementById('chatBd');
+  if(!bd)return;
+  bd.innerHTML=AI_MSGS.map(function(m){
+    var html='<div class="ai-msg '+m.role+'"><div class="ai-msg-bd">'+m.text.replace(/\n/g,'<br/>')+'</div>';
+    if(m.shortcuts){html+='<div class="ai-shortcuts">'+AI_SHORTCUTS.map(function(s){return '<div class="ai-shortcut" onclick="handleAiAction(\''+s.label+'\')"><span class="ai-shortcut-icon">'+s.icon+'</span><div class="ai-shortcut-text"><div class="ai-shortcut-label">'+s.label+'</div><div class="ai-shortcut-desc">'+s.desc+'</div></div></div>';}).join('')+'</div>';}
+    if(m.upload){html+='<div class="ai-upload" id="aiUpload" onclick="document.getElementById(\'aiFileInput\').click()" ondragover="event.preventDefault();this.classList.add(\'dragover\')" ondragleave="this.classList.remove(\'dragover\')" ondrop="event.preventDefault();this.classList.remove(\'dragover\');handleFileDrop(event)"><div class="ai-upload-icon">📎</div><div class="ai-upload-text">点击或拖拽上传文件</div><div class="ai-upload-hint">支持 Word、Excel、PDF、TXT，可多选</div><input type="file" id="aiFileInput" class="ai-upload-input" multiple accept=".doc,.docx,.xls,.xlsx,.pdf,.txt" onchange="handleFileSelect(event)"></div>';}
+    if(m.files){html+='<div class="ai-file-list">'+m.files.map(function(f){return '<div class="ai-file"><span class="ai-file-icon">📄</span><span class="ai-file-name">'+f.name+'</span><span class="ai-file-size">'+f.size+'</span><span class="ai-file-status parsed">已解析</span></div>';}).join('')+'</div>';}
+    if(m.cards){html+=m.cards.map(function(c){return '<div class="ai-msg-card"><div class="ai-msg-card-t">'+c.t+'</div><div class="ai-msg-card-d">'+c.d+'</div><div class="ai-msg-card-ft"><span class="ai-msg-card-tag '+c.tc+'">'+c.tag+'</span>'+(c.apply?'<button class="ai-msg-card-apply" onclick="applyAiSuggestion(\''+c.apply+'\')">应用到表格</button>':'')+'</div></div>';}).join('');}
+    if(m.actions){html+='<div class="ai-msg-actions">'+m.actions.map(function(a){return '<button class="ai-msg-btn'+(a.indexOf('确认')>=0||a.indexOf('应用')>=0?' primary':'')+'" onclick="handleAiAction(\''+a+'\')">'+a+'</button>';}).join('')+'</div>';}
+    if(m.time){html+='<div class="ai-msg-time">'+m.time+'</div>';}
+    html+='</div>';
+    return html;
+  }).join('');
+  bd.scrollTop=bd.scrollHeight;
+}
+
+function handleChatFileSelect(e){
+  var files=Array.from(e.target.files);
+  if(!files.length)return;
+  processFiles(files);
+  e.target.value='';
+}
+
+function handleFileSelect(e){
+  var files=Array.from(e.target.files);
+  if(!files.length)return;
+  processFiles(files);
+}
+
+function handleFileDrop(e){
+  var files=Array.from(e.dataTransfer.files);
+  if(!files.length)return;
+  processFiles(files);
+}
+
+function processFiles(files){
+  var fileList=files.map(function(f){
+    var size=f.size>1024*1024?(f.size/(1024*1024)).toFixed(1)+'MB':(f.size/1024).toFixed(0)+'KB';
+    return {name:f.name,size:size};
+  });
+  AI_MSGS.push({role:'user',text:'已上传 '+files.length+' 个文件：\n'+files.map(function(f){return '• '+f.name;}).join('\n')});
+  AI_MSGS.push({role:'bot',text:'正在解析文件内容，分析员工工作完成情况…',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),files:fileList});
+  renderAiChat();
+
+  setTimeout(function(){
+    AI_MSGS.push({role:'bot',text:'文件解析完成！已从文档中提取以下信息：\n\n📄 张明_周报_Q2_W12.docx:\n• 人才培养: 完成2名下属IDP辅导\n• 技术认证: 已取得云原生认证\n\n📊 360评估汇总.xlsx:\n• 团队协作: 跨部门协作评分优秀\n\n建议评价：\n• 人才培养: 符合预期\n• 技术认证: 符合预期+\n• 团队协作: 符合预期+\n\n点击「应用到表格」一键填入。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
+      {t:'解析完成',d:'已提取 3 项目标的完成数据，建议评价已生成',tag:'AI 解析',tc:'pr',apply:'batch'}
+    ]});
+    renderAiChat();
+  },1500);
+}
+
+function applyAiSuggestion(type){
+  if(type==='batch'){
+    var grades=[
+      {mi:0,gi:0,grade:'符合预期'},
+      {mi:0,gi:1,grade:'符合预期+'},
+      {mi:1,gi:0,grade:'符合预期+'}
+    ];
+    grades.forEach(function(g){
+      MODULES[g.mi].goals[g.gi].grade=g.grade;
+      var gr=document.getElementById('grade_'+g.mi+'_'+g.gi);
+      if(gr){
+        var btn=gr.parentElement.querySelector('.grade-btn[data-grade="'+g.grade+'"]');
+        if(btn){updateGrade(g.mi,g.gi,btn);}
+      }
+    });
+    indirectComment='张明在能力发展和价值观方面表现良好。人才培养工作扎实，技术认证按时完成，团队协作获得好评。建议继续保持跨部门协作优势。';
+    var ic=document.getElementById('indirectComment');
+    if(ic)ic.value=indirectComment;
+    showToast('已为3项目标 + 总评语自动生成','success');
+  }
+}
+
+function sendAiMsg(){
+  var input=document.getElementById('chatInput');
+  var text=input.value.trim();
+  if(!text)return;
+  AI_MSGS.push({role:'user',text:text});
+  input.value='';
+  renderAiChat();
+  setTimeout(function(){
+    AI_MSGS.push({role:'bot',text:'收到，正在分析评分数据…\n\n已根据你的描述生成建议，请查看更新结果。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
+    renderAiChat();
+  },800);
+}
+
+function handleAiAction(action){
+  AI_MSGS.push({role:'user',text:action});
+  renderAiChat();
+
+  setTimeout(function(){
+    switch(action){
+      case '解析文件辅助评分':
+        AI_MSGS.push({role:'bot',text:'请上传员工的工作文档，AI 将辅助分析完成情况。\n\n支持的文件类型：\n• 周报/日报/月报（Word、TXT）\n• 工作总结（PDF）\n• 360评估报告（Excel）',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),upload:true});
+        break;
+      case '批量填写评价':
+        AI_MSGS.push({role:'bot',text:'已根据员工自评和完成情况，为 3 项目标推荐评价：\n\n能力发展:\n• 人才培养 → 符合预期（2人完成IDP）\n• 技术认证 → 符合预期+（已取得认证）\n\n价值观:\n• 团队协作 → 符合预期+（协作评价优秀）\n\n点击「应用到表格」一键填入。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
+          {t:'批量评价完成',d:'3 项评价已就绪，基于员工自评和完成情况推荐',tag:'AI 推荐',tc:'pr',apply:'batch'}
+        ]});
+        break;
+      case '查看评分建议':
+        AI_MSGS.push({role:'bot',text:'评分建议分析：\n\n• 人才培养: IDP执行到位，1人绩效提升明显 → 符合预期\n• 技术认证: 按时取得认证，成绩85分 → 符合预期+\n• 团队协作: 跨部门协作获好评 → 符合预期+\n\n整体建议等级: 符合预期+',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
+          {t:'评分建议',d:'3 项均达到预期，1项超出预期',tag:'整体良好',tc:'em'}
+        ]});
+        break;
+      default:
+        AI_MSGS.push({role:'bot',text:'收到，正在分析评分数据…\n\n已根据你的描述生成建议，请查看更新结果。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
+    }
+    renderAiChat();
+  },800);
+}
+
+function toggleAiChat(){document.body.classList.toggle('chat-open');}
+
+</script>
+
+<!-- AI Chat Panel -->
+<div class="ai-chat" id="aiChat">
+  <div class="ai-chat-hd">
+    <div class="ai-chat-hd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg></div>
+    <div><div class="ai-chat-hd-t">AI 评分助手</div><div class="ai-chat-hd-s">分析完成情况 · 推荐评价等级</div></div>
+    <button class="ai-chat-close" onclick="toggleAiChat()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+  <div class="ai-chat-bd" id="chatBd"></div>
+  <div class="ai-chat-ft">
+    <label class="ai-chat-upload" title="上传文件"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg><input type="file" multiple accept=".doc,.docx,.xls,.xlsx,.pdf,.txt" onchange="handleChatFileSelect(event)"/></label>
+    <input class="ai-chat-input" id="chatInput" placeholder="输入指令，如「批量评分」「查看建议」…" onkeydown="if(event.key==='Enter')sendAiMsg()"/>
+    <button class="ai-chat-send" onclick="sendAiMsg()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+  </div>
+</div>
+<button class="ai-toggle" onclick="toggleAiChat()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg></button>
+
+</body>
+</html>

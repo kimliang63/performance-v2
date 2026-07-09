@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 活动管理</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════ HR ONE Design Spec ═══════════════════════════ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;
+  --vi:#7C3AED;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --r1:6px;--r2:8px;--r3:10px;--r4:12px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --m:'JetBrains Mono','SF Mono',monospace;
+}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased}
+
+#app{display:flex;flex-direction:column;height:calc(100vh - var(--header-h) - 48px)}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;padding-bottom:16px;flex-shrink:0}
+.topbar-l h1{font:700 18px/1.2 var(--f);color:var(--c9);margin-bottom:2px}
+.topbar-l p{font:400 12.5px/1 var(--f);color:var(--c5)}
+.topbar-r{display:flex;gap:8px}
+
+.filter-bar{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:14px;flex-shrink:0}
+.filter-bar .fl-grow{flex:1}
+
+.main-layout{flex:1;display:flex;gap:0;min-height:0;overflow:hidden;position:relative}
+
+/* ═══ LEFT PANEL ═══ */
+.left-panel{width:380px;flex-shrink:0;overflow-y:auto;overflow-x:hidden;transition:width .2s ease}
+.left-panel.collapsed{width:0}
+.left-panel::-webkit-scrollbar{width:4px}
+.left-panel::-webkit-scrollbar-thumb{background:var(--c3);border-radius:2px}
+
+/* Panel toggle — sits in the gap */
+.panel-toggle{width:20px;flex-shrink:0;display:flex;align-items:flex-start;justify-content:center;padding-top:16px;cursor:pointer;position:relative}
+.panel-toggle:hover .panel-toggle-btn{background:var(--c2);color:var(--c7)}
+.panel-toggle-btn{width:18px;height:28px;border-radius:4px;display:flex;align-items:center;justify-content:center;transition:all .12s;color:var(--c4)}
+.panel-toggle-btn svg{width:12px;height:12px;transition:transform .2s}
+.left-panel.collapsed+.panel-toggle .panel-toggle-btn svg{transform:rotate(180deg)}
+
+.panel-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden}
+
+/* Scheme header — stacked layout */
+.scheme-hd{padding:14px 18px;border-bottom:1px solid var(--dv);display:flex;flex-direction:column;gap:6px}
+.scheme-hd-name{font:600 15px/1 var(--f);color:var(--c9)}
+.scheme-hd-tags{display:flex;align-items:center;gap:6px}
+.scheme-hd .tag-type{font:500 10px/1 var(--f);padding:2px 7px;border-radius:3px;background:var(--pr50);color:var(--pr)}
+.scheme-hd .tag-auto{font:500 10px/1 var(--f);padding:2px 7px;border-radius:3px}
+.scheme-hd .tag-auto.on{background:var(--em50);color:var(--em700)}
+.scheme-hd .tag-auto.off{background:var(--ac50);color:var(--ac700)}
+.scheme-hd-info{font:400 11px/1 var(--f);color:var(--c5)}
+
+/* Collapsible sections */
+.panel-section{border-bottom:1px solid var(--dv)}
+.panel-section:last-child{border-bottom:none}
+.panel-section-hd{display:flex;align-items:center;gap:6px;padding:10px 18px;cursor:pointer;user-select:none;font:500 12.5px/1 var(--f);color:var(--c6);transition:color .1s}
+.panel-section-hd:hover{color:var(--c8)}
+.panel-section-hd svg{width:14px;height:14px;color:var(--c4);transition:transform .15s;flex-shrink:0}
+.panel-section.open .panel-section-hd svg{transform:rotate(90deg)}
+.panel-section-bd{display:none}
+.panel-section.open .panel-section-bd{display:block}
+
+/* Current activity card */
+.cur-act{margin:0 18px 10px;padding:8px 10px;background:var(--pr50);border-radius:var(--r2);border-left:3px solid var(--pr)}
+.cur-act-row{display:flex;align-items:center}
+.cur-act-info{flex:1;min-width:0}
+.cur-act-name{font:500 13px/1.2 var(--f);color:var(--c7);margin-bottom:2px}
+.cur-act-range{font:400 11px/1 var(--f);color:var(--c5);font-family:var(--m)}
+.cur-act-extra{display:flex;align-items:center;gap:8px;flex-shrink:0;margin-left:8px}
+.cur-act-extra .emp-count{font-family:var(--m)}
+.cur-act-row .emp-count{font-family:var(--m)}
+
+/* Stage list */
+.stage-list{display:flex;flex-direction:column;gap:2px}
+.stage-item{display:flex;align-items:center;gap:8px;font:400 12px/1.3 var(--f)}
+.stage-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.stage-dot.done{background:var(--em)}
+.stage-dot.active{background:var(--pr);box-shadow:0 0 0 3px var(--pr50)}
+.stage-dot.pending{background:var(--c3)}
+.stage-item .stage-name{color:var(--c7);flex:1}
+.stage-item .stage-tag{font:500 10px/1 var(--f);padding:1px 6px;border-radius:3px}
+.stage-item .stage-tag.done{color:var(--em700);background:var(--em50)}
+.stage-item .stage-tag.active{color:var(--pr);background:var(--pr50)}
+.stage-item .stage-tag.pending{color:var(--c4);background:var(--c1)}
+
+/* Period list — two-line layout */
+.period-list{margin:0 18px 10px}
+.period-item{display:flex;align-items:center;padding:8px 0;border-bottom:1px solid var(--dv)}
+.period-item:last-child{border-bottom:none}
+.period-info{flex:1;min-width:0}
+.period-name{font:500 13px/1.2 var(--f);color:var(--c7);margin-bottom:2px}
+.period-range{font:400 11px/1 var(--f);color:var(--c5);font-family:var(--m)}
+.period-extra{display:flex;align-items:center;gap:8px;flex-shrink:0;margin-left:8px}
+.period-extra .period-count{font:400 12px/1 var(--f);color:var(--c5);font-family:var(--m)}
+.period-extra a{font-size:12px}
+
+/* ═══ RIGHT PANEL ═══ */
+.right-panel{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.list-wrap{flex:1;overflow-y:auto;background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card)}
+.list-wrap::-webkit-scrollbar{width:4px}
+.list-wrap::-webkit-scrollbar-thumb{background:var(--c3);border-radius:2px}
+
+.list-hd{display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--dv);position:sticky;top:0;background:var(--sf);z-index:1;border-radius:var(--r3) var(--r3) 0 0}
+.list-hd-col{font:500 11px/1 var(--f);color:var(--c5);letter-spacing:.2px}
+.list-hd .col-scheme{flex:1.3;min-width:0}
+.list-hd .col-activity{flex:1.2;min-width:0}
+.list-hd .col-relationship,.list-hd .col-admin,.list-hd .col-count,.list-hd .col-stage,.list-hd .col-status{flex:1;min-width:0}
+.list-hd .col-actions{flex:1.3;min-width:0;text-align:right}
+.list-hd .col-actions{text-align:right}
+
+.list-row{display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--dv);cursor:pointer;transition:background .1s;position:relative}
+.list-row:hover{background:var(--pr50)}
+.list-row.selected{background:var(--pr50)}
+.list-row.selected::before{content:'';position:absolute;left:0;top:2px;bottom:2px;width:3px;background:var(--pr);border-radius:0 2px 2px 0}
+.list-row:last-child{border-bottom:none}
+
+.list-row.dim .cell-primary{color:var(--c5)}
+.list-row.dim .cell-secondary{color:var(--c4)}
+.list-row.dim .tag{opacity:.6}
+
+.cell-primary{font:400 13px/1.2 var(--f);color:var(--c9)}
+.cell-secondary{font:400 11px/1.2 var(--f);color:var(--c5);margin-top:3px}
+.list-row.has-active .col-scheme .cell-primary{color:var(--pr);font-weight:400}
+
+.list-row .col-scheme{flex:1.3;min-width:0}
+.list-row .col-activity{flex:1.2;min-width:0}
+.list-row .col-relationship,.list-row .col-admin,.list-row .col-count,.list-row .col-stage,.list-row .col-status{flex:1;min-width:0}
+.list-row .col-count .cell-primary{font-family:var(--m)}
+.list-row .col-actions{flex:1.3;min-width:0;display:flex;align-items:center;gap:6px;justify-content:flex-end}
+.col-actions a:hover{opacity:.8}
+
+/* ═══ COMPONENTS ═══ */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit;white-space:nowrap}
+.btn svg{width:13px;height:13px;flex-shrink:0}
+.btn-p{background:var(--pr);color:#FFF}.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
+.btn-t{background:transparent;color:var(--c5);height:28px;font-size:12px;padding:0 8px}.btn-t:hover{color:var(--pr);background:var(--pr50)}
+.btn-sm{height:28px;font-size:12px;padding:0 10px}
+
+.fl-input{display:flex;align-items:center;gap:6px;background:var(--c0);border:1px solid transparent;border-radius:var(--r1);padding:0 10px;height:30px;transition:all .15s;width:180px}
+.fl-input:focus-within{background:var(--sf);border-color:var(--pr)}
+.fl-input svg{color:var(--c4);flex-shrink:0;width:13px;height:13px}
+.fl-input input{border:none;background:transparent;outline:none;font:13px/1 var(--f);width:100%;color:var(--c8)}
+.fl-input input::placeholder{color:var(--c4)}
+.fl-sel{height:30px;padding:0 26px 0 10px;border:1px solid var(--c2);border-radius:var(--r1);font:400 12.5px/1 var(--f);color:var(--c7);background:var(--sf) url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 8px center;appearance:none;cursor:pointer;outline:none}
+.fl-sel:focus{border-color:var(--pr)}
+
+.tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:3px;font:500 11px/1 var(--f);white-space:nowrap}
+.tag-active{background:var(--pr50);color:var(--pr)}
+.tag-done{background:var(--em50);color:var(--em700)}
+.tag-pending{background:var(--c1);color:var(--c4)}
+
+.dropdown{position:relative;display:inline-flex}
+.dropdown-menu{position:absolute;right:0;top:100%;margin-top:4px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r1);box-shadow:var(--shadow-card);min-width:120px;z-index:200;display:none;padding:4px}
+.dropdown:hover .dropdown-menu{display:block}
+.dropdown-item{display:flex;align-items:center;padding:6px 10px;border-radius:4px;font:400 12.5px/1 var(--f);color:var(--c7);cursor:pointer;transition:background .1s;white-space:nowrap}
+.dropdown-item:hover{background:var(--pr50);color:var(--pr)}
+.dropdown-item.danger{color:var(--c6)}.dropdown-item.danger:hover{color:var(--ro);background:var(--ro50)}
+
+.empty{font:400 12px/1 var(--f);color:var(--c4);padding:6px 0}
+
+/* ═══ MODAL ═══ */
+.modal-ov{
+  position:fixed;inset:0;background:rgba(0,0,0,.35);
+  z-index:2000;display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .2s;
+}
+.modal-ov.on{opacity:1;pointer-events:all}
+.modal{
+  background:var(--sf);border-radius:var(--r4);
+  box-shadow:0 20px 60px -15px rgba(0,0,0,.2);
+  width:520px;max-width:90vw;max-height:90vh;overflow-y:auto;
+  transform:translateY(8px) scale(.98);transition:transform .2s ease;
+}
+.modal-ov.on .modal{transform:translateY(0) scale(1)}
+.modal-hd{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 22px 14px;border-bottom:1px solid var(--dv);
+}
+.modal-hd-t{font:600 15px/1.2 var(--f);color:var(--c9)}
+.modal-close{
+  width:28px;height:28px;border-radius:var(--r1);border:none;
+  background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  color:var(--c4);transition:all .12s;
+}
+.modal-close:hover{background:var(--c1);color:var(--c7)}
+.modal-close svg{width:16px;height:16px}
+.modal-bd{padding:18px 22px}
+.modal-ft{
+  display:flex;justify-content:flex-end;gap:8px;
+  padding:14px 22px 18px;border-top:1px solid var(--dv);
+}
+.modal-label{font:500 13px/1 var(--f);color:var(--c7);margin-bottom:8px}
+.modal-label .req{color:var(--ro);margin-left:2px}
+.modal-input{
+  width:100%;height:36px;padding:0 12px;border:1px solid var(--c2);
+  border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c9);
+  outline:none;transition:border-color .12s;
+}
+.modal-input:focus{border-color:var(--pr)}
+.modal-input.err{border-color:var(--ro)}
+.modal-textarea{
+  width:100%;min-height:80px;padding:8px 12px;border:1px solid var(--c2);
+  border-radius:var(--r1);font:400 13px/1.5 var(--f);color:var(--c9);
+  outline:none;transition:border-color .12s;resize:vertical;
+}
+.modal-textarea:focus{border-color:var(--pr)}
+.form-row{margin-bottom:16px}
+.form-row:last-child{margin-bottom:0}
+.form-err{font:400 11px/1 var(--f);color:var(--ro);margin-top:4px;display:none}
+.form-err.show{display:block}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="modalContainer"></div>
+<script src="../navigation.js"></script>
+<script>
+GHR_NAV.init('perf', '活动管理');
+
+/* ═══ ICONS ═══ */
+var I={
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>',
+  chevronRight:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>',
+  more:'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+  users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  calendar:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+  edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+  copy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
+  trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+  play:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>',
+  power:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>',
+  eye:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
+  x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+};
+
+/* ═══ DATA ═══ */
+
+function genMonthlyActs(startY, startM, count) {
+  var acts=[], y=startY, m=startM;
+  for(var i=0;i<count;i++){
+    var days=new Date(y,m,0).getDate();
+    var name=m+'月';
+    acts.push({name:name,desc:name+'绩效考核',start:y+'/'+String(m).padStart(2,'0')+'/01',end:y+'/'+String(m).padStart(2,'0')+'/'+String(days).padStart(2,'0'),empCount:30+Math.floor(Math.sin(i*2.3)*10+i*3),status:i<5?'ended':i===5?'active':'not_started'});
+    m++;if(m>12){m=1;y++;}
+  }
+  return acts;
+}
+function genQuarterlyActs(startY, startQ, count) {
+  var acts=[], qm={'Q1':['01/01','03/31'],'Q2':['04/01','06/30'],'Q3':['07/01','09/30'],'Q4':['10/01','12/31']};
+  var qs=['Q1','Q2','Q3','Q4'], y=startY, q=startQ;
+  for(var i=0;i<count;i++){
+    var qn=qs[(q-1)%4], rm=qm[qn], name=y+' '+qn;
+    acts.push({name:name,desc:name+'季度绩效考核',start:y+'/'+rm[0],end:y+'/'+rm[1],empCount:55+Math.floor(Math.sin(i*1.7)*15+i*5),status:i<1?'ended':i===1?'active':'not_started'});
+    q++;if(q>4){q=1;y++;}
+  }
+  return acts;
+}
+function genHalfYearActs(startY, count) {
+  var acts=[];
+  for(var i=0;i<count;i++){
+    var h=i%2===0?'H1':'H2', y=startY+Math.floor(i/2), name=y+' '+h;
+    acts.push({name:name,desc:name+'半年度绩效考核',start:y+(h==='H1'?'/01/01':'/07/01'),end:y+(h==='H1'?'/06/30':'/12/31'),empCount:85+Math.floor(Math.sin(i*2)*20),status:i<1?'ended':i===1?'active':'not_started'});
+  }
+  return acts;
+}
+function genAnnualActs(startY, count) {
+  var acts=[];
+  for(var i=0;i<count;i++){
+    var y=startY+i, name=y+'年度考核';
+    acts.push({name:name,desc:y+'年度绩效考核',start:y+'/01/01',end:y+'/12/31',empCount:100+Math.floor(Math.sin(i*1.5)*30),status:i<1?'ended':i===1?'active':'not_started'});
+  }
+  return acts;
+}
+
+var SCHEMES = [
+  { id:'S01', name:'员工月度绩效考核', code:'PERF-2026-M01', type:'月度', version:3, autoCreate:true, status:'enabled', admin:'王管理', relationship:'锁定', actAdmin:'王管理', stage:'绩效考核', createdAt:'2025-03-15', groupCount:3, acts:genMonthlyActs(2026,1,12) },
+  { id:'S02', name:'销售部门月度考核', code:'PERF-2026-M02', type:'月度', version:1, autoCreate:true, status:'enabled', admin:'李HR', relationship:'动态', actAdmin:'李HR', stage:'目标制定', createdAt:'2025-05-15', groupCount:2, acts:genMonthlyActs(2026,1,12) },
+  { id:'S03', name:'试点部门月度考核', code:'PERF-2026-M03', type:'月度', version:1, autoCreate:false, status:'draft', admin:'张经理', relationship:'动态', actAdmin:'张经理', stage:'目标制定', createdAt:'2026-06-15', groupCount:1, acts:genMonthlyActs(2026,6,6) },
+  { id:'S04', name:'季度方案 v1', code:'PERF-2026-Q01', type:'季度', version:2, autoCreate:true, status:'enabled', admin:'Kim', relationship:'锁定', actAdmin:'Kim', stage:'结果审定', createdAt:'2025-01-10', groupCount:3, acts:genQuarterlyActs(2025,1,8) },
+  { id:'S05', name:'季度方案 v2', code:'PERF-2026-Q02', type:'季度', version:1, autoCreate:true, status:'disabled', admin:'张经理', relationship:'锁定', actAdmin:'张经理', stage:'绩效考核', createdAt:'2025-08-15', groupCount:2, acts:genQuarterlyActs(2025,3,6) },
+  { id:'S06', name:'半年度方案', code:'PERF-2026-H01', type:'半年度', version:2, autoCreate:true, status:'enabled', admin:'Kim', relationship:'锁定', actAdmin:'Kim', stage:'绩效面谈', createdAt:'2024-12-01', groupCount:4, acts:genHalfYearActs(2025,4) },
+  { id:'S07', name:'年度方案', code:'PERF-2026-Y01', type:'年度', version:4, autoCreate:true, status:'enabled', admin:'Kim', relationship:'锁定', actAdmin:'Kim', stage:'结果确认', createdAt:'2024-06-01', groupCount:5, acts:genAnnualActs(2024,4) },
+  { id:'S08', name:'项目制方案', code:'PERF-2026-P01', type:'项目制', version:1, autoCreate:false, status:'enabled', admin:'张经理', relationship:'动态', actAdmin:'张经理', stage:'绩效考核', createdAt:'2026-01-20', groupCount:1, acts:[
+    { name:'App 3.0 改版', desc:'移动端 App 3.0 版本绩效考核', start:'2026/02/01', end:'2026/05/15', empCount:28, status:'ended' },
+    { name:'数据中台建设', desc:'数据中台一期建设与交付', start:'2026/04/01', end:'2026/08/31', empCount:42, status:'active' },
+    { name:'用户增长项目', desc:'Q3 用户增长专项行动', start:'2026/07/01', end:'2026/10/31', empCount:35, status:'not_started' },
+  ]},
+];
+
+var CYCLES=[
+  {id:'annual',label:'年度考核',start:'2026/01/01',end:'2026/12/31'},
+  {id:'semi',label:'半年度考核',start:'2026/01/01',end:'2026/06/30'},
+  {id:'q1',label:'Q1季度考核',start:'2026/01/01',end:'2026/03/31'},
+  {id:'q2',label:'Q2季度考核',start:'2026/04/01',end:'2026/06/30'},
+  {id:'q3',label:'Q3季度考核',start:'2026/07/01',end:'2026/09/30'},
+  {id:'q4',label:'Q4季度考核',start:'2026/10/01',end:'2026/12/31'},
+  {id:'mar',label:'3月月度考核',start:'2026/03/01',end:'2026/03/31'},
+  {id:'apr',label:'4月月度考核',start:'2026/04/01',end:'2026/04/30'},
+  {id:'may',label:'5月月度考核',start:'2026/05/01',end:'2026/05/31'},
+  {id:'jun',label:'6月月度考核',start:'2026/06/01',end:'2026/06/30'},
+];
+
+var ADMIN_LIST=[
+  {id:'EMP0088',name:'Kim（HRBP经理）'},
+  {id:'EMP0012',name:'张经理（COE负责人）'},
+  {id:'EMP0025',name:'李HR（HRBP）'},
+  {id:'EMP0036',name:'王管理（部门总监）'},
+  {id:'EMP0047',name:'赵HR（SSC专员）'},
+  {id:'EMP0058',name:'陈主管（财务部）'},
+  {id:'EMP0069',name:'周经理（技术部）'},
+];
+
+var SCHEME_ADMINS={
+  '员工月度绩效考核': ['EMP0036'],
+  '销售部门月度考核': ['EMP0025'],
+  '试点部门月度考核': ['EMP0012'],
+  '季度方案 v1': ['EMP0088'],
+  '季度方案 v2': ['EMP0012'],
+  '半年度方案': ['EMP0088','EMP0012'],
+  '年度方案': ['EMP0088','EMP0012'],
+  '项目制方案': ['EMP0012'],
+};
+
+var FILTERS = { scheme:'', status:'', search:'' };
+var selectedSchemeId = SCHEMES[0].id;
+var expandedSections = {};
+var leftCollapsed = false;
+
+/* ═══ HELPERS ═══ */
+function getScheme(id){return SCHEMES.find(function(s){return s.id===id;});}
+function getCurAct(s){return s.acts.find(function(a){return a.status==='active';})||null;}
+function getHistActs(s){return s.acts.filter(function(a){return a.status==='ended';});}
+function getFutActs(s){return s.acts.filter(function(a){return a.status==='not_started';});}
+
+var STATUS_LABEL={active:'进行中',ended:'已结束',not_started:'未开始',draft:'草稿'};
+
+function statusTag(status){
+  var map={active:'tag-active',ended:'tag-done',not_started:'tag-pending',draft:'tag-pending'};
+  return '<span class="tag '+map[status]+'">'+STATUS_LABEL[status]+'</span>';
+}
+
+function buildSchemeMeta(s){
+  if(s.status==='draft')return'<span style="color:var(--c5)">草稿</span> · '+s.type;
+  if(s.status==='disabled')return'<span style="color:var(--ro)">停用</span> · '+s.type;
+  var auto=s.autoCreate?'<span style="color:var(--em)">自动创建</span>':'<span style="color:var(--ac)">手动创建</span>';
+  return auto+' · '+s.type;
+}
+
+function getCurrentStageName(s){
+  var cur=getCurAct(s);
+  if(cur&&cur.status==='active')return s.stage||'进行中';
+  if(cur&&cur.status==='ended')return'已完成';
+  return'—';
+}
+
+function showToast(msg){
+  var t=document.getElementById('ghrToast');
+  if(!t){t=document.createElement('div');t.id='ghrToast';t.style.cssText='position:fixed;top:60px;left:50%;transform:translateX(-50%);background:var(--c9);color:#FFF;padding:10px 18px;border-radius:var(--r2);font:500 13px/1 var(--f);z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none';document.body.appendChild(t);}
+  t.textContent=msg;t.style.opacity='1';
+  clearTimeout(t._t);t._t=setTimeout(function(){t.style.opacity='0';},2000);
+}
+
+function isExpanded(schemeId, section){
+  if(expandedSections[schemeId]&&expandedSections[schemeId].hasOwnProperty(section))
+    return expandedSections[schemeId][section];
+  return section==='current';
+}
+
+/* ═══ CREATE MODAL ═══ */
+var modalState={type:null,data:null};
+
+function openCreateModal(){
+  modalState={type:'create',data:{}};
+  renderModal();
+  setTimeout(function(){var el=document.getElementById('fName');if(el)el.focus();},50);
+}
+
+function closeModal(){
+  modalState={type:null,data:null};
+  renderModal();
+}
+
+function onPlanChange(val){
+  modalState.data.plan=val;
+  modalState.data.admins=SCHEME_ADMINS[val]||[];
+  renderModal();
+}
+
+function filterAdminListAct(val){
+  var q=val.toLowerCase();
+  var items=document.querySelectorAll('#fAdminList label');
+  for(var i=0;i<items.length;i++){
+    var txt=items[i].textContent.toLowerCase();
+    items[i].style.display=txt.indexOf(q)>=0?'':'none';
+  }
+}
+
+function updateAdminSelectionAct(cb){
+  var data=modalState.data;
+  if(!data.admins)data.admins=[];
+  if(cb.checked){
+    if(data.admins.indexOf(cb.value)<0)data.admins.push(cb.value);
+  }else{
+    data.admins=data.admins.filter(function(id){return id!==cb.value;});
+  }
+  renderModal();
+}
+
+function renderModal(){
+  if(!modalState.type){
+    document.getElementById('modalContainer').innerHTML='';
+    return;
+  }
+  var d=modalState.data||{};
+  var title=modalState.type==='create'?'发起活动':'编辑活动';
+
+  /* Scheme options from SCHEMES */
+  var planOpts=SCHEMES.filter(function(s){return s.status!=='disabled';}).map(function(s){
+    return '<option value="'+s.name+'"'+(d.plan===s.name?' selected':'')+'>'+s.name+'</option>';
+  }).join('');
+
+  /* Cycle options grouped */
+  function cycleOpts(filter, label){
+    var opts=CYCLES.filter(filter).map(function(c){
+      return '<option value="'+c.label+'" data-start="'+c.start+'" data-end="'+c.end+'"'+(d.cycleLabel===c.label?' selected':'')+'>'+c.label+'（'+c.start+' - '+c.end+'）</option>';
+    }).join('');
+    return opts?'<optgroup label="'+label+'">'+opts+'</optgroup>':'';
+  }
+
+  /* Admin list */
+  var admins=d.admins||[];
+  var adminHtml=ADMIN_LIST.map(function(a){
+    var sel=admins.indexOf(a.id)>=0;
+    if(admins.length===0&&a.id==='EMP0088')sel=true;
+    return '<label style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;cursor:pointer;font:400 13px/1 var(--f);color:var(--c7);border-bottom:1px solid var(--dv);transition:background .1s;'+(sel?'background:var(--pr50)':'')+'" onmouseover="if(!this.querySelector(\'input\').checked)this.style.background=\'var(--c0)\'" onmouseout="if(!this.querySelector(\'input\').checked)this.style.background=\'\'">';
+    adminHtml+='<span style="display:flex;align-items:center;gap:8px"><input type="checkbox" value="'+a.id+'" '+(sel?'checked':'')+' onchange="updateAdminSelectionAct(this)" style="accent-color:var(--pr)">'+a.name+'</span>';
+    adminHtml+='<span style="font:400 11px/1 var(--m);color:var(--c4)">'+a.id+'</span></label>';
+  }).join('');
+  if(admins.length===0)admins=['EMP0088'];
+  var adminCount=admins.length;
+
+  var html='<div class="modal-ov on" id="modalOv" onclick="if(event.target===this)closeModal()">';
+  html+='<div class="modal">';
+  html+='<div class="modal-hd"><span class="modal-hd-t">'+title+'</span><button class="modal-close" onclick="closeModal()">'+I.x+'</button></div>';
+  html+='<div class="modal-bd">';
+
+  /* Name */
+  html+='<div class="form-row"><div class="modal-label">活动名称<span class="req">*</span></div>';
+  html+='<input class="modal-input" id="fName" value="'+(d.name||'')+'" placeholder="请输入活动名称" oninput="modalState.data.name=this.value">';
+  html+='<div class="form-err" id="errName">请输入活动名称</div></div>';
+
+  /* Scheme */
+  html+='<div class="form-row"><div class="modal-label">关联方案<span class="req">*</span></div>';
+  html+='<select class="fl-sel" id="fPlan" style="width:100%;height:36px" onchange="onPlanChange(this.value)"><option value="">请选择关联方案</option>'+planOpts+'</select>';
+  html+='<div class="form-err" id="errPlan">请选择关联方案</div></div>';
+
+  /* Cycle */
+  html+='<div class="form-row"><div class="modal-label">考核周期<span class="req">*</span></div>';
+  html+='<select class="fl-sel" id="fCycle" style="width:100%;height:36px" onchange="modalState.data.cycleLabel=this.value">';
+  html+='<option value="">请选择考核周期</option>';
+  html+=cycleOpts(function(c){return c.id==='annual';},'年度考核');
+  html+=cycleOpts(function(c){return c.id==='semi';},'半年度考核');
+  html+=cycleOpts(function(c){return c.id.indexOf('q')===0;},'季度考核');
+  html+=cycleOpts(function(c){return c.id!=='annual'&&c.id!=='semi'&&c.id.indexOf('q')!==0;},'月度考核');
+  html+='</select><div class="form-err" id="errCycle">请选择考核周期</div></div>';
+
+  /* Dynamic relationship */
+  var dLocked=!d.dynamicAssessment||d.dynamicAssessment==='locked';
+  html+='<div class="form-row"><div class="modal-label">动态考核关系<span class="req">*</span></div>';
+  html+='<div style="display:flex;gap:24px;padding:8px 0">';
+  html+='<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font:400 13px/1 var(--f);color:var(--c7)"><input type="radio" name="fDynamic" value="locked"'+(dLocked?' checked':'')+' onchange="modalState.data.dynamicAssessment=this.value" style="accent-color:var(--pr)">开启时锁定考核关系</label>';
+  html+='<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font:400 13px/1 var(--f);color:var(--c7)"><input type="radio" name="fDynamic" value="dynamic"'+(d.dynamicAssessment==='dynamic'?' checked':'')+' onchange="modalState.data.dynamicAssessment=this.value" style="accent-color:var(--pr)">动态获取考核关系</label>';
+  html+='</div>';
+  html+='<div style="font:400 12px/1.4 var(--f);color:var(--c5);margin-top:4px">锁定：活动发起时快照考核关系，后续不随组织调整变化；动态：每次环节启动时实时查询当前汇报关系</div></div>';
+
+  /* Admin */
+  html+='<div class="form-row"><div class="modal-label">活动管理员<span class="req">*</span></div>';
+  html+='<div style="border:1px solid var(--c2);border-radius:var(--r1);overflow:hidden">';
+  html+='<input id="fAdminSearch" style="width:100%;height:36px;padding:0 12px;border:none;border-bottom:1px solid var(--dv);border-radius:0;font:400 13px/1 var(--f);color:var(--c9);outline:none" placeholder="搜索工号/姓名…" oninput="filterAdminListAct(this.value)">';
+  html+='<div id="fAdminList" style="max-height:180px;overflow-y:auto">'+adminHtml+'</div></div>';
+  html+='<div id="fAdminCount" style="font:400 11px/1 var(--f);color:var(--c5);margin-top:2px">已选 '+adminCount+' 人</div>';
+  html+='<div class="form-err" id="errAdmin">请选择至少一位活动管理员</div>';
+  html+='<div style="font:400 12px/1.4 var(--f);color:var(--c5);margin-top:4px">活动管理员拥有管理考核活动的权限，包括启停环节、修改考核关系等操作</div></div>';
+
+  /* Description */
+  html+='<div class="form-row"><div class="modal-label">活动说明</div>';
+  html+='<textarea class="modal-textarea" id="fDesc" placeholder="请输入活动说明（选填）" oninput="modalState.data.description=this.value">'+(d.description||'')+'</textarea></div>';
+
+  html+='</div>';
+  html+='<div class="modal-ft"><button class="btn btn-s" onclick="closeModal()">取消</button><button class="btn btn-p" onclick="submitForm()">确认</button></div>';
+  html+='</div></div>';
+  document.getElementById('modalContainer').innerHTML=html;
+}
+
+function submitForm(){
+  var d=modalState.data;
+  var nameEl=document.getElementById('fName');
+  var planEl=document.getElementById('fPlan');
+  var cycleEl=document.getElementById('fCycle');
+  var err=true;
+  if(!nameEl||!nameEl.value.trim()){var e=document.getElementById('errName');if(e)e.classList.add('show');err=false;}
+  else{var e=document.getElementById('errName');if(e)e.classList.remove('show');}
+  if(!planEl||!planEl.value){var e=document.getElementById('errPlan');if(e)e.classList.add('show');err=false;}
+  else{var e=document.getElementById('errPlan');if(e)e.classList.remove('show');}
+  if(!cycleEl||!cycleEl.value){var e=document.getElementById('errCycle');if(e)e.classList.add('show');err=false;}
+  else{var e=document.getElementById('errCycle');if(e)e.classList.remove('show');}
+  if(!d.admins||d.admins.length===0){var e=document.getElementById('errAdmin');if(e)e.classList.add('show');err=false;}
+  else{var e=document.getElementById('errAdmin');if(e)e.classList.remove('show');}
+  if(!err)return;
+  showToast('已创建活动「'+d.name+'」');
+  closeModal();
+}
+
+/* ═══ RENDER ═══ */
+
+var ALL_STAGES = ['目标制定','绩效考核','结果审定','结果确认','绩效面谈'];
+
+function getStagesForScheme(s){
+  var cur=s.stage;
+  var stages=[], passed=true;
+  for(var i=0;i<ALL_STAGES.length;i++){
+    var st=ALL_STAGES[i];
+    var status=st===cur?'active':passed?'done':'pending';
+    if(st===cur)passed=false;
+    stages.push({name:st,status:status});
+  }
+  return stages;
+}
+
+function stageTag(status){
+  var map={done:'已完成',active:'进行中',pending:'未开始'};
+  return '<span class="stage-tag '+status+'">'+map[status]+'</span>';
+}
+
+function renderPeriodItems(acts, scheme, type){
+  var html='';
+  for(var i=0;i<acts.length;i++){
+    var a=acts[i];
+    var name=a.name;
+    if(scheme&&scheme.autoCreate)name=a.name;
+    html+='<div class="period-item">';
+    html+='<div class="period-info"><div class="period-name">'+name+'</div><div class="period-range">'+a.start+' ~ '+a.end+'</div></div>';
+    html+='<div class="period-extra">';
+    if(type==='history'){
+      html+='<span class="period-count">'+a.empCount+'人</span>';
+      html+='<a style="color:var(--c5);cursor:pointer;text-decoration:none" onclick="event.stopPropagation();enterActivity(\''+scheme.id+'\')">查看</a>';
+    }else{
+      html+='<span class="period-count">'+a.start+'</span>';
+    }
+    html+='</div></div>';
+  }
+  return html;
+}
+
+function renderActDropdown(s){
+  var h='';
+  h+='<div class="dropdown-item" onclick="event.stopPropagation();showToast(\'更新考核关系（原型占位）\')">更新考核关系</div>';
+  if(s.relationship==='锁定'){
+    h+='<div class="dropdown-item" onclick="event.stopPropagation();toggleRelationship(\''+s.id+'\',\'动态\')">解锁考核关系</div>';
+  }else{
+    h+='<div class="dropdown-item" onclick="event.stopPropagation();toggleRelationship(\''+s.id+'\',\'锁定\')">锁定考核关系</div>';
+  }
+  h+='<div class="dropdown-item danger" onclick="event.stopPropagation();showToast(\'终止活动（原型占位）\')">终止</div>';
+  h+='<div class="dropdown-item danger" onclick="event.stopPropagation();showToast(\'删除活动（原型占位）\')">删除</div>';
+  return h;
+}
+
+function renderSchDropdown(s){
+  var h='';
+  h+='<div class="dropdown-item" onclick="event.stopPropagation();goSchemeWizard(\''+s.id+'\')">编辑</div>';
+  h+='<div class="dropdown-item" onclick="event.stopPropagation();showToast(\'复制方案（原型占位）\')">复制</div>';
+  if(s.status==='disabled'){
+    h+='<div class="dropdown-item" onclick="event.stopPropagation();toggleStatus(\''+s.id+'\',\'enabled\')">启用</div>';
+  }else if(s.status==='enabled'){
+    h+='<div class="dropdown-item" onclick="event.stopPropagation();toggleStatus(\''+s.id+'\',\'disabled\')">停用</div>';
+  }else if(s.status==='draft'){
+    h+='<div class="dropdown-item" onclick="event.stopPropagation();toggleStatus(\''+s.id+'\',\'enabled\')">发布</div>';
+  }
+  h+='<div class="dropdown-item danger" onclick="event.stopPropagation();showToast(\'删除方案（原型占位）\')">删除</div>';
+  return h;
+}
+
+function renderLeftPanel(){
+  var s=getScheme(selectedSchemeId);
+  if(!s)return'<div class="panel-card" style="padding:14px 18px"><span class="empty">未选择方案</span></div>';
+
+  var cur=getCurAct(s);
+  var hist=getHistActs(s);
+  var fut=getFutActs(s);
+  var ek=selectedSchemeId;
+
+  var html='<div class="panel-card">';
+
+  /* Scheme header */
+  html+='<div class="scheme-hd">';
+  html+='<div class="scheme-hd-name" style="cursor:pointer" onclick="goSchemeDetail(\''+s.id+'\')" title="查看方案详情">'+s.name+'</div>';
+  html+='<div class="scheme-hd-tags">';
+  html+='<span class="tag-type">'+s.type+'</span>';
+  html+='<span class="tag-auto '+(s.autoCreate?'on':'off')+'">'+(s.autoCreate?'自动创建':'手动创建')+'</span>';
+  html+='</div>';
+  html+='<div class="scheme-hd-info">v'+(s.version||1)+' · '+s.code+' · '+s.createdAt+'</div>';
+  html+='</div>';
+  /* Current activity */
+  var curOpen=isExpanded(ek,'current');
+  html+='<div class="panel-section'+(curOpen?' open':'')+'">';
+  html+='<div class="panel-section-hd" onclick="toggleSection(\''+ek+'\',\'current\')">'+I.chevronRight+' 当前活动</div>';
+  html+='<div class="panel-section-bd">';
+  if(cur){
+    html+='<div class="cur-act">';
+    html+='<div class="cur-act-row">';
+    html+='<div class="cur-act-info"><div class="cur-act-name">'+cur.name+'</div><div class="cur-act-range">'+cur.start+' ~ '+cur.end+'</div></div>';
+    html+='<div class="cur-act-extra"><a style="color:var(--pr);font-size:12px;cursor:pointer;text-decoration:none" onclick="event.stopPropagation();enterActivity(\''+s.id+'\')">查看</a></div>';
+    html+='</div>';
+    /* Stage list */
+    var stages=getStagesForScheme(s);
+    html+='<div class="stage-list" style="padding-top:6px;border-top:1px solid var(--dv);margin-top:6px">';
+    for(var i=0;i<stages.length;i++){
+      var st=stages[i];
+      html+='<div class="stage-item"><span class="stage-dot '+st.status+'"></span><span class="stage-name">'+st.name+'</span>'+stageTag(st.status)+'</div>';
+    }
+    html+='</div></div>';
+  }else{html+='<div class="empty" style="margin:0 18px 10px">暂无进行中的活动</div>';}
+  html+='</div></div>';
+
+  /* Historical */
+  var histOpen=isExpanded(ek,'history');
+  html+='<div class="panel-section'+(histOpen?' open':'')+'">';
+  html+='<div class="panel-section-hd" onclick="toggleSection(\''+ek+'\',\'history\')">'+I.chevronRight+' 历史活动（'+hist.length+'）</div>';
+  html+='<div class="panel-section-bd"><div class="period-list">';
+  if(!hist.length)html+='<div class="empty" style="margin:0 18px 10px">暂无</div>';
+  else html+=renderPeriodItems(hist, s, 'history');
+  html+='</div></div></div>';
+
+  /* Future */
+  var futOpen=isExpanded(ek,'future');
+  html+='<div class="panel-section'+(futOpen?' open':'')+'">';
+  html+='<div class="panel-section-hd" onclick="toggleSection(\''+ek+'\',\'future\')">'+I.chevronRight+' 未来活动（'+fut.length+'）</div>';
+  html+='<div class="panel-section-bd"><div class="period-list">';
+  if(!fut.length)html+='<div class="empty" style="margin:0 18px 10px">暂无</div>';
+  else html+=renderPeriodItems(fut, s, 'future');
+  html+='</div></div></div>';
+
+  html+='</div>';
+  return html;
+}
+
+function renderRightPanel(){
+  var filtered=SCHEMES;
+  if(FILTERS.scheme)filtered=filtered.filter(function(s){return s.type===FILTERS.scheme;});
+  if(FILTERS.status==='enabled')filtered=filtered.filter(function(s){return s.status==='enabled';});
+  if(FILTERS.status==='disabled')filtered=filtered.filter(function(s){return s.status==='disabled';});
+  if(FILTERS.status==='draft')filtered=filtered.filter(function(s){return s.status==='draft';});
+  if(FILTERS.search){
+    var q=FILTERS.search.toLowerCase();
+    filtered=filtered.filter(function(s){if(s.name.toLowerCase().indexOf(q)>=0)return true;return s.acts.some(function(a){return a.name.toLowerCase().indexOf(q)>=0;});});
+  }
+  var enabled=filtered.filter(function(s){return s.status==='enabled'||s.status==='draft'||s.status==='disabled';});
+
+  function renderRow(s){
+    var cur=getCurAct(s);
+    var sel=s.id===selectedSchemeId?' selected':'';
+    var hasActive=cur&&cur.status==='active'?' has-active':'';
+    var curName=cur?cur.name:'—';
+    var curPeriod=cur?cur.start+' ~ '+cur.end:'';
+    var curCount=cur?cur.empCount:0;
+    var curStatus=cur?cur.status:'not_started';
+    var stageName=getCurrentStageName(s);
+    var meta=buildSchemeMeta(s);
+    var dimClass=(s.status==='draft'||s.status==='disabled')?' dim':'';
+
+    /* Action links */
+    var actions='';
+    if(cur){
+      actions+='<a style="color:var(--pr);font-size:13px;cursor:pointer;text-decoration:none" onclick="event.stopPropagation();enterActivity(\''+s.id+'\')">查看</a>';
+    }
+    actions+='<div class="dropdown" style="display:inline-flex">';
+    actions+='<a style="color:var(--c6);font-size:12px;cursor:pointer;text-decoration:none" onclick="event.stopPropagation()">活动管理</a>';
+    actions+='<div class="dropdown-menu">'+renderActDropdown(s)+'</div></div>';
+    actions+='<div class="dropdown" style="display:inline-flex">';
+    actions+='<a style="color:var(--c6);font-size:12px;cursor:pointer;text-decoration:none" onclick="event.stopPropagation()">方案管理</a>';
+    actions+='<div class="dropdown-menu">'+renderSchDropdown(s)+'</div></div>';
+
+    var h='<div class="list-row'+sel+hasActive+dimClass+'" onclick="selectScheme(\''+s.id+'\')">';
+    h+='<div class="col-scheme"><div class="cell-primary">'+s.name+'</div><div class="cell-secondary">'+meta+'</div></div>';
+    h+='<div class="col-activity"><div class="cell-primary">'+curName+'</div><div class="cell-secondary">'+curPeriod+'</div></div>';
+    h+='<div class="col-status">'+statusTag(curStatus)+'</div>';
+    h+='<div class="col-stage"><div class="cell-primary">'+stageName+'</div></div>';
+    h+='<div class="col-relationship"><div class="cell-primary">'+(s.relationship||'—')+'</div></div>';
+    h+='<div class="col-count"><div class="cell-primary">'+curCount+'</div></div>';
+    h+='<div class="col-admin"><div class="cell-primary">'+(s.actAdmin||'—')+'</div></div>';
+    h+='<div class="col-actions">'+actions+'</div></div>';
+    return h;
+  }
+
+  var html='';
+  html+='<div class="list-hd">';
+  html+='<span class="list-hd-col col-scheme">方案</span>';
+  html+='<span class="list-hd-col col-activity">活动</span>';
+  html+='<span class="list-hd-col col-status">状态</span>';
+  html+='<span class="list-hd-col col-stage">当前环节</span>';
+  html+='<span class="list-hd-col col-relationship">考核关系</span>';
+  html+='<span class="list-hd-col col-count">被考核人</span>';
+  html+='<span class="list-hd-col col-admin">活动管理员</span>';
+  html+='<span class="list-hd-col col-actions">操作</span>';
+  html+='</div>';
+
+  for(var i=0;i<enabled.length;i++)html+=renderRow(enabled[i]);
+
+  return html;
+}
+
+function renderFilters(){
+  var types=['全部类型','月度','季度','半年度','年度','项目制'];
+  var h='';
+  h+='<span style="font:500 12px/1 var(--f);color:var(--c5);flex-shrink:0">类型</span>';
+  h+='<select class="fl-sel" onchange="FILTERS.scheme=this.value===\'全部类型\'?\'\':this.value;render()">';
+  for(var i=0;i<types.length;i++)h+='<option value="'+types[i]+'"'+(FILTERS.scheme===types[i]||(FILTERS.scheme===''&&types[i]==='全部类型')?' selected':'')+'>'+types[i]+'</option>';
+  h+='</select>';
+  h+='<span style="font:500 12px/1 var(--f);color:var(--c5);flex-shrink:0">状态</span>';
+  h+='<select class="fl-sel" onchange="FILTERS.status=this.value===\'全部状态\'?\'\':this.value;render()">';
+  h+='<option value="全部状态"'+(FILTERS.status===''?' selected':'')+'>全部状态</option>';
+  h+='<option value="enabled"'+(FILTERS.status==='enabled'?' selected':'')+'>启用</option>';
+  h+='<option value="disabled"'+(FILTERS.status==='disabled'?' selected':'')+'>停用</option>';
+  h+='<option value="draft"'+(FILTERS.status==='draft'?' selected':'')+'>草稿</option>';
+  h+='</select>';
+  h+='<span class="fl-grow"></span>';
+  h+='<div class="fl-input">'+I.search+'<input placeholder="搜索方案或活动…" value="'+FILTERS.search.replace(/"/g,'&quot;')+'" oninput="FILTERS.search=this.value;render()"></div>';
+  h+='<button class="btn btn-s" style="height:30px" onclick="FILTERS={scheme:\'\',status:\'\',search:\'\'};expandedSections={};render()">'+I.x+' 重置</button>';
+  return h;
+}
+
+/* ═══ ACTIONS ═══ */
+function selectScheme(id){
+  selectedSchemeId=id;
+  if(!expandedSections[id])expandedSections[id]={current:true,history:false,future:false};
+  render();
+}
+function toggleSection(schemeId, section){
+  if(!expandedSections[schemeId])expandedSections[schemeId]={current:true,history:false,future:false};
+  expandedSections[schemeId][section]=!expandedSections[schemeId][section];
+  render();
+}
+function togglePanel(schemeId){
+  leftCollapsed=!leftCollapsed;
+  render();
+}
+function enterActivity(id){
+  window.location.href='http://127.0.0.1:8788/perf-activity-detail.html?scheme='+id;
+}
+function goSchemeWizard(id){
+  window.location.href='http://127.0.0.1:8788/perf-scheme-wizard.html'+(id?'?id='+id:'');
+}
+function goSchemeDetail(id){
+  window.location.href='http://127.0.0.1:8788/perf-scheme-detail.html?id='+id;
+}
+function toggleRelationship(id, newVal){
+  var s=getScheme(id);
+  if(s){s.relationship=newVal;showToast(s.name+' 考核关系已'+(newVal==='锁定'?'锁定':'解锁'));render();}
+}
+
+/* ═══ RENDER ═══ */
+function render(){
+  var html='';
+  html+='<div class="topbar"><div class="topbar-l"><h1>活动管理</h1><p>管理绩效考核活动的发起与执行</p></div><div class="topbar-r"><button class="btn btn-s" onclick="goSchemeWizard()">新增方案</button><button class="btn btn-p" onclick="openCreateModal()">'+I.plus+' 发起活动</button></div></div>';
+  html+='<div class="filter-bar">'+renderFilters()+'</div>';
+  html+='<div class="main-layout"><div class="left-panel'+(leftCollapsed?' collapsed':'')+'">'+renderLeftPanel()+'</div><div class="panel-toggle" onclick="togglePanel()" title="'+(leftCollapsed?'展开':'收起')+'左侧面板"><span class="panel-toggle-btn">'+I.chevronRight+'</span></div><div class="right-panel"><div class="list-wrap">'+renderRightPanel()+'</div></div></div>';
+  document.getElementById('app').innerHTML=html;
+}
+
+render();
+</script>
+</body>
+</html>

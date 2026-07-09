@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 强制分布规则</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --shadow-card-hover:0 8px 20px -4px rgba(0,0,0,.08),0 2px 6px -2px rgba(0,0,0,.04);
+  --shadow-dropdown:0 10px 40px -10px rgba(0,0,0,.12),0 2px 10px -2px rgba(0,0,0,.04);
+  --header-h:52px;--r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --m:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+.hdr{height:var(--header-h);background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:1100}
+.hdr-l{display:flex;align-items:center;gap:14px}.logo{display:flex;align-items:center;gap:8px}
+.logo-i{width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center}
+.logo-i svg{width:15px;height:15px;color:#FFF}.logo-t{font-size:15px;font-weight:700;color:var(--c9);letter-spacing:-.3px}
+.hdr-title{font:600 14px/1 var(--f);color:var(--c7);padding-left:14px;border-left:1px solid var(--c2)}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
+.btn svg{width:13px;height:13px}.btn-p{background:var(--pr);color:#FFF}.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
+.btn-d{background:var(--sf);color:var(--ro);border:1px solid var(--ro100)}.btn-d:hover{background:var(--ro50);border-color:var(--ro)}
+.btn-sm{height:26px;padding:0 10px;font-size:12px}.btn-sm svg{width:11px;height:11px}
+.sec{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:20px;overflow:hidden}
+.sec-hd{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--dv)}
+.sec-hd-l{display:flex;align-items:center;gap:10px}
+.sec-hd-ic{width:30px;height:30px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center}
+.sec-hd-ic svg{width:15px;height:15px;color:#FFF}.sec-hd-ic.b{background:var(--pr)}
+.sec-hd-t{font:600 15px/1.2 var(--f);color:var(--c9)}.sec-hd-s{font:400 11px/1 var(--f);color:var(--c4);margin-top:2px}
+.sec-bd{padding:20px 24px}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--c2);border-radius:var(--r2)}
+table{width:100%;border-collapse:collapse;font-size:13px}thead{position:sticky;top:0;z-index:1}
+thead th{background:var(--c0);padding:10px 14px;font:600 12px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--c2);white-space:nowrap;text-transform:uppercase;letter-spacing:.3px}
+tbody td{padding:10px 14px;border-bottom:1px solid var(--dv);font:400 13px/1.4 var(--f);color:var(--c7);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}tbody tr:nth-child(even){background:var(--c0)}
+tbody tr{transition:background .1s}tbody tr:hover{background:var(--pr50)}
+.inp{border:1px solid var(--c2);border-radius:var(--r1);padding:6px 10px;font:400 13px/1 var(--f);color:var(--c9);background:var(--sf);outline:none;transition:all .15s;width:100%}
+.inp:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr100)}
+select.inp{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+label{font:500 13px/1 var(--f);color:var(--c6);display:block;margin-bottom:6px}
+.form-row{display:flex;gap:16px;margin-bottom:16px}.form-row:last-child{margin-bottom:0}.form-g{flex:1}
+.badge{display:inline-flex;align-items:center;gap:4px;font:600 11px/1 var(--f);padding:3px 8px;border-radius:var(--r1)}
+.badge-ok{color:var(--em700);background:var(--em50)}.badge-off{color:var(--c5);background:var(--c1)}
+.filter-bar{display:flex;align-items:flex-end;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.filter-bar .form-g{flex:none}
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:2000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-ov.on{opacity:1;pointer-events:all}
+.modal{background:var(--sf);border-radius:var(--r4);box-shadow:var(--shadow-dropdown);width:680px;max-height:85vh;overflow-y:auto;transform:translateY(8px);transition:transform .2s}
+.modal-ov.on .modal{transform:translateY(0)}
+.modal-hd{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--dv)}
+.modal-hd-t{font:600 16px/1 var(--f);color:var(--c9)}
+.modal-close{width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c4);background:transparent;border:none;transition:all .12s}
+.modal-close:hover{background:var(--c1);color:var(--c7)}.modal-close svg{width:14px;height:14px}
+.modal-bd{padding:20px 24px}.modal-ft{display:flex;justify-content:flex-end;gap:8px;padding:14px 24px;border-top:1px solid var(--dv)}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}.fi{animation:fi .25s ease forwards}
+.toggle{width:36px;height:20px;border-radius:10px;border:none;cursor:pointer;position:relative;transition:all .2s}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#FFF;transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.toggle.on{background:var(--em)}.toggle.on::after{left:19px}
+.toggle.off{background:var(--c3)}.toggle.off::after{left:3px}
+.grade-tbl{margin-top:12px}.grade-tbl table{font-size:12px}.grade-tbl th{padding:8px 10px;font-size:11px}.grade-tbl td{padding:6px 10px}
+.grade-tbl .inp{padding:4px 8px;font-size:12px}
+.grade-tbl select.inp{padding-right:24px}
+.grade-tbl .del-btn{background:none;border:none;color:var(--ro);cursor:pointer;padding:4px;border-radius:var(--r1);transition:all .12s}
+.grade-tbl .del-btn:hover{background:var(--ro50)}
+.grade-tbl .del-btn svg{width:14px;height:14px}
+.section-title{font:600 13px/1 var(--f);color:var(--c8);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--dv)}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div class="modal-ov" id="modalOv"><div class="modal" id="modalBox"></div></div>
+<script src="navigation.js"></script>
+<script>
+const I={
+  settings:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>',
+  refresh:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+  edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+  trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+  x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+  toggleOn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="5" width="22" height="14" rx="7" ry="7"/><circle cx="16" cy="12" r="3"/></svg>',
+  toggleOff:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="5" width="22" height="14" rx="7" ry="7"/><circle cx="8" cy="12" r="3"/></svg>',
+  minus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+};
+
+const GRADES = [
+  { name:'远超预期', code:'A' },
+  { name:'符合预期+', code:'B+' },
+  { name:'符合预期', code:'B' },
+  { name:'符合预期-', code:'B-' },
+  { name:'待改进', code:'C' },
+];
+
+let RULES = [
+  { id:1, name:'强制分布比例', code:'PERK0001', dept:'纵腾网络', enabled:true, lastMod:'Kim', lastModTime:'2026/01/01 00:00:00', gradeRule:'百分制绩效等级', ruleType:'数值', minHeadcount:10, gradeRows:[
+    { grade:'A', calcRule:'不超过', value:10 },
+    { grade:'B+', calcRule:'不低于', value:15 },
+    { grade:'B', calcRule:'不低于', value:30 },
+  ]},
+  { id:2, name:'宽松分布规则', code:'PERK0002', dept:'纵腾网络', enabled:true, lastMod:'Kim', lastModTime:'2026/01/01 00:00:00', gradeRule:'百分制绩效等级', ruleType:'等级', minHeadcount:5, gradeRows:[
+    { grade:'A', calcRule:'不低于', value:15 },
+    { grade:'B+', calcRule:'不低于', value:25 },
+  ]},
+  { id:3, name:'严格分布规则', code:'PERK0003', dept:'纵腾网络', enabled:false, lastMod:'Molly', lastModTime:'2026/01/01 00:00:00', gradeRule:'百分制绩效等级', ruleType:'数值', minHeadcount:15, gradeRows:[
+    { grade:'C', calcRule:'不超过', value:5 },
+  ]},
+];
+let nextId = 4;
+let searchText = '';
+let filterDept = '';
+
+function render(){
+  let filtered = RULES.filter(r => {
+    if(searchText && !r.name.includes(searchText)) return false;
+    if(filterDept && r.dept !== filterDept) return false;
+    return true;
+  });
+  const rows = filtered.map((r,i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td style="font-weight:500;color:var(--c8)">${r.name}</td>
+      <td><span style="font-family:var(--m);font-weight:500;font-size:12px;color:var(--c6)">${r.code}</span></td>
+      <td>${r.dept}</td>
+      <td>${r.gradeRule}</td>
+      <td>${r.enabled ? '<span class="badge badge-ok">是</span>' : '<span class="badge badge-off">否</span>'}</td>
+      <td>${r.lastMod}</td>
+      <td style="font-size:12px;color:var(--c5)">${r.lastModTime}</td>
+      <td>
+        <button class="btn btn-s btn-sm btn-edit" data-id="${r.id}">${I.edit} 编辑</button>
+      </td>
+    </tr>
+  `).join('');
+
+  document.getElementById('app').innerHTML = `
+    <div class="sec fi">
+      <div class="sec-hd">
+        <div class="sec-hd-l">
+          <div class="sec-hd-ic b">${I.settings}</div>
+          <div><div class="sec-hd-t">强制分布规则</div><div class="sec-hd-s">Forced Distribution Rules · 管理绩效等级的强制分布策略</div></div>
+        </div>
+        <button class="btn btn-p" id="btnAdd">${I.plus} 新增</button>
+      </div>
+      <div class="sec-bd">
+        <div class="filter-bar">
+          <div class="form-g" style="width:200px"><label>规则名称</label><input class="inp" id="searchInp" placeholder="搜索规则名称" value="${searchText}"></div>
+          <div class="form-g" style="width:140px"><label>部门</label><select class="inp" id="filterDept"><option value="">全部</option><option value="纵腾网络" ${filterDept==='纵腾网络'?'selected':''}>纵腾网络</option></select></div>
+          <button class="btn btn-s" id="btnSearch">${I.search} 搜索</button>
+          <button class="btn btn-s" id="btnReset">${I.refresh} 重置</button>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>序号</th><th>规则名称</th><th>编码值</th><th>部门</th><th>等级</th><th>是否启用</th><th>最近修改人</th><th>最近修改时间</th><th>操作</th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  `;
+  bindEvents();
+}
+
+function bindEvents(){
+  document.getElementById('btnAdd').onclick = () => openModal(-1);
+  document.getElementById('btnSearch').onclick = () => { searchText = document.getElementById('searchInp').value.trim(); filterDept = document.getElementById('filterDept').value; render(); };
+  document.getElementById('btnReset').onclick = () => { searchText = ''; filterDept = ''; render(); };
+  document.querySelectorAll('.btn-edit').forEach(b => b.onclick = () => openModal(parseInt(b.dataset.id)));
+}
+
+function openModal(id){
+  const isNew = id < 0;
+  const r = isNew
+    ? { name:'', code:'', dept:'纵腾网络', enabled:true, gradeRule:'百分制绩效等级', ruleType:'数值', minHeadcount:'', gradeRows:[ { grade:'A', calcRule:'不超过', value:10 }, { grade:'B+', calcRule:'不低于', value:15 } ] }
+    : RULES.find(x=>x.id===id);
+
+  const gradeOpts = GRADES.map(g => `<option value="${g.code}">${g.name}</option>`).join('');
+  const calcOpts = '<option>不超过</option><option>不低于</option>';
+
+  const gradeRows = r.gradeRows.map((row, i) => `
+    <tr>
+      <td style="text-align:center;color:var(--c5)">${i+1}</td>
+      <td><select class="inp grade-select" data-idx="${i}">${GRADES.map(g => `<option value="${g.code}" ${row.grade===g.code?'selected':''}>${g.name}</option>`).join('')}</select></td>
+      <td><select class="inp calc-select" data-idx="${i}">${['不超过','不低于'].map(c => `<option ${row.calcRule===c?'selected':''}>${c}</option>`).join('')}</select></td>
+      <td><div style="display:flex;align-items:center;gap:4px"><input class="inp value-input" data-idx="${i}" type="number" value="${row.value}" min="0" max="100" style="width:60px"><span style="font:500 12px/1 var(--f);color:var(--c5)">%</span></div></td>
+      <td><button class="del-btn grade-del" data-idx="${i}">${I.trash}</button></td>
+    </tr>
+  `).join('');
+
+  openModalBox(`
+    <div class="modal-hd"><span class="modal-hd-t">${isNew?'新增强制分布规则':'编辑强制分布规则'}</span><button class="modal-close" onclick="closeModal()">${I.x}</button></div>
+    <div class="modal-bd">
+      <div class="section-title">基本信息</div>
+      <div class="form-row">
+        <div class="form-g"><label>名称</label><input class="inp" id="mName" value="${r.name}" placeholder="请输入"></div>
+        <div class="form-g"><label>编码值</label><input class="inp" id="mCode" value="${r.code}" placeholder="请输入" style="font-family:var(--m)"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-g"><label>部门</label><select class="inp" id="mDept"><option ${r.dept==='纵腾网络'?'selected':''}>纵腾网络</option><option ${r.dept==='纵腾网络/FBU'?'selected':''}>纵腾网络/FBU</option></select></div>
+        <div class="form-g"><label>状态</label><button class="toggle ${r.enabled?'on':'off'}" id="mEnabled" onclick="this.classList.toggle('on');this.classList.toggle('off')">${r.enabled?I.toggleOn:I.toggleOff}</button></div>
+      </div>
+
+      <div class="section-title" style="margin-top:20px">规则信息</div>
+      <div class="form-row">
+        <div class="form-g" style="flex:none;width:180px"><label>应用等级</label><select class="inp" id="mGradeRule"><option ${r.gradeRule==='百分制绩效等级'?'selected':''}>百分制绩效等级</option><option ${r.gradeRule==='五分制绩效等级'?'selected':''}>五分制绩效等级</option></select></div>
+        <div class="form-g" style="flex:none;width:140px"><label>规则类型</label><select class="inp" id="mRuleType"><option ${r.ruleType==='数值'?'selected':''}>数值</option><option ${r.ruleType==='等级'?'selected':''}>等级</option></select></div>
+        <div class="form-g" style="flex:none;width:120px"><label>起控人数</label><input class="inp" id="mMinHead" type="number" value="${r.minHeadcount||''}" min="1" step="1" placeholder="正整数"></div>
+        <div class="form-g" style="flex:none;display:flex;align-items:flex-end"><button class="btn btn-s btn-sm" id="btnAddGrade">${I.plus} 新增规则</button></div>
+      </div>
+      <div class="grade-tbl">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th style="width:50px;text-align:center">#</th><th style="width:200px">等级</th><th style="width:160px">计算规则</th><th style="width:120px">值%</th><th style="width:60px">操作</th></tr></thead>
+            <tbody id="gradeBody">${gradeRows}</tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-s" onclick="closeModal()">取消</button><button class="btn btn-p" id="btnSave">确定</button></div>
+  `);
+
+  // Add grade row
+  document.getElementById('btnAddGrade').onclick = () => {
+    const tbody = document.getElementById('gradeBody');
+    const idx = tbody.children.length;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="text-align:center;color:var(--c5)">${idx+1}</td>
+      <td><select class="inp grade-select" data-idx="${idx}">${gradeOpts}</select></td>
+      <td><select class="inp calc-select" data-idx="${idx}">${['不超过','不低于'].map(c => `<option>${c}</option>`).join('')}</select></td>
+      <td><div style="display:flex;align-items:center;gap:4px"><input class="inp value-input" data-idx="${idx}" type="number" value="10" min="0" max="100" style="width:60px"><span style="font:500 12px/1 var(--f);color:var(--c5)">%</span></div></td>
+      <td><button class="del-btn grade-del" data-idx="${idx}">${I.trash}</button></td>
+    `;
+    tbody.appendChild(tr);
+    bindGradeEvents();
+  };
+
+  // Delete grade row
+  function bindGradeEvents(){
+    document.querySelectorAll('.grade-del').forEach(btn => {
+      btn.onclick = () => {
+        btn.closest('tr').remove();
+        // Re-number
+        document.querySelectorAll('#gradeBody tr').forEach((tr, i) => {
+          tr.children[0].textContent = i+1;
+        });
+      };
+    });
+  }
+  bindGradeEvents();
+
+  // Save
+  document.getElementById('btnSave').onclick = () => {
+    const name = document.getElementById('mName').value.trim();
+    if(!name){ alert('请输入规则名称'); return; }
+    const code = document.getElementById('mCode').value.trim();
+    if(!code){ alert('请输入编码值'); return; }
+
+    const gradeRows = [];
+    document.querySelectorAll('#gradeBody tr').forEach(tr => {
+      gradeRows.push({
+        grade: tr.querySelector('.grade-select').value,
+        calcRule: tr.querySelector('.calc-select').value,
+        value: parseInt(tr.querySelector('.value-input').value) || 0,
+      });
+    });
+
+    const minHeadRaw = document.getElementById('mMinHead').value.trim();
+    const minHeadcount = minHeadRaw ? parseInt(minHeadRaw) : '';
+    if(minHeadcount !== '' && (!Number.isInteger(minHeadcount) || minHeadcount < 1)){
+      alert('起控人数必须为正整数'); return;
+    }
+
+    const data = {
+      name, code,
+      dept: document.getElementById('mDept').value,
+      enabled: document.getElementById('mEnabled').classList.contains('on'),
+      gradeRule: document.getElementById('mGradeRule').value,
+      ruleType: document.getElementById('mRuleType').value,
+      minHeadcount,
+      gradeRows,
+      lastMod: 'Molly',
+      lastModTime: new Date().toISOString().slice(0,19).replace('T',' ').replace(/-/g,'/'),
+    };
+
+    if(isNew){ data.id = nextId++; RULES.unshift(data); }
+    else { Object.assign(RULES.find(x=>x.id===id), data); }
+    closeModal(); render();
+  };
+}
+
+function openModalBox(html){ document.getElementById('modalBox').innerHTML = html; document.getElementById('modalOv').classList.add('on'); }
+function closeModal(){ document.getElementById('modalOv').classList.remove('on'); }
+document.getElementById('modalOv').onclick = (e) => { if(e.target === document.getElementById('modalOv')) closeModal(); };
+
+GHR_NAV.init('perf', '强制分布规则');
+render();
+</script>
+</body>
+</html>
