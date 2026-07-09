@@ -59,21 +59,6 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .score-badge.mid{background:var(--pr50);color:var(--pr)}
 .score-badge.low{background:var(--ac50);color:var(--ac700)}
 
-/* ═══ CONFIRM BAR ═══ */
-.confirm-bar{padding:20px 24px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--dv)}
-.confirm-status{display:flex;align-items:center;gap:8px;font:500 13px/1 var(--f);color:var(--ac700)}
-.confirm-status .dot{width:8px;height:8px;border-radius:50%;background:var(--ac)}
-
-/* ═══ BUTTONS ═══ */
-.btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
-.btn svg{width:13px;height:13px}
-.btn-p{background:var(--pr);color:#FFF}
-.btn-p:hover{background:var(--pr700)}
-.btn-r{background:var(--ro);color:#FFF}
-.btn-r:hover{background:#E11D48}
-.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}
-.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
-
 /* ═══ TOAST ═══ */
 .validate-toast{position:fixed;top:64px;left:50%;transform:translateX(-50%);background:var(--em);color:#FFF;padding:10px 20px;border-radius:var(--r2);font:500 13px/1 var(--f);box-shadow:0 8px 24px rgba(16,185,129,.3);z-index:3000;opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:center;gap:8px}
 .validate-toast.show{opacity:1;pointer-events:all}
@@ -92,15 +77,63 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .eval-tag.poor{background:var(--ro50);color:var(--ro)}
 
 /* ═══ CONFIRM BUTTONS ═══ */
-.confirm-btn{flex:1;height:48px;border-radius:var(--r2);font:600 15px/1 var(--f);cursor:pointer;border:2px solid transparent;transition:all .12s;display:flex;align-items:center;justify-content:center}
-.confirm-agree{border-color:var(--em);color:var(--em700);background:var(--sf)}
-.confirm-agree:hover{background:var(--em50)}
-.confirm-agree.sel{background:var(--em);color:#FFF;border-color:var(--em)}
-.confirm-disagree{border-color:var(--ro);color:var(--ro);background:var(--sf)}
-.confirm-disagree:hover{background:var(--ro50)}
-.confirm-disagree.sel{background:var(--ro);color:#FFF;border-color:var(--ro)}
-.confirm-submit{background:var(--pr);color:#FFF;border-color:var(--pr)}
-.confirm-submit:hover{background:var(--pr700)}
+.confirm-btn-wrap{display:flex;flex-direction:column;gap:12px;flex:3;min-width:0}
+.confirm-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 16px;border-radius:var(--r2);cursor:pointer;transition:all .12s;text-align:center;border:1.5px solid;background:var(--sf)}
+.confirm-btn-icon{font:600 15px/1 var(--f);margin-bottom:2px}
+.confirm-btn-hint{font:400 12px/1.4 var(--f);color:var(--c5);margin-top:6px;text-align:center}
+.confirm-btn-agree{border-color:var(--em);color:var(--em700)}
+.confirm-btn-agree:hover{background:var(--em50)}
+.confirm-btn-agree:active{background:var(--em100)}
+.confirm-btn-disagree{border-color:var(--ro);color:var(--ro)}
+.confirm-btn-disagree:hover{background:var(--ro50)}
+.confirm-btn-disagree:active{background:var(--ro100)}
+
+/* ═══ MODAL ═══ */
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.4);z-index:2000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.show{opacity:1;pointer-events:all}
+.modal-box{background:var(--sf);border-radius:var(--r3);box-shadow:0 20px 60px rgba(0,0,0,.15);width:480px;max-width:92vw;max-height:80vh;display:flex;flex-direction:column;overflow:hidden}
+.modal-hd{padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between}
+.modal-hd-t{font:600 16px/1 var(--f);color:var(--c9)}
+.modal-close{width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:transparent;color:var(--c5);transition:all .12s;font-size:18px;line-height:1}
+.modal-close:hover{background:var(--c1);color:var(--c7)}
+.modal-bd{padding:20px;overflow-y:auto;flex:1}
+.modal-ft{padding:14px 20px;border-top:1px solid var(--dv);display:flex;gap:10px;justify-content:flex-end}
+.modal-ft .btn{display:inline-flex;align-items:center;justify-content:center;padding:0 20px;height:36px;border-radius:var(--r1);font:500 14px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
+.modal-ft .btn-cancel{background:var(--c1);color:var(--c6)}
+.modal-ft .btn-cancel:hover{background:var(--c2);color:var(--c8)}
+.modal-ft .btn-primary{background:var(--pr);color:#FFF}
+.modal-ft .btn-primary:hover{background:var(--pr700)}
+.modal-ft .btn-danger{background:var(--ro);color:#FFF}
+.modal-ft .btn-danger:hover{background:#E11D48}
+
+/* ═══ APPEAL ITEMS IN MODAL ═══ */
+.appeal-item-list{display:flex;flex-direction:column;gap:2px;margin-bottom:16px}
+.appeal-mod-label{font:600 12px/1 var(--f);color:var(--c5);padding:8px 0 4px;text-transform:uppercase;letter-spacing:.5px}
+.appeal-mod-label:first-child{padding-top:0}
+.appeal-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--r1);cursor:pointer;transition:all .12s}
+.appeal-item:hover{background:var(--c0)}
+.appeal-item.sel{background:var(--pr50)}
+.appeal-item-ck{width:16px;height:16px;border-radius:3px;border:1.5px solid var(--c3);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.appeal-item.sel .appeal-item-ck{background:var(--pr);border-color:var(--pr)}
+.appeal-item-ck svg{width:10px;height:10px;color:#FFF;display:none}
+.appeal-item.sel .appeal-item-ck svg{display:block}
+.appeal-item-name{flex:1;font:400 13px/1.3 var(--f);color:var(--c8)}
+.appeal-item-grade{font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px}
+.appeal-label{font:500 12px/1 var(--f);color:var(--c6);margin-bottom:8px;display:block}
+.appeal-textarea{width:100%;min-height:90px;border:1px solid var(--c2);border-radius:var(--r1);padding:10px 12px;font:400 13px/1.5 var(--f);color:var(--c8);outline:none;resize:vertical;transition:border-color .15s;font-family:var(--f)}
+.appeal-textarea:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
+.appeal-err{font:400 11px/1 var(--f);color:var(--ro);margin-top:4px;display:none}
+
+/* ═══ APPEAL FILE UPLOAD ═══ */
+.appeal-files{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:8px}
+.appeal-file{border:2px dashed var(--c2);border-radius:var(--r2);padding:12px 6px;text-align:center;cursor:pointer;transition:all .12s;display:flex;flex-direction:column;align-items:center;gap:2px}
+.appeal-file:hover{border-color:var(--pr);background:var(--pr50)}
+.appeal-file.uploaded{border-style:solid;border-color:var(--em);background:var(--em50)}
+.appeal-file-icon{width:24px;height:24px;border-radius:50%;background:var(--c1);display:flex;align-items:center;justify-content:center;font:600 14px/1 var(--f);color:var(--c4);transition:all .12s}
+.appeal-file.uploaded .appeal-file-icon{background:var(--em);color:#FFF}
+.appeal-file-label{font:500 11px/1 var(--f);color:var(--c6)}
+.appeal-file-hint{font:400 10px/1 var(--f);color:var(--c4)}
+.appeal-file-name{font:400 10px/1 var(--f);color:var(--em700);max-width:90%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px}
 
 /* ═══ AI CHAT ═══ */
 .ai-chat{position:fixed;top:52px;right:0;width:380px;height:calc(100vh - 52px);background:var(--sf);border-left:1px solid var(--dv);z-index:900;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s ease}
@@ -148,37 +181,9 @@ body.chat-open .ai-chat{transform:translateX(0)}
 .ai-toggle:hover{transform:scale(1.08);box-shadow:0 6px 20px rgba(37,99,235,.4)}
 .ai-toggle svg{width:22px;height:22px;color:#FFF}
 body.chat-open .ai-toggle{display:none}
-
-/* ═══ APPEAL MODAL ITEMS ═══ */
-.appeal-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--dv);cursor:pointer;transition:background .12s}
-.appeal-item:last-child{border-bottom:none}
-.appeal-item:hover{background:var(--c0)}
-.appeal-item.sel{background:var(--pr50)}
-.appeal-item-ck{width:18px;height:18px;border-radius:4px;border:2px solid var(--c3);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .12s}
-.appeal-item.sel .appeal-item-ck{background:var(--pr);border-color:var(--pr)}
-.appeal-item-ck svg{width:11px;height:11px;color:#FFF;display:none}
-.appeal-item.sel .appeal-item-ck svg{display:block}
-.appeal-item-info{flex:1;min-width:0}
-.appeal-item-name{font:500 13px/1.3 var(--f);color:var(--c8)}
-.appeal-item-meta{font:400 11px/1 var(--f);color:var(--c5);margin-top:2px}
-
-.appeal-textarea{width:100%;min-height:100px;border:1px solid var(--c2);border-radius:var(--r1);padding:10px 12px;font:400 13px/1.5 var(--f);color:var(--c8);outline:none;resize:vertical;transition:border-color .15s}
-.appeal-textarea:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
-
-/* ═══ APPEAL FILE UPLOAD ═══ */
-.appeal-file{border:2px dashed var(--c2);border-radius:var(--r2);padding:16px 10px;text-align:center;cursor:pointer;transition:all .12s;display:flex;flex-direction:column;align-items:center;gap:4px}
-.appeal-file:hover{border-color:var(--pr);background:var(--pr50)}
-.appeal-file.uploaded{border-style:solid;border-color:var(--em);background:var(--em50)}
-.appeal-file-icon{width:28px;height:28px;border-radius:50%;background:var(--c1);display:flex;align-items:center;justify-content:center;font:600 16px/1 var(--f);color:var(--c4);transition:all .12s}
-.appeal-file.uploaded .appeal-file-icon{background:var(--em);color:#FFF}
-.appeal-file-label{font:500 12px/1 var(--f);color:var(--c6)}
-.appeal-file-hint{font:400 10px/1 var(--f);color:var(--c4)}
-.appeal-file-name{font:400 10px/1 var(--f);color:var(--em700);max-width:90%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px}
 </style>
 </head>
 <body>
-
-<!-- Navigation will be injected by navigation.js -->
 
 <!-- Main content -->
 <div class="ct fade-in">
@@ -201,38 +206,40 @@ body.chat-open .ai-toggle{display:none}
 
   <!-- Confirm Result Card -->
   <div class="card" style="margin-bottom:var(--sp-lg)">
-    <div class="card-bd" style="display:flex;align-items:center;gap:16px">
-      <!-- 综合等级 -->
-      <div style="text-align:center;flex:1">
+    <div class="card-bd" style="display:flex;align-items:center;gap:0">
+      <!-- Col 1: 等级 -->
+      <div style="flex:2;text-align:center;padding:0 var(--sp-lg)">
         <div style="font:400 13px/1 var(--f);color:var(--c5);margin-bottom:4px">综合等级</div>
         <div style="font:700 28px/1 var(--f);color:var(--em700)">符合预期+</div>
       </div>
-      <!-- 人员信息 -->
-      <div style="flex:1;min-width:0;padding:0 16px;border-left:1px solid var(--dv)">
+      <!-- Col 2: 人员信息 -->
+      <div style="flex:2;min-width:0;border-left:1px solid var(--dv);padding:0 var(--sp-lg)">
         <div style="font:500 15px/1.3 var(--f);color:var(--c8);margin-bottom:4px">张明</div>
         <div style="font:400 13px/1.4 var(--f);color:var(--c6)">产品部 · 高级产品经理</div>
         <div style="font:400 13px/1 var(--f);color:var(--c5);margin-top:2px">2026年Q2</div>
       </div>
-      <!-- 三按钮 -->
-      <div style="flex:2;display:flex;gap:12px">
-        <button class="confirm-btn confirm-agree sel" id="btnAgree" onclick="selectOpt(1)">认可结果</button>
-        <button class="confirm-btn confirm-disagree" id="btnDisagree" onclick="selectOpt(2)">有异议，申请申诉</button>
-        <button class="confirm-btn confirm-submit" onclick="submitConfirm()">提交</button>
+      <!-- Col 3: 操作按钮 -->
+      <div class="confirm-btn-wrap" style="border-left:1px solid var(--dv);padding-left:var(--sp-lg)">
+        <div>
+          <div class="confirm-btn confirm-btn-agree" onclick="openConfirmModal()">
+            <div class="confirm-btn-icon">✓ 认可结果</div>
+          </div>
+          <div class="confirm-btn-hint">如未在 5 个工作日内确认结果，系统将自动视为认可并完成确认。</div>
+        </div>
+        <div>
+          <div class="confirm-btn confirm-btn-disagree" onclick="openAppealModal()">
+            <div class="confirm-btn-icon">✗ 有异议，申请申诉</div>
+          </div>
+          <div class="confirm-btn-hint">申诉提交后 HRBP 将在 3 个工作日内处理，申诉期间不影响当前绩效结果。</div>
+        </div>
       </div>
     </div>
-  </div>
-
-  <!-- Auto-confirm hint -->
-  <div style="display:flex;align-items:center;gap:8px;padding:10px 16px;margin-bottom:16px;background:var(--ac50);border:1px solid var(--ac100);border-radius:var(--r2);font:400 13px/1.4 var(--f);color:var(--ac700)">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-    提示：如未在 5 个工作日内确认结果，系统将自动视为认可并完成确认。
   </div>
 
   <!-- Results Table -->
   <div class="results-list" style="margin-bottom:16px">
     <div style="padding:16px 20px;border-bottom:1px solid var(--dv)">
       <span style="font:600 15px/1 var(--f);color:var(--c9)">得分明细</span>
-      <span id="appealHint" style="display:none;font:400 12px/1 var(--f);color:var(--ro);margin-left:12px">请勾选有异议的得分项</span>
     </div>
     <table>
       <thead>
@@ -314,39 +321,51 @@ body.chat-open .ai-toggle{display:none}
         </tr>
       </tbody>
     </table>
-</div>
+  </div>
 </div>
 
-
-<!-- Appeal Modal -->
-<div id="appealModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:2000;align-items:center;justify-content:center">
-  <div style="background:var(--sf);border-radius:var(--r4);box-shadow:0 20px 60px rgba(0,0,0,.15);width:560px;max-height:80vh;overflow-y:auto">
-    <div style="padding:18px 24px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between">
-      <span style="font:600 16px/1 var(--f);color:var(--c9)">绩效结果申诉</span>
-      <button onclick="closeAppealModal()" style="width:28px;height:28px;border:none;background:transparent;cursor:pointer;color:var(--c4);font-size:18px">&times;</button>
+<!-- ═══ 二次确认 Modal ═══ -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-box">
+    <div class="modal-hd">
+      <span class="modal-hd-t">确认绩效结果</span>
+      <button class="modal-close" onclick="closeConfirmModal()">×</button>
     </div>
-    <div style="padding:20px 24px">
-      <!-- 异议项 -->
-      <div style="margin-bottom:16px">
-        <div style="font:500 12px/1 var(--f);color:var(--c6);margin-bottom:8px">选择异议项 <span style="color:var(--ro)">*</span></div>
-        <div id="appealItems" style="max-height:200px;overflow-y:auto;border:1px solid var(--c2);border-radius:var(--r1)"></div>
-        <div id="appealItemCount" style="font:400 11px/1 var(--f);color:var(--c5);margin-top:4px">已选 0 项</div>
-      </div>
-      <!-- 申诉原因 -->
-      <div style="margin-bottom:16px">
-        <div style="font:500 12px/1 var(--f);color:var(--c6);margin-bottom:8px">申诉原因 <span style="color:var(--ro)">*</span></div>
+    <div class="modal-bd">
+      <p style="font:400 14px/1.6 var(--f);color:var(--c7);margin:0">确认后视为你已认可本次绩效考核结果，确认后不可撤回。</p>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-cancel" onclick="closeConfirmModal()">取消</button>
+      <button class="btn btn-primary" onclick="doConfirm()">确认</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 申诉 Modal ═══ -->
+<div class="modal-overlay" id="appealModal">
+  <div class="modal-box" style="width:520px">
+    <div class="modal-hd">
+      <span class="modal-hd-t">绩效结果申诉</span>
+      <button class="modal-close" onclick="closeAppealModal()">×</button>
+    </div>
+    <div class="modal-bd">
+      <div class="appeal-item-list" id="appealItemList"></div>
+      <div id="appealItemCount" style="font:400 11px/1 var(--f);color:var(--pr);margin-bottom:12px">已选 0 项</div>
+
+      <div style="margin-bottom:14px">
+        <label class="appeal-label">申诉原因 <span style="color:var(--ro)">*</span></label>
         <textarea class="appeal-textarea" id="appealReason" placeholder="请说明不同意的原因，至少10个字..."></textarea>
-        <div id="appealReasonErr" style="font:400 11px/1 var(--f);color:var(--ro);margin-top:4px;display:none">请至少输入 10 个字</div>
+        <div class="appeal-err" id="appealReasonErr">请至少输入 10 个字</div>
       </div>
-      <!-- 附件 -->
+
       <div>
-        <div style="font:500 12px/1 var(--f);color:var(--c6);margin-bottom:8px">佐证材料（选填，最多 5 份）</div>
-        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px" id="appealFilesGrid"></div>
+        <label class="appeal-label">佐证材料（选填，最多 5 份）</label>
+        <div class="appeal-files" id="appealFilesGrid"></div>
       </div>
     </div>
-    <div style="padding:14px 24px;border-top:1px solid var(--dv);display:flex;justify-content:flex-end;gap:8px">
-      <button class="btn btn-s" onclick="closeAppealModal()">取消</button>
-      <button class="btn btn-p" onclick="submitAppeal()">提交申诉</button>
+    <div class="modal-ft">
+      <button class="btn btn-cancel" onclick="closeAppealModal()">取消</button>
+      <button class="btn btn-danger" onclick="submitAppeal()">提交申诉</button>
     </div>
   </div>
 </div>
@@ -357,30 +376,40 @@ body.chat-open .ai-toggle{display:none}
 <script>
 GHR_NAV.init('perf', '结果确认');
 
-var selectedOpt = 1;
-
 // ═══ 申诉数据 ═══
 var SCORE_ITEMS = [
-  {id:1, module:'KPI', name:'资源利用率（通用）', type:'定量', score:'108%', grade:'符合预期+', gradeCls:'excellent'},
-  {id:2, module:'KPI', name:'HRAS UAT用户验收首次通过率', type:'定量', score:'97%', grade:'符合预期', gradeCls:'good'},
-  {id:3, module:'KPI', name:'HRAS需求评审及时率', type:'定量', score:'96%', grade:'符合预期', gradeCls:'good'},
+  {id:1, module:'KPI', name:'资源利用率（通用）', type:'定量', grade:'符合预期+', gradeCls:'excellent'},
+  {id:2, module:'KPI', name:'HRAS UAT用户验收首次通过率', type:'定量', grade:'符合预期', gradeCls:'good'},
+  {id:3, module:'KPI', name:'HRAS需求评审及时率', type:'定量', grade:'符合预期', gradeCls:'good'},
   {id:4, module:'KPA', name:'HRAS产品管理规范', type:'定性', grade:'符合预期+', gradeCls:'excellent'},
   {id:5, module:'KPA', name:'日常滚动需求响应', type:'定性', grade:'符合预期+', gradeCls:'excellent'},
   {id:6, module:'KPA', name:'HR ONE 绩效重构事项推进', type:'定性', grade:'符合预期+', gradeCls:'excellent'},
-  {id:7, module:'KPA', name:'AI应用项目探索与落地推广', type:'定性', grade:'符合预期+', gradeCls:'excellent'},
+  {id:7, module:'KPA', name:'AI应用项目探索与落地推广', type:'定性', grade:'符合预期+', gradeCls:'excellent'}
 ];
 var selectedItems = [];
 var uploadedFiles = [null, null, null, null, null];
 
-// ═══ 选择选项联动 ═══
-function selectOpt(n) {
-  selectedOpt = n;
-  selectedItems = [];
-  uploadedFiles = [null, null, null, null, null];
-  document.getElementById('btnAgree').classList.toggle('sel', n === 1);
-  document.getElementById('btnDisagree').classList.toggle('sel', n === 2);
+var GRADE_CLS_MAP = {
+  '符合预期+': 'excellent',
+  '符合预期': 'good',
+  '符合预期-': 'poor',
+  '超出预期': 'excellent',
+  '低于预期': 'poor'
+};
+
+// ═══ 二次确认 Modal ═══
+function openConfirmModal() {
+  document.getElementById('confirmModal').classList.add('show');
+}
+function closeConfirmModal() {
+  document.getElementById('confirmModal').classList.remove('show');
+}
+function doConfirm() {
+  closeConfirmModal();
+  showToast('已确认绩效结果', 'success');
 }
 
+// ═══ 申诉 Modal ═══
 function openAppealModal() {
   selectedItems = [];
   uploadedFiles = [null, null, null, null, null];
@@ -388,77 +417,79 @@ function openAppealModal() {
   document.getElementById('appealReasonErr').style.display = 'none';
   renderAppealItems();
   renderAppealFiles();
-  document.getElementById('appealModal').style.display = 'flex';
+  updateAppealCount();
+  document.getElementById('appealModal').classList.add('show');
 }
-
 function closeAppealModal() {
-  document.getElementById('appealModal').style.display = 'none';
-}
-
-function toggleAppealItem(id) {
-  var idx = selectedItems.indexOf(id);
-  if (idx >= 0) { selectedItems.splice(idx, 1); }
-  else { selectedItems.push(id); }
-  renderAppealItems();
+  document.getElementById('appealModal').classList.remove('show');
 }
 
 function renderAppealItems() {
   var html = '';
+  var lastMod = '';
   SCORE_ITEMS.forEach(function(item) {
-    var sel = selectedItems.includes(item.id);
-    html += '<div class="appeal-item' + (sel ? ' sel' : '') + '" onclick="toggleAppealItem(' + item.id + ')">';
-    html += '<div class="appeal-item-ck"><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2.5\'><polyline points=\'20 6 9 17 4 12\'/></svg></div>';
-    html += '<div class="appeal-item-info"><div class="appeal-item-name">' + item.module + ' · ' + item.name + '</div><div class="appeal-item-meta">' + item.type + (item.score ? ' → ' + item.score : '') + '</div></div>';
-    html += '<span class="appeal-item-grade eval-tag ' + item.gradeCls + '">' + item.grade + '</span>';
+    if (item.module !== lastMod) {
+      var modColor = item.module === 'KPI' ? 'var(--pr)' : 'var(--em)';
+      html += '<div class="appeal-mod-label"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:' + modColor + ';margin-right:6px;vertical-align:middle"></span>' + item.module + '</div>';
+      lastMod = item.module;
+    }
+    var isSel = selectedItems.indexOf(item.id) >= 0;
+    var gradeCls = GRADE_CLS_MAP[item.grade] || 'normal';
+    html += '<div class="appeal-item' + (isSel ? ' sel' : '') + '" data-id="' + item.id + '" onclick="toggleAppealItem(' + item.id + ',this)">';
+    html += '<div class="appeal-item-ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>';
+    html += '<span class="appeal-item-name">' + item.name + '</span>';
+    html += '<span class="appeal-item-grade eval-tag ' + gradeCls + '">' + item.grade + '</span>';
     html += '</div>';
   });
-  document.getElementById('appealItems').innerHTML = html;
-  document.getElementById('appealItemCount').textContent = '已选 ' + selectedItems.length + ' 项';
+  document.getElementById('appealItemList').innerHTML = html;
 }
 
+function toggleAppealItem(id, el) {
+  var idx = selectedItems.indexOf(id);
+  if (idx >= 0) {
+    selectedItems.splice(idx, 1);
+    el.classList.remove('sel');
+  } else {
+    selectedItems.push(id);
+    el.classList.add('sel');
+  }
+  updateAppealCount();
+}
 
+function updateAppealCount() {
+  document.getElementById('appealItemCount').textContent = '已选 ' + selectedItems.length + ' 项';
+}
 
 // ═══ 文件上传 ═══
 function renderAppealFiles() {
   var grid = document.getElementById('appealFilesGrid');
   var html = '';
   for (var i = 1; i <= 5; i++) {
-    html += '<div class="appeal-file" id="appealFile' + i + '" onclick="triggerFile(' + i + ')">' +
-      '<div class="appeal-file-icon">+</div>' +
-      '<div class="appeal-file-label">上传材料 ' + i + '</div>' +
+    var uploaded = uploadedFiles[i - 1] !== null;
+    html += '<div class="appeal-file' + (uploaded ? ' uploaded' : '') + '" id="appealFile' + i + '" onclick="triggerFile(' + i + ')">' +
+      '<div class="appeal-file-icon">' + (uploaded ? '✓' : '+') + '</div>' +
+      '<div class="appeal-file-label">' + (uploaded ? '已上传' : '上传材料 ' + i) + '</div>' +
       '<div class="appeal-file-hint">PDF / 图片</div>' +
+      (uploaded ? '<div class="appeal-file-name">' + (uploadedFiles[i - 1].name || '') + '</div>' : '') +
       '<input type="file" id="fileInput' + i + '" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFile(' + i + ',this)" style="display:none">' +
     '</div>';
   }
   grid.innerHTML = html;
 }
 
-function triggerFile(slot) { document.getElementById('fileInput' + slot).click(); }
+function triggerFile(slot) {
+  var input = document.getElementById('fileInput' + slot);
+  if (input) input.click();
+}
 
 function handleFile(slot, input) {
   if (input.files.length > 0) {
     uploadedFiles[slot - 1] = input.files[0];
-    var el = document.getElementById('appealFile' + slot);
-    el.classList.add('uploaded');
-    el.querySelector('.appeal-file-label').textContent = '已上传';
-    var old = el.querySelector('.appeal-file-name');
-    if (old) old.remove();
-    var n = document.createElement('div');
-    n.className = 'appeal-file-name';
-    n.textContent = input.files[0].name;
-    el.appendChild(n);
+    renderAppealFiles();
   }
 }
 
-// ═══ 提交 ═══
-function submitConfirm() {
-  if (selectedOpt === 1) {
-    showToast('已确认绩效结果', 'success');
-  } else {
-    openAppealModal();
-  }
-}
-
+// ═══ 提交申诉 ═══
 function submitAppeal() {
   var reason = document.getElementById('appealReason').value.trim();
   var hasErr = false;
@@ -534,7 +565,7 @@ function handleAiAction(action){
         ],actions:['分析我的绩效','有异议怎么办']});
         break;
       case '有异议怎么办':
-        AI_MSGS.push({role:'bot',text:'❓ 如果你对绩效结果有异议：\n\n1. 选择「我对考核结果有异议」\n2. 勾选有异议的得分项\n3. 填写申诉原因（至少10个字）\n4. 可选上传佐证材料\n5. 点击提交，HRBP将在3个工作日内处理\n\n💡 建议：\n• 先冷静分析，确认是否有误解\n• 准备具体数据或事实依据\n• 异议不影响后续绩效改进计划',time:aiNow(),cards:[
+        AI_MSGS.push({role:'bot',text:'❓ 如果你对绩效结果有异议：\n\n1. 点击「有异议，申请申诉」\n2. 勾选有异议的得分项\n3. 填写申诉原因（至少10个字）\n4. 可选上传佐证材料\n5. 点击提交，HRBP将在3个工作日内处理\n\n💡 建议：\n• 先冷静分析，确认是否有误解\n• 准备具体数据或事实依据\n• 异议不影响后续绩效改进计划',time:aiNow(),cards:[
           {t:'申诉指引',d:'3个工作日内HRBP处理',tag:'流程说明',tc:'pr'}
         ],actions:['分析我的绩效','查看成长趋势']});
         break;
@@ -555,8 +586,13 @@ function showToast(msg,type){
   setTimeout(function(){t.classList.remove('show')},3000);
 }
 
-// 初始化文件上传格
-renderAppealFiles();
+// 点击 Modal 遮罩关闭
+document.getElementById('confirmModal').addEventListener('click', function(e) {
+  if (e.target === this) closeConfirmModal();
+});
+document.getElementById('appealModal').addEventListener('click', function(e) {
+  if (e.target === this) closeAppealModal();
+});
 </script>
 
 <!-- AI Chat Panel -->
