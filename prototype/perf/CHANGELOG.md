@@ -1,5 +1,12 @@
 # 变更记录
 
+## 2026-07-03 新增活动管理new页面
+- 新建: perf-activity-new.html
+- 内容: 方案分组+活动表格统一视图，含自动创建/异常处理/人员规则标识
+- 导航: navigation.js 绩效活动组新增活动管理(旧)和活动管理两入口
+
+---
+
 ## 2026-07-02 新增 4 个绩效报表页面
 - 新建: perf-report-goals.html, perf-report-results.html, perf-report-progress.html, perf-report-distribution.html
 - 内容: 目标中心/绩效结果/考核进度/绩效报表，跨周期查询+Chart.js图表

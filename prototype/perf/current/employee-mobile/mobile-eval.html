@@ -4,121 +4,313 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>HR ONE - 绩效自评</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../mobile-base.css">
 <style>
-.goal-card{background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:12px 14px;margin-bottom:8px}
-.goal-top{display:flex;align-items:center;gap:6px;margin-bottom:4px}
-.goal-name{flex:1;font:500 var(--fs-base)/1.3 var(--f);color:var(--c8)}
-.goal-type-tag{font:500 var(--fs-xs)/1 var(--f);padding:2px 6px;border-radius:3px}
+:root{
+  --pr:#2563EB;--pr50:#EFF6FF;--pr100:#DBEAFE;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#0F172A;--c7:#334155;--c5:#64748B;--c4:#94A3B8;--c3:#CBD5E1;--c2:#E2E8F0;--c1:#F1F5F8;
+  --sf:#FFF;--bg:#F0F4F8;--s2:#F7F9FC;--s3:#EEF2F7;
+  --dv:#F1F5F9;--bd:rgba(15,23,42,.06);
+  --sx:0 1px 3px rgba(0,0,0,.05);--sm:0 2px 8px rgba(0,0,0,.06);--md:0 4px 16px rgba(0,0,0,.08);
+  --r1:10px;--r2:14px;--r3:18px;--r4:22px;
+  --f:'Inter','Noto Sans SC',system-ui,sans-serif;
+  --fm:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:#E5E7EB;color:var(--c7);display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:0;-webkit-font-smoothing:antialiased;line-height:1.5}
+
+.phone{width:390px;min-height:844px;background:var(--bg);position:relative;overflow-x:hidden;overflow-y:auto}
+
+/* Status bar */
+.status-bar{height:54px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 8px;font:600 14px/1 var(--f);color:var(--c9)}
+.status-bar-r{display:flex;align-items:center;gap:4px}
+.status-bar-r svg{display:block}
+
+/* Nav bar */
+.nav-bar{display:flex;align-items:center;height:44px;padding:0 16px;position:relative}
+.nav-title{flex:1;font:600 17px/1 var(--f);color:var(--c9);text-align:center}
+.nav-back{width:32px;height:32px;border-radius:8px;background:var(--c1);display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--c7);flex-shrink:0}
+.nav-back svg{width:16px;height:16px}
+.nav-capsule{position:absolute;right:16px;top:50%;transform:translateY(-50%);display:flex;align-items:center;border:1px solid var(--c2);border-radius:18px;overflow:hidden}
+.nav-capsule-btn{width:40px;height:28px;display:flex;align-items:center;justify-content:center;background:var(--sf);border:none;border-right:1px solid var(--c2);cursor:pointer;color:var(--c5);font-size:14px;line-height:1}
+.nav-capsule-btn:last-child{border-right:none}
+.nav-capsule-btn:active{background:var(--c1)}
+
+/* Scroll body */
+.phone-body{padding:12px 16px 32px}
+
+/* Employee info */
+.emp-bar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--sf);border-radius:var(--r2);margin-bottom:10px;box-shadow:var(--sx);border:1px solid var(--bd)}
+.emp-avatar{width:36px;height:36px;border-radius:50%;background:var(--pr50);display:flex;align-items:center;justify-content:center;font:700 16px/1 var(--f);color:var(--pr);flex-shrink:0}
+.emp-info{flex:1;min-width:0}
+.emp-name{font:600 14px/1 var(--f);color:var(--c9)}
+.emp-meta{font:400 12px/1 var(--f);color:var(--c5);margin-top:3px}
+.emp-cycle{font:500 11px/1 var(--f);padding:3px 8px;border-radius:4px;background:var(--pr50);color:var(--pr);white-space:nowrap}
+
+/* Section header */
+.sec-hd{display:flex;align-items:center;gap:8px;padding:0 0 10px;font:600 15px/1 var(--f);color:var(--c9)}
+.sec-hd-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.sec-hd-wt{font:500 13px/1 var(--fm);color:var(--c5);margin-left:auto}
+
+/* Goal card */
+.goal-card{background:var(--sf);border-radius:var(--r2);padding:12px 14px;margin-bottom:6px;box-shadow:var(--sx);border:1px solid var(--bd)}
+.goal-card-hd{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.goal-card-name{flex:1;font:500 14px/1.3 var(--f);color:var(--c9)}
+.goal-card-wt{font:500 13px/1 var(--fm);color:var(--c5)}
+.goal-type-tag{font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px;flex-shrink:0}
 .goal-type-tag.quant{background:var(--pr50);color:var(--pr)}
 .goal-type-tag.qual{background:var(--em50);color:var(--em700)}
-.goal-desc{font:400 var(--fs-sm)/1.4 var(--f);color:var(--c6);padding:6px 10px;background:var(--c0);border-radius:6px;margin-bottom:8px}
-.section-hd{display:flex;align-items:center;gap:6px;margin:14px 0 8px}
-.section-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.section-name{font:600 var(--fs-base)/1 var(--f);color:var(--c8)}
-.score-num{font:700 var(--fs-base)/1 var(--fm);color:var(--pr);text-align:center;min-width:40px}
+
+/* Read-only metrics reference (compact 3-col) */
+.goal-metrics-ref{display:flex;gap:8px;margin-bottom:8px;padding:6px 10px;background:var(--s2);border-radius:6px}
+.goal-metrics-ref .gmr-item{flex:1;text-align:center}
+.goal-metrics-ref .gmr-lbl{font:400 10px/1 var(--f);color:var(--c4);margin-bottom:2px}
+.goal-metrics-ref .gmr-val{font:600 13px/1 var(--fm);color:var(--c7)}
+
+/* Editable fields — vertical stack */
+.goal-metrics{display:flex;flex-direction:column;gap:8px;margin-bottom:6px}
+.goal-metric{}
+.goal-metric-lbl{font:400 11px/1 var(--f);color:var(--c5);margin-bottom:4px}
+.goal-metric-lbl .req{color:var(--ro);margin-left:2px}
+
+.goal-input-sm{width:100%;height:36px;border:1px solid var(--c2);border-radius:var(--r1);padding:0 10px;font:500 14px/1 var(--fm);color:var(--c9);outline:none;background:var(--sf)}
+.goal-input-sm:focus{border-color:var(--pr)}
+.goal-textarea-sm{width:100%;min-height:56px;border:1px solid var(--c2);border-radius:6px;padding:6px 8px;font:400 12px/1.4 var(--f);color:var(--c7);outline:none;resize:none;background:var(--sf)}
+.goal-textarea-sm:focus{border-color:var(--pr)}
+
+/* Score display */
+.goal-score-row{display:flex;align-items:center;gap:8px}
+.goal-score-row .goal-input-sm{flex:1}
+.goal-score-val{font:700 14px/1 var(--fm);color:var(--pr);min-width:44px;text-align:right;flex-shrink:0}
+
+/* Stars */
+.goal-stars-row{display:flex;align-items:center;gap:4px;padding-top:8px}
+.goal-star{font-size:28px;color:var(--c3);cursor:pointer;transition:color .1s;line-height:1;user-select:none;-webkit-tap-highlight-color:transparent}
+.goal-star.on{color:var(--ac)}
+.goal-star-label{font:600 14px/1 var(--f);margin-left:8px}
+
+/* Read-only measure standard row */
+.goal-ms-row{display:flex;flex-direction:column;gap:2px;padding:6px 10px;background:var(--s2);border-radius:6px;margin-bottom:6px}
+.goal-ms-label{font:500 10px/1 var(--f);color:var(--c4);white-space:nowrap}
+.goal-ms-val{font:400 12px/1.4 var(--f);color:var(--c5)}
+.goal-ms-row .req{color:var(--ro);margin-left:1px}
+
+/* Panel (self-eval / approval) */
+.panel{background:var(--sf);border-radius:var(--r2);margin-bottom:10px;box-shadow:var(--sx);border:1px solid var(--bd);overflow:hidden}
+.panel-hd{padding:14px 16px;font:600 14px/1 var(--f);color:var(--c9);border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:8px}
+.panel-bd{padding:12px 16px}
+.panel-textarea{width:100%;min-height:80px;border:1px solid var(--c2);border-radius:var(--r1);padding:8px 10px;font:400 13px/1.5 var(--f);color:var(--c9);outline:none;resize:none;background:var(--sf)}
+.panel-textarea:focus{border-color:var(--pr)}
+
+/* Approval flow cells */
+.flow-item{display:flex;align-items:center;padding:12px 16px;gap:10px}
+.flow-item+.flow-item{border-top:1px solid var(--dv)}
+.flow-dot{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.flow-dot svg{width:12px;height:12px}
+.flow-info{flex:1;min-width:0}
+.flow-name{font:500 13px/1 var(--f);color:var(--c9)}
+.flow-person{font:400 12px/1 var(--f);color:var(--c5);margin-top:2px}
+.flow-badge{font:500 11px/1 var(--f);padding:2px 8px;border-radius:4px;white-space:nowrap}
+
+/* WeUI-like buttons */
+.bottom-bar{position:sticky;bottom:0;left:0;right:0;padding:10px 16px 34px;background:rgba(255,255,255,.95);border-top:1px solid var(--dv);display:flex;gap:8px;z-index:100}
+.weui-btn{display:flex;align-items:center;justify-content:center;height:44px;border-radius:var(--r1);font:500 15px/1 var(--f);border:none;cursor:pointer;padding:0 16px;transition:opacity .15s}
+.weui-btn:active{opacity:.7}
+.weui-btn_default{flex:1;background:var(--s2);color:var(--c7);border:1px solid var(--c2)}
+.weui-btn_primary{flex:1;background:var(--pr);color:#FFF}
+
+.toast{position:absolute;top:70px;left:50%;transform:translateX(-50%);background:var(--c9);color:#FFF;padding:10px 22px;border-radius:20px;font:500 13px/1 var(--f);z-index:900;opacity:0;pointer-events:none;transition:opacity .2s;white-space:nowrap}
+.toast.show{opacity:1}
+
+.gap{height:80px}
 </style>
 </head>
 <body>
-<div class="phone">
-  <div class="phone-notch"></div>
-  <div class="phone-status">9:41<div class="phone-status-r">
-    <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="6" width="3" height="6" rx="1" fill="currentColor" style="color:var(--c9)"/><rect x="4.5" y="4" width="3" height="8" rx="1" fill="currentColor" style="color:var(--c9)"/><rect x="9" y="1.5" width="3" height="10.5" rx="1" fill="currentColor" style="color:var(--c9)"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="currentColor" style="color:var(--c9)"/></svg>
-    <svg width="15" height="12" viewBox="0 0 15 12" fill="none"><rect x="0.5" y="0.5" width="12" height="11" rx="2" stroke="currentColor" style="color:var(--c9)" stroke-width="1.2"/><line x1="13" y1="4" x2="13" y2="8" stroke="currentColor" style="color:var(--c9)" stroke-width="1.2"/><rect x="2" y="2.5" width="7" height="7" rx="1" fill="currentColor" style="color:var(--c9)"/></svg>
-  </div></div>
-  <div class="weui-navigation-bar">
-    <a href="../demo-index.html" class="back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></a>
-    <span class="title">绩效自评</span>
+<div class="phone" id="phone">
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span>9:41</span>
+    <div class="status-bar-r">
+      <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="6" width="3" height="6" rx="1" fill="#0F172A"/><rect x="4.5" y="4" width="3" height="8" rx="1" fill="#0F172A"/><rect x="9" y="1.5" width="3" height="10.5" rx="1" fill="#0F172A"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="#0F172A"/></svg>
+      <svg width="15" height="12" viewBox="0 0 15 12" fill="none"><rect x="0.5" y="0.5" width="12" height="11" rx="2" stroke="#0F172A" stroke-width="1.2"/><line x1="13" y1="4" x2="13" y2="8" stroke="#0F172A" stroke-width="1.2"/><rect x="2" y="2.5" width="7" height="7" rx="1" fill="#0F172A"/></svg>
+    </div>
   </div>
+
+  <!-- Nav Bar -->
+  <div class="nav-bar">
+    <a href="../demo-index.html" class="nav-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></a>
+    <span class="nav-title">绩效自评</span>
+    <div class="nav-capsule">
+      <button class="nav-capsule-btn" aria-label="更多">⋯</button>
+      <button class="nav-capsule-btn" aria-label="关闭">○</button>
+    </div>
+  </div>
+
   <div class="phone-body" id="phoneBody"></div>
+
+  <!-- Bottom Bar -->
   <div class="bottom-bar">
-    <button class="weui-btn weui-btn_default" style="flex:1" onclick="showToast('已暂存')">暂存</button>
-    <button class="weui-btn weui-btn_primary" style="flex:1" onclick="showToast('已提交自评')">提交自评</button>
+    <button class="weui-btn weui-btn_default" style="flex:1" onclick="var n=Object.keys(edits).length;showToast('已暂存'+(n>0?'（'+n+'项已编辑）':''))">暂存</button>
+    <button class="weui-btn weui-btn_primary" style="flex:1" onclick="var n=Object.keys(edits).length;showToast('已提交自评'+(n>0?'（'+n+'项已编辑）':''))">提交自评</button>
   </div>
+
 </div>
+
+<!-- Toast -->
 <div class="toast" id="toast"></div>
-<script src="../mobile-base.js"></script>
+
 <script>
 var EMP={name:'张明',dept:'产品部',title:'高级产品经理',cycle:'2026年Q2'};
-var GRADES=['超出预期','符合预期+','符合预期','符合预期-','低于预期'];
+var GRADE_TIPS={1:'低于预期',2:'符合预期-',3:'符合预期',4:'符合预期+',5:'超出预期'};
+var GRADE_COLORS={1:'#F43F5E',2:'#D97706',3:'#047857',4:'#2563EB',5:'#8B5CF6'};
 
 var MODS=[
   {name:'KPI',weight:30,color:'var(--pr)',goals:[
-    {id:'g1',name:'资源利用率（通用）',type:'quant',weight:5,desc:'人员实际工作量饱和情况',target:105,challenge:110,baseline:100,unit:'%'},
-    {id:'g2',name:'HRAS UAT用户验收首次通过率',type:'quant',weight:10,desc:'需求首次业务验收通过的概率',target:98,challenge:100,baseline:95,unit:'%'},
-    {id:'g3',name:'HRAS需求评审及时率',type:'quant',weight:15,desc:'迭代版本评审的及时性情况',target:98,challenge:100,baseline:95,unit:'%'}
+    {id:'g1',name:'资源利用率（通用）',type:'quant',weight:5,target:105,challenge:110,baseline:100,unit:'%'},
+    {id:'g2',name:'HRAS UAT用户验收首次通过率',type:'quant',weight:10,target:98,challenge:100,baseline:95,unit:'%'},
+    {id:'g3',name:'HRAS需求评审及时率',type:'quant',weight:15,target:98,challenge:100,baseline:95,unit:'%'}
   ]},
   {name:'KPA',weight:70,color:'var(--em)',goals:[
-    {id:'g4',name:'HRAS产品管理规范',type:'qual',weight:10,desc:'需求管理流程规范、产品需求规范、迭代火车管理规范、周会/月会准时完成'},
-    {id:'g5',name:'日常滚动需求响应',type:'qual',weight:10,desc:'根据业务日会需求优先级，滚动响应日常需求，输出产品解决方案'},
-    {id:'g6',name:'HR ONE 绩效重构事项推进',type:'qual',weight:25,desc:'06-10 输出AI+绩效核心页面原型；06-19 完成绩效版本4需求内审；06-24 完成需求评审'},
-    {id:'g7',name:'AI应用项目探索与落地推广',type:'qual',weight:25,desc:'06-05 完成ASSC采购侧AI应用1.0版本；06-12 对接LBU试点应用；06-26 完成1.1版本'}
+    {id:'g4',name:'HRAS产品管理规范',type:'qual',weight:10,std2:'完成部分规范制定',std3:'4项规范全部符合，遵从度≥95%',std4:'超预期完成，并形成最佳实践'},
+    {id:'g5',name:'日常滚动需求响应',type:'qual',weight:10,std2:'完成部分迭代需求响应',std3:'按时完成全部GOFO迭代需求响应',std4:'超预期完成，主动识别并解决关联问题'},
+    {id:'g6',name:'HR ONE 绩效重构事项推进',type:'qual',weight:25,std2:'完成部分里程碑节点',std3:'3个里程碑节点按时交付',std4:'提前交付并通过评审'},
+    {id:'g7',name:'AI应用项目探索与落地推广',type:'qual',weight:25,std2:'完成部分版本迭代',std3:'3个版本迭代按时发布',std4:'超预期发布并获得业务正向反馈'}
   ]}
 ];
 
-var completed={},grades={};
+var completed={},stars={},edits={};
 
+function calcItemScore(g,v){var va=parseFloat(v);if(isNaN(va))return'—';return va>=g.challenge?120:va>=g.target?100:va>=g.baseline?80:0;}
 function calcScore(){
   var total=0,wSum=0;
   MODS.forEach(function(m){m.goals.forEach(function(g){
-    var c=completed[g.id];
-    if(c===undefined||c==='')return;
-    if(g.type==='quant'){
-      var v=parseFloat(c);if(isNaN(v))return;
-      var s=v>=g.challenge?120:v>=g.target?100:v>=g.baseline?80:0;
-      total+=s*g.weight;wSum+=g.weight;
-    }else{
-      var gr=grades[g.id];if(!gr)return;
-      var sm={'超出预期':120,'符合预期+':100,'符合预期':80,'符合预期-':60,'低于预期':40};
-      total+=(sm[gr]||80)*g.weight;wSum+=g.weight;
-    }
+    var c=completed[g.id];if(c===undefined||c==='')return;
+    if(g.type==='quant'){var v=parseFloat(c);if(isNaN(v))return;var s=v>=g.challenge?120:v>=g.target?100:v>=g.baseline?80:0;total+=s*g.weight;wSum+=g.weight;}
+    else{var st=stars[g.id];if(!st)return;total+=st*20*g.weight;wSum+=g.weight;}
   })});
   return wSum>0?Math.round(total/wSum*10)/10:0;
 }
 function getGrade(s){return s>=110?'超出预期':s>=90?'符合预期+':s>=70?'符合预期':s>=50?'符合预期-':'低于预期';}
 
-function calcItemScore(g,v){var va=parseFloat(v);if(isNaN(va))return'—';return va>=g.challenge?120:va>=g.target?100:va>=g.baseline?80:0;}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
 
+function updateEdit(id, field, val){
+  if(!edits[id]) edits[id]={};
+  edits[id][field]=val;
+}
+
+/* ═══ Inline editing ═══ */
+function setComp(id,v){completed[id]=v;edits[id]=edits[id]||{};edits[id].completed=v;render();}
+function setStarVal(id,n,el){
+  stars[id]=n;edits[id]=edits[id]||{};edits[id].stars=n;
+  var row=el.parentElement;
+  row.querySelectorAll('.goal-star').forEach(function(s,i){s.classList.toggle('on',i<n);});
+  var label=row.querySelector('.goal-star-label');
+  label.textContent=GRADE_TIPS[n];
+  label.style.color=GRADE_COLORS[n];
+  setTimeout(function(){render();},150);
+}
+
+/* ═══ Main Page ═══ */
 function render(){
   var h='';
-  // Employee
-  h+='<div class="weui-panel weui-panel_access" style="margin-bottom:10px"><div class="weui-cells"><div class="weui-cell"><div class="weui-cell__hd"><div style="width:36px;height:36px;border-radius:50%;background:var(--pr50);display:flex;align-items:center;justify-content:center;font:700 var(--fs-lg)/1 var(--f);color:var(--pr);margin-right:12px">'+EMP.name[0]+'</div></div><div class="weui-cell__bd"><div style="font:600 var(--fs-base)/1 var(--f);color:var(--c9)">'+EMP.name+'</div><div style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5);margin-top:2px">'+EMP.title+' · '+EMP.dept+'</div></div><div class="weui-cell__ft"><span class="weui-badge" style="background:var(--pr50);color:var(--pr)">'+EMP.cycle+'</span></div></div></div></div>';
 
-  MODS.forEach(function(m){
-    h+='<div class="section-hd"><span class="section-dot" style="background:'+m.color+'"></span><span class="section-name">'+m.name+'</span><span style="font:500 var(--fs-sm)/1 var(--fm);color:var(--c5);margin-left:auto">'+m.weight+'%</span></div>';
-    m.goals.forEach(function(g){
-      var isQuant=g.type==='quant',kv=completed[g.id]||'',gr=grades[g.id]||'';
-      h+='<div class="goal-card"><div class="goal-top"><span class="goal-name">'+g.name+'</span><span class="goal-type-tag '+(isQuant?'quant':'qual')+'">'+(isQuant?'定量':'定性')+'</span></div><div class="goal-desc">'+g.desc+'</div>';
+  /* Employee info */
+  h+='<div class="emp-bar">';
+  h+='<div class="emp-avatar">'+EMP.name[0]+'</div>';
+  h+='<div class="emp-info"><div class="emp-name">'+EMP.name+'</div><div class="emp-meta">'+EMP.title+' · '+EMP.dept+'</div></div>';
+  h+='<span class="emp-cycle">'+EMP.cycle+'</span>';
+  h+='</div>';
+
+  /* Goals by module */
+  MODS.forEach(function(m,mi){
+    h+='<div class="sec-hd">';
+    h+='<span class="sec-hd-dot" style="background:'+m.color+'"></span>';
+    h+=m.name;
+    h+='<span class="sec-hd-wt">'+m.weight+'%</span>';
+    h+='</div>';
+
+    m.goals.forEach(function(g,gi){
+      var isQuant=g.type==='quant',kv=completed[g.id]||'',st=stars[g.id]||0;
+      h+='<div class="goal-card">';
+      /* Header */
+      h+='<div class="goal-card-hd">';
+      h+='<span class="goal-card-name">'+esc(g.name)+'</span>';
+      h+='<span class="goal-type-tag '+(isQuant?'quant':'qual')+'">'+(isQuant?'定量':'定性')+'</span>';
+      h+='<span class="goal-card-wt">'+g.weight+'%</span>';
+      h+='</div>';
+
       if(isQuant){
-        h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5)">目标值</span><span style="font:500 var(--fs-base)/1 var(--fm);color:var(--pr)">'+g.target+g.unit+'</span></div>';
-        h+='<div class="weui-cell" style="padding:0;margin-bottom:4px"><div class="weui-cell__bd" style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5)">完成值</div><div class="weui-cell__ft"><input class="weui-input" type="number" style="width:80px;text-align:right;font-family:var(--fm);font-weight:500" placeholder="输入完成值" value="'+kv+'" oninput="setC(\''+g.id+'\',this.value)" onchange="setC(\''+g.id+'\',this.value)"><span style="font:400 var(--fs-sm)/1 var(--f);color:var(--c4);margin-left:4px">'+g.unit+'</span></div></div>';
-        h+='<div style="display:flex;align-items:center;justify-content:space-between"><span style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5)">得分</span><span class="score-num">'+(kv!==''?calcItemScore(g,kv):'—')+'</span></div>';
+        /* Read-only target reference */
+        h+='<div class="goal-metrics-ref">';
+        h+='<div class="gmr-item"><div class="gmr-lbl">挑战值</div><div class="gmr-val">'+g.challenge+g.unit+'</div></div>';
+        h+='<div class="gmr-item"><div class="gmr-lbl">目标值</div><div class="gmr-val">'+g.target+g.unit+'</div></div>';
+        h+='<div class="gmr-item"><div class="gmr-lbl">保底值</div><div class="gmr-val">'+g.baseline+g.unit+'</div></div>';
+        h+='</div>';
+        /* Input + score */
+        h+='<div class="goal-metric"><div class="goal-metric-lbl">完成值（'+g.unit+'） <span class="req">*</span></div></div>';
+        h+='<div class="goal-score-row">';
+        h+='<input class="goal-input-sm" type="number" value="'+kv+'" placeholder="输入完成值" oninput="setComp(\''+g.id+'\',this.value)">';
+        h+='<span class="goal-score-val">'+(kv!==''?calcItemScore(g,kv)+'分':'—')+'</span>';
+        h+='</div>';
       }else{
-        h+='<div style="margin-bottom:6px"><textarea class="weui-textarea" style="min-height:56px;font-size:var(--fs-sm)" placeholder="描述完成情况…" oninput="setC(\''+g.id+'\',this.value)" onchange="setC(\''+g.id+'\',this.value)">'+kv+'</textarea></div>';
-        h+='<div style="display:flex;align-items:center;gap:8px"><span style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5)">等级</span><select class="weui-select" style="flex:1" onchange="setG(\''+g.id+'\',this.value)"><option value="">请选择</option>'+GRADES.map(function(o){return '<option value="'+o+'"'+(gr===o?' selected':'')+'>'+o+'</option>'}).join('')+'</select></div>';
+        /* Read-only measure standards */
+        h+='<div class="goal-ms-row"><span class="goal-ms-label">衡量标准（2分）</span><span class="goal-ms-val">'+(g.std2||'—')+'</span></div>';
+        h+='<div class="goal-ms-row"><span class="goal-ms-label">衡量标准（3分）<span class="req">*</span></span><span class="goal-ms-val">'+(g.std3||'—')+'</span></div>';
+        h+='<div class="goal-ms-row"><span class="goal-ms-label">衡量标准（4分）</span><span class="goal-ms-val">'+(g.std4||'—')+'</span></div>';
+        /* Completion textarea */
+        h+='<div class="goal-metric" style="margin-top:8px"><div class="goal-metric-lbl">完成情况 <span class="req">*</span></div></div>';
+        h+='<textarea class="goal-textarea-sm" placeholder="描述完成情况…" oninput="setComp(\''+g.id+'\',this.value)">'+esc(kv)+'</textarea>';
+        /* 5 stars */
+        h+='<div class="goal-stars-row">';
+        for(var s=1;s<=5;s++){
+          h+='<span class="goal-star'+(s<=st?' on':'')+'" onclick="setStarVal(\''+g.id+'\','+s+',this)">★</span>';
+        }
+        h+='<span class="goal-star-label" style="color:'+(st?GRADE_COLORS[st]:'var(--c4)')+'">'+(st?GRADE_TIPS[st]:'未选择')+'</span>';
+        h+='</div>';
       }
       h+='</div>';
     });
   });
 
-  var ts=calcScore(),tg=getGrade(ts);
-  h+='<div style="display:flex;gap:8px;margin:12px 0"><div style="flex:1;background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:12px;text-align:center"><div style="font:700 var(--fs-xl)/1 var(--fm);color:var(--pr)">'+(ts||'—')+'</div><div style="font:400 var(--fs-xs)/1 var(--f);color:var(--c5);margin-top:3px">综合得分</div></div><div style="flex:1;background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:12px;text-align:center"><div style="font:700 var(--fs-base)/1 var(--f);color:var(--em700)">'+(ts?tg:'—')+'</div><div style="font:400 var(--fs-xs)/1 var(--f);color:var(--c5);margin-top:3px">综合等级</div></div></div>';
+  /* Self-eval */
+  h+='<div class="panel">';
+  h+='<div class="panel-hd">';
+  h+='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
+  h+='员工自评 <span style="font:400 11px/1 var(--f);color:var(--ro);margin-left:4px">*</span></div>';
+  h+='<div class="panel-bd"><textarea class="panel-textarea" placeholder="请对本季度整体工作进行总结评价，包括主要成果、不足之处及改进方向…"></textarea></div>';
+  h+='</div>';
 
-  h+='<div style="margin-bottom:8px"><textarea class="weui-textarea" style="min-height:72px;font-size:var(--fs-sm)" placeholder="请对本季度整体工作进行总结…"></textarea></div>';
+  /* Approval flow */
+  h+='<div class="panel">';
+  h+='<div class="panel-hd">审批流程</div>';
+  var flow=[{n:'员工自评',p:'张明',c:'var(--em)',s:'进行中',sb:'var(--em50)',sc:'var(--em700)'},{n:'间接上级评分',p:'刘VP',c:'var(--c3)',s:'待处理',sb:'var(--c1)',sc:'var(--c5)'},{n:'直接上级评分',p:'王总监',c:'var(--c3)',s:'待处理',sb:'var(--c1)',sc:'var(--c5)'}];
+  flow.forEach(function(f){
+    h+='<div class="flow-item">';
+    h+='<div class="flow-dot" style="background:'+f.c+'"><svg viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>';
+    h+='<div class="flow-info"><div class="flow-name">'+f.n+'</div><div class="flow-person">'+f.p+'</div></div>';
+    h+='<span class="flow-badge" style="background:'+f.sb+';color:'+f.sc+'">'+f.s+'</span>';
+    h+='</div>';
+  });
+  h+='</div><div class="gap"></div>';
 
-  // Approval flow
-  h+='<div class="weui-panel weui-panel_access"><div class="weui-panel__hd" style="font:600 var(--fs-base)/1 var(--f);color:var(--c8)">审批流程</div><div class="weui-cells">';
-  var flow=[{n:'员工自评',p:'张明',c:'var(--em)',s:'进行中',sb:'var(--ac50)',sc:'var(--ac700)'},{n:'直线上级评分',p:'王总监',c:'var(--c4)',s:'待处理',sb:'var(--c1)',sc:'var(--c5)'},{n:'间接上级评分',p:'刘VP',c:'var(--c4)',s:'待处理',sb:'var(--c1)',sc:'var(--c5)'},{n:'HRBP审批',p:'赵敏',c:'var(--c4)',s:'待处理',sb:'var(--c1)',sc:'var(--c5)'}];
-  flow.forEach(function(f){h+='<div class="weui-cell"><div class="weui-cell__hd"><div style="width:24px;height:24px;border-radius:50%;background:'+f.c+';display:flex;align-items:center;justify-content:center;margin-right:10px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div></div><div class="weui-cell__bd"><div style="font:500 var(--fs-sm)/1 var(--f);color:var(--c8)">'+f.n+'</div><div style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5);margin-top:2px">'+f.p+'</div></div><div class="weui-cell__ft"><span style="font:500 var(--fs-xs)/1 var(--f);padding:2px 8px;border-radius:4px;background:'+f.sb+';color:'+f.sc+'">'+f.s+'</span></div></div>';});
-  h+='</div></div><div style="height:80px"></div>';
   document.getElementById('phoneBody').innerHTML=h;
 }
 
-function setC(id,v){completed[id]=v;render();}
-function setG(id,v){grades[id]=v;render();}
+/* ═══ Toast ═══ */
+var toastTimer;
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){t.classList.remove('show');},1800);
+}
+
 render();
-injectAIPanel('AI 自评助手','优化评分 · 生成评语 · 完整性检查',['优化评分建议','生成评语','检查完整性']);
 </script>
 </body>
 </html>

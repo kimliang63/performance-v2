@@ -56,6 +56,10 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}
 .btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
 .btn-s.btn-active{background:var(--pr50);color:var(--pr);border-color:var(--pr200)}
+.btn-sm{height:28px;padding:0 10px;font-size:12px}
+.search-input{height:32px;border:1px solid var(--c2);border-radius:var(--r1);padding:0 10px 0 32px;font:400 13px/1 var(--f);color:var(--c8);outline:none;background:var(--sf);transition:border .15s;width:100%}
+.search-input:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
+.search-input::placeholder{color:var(--c4)}
 
 /* ═══ PAGINATION ═══ */
 .pager{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-top:1px solid var(--dv);font:400 12px/1 var(--f);color:var(--c5)}
@@ -83,11 +87,31 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .dist-chart{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:14px 16px}
 .dist-chart-title{font:600 13px/1 var(--f);color:var(--c9);margin-bottom:8px}
 
+/* ═══ DIST TABLE ═══ */
+
+/* ═══ STAR RATING ═══ */
+.star-rating{display:inline-flex;flex-direction:column;align-items:center;gap:4px}
+.star-row{display:flex;gap:2px}
+.star{font-size:18px;color:var(--c3);cursor:pointer;transition:all .12s;line-height:1}
+.star.hover{color:var(--ac);transform:scale(1.15)}
+.star.sel{color:var(--ac)}
+.star-label{font:500 12px/1 var(--f);white-space:nowrap;min-width:60px;text-align:center}
+.star-desc{font:400 11px/1.3 var(--f);color:var(--c5);margin-top:2px;max-width:180px;text-align:center}
+.dist-table{width:100%;border-collapse:collapse}
+.dist-table th{font:600 11px/1 var(--f);color:var(--c5);padding:6px 10px;border-bottom:1px solid var(--dv);background:var(--c0);white-space:nowrap}
+.dist-table td{font:400 13px/1.4 var(--f);color:var(--c7);padding:6px 10px;border-bottom:1px solid var(--dv)}
+.dist-table tr.violation td{background:var(--ro50)}
+.dist-table tr.violation td:first-child{color:var(--ro);font-weight:600}
+.dist-table tr.clickable{cursor:pointer;transition:background .1s}
+.dist-table tr.clickable:hover td{background:var(--pr50)}
+.dist-table tr.clickable.sel td{background:var(--pr50)}
+
+
 /* ═══ AI CHAT ═══ */
 .ai-chat{position:fixed;top:52px;right:0;width:380px;height:calc(100vh - 52px);background:var(--sf);border-left:1px solid var(--dv);z-index:900;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s ease}
 body.chat-open .ai-chat{transform:translateX(0)}
 .ai-chat-hd{padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:10px}
-.ai-chat-hd-ic{width:32px;height:32px;border-radius:var(--r2);background:linear-gradient(135deg,var(--pr) 0%,var(--vi) 100%);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ai-chat-hd-ic{width:32px;height:32px;border-radius:var(--r2);background:var(--pr);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .ai-chat-hd-ic svg{width:16px;height:16px;color:#FFF}
 .ai-chat-hd-t{font:600 14px/1.2 var(--f);color:var(--c9)}
 .ai-chat-hd-s{font:400 11px/1 var(--f);color:var(--c5)}
@@ -132,7 +156,7 @@ body.chat-open .ai-chat{transform:translateX(0)}
 .ai-chat-upload{width:36px;height:36px;border-radius:var(--r2);background:var(--sf);border:1px solid var(--c2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c5);transition:all .12s;position:relative}
 .ai-chat-upload:hover{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
 .ai-chat-upload input{position:absolute;inset:0;opacity:0;cursor:pointer}
-.ai-toggle{position:fixed;bottom:80px;right:24px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--pr) 0%,var(--vi) 100%);border:none;box-shadow:0 4px 16px rgba(37,99,235,.3);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:950;transition:all .2s}
+.ai-toggle{position:fixed;bottom:80px;right:24px;width:52px;height:52px;border-radius:50%;background:var(--pr);border:none;box-shadow:0 4px 16px rgba(37,99,235,.3);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:950;transition:all .2s}
 .ai-toggle:hover{transform:scale(1.08);box-shadow:0 6px 20px rgba(37,99,235,.4)}
 .ai-toggle svg{width:22px;height:22px;color:#FFF}
 body.chat-open .ai-toggle{display:none}
@@ -160,6 +184,10 @@ body.chat-open .ai-toggle{display:none}
     <span style="color:var(--c8);font-weight:600">结果审定</span>
   </nav>
 
+  <!-- Sticky dist bar -->
+  <div class="sticky-dist" id="stickyDist"><div class="sticky-dist-inner" id="stickyDistInner"></div></div>
+
+
   <!-- Title row -->
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
     <div>
@@ -180,7 +208,7 @@ body.chat-open .ai-toggle{display:none}
     <!-- 等级分布 -->
   <div class="dist-grid">
     <div>
-      <div id="distConclusion" style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:14px 16px"></div>
+      <div id="distConclusion" style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:14px 16px"><div style="font:400 13px/1 var(--f);color:var(--c4);text-align:center;padding:20px">加载中…</div></div>
     </div>
     <div class="dist-chart" style="display:flex;flex-direction:column">
       <div class="dist-chart-title">等级分布</div>
@@ -191,6 +219,23 @@ body.chat-open .ai-toggle{display:none}
         <span>待调整 <b style="font-family:var(--m);font-weight:600;color:var(--pr)" id="statPending">—</b></span>
       </div>
       <div style="position:relative;flex:1;min-height:0"><canvas id="chartDist"></canvas></div>
+    </div>
+  </div>
+
+  <!-- 筛选 -->
+  <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:12px;padding:8px 16px;display:flex;align-items:center;gap:16px">
+    <span style="font:500 13px/1 var(--f);color:var(--c6)">部门:</span>
+    <div id="deptFilter" style="display:flex;gap:8px">
+      <button class="btn btn-s btn-sm btn-active" onclick="filterDept('全部',this)">全部</button>
+      <button class="btn btn-s btn-sm" onclick="filterDept('产品部',this)">产品部</button>
+      <button class="btn btn-s btn-sm" onclick="filterDept('技术部',this)">技术部</button>
+      <button class="btn btn-s btn-sm" onclick="filterDept('设计部',this)">设计部</button>
+      <button class="btn btn-s btn-sm" onclick="filterDept('运营部',this)">运营部</button>
+    </div>
+    <div style="width:1px;height:20px;background:var(--c2)"></div>
+    <div style="position:relative;flex:1;min-width:160px;max-width:220px">
+      <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);pointer-events:none" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--c4)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="search-input" placeholder="搜索员工姓名" id="searchInput" oninput="handleSearch()">
     </div>
   </div>
 
@@ -225,8 +270,13 @@ body.chat-open .ai-toggle{display:none}
 <script>
 GHR_NAV.init('perf', '结果审定');
 
-var GRADE_OPTIONS=['超出预期','符合预期+','符合预期','符合预期-','低于预期'];
-var GRADE_COLORS={'超出预期':'var(--em700)','符合预期+':'var(--pr)','符合预期':'var(--c7)','符合预期-':'var(--ac)','低于预期':'var(--ro)'};
+var GRADE_OPTIONS=['远低预期','低于预期','符合预期-','符合预期','符合预期+','超出预期','远超预期'];
+
+var GRADE_COLORS={'远低预期':'var(--c5)','低于预期':'var(--ro)','符合预期-':'var(--ac700)','符合预期':'var(--em700)','符合预期+':'var(--pr700)','超出预期':'var(--vi)','远超预期':'var(--ac)'};
+var GRADE_BG={'远低预期':'var(--c1)','低于预期':'var(--ro50)','符合预期-':'var(--ac50)','符合预期':'var(--em50)','符合预期+':'var(--pr50)','超出预期':'var(--vi50)','远超预期':'var(--ac50)'};
+var STAR_TIPS_RATIFY={1:'远低预期',2:'低于预期',3:'符合预期-',4:'符合预期',5:'符合预期+',6:'超出预期',7:'远超预期'};
+var STAR_COLORS_RATIFY={1:'#A1A1AA',2:'#71717A',3:'#6366F1',4:'#10B981',5:'#F59E0B',6:'#F97316',7:'#DC2626'};
+var STAR_DESC_RATIFY={1:'显著低于团队平均水平',2:'低于预期，需重点关注',3:'略低于预期，有提升空间',4:'符合岗位要求，表现达标',5:'超出预期，表现优秀',6:'显著超出，可作为团队标杆',7:'卓越表现，树立组织标杆'};var GRADE_COLORS={'超出预期':'var(--em700)','符合预期+':'var(--pr)','符合预期':'var(--c7)','符合预期-':'var(--ac)','低于预期':'var(--ro)'};
 var GRADE_BG={'超出预期':'var(--em)','符合预期+':'var(--pr)','符合预期':'var(--c4)','符合预期-':'var(--ac)','低于预期':'var(--ro)'};
 var RATIFY_COLORS={'远低预期':'var(--c5)','低于预期':'var(--ro)','符合预期-':'var(--ac700)','符合预期':'var(--em700)','符合预期+':'var(--pr700)','超出预期':'var(--vi)','远超预期':'var(--ac)'};
 var RATIFY_BG={'远低预期':'var(--c1)','低于预期':'var(--ro50)','符合预期-':'var(--ac50)','符合预期':'var(--em50)','符合预期+':'var(--pr50)','超出预期':'var(--vi50)','远超预期':'var(--ac50)'};
@@ -282,17 +332,29 @@ var MEMBERS=[
 ];
 
 var currentGroup='全部';
+var currentDept='全部';
+var searchQuery='';
 var currentStatus='全部';
 var currentGrade=null;
 var currentPage=1;
 var PAGE_SIZE=10;
 
 function getFilteredMembers(){
+  var q=searchQuery.trim().toLowerCase();
   return MEMBERS.filter(function(m){
+    if(currentDept!=='全部'&&m.dept!==currentDept)return false;
     if(currentGrade&&m.grade!==currentGrade)return false;
+    if(q&&m.name.toLowerCase().indexOf(q)<0)return false;
     return true;
   });
 }
+
+function filterDept(dept,btn){
+  currentDept=dept;currentPage=1;
+  setActiveBtn('deptFilter',btn);
+  renderMembers();
+}
+function handleSearch(){currentPage=1;renderMembers();}
 
 function renderDist(){
   window._selectedBar=null;
@@ -310,6 +372,10 @@ function renderDist(){
   var forceMax=FORCE_DIST.map(function(r){return Math.ceil(total*r.max/100);});
 
   if(window._distChart)window._distChart.destroy();
+
+  // Render table first — always runs regardless of chart
+  renderDistRules();
+
   var ctx=document.getElementById('chartDist');
   if(!ctx)return;
 
@@ -327,7 +393,7 @@ function renderDist(){
     },
     options:{
       responsive:true,maintainAspectRatio:false,
-      animation:false,
+      animation:{duration:300},
       plugins:{
         legend:{display:true,position:'bottom',align:'start',labels:{boxWidth:10,boxHeight:10,padding:12,font:{size:11,family:'Inter, Noto Sans SC, sans-serif'},usePointStyle:true}},
         tooltip:{callbacks:{title:function(items){return items[0].label;},label:function(ctx){return['调整前人数: '+beforeData[ctx.dataIndex],'当前人数: '+afterData[ctx.dataIndex],'目标人数: '+forceMin[ctx.dataIndex]+'–'+forceMax[ctx.dataIndex]];}}}
@@ -361,7 +427,6 @@ function renderDist(){
       scales:{y:{beginAtZero:true,ticks:{stepSize:1,font:{family:'Inter, Noto Sans SC, sans-serif',size:11}},grid:{color:'#E4E4E7'}},x:{ticks:{font:{family:'Inter, Noto Sans SC, sans-serif',size:10},callback:function(v){return['远超','超出','符合+','符合','符合-','低于','远低'][v];}},grid:{display:false}}}
     }
   });
-  renderDistRules();
 }
 
 function renderDistRules(){
@@ -379,60 +444,34 @@ function renderDistRules(){
     else if(pct>r.max){need=count-Math.ceil(total*r.max/100);dir='in';}
     allGrades.push({grade:r.grade,count:count,min:r.min,max:r.max,ok:ok,dir:dir,need:need});
   });
+
   var el=document.getElementById('distConclusion');
   if(!el)return;
   var html='';
-  html+='<div style="margin-bottom:14px">';
-  html+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">';
+  html+='<div style="margin-bottom:10px;display:flex;align-items:center;gap:8px">';
   html+='<span style="font:600 14px/1 var(--f);color:var(--c9)">总体结论</span>';
   if(hasViolation){html+='<span style="display:inline-flex;align-items:center;height:22px;padding:0 10px;border-radius:12px;font:500 11px/1 var(--f);background:var(--ro50);color:var(--ro)">不符合规则</span>';}
   else{html+='<span style="display:inline-flex;align-items:center;height:22px;padding:0 10px;border-radius:12px;font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">符合规则</span>';}
+  html+='<span style="font:400 12px/1 var(--f);color:var(--c6);margin-left:auto">共 '+total+' 人，'+allGrades.length+' 个等级</span>';
   html+='</div>';
-  html+='<div style="font:400 12px/1.5 var(--f);color:var(--c6)">共 '+total+' 人，'+GRADE_OPTIONS.length+' 个等级'+(hasViolation?'，部分等级需调整':'，分布合理')+'</div>';
-  html+='</div>';
-  html+='<div style="border-top:1px solid var(--dv);padding-top:12px">';
-  html+='<div style="font:600 12px/1 var(--f);color:var(--c8);margin-bottom:10px">各等级状态</div>';
-  html+='<div style="display:flex;flex-direction:column;gap:4px">';
+
+  html+='<table class="dist-table"><thead><tr><th>等级</th><th style="text-align:center">要求</th><th style="text-align:center">实际</th><th style="text-align:center">状态</th></tr></thead><tbody>';
   allGrades.forEach(function(d){
     var isActive=currentGrade===d.grade;
-    var bg=isActive?'var(--pr50)':'transparent';
-    var br=isActive?'1px solid var(--pr200)':'1px solid transparent';
+    var rowClass=(isActive?'sel ':'')+'clickable'+(d.ok?'':' violation');
     var icon=d.ok?'✅':'❌';
-    var statusText=d.ok?'符合':'需调整';
+    var statusText=d.ok?'符合':'';
+    if(!d.ok){statusText=d.dir==='out'?'差'+d.need:'超'+d.need;}
     var statusColor=d.ok?'var(--em700)':'var(--ro)';
-    var detail='';
-    if(!d.ok){
-      detail=d.dir==='out'?' 需调入 '+d.need+'人':' 需调出 '+d.need+'人';
-    }
-    html+='<div style="display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:var(--r1);background:'+bg+';border:'+br+';cursor:pointer;font:400 12px/1.4 var(--f);color:var(--c7)" onclick="filterByConclusion(\''+d.grade+'\')">';
-    html+='<span style="font-size:13px;flex-shrink:0">'+icon+'</span>';
-    html+='<span style="font-weight:600;color:var(--c8);min-width:56px;flex-shrink:0">'+d.grade+'</span>';
-    html+='<span style="color:var(--c5);flex-shrink:0">'+d.min+'–'+d.max+'人</span>';
-    html+='<span style="color:var(--c5);flex-shrink:0">实 '+d.count+'人</span>';
-    html+='<span style="font-weight:500;color:'+statusColor+';margin-left:auto;flex-shrink:0">'+statusText+detail+'</span>';
-    html+='</div>';
+    html+='<tr class="'+rowClass+'" onclick="filterByConclusion(\''+d.grade+'\')">';
+    html+='<td style="font-weight:600;color:'+(d.ok?'var(--c8)':'var(--ro)')+'">'+d.grade+'</td>';
+    html+='<td style="text-align:center;font-family:var(--m);font-size:12px">'+d.min+'–'+d.max+'</td>';
+    html+='<td style="text-align:center;font-family:var(--m);font-weight:600;color:'+(d.ok?'var(--c8)':'var(--ro)')+'">'+d.count+'</td>';
+    html+='<td style="text-align:center"><span style="font-weight:500;color:'+statusColor+'">'+icon+' '+statusText+'</span></td>';
+    html+='</tr>';
   });
-  html+='</div></div>';
+  html+='</tbody></table>';
   el.innerHTML=html;
-}
-
-function filterByConclusion(grade){
-  if(currentGrade===grade){currentGrade=null;window._selectedBar=null;}else{currentGrade=grade;window._selectedBar=GRADE_OPTIONS.indexOf(grade);}
-  // Update chart highlight
-  if(window._distChart){
-    var ds=window._distChart.data.datasets[0];
-    var bw=new Array(GRADE_OPTIONS.length).fill(0);
-    var bc=new Array(GRADE_OPTIONS.length).fill('transparent');
-    if(window._selectedBar!==null){
-      bw[window._selectedBar]=3;
-      bc[window._selectedBar]='#0F172A';
-    }
-    ds.borderWidth=bw;
-    ds.borderColor=bc;
-    window._distChart.update('none');
-  }
-  currentPage=1;renderMembers();
-  renderDistRules();
 }
 
 function renderMembers(){
@@ -444,20 +483,14 @@ function renderMembers(){
   var html='';
   pageData.forEach(function(m){
     html+='<tr>'+
-      '<td><span style="font-weight:500;color:var(--c8)">'+m.name+'</span></td>'+
+      '<td style="font-weight:500;color:var(--c8)">'+m.name+'</td>'+
       '<td style="color:var(--c6)">'+m.dept+'</td>'+
       '<td style="color:var(--c6)">'+m.role+'</td>'+
-      '<td><span style="font-family:var(--m);font-weight:600;color:var(--c9)">'+m.totalScore+'</span></td>'+
-      '<td><span style="font:400 13px/1 var(--f);color:var(--c7)">'+m.grade+'</span></td>'+
-      '<td><span style="font:400 13px/1 var(--f);color:var(--c7)">'+m.hierarchyGrade+'</span></td>';
-    if(m.ratifyGrade){
-      var gc=RATIFY_COLORS[m.ratifyGrade]||'var(--c7)';
-      var gb=RATIFY_BG[m.ratifyGrade]||'var(--c1)';
-      html+='<td><span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:var(--r1);font:500 12px/1 var(--f);color:'+gc+';background:'+gb+'">'+m.ratifyGrade+'</span></td>';
-    }else{
-      html+='<td><span style="font:400 12px/1 var(--f);color:var(--c4)">待确认</span></td>';
-    }
-    html+='<td><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">✓ 已确认</span></td>'+
+      '<td style="font-family:var(--m);font-weight:600;color:var(--c9)">'+m.totalScore+'</td>'+
+      '<td><span style="font:400 13px/1 var(--f);color:var(--c7)">'+(m.grade||'—')+'</span></td>'+
+      '<td><span style="font:400 13px/1 var(--f);color:var(--c7)">'+(m.indirectGrade||'—')+'</span></td>'+
+      '<td><span style="font-weight:500;color:'+(m.ratifyGrade?'var(--c8)':'var(--c4)')+'">'+(m.ratifyGrade||'未调整')+'</span></td>'+
+      '<td><span style="font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px;background:'+(m.reached?'var(--em50)':'var(--ac50)')+';color:'+(m.reached?'var(--em700)':'var(--ac700)')+'">'+(m.reached?'已到达':'未到达')+'</span></td>'+
       '</tr>';
   });
   document.getElementById('memberBody').innerHTML=html;
@@ -469,50 +502,22 @@ function renderMembers(){
 function renderPager(total,totalPages){
   var start=Math.min((currentPage-1)*PAGE_SIZE+1,total);
   var end=Math.min(currentPage*PAGE_SIZE,total);
-  var html='<span class="pager-info">共 <b style="color:var(--c8)">'+total+'</b> 条，第 '+start+'-'+end+' 条</span><div class="pager-btns">';
-  html+='<button class="pager-btn" onclick="goPage('+(currentPage-1)+')"'+(currentPage<=1?' disabled':'')+'><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>';
-  for(var p=1;p<=totalPages;p++){
-    html+='<button class="pager-btn'+(p===currentPage?' active':'')+'" onclick="goPage('+p+')">'+p+'</button>';
-  }
-  html+='<button class="pager-btn" onclick="goPage('+(currentPage+1)+')"'+(currentPage>=totalPages?' disabled':'')+'><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>';
-  html+='</div>';
-  document.getElementById('pager').innerHTML=html;
+  var h='<span class="pager-info">共 <b style="color:var(--c8)">'+total+'</b> 条，第 '+start+'-'+end+' 条</span><div class="pager-btns">';
+  h+='<button class="pager-btn" onclick="goPage('+(currentPage-1)+')"'+(currentPage<=1?' disabled':'')+'><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>';
+  for(var p=1;p<=totalPages;p++){h+='<button class="pager-btn'+(p===currentPage?' active':'')+'" onclick="goPage('+p+')">'+p+'</button>';}
+  h+='<button class="pager-btn" onclick="goPage('+(currentPage+1)+')"'+(currentPage>=totalPages?' disabled':'')+'><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button></div>';
+  document.getElementById('pager').innerHTML=h;
 }
 
+function goPage(p){currentPage=p;renderMembers();}
 function updateStats(filtered){
-  var total=filtered.length;
-  var reached=filtered.filter(function(m){return m.reached;}).length;
-  var unreached=total-reached;
-  var pending=filtered.filter(function(m){return m.reached&&!m.ratifyGrade;}).length;
+  var total=filtered.length, reached=filtered.filter(function(m){return m.reached;}).length;
   document.getElementById('statTotal').textContent=total;
   document.getElementById('statReached').textContent=reached;
-  document.getElementById('statUnreached').textContent=unreached;
-  document.getElementById('statPending').textContent=pending;
-  var hdTotal=document.getElementById('hdTotal');
-  var hdReached=document.getElementById('hdReached');
-  var hdPending=document.getElementById('hdPending');
-  if(hdTotal)hdTotal.textContent=total+'人';
-  if(hdReached)hdReached.textContent=reached+'人';
-  if(hdPending)hdPending.textContent=pending+'人';
-  var summary=document.getElementById('listSummary');
-  if(summary)summary.textContent='已到达 '+reached+'人 · 未到达 '+unreached+'人';
+  document.getElementById('statUnreached').textContent=total-reached;
+  document.getElementById('statPending').textContent=filtered.filter(function(m){return m.reached&&!m.ratifyGrade;}).length;
 }
 
-function setActiveBtn(containerId,btn){}
-
-function filterByGrade(grade){
-  if(currentGrade===grade){currentGrade=null;}else{currentGrade=grade;}
-  currentPage=1;
-  renderMembers();
-}
-function goPage(p){
-  var filtered=getFilteredMembers();
-  var totalPages=Math.ceil(filtered.length/PAGE_SIZE)||1;
-  if(p<1||p>totalPages)return;
-  currentPage=p;
-  renderMembers();
-  document.querySelector('.eval-list').scrollIntoView({behavior:'smooth',block:'start'});
-}
 function updateRatify(i,grade){MEMBERS[i].ratifyGrade=grade;renderMembers();}
 function batchRatify(){showToast('HRBP审定已确认','success');}
 function showToast(msg,type){
@@ -523,6 +528,33 @@ function showToast(msg,type){
 }
 
 renderMembers();
+
+
+function renderStickyBar(allGrades){
+  var el=document.getElementById('stickyDistInner');
+  if(!el||!allGrades)return;
+  var html='';
+  allGrades.forEach(function(d,i){
+    var ok=d.count>=d.min&&d.count<=d.max;
+    html+='<span class="sticky-grade">';
+    html+='<span class="name">'+d.grade.replace('符合预期','符合').replace('超出预期','超出').replace('远低预期','远低').replace('低于预期','低于')+'</span>';
+    html+='<span class="count '+(ok?'ok':'bad')+'">'+d.count+'</span>';
+    html+='<span style="font-size:11px">'+(ok?'✓':'❌')+'</span>';
+    if(i<allGrades.length-1)html+='<span class="sep">|</span>';
+    html+='</span>';
+  });
+  el.innerHTML=html;
+}
+var stickyEl=document.getElementById('stickyDist');
+if(!window._scrollBound){
+  window._scrollBound=true;
+  window.addEventListener('scroll',function(){
+    var chartEl=document.querySelector('.dist-chart');
+    if(!chartEl||!stickyEl)return;
+    var rect=chartEl.getBoundingClientRect();
+    stickyEl.style.display=(rect.bottom<0)?'block':'none';
+  });
+}
 
 // ═══ AI CHAT ═══
 var AI_SHORTCUTS=[

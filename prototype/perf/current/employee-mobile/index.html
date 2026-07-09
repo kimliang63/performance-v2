@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>绩效系统 · 目标制定</title>
+<style>
+/* ═══ Design Tokens ═══ */
+:root{
+  --bg:#F6F8FC;
+  --pr:#2F6BFF;--pr10:#EBF1FF;--pr20:#D6E3FF;
+  --em:#1BBF83;--em10:#E8F8F2;
+  --ro:#F54A45;--ro10:#FEEEEE;
+  --ac:#FF8C00;--ac10:#FFF4E8;
+  --c1:#1F2329;--c2:#646A73;--c3:#8F959E;--c4:#C1C4CA;--c5:#E5E6EB;--c6:#F0F1F5;
+  --sf:#FFF;
+  --r:16px;--rs:10px;--rx:6px;
+  --fs-title:18px;--fs-h2:16px;--fs-body:15px;--fs-sub:13px;--fs-label:11px;
+  --f:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue","PingFang SC",sans-serif;
+  --shadow:0 1px 3px rgba(0,0,0,.04),0 2px 8px rgba(0,0,0,.02);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c1);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;user-select:none;overflow:hidden;height:100vh;display:flex;justify-content:center;align-items:center}
+.phone{width:390px;height:844px;background:var(--bg);overflow:hidden;position:relative;border-radius:44px;box-shadow:0 20px 60px rgba(0,0,0,.15),0 0 0 1px rgba(0,0,0,.04)}
+@media(max-width:420px){.phone{width:100vw;height:100vh;border-radius:0}}
+
+/* ═══ Nav Bar ═══ */
+.nav{position:sticky;top:0;z-index:100;background:var(--bg);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.nav-back{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c1);transition:background .15s}
+.nav-back:active{background:rgba(0,0,0,.05)}
+.nav-back svg{width:20px;height:20px}
+.nav-title{font:600 var(--fs-title)/1 var(--f);color:var(--c1);position:absolute;left:50%;transform:translateX(-50%)}
+.nav-capsule{display:flex;align-items:center;gap:0;border:1px solid var(--c5);border-radius:18px;overflow:hidden;height:32px}
+.nav-capsule span{width:36px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--c2)}
+.nav-capsule span:first-child{border-right:0.5px solid var(--c5)}
+.nav-capsule span svg{width:16px;height:16px}
+.nav-act{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ro)}
+.nav-act:active{background:var(--ro10)}
+
+/* ═══ Scroll Body ═══ */
+.body{height:calc(100% - 60px);overflow-y:auto;padding:0 16px 100px;-webkit-overflow-scrolling:touch}
+.body::-webkit-scrollbar{width:0}
+
+/* ═══ Cards ═══ */
+.card{background:var(--sf);border-radius:var(--r);padding:16px;margin-bottom:16px;box-shadow:var(--shadow)}
+.card-flush{padding:0;overflow:hidden}
+
+/* ═══ Employee Card ═══ */
+.emp{display:flex;align-items:center;gap:12px}
+.emp-av{width:48px;height:48px;border-radius:50%;background:var(--pr10);display:flex;align-items:center;justify-content:center;font:600 20px/1 var(--f);color:var(--pr);flex-shrink:0}
+.emp-info{flex:1;min-width:0}
+.emp-name{font:600 var(--fs-h2)/1.2 var(--f);color:var(--c1)}
+.emp-meta{font:400 var(--fs-sub)/1 var(--f);color:var(--c2);margin-top:4px}
+.emp-cycle{font:500 var(--fs-label)/1 var(--f);color:var(--pr);background:var(--pr10);padding:5px 10px;border-radius:12px;white-space:nowrap}
+
+/* ═══ Stat Row ═══ */
+.stat-row{display:flex;gap:12px;margin-bottom:16px}
+.stat-card{flex:1;background:var(--sf);border-radius:var(--r);padding:14px 16px;box-shadow:var(--shadow);text-align:center}
+.stat-val{font:700 28px/1 var(--f);color:var(--c1);letter-spacing:-.5px}
+.stat-val.em{color:var(--em)}
+.stat-label{font:400 var(--fs-sub)/1 var(--f);color:var(--c3);margin-top:6px}
+
+/* ═══ Quick Actions ═══ */
+.qa-row{display:flex;gap:12px;margin-bottom:16px}
+.qa-btn{flex:1;height:44px;background:var(--sf);border:1px solid var(--c5);border-radius:var(--r);display:flex;align-items:center;justify-content:center;gap:6px;font:500 var(--fs-body)/1 var(--f);color:var(--pr);cursor:pointer;transition:all .15s;box-shadow:var(--shadow)}
+.qa-btn:active{background:var(--pr10);border-color:var(--pr20)}
+.qa-btn svg{width:18px;height:18px;flex-shrink:0}
+
+/* ═══ Section ═══ */
+.sec{margin-bottom:16px}
+.sec-hd{display:flex;align-items:center;gap:8px;padding:0 0 12px;cursor:pointer}
+.sec-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.sec-dot.pr{background:var(--pr)}.sec-dot.em{background:var(--em)}
+.sec-title{font:600 var(--fs-h2)/1 var(--f);color:var(--c1)}
+.sec-wt{font:500 var(--fs-sub)/1 var(--f);color:var(--c2)}
+.sec-arrow{margin-left:auto;color:var(--c3);transition:transform .25s;display:flex}
+.sec-arrow svg{width:16px;height:16px}
+.sec-arrow.open{transform:rotate(90deg)}
+.sec-bd{overflow:hidden;transition:max-height .3s ease;max-height:0}
+.sec-bd.open{max-height:2000px}
+
+/* ═══ Goal List Item ═══ */
+.goal-item{display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--sf);border-bottom:0.5px solid var(--c6);cursor:pointer;transition:background .12s}
+.goal-item:first-child{border-radius:var(--r) var(--r) 0 0}
+.goal-item:last-child{border-bottom:none;border-radius:0 0 var(--r) var(--r)}
+.goal-item:active{background:var(--c6)}
+.goal-item-info{flex:1;min-width:0}
+.goal-item-name{font:500 var(--fs-body)/1.3 var(--f);color:var(--c1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.goal-item-meta{display:flex;align-items:center;gap:8px;margin-top:4px}
+.goal-item-tag{font:500 var(--fs-label)/1 var(--f);padding:2px 7px;border-radius:4px}
+.goal-item-tag.quant{background:var(--pr10);color:var(--pr)}
+.goal-item-tag.qual{background:var(--em10);color:var(--em)}
+.goal-item-wt{font:400 var(--fs-sub)/1 var(--f);color:var(--c3)}
+.goal-item-arrow{color:var(--c4);display:flex}
+.goal-item-arrow svg{width:14px;height:14px}
+
+/* ═══ Add Goal Dashed ═══ */
+.add-goal{display:flex;align-items:center;justify-content:center;gap:6px;padding:14px;border:1.5px dashed var(--c4);border-radius:0 0 var(--r) var(--r);font:500 var(--fs-body)/1 var(--f);color:var(--c3);cursor:pointer;transition:all .15s;background:var(--sf)}
+.add-goal:active{border-color:var(--pr);color:var(--pr);background:var(--pr10)}
+.add-goal svg{width:16px;height:16px}
+
+/* ═══ Bottom Bar ═══ */
+.bbar{position:absolute;bottom:0;left:0;right:0;background:rgba(255,255,255,.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:0.5px solid var(--c5);padding:12px 16px 34px;display:flex;gap:12px;z-index:50}
+.bbar .btn{flex:1;height:48px;border-radius:var(--rx);font:600 var(--fs-h2)/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:var(--f);display:flex;align-items:center;justify-content:center}
+.btn-default{background:var(--c6);color:var(--c2)}
+.btn-default:active{background:var(--c5)}
+.btn-primary{background:var(--pr);color:#FFF}
+.btn-primary:active{background:#2459D9}
+
+/* ═══ Form (Page 2) ═══ */
+.form-group{margin-bottom:20px}
+.form-label{font:500 var(--fs-sub)/1 var(--f);color:var(--c2);margin-bottom:8px;display:flex;align-items:center;gap:4px}
+.form-label .req{color:var(--ro)}
+.segment{display:flex;background:var(--c6);border-radius:var(--rx);padding:3px}
+.segment-item{flex:1;height:38px;display:flex;align-items:center;justify-content:center;font:500 var(--fs-body)/1 var(--f);color:var(--c2);border-radius:4px;cursor:pointer;transition:all .15s}
+.segment-item.on{background:var(--sf);color:var(--c1);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.form-input{width:100%;height:44px;border:1px solid var(--c5);border-radius:var(--rx);padding:0 12px;font:400 var(--fs-body)/1 var(--f);color:var(--c1);outline:none;transition:border .15s;background:var(--sf);font-family:var(--f)}
+.form-input:focus{border-color:var(--pr);box-shadow:0 0 0 3px var(--pr10)}
+.form-input.sm{height:40px;text-align:center;font:500 var(--fs-h2)/1 var(--f);padding:0 8px}
+.form-textarea{width:100%;min-height:80px;border:1px solid var(--c5);border-radius:var(--rx);padding:10px 12px;font:400 var(--fs-body)/1.5 var(--f);color:var(--c1);outline:none;resize:vertical;transition:border .15s;background:var(--sf);font-family:var(--f)}
+.form-textarea:focus{border-color:var(--pr);box-shadow:0 0 0 3px var(--pr10)}
+.form-hint{font:400 var(--fs-sub)/1.4 var(--f);color:var(--c3);margin-top:6px;padding:8px 12px;background:var(--c6);border-radius:var(--rx)}
+.val-row{display:flex;gap:8px;align-items:flex-end}
+.val-col{flex:1;display:flex;flex-direction:column;gap:4px}
+.val-col-label{font:400 var(--fs-label)/1 var(--f);color:var(--c3);text-align:center}
+.val-row select.form-input{width:auto;flex-shrink:0;min-width:56px}
+.unit-label{font:400 var(--fs-sub)/1 var(--f);color:var(--c2);padding-bottom:10px}
+
+/* ═══ Action Sheet ═══ */
+.sheet-mask{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:900;opacity:0;pointer-events:none;transition:opacity .25s}
+.sheet-mask.on{opacity:1;pointer-events:all}
+.sheet-panel{position:fixed;bottom:0;left:0;right:0;background:var(--sf);border-radius:16px 16px 0 0;z-index:901;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);padding-bottom:34px;max-height:60vh;overflow-y:auto}
+.sheet-mask.on .sheet-panel{transform:translateY(0)}
+.sheet-title{font:600 var(--fs-h2)/1 var(--f);color:var(--c1);padding:16px 20px 12px;text-align:center}
+.sheet-item{display:flex;align-items:center;gap:12px;padding:14px 20px;font:500 var(--fs-body)/1 var(--f);color:var(--c1);cursor:pointer;border-bottom:0.5px solid var(--c6)}
+.sheet-item:active{background:var(--c6)}
+.sheet-item svg{width:20px;height:20px;color:var(--pr);flex-shrink:0}
+.sheet-item .sheet-check{width:20px;height:20px;border-radius:50%;border:2px solid var(--c4);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.sheet-item .sheet-check.sel{border-color:var(--pr);background:var(--pr)}
+.sheet-item .sheet-check.sel::after{content:'';width:8px;height:5px;border-left:2px solid #FFF;border-bottom:2px solid #FFF;transform:rotate(-45deg);margin-top:-1px}
+.sheet-cancel{margin-top:8px;padding:14px;text-align:center;font:500 var(--fs-body)/1 var(--f);color:var(--c3);cursor:pointer;background:var(--c6);margin:8px 16px 0;border-radius:var(--rx)}
+.sheet-cancel:active{background:var(--c5)}
+.sheet-danger{color:var(--ro)}
+
+/* ═══ Page Transition ═══ */
+.page{position:absolute;inset:0;display:flex;flex-direction:column;transition:transform .3s cubic-bezier(.4,0,.2,1),opacity .3s}
+.page.p1{transform:translateX(0);opacity:1}
+.page.p1.hide{transform:translateX(-30%);opacity:0;pointer-events:none}
+.page.p2{transform:translateX(100%);opacity:0;pointer-events:none}
+.page.p2.show{transform:translateX(0);opacity:1;pointer-events:all}
+
+/* ═══ Toast ═══ */
+.toast{position:absolute;top:80px;left:50%;transform:translateX(-50%);background:var(--c1);color:#FFF;padding:10px 22px;border-radius:20px;font:500 var(--fs-sub)/1 var(--f);z-index:999;opacity:0;pointer-events:none;transition:opacity .25s;white-space:nowrap}
+.toast.on{opacity:1}
+.toast.success{background:var(--em)}
+</style>
+</head>
+<body>
+<div class="phone" id="app">
+  <!-- ═══════ Page 1: 目标制定 ═══════ -->
+  <div class="page p1" id="page1">
+    <div class="nav">
+      <div class="nav-back" onclick="goBack()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <div class="nav-title">目标制定</div>
+      <div class="nav-capsule">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10"/></svg></span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></span>
+      </div>
+    </div>
+
+    <div class="body" id="body1"></div>
+
+    <div class="bbar">
+      <button class="btn btn-default" onclick="toast('已保存草稿')">保存草稿</button>
+      <button class="btn btn-primary" onclick="toast('已提交审批')">提交审批</button>
+    </div>
+  </div>
+
+  <!-- ═══════ Page 2: 编辑目标 ═══════ -->
+  <div class="page p2" id="page2">
+    <div class="nav">
+      <div class="nav-back" onclick="closeEdit()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <div class="nav-title" id="editTitle">新增目标</div>
+      <div class="nav-act" id="btnDelete" style="display:none" onclick="confirmDelete()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></div>
+    </div>
+
+    <div class="body" id="body2" style="padding-bottom:100px">
+      <!-- Form rendered by JS -->
+    </div>
+
+    <div class="bbar">
+      <button class="btn btn-default" onclick="closeEdit()">取消</button>
+      <button class="btn btn-primary" onclick="saveGoal()">保存</button>
+    </div>
+  </div>
+
+  <!-- ═══════ Action Sheet ═══════ -->
+  <div class="sheet-mask" id="sheetMask" onclick="closeSheet()">
+    <div class="sheet-panel" id="sheetPanel" onclick="event.stopPropagation()"></div>
+  </div>
+
+  <div class="toast" id="toastEl"></div>
+</div>
+
+<script>
+/* ═══ STATE ═══ */
+var EMP={name:'张明',title:'高级产品经理',dept:'产品部',cycle:'2026年Q2'};
+
+var MODS=[
+  {name:'KPI',weight:30,color:'pr',goals:[
+    {id:'g1',name:'资源利用率（通用）',type:'quant',weight:5,target:105,challenge:110,baseline:100,unit:'%'},
+    {id:'g2',name:'HRAS UAT用户验收首次通过率',type:'quant',weight:10,target:98,challenge:100,baseline:95,unit:'%'},
+    {id:'g3',name:'HRAS需求评审及时率',type:'quant',weight:15,target:98,challenge:100,baseline:95,unit:'%'}
+  ],open:true},
+  {name:'KPA',weight:70,color:'em',goals:[
+    {id:'g4',name:'HRAS产品管理规范',type:'qual',weight:10,std2:'',std3:'4项规范全部符合，遵从度≥95%',std4:''},
+    {id:'g5',name:'日常滚动需求响应',type:'qual',weight:10,std2:'',std3:'按时完成全部GOFO迭代需求响应',std4:''},
+    {id:'g6',name:'HR ONE 绩效重构事项推进',type:'qual',weight:25,std2:'',std3:'3个里程碑节点按时交付',std4:''},
+    {id:'g7',name:'AI应用项目探索与落地推广',type:'qual',weight:25,std2:'',std3:'3个版本迭代按时发布',std4:''}
+  ],open:true}
+];
+
+var editMode='new'; // 'new' | 'edit'
+var editModIdx=0, editGoalIdx=-1, editGoal=null;
+
+/* ═══ PAGE 1 RENDER ═══ */
+function renderPage1(){
+  var h='';
+  // Employee card
+  h+='<div class="card"><div class="emp"><div class="emp-av">'+EMP.name[0]+'</div><div class="emp-info"><div class="emp-name">'+EMP.name+'</div><div class="emp-meta">'+EMP.title+' · '+EMP.dept+'</div></div><div class="emp-cycle">'+EMP.cycle+'</div></div></div>';
+
+  // Stats
+  var total=MODS.reduce(function(s,m){return s+m.goals.length},0);
+  h+='<div class="stat-row"><div class="stat-card"><div class="stat-val">'+total+'</div><div class="stat-label">目标数</div></div><div class="stat-card"><div class="stat-val em">100%</div><div class="stat-label">总权重</div></div></div>';
+
+  // Quick actions
+  h+='<div class="qa-row"><div class="qa-btn" onclick="openIndicatorSheet()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>关联指标库</div><div class="qa-btn" onclick="openCopySheet()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>复制历史目标</div></div>';
+
+  // Sections
+  MODS.forEach(function(m,mi){
+    h+='<div class="sec"><div class="sec-hd" onclick="toggleSec('+mi+')"><span class="sec-dot '+m.color+'"></span><span class="sec-title">'+m.name+'</span><span class="sec-wt">权重 '+m.weight+'%</span><span class="sec-arrow'+(m.open?' open':'')+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></span></div>';
+    h+='<div class="card card-flush sec-bd'+(m.open?' open':'')+'">';
+    m.goals.forEach(function(g,gi){
+      h+='<div class="goal-item" onclick="openEdit('+mi+','+gi+')"><div class="goal-item-info"><div class="goal-item-name">'+g.name+'</div><div class="goal-item-meta"><span class="goal-item-tag '+(g.type==='quant'?'quant':'qual')+'">'+(g.type==='quant'?'定量':'定性')+'</span><span class="goal-item-wt">权重 '+g.weight+'%</span></div></div><div class="goal-item-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div></div>';
+    });
+    h+='<div class="add-goal" onclick="openNew('+mi+')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>新增目标</div>';
+    h+='</div></div>';
+  });
+
+  document.getElementById('body1').innerHTML=h;
+}
+
+/* ═══ PAGE 2 RENDER ═══ */
+function renderPage2(){
+  var g=editGoal;
+  var isQuant=g.type==='quant';
+  document.getElementById('editTitle').textContent=editMode==='new'?'新增目标':'编辑目标';
+  document.getElementById('btnDelete').style.display=editMode==='edit'?'flex':'none';
+
+  var h='';
+  // Type segment
+  h+='<div class="form-group"><div class="form-label">目标类型</div><div class="segment"><div class="segment-item'+(isQuant?' on':'')+'" onclick="setType(\'quant\')">定量</div><div class="segment-item'+(!isQuant?' on':'')+'" onclick="setType(\'qual\')">定性</div></div></div>';
+
+  // Name
+  h+='<div class="form-group"><div class="form-label">目标名称 <span class="req">*</span></div><input class="form-input" id="fName" value="'+esc(g.name)+'" placeholder="请输入目标名称"></div>';
+
+  // Weight
+  h+='<div class="form-group"><div class="form-label">权重 <span class="req">*</span></div><div style="display:flex;align-items:center;gap:8px"><input class="form-input sm" type="number" id="fWeight" value="'+g.weight+'" style="width:80px"><span style="font:400 var(--fs-body)/1 var(--f);color:var(--c2)">%</span></div></div>';
+
+  if(isQuant){
+    // Challenge / Target / Baseline + unit
+    h+='<div class="form-group"><div class="form-label">挑战值 · 目标值 · 保底值</div><div class="val-row"><div class="val-col"><input class="form-input sm" type="number" id="fChallenge" value="'+g.challenge+'" placeholder="挑战"><span class="val-col-label">挑战值</span></div><div class="val-col"><input class="form-input sm" type="number" id="fTarget" value="'+g.target+'" placeholder="目标"><span class="val-col-label">目标值 <span class="req">*</span></span></div><div class="val-col"><input class="form-input sm" type="number" id="fBaseline" value="'+g.baseline+'" placeholder="保底"><span class="val-col-label">保底值</span></div><select class="form-input" id="fUnit" style="width:auto;flex-shrink:0;min-width:52px"><option value="%"'+(g.unit==='%'?' selected':'')+'>%</option><option value="元"'+(g.unit==='元'?' selected':'')+'>元</option><option value="人"'+(g.unit==='人'?' selected':'')+'>人</option><option value="次"'+(g.unit==='次'?' selected':'')+'>次</option><option value="小时"'+(g.unit==='小时'?' selected':'')+'>小时</option></select></div></div>';
+  }else{
+    // 3 std textareas
+    h+='<div class="form-group"><div class="form-label">衡量标准（2分）</div><textarea class="form-textarea" id="fStd2" placeholder="例如：完成部分工作">'+esc(g.std2||'')+'</textarea></div>';
+    h+='<div class="form-group"><div class="form-label">衡量标准（3分）<span class="req">*</span></div><textarea class="form-textarea" id="fStd3" placeholder="例如：按计划完成全部工作">'+esc(g.std3||'')+'</textarea></div>';
+    h+='<div class="form-group"><div class="form-label">衡量标准（4分）</div><textarea class="form-textarea" id="fStd4" placeholder="例如：超预期完成，并形成最佳实践">'+esc(g.std4||'')+'</textarea></div>';
+    h+='<div class="form-hint"><b>示例：</b><br>2分 — 完成部分工作<br>3分 — 按计划完成全部工作<br>4分 — 超预期完成，并形成最佳实践</div>';
+  }
+
+  document.getElementById('body2').innerHTML=h;
+}
+
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+function setType(t){editGoal.type=t;if(t==='quant'){editGoal.target=editGoal.target||100;editGoal.challenge=editGoal.challenge||110;editGoal.baseline=editGoal.baseline||90;editGoal.unit=editGoal.unit||'%';}renderPage2();}
+
+/* ═══ NAVIGATION ═══ */
+function openNew(mi){
+  editMode='new';editModIdx=mi;editGoalIdx=-1;
+  editGoal={id:'g'+Date.now(),name:'',type:'quant',weight:0,target:100,challenge:110,baseline:90,unit:'%',std2:'',std3:'',std4:''};
+  showPage2();
+}
+function openEdit(mi,gi){
+  editMode='edit';editModIdx=mi;editGoalIdx=gi;
+  editGoal=JSON.parse(JSON.stringify(MODS[mi].goals[gi]));
+  showPage2();
+}
+function showPage2(){
+  renderPage2();
+  document.getElementById('page1').classList.add('hide');
+  document.getElementById('page2').classList.add('show');
+}
+function closeEdit(){
+  document.getElementById('page1').classList.remove('hide');
+  document.getElementById('page2').classList.remove('show');
+}
+function goBack(){if(document.getElementById('page2').classList.contains('show')){closeEdit();}}
+
+/* ═══ SAVE / DELETE ═══ */
+function saveGoal(){
+  var g=editGoal;
+  g.name=document.getElementById('fName').value.trim();
+  g.weight=parseInt(document.getElementById('fWeight').value)||0;
+  if(!g.name){toast('请输入目标名称');return;}
+  if(!g.weight){toast('请输入权重');return;}
+  if(g.type==='quant'){
+    g.challenge=parseFloat(document.getElementById('fChallenge').value)||0;
+    g.target=parseFloat(document.getElementById('fTarget').value)||0;
+    g.baseline=parseFloat(document.getElementById('fBaseline').value)||0;
+    g.unit=document.getElementById('fUnit').value;
+    if(!g.target){toast('请输入目标值');return;}
+  }else{
+    g.std2=document.getElementById('fStd2').value.trim();
+    g.std3=document.getElementById('fStd3').value.trim();
+    g.std4=document.getElementById('fStd4').value.trim();
+    if(!g.std3){toast('请填写3分衡量标准（必填）');return;}
+  }
+  if(editMode==='new'){MODS[editModIdx].goals.push(g);}
+  renderPage1();
+  closeEdit();
+  toast(editMode==='new'?'添加成功':'保存成功');
+}
+function confirmDelete(){
+  var items=[
+    {label:'删除目标',cls:'sheet-danger',action:function(){
+      MODS[editModIdx].goals.splice(editGoalIdx,1);
+      renderPage1();closeEdit();
+      toast('删除成功');
+    }}
+  ];
+  showSheet('删除后不可恢复',items,true);
+}
+function toggleSec(mi){MODS[mi].open=!MODS[mi].open;renderPage1();}
+
+/* ═══ ACTION SHEETS ═══ */
+function openIndicatorSheet(){
+  var indicators=[
+    {name:'资源利用率',type:'quant'},{name:'UAT验收通过率',type:'quant'},{name:'需求评审及时率',type:'quant'},{name:'客户满意度评分',type:'quant'},{name:'产品管理规范',type:'qual'},{name:'项目按时交付率',type:'quant'}
+  ];
+  var items=indicators.map(function(ind){
+    return {label:ind.name+' · '+(ind.type==='quant'?'定量':'定性'),action:function(){
+      MODS.forEach(function(m){
+        m.goals.push({id:'g'+Date.now()+Math.random(),name:ind.name,type:ind.type,weight:10,target:95,challenge:100,baseline:90,unit:'%',std2:'',std3:'',std4:''});
+      });
+      renderPage1();toast('已关联指标');
+    }};
+  });
+  showSheet('选择关联指标',items);
+}
+function openCopySheet(){
+  var items=[{label:'2026年Q1（上期）',action:function(){
+    MODS.forEach(function(m){
+      m.goals.push({id:'g'+Date.now()+Math.random(),name:'复制自上期 — '+m.name+'目标',type:'quant',weight:10,target:95,challenge:100,baseline:90,unit:'%',std2:'',std3:'',std4:''});
+    });
+    renderPage1();toast('已复制历史目标');
+  }},{label:'2025年Q4',action:function(){
+    MODS.forEach(function(m){
+      m.goals.push({id:'g'+Date.now()+Math.random(),name:'复制自2025Q4 — '+m.name+'目标',type:'qual',weight:10,std2:'',std3:'符合周期要求',std4:''});
+    });
+    renderPage1();toast('已复制历史目标');
+  }}];
+  showSheet('复制历史目标',items);
+}
+function showSheet(title,items,noCancel){
+  var h='<div class="sheet-title">'+title+'</div>';
+  items.forEach(function(it){
+    h+='<div class="sheet-item'+(it.cls?' '+it.cls:'')+'" onclick="closeSheet();('+it.action.toString()+')()">'+it.label+'</div>';
+  });
+  if(!noCancel)h+='<div class="sheet-cancel" onclick="closeSheet()">取消</div>';
+  document.getElementById('sheetPanel').innerHTML=h;
+  document.getElementById('sheetMask').classList.add('on');
+}
+function closeSheet(){document.getElementById('sheetMask').classList.remove('on');}
+
+/* ═══ TOAST ═══ */
+function toast(msg){
+  var t=document.getElementById('toastEl');
+  t.textContent=msg;t.className='toast on';
+  setTimeout(function(){t.classList.remove('on')},2000);
+}
+
+/* ═══ INIT ═══ */
+renderPage1();
+</script>
+</body>
+</html>

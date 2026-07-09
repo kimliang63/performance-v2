@@ -63,13 +63,72 @@ tbody tr:last-child td{border-bottom:none}
 
 @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .fi{animation:fi .25s ease forwards}
+
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:2000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-ov.on{opacity:1;pointer-events:all}
+.modal{background:var(--sf);border-radius:var(--r4);box-shadow:0 20px 60px -15px rgba(0,0,0,.2);width:520px;max-width:90vw;transform:translateY(8px) scale(.98);transition:transform .2s ease}
+.modal-ov.on .modal{transform:translateY(0) scale(1)}
+.modal-hd{display:flex;align-items:center;justify-content:space-between;padding:18px 22px 14px;border-bottom:1px solid var(--dv)}
+.modal-hd-t{font:600 15px/1.2 var(--f);color:var(--c9)}
+.modal-close{width:28px;height:28px;border-radius:var(--r1);border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--c4);transition:all .12s}
+.modal-close:hover{background:var(--c1);color:var(--c7)}
+.modal-close svg{width:16px;height:16px}
+.modal-bd{padding:18px 22px}
+.modal-ft{display:flex;justify-content:flex-end;gap:8px;padding:14px 22px 18px;border-top:1px solid var(--dv)}
 </style>
 </head>
 <body>
 <div id="app"></div>
+<div id="modalContainer"></div>
 <script src="../navigation.js"></script>
 <script>
 GHR_NAV.init('perf', '绩效报表');
+
+var S={
+  download:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+  settings:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+};
+
+var EXPORT_FIELDS={
+  roster:{name:'导出名单',fields:[
+    {key:'name',label:'姓名',def:true},{key:'emp',label:'工号',def:true},{key:'dept',label:'部门',def:true},
+    {key:'position',label:'岗位',def:true},{key:'level',label:'职级',def:false},{key:'relation',label:'考核关系',def:true},{key:'group',label:'考核组',def:false}
+  ]},
+  goals:{name:'导出目标',fields:[
+    {key:'name',label:'姓名',def:true},{key:'emp',label:'工号',def:true},{key:'dept',label:'部门',def:true},
+    {key:'goalName',label:'目标名称',def:true},{key:'goalType',label:'目标类型',def:true},{key:'weight',label:'权重',def:true},
+    {key:'standard',label:'衡量标准',def:true},{key:'completion',label:'完成情况',def:false}
+  ]},
+  eval:{name:'导出考核结果',fields:[
+    {key:'name',label:'姓名',def:true},{key:'emp',label:'工号',def:true},{key:'dept',label:'部门',def:true},
+    {key:'indicator',label:'指标名称',def:true},{key:'target',label:'目标值',def:true},{key:'actual',label:'完成值',def:true},
+    {key:'score',label:'得分',def:true},{key:'grade',label:'评价等级',def:true}
+  ]},
+  ratify:{name:'导出审定结果',fields:[
+    {key:'name',label:'姓名',def:true},{key:'emp',label:'工号',def:true},{key:'dept',label:'部门',def:true},
+    {key:'evalGrade',label:'初评等级',def:true},{key:'ratifyGrade',label:'审定等级',def:true},{key:'ratifier',label:'审定人',def:true},{key:'ratifyTime',label:'审定时间',def:false}
+  ]},
+  interview:{name:'导出面谈结果',fields:[
+    {key:'name',label:'姓名',def:true},{key:'emp',label:'工号',def:true},{key:'dept',label:'部门',def:true},
+    {key:'date',label:'面谈日期',def:true},{key:'content',label:'面谈内容',def:true},{key:'plan',label:'改进计划',def:true},{key:'confirm',label:'员工确认',def:false}
+  ]}
+};
+var exportSettingsOpen=false,exportSettingsTab='roster';
+if(!window._exportSettings){window._exportSettings={};for(var k in EXPORT_FIELDS){window._exportSettings[k]={};EXPORT_FIELDS[k].fields.forEach(function(f){window._exportSettings[k][f.key]=f.def;});}}
+function openExportSettings(){exportSettingsOpen=true;renderExportSettings();}
+function closeExportSettings(){exportSettingsOpen=false;renderExportSettings();}
+function toggleExportField(cat,key){window._exportSettings[cat][key]=!window._exportSettings[cat][key];renderExportSettings();}
+function renderExportSettings(){
+  var mc=document.getElementById('modalContainer');
+  if(!mc)return;
+  if(!exportSettingsOpen){mc.innerHTML='';return;}
+  var tab=exportSettingsTab,cfg=EXPORT_FIELDS[tab];
+  var tabs='';for(var k in EXPORT_FIELDS){tabs+='<button style="padding:8px 14px;border:none;border-bottom:2px solid '+(k===tab?'var(--pr)':'transparent')+';background:transparent;font:'+(k===tab?'500':'400')+' 13px/1 var(--f);color:'+(k===tab?'var(--pr)':'var(--c5)')+';cursor:pointer" onclick="exportSettingsTab=\''+k+'\';renderExportSettings()">'+EXPORT_FIELDS[k].name+'</button>';}
+  var fields='';cfg.fields.forEach(function(f){var chk=window._exportSettings[tab][f.key];fields+='<label style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--dv);cursor:pointer;font:400 13px/1 var(--f);color:var(--c7)"><input type="checkbox" '+(chk?'checked':'')+' onchange="toggleExportField(\''+tab+'\',\''+f.key+'\')" style="accent-color:var(--pr)">'+f.label+'<span style="font:400 11px/1 var(--f);color:var(--c4);margin-left:auto">'+(f.def?'默认':'')+'</span></label>';});
+  var xSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+  mc.innerHTML='<div class="modal-ov on" onclick="if(event.target===this)closeExportSettings()"><div class="modal" style="width:560px"><div class="modal-hd"><span class="modal-hd-t">导出设置</span><button class="modal-close" onclick="closeExportSettings()">'+xSvg+'</button></div><div class="modal-bd"><div style="display:flex;gap:0;border-bottom:1px solid var(--dv);margin-bottom:16px">'+tabs+'</div><div style="font:500 13px/1 var(--f);color:var(--c9);margin-bottom:4px">'+cfg.name+' — 选择导出字段</div><div style="max-height:360px;overflow-y:auto">'+fields+'</div></div><div class="modal-ft"><button class="btn btn-s" onclick="closeExportSettings()">关闭</button></div></div></div>';
+}
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&exportSettingsOpen){closeExportSettings();}});
 
 var GRADES=['远低预期','低于预期','符合预期-','符合预期','符合预期+','超出预期','远超预期'];
 var GRADE_COLORS=['#A1A1AA','#71717A','#6366F1','#10B981','#F59E0B','#F97316','#DC2626'];
@@ -190,23 +249,51 @@ function renderFilters(){
 
 function renderDistChart(){
   var dd=getDeptData(currentMonth,currentDept);
-  var initCounts=[],finalCounts=[];
+  var finalCounts=[];
   for(var g=0;g<GRADES.length;g++){
-    initCounts.push(dd.initial[GRADES[g]]||0);
     finalCounts.push(dd.final[GRADES[g]]||0);
   }
-  var total=dd.count||1;
-  var maxCount=Math.max.apply(null,initCounts.concat(finalCounts));
+  var curIdx=MONTHS.indexOf(currentMonth);
+  var prevMonth=curIdx>0?MONTHS[curIdx-1]:null;
+  var prevCounts=[],prevTotal=0;
+  if(prevMonth){
+    var pd=getDeptData(prevMonth,currentDept);
+    prevTotal=pd.count||0;
+    for(var g=0;g<GRADES.length;g++){
+      prevCounts.push(pd.final[GRADES[g]]||0);
+    }
+  }
+  var allCounts=finalCounts.concat(prevCounts);
+  var maxCount=Math.max.apply(null,allCounts);
   var yMax=Math.ceil(maxCount*1.2)||10;
+
+  var datasets=[{
+    label:'最终',data:finalCounts,
+    backgroundColor:'rgba(16,185,129,.5)',borderColor:'#10B981',borderWidth:1,borderRadius:4,order:1
+  }];
+  if(prevMonth){
+    datasets.push({
+      type:'line',label:'上期',data:prevCounts,
+      borderColor:'#F43F5E',backgroundColor:'transparent',borderWidth:2,borderDash:[6,3],
+      pointRadius:4,pointBackgroundColor:'#F43F5E',tension:0.3,order:0
+    });
+  }
+
   var ctx=document.getElementById('chartDist').getContext('2d');
   if(window._chartDist)window._chartDist.destroy();
   window._chartDist=new Chart(ctx,{
     type:'bar',
-    data:{labels:GRADES,datasets:[
-      {label:'初评',data:initCounts,yAxisID:'yCount',backgroundColor:'rgba(37,99,235,.4)',borderColor:'#2563EB',borderWidth:1,borderRadius:4},
-      {label:'最终',data:finalCounts,yAxisID:'yCount',backgroundColor:'rgba(16,185,129,.5)',borderColor:'#10B981',borderWidth:1,borderRadius:4}
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{usePointStyle:true,padding:16,font:{size:12}}}},scales:{x:{grid:{display:false}},yCount:{type:'linear',position:'left',title:{display:true,text:'人数',font:{size:12}},min:0,max:yMax,ticks:{stepSize:Math.max(1,Math.round(yMax/5))}},yPct:{type:'linear',position:'right',title:{display:true,text:'比例',font:{size:12}},min:0,max:yMax,grid:{drawOnChartArea:false},ticks:{stepSize:Math.max(1,Math.round(yMax/5)),callback:function(v){return (v/total*100).toFixed(2)+'%';}}}}}
+    data:{labels:GRADES,datasets:datasets},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom',labels:{usePointStyle:true,padding:16,font:{size:12}}},
+        tooltip:{callbacks:{label:function(ctx){
+          var v=ctx.raw;
+          if(ctx.datasetIndex===1){return '上期: '+v+'人 ('+(prevTotal?(v/prevTotal*100).toFixed(1):'0.0')+'%)';}
+          return v+'人 ('+(dd.count?(v/dd.count*100).toFixed(1):'0.0')+'%)';
+        }}}
+      },
+      scales:{x:{grid:{display:false}},y:{min:0,max:yMax,ticks:{stepSize:Math.max(1,Math.round(yMax/5))},title:{display:true,text:'人数',font:{size:12}}}}
+    }
   });
 }
 
@@ -314,6 +401,7 @@ function renderStats(){
 function setMonth(m){currentMonth=m;render();}
 function setDept(v){currentDept=v;render();}
 function resetFilters(){currentMonth='2026-06';currentDept='全部';render();}
+function handleExport(){alert('导出功能（原型占位）');}
 
 function render(){
   renderStats();
@@ -332,7 +420,7 @@ function init(){
   document.getElementById('app').innerHTML='<div class="fi">'+
     '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">'+
       '<div><h1 style="font:700 20px/1.2 var(--f);color:var(--c9);margin-bottom:4px">绩效报表</h1></div>'+
-      '<div style="display:flex;gap:8px"><button class="btn btn-s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>导出</button></div>'+
+      '<div style="display:flex;gap:8px"><button class="btn btn-s" onclick="handleExport()">'+S.download+'导出</button><button class="btn btn-s" onclick="openExportSettings()" title="导出设置">'+S.settings+'导出设置</button></div>'+
     '</div>'+
     '<div class="fl-bar" id="filterBar"></div>'+
     '<div class="st-row">'+

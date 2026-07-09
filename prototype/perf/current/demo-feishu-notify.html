@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 飞书消息通知</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;
+  --ro:#F43F5E;--ro50:#FFF1F2;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --r1:6px;--r2:8px;--r3:10px;
+  --f:'Inter','Noto Sans SC',-apple-system,sans-serif;
+  --m:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+.notify-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden;border-left:4px solid var(--pr)}
+.notify-card-hd{padding:14px 20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--dv)}
+.notify-card-title{font:600 14px/1 var(--f);color:var(--c9);flex:1}
+.notify-card-tag{font:500 10px/1 var(--f);padding:2px 8px;border-radius:3px;white-space:nowrap;flex-shrink:0}
+.notify-card-bd{padding:14px 20px;font:400 13px/1.6 var(--f);color:var(--c7)}
+.notify-card-ft{padding:12px 20px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--dv)}
+.notify-card-action{display:inline-flex;align-items:center;gap:4px;padding:0 18px;height:36px;border-radius:var(--r1);font:500 14px/1 var(--f);color:#FFF;background:var(--pr);text-decoration:none;transition:all .12s}
+.notify-card-action:hover{background:var(--pr700)}
+.notify-card-time{font:400 12px/1 var(--f);color:var(--c5)}
+
+/* ═══ TABS ═══ */
+.notify-tabs{display:flex;gap:0;margin-bottom:20px;background:var(--c1);border-radius:var(--r2);padding:3px;width:fit-content}
+.notify-tab{padding:7px 18px;border-radius:var(--r1);font:500 13px/1 var(--f);color:var(--c5);cursor:pointer;transition:all .12s;border:none;background:transparent;font-family:var(--f)}
+.notify-tab:hover{color:var(--c8)}
+.notify-tab.active{background:var(--sf);color:var(--pr);box-shadow:0 1px 2px rgba(0,0,0,.06)}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .2s ease forwards}
+</style>
+</head>
+<body>
+
+<div class="ct fade-in">
+  <!-- Breadcrumb -->
+  <nav style="display:flex;align-items:center;gap:4px;font:500 12px/1 var(--f);color:var(--c5);margin-bottom:16px">
+    <a href="../demo-index.html" style="color:var(--c5);text-decoration:none;transition:color .12s" onmouseover="this.style.color='var(--pr)'" onmouseout="this.style.color='var(--c5)'">绩效工作台</a>
+    <span style="color:var(--c3)">/</span>
+    <span style="color:var(--c8);font-weight:600">飞书消息通知</span>
+  </nav>
+
+  <!-- 标题 -->
+  <div style="margin-bottom:16px">
+    <h1 style="font:700 20px/1.2 var(--f);color:var(--c9);margin:0 0 4px">📨 飞书消息通知</h1>
+    <p style="font:400 13px/1 var(--f);color:var(--c5);margin:0">模拟员工和管理者在飞书中收到的绩效相关通知卡片</p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="notify-tabs" id="notifyTabs">
+    <button class="notify-tab active" onclick="switchTab('employee',this)">👤 员工</button>
+    <button class="notify-tab" onclick="switchTab('manager',this)">👥 管理者 / HR</button>
+  </div>
+
+  <div id="app"></div>
+</div>
+
+<script src="../navigation.js"></script>
+<script>
+GHR_NAV.init('perf', '飞书通知');
+
+var EMPLOYEE=[
+  {
+    tag:'目标制定',tagBg:'var(--pr50)',tagColor:'var(--pr)',
+    title:'📝【绩效】请制定6月目标',
+    content:'请在 <b>截止日期前</b> 完成当期绩效目标填写。逾期未填写将锁定绩效结果并默认评定为符合预期-。',
+    action:'去处理',link:'demo-goal-employee.html',deadline:'截止 6/30',borderColor:'var(--ac)'
+  },
+  {
+    tag:'审批通知',tagBg:'var(--em50)',tagColor:'var(--em700)',
+    title:'📋【绩效】6月目标审批通过',
+    content:'你提交的当期绩效目标已通过直线上级审批，现已进入执行阶段。可在工作台查看目标详情。',
+    action:'去查看',link:'demo-workbench-my-goal.html',deadline:'06/20 14:30',borderColor:'var(--c3)'
+  },
+  {
+    tag:'目标驳回',tagBg:'var(--ro50)',tagColor:'var(--ro)',
+    title:'📝【绩效】6月目标已驳回，请修改后重新提交',
+    content:'你的绩效目标被直线上级驳回。请根据驳回意见修改后于 <b>截止日期前</b> 重新提交，逾期将影响考核进度。',
+    action:'去修改',link:'demo-goal-employee.html',deadline:'截止 6/28',borderColor:'var(--ro)'
+  },
+  {
+    tag:'绩效考核',tagBg:'var(--pr50)',tagColor:'var(--pr)',
+    title:'📊【绩效】请完成绩效自评',
+    content:'请在 <b>截止日期前</b> 完成当期绩效自评。逾期未完成将无法参与本期绩效考核排名。',
+    action:'去处理',link:'demo-eval-self.html',deadline:'截止 7/10',borderColor:'var(--ac)'
+  },
+  {
+    tag:'考核驳回',tagBg:'var(--ro50)',tagColor:'var(--ro)',
+    title:'📊【绩效】自评已驳回，请修改后重新提交',
+    content:'你的绩效自评被直线上级驳回。请根据驳回意见补充完善后于 <b>截止日期前</b> 重新提交。',
+    action:'去修改',link:'demo-eval-self.html',deadline:'截止 7/12',borderColor:'var(--ro)'
+  },
+  {
+    tag:'绩效面谈',tagBg:'var(--vi50)',tagColor:'var(--vi)',
+    title:'💬【绩效】请填写面谈记录',
+    content:'你的直线上级已完成绩效面谈，请在 <b>截止日期前</b> 填写面谈记录。逾期未填写将自动跳过面谈流程。',
+    action:'去处理',link:'demo-interview-employee.html',deadline:'截止 7/15',borderColor:'var(--ac)'
+  },
+  {
+    tag:'结果确认',tagBg:'var(--pr50)',tagColor:'var(--pr)',
+    title:'✅【绩效】请确认绩效结果',
+    content:'你的当期绩效结果已审定，请在 <b>截止日期前</b> 完成确认。逾期未确认系统将自动视为认可并完成流程。',
+    action:'去处理',link:'demo-confirm-employee.html',deadline:'截止 7/5',borderColor:'var(--ac)'
+  },
+  {
+    tag:'结果通知',tagBg:'var(--em50)',tagColor:'var(--em700)',
+    title:'🏆【绩效】考核结果已出',
+    content:'你的当期绩效考核已完成，可前往工作台查看综合等级、得分明细及审定意见。',
+    action:'去查看',link:'demo-workbench-my-result.html',deadline:'06/25 09:00',borderColor:'var(--c3)'
+  }
+];
+
+var MANAGER=[
+  {
+    tag:'目标审批',tagBg:'var(--pr50)',tagColor:'var(--pr)',
+    title:'📝【绩效】请审批下属目标',
+    content:'多名下属已提交当期绩效目标，请在 <b>截止日期前</b> 完成审批。逾期未审批将自动通过。',
+    action:'去审批',link:'../manager/demo-goal-approve-direct.html',deadline:'截止 6/28',borderColor:'var(--ac)'
+  },
+  {
+    tag:'绩效评分',tagBg:'var(--pr50)',tagColor:'var(--pr)',
+    title:'📊【绩效】请完成下属评分',
+    content:'多名下属已完成绩效自评，请在 <b>截止日期前</b> 完成评分。逾期未评将影响考核进度。',
+    action:'去评分',link:'../manager/demo-eval-direct.html',deadline:'截止 7/12',borderColor:'var(--ac)'
+  },
+  {
+    tag:'结果审定',tagBg:'var(--ac50)',tagColor:'var(--ac700)',
+    title:'📐【绩效】请完成结果审定',
+    content:'团队成员已完成绩效评分，请在 <b>截止日期前</b> 完成结果审定。请关注强制分布合规性。',
+    action:'去审定',link:'../manager/demo-ratify-direct.html',deadline:'截止 7/18',borderColor:'var(--ac)'
+  },
+  {
+    tag:'强制分布',tagBg:'var(--ro50)',tagColor:'var(--ro)',
+    title:'📐【绩效】等级分布偏离，请调整',
+    content:'当前审定结果的等级分布不符合强制分布规则，部分等级超出比例上限或低于下限。请调整后重新校验。',
+    action:'去调整',link:'../manager/demo-ratify-direct.html',deadline:'截止 7/18',borderColor:'var(--ro)'
+  },
+  {
+    tag:'面谈审批',tagBg:'var(--vi50)',tagColor:'var(--vi)',
+    title:'💬【绩效】请审批下属面谈记录',
+    content:'多名下属已提交绩效面谈记录，请在 <b>截止日期前</b> 完成审批。',
+    action:'去审批',link:'../manager/demo-interview-approve.html',deadline:'截止 7/22',borderColor:'var(--ac)'
+  },
+  {
+    tag:'HRBP审批',tagBg:'var(--vi50)',tagColor:'var(--vi)',
+    title:'📋【绩效】A级评定待HRBP审批',
+    content:'有下属评定为A级（远超预期/超出预期），需HRBP审批确认。请在 <b>截止日期前</b> 完成审批。',
+    action:'去审批',link:'../manager/demo-ratify-hrbp.html',deadline:'截止 7/20',borderColor:'var(--ac)'
+  },
+  {
+    tag:'异常提醒',tagBg:'var(--ro50)',tagColor:'var(--ro)',
+    title:'⚠【绩效】员工连续低绩效，请关注',
+    content:'有员工连续多个考核周期评定低于预期，建议关注其绩效改进计划执行情况，必要时介入辅导。',
+    action:'去查看',link:'../manager/demo-eval-direct.html',deadline:'06/30 10:00',borderColor:'var(--ro)'
+  },
+  {
+    tag:'结果通知',tagBg:'var(--em50)',tagColor:'var(--em700)',
+    title:'🏆【绩效】团队考核结果已确认',
+    content:'你的团队当期绩效考核结果已全部确认完毕，可前往审定页面查看各等级分布及详细信息。',
+    action:'去查看',link:'../manager/demo-ratify-direct.html',deadline:'07/05 16:00',borderColor:'var(--c3)'
+  }
+];
+
+function renderCards(data){
+  var html='';
+  data.forEach(function(n){
+    html+='<div class="notify-card" style="border-left-color:'+n.borderColor+'">';
+    html+='<div class="notify-card-hd">';
+    html+='<span class="notify-card-tag" style="background:'+n.tagBg+';color:'+n.tagColor+'">'+n.tag+'</span>';
+    html+='<span class="notify-card-title">'+n.title+'</span>';
+    html+='</div>';
+    html+='<div class="notify-card-bd">'+n.content+'</div>';
+    html+='<div class="notify-card-ft">';
+    html+='<a class="notify-card-action" href="'+n.link+'">'+n.action+'</a>';
+    html+='<span class="notify-card-time">'+n.deadline+'</span>';
+    html+='</div></div>';
+  });
+  document.getElementById('app').innerHTML=html;
+}
+
+function switchTab(tab,el){
+  var tabs=document.querySelectorAll('.notify-tab');
+  for(var i=0;i<tabs.length;i++)tabs[i].classList.remove('active');
+  el.classList.add('active');
+  renderCards(tab==='employee'?EMPLOYEE:MANAGER);
+}
+
+renderCards(EMPLOYEE);
+</script>
+</body>
+</html>

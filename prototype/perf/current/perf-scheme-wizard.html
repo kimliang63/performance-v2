@@ -623,7 +623,7 @@ function renderBasicInfo(ct){
 
 // ═══ 考核组 ═══
 function renderGroups(ct){
-  const RULE_FIELDS=['部门','职位','职级','划分区域','人员类型','人员状态','手动选择人员'];
+  const RULE_FIELDS=['部门','职位','职级','划分区域','人员类型','人员状态','选择人员','排除人员'];
   ct.innerHTML=`<div class="fi">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
       <span style="font:600 15px/1 var(--f);color:var(--c9)">考核组配置</span>
@@ -649,10 +649,11 @@ function renderGroups(ct){
         <div style="padding-bottom:12px;border-bottom:1px solid var(--dv);margin-bottom:12px">
           <div style="font:600 12px/1 var(--f);color:var(--c6);margin-bottom:10px">二、添加人员规则</div>
           ${grp.rules.map((r,ri)=>{
-            const isManual=r.field==='手动选择人员';
+            const isManual=r.field==='选择人员';
+            const isExclude=r.field==='排除人员';
             return `<div class="rule-row">
-            <select onchange="form.groups[${gi}].rules[${ri}].field=this.value;form.groups[${gi}].rules[${ri}].val='';render()"><option ${r.field==='部门'?'selected':''}>部门</option><option ${r.field==='职位'?'selected':''}>职位</option><option ${r.field==='职级'?'selected':''}>职级</option><option ${r.field==='划分区域'?'selected':''}>划分区域</option><option ${r.field==='人员类型'?'selected':''}>人员类型</option><option ${r.field==='人员状态'?'selected':''}>人员状态</option><option ${r.field==='手动选择人员'?'selected':''}>手动选择人员</option></select>
-            <input value="${r.val}" style="flex:1;min-width:${isManual?'200':'120'}px" placeholder="${isManual?'搜索并选择人员…':'请输入'}" oninput="form.groups[${gi}].rules[${ri}].val=this.value">
+            <select onchange="form.groups[${gi}].rules[${ri}].field=this.value;form.groups[${gi}].rules[${ri}].val='';render()"><option ${r.field==='部门'?'selected':''}>部门</option><option ${r.field==='职位'?'selected':''}>职位</option><option ${r.field==='职级'?'selected':''}>职级</option><option ${r.field==='划分区域'?'selected':''}>划分区域</option><option ${r.field==='人员类型'?'selected':''}>人员类型</option><option ${r.field==='人员状态'?'selected':''}>人员状态</option><option ${r.field==='选择人员'?'selected':''}>选择人员</option><option ${r.field==='排除人员'?'selected':''}>排除人员</option></select>
+            <input value="${r.val}" style="flex:1;min-width:${isManual||isExclude?'200':'120'}px" placeholder="${isManual?'搜索并选择人员…':isExclude?'搜索并排除人员…':'请输入'}" oninput="form.groups[${gi}].rules[${ri}].val=this.value">
             <button class="btn btn-s btn-sm" style="color:var(--ro)" onclick="form.groups[${gi}].rules.splice(${ri},1);render()">${I.trash}</button>
           </div>`}).join('')}
           <button class="btn btn-s btn-sm" onclick="form.groups[${gi}].rules.push({field:'部门',op:'等于',val:''});render()">${I.plus} 添加规则</button>

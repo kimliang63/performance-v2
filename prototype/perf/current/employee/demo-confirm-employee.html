@@ -91,15 +91,16 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .eval-tag.normal{background:var(--c1);color:var(--c6)}
 .eval-tag.poor{background:var(--ro50);color:var(--ro)}
 
-/* ═══ CONFIRM OPTION ═══ */
-.confirm-opt{display:flex;align-items:flex-start;gap:10px;padding:14px 16px;border:1px solid var(--c2);border-radius:var(--r2);cursor:pointer;transition:all .12s}
-.confirm-opt+.confirm-opt{margin-top:var(--sp-sm)}
-.confirm-opt:hover{border-color:var(--pr200)}
-.confirm-opt.sel{border-color:var(--pr);background:var(--pr50)}
-.confirm-opt-dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--c3);flex-shrink:0;margin-top:1px;transition:all .12s}
-.confirm-opt.sel .confirm-opt-dot{border-color:var(--pr);background:var(--pr);box-shadow:inset 0 0 0 3px var(--sf)}
-.confirm-opt-title{font:600 14px/1.3 var(--f);color:var(--c9)}
-.confirm-opt-desc{font:400 12px/1.5 var(--f);color:var(--c5);margin-top:4px}
+/* ═══ CONFIRM BUTTONS ═══ */
+.confirm-btn{flex:1;height:48px;border-radius:var(--r2);font:600 15px/1 var(--f);cursor:pointer;border:2px solid transparent;transition:all .12s;display:flex;align-items:center;justify-content:center}
+.confirm-agree{border-color:var(--em);color:var(--em700);background:var(--sf)}
+.confirm-agree:hover{background:var(--em50)}
+.confirm-agree.sel{background:var(--em);color:#FFF;border-color:var(--em)}
+.confirm-disagree{border-color:var(--ro);color:var(--ro);background:var(--sf)}
+.confirm-disagree:hover{background:var(--ro50)}
+.confirm-disagree.sel{background:var(--ro);color:#FFF;border-color:var(--ro)}
+.confirm-submit{background:var(--pr);color:#FFF;border-color:var(--pr)}
+.confirm-submit:hover{background:var(--pr700)}
 
 /* ═══ AI CHAT ═══ */
 .ai-chat{position:fixed;top:52px;right:0;width:380px;height:calc(100vh - 52px);background:var(--sf);border-left:1px solid var(--dv);z-index:900;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s ease}
@@ -148,17 +149,19 @@ body.chat-open .ai-chat{transform:translateX(0)}
 .ai-toggle svg{width:22px;height:22px;color:#FFF}
 body.chat-open .ai-toggle{display:none}
 
-/* ═══ INLINE APPEAL ═══ */
-.appeal-td{padding:10px 8px !important}
-.appeal-row-ck{width:16px;height:16px;border-radius:3px;border:1.5px solid var(--c3);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .12s}
-.appeal-row-ck.sel{background:var(--pr);border-color:var(--pr)}
-.appeal-row-ck svg{width:10px;height:10px;color:#FFF;display:none}
-.appeal-row-ck.sel svg{display:block}
-tr.appeal-sel{background:var(--pr50)}
-tr.appeal-sel:hover td{background:var(--pr50)}
+/* ═══ APPEAL MODAL ITEMS ═══ */
+.appeal-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--dv);cursor:pointer;transition:background .12s}
+.appeal-item:last-child{border-bottom:none}
+.appeal-item:hover{background:var(--c0)}
+.appeal-item.sel{background:var(--pr50)}
+.appeal-item-ck{width:18px;height:18px;border-radius:4px;border:2px solid var(--c3);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.appeal-item.sel .appeal-item-ck{background:var(--pr);border-color:var(--pr)}
+.appeal-item-ck svg{width:11px;height:11px;color:#FFF;display:none}
+.appeal-item.sel .appeal-item-ck svg{display:block}
+.appeal-item-info{flex:1;min-width:0}
+.appeal-item-name{font:500 13px/1.3 var(--f);color:var(--c8)}
+.appeal-item-meta{font:400 11px/1 var(--f);color:var(--c5);margin-top:2px}
 
-#appealForm{border-top:1px solid var(--dv)}
-.appeal-label{font:500 12px/1 var(--f);color:var(--c6);margin-bottom:8px;display:block}
 .appeal-textarea{width:100%;min-height:100px;border:1px solid var(--c2);border-radius:var(--r1);padding:10px 12px;font:400 13px/1.5 var(--f);color:var(--c8);outline:none;resize:vertical;transition:border-color .15s}
 .appeal-textarea:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 
@@ -198,38 +201,31 @@ tr.appeal-sel:hover td{background:var(--pr50)}
 
   <!-- Confirm Result Card -->
   <div class="card" style="margin-bottom:var(--sp-lg)">
-    <div class="card-bd" style="display:flex;align-items:center;gap:0">
-      <!-- Col 1: 等级 (2) -->
-      <div style="flex:2;text-align:center;padding:0 var(--sp-lg)">
+    <div class="card-bd" style="display:flex;align-items:center;gap:16px">
+      <!-- 综合等级 -->
+      <div style="text-align:center;flex:1">
         <div style="font:400 13px/1 var(--f);color:var(--c5);margin-bottom:4px">综合等级</div>
         <div style="font:700 28px/1 var(--f);color:var(--em700)">符合预期+</div>
       </div>
-      <!-- Col 2: 人员信息 (2) -->
-      <div style="flex:2;min-width:0;border-left:1px solid var(--dv);border-right:1px solid var(--dv);padding:0 var(--sp-lg)">
+      <!-- 人员信息 -->
+      <div style="flex:1;min-width:0;padding:0 16px;border-left:1px solid var(--dv)">
         <div style="font:500 15px/1.3 var(--f);color:var(--c8);margin-bottom:4px">张明</div>
         <div style="font:400 13px/1.4 var(--f);color:var(--c6)">产品部 · 高级产品经理</div>
         <div style="font:400 13px/1 var(--f);color:var(--c5);margin-top:2px">2026年Q2</div>
       </div>
-      <!-- Col 3: 操作 (4) -->
-      <div style="flex:4;min-width:0;display:flex;flex-direction:column;padding-left:var(--sp-lg)">
-        <div class="confirm-opt sel" onclick="selectOpt(this,1)">
-          <div class="confirm-opt-dot"></div>
-          <div>
-            <div class="confirm-opt-title">我认可上述考核结果</div>
-          </div>
-        </div>
-        <div class="confirm-opt" onclick="selectOpt(this,2)">
-          <div class="confirm-opt-dot"></div>
-          <div>
-            <div class="confirm-opt-title">我对上述考核结果有异议，申请申诉</div>
-          </div>
-        </div>
-      </div>
-      <!-- Col 4: 提交按钮 (1) -->
-      <div style="flex:1;display:flex;align-items:center;justify-content:center;padding-left:var(--sp-lg)">
-        <button class="btn btn-p" onclick="submitConfirm()">提交</button>
+      <!-- 三按钮 -->
+      <div style="flex:2;display:flex;gap:12px">
+        <button class="confirm-btn confirm-agree sel" id="btnAgree" onclick="selectOpt(1)">认可结果</button>
+        <button class="confirm-btn confirm-disagree" id="btnDisagree" onclick="selectOpt(2)">有异议，申请申诉</button>
+        <button class="confirm-btn confirm-submit" onclick="submitConfirm()">提交</button>
       </div>
     </div>
+  </div>
+
+  <!-- Auto-confirm hint -->
+  <div style="display:flex;align-items:center;gap:8px;padding:10px 16px;margin-bottom:16px;background:var(--ac50);border:1px solid var(--ac100);border-radius:var(--r2);font:400 13px/1.4 var(--f);color:var(--ac700)">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    提示：如未在 5 个工作日内确认结果，系统将自动视为认可并完成确认。
   </div>
 
   <!-- Results Table -->
@@ -241,7 +237,6 @@ tr.appeal-sel:hover td{background:var(--pr50)}
     <table>
       <thead>
         <tr>
-          <th id="appealColHead" style="width:36px;text-align:center;display:none">选择</th>
           <th style="width:180px">名称</th>
           <th style="width:55px">权重</th>
           <th style="width:80px">类型</th>
@@ -251,15 +246,12 @@ tr.appeal-sel:hover td{background:var(--pr50)}
         </tr>
       </thead>
       <tbody>
-        <tr class="mod-row"><td colspan="7"><div class="results-mod">
+        <tr class="mod-row"><td colspan="6"><div class="results-mod">
           <div class="results-mod-dot" style="background:var(--pr)"></div>
           <span class="results-mod-name">KPI</span>
           <span class="results-mod-weight">30%</span>
         </div></td></tr>
         <tr>
-          <td class="appeal-td" style="text-align:center;display:none">
-            <div class="appeal-row-ck" data-id="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
-          </td>
           <td><span style="font-weight:500;color:var(--c8)">资源利用率（通用）</span></td>
           <td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">5%</span></td>
           <td><span style="display:inline-block;padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)">定量</span></td>
@@ -268,9 +260,6 @@ tr.appeal-sel:hover td{background:var(--pr50)}
           <td><span class="eval-tag excellent">符合预期+</span></td>
         </tr>
         <tr>
-          <td class="appeal-td" style="text-align:center;display:none">
-            <div class="appeal-row-ck" data-id="2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
-          </td>
           <td><span style="font-weight:500;color:var(--c8)">HRAS UAT用户验收首次通过率</span></td>
           <td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">10%</span></td>
           <td><span style="display:inline-block;padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)">定量</span></td>
@@ -279,9 +268,6 @@ tr.appeal-sel:hover td{background:var(--pr50)}
           <td><span class="eval-tag good">符合预期</span></td>
         </tr>
         <tr>
-          <td class="appeal-td" style="text-align:center;display:none">
-            <div class="appeal-row-ck" data-id="3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
-          </td>
           <td><span style="font-weight:500;color:var(--c8)">HRAS需求评审及时率</span></td>
           <td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">15%</span></td>
           <td><span style="display:inline-block;padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)">定量</span></td>
@@ -289,15 +275,12 @@ tr.appeal-sel:hover td{background:var(--pr50)}
           <td style="font-family:var(--m);font-weight:500;color:var(--c8)">96%</td>
           <td><span class="eval-tag good">符合预期</span></td>
         </tr>
-        <tr class="mod-row"><td colspan="7"><div class="results-mod">
+        <tr class="mod-row"><td colspan="6"><div class="results-mod">
           <div class="results-mod-dot" style="background:var(--em)"></div>
           <span class="results-mod-name">KPA</span>
           <span class="results-mod-weight">70%</span>
         </div></td></tr>
         <tr>
-          <td class="appeal-td" style="text-align:center;display:none">
-            <div class="appeal-row-ck" data-id="4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
-          </td>
           <td><span style="font-weight:500;color:var(--c8)">HRAS产品管理规范</span></td>
           <td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">10%</span></td>
           <td><span style="display:inline-block;padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">定性</span></td>
@@ -306,9 +289,6 @@ tr.appeal-sel:hover td{background:var(--pr50)}
           <td><span class="eval-tag excellent">符合预期+</span></td>
         </tr>
         <tr>
-          <td class="appeal-td" style="text-align:center;display:none">
-            <div class="appeal-row-ck" data-id="5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
-          </td>
           <td><span style="font-weight:500;color:var(--c8)">日常滚动需求响应</span></td>
           <td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">10%</span></td>
           <td><span style="display:inline-block;padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">定性</span></td>
@@ -317,9 +297,6 @@ tr.appeal-sel:hover td{background:var(--pr50)}
           <td><span class="eval-tag excellent">符合预期+</span></td>
         </tr>
         <tr>
-          <td class="appeal-td" style="text-align:center;display:none">
-            <div class="appeal-row-ck" data-id="6"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
-          </td>
           <td><span style="font-weight:500;color:var(--c8)">HR ONE 绩效重构事项推进</span></td>
           <td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">25%</span></td>
           <td><span style="display:inline-block;padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">定性</span></td>
@@ -328,9 +305,6 @@ tr.appeal-sel:hover td{background:var(--pr50)}
           <td><span class="eval-tag excellent">符合预期+</span></td>
         </tr>
         <tr>
-          <td class="appeal-td" style="text-align:center;display:none">
-            <div class="appeal-row-ck" data-id="7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
-          </td>
           <td><span style="font-weight:500;color:var(--c8)">AI应用项目探索与落地推广</span></td>
           <td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">25%</span></td>
           <td><span style="display:inline-block;padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">定性</span></td>
@@ -340,21 +314,39 @@ tr.appeal-sel:hover td{background:var(--pr50)}
         </tr>
       </tbody>
     </table>
+</div>
+</div>
 
-    <!-- Inline Appeal Form -->
-    <div id="appealForm" style="display:none;padding:20px 24px">
-      <div id="appealItemCount" style="font:400 11px/1 var(--f);color:var(--pr);margin-bottom:16px">已选 0 项</div>
 
+<!-- Appeal Modal -->
+<div id="appealModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:2000;align-items:center;justify-content:center">
+  <div style="background:var(--sf);border-radius:var(--r4);box-shadow:0 20px 60px rgba(0,0,0,.15);width:560px;max-height:80vh;overflow-y:auto">
+    <div style="padding:18px 24px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between">
+      <span style="font:600 16px/1 var(--f);color:var(--c9)">绩效结果申诉</span>
+      <button onclick="closeAppealModal()" style="width:28px;height:28px;border:none;background:transparent;cursor:pointer;color:var(--c4);font-size:18px">&times;</button>
+    </div>
+    <div style="padding:20px 24px">
+      <!-- 异议项 -->
       <div style="margin-bottom:16px">
-        <label class="appeal-label">申诉原因 <span style="color:var(--ro)">*</span></label>
+        <div style="font:500 12px/1 var(--f);color:var(--c6);margin-bottom:8px">选择异议项 <span style="color:var(--ro)">*</span></div>
+        <div id="appealItems" style="max-height:200px;overflow-y:auto;border:1px solid var(--c2);border-radius:var(--r1)"></div>
+        <div id="appealItemCount" style="font:400 11px/1 var(--f);color:var(--c5);margin-top:4px">已选 0 项</div>
+      </div>
+      <!-- 申诉原因 -->
+      <div style="margin-bottom:16px">
+        <div style="font:500 12px/1 var(--f);color:var(--c6);margin-bottom:8px">申诉原因 <span style="color:var(--ro)">*</span></div>
         <textarea class="appeal-textarea" id="appealReason" placeholder="请说明不同意的原因，至少10个字..."></textarea>
         <div id="appealReasonErr" style="font:400 11px/1 var(--f);color:var(--ro);margin-top:4px;display:none">请至少输入 10 个字</div>
       </div>
-
+      <!-- 附件 -->
       <div>
-        <label class="appeal-label">佐证材料（选填，最多 5 份）</label>
+        <div style="font:500 12px/1 var(--f);color:var(--c6);margin-bottom:8px">佐证材料（选填，最多 5 份）</div>
         <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px" id="appealFilesGrid"></div>
       </div>
+    </div>
+    <div style="padding:14px 24px;border-top:1px solid var(--dv);display:flex;justify-content:flex-end;gap:8px">
+      <button class="btn btn-s" onclick="closeAppealModal()">取消</button>
+      <button class="btn btn-p" onclick="submitAppeal()">提交申诉</button>
     </div>
   </div>
 </div>
@@ -381,53 +373,50 @@ var selectedItems = [];
 var uploadedFiles = [null, null, null, null, null];
 
 // ═══ 选择选项联动 ═══
-function selectOpt(el, n) {
-  document.querySelectorAll('.confirm-opt').forEach(function(o) { o.classList.remove('sel'); });
-  el.classList.add('sel');
+function selectOpt(n) {
   selectedOpt = n;
   selectedItems = [];
   uploadedFiles = [null, null, null, null, null];
-  toggleAppealForm(n === 2);
+  document.getElementById('btnAgree').classList.toggle('sel', n === 1);
+  document.getElementById('btnDisagree').classList.toggle('sel', n === 2);
 }
 
-function toggleAppealForm(show) {
-  // 勾选列
-  document.querySelectorAll('.appeal-td').forEach(function(td) { td.style.display = show ? '' : 'none'; });
-  document.getElementById('appealColHead').style.display = show ? '' : 'none';
-  document.getElementById('appealHint').style.display = show ? 'inline' : 'none';
-  // 申诉表单
-  document.getElementById('appealForm').style.display = show ? 'block' : 'none';
-  // 重置状态
-  document.querySelectorAll('.appeal-row-ck').forEach(function(ck) { ck.classList.remove('sel'); });
-  document.querySelectorAll('tr.appeal-sel').forEach(function(tr) { tr.classList.remove('appeal-sel'); });
+function openAppealModal() {
+  selectedItems = [];
+  uploadedFiles = [null, null, null, null, null];
   document.getElementById('appealReason').value = '';
   document.getElementById('appealReasonErr').style.display = 'none';
+  renderAppealItems();
   renderAppealFiles();
-  updateAppealCount();
+  document.getElementById('appealModal').style.display = 'flex';
 }
 
-// ═══ 勾选行 ═══
-document.addEventListener('click', function(e) {
-  var ck = e.target.closest('.appeal-row-ck');
-  if (!ck) return;
-  e.stopPropagation();
-  var id = parseInt(ck.dataset.id);
-  var idx = selectedItems.indexOf(id);
-  if (idx >= 0) {
-    selectedItems.splice(idx, 1);
-    ck.classList.remove('sel');
-    ck.closest('tr').classList.remove('appeal-sel');
-  } else {
-    selectedItems.push(id);
-    ck.classList.add('sel');
-    ck.closest('tr').classList.add('appeal-sel');
-  }
-  updateAppealCount();
-});
+function closeAppealModal() {
+  document.getElementById('appealModal').style.display = 'none';
+}
 
-function updateAppealCount() {
+function toggleAppealItem(id) {
+  var idx = selectedItems.indexOf(id);
+  if (idx >= 0) { selectedItems.splice(idx, 1); }
+  else { selectedItems.push(id); }
+  renderAppealItems();
+}
+
+function renderAppealItems() {
+  var html = '';
+  SCORE_ITEMS.forEach(function(item) {
+    var sel = selectedItems.includes(item.id);
+    html += '<div class="appeal-item' + (sel ? ' sel' : '') + '" onclick="toggleAppealItem(' + item.id + ')">';
+    html += '<div class="appeal-item-ck"><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2.5\'><polyline points=\'20 6 9 17 4 12\'/></svg></div>';
+    html += '<div class="appeal-item-info"><div class="appeal-item-name">' + item.module + ' · ' + item.name + '</div><div class="appeal-item-meta">' + item.type + (item.score ? ' → ' + item.score : '') + '</div></div>';
+    html += '<span class="appeal-item-grade eval-tag ' + item.gradeCls + '">' + item.grade + '</span>';
+    html += '</div>';
+  });
+  document.getElementById('appealItems').innerHTML = html;
   document.getElementById('appealItemCount').textContent = '已选 ' + selectedItems.length + ' 项';
 }
+
+
 
 // ═══ 文件上传 ═══
 function renderAppealFiles() {
@@ -466,22 +455,27 @@ function submitConfirm() {
   if (selectedOpt === 1) {
     showToast('已确认绩效结果', 'success');
   } else {
-    var reason = document.getElementById('appealReason').value.trim();
-    var hasErr = false;
-    if (selectedItems.length === 0) {
-      showToast('请至少选择 1 项异议得分项', 'warn');
-      hasErr = true;
-    }
-    if (reason.length < 10) {
-      document.getElementById('appealReasonErr').style.display = 'block';
-      hasErr = true;
-    } else {
-      document.getElementById('appealReasonErr').style.display = 'none';
-    }
-    if (hasErr) return;
-    var fileCount = uploadedFiles.filter(Boolean).length;
-    showToast('已提交申诉 · ' + selectedItems.length + ' 项异议' + (fileCount > 0 ? ' · ' + fileCount + ' 份材料' : '') + ' · HRBP将在3个工作日内处理', 'warn');
+    openAppealModal();
   }
+}
+
+function submitAppeal() {
+  var reason = document.getElementById('appealReason').value.trim();
+  var hasErr = false;
+  if (selectedItems.length === 0) {
+    showToast('请至少选择 1 项异议得分项', 'warn');
+    hasErr = true;
+  }
+  if (reason.length < 10) {
+    document.getElementById('appealReasonErr').style.display = 'block';
+    hasErr = true;
+  } else {
+    document.getElementById('appealReasonErr').style.display = 'none';
+  }
+  if (hasErr) return;
+  var fileCount = uploadedFiles.filter(Boolean).length;
+  closeAppealModal();
+  showToast('已提交申诉 · ' + selectedItems.length + ' 项异议' + (fileCount > 0 ? ' · ' + fileCount + ' 份材料' : '') + ' · HRBP将在3个工作日内处理', 'warn');
 }
 
 // ═══ AI CHAT ═══

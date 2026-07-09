@@ -7,14 +7,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../mobile-base.css">
 <style>
-.section-hd{display:flex;align-items:center;gap:6px;margin:14px 0 8px}
-.section-ic{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.section-ic svg{width:12px;height:12px;color:#FFF}
-.section-name{font:600 var(--fs-base)/1 var(--f);color:var(--c8)}
-.tip{font:400 var(--fs-sm)/1.3 var(--f);color:var(--c5);padding:8px 10px;background:var(--pr50);border-radius:var(--r1);margin-bottom:8px;display:flex;align-items:flex-start;gap:6px}
+.tip{font:400 var(--fs-base)/1.3 var(--f);color:var(--c5);padding:8px 10px;background:var(--pr50);border-radius:var(--r1);margin-bottom:8px;display:flex;align-items:flex-start;gap:6px}
 .tip svg{width:12px;height:12px;flex-shrink:0;margin-top:1px;color:var(--pr)}
-.chart-wrap{background:var(--sf);border-radius:var(--r2);padding:14px 16px;margin-bottom:10px;box-shadow:var(--sx);border:1px solid var(--bd)}
-.chart-wrap canvas{width:100%!important;height:160px!important}
+.grade-tag{display:inline-block;padding:2px 8px;border-radius:3px;font-weight:500;white-space:nowrap}
+.grade-tag.meet-plus{background:var(--pr50);color:var(--pr700)}
+.grade-tag.meet{background:var(--em50);color:var(--em700)}
+.grade-tag.meet-minus{background:var(--ac50);color:var(--ac700)}
+.bottom-bar .weui-btn{flex:1}
 </style>
 </head>
 <body>
@@ -35,61 +34,57 @@
   </div>
 </div>
 <div class="toast" id="toast"></div>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
 <script src="../mobile-base.js"></script>
 <script>
 var MOCK={
   employee:{name:'张明',dept:'产品部',title:'高级产品经理'},
-  cycle:'2026年Q2',interviewer:'王总监',interviewType:'定期面谈',
-  monthlyData:[{month:'6月',score:3.95,grade:'超出预期'},{month:'5月',score:3.70,grade:'符合预期+'},{month:'4月',score:3.82,grade:'符合预期+'}]
+  cycle:'2026年Q2',interviewer:'王总监',interviewType:'定期面谈'
 };
 function render(){
   var h='';
   // Info
-  h+='<div class="weui-panel weui-panel_access" style="margin-bottom:10px"><div class="weui-cells"><div class="weui-cell"><div class="weui-cell__hd"><div style="width:36px;height:36px;border-radius:50%;background:var(--pr50);display:flex;align-items:center;justify-content:center;font:700 var(--fs-lg)/1 var(--f);color:var(--pr);margin-right:12px">'+MOCK.employee.name[0]+'</div></div><div class="weui-cell__bd"><div style="font:600 var(--fs-base)/1 var(--f);color:var(--c9)">'+MOCK.employee.name+'</div><div style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5);margin-top:2px">'+MOCK.employee.title+' · '+MOCK.employee.dept+'</div></div><div class="weui-cell__ft"><span class="weui-badge" style="background:var(--pr50);color:var(--pr)">'+MOCK.cycle+'</span></div></div></div></div>';
+  h+='<div class="weui-panel weui-panel_access" style="margin-bottom:10px"><div class="weui-cells"><div class="weui-cell"><div class="weui-cell__hd"><div style="width:36px;height:36px;border-radius:50%;background:var(--pr50);display:flex;align-items:center;justify-content:center;font:700 var(--fs-lg)/1 var(--f);color:var(--pr);margin-right:12px">'+MOCK.employee.name[0]+'</div></div><div class="weui-cell__bd"><div style="font:600 var(--fs-base)/1 var(--f);color:var(--c9)">'+MOCK.employee.name+'</div><div style="font:400 var(--fs-base)/1 var(--f);color:var(--c5);margin-top:2px">'+MOCK.employee.title+' · '+MOCK.employee.dept+'</div></div><div class="weui-cell__ft"><span class="weui-badge" style="background:var(--pr50);color:var(--pr)">'+MOCK.cycle+'</span></div></div><div class="weui-cell" style="padding-top:2px;padding-bottom:6px"><div class="weui-cell__bd" style="font:400 var(--fs-base)/1.5 var(--f);color:var(--c5)"><div>考核方案：产品部2026年Q2绩效考核</div><div>面谈人：'+MOCK.interviewer+'（直接上级） · '+MOCK.interviewType+' · 2026-06-20 14:00</div></div></div></div></div>';
 
-  // Monthly trend chart
-  h+='<div class="chart-wrap"><div style="font:600 var(--fs-base)/1 var(--f);color:var(--c8);margin-bottom:8px">月度绩效趋势</div><canvas id="chartMonthly"></canvas></div>';
+  // Monthly trend - WeUI list
+  h+='<div class="weui-panel weui-panel_access" style="margin-bottom:10px">';
+  h+='<div class="weui-panel__hd" style="font:600 var(--fs-base)/1 var(--f);color:var(--c9)">月度绩效结果</div>';
+  h+='<div class="weui-cells">';
+  var ms=['1月','2月','3月','4月','5月','6月'];
+  var gs=[{g:'符合预期+',c:'meet-plus'},{g:'符合预期',c:'meet'},{g:'符合预期+',c:'meet-plus'},{g:'符合预期-',c:'meet-minus'},{g:'符合预期-',c:'meet-minus'},{g:'符合预期',c:'meet'}];
+  for(var i=0;i<ms.length;i++){
+    h+='<div class="weui-cell"><div class="weui-cell__bd" style="font:500 var(--fs-base)/1 var(--f);color:var(--c8)">'+ms[i]+'</div><div class="weui-cell__ft"><span class="grade-tag '+gs[i].c+'">'+gs[i].g+'</span></div></div>';
+  }
+  h+='</div></div>';
 
   // Interview confirm
-  h+='<div class="weui-cells__title" style="font:600 var(--fs-base)/1 var(--f);color:var(--c8);padding:0 0 8px">面谈确认</div>';
-  h+='<div class="weui-cells" style="margin-bottom:10px"><div class="weui-cell weui-cell_select weui-cell_select-after"><div class="weui-cell__hd" style="margin-right:8px"><span style="color:var(--ro)">*</span></div><div class="weui-cell__bd" style="font:500 var(--fs-base)/1 var(--f);color:var(--c8)">直线上级是否有进行面谈？</div><div class="weui-cell__ft"><select class="weui-select"><option value="">请选择</option><option value="1on1" selected>是，一对一面谈</option><option value="phone">是，电话面谈</option><option value="no">否</option></select></div></div></div>';
+  h+='<div class="weui-panel weui-panel_access" style="margin-bottom:10px"><div class="weui-panel__hd" style="display:flex;align-items:center;gap:8px;padding:12px 16px 0"><span style="width:24px;height:24px;border-radius:6px;background:var(--ac);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span style="font:600 var(--fs-base)/1 var(--f);color:var(--c9)">面谈确认</span></div><div class="weui-cells"><div class="weui-cell weui-cell_access" onclick="selectInterviewType(this,\'1on1\')"><div class="weui-cell__bd" style="font:500 var(--fs-base)/1 var(--f);color:var(--c8)">是，一对一面谈</div><div class="weui-cell__ft"><span class="sel-mark" style="color:var(--em);font-weight:700;display:block">✓</span></div></div><div class="weui-cell weui-cell_access" onclick="selectInterviewType(this,\'phone\')"><div class="weui-cell__bd" style="font:500 var(--fs-base)/1 var(--f);color:var(--c8)">是，电话面谈</div><div class="weui-cell__ft"><span class="sel-mark" style="display:none">✓</span></div></div><div class="weui-cell weui-cell_access" onclick="selectInterviewType(this,\'no\')"><div class="weui-cell__bd" style="font:500 var(--fs-base)/1 var(--f);color:var(--c8)">否</div><div class="weui-cell__ft"><span class="sel-mark" style="display:none">✓</span></div></div></div></div>';
 
   // Praises
-  h+='<div class="section-hd"><div class="section-ic" style="background:var(--em)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg></div><span class="section-name">点三个赞</span></div>';
-  h+='<div class="tip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>每行一项，不少于三个</div>';
-  h+='<textarea class="weui-textarea" style="min-height:80px;margin-bottom:10px;font-size:var(--fs-sm)" placeholder="每行一项，至少填写3项&#10;如：&#10;1. 感谢上级在XX方面的指导&#10;2. 感谢上级在XX方面的支持&#10;3. 感谢上级在XX方面的鼓励">感谢王总在产品战略方向上的清晰指导，帮助我更好地理解公司业务全局。\n感谢王总在跨部门协调中的大力支持，为产品推进扫清了障碍。\n感谢王总在团队管理方法上的分享，让我在带团队方面有了新的思路。</textarea>';
+  h+='<div class="weui-panel weui-panel_access" style="margin-bottom:10px"><div class="weui-panel__hd" style="display:flex;align-items:center;gap:8px;padding:12px 16px 0"><span style="width:24px;height:24px;border-radius:6px;background:var(--em);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg></span><span style="font:600 var(--fs-base)/1 var(--f);color:var(--c9)">点三个赞</span></div><div class="weui-cells"><div class="weui-cell"><div style="width:100%"><div class="tip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>每行一项，不少于三个</div><textarea class="weui-textarea" style="min-height:80px;font-size:var(--fs-base)" placeholder="每行一项，至少填写3项&#10;如：&#10;1. 感谢上级在XX方面的指导&#10;2. 感谢上级在XX方面的支持&#10;3. 感谢上级在XX方面的鼓励">感谢王总在产品战略方向上的清晰指导。\n感谢王总在跨部门协调中的大力支持。</textarea></div></div></div></div>';
 
   // Turns
-  h+='<div class="section-hd"><div class="section-ic" style="background:var(--ac)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></div><span class="section-name">拍三个转</span></div>';
-  h+='<div class="tip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>每行一项，不少于三个</div>';
-  h+='<textarea class="weui-textarea" style="min-height:80px;margin-bottom:10px;font-size:var(--fs-sm)" placeholder="每行一项，至少填写3项">希望在需求优先级判断上更加果断，减少反复沟通的时间成本。\n希望提升数据分析能力，用数据驱动产品决策而非仅凭经验。\n希望加强对行业趋势的洞察，提升产品前瞻性规划能力。</textarea>';
+  h+='<div class="weui-panel weui-panel_access" style="margin-bottom:10px"><div class="weui-panel__hd" style="display:flex;align-items:center;gap:8px;padding:12px 16px 0"><span style="width:24px;height:24px;border-radius:6px;background:var(--ac);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></span><span style="font:600 var(--fs-base)/1 var(--f);color:var(--c9)">拍三个转</span></div><div class="weui-cells"><div class="weui-cell"><div style="width:100%"><div class="tip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>每行一项，不少于三个</div><textarea class="weui-textarea" style="min-height:80px;font-size:var(--fs-base)" placeholder="每行一项，至少填写3项">希望在需求优先级判断上更加果断，减少反复沟通的时间成本。\n希望提升数据分析能力，用数据驱动产品决策。</textarea></div></div></div></div>';
 
   // Next plan
-  h+='<div class="section-hd"><div class="section-ic" style="background:var(--pr)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/></svg></div><span class="section-name">下阶段规划</span></div>';
-  h+='<textarea class="weui-textarea" style="min-height:80px;margin-bottom:10px;font-size:var(--fs-sm)" placeholder="请描述下阶段工作目标和计划…">Q3工作规划：\n1. 继续推进绩效重构项目，完成考核活动管理模块上线\n2. 深化AI应用场景，完成采购侧AI应用1.2版本迭代\n3. 提升需求评审及时率至98%以上</textarea>';
+  h+='<div class="weui-panel weui-panel_access" style="margin-bottom:10px"><div class="weui-panel__hd" style="display:flex;align-items:center;gap:8px;padding:12px 16px 0"><span style="width:24px;height:24px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/></svg></span><span style="font:600 var(--fs-base)/1 var(--f);color:var(--c9)">下阶段规划</span></div><div class="weui-cells"><div class="weui-cell"><textarea class="weui-textarea" style="min-height:80px;font-size:var(--fs-base)" placeholder="请描述下阶段工作目标和计划…">Q3继续推进绩效重构项目，完成考核活动管理模块上线。\n深化AI应用场景，完成采购侧AI应用1.2版本迭代。</textarea></div></div></div>';
 
   // Support needed
-  h+='<div class="section-hd"><div class="section-ic" style="background:var(--vi)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><span class="section-name">需要的支持</span></div>';
-  h+='<textarea class="weui-textarea" style="min-height:80px;margin-bottom:10px;font-size:var(--fs-sm)" placeholder="请描述需要的支持…">1. 希望上级在跨部门协调中继续提供支持\n2. 希望获得更多行业交流机会，提升产品视野\n3. 希望上级在绩效重构项目上给予更多指导</textarea>';
+  h+='<div class="weui-panel weui-panel_access" style="margin-bottom:10px"><div class="weui-panel__hd" style="display:flex;align-items:center;gap:8px;padding:12px 16px 0"><span style="width:24px;height:24px;border-radius:6px;background:var(--vi);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span><span style="font:600 var(--fs-base)/1 var(--f);color:var(--c9)">需要的支持</span></div><div class="weui-cells"><div class="weui-cell"><textarea class="weui-textarea" style="min-height:80px;font-size:var(--fs-base)" placeholder="请描述需要的支持…">希望上级在跨部门协调中继续提供支持。\n希望获得更多行业交流机会，提升产品视野。</textarea></div></div></div>';
 
   // Attachment
-  h+='<div class="section-hd"><div class="section-ic" style="background:var(--c5)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></div><span class="section-name">附件</span><span style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5)">可选</span></div>';
-  h+='<div style="border:2px dashed var(--c2);border-radius:var(--r1);padding:16px;text-align:center;margin-bottom:10px" onclick="showToast(\'选择文件\')"><div style="font:500 var(--fs-base)/1 var(--f);color:var(--c6)">点击上传附件</div><div style="font:400 var(--fs-sm)/1 var(--f);color:var(--c4);margin-top:4px">支持 .doc .pdf .xlsx</div></div>';
+  h+='<div class="weui-panel weui-panel_access" style="margin-bottom:10px"><div class="weui-panel__hd" style="display:flex;align-items:center;gap:8px;padding:12px 16px 0"><span style="width:24px;height:24px;border-radius:6px;background:var(--c5);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></span><span style="font:600 var(--fs-base)/1 var(--f);color:var(--c9)">附件</span><span style="font:400 var(--fs-base)/1 var(--f);color:var(--c5)">（选填）</span></div><div class="weui-cells"><div class="weui-cell"><button class="weui-btn weui-btn_default" onclick="showToast(\'选择文件\')" style="width:100%;height:40px;font-size:14px">📎 上传附件（选填）</button></div></div></div>';
 
   // Approval flow
   h+='<div class="weui-panel weui-panel_access"><div class="weui-panel__hd" style="font:600 var(--fs-base)/1 var(--f);color:var(--c8)">审批流程</div><div class="weui-cells">';
-  var flow=[{n:'员工填写',p:'张明',c:'var(--em)',s:'已完成',sb:'var(--em50)',sc:'var(--em700)'},{n:'上级审批',p:'王总监',c:'var(--pr)',s:'处理中',sb:'var(--pr50)',sc:'var(--pr)'},{n:'HRBP确认',p:'赵敏',c:'var(--c4)',s:'待处理',sb:'var(--c1)',sc:'var(--c5)'}];
-  flow.forEach(function(f){h+='<div class="weui-cell"><div class="weui-cell__hd"><div style="width:24px;height:24px;border-radius:50%;background:'+f.c+';display:flex;align-items:center;justify-content:center;margin-right:10px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div></div><div class="weui-cell__bd"><div style="font:500 var(--fs-sm)/1 var(--f);color:var(--c8)">'+f.n+'</div><div style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5);margin-top:2px">'+f.p+'</div></div><div class="weui-cell__ft"><span style="font:500 var(--fs-xs)/1 var(--f);padding:2px 8px;border-radius:4px;background:'+f.sb+';color:'+f.sc+'">'+f.s+'</span></div></div>';});
+  var flow=[{n:'员工填写',p:'张明',c:'var(--em)',s:'已完成',sb:'var(--em50)',sc:'var(--em700)'},{n:'上级审批',p:'王总监',c:'var(--pr)',s:'处理中',sb:'var(--pr50)',sc:'var(--pr)'},{n:'HRBP确认',p:'赵敏',c:'var(--c3)',s:'待处理',sb:'var(--c1)',sc:'var(--c5)'}];
+  flow.forEach(function(f){h+='<div class="weui-cell"><div class="weui-cell__hd"><div style="width:24px;height:24px;border-radius:50%;background:'+f.c+';display:flex;align-items:center;justify-content:center;margin-right:10px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div></div><div class="weui-cell__bd"><div style="font:500 var(--fs-base)/1 var(--f);color:var(--c8)">'+f.n+'</div><div style="font:400 var(--fs-base)/1 var(--f);color:var(--c5);margin-top:2px">'+f.p+'</div></div><div class="weui-cell__ft"><span style="font:500 var(--fs-sm)/1 var(--f);padding:3px 8px;border-radius:4px;background:'+f.sb+';color:'+f.sc+'">'+f.s+'</span></div></div>';});
   h+='</div></div><div style="height:80px"></div>';
 
   document.getElementById('phoneBody').innerHTML=h;
-  initChart();
 }
-function initChart(){
-  var ctx=document.getElementById('chartMonthly');if(!ctx)return;
-  var ds=MOCK.monthlyData;
-  new Chart(ctx,{type:'line',data:{labels:ds.map(function(d){return d.month}),datasets:[{data:ds.map(function(d){return d.score}),borderColor:'#2563EB',backgroundColor:'rgba(37,99,235,.08)',borderWidth:2,fill:true,pointBackgroundColor:'#2563EB',pointRadius:5,tension:.2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:3.0,max:4.5,ticks:{stepSize:.5,font:{size:10}},grid:{color:'#E2E8F0'}},x:{ticks:{font:{size:10}},grid:{display:false}}}}});
+function selectInterviewType(el,type){
+  document.querySelectorAll('.sel-mark').forEach(function(s){s.style.display='none';});
+  el.querySelector('.sel-mark').style.display='block';
 }
 render();
 injectAIPanel('AI 面谈助手','面谈引导 · 内容建议 · 趋势分析',['帮我写面谈要点','优化下阶段规划','分析绩效趋势']);

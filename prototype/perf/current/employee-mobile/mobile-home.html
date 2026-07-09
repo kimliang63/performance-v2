@@ -3,94 +3,292 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>HR ONE - 我的工作台</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../mobile-base.css">
+<title>我的绩效</title>
 <style>
-/* Page-specific: compact stat cards, todo rows, chart */
-.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-.stat-card{background:var(--sf);border-radius:var(--r2);padding:14px 16px;box-shadow:var(--sx);border:1px solid var(--bd);position:relative;overflow:hidden}
-.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
-.stat-card.pr::before{background:var(--pr)}.stat-card.em::before{background:var(--em)}.stat-card.ac::before{background:var(--ac)}.stat-card.vi::before{background:var(--vi)}
-.stat-card-t{font:400 var(--fs-sm)/1 var(--f);color:var(--c5);margin-bottom:6px}
-.stat-card-v{font:700 var(--fs-xl)/1 var(--fm);color:var(--c9)}
-.stat-card-d{font:400 var(--fs-xs)/1 var(--f);color:var(--c4);margin-top:3px}
+:root{
+  --pr:#2563EB;--pr50:#EFF6FF;--pr100:#DBEAFE;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#0F172A;--c7:#334155;--c5:#64748B;--c4:#94A3B8;--c3:#CBD5E1;--c2:#E2E8F0;--c1:#F1F5F8;
+  --sf:#FFF;--bg:#F0F4F8;--s2:#F7F9FC;--s3:#EEF2F7;
+  --dv:#F1F5F9;--bd:rgba(15,23,42,.06);
+  --sx:0 1px 3px rgba(0,0,0,.05);--sm:0 2px 8px rgba(0,0,0,.06);--md:0 4px 16px rgba(0,0,0,.08);
+  --r1:10px;--r2:14px;--r3:18px;--r4:22px;
+  --f:'Inter','Noto Sans SC',system-ui,sans-serif;
+  --fm:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:#E5E7EB;color:var(--c7);display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:0;-webkit-font-smoothing:antialiased;line-height:1.5}
 
-.weui-panel{margin-bottom:12px}
-.todo-row{display:flex;align-items:center;padding:14px 16px;gap:12px;cursor:pointer}
-.todo-row:active{background:var(--c0)}
-.todo-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.phone{width:390px;min-height:844px;background:var(--bg);position:relative;overflow-x:hidden;overflow-y:auto}
+
+/* Status bar */
+.status-bar{height:54px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 8px;font:600 14px/1 var(--f);color:var(--c9)}
+.status-bar-r{display:flex;align-items:center;gap:4px}
+.status-bar-r svg{display:block}
+
+/* Nav bar */
+.nav-bar{display:flex;align-items:center;justify-content:center;height:44px;padding:0 16px;position:relative}
+.nav-title{flex:1;font:600 17px/1 var(--f);color:var(--c9);text-align:center}
+.nav-capsule{position:absolute;right:16px;top:50%;transform:translateY(-50%);display:flex;align-items:center;border:1px solid var(--c2);border-radius:18px;overflow:hidden}
+.nav-capsule-btn{width:40px;height:28px;display:flex;align-items:center;justify-content:center;background:var(--sf);border:none;border-right:1px solid var(--c2);cursor:pointer;color:var(--c5);font-size:14px;line-height:1}
+.nav-capsule-btn:last-child{border-right:none}
+.nav-capsule-btn:active{background:var(--c1)}
+
+/* Scroll body */
+.phone-body{padding:12px 16px 32px}
+
+/* Card base */
+.card{background:var(--sf);border-radius:var(--r2);padding:14px;margin-bottom:10px;box-shadow:var(--sx);border:1px solid var(--bd)}
+.card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.card-title{font:600 15px/1 var(--f);color:var(--c9);display:flex;align-items:center;gap:6px}
+.card-more{font:400 13px/1 var(--f);color:var(--c4);display:flex;align-items:center;gap:2px;text-decoration:none;cursor:pointer}
+.card-more:active{color:var(--pr)}
+
+.badge{display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;border-radius:50%;background:var(--ro);color:#FFF;font:700 9px/1 var(--f);padding:0 5px}
+
+/* Grade card (Hero) */
+.grade-card{background:linear-gradient(135deg,#1E40AF,var(--pr),#3B82F6);border-radius:var(--r4);padding:18px 20px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;color:#FFF;overflow:hidden;position:relative;box-shadow:0 8px 24px rgba(37,99,235,.25)}
+.grade-card::after{content:'';position:absolute;right:-20px;top:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.06)}
+.grade-info{position:relative;z-index:1}
+.grade-label{font:400 14px/1.4 var(--f);opacity:.85;margin-bottom:6px}
+.grade-value{font:700 28px/1.2 var(--f);letter-spacing:-.5px}
+.grade-icon{position:relative;z-index:1;width:56px;height:56px;border-radius:var(--r2);background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center}
+
+/* Todo item */
+.todo-item{display:flex;align-items:center;padding:12px 0;gap:10px;cursor:pointer;text-decoration:none;color:inherit}
+.todo-item+.todo-item{border-top:1px solid var(--dv)}
+.todo-item:active{opacity:.7}
 .todo-info{flex:1;min-width:0}
-.todo-name{font:500 var(--fs-base)/1.3 var(--f);color:var(--c8)}
-.todo-deadline{font:400 var(--fs-sm)/1 var(--f);color:var(--c5);margin-top:3px}
+.todo-name{font:500 15px/1.3 var(--f);color:var(--c9)}
+.todo-meta{font:400 12px/1 var(--f);color:var(--c5);margin-top:4px}
+.todo-action{font:400 13px/1 var(--f);color:var(--pr);white-space:nowrap}
 
-.chart-wrap{background:var(--sf);border-radius:var(--r2);padding:14px 16px;box-shadow:var(--sx);border:1px solid var(--bd);margin-bottom:12px}
-.chart-wrap-title{font:600 var(--fs-base)/1 var(--f);color:var(--c8);margin-bottom:10px}
-.chart-wrap canvas{width:100%!important;height:180px!important}
+/* Goal item — two-line */
+.goal-item{display:flex;padding:10px 0;gap:8px}
+.goal-item+.goal-item{border-top:1px solid var(--dv)}
+.goal-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.goal-dot.kpi{background:var(--pr)}
+.goal-dot.kpa{background:var(--vi)}
+.goal-body{flex:1;min-width:0}
+.goal-body-name{font:500 14px/1.3 var(--f);color:var(--c9)}
+.goal-body-detail{font:400 12px/1.4 var(--f);color:var(--c5);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.goal-wt{font:600 14px/1 var(--fm);color:var(--c7);flex-shrink:0;padding-top:2px}
+
+/* Chart card */
+.chart-body{position:relative;height:180px}
+.chart-body svg{display:block;width:100%;height:100%}
+
+.toast{position:absolute;top:70px;left:50%;transform:translateX(-50%);background:var(--c9);color:#FFF;padding:10px 22px;border-radius:20px;font:500 13px/1 var(--f);z-index:900;opacity:0;pointer-events:none;transition:opacity .2s;white-space:nowrap}
+.toast.show{opacity:1}
+
+.gap{height:8px}
 </style>
 </head>
 <body>
-<div class="phone">
-  <div class="phone-notch"></div>
-  <div class="phone-status">9:41<div class="phone-status-r">
-    <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="6" width="3" height="6" rx="1" fill="currentColor" style="color:var(--c9)"/><rect x="4.5" y="4" width="3" height="8" rx="1" fill="currentColor" style="color:var(--c9)"/><rect x="9" y="1.5" width="3" height="10.5" rx="1" fill="currentColor" style="color:var(--c9)"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="currentColor" style="color:var(--c9)"/></svg>
-    <svg width="15" height="12" viewBox="0 0 15 12" fill="none"><rect x="0.5" y="0.5" width="12" height="11" rx="2" stroke="currentColor" style="color:var(--c9)" stroke-width="1.2"/><line x1="13" y1="4" x2="13" y2="8" stroke="currentColor" style="color:var(--c9)" stroke-width="1.2"/><rect x="2" y="2.5" width="7" height="7" rx="1" fill="currentColor" style="color:var(--c9)"/></svg>
-  </div></div>
-  <div class="weui-navigation-bar">
-    <a href="../demo-index.html" class="back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></a>
-    <span class="title">我的工作台</span>
+<div class="phone" id="phone">
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span>9:41</span>
+    <div class="status-bar-r">
+      <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="6" width="3" height="6" rx="1" fill="#0F172A"/><rect x="4.5" y="4" width="3" height="8" rx="1" fill="#0F172A"/><rect x="9" y="1.5" width="3" height="10.5" rx="1" fill="#0F172A"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="#0F172A"/></svg>
+      <svg width="15" height="12" viewBox="0 0 15 12" fill="none"><rect x="0.5" y="0.5" width="12" height="11" rx="2" stroke="#0F172A" stroke-width="1.2"/><line x1="13" y1="4" x2="13" y2="8" stroke="#0F172A" stroke-width="1.2"/><rect x="2" y="2.5" width="7" height="7" rx="1" fill="#0F172A"/></svg>
+    </div>
   </div>
-  <div class="phone-body" id="phoneBody"></div>
+
+  <!-- Nav Bar -->
+  <div class="nav-bar">
+    <a href="http://127.0.0.1:8788/employee-mobile/mobile-home.html" class="nav-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></a>
+    <span class="nav-title">我的绩效</span>
+    <div class="nav-capsule">
+      <button class="nav-capsule-btn" aria-label="更多">⋯</button>
+      <button class="nav-capsule-btn" aria-label="关闭">○</button>
+    </div>
+  </div>
+
+  <div class="phone-body">
+
+    <!-- Grade Card -->
+    <div class="grade-card">
+      <div class="grade-info">
+        <div class="grade-label">2026年6月</div>
+        <div class="grade-value">符合预期+</div>
+      </div>
+      <div class="grade-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </div>
+    </div>
+
+    <!-- Todo Card -->
+    <div class="card">
+      <div class="card-hd">
+        <span class="card-title">待办任务<span class="badge">2</span></span>
+        <span class="card-more">全部 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+      </div>
+      <a class="todo-item" href="javascript:void(0)" onclick="showToast('已进入处理页面')">
+        <div class="todo-info">
+          <div class="todo-name">填写6月绩效自评</div>
+          <div class="todo-meta">截止 06/30</div>
+        </div>
+        <span class="todo-action">去处理 ›</span>
+      </a>
+      <a class="todo-item" href="javascript:void(0)" onclick="showToast('已进入处理页面')">
+        <div class="todo-info">
+          <div class="todo-name">确认5月绩效结果</div>
+          <div class="todo-meta">截止 07/05</div>
+        </div>
+        <span class="todo-action">去处理 ›</span>
+      </a>
+    </div>
+
+    <!-- Goals Card -->
+    <div class="card">
+      <div class="card-hd">
+        <span class="card-title">我的目标</span>
+        <span class="card-more">全部 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+      </div>
+      <div class="goal-item">
+        <div class="goal-dot kpi"></div>
+        <div class="goal-body">
+          <div class="goal-body-name">AI 产品迭代完成率</div>
+          <div class="goal-body-detail">目标 100% · 挑战 120%</div>
+        </div>
+        <div class="goal-wt">25%</div>
+      </div>
+      <div class="goal-item">
+        <div class="goal-dot kpi"></div>
+        <div class="goal-body">
+          <div class="goal-body-name">AI 新增用户数</div>
+          <div class="goal-body-detail">目标 5000 · 挑战 7000</div>
+        </div>
+        <div class="goal-wt">20%</div>
+      </div>
+      <div class="goal-item">
+        <div class="goal-dot kpi"></div>
+        <div class="goal-body">
+          <div class="goal-body-name">产品营收贡献</div>
+          <div class="goal-body-detail">目标 200万 · 挑战 300万</div>
+        </div>
+        <div class="goal-wt">15%</div>
+      </div>
+      <div class="goal-item">
+        <div class="goal-dot kpa"></div>
+        <div class="goal-body">
+          <div class="goal-body-name">主导完成6月产品架构评审</div>
+          <div class="goal-body-detail">定性</div>
+        </div>
+        <div class="goal-wt">15%</div>
+      </div>
+      <div class="goal-item">
+        <div class="goal-dot kpa"></div>
+        <div class="goal-body">
+          <div class="goal-body-name">完成2名新人带教</div>
+          <div class="goal-body-detail">定性</div>
+        </div>
+        <div class="goal-wt">10%</div>
+      </div>
+      <div class="goal-item">
+        <div class="goal-dot kpa"></div>
+        <div class="goal-body">
+          <div class="goal-body-name">推动跨部门协作机制落地</div>
+          <div class="goal-body-detail">定性</div>
+        </div>
+        <div class="goal-wt">15%</div>
+      </div>
+    </div>
+
+    <!-- Performance Trend Card -->
+    <div class="card">
+      <div class="card-hd">
+        <span class="card-title">绩效趋势</span>
+        <span class="card-more" onclick="showToast('查看更多绩效趋势')">查看更多 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+      </div>
+      <div class="chart-body" id="chartBody"></div>
+    </div>
+
+    <div class="gap"></div>
+  </div>
+
 </div>
+
+<!-- Toast -->
 <div class="toast" id="toast"></div>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
-<script src="../mobile-base.js"></script>
+
 <script>
-var EMP={name:'张明',dept:'产品部',title:'高级产品经理',cycle:'2026年Q2',totalScore:87.5,grade:'符合预期+'};
-
-var TODOS=[
-  {name:'填写6月绩效目标',meta:'绩效方案 - 高级产品经理',deadline:'截止 6/30',dot:'pr',tag:'进行中',tagCls:'weui-badge',link:'mobile-goal.html'},
-  {name:'确认5月绩效结果',meta:'绩效方案 - 2026年5月',deadline:'截止 7/5',dot:'ac',tag:'待处理',tagCls:'weui-badge',link:'mobile-confirm.html'}
+/* ═══ SVG Chart — grade-level line ═══ */
+var CHART_DATA=[
+  {month:'1月',grade:'低于预期',level:2},
+  {month:'2月',grade:'符合预期-',level:3},
+  {month:'3月',grade:'符合预期-',level:3},
+  {month:'4月',grade:'符合预期',level:4},
+  {month:'5月',grade:'符合预期',level:4},
+  {month:'6月',grade:'符合预期+',level:5}
 ];
+var GRADE_LABELS=['','远低预期','低于预期','符合预期-','符合预期','符合预期+','超出预期','远超预期'];
 
-function render(){
-  var h='';
-
-  // Stats
-  h+='<div class="stat-grid">';
-  h+='<div class="stat-card pr"><div class="stat-card-t">综合得分</div><div class="stat-card-v">'+EMP.totalScore+'</div><div class="stat-card-d">'+EMP.cycle+'</div></div>';
-  h+='<div class="stat-card em"><div class="stat-card-t">综合等级</div><div class="stat-card-v" style="font-size:var(--fs-lg);color:var(--em700)">'+EMP.grade+'</div><div class="stat-card-d">'+EMP.dept+' · '+EMP.title+'</div></div>';
-  h+='</div>';
-
-  // Todos via WeUI
-  h+='<div class="weui-panel weui-panel_access"><div class="weui-panel__hd" style="font:600 var(--fs-base)/1 var(--f);color:var(--c8);padding:0 0 10px">待办任务</div><div class="weui-cells">';
-  TODOS.forEach(function(t){
-    h+='<a class="weui-cell weui-cell_access" href="'+t.link+'"><div class="weui-cell__hd"><span style="width:8px;height:8px;border-radius:50%;background:var(--'+t.dot+');display:inline-block;margin-right:12px"></span></div><div class="weui-cell__bd"><div style="font:500 var(--fs-base)/1.3 var(--f);color:var(--c8)">'+t.name+'</div><div style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5);margin-top:3px">'+t.meta+'</div></div><div class="weui-cell__ft"><span style="font:500 var(--fs-sm)/1 var(--f);padding:3px 8px;border-radius:10px;background:var(--ac50);color:var(--ac700);margin-right:4px">'+t.tag+'</span><span style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5)">'+t.deadline+'</span></div></a>';
+function buildChart(){
+  var W=342,H=180,padL=56,padR=16,padT=16,padB=32;
+  var plotW=W-padL-padR,plotH=H-padT-padB;
+  var minV=1,maxV=7;
+  var points=CHART_DATA.map(function(d,i){
+    var x=padL+(i/(CHART_DATA.length-1))*plotW;
+    var y=padT+plotH-((d.level-minV)/(maxV-minV))*plotH;
+    return{x:x,y:y,grade:d.grade,level:d.level,label:d.month,isLast:i===CHART_DATA.length-1};
   });
-  h+='</div></div>';
 
-  // Score detail
-  h+='<div class="weui-panel weui-panel_access"><div class="weui-panel__hd" style="font:600 var(--fs-base)/1 var(--f);color:var(--c8);padding:0 0 10px">绩效概览</div><div class="weui-cells">';
-  h+='<div class="weui-cell"><div class="weui-cell__bd" style="font:500 var(--fs-base)/1 var(--f);color:var(--c8)">'+EMP.name+'</div><div class="weui-cell__ft" style="font:400 var(--fs-base)/1 var(--f);color:var(--c6)">'+EMP.dept+' · '+EMP.title+'</div></div>';
-  h+='<div class="weui-cell"><div class="weui-cell__bd" style="font:500 var(--fs-base)/1 var(--f);color:var(--c8)">综合得分</div><div class="weui-cell__ft" style="font:700 var(--fs-lg)/1 var(--fm);color:var(--pr)">'+EMP.totalScore+'</div></div>';
-  h+='<div class="weui-cell"><div class="weui-cell__bd" style="font:500 var(--fs-base)/1 var(--f);color:var(--c8)">综合等级</div><div class="weui-cell__ft"><span class="grade-tag meet-plus">'+EMP.grade+'</span></div></div>';
-  h+='</div></div>';
+  var pathD='';
+  var areaD='';
+  for(var i=0;i<points.length;i++){
+    pathD+=(i===0?'M':'L')+points[i].x.toFixed(1)+','+points[i].y.toFixed(1);
+    areaD+=(i===0?'M':'L')+points[i].x.toFixed(1)+','+points[i].y.toFixed(1);
+  }
+  areaD+='L'+points[points.length-1].x.toFixed(1)+','+(padT+plotH)+'L'+points[0].x.toFixed(1)+','+(padT+plotH)+'Z';
 
-  // Charts
-  h+='<div class="chart-wrap"><div class="chart-wrap-title">月度绩效趋势</div><canvas id="chartMonthly"></canvas></div>';
+  var gradePts='';
+  for(var g=2;g<=6;g++){
+    var gy=padT+plotH-((g-minV)/(maxV-minV))*plotH;
+    gradePts+='<line x1="'+padL+'" y1="'+gy.toFixed(1)+'" x2="'+(W-padR)+'" y2="'+gy.toFixed(1)+'" stroke="var(--c1)" stroke-width="1"/>'+
+      '<text x="'+(padL-6)+'" y="'+(gy+4).toFixed(1)+'" text-anchor="end" fill="var(--c4)" font-size="10" font-family="var(--f)">'+GRADE_LABELS[g]+'</text>';
+  }
 
-  h+='<div style="height:24px"></div>';
-  document.getElementById('phoneBody').innerHTML=h;
-  initChart();
+  var dots='',labels='';
+  for(var i=0;i<points.length;i++){
+    var p=points[i];
+    var r=p.isLast?6:4;
+    var fill=p.isLast?'var(--pr)':'var(--sf)';
+    var stroke=p.isLast?'var(--sf)':'var(--pr)';
+    var sw=p.isLast?3:2;
+    dots+='<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="'+r+'" fill="'+fill+'" stroke="'+stroke+'" stroke-width="'+sw+'"/>';
+    if(p.isLast){
+      dots+='<rect x="'+(p.x-32)+'" y="'+(p.y-28)+'" width="64" height="20" rx="10" fill="var(--pr)"/>';
+      dots+='<text x="'+p.x.toFixed(1)+'" y="'+(p.y-15)+'" text-anchor="middle" fill="#FFF" font-size="11" font-weight="600" font-family="var(--f)">'+p.grade+'</text>';
+    }
+    labels+='<text x="'+p.x.toFixed(1)+'" y="'+(H-6)+'" text-anchor="middle" fill="var(--c4)" font-size="11" font-family="var(--f)">'+p.label+'</text>';
+  }
+
+  return '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">'+
+    gradePts+
+    '<path d="'+areaD+'" fill="url(#grad)" opacity=".12"/>'+
+    '<defs><linearGradient id="grad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--pr)"/><stop offset="100%" stop-color="var(--pr)" stop-opacity="0"/></linearGradient></defs>'+
+    '<path d="'+pathD+'" fill="none" stroke="var(--pr)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>'+
+    dots+labels+
+    '</svg>';
 }
 
-function initChart(){
-  var ctx=document.getElementById('chartMonthly');if(!ctx)return;
-  new Chart(ctx,{type:'line',data:{labels:['1月','2月','3月','4月','5月','6月'],datasets:[{data:[5,6,6,6,7,6],borderColor:'#CBD5E1',backgroundColor:'transparent',borderWidth:2,pointBackgroundColor:['#2563EB','#10B981','#10B981','#10B981','#047857','#10B981'],pointRadius:[5,5,5,5,5,7],pointBorderWidth:[0,0,0,0,0,2],pointBorderColor:['','','','','','#0F172A'],tension:.2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:3,max:7,ticks:{stepSize:1,callback:function(v){return['','','','符合-','符合','符合+','超出','远超'][v]||''},font:{size:10}},grid:{color:'#E2E8F0'}},x:{ticks:{font:{size:10}},grid:{display:false}}}}});
+/* ═══ Toast ═══ */
+var toastTimer;
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){t.classList.remove('show');},1800);
 }
 
-render();
-injectAIPanel('AI 工作台助手','绩效分析 · 趋势对比 · 任务提醒',['分析我的绩效','查看成长趋势','任务提醒']);
+/* ═══ Init ═══ */
+document.getElementById('chartBody').innerHTML=buildChart();
 </script>
 </body>
 </html>

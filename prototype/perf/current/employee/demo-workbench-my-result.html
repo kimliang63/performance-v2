@@ -14,247 +14,415 @@
   --vi:#8B5CF6;--vi50:#F5F3FF;
   --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
   --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
   --r1:6px;--r2:8px;--r3:10px;--r4:14px;
   --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
-  --fm:'JetBrains Mono','SF Mono',monospace;
+  --m:'JetBrains Mono','SF Mono',monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoothing:antialiased;line-height:1.5}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
 
-.pg{background:var(--sf);border-radius:var(--r3);box-shadow:0 1px 3px rgba(0,0,0,.05);overflow:hidden;margin-bottom:16px}
+/* ═══ PAGE HEADER ═══ */
+.pg-hd{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:16px}
+.pg-hd-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.pg-hd-title{font:700 20px/1.2 var(--f);color:var(--c9);letter-spacing:-.3px}
 
-/* Result table — unified with confirm */
+/* ═══ SECTION ═══ */
+.section{padding:20px 24px;border-bottom:1px solid var(--dv)}
+.section:last-child{border-bottom:none}
+.section-hd{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.section-icon{width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.section-icon svg{width:14px;height:14px;color:#FFF}
+.section-title{font:600 14px/1 var(--f);color:var(--c9)}
+
+/* ═══ CYCLE CARDS ═══ */
+.cycle-cards{display:flex;gap:8px;flex-wrap:wrap}
+.cycle-card{width:140px;flex-shrink:0;border:1px solid var(--c2);border-radius:var(--r2);padding:14px 12px;text-align:center;transition:all .12s;cursor:pointer;background:var(--sf)}
+.cycle-card:hover{border-color:var(--pr200);box-shadow:0 2px 8px rgba(37,99,235,.08)}
+.cycle-card.active{border-color:var(--pr);background:var(--pr50)}
+.cycle-card-period{font:500 12px/1 var(--f);color:var(--c5);margin-bottom:10px}
+.cycle-card.active .cycle-card-period{color:var(--pr);font-weight:600}
+.cycle-card-grade{display:inline-block;padding:6px 14px;border-radius:var(--r1);font:600 14px/1 var(--f)}
+.cycle-card-grade.excellent{background:var(--em50);color:var(--em700)}
+.cycle-card-grade.good{background:var(--pr50);color:var(--pr)}
+.cycle-card-grade.normal{background:var(--c1);color:var(--c6)}
+.cycle-card-grade.poor{background:var(--ac50);color:var(--ac700)}
+.cycle-card-grade.bad{background:var(--ro50);color:var(--ro)}
+
+/* ═══ STATUS BADGES ═══ */
+.status-pending{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--ac50);color:var(--ac700)}
+.status-pending::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--ac);animation:pulse 2s ease-in-out infinite}
+.status-confirmed{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)}
+.status-confirmed::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--em)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ═══ RESULT TABLE ═══ */
 .result-table{width:100%;border-collapse:collapse}
-.result-table th{background:var(--c0);padding:10px 14px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.result-table th{background:var(--c0);padding:10px 14px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);letter-spacing:.3px;white-space:nowrap}
 .result-table td{font:400 13px/1.4 var(--f);color:var(--c7);padding:12px 14px;border-bottom:1px solid var(--dv);vertical-align:middle}
 .result-table tr:hover td{background:var(--c0)}
-
-/* Module row — grey bg matching confirm */
 .mod-row td{background:var(--c0);padding:10px 14px;border-bottom:1px solid var(--dv)}
 .mod-row:hover td{background:var(--c0)}
 .mod-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .mod-name{font:600 13px/1 var(--f);color:var(--c8)}
-.mod-weight{font:500 12px/1 var(--fm);color:var(--c5);background:var(--c1);padding:2px 8px;border-radius:4px}
+.mod-weight{font:500 12px/1 var(--m);color:var(--c5);background:var(--c1);padding:2px 8px;border-radius:4px}
 
-/* Score badges */
-.score-tag{display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:24px;border-radius:var(--r1);font:600 13px/1 var(--fm)}
-.score-tag.high{background:var(--em50);color:var(--em700)}
-.score-tag.mid{background:var(--ac50);color:var(--ac700)}
-.score-tag.excellent{background:var(--em50);color:var(--em700)}
-
-/* Eval tag for qualitative */
+/* ═══ TAGS ═══ */
 .eval-tag{display:inline-block;padding:2px 8px;border-radius:3px;font:500 11px/1 var(--f)}
 .eval-tag.excellent{background:var(--em50);color:var(--em700)}
 .eval-tag.good{background:var(--pr50);color:var(--pr)}
-
-/* Type tag */
 .type-tag{display:inline-block;padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);white-space:nowrap}
 .type-tag.quant{background:var(--pr50);color:var(--pr)}
 .type-tag.qual{background:var(--vi50);color:var(--vi)}
 
-/* Info grid */
-.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:20px 24px}
-.info-item{display:flex;flex-direction:column;gap:4px}
-.info-label{font:500 11px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px}
-.info-value{font:600 15px/1.3 var(--f);color:var(--c9)}
-.info-value.highlight{color:var(--em700)}
+/* ═══ INTERVIEW ═══ */
+.iv-section{padding:16px 0;border-bottom:1px solid var(--dv)}
+.iv-section:last-child{border-bottom:none}
+.iv-section-hd{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.iv-section-icon{width:24px;height:24px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.iv-section-icon svg{width:12px;height:12px;color:#FFF}
+.iv-section-title{font:600 13px/1 var(--f);color:var(--c9)}
+.iv-section-body{font:400 13px/1.6 var(--f);color:var(--c7);line-height:1.8}
+.iv-section-body div{margin-bottom:2px}
 
-/* Interview */
-.interview-card{padding:16px 20px;background:var(--c0);border-radius:var(--r1);margin:0 24px 20px}
-.interview-hd{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-.interview-hd svg{width:16px;height:16px;color:var(--pr)}
-.interview-hd span{font:600 13px/1 var(--f);color:var(--c8)}
-.interview-row{display:flex;gap:12px;padding:6px 0;font:400 12px/1.5 var(--f)}
-.interview-label{font:500 12px/1 var(--f);color:var(--c5);min-width:70px;flex-shrink:0}
-.interview-val{color:var(--c7)}
+/* ═══ CONFIRM BAR ═══ */
+.confirm-bar{display:flex;align-items:center;justify-content:space-between}
+.confirm-status{display:flex;align-items:center;gap:8px;font:500 13px/1 var(--f);color:var(--em700)}
+.confirm-dot{width:8px;height:8px;border-radius:50%;background:var(--em)}
+.confirm-time{font:400 12px/1 var(--f);color:var(--c5)}
 
-/* Confirm status */
-.confirm-status{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-top:1px solid var(--dv)}
-.confirm-left{display:flex;align-items:center;gap:8px;font:500 13px/1 var(--f)}
-.confirm-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.confirm-left.confirmed{color:var(--em700)}
-.confirm-left.confirmed .confirm-dot{background:var(--em)}
+/* ═══ RATIFY INFO ═══ */
+.ratify-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 24px}
+.ratify-item{display:flex;flex-direction:column;gap:2px}
+.ratify-label{font:400 11px/1 var(--f);color:var(--c4);letter-spacing:.3px}
+.ratify-value{font:500 13px/1.3 var(--f);color:var(--c8)}
 
-.btn{display:inline-flex;align-items:center;gap:5px;padding:0 16px;height:34px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
+/* ═══ BUTTONS ═══ */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
+.btn svg{width:13px;height:13px}
 .btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3);color:var(--c8)}
 
-.toast{position:fixed;top:70px;right:24px;padding:12px 18px;border-radius:var(--r2);font:500 13px/1.3 var(--f);box-shadow:0 10px 40px -10px rgba(0,0,0,.12);z-index:3000;transform:translateX(120%);transition:transform .25s ease}
-.toast.on{transform:translateX(0)}
-.toast.success{background:var(--em);color:#FFF}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .2s ease forwards}
 </style>
 </head>
 <body>
 
-<!-- Header -->
-<div style="height:52px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:1100">
-  <div style="display:flex;align-items:center;gap:14px">
-    <a href="../demo-index.html" style="text-decoration:none;display:flex;align-items:center;gap:8px">
-      <div style="width:28px;height:28px;border-radius:6px;background:var(--pr);display:flex;align-items:center;justify-content:center">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+<div class="ct fade-in">
+  <!-- Breadcrumb -->
+  <nav style="display:flex;align-items:center;gap:4px;font:500 12px/1 var(--f);color:var(--c5);margin-bottom:12px">
+    <a href="../demo-index.html" style="color:var(--c5);text-decoration:none;transition:color .12s" onmouseover="this.style.color='var(--pr)'" onmouseout="this.style.color='var(--c5)'">绩效工作台</a>
+    <span style="color:var(--c3)">/</span>
+    <span style="color:var(--c8);font-weight:600">我的绩效结果</span>
+  </nav>
+
+  <!-- pg-hd -->
+  <div class="pg-hd">
+    <div class="pg-hd-top">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="pg-hd-title">我的绩效结果</div>
+        <span class="status-confirmed" id="statusBadge">已确认</span>
       </div>
-      <span style="font-size:15px;font-weight:700;color:var(--c9)">HR ONE</span>
-    </a>
-    <div style="width:1px;height:20px;background:var(--c2)"></div>
-    <span style="font:500 13px/1 var(--f);color:var(--c5)">业务演示</span>
-    <span style="color:var(--c3)">&#8250;</span>
-    <span style="font:600 13px/1 var(--f);color:var(--c8)">我的绩效结果</span>
+    </div>
+    <div class="cycle-cards" id="cycleCards"></div>
   </div>
-  <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
-    <div style="width:30px;height:30px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--f);color:#FFF">张</div>
+
+  <!-- 得分明细 -->
+  <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden">
+    <div class="section">
+      <div class="section-hd">
+        <div class="section-icon" style="background:var(--pr)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+        <span class="section-title">得分明细</span>
+        <span style="font:400 12px/1 var(--f);color:var(--c5);margin-left:8px" id="scoreLabel">总分 87.5 · 符合预期+</span>
+      </div>
+      <div style="overflow-x:auto" id="scoreDetail"></div>
+    </div>
+  </div>
+
+  <!-- 审定信息 -->
+  <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden">
+    <div class="section">
+      <div class="section-hd">
+        <div class="section-icon" style="background:var(--em)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <span class="section-title">审定信息</span>
+      </div>
+      <div class="ratify-grid">
+        <div class="ratify-item"><span class="ratify-label">直接上级</span><span class="ratify-value">王总监</span></div>
+        <div class="ratify-item"><span class="ratify-label">审定时间</span><span class="ratify-value">2026-06-28 14:30</span></div>
+        <div class="ratify-item"><span class="ratify-label">审定等级</span><span class="ratify-value" style="font-weight:600;color:var(--em700)">符合预期+</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 面谈记录 -->
+  <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden">
+    <div class="section">
+      <div class="section-hd">
+        <div class="section-icon" style="background:var(--vi)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <span class="section-title">面谈记录</span>
+      </div>
+      <!-- 点赞 -->
+      <div class="iv-section">
+        <div class="iv-section-hd"><div class="iv-section-icon" style="background:var(--em)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-4"/><polyline points="18 15 22 19 18 23"/></svg></div><span class="iv-section-title">点赞</span></div>
+        <div class="iv-section-body"><div>感谢王总在产品战略方向上的清晰指导，帮助我更好地理解公司业务全局。</div><div>感谢王总在跨部门协调中的大力支持，为产品推进扫清了障碍。</div><div>感谢王总在团队管理方法上的分享，让我在带团队方面有了新的思路。</div></div>
+      </div>
+      <!-- 转机 -->
+      <div class="iv-section">
+        <div class="iv-section-hd"><div class="iv-section-icon" style="background:var(--ac)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></div><span class="iv-section-title">转机</span></div>
+        <div class="iv-section-body"><div>希望在需求优先级判断上更加果断，减少反复沟通的时间成本。</div><div>希望提升数据分析能力，用数据驱动产品决策而非仅凭经验。</div><div>希望加强对行业趋势的洞察，提升产品前瞻性规划能力。</div></div>
+      </div>
+      <!-- 下阶段规划 -->
+      <div class="iv-section">
+        <div class="iv-section-hd"><div class="iv-section-icon" style="background:var(--pr)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg></div><span class="iv-section-title">下阶段规划</span></div>
+        <div class="iv-section-body"><div>1. 继续推进绩效重构项目，完成考核活动管理模块上线</div><div>2. 深化AI应用场景，完成采购侧AI应用1.2版本迭代</div><div>3. 提升需求评审及时率至98%以上</div><div>4. 加强客户满意度管理，NPS评分提升至90+</div><div>5. 完成2名下属的季度IDP辅导和评估</div></div>
+      </div>
+      <!-- 需要的支持 -->
+      <div class="iv-section">
+        <div class="iv-section-hd"><div class="iv-section-icon" style="background:var(--vi)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><span class="iv-section-title">需要的支持</span></div>
+        <div class="iv-section-body"><div>1. 希望上级在跨部门协调中继续提供支持，特别是与研发团队的资源协调</div><div>2. 希望获得更多行业交流机会，提升产品视野</div><div>3. 希望上级在绩效重构项目上给予更多指导和反馈</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 确认状态 -->
+  <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:16px">
+    <div class="confirm-bar">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="confirm-status"><span class="confirm-dot"></span>已确认</div>
+        <span class="confirm-time">2026-06-28 14:30</span>
+      </div>
+      <button class="btn btn-s" onclick="showToast('下载成功')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        下载
+      </button>
+    </div>
   </div>
 </div>
 
-<div style="padding:24px">
-
-  <!-- Hero: clean white bg -->
-  <div class="pg">
-    <div style="display:flex;align-items:center;gap:32px;padding:24px;background:var(--sf);border-bottom:1px solid var(--dv)">
-      <div style="text-align:center">
-        <div style="font:700 40px/1 var(--fm);color:var(--pr);letter-spacing:-1px">87.5</div>
-        <div style="font:400 12px/1 var(--f);color:var(--c5);margin-top:4px">加权总分</div>
-      </div>
-      <div style="width:1px;height:48px;background:var(--c2)"></div>
-      <div style="text-align:center">
-        <div style="font:700 22px/1 var(--f);color:var(--em700)">符合预期+</div>
-        <div style="font:400 12px/1 var(--f);color:var(--c5);margin-top:4px">综合等级</div>
-      </div>
-      <div style="flex:1;display:flex;flex-direction:column;gap:6px;padding-left:16px;font:400 13px/1 var(--f);color:var(--c6)">
-        <div>考核周期：<strong style="color:var(--c8);font-weight:600">2026年Q2</strong></div>
-        <div>部门：<strong style="color:var(--c8);font-weight:600">产品部</strong> · 岗位：<strong style="color:var(--c8);font-weight:600">高级产品经理</strong></div>
-        <div>HRBP：<strong style="color:var(--c8);font-weight:600">赵敏</strong></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Score detail table -->
-  <div class="pg">
-    <div style="padding:14px 20px;border-bottom:1px solid var(--dv)"><span style="font:600 14px/1 var(--f);color:var(--c9)">得分明细</span></div>
-    <div style="overflow-x:auto">
-      <table class="result-table">
-        <thead>
-          <tr><th style="width:200px">名称</th><th style="width:55px">权重</th><th style="width:60px">类型</th><th>完成值/完成情况</th><th>评价</th><th>上级评语</th></tr>
-        </thead>
-        <tbody>
-          <tr class="mod-row"><td colspan="6">
-            <div style="display:flex;align-items:center;gap:8px">
-              <div class="mod-dot" style="background:var(--pr)"></div>
-              <span class="mod-name">KPI</span>
-              <span class="mod-weight">30%</span>
-            </div>
-          </td></tr>
-          <tr>
-            <td style="font-weight:500;color:var(--c8)">资源利用率（通用）</td>
-            <td style="font-family:var(--fm);font-size:12px">5%</td>
-            <td><span class="type-tag quant">定量</span></td>
-            <td style="font-size:12px;color:var(--c6)">挑战110%/目标105%<br>完成值：<span style="font-family:var(--fm);color:var(--c8)">108%</span></td>
-            <td><span class="eval-tag excellent">符合预期+</span></td>
-            <td style="max-width:180px;font-size:12px;color:var(--c6)">工作量饱和，超额完成</td>
-          </tr>
-          <tr>
-            <td style="font-weight:500;color:var(--c8)">HRAS UAT用户验收首次通过率</td>
-            <td style="font-family:var(--fm);font-size:12px">10%</td>
-            <td><span class="type-tag quant">定量</span></td>
-            <td style="font-size:12px;color:var(--c6)">挑战100%/目标98%<br>完成值：<span style="font-family:var(--fm);color:var(--c8)">97%</span></td>
-            <td><span class="eval-tag good">符合预期</span></td>
-            <td style="max-width:180px;font-size:12px;color:var(--c6)">略低于目标，需关注质量</td>
-          </tr>
-          <tr>
-            <td style="font-weight:500;color:var(--c8)">HRAS需求评审及时率</td>
-            <td style="font-family:var(--fm);font-size:12px">15%</td>
-            <td><span class="type-tag quant">定量</span></td>
-            <td style="font-size:12px;color:var(--c6)">挑战100%/目标98%<br>完成值：<span style="font-family:var(--fm);color:var(--c8)">96%</span></td>
-            <td><span class="eval-tag good">符合预期</span></td>
-            <td style="max-width:180px;font-size:12px;color:var(--c6)">有提升空间，下季度重点改进</td>
-          </tr>
-          <tr class="mod-row"><td colspan="6">
-            <div style="display:flex;align-items:center;gap:8px">
-              <div class="mod-dot" style="background:var(--em)"></div>
-              <span class="mod-name">KPA</span>
-              <span class="mod-weight">70%</span>
-            </div>
-          </td></tr>
-          <tr>
-            <td style="font-weight:500;color:var(--c8)">HRAS产品管理规范</td>
-            <td style="font-family:var(--fm);font-size:12px">10%</td>
-            <td><span class="type-tag qual">定性</span></td>
-            <td style="font-size:12px;color:var(--c6)">4项规范全部符合，遵从度95%+</td>
-            <td><span class="eval-tag excellent">符合预期+</span></td>
-            <td style="max-width:180px;font-size:12px;color:var(--c6)">体系完整，执行力强</td>
-          </tr>
-          <tr>
-            <td style="font-weight:500;color:var(--c8)">日常滚动需求响应</td>
-            <td style="font-family:var(--fm);font-size:12px">10%</td>
-            <td><span class="type-tag qual">定性</span></td>
-            <td style="font-size:12px;color:var(--c6)">按时完成GOFO 6月迭代需求</td>
-            <td><span class="eval-tag excellent">符合预期+</span></td>
-            <td style="max-width:180px;font-size:12px;color:var(--c6)">响应及时，方案质量高</td>
-          </tr>
-          <tr>
-            <td style="font-weight:500;color:var(--c8)">HR ONE 绩效重构事项推进</td>
-            <td style="font-family:var(--fm);font-size:12px">25%</td>
-            <td><span class="type-tag qual">定性</span></td>
-            <td style="font-size:12px;color:var(--c6)">全部按时交付，无延期</td>
-            <td><span class="eval-tag excellent">符合预期+</span></td>
-            <td style="max-width:180px;font-size:12px;color:var(--c6)">推进有力，项目管控优秀</td>
-          </tr>
-          <tr>
-            <td style="font-weight:500;color:var(--c8)">AI应用项目探索与落地推广</td>
-            <td style="font-family:var(--fm);font-size:12px">25%</td>
-            <td><span class="type-tag qual">定性</span></td>
-            <td style="font-size:12px;color:var(--c6)">全部按时发布，试点已落地</td>
-            <td><span class="eval-tag excellent">符合预期+</span></td>
-            <td style="max-width:180px;font-size:12px;color:var(--c6)">创新驱动，成果突出</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- Approval info -->
-  <div class="pg" style="margin-bottom:16px">
-    <div style="padding:14px 20px;border-bottom:1px solid var(--dv)"><span style="font:600 14px/1 var(--f);color:var(--c9)">审定信息</span></div>
-    <div class="info-grid">
-      <div class="info-item"><span class="info-label">直接上级</span><span class="info-value">王总监</span></div>
-      <div class="info-item"><span class="info-label">审定时间</span><span class="info-value">2026-06-25</span></div>
-      <div class="info-item"><span class="info-label">审定等级</span><span class="info-value highlight">符合预期+</span></div>
-    </div>
-  </div>
-
-  <!-- Interview record -->
-  <div class="pg">
-    <div style="padding:14px 20px;border-bottom:1px solid var(--dv)"><span style="font:600 14px/1 var(--f);color:var(--c9)">面谈记录</span></div>
-    <div class="interview-card">
-      <div class="interview-hd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 9V5a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-4"/><polyline points="18 15 22 19 18 23"/></svg><span>员工面谈</span></div>
-      <div class="interview-row"><span class="interview-label">点赞</span><span class="interview-val">团队协作氛围好，跨部门沟通顺畅；上级在关键决策时给予充分信任</span></div>
-      <div class="interview-row"><span class="interview-label">转机</span><span class="interview-val">需求评审及时率需提升，建议引入自动化检查工具；UAT质量可以前置到开发阶段</span></div>
-      <div class="interview-row"><span class="interview-label">下阶段规划</span><span class="interview-val">Q3重点：绩效重构收尾上线；AI应用推广至3个以上BU；产品管理能力培训</span></div>
-      <div class="interview-row"><span class="interview-label">发展需求</span><span class="interview-val">希望参加产品战略规划培训；期望参与公司级AI战略项目</span></div>
-    </div>
-  </div>
-
-  <!-- Confirm status -->
-  <div class="pg">
-    <div class="confirm-status">
-      <div class="confirm-left confirmed"><div class="confirm-dot"></div>已确认 · 2026-06-28 14:30</div>
-      <button class="btn btn-s" onclick="showToast('已下载绩效结果PDF')">下载报告</button>
-    </div>
-  </div>
-
-</div>
-
-<div class="toast" id="toast"></div>
-
-<script>
-function showToast(msg, type) {
-  var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast ' + (type || 'success');
-  setTimeout(function() { t.classList.add('on'); }, 10);
-  setTimeout(function() { t.classList.remove('on'); }, 2500);
-}
-</script>
 <script src="../navigation.js"></script>
-<script>GHR_NAV.init('perf', '我的绩效结果');</script>
+<script>
+GHR_NAV.init('perf', '我的绩效结果');
+
+/* ═══ ICONS ═══ */
+var I={
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+};
+
+/* ═══ Toast ═══ */
+function showToast(msg){
+  var t=document.getElementById('ghrToast');
+  if(!t){t=document.createElement('div');t.id='ghrToast';t.style.cssText='position:fixed;top:60px;left:50%;transform:translateX(-50%);background:var(--c9);color:#FFF;padding:10px 18px;border-radius:var(--r2);font:500 13px/1 var(--f);z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none';document.body.appendChild(t);}
+  t.textContent=msg;t.style.opacity='1';
+  clearTimeout(t._t);t._t=setTimeout(function(){t.style.opacity='0';},2000);
+}
+
+/* ═══ PERIOD DATA ═══ */
+var PERIOD_DATA={
+  '2026-06':{periodLabel:'2026年6月',grade:'符合预期+',score:87.5,status:'confirmed',statusLabel:'已确认',items:[
+    {mod:'KPI',modColor:'var(--pr)',modWeight:'30%',rows:[
+      {name:'资源利用率（通用）',weight:'5%',type:'quant',typeLabel:'定量',detail:'挑战110%/目标105%<br>完成值：<span style="font-family:var(--m);color:var(--c8)">108%</span>',eval:'符合预期+',evalCls:'excellent',comment:'工作量饱和，超额完成'},
+      {name:'HRAS UAT用户验收首次通过率',weight:'10%',type:'quant',typeLabel:'定量',detail:'挑战100%/目标98%<br>完成值：<span style="font-family:var(--m);color:var(--c8)">97%</span>',eval:'符合预期',evalCls:'good',comment:'略低于目标，需关注质量'},
+      {name:'HRAS需求评审及时率',weight:'15%',type:'quant',typeLabel:'定量',detail:'挑战100%/目标98%<br>完成值：<span style="font-family:var(--m);color:var(--c8)">96%</span>',eval:'符合预期',evalCls:'good',comment:'有提升空间，下季度重点改进'}
+    ]},
+    {mod:'KPA',modColor:'var(--em)',modWeight:'70%',rows:[
+      {name:'HRAS产品管理规范',weight:'10%',type:'qual',typeLabel:'定性',detail:'4项规范全部符合，遵从度95%+',eval:'符合预期+',evalCls:'excellent',comment:'体系完整，执行力强'},
+      {name:'日常滚动需求响应',weight:'10%',type:'qual',typeLabel:'定性',detail:'按时完成GOFO 6月迭代需求',eval:'符合预期+',evalCls:'excellent',comment:'响应及时，方案质量高'},
+      {name:'HR ONE 绩效重构事项推进',weight:'25%',type:'qual',typeLabel:'定性',detail:'全部按时交付，无延期',eval:'符合预期+',evalCls:'excellent',comment:'推进有力，项目管控优秀'},
+      {name:'AI应用项目探索与落地推广',weight:'25%',type:'qual',typeLabel:'定性',detail:'全部按时发布，试点已落地',eval:'符合预期+',evalCls:'excellent',comment:'创新驱动，成果突出'}
+    ]}
+  ]},
+  '2026-05':{periodLabel:'2026年5月',grade:'符合预期',score:82.0,status:'confirmed',statusLabel:'已确认',items:[
+    {mod:'KPI',modColor:'var(--pr)',modWeight:'30%',rows:[
+      {name:'资源利用率（通用）',weight:'5%',type:'quant',typeLabel:'定量',detail:'挑战110%/目标105%<br>完成值：<span style="font-family:var(--m);color:var(--c8)">103%</span>',eval:'符合预期',evalCls:'good',comment:'基本达标'},
+      {name:'HRAS UAT用户验收首次通过率',weight:'10%',type:'quant',typeLabel:'定量',detail:'挑战100%/目标98%<br>完成值：<span style="font-family:var(--m);color:var(--c8)">95%</span>',eval:'符合预期-',evalCls:'good',comment:'需改进'},
+      {name:'HRAS需求评审及时率',weight:'15%',type:'quant',typeLabel:'定量',detail:'挑战100%/目标98%<br>完成值：<span style="font-family:var(--m);color:var(--c8)">94%</span>',eval:'符合预期-',evalCls:'good',comment:'有提升空间'}
+    ]},
+    {mod:'KPA',modColor:'var(--em)',modWeight:'70%',rows:[
+      {name:'HRAS产品管理规范',weight:'10%',type:'qual',typeLabel:'定性',detail:'4项规范基本符合，遵从度90%',eval:'符合预期',evalCls:'good',comment:'持续改进中'},
+      {name:'日常滚动需求响应',weight:'10%',type:'qual',typeLabel:'定性',detail:'按时完成GOFO 5月迭代需求',eval:'符合预期',evalCls:'good',comment:'响应及时'},
+      {name:'HR ONE 绩效重构事项推进',weight:'25%',type:'qual',typeLabel:'定性',detail:'大部分按时交付',eval:'符合预期+',evalCls:'excellent',comment:'推进有力'},
+      {name:'AI应用项目探索与落地推广',weight:'25%',type:'qual',typeLabel:'定性',detail:'按计划推进',eval:'符合预期',evalCls:'good',comment:'稳步推进'}
+    ]}
+  ]},
+  '2026-04':{periodLabel:'2026年4月',grade:'符合预期+',score:85.5,status:'confirmed',statusLabel:'已确认',items:[
+    {mod:'KPI',modColor:'var(--pr)',modWeight:'30%',rows:[
+      {name:'资源利用率（通用）',weight:'5%',type:'quant',typeLabel:'定量',detail:'挑战110%/目标105%<br>完成值：<span style="font-family:var(--m);color:var(--c8)">106%</span>',eval:'符合预期+',evalCls:'excellent',comment:'超额完成'},
+      {name:'HRAS UAT用户验收首次通过率',weight:'10%',type:'quant',typeLabel:'定量',detail:'挑战100%/目标98%<br>完成值：<span style="font-family:var(--m);color:var(--c8)">98%</span>',eval:'符合预期',evalCls:'good',comment:'达标'},
+      {name:'HRAS需求评审及时率',weight:'15%',type:'quant',typeLabel:'定量',detail:'挑战100%/目标98%<br>完成值：<span style="font-family:var(--m);color:var(--c8)">97%</span>',eval:'符合预期',evalCls:'good',comment:'接近目标'}
+    ]},
+    {mod:'KPA',modColor:'var(--em)',modWeight:'70%',rows:[
+      {name:'HRAS产品管理规范',weight:'10%',type:'qual',typeLabel:'定性',detail:'4项规范全部符合',eval:'符合预期+',evalCls:'excellent',comment:'执行到位'},
+      {name:'日常滚动需求响应',weight:'10%',type:'qual',typeLabel:'定性',detail:'按时完成GOFO 4月迭代需求',eval:'符合预期+',evalCls:'excellent',comment:'质量高'},
+      {name:'HR ONE 绩效重构事项推进',weight:'25%',type:'qual',typeLabel:'定性',detail:'全部按时交付',eval:'符合预期+',evalCls:'excellent',comment:'项目管控优秀'},
+      {name:'AI应用项目探索与落地推广',weight:'25%',type:'qual',typeLabel:'定性',detail:'试点推进顺利',eval:'符合预期+',evalCls:'excellent',comment:'成果突出'}
+    ]}
+  ]},
+  '2026-03':{periodLabel:'2026年3月',grade:'符合预期',score:81.0,status:'confirmed',statusLabel:'已确认',items:[
+    {mod:'KPI',modColor:'var(--pr)',modWeight:'30%',rows:[
+      {name:'资源利用率（通用）',weight:'5%',type:'quant',typeLabel:'定量',detail:'挑战110%/目标105%<br>完成值：<span style="font-family:var(--m);color:var(--c8)">102%</span>',eval:'符合预期',evalCls:'good',comment:'基本达标'},
+      {name:'HRAS UAT用户验收首次通过率',weight:'10%',type:'quant',typeLabel:'定量',detail:'挑战100%/目标98%<br>完成值：<span style="font-family:var(--m);color:var(--c8)">93%</span>',eval:'符合预期-',evalCls:'good',comment:'需改进'},
+      {name:'HRAS需求评审及时率',weight:'15%',type:'quant',typeLabel:'定量',detail:'挑战100%/目标98%<br>完成值：<span style="font-family:var(--m);color:var(--c8)">95%</span>',eval:'符合预期',evalCls:'good',comment:'有提升空间'}
+    ]},
+    {mod:'KPA',modColor:'var(--em)',modWeight:'70%',rows:[
+      {name:'HRAS产品管理规范',weight:'10%',type:'qual',typeLabel:'定性',detail:'规范遵从度88%',eval:'符合预期',evalCls:'good',comment:'持续改进'},
+      {name:'日常滚动需求响应',weight:'10%',type:'qual',typeLabel:'定性',detail:'按时完成GOFO 3月迭代需求',eval:'符合预期',evalCls:'good',comment:'基本完成'},
+      {name:'HR ONE 绩效重构事项推进',weight:'25%',type:'qual',typeLabel:'定性',detail:'有1项延期',eval:'符合预期',evalCls:'good',comment:'整体可控'},
+      {name:'AI应用项目探索与落地推广',weight:'25%',type:'qual',typeLabel:'定性',detail:'按计划推进',eval:'符合预期',evalCls:'good',comment:'稳定推进'}
+    ]}
+  ]},
+  '2026-02':{periodLabel:'2026年2月',grade:'符合预期+',score:84.0,status:'confirmed',statusLabel:'已确认',items:[
+    {mod:'KPI',modColor:'var(--pr)',modWeight:'30%',rows:[
+      {name:'资源利用率（通用）',weight:'5%',type:'quant',typeLabel:'定量',detail:'完成值：<span style="font-family:var(--m);color:var(--c8)">105%</span>',eval:'符合预期+',evalCls:'excellent',comment:'表现优秀'},
+      {name:'HRAS UAT用户验收首次通过率',weight:'10%',type:'quant',typeLabel:'定量',detail:'完成值：<span style="font-family:var(--m);color:var(--c8)">97%</span>',eval:'符合预期',evalCls:'good',comment:'接近目标'},
+      {name:'HRAS需求评审及时率',weight:'15%',type:'quant',typeLabel:'定量',detail:'完成值：<span style="font-family:var(--m);color:var(--c8)">96%</span>',eval:'符合预期',evalCls:'good',comment:'稳定'}
+    ]},
+    {mod:'KPA',modColor:'var(--em)',modWeight:'70%',rows:[
+      {name:'HRAS产品管理规范',weight:'10%',type:'qual',typeLabel:'定性',detail:'规范基本完善',eval:'符合预期+',evalCls:'excellent',comment:'执行到位'},
+      {name:'日常滚动需求响应',weight:'10%',type:'qual',typeLabel:'定性',detail:'按时完成',eval:'符合预期',evalCls:'good',comment:'正常'},
+      {name:'HR ONE 绩效重构事项推进',weight:'25%',type:'qual',typeLabel:'定性',detail:'按计划推进',eval:'符合预期+',evalCls:'excellent',comment:'推进有力'},
+      {name:'AI应用项目探索与落地推广',weight:'25%',type:'qual',typeLabel:'定性',detail:'方案设计完成',eval:'符合预期+',evalCls:'excellent',comment:'创新突破'}
+    ]}
+  ]},
+  '2026-01':{periodLabel:'2026年1月',grade:'符合预期',score:80.5,status:'confirmed',statusLabel:'已确认',items:[
+    {mod:'KPI',modColor:'var(--pr)',modWeight:'30%',rows:[
+      {name:'资源利用率（通用）',weight:'5%',type:'quant',typeLabel:'定量',detail:'完成值：<span style="font-family:var(--m);color:var(--c8)">101%</span>',eval:'符合预期',evalCls:'good',comment:'基本达标'},
+      {name:'HRAS UAT用户验收首次通过率',weight:'10%',type:'quant',typeLabel:'定量',detail:'完成值：<span style="font-family:var(--m);color:var(--c8)">92%</span>',eval:'符合预期-',evalCls:'good',comment:'需提升'},
+      {name:'HRAS需求评审及时率',weight:'15%',type:'quant',typeLabel:'定量',detail:'完成值：<span style="font-family:var(--m);color:var(--c8)">93%</span>',eval:'符合预期-',evalCls:'good',comment:'有改善空间'}
+    ]},
+    {mod:'KPA',modColor:'var(--em)',modWeight:'70%',rows:[
+      {name:'HRAS产品管理规范',weight:'10%',type:'qual',typeLabel:'定性',detail:'规范初步建立',eval:'符合预期',evalCls:'good',comment:'起步阶段'},
+      {name:'日常滚动需求响应',weight:'10%',type:'qual',typeLabel:'定性',detail:'基本按时完成',eval:'符合预期',evalCls:'good',comment:'正常'},
+      {name:'HR ONE 绩效重构事项推进',weight:'25%',type:'qual',typeLabel:'定性',detail:'项目启动',eval:'符合预期',evalCls:'good',comment:'开局良好'},
+      {name:'AI应用项目探索与落地推广',weight:'25%',type:'qual',typeLabel:'定性',detail:'调研阶段',eval:'符合预期',evalCls:'good',comment:'稳步探索'}
+    ]}
+  ]},
+  '2026-Q2':{periodLabel:'2026年Q2',grade:'符合预期+',score:87.5,status:'pending',statusLabel:'待确认',items:[
+    {mod:'KPI',modColor:'var(--pr)',modWeight:'30%',rows:[
+      {name:'资源利用率（通用）',weight:'5%',type:'quant',typeLabel:'定量',detail:'挑战110%/目标105%<br>完成值：<span style="font-family:var(--m);color:var(--c8)">108%</span>',eval:'符合预期+',evalCls:'excellent',comment:'工作量饱和，超额完成'},
+      {name:'HRAS UAT用户验收首次通过率',weight:'10%',type:'quant',typeLabel:'定量',detail:'挑战100%/目标98%<br>完成值：<span style="font-family:var(--m);color:var(--c8)">97%</span>',eval:'符合预期',evalCls:'good',comment:'略低于目标，需关注质量'},
+      {name:'HRAS需求评审及时率',weight:'15%',type:'quant',typeLabel:'定量',detail:'挑战100%/目标98%<br>完成值：<span style="font-family:var(--m);color:var(--c8)">96%</span>',eval:'符合预期',evalCls:'good',comment:'有提升空间，下季度重点改进'}
+    ]},
+    {mod:'KPA',modColor:'var(--em)',modWeight:'70%',rows:[
+      {name:'HRAS产品管理规范',weight:'10%',type:'qual',typeLabel:'定性',detail:'4项规范全部符合，遵从度95%+',eval:'符合预期+',evalCls:'excellent',comment:'体系完整，执行力强'},
+      {name:'日常滚动需求响应',weight:'10%',type:'qual',typeLabel:'定性',detail:'按时完成GOFO 6月迭代需求',eval:'符合预期+',evalCls:'excellent',comment:'响应及时，方案质量高'},
+      {name:'HR ONE 绩效重构事项推进',weight:'25%',type:'qual',typeLabel:'定性',detail:'全部按时交付，无延期',eval:'符合预期+',evalCls:'excellent',comment:'推进有力，项目管控优秀'},
+      {name:'AI应用项目探索与落地推广',weight:'25%',type:'qual',typeLabel:'定性',detail:'全部按时发布，试点已落地',eval:'符合预期+',evalCls:'excellent',comment:'创新驱动，成果突出'}
+    ]}
+  ]},
+  '2026-Q1':{periodLabel:'2026年Q1',grade:'符合预期+',score:85.5,status:'confirmed',statusLabel:'已确认',items:[
+    {mod:'KPI',modColor:'var(--pr)',modWeight:'30%',rows:[
+      {name:'资源利用率（通用）',weight:'5%',type:'quant',typeLabel:'定量',detail:'Q1均值：<span style="font-family:var(--m);color:var(--c8)">104%</span>',eval:'符合预期+',evalCls:'excellent',comment:'季度表现优秀'},
+      {name:'HRAS UAT用户验收首次通过率',weight:'10%',type:'quant',typeLabel:'定量',detail:'Q1均值：<span style="font-family:var(--m);color:var(--c8)">95%</span>',eval:'符合预期',evalCls:'good',comment:'整体达标'},
+      {name:'HRAS需求评审及时率',weight:'15%',type:'quant',typeLabel:'定量',detail:'Q1均值：<span style="font-family:var(--m);color:var(--c8)">96%</span>',eval:'符合预期',evalCls:'good',comment:'保持稳定'}
+    ]},
+    {mod:'KPA',modColor:'var(--em)',modWeight:'70%',rows:[
+      {name:'HRAS产品管理规范',weight:'10%',type:'qual',typeLabel:'定性',detail:'Q1规范体系逐步完善',eval:'符合预期+',evalCls:'excellent',comment:'进步明显'},
+      {name:'日常滚动需求响应',weight:'10%',type:'qual',typeLabel:'定性',detail:'Q1全部按时完成',eval:'符合预期+',evalCls:'excellent',comment:'响应效率高'},
+      {name:'HR ONE 绩效重构事项推进',weight:'25%',type:'qual',typeLabel:'定性',detail:'Q1里程碑全部达成',eval:'符合预期+',evalCls:'excellent',comment:'项目推进顺利'},
+      {name:'AI应用项目探索与落地推广',weight:'25%',type:'qual',typeLabel:'定性',detail:'Q1完成调研与方案设计',eval:'符合预期+',evalCls:'excellent',comment:'开局扎实'}
+    ]}
+  ]},
+  '2026-H1':{periodLabel:'2026年H1',grade:'符合预期+',score:86.5,status:'confirmed',statusLabel:'已确认',items:[
+    {mod:'KPI',modColor:'var(--pr)',modWeight:'30%',rows:[
+      {name:'资源利用率（通用）',weight:'5%',type:'quant',typeLabel:'定量',detail:'H1均值：<span style="font-family:var(--m);color:var(--c8)">106%</span>',eval:'符合预期+',evalCls:'excellent',comment:'半年表现优异'},
+      {name:'HRAS UAT用户验收首次通过率',weight:'10%',type:'quant',typeLabel:'定量',detail:'H1均值：<span style="font-family:var(--m);color:var(--c8)">96%</span>',eval:'符合预期',evalCls:'good',comment:'整体达标'},
+      {name:'HRAS需求评审及时率',weight:'15%',type:'quant',typeLabel:'定量',detail:'H1均值：<span style="font-family:var(--m);color:var(--c8)">96%</span>',eval:'符合预期',evalCls:'good',comment:'保持稳定'}
+    ]},
+    {mod:'KPA',modColor:'var(--em)',modWeight:'70%',rows:[
+      {name:'HRAS产品管理规范',weight:'10%',type:'qual',typeLabel:'定性',detail:'H1规范体系完善',eval:'符合预期+',evalCls:'excellent',comment:'体系完整'},
+      {name:'日常滚动需求响应',weight:'10%',type:'qual',typeLabel:'定性',detail:'H1全部按时完成',eval:'符合预期+',evalCls:'excellent',comment:'效率高'},
+      {name:'HR ONE 绩效重构事项推进',weight:'25%',type:'qual',typeLabel:'定性',detail:'H1里程碑全部达成',eval:'符合预期+',evalCls:'excellent',comment:'推进有力'},
+      {name:'AI应用项目探索与落地推广',weight:'25%',type:'qual',typeLabel:'定性',detail:'H1试点落地',eval:'符合预期+',evalCls:'excellent',comment:'成果突出'}
+    ]}
+  ]},
+  '2026':{periodLabel:'2026年',grade:'符合预期+',score:86.5,status:'confirmed',statusLabel:'已确认',items:[
+    {mod:'KPI',modColor:'var(--pr)',modWeight:'30%',rows:[
+      {name:'资源利用率（通用）',weight:'5%',type:'quant',typeLabel:'定量',detail:'全年均值：<span style="font-family:var(--m);color:var(--c8)">106%</span>',eval:'符合预期+',evalCls:'excellent',comment:'全年表现优异'},
+      {name:'HRAS UAT用户验收首次通过率',weight:'10%',type:'quant',typeLabel:'定量',detail:'全年均值：<span style="font-family:var(--m);color:var(--c8)">96%</span>',eval:'符合预期',evalCls:'good',comment:'整体达标'},
+      {name:'HRAS需求评审及时率',weight:'15%',type:'quant',typeLabel:'定量',detail:'全年均值：<span style="font-family:var(--m);color:var(--c8)">96%</span>',eval:'符合预期',evalCls:'good',comment:'保持稳定'}
+    ]},
+    {mod:'KPA',modColor:'var(--em)',modWeight:'70%',rows:[
+      {name:'HRAS产品管理规范',weight:'10%',type:'qual',typeLabel:'定性',detail:'全年规范体系完善',eval:'符合预期+',evalCls:'excellent',comment:'体系完整'},
+      {name:'日常滚动需求响应',weight:'10%',type:'qual',typeLabel:'定性',detail:'全年全部按时完成',eval:'符合预期+',evalCls:'excellent',comment:'高效响应'},
+      {name:'HR ONE 绩效重构事项推进',weight:'25%',type:'qual',typeLabel:'定性',detail:'全年里程碑全部达成',eval:'符合预期+',evalCls:'excellent',comment:'年度重点项目'},
+      {name:'AI应用项目探索与落地推广',weight:'25%',type:'qual',typeLabel:'定性',detail:'全年试点落地并推广',eval:'符合预期+',evalCls:'excellent',comment:'创新成果突出'}
+    ]}
+  ]}
+};
+
+/* ═══ CYCLE SWITCH ═══ */
+var currentYear='2026',currentCycle='2026-Q2';
+var CYCLES_BY_YEAR={
+  '2026':[{v:'2026-06',t:'6月'},{v:'2026-05',t:'5月'},{v:'2026-04',t:'4月'},{v:'2026-03',t:'3月'},{v:'2026-02',t:'2月'},{v:'2026-01',t:'1月'},{v:'2026-Q2',t:'Q2'},{v:'2026-Q1',t:'Q1'},{v:'2026-H1',t:'H1'},{v:'2026',t:'全年'}],
+  '2025':[{v:'2025-12',t:'12月'},{v:'2025-11',t:'11月'},{v:'2025-10',t:'10月'},{v:'2025-09',t:'9月'},{v:'2025-08',t:'8月'},{v:'2025-07',t:'7月'},{v:'2025-06',t:'6月'},{v:'2025-05',t:'5月'},{v:'2025-04',t:'4月'},{v:'2025-03',t:'3月'},{v:'2025-02',t:'2月'},{v:'2025-01',t:'1月'},{v:'2025-Q4',t:'Q4'},{v:'2025-Q3',t:'Q3'},{v:'2025-Q2',t:'Q2'},{v:'2025-Q1',t:'Q1'},{v:'2025-H2',t:'H2'},{v:'2025-H1',t:'H1'},{v:'2025',t:'全年'}],
+  '2024':[{v:'2024-12',t:'12月'},{v:'2024-11',t:'11月'},{v:'2024-10',t:'10月'},{v:'2024-Q4',t:'Q4'},{v:'2024-Q3',t:'Q3'},{v:'2024-Q2',t:'Q2'},{v:'2024-Q1',t:'Q1'},{v:'2024-H2',t:'H2'},{v:'2024-H1',t:'H1'},{v:'2024',t:'全年'}]
+};
+
+function switchYear(yr){
+  currentYear=yr;
+  var cycles=CYCLES_BY_YEAR[yr]||[];
+  currentCycle=cycles[0].v;
+  switchCycle(currentCycle);
+  renderCards();
+}
+
+var GRADE_CLS={'远超预期':'excellent','超出预期':'excellent','符合预期+':'good','符合预期':'normal','符合预期-':'poor','低于预期':'bad','远低预期':'bad'};
+
+function renderCards(){
+  var cycles=CYCLES_BY_YEAR[currentYear]||[];
+  var h='';
+  for(var i=0;i<cycles.length;i++){
+    var c=cycles[i];
+    var data=PERIOD_DATA[c.v]||{grade:'—'};
+    var active=c.v===currentCycle?' active':'';
+    var gc=GRADE_CLS[data.grade]||'normal';
+    h+='<div class="cycle-card'+active+'" onclick="switchCycle(\''+c.v+'\',this)">';
+    h+='<div class="cycle-card-period">'+c.t+'</div>';
+    h+='<span class="cycle-card-grade '+gc+'">'+data.grade+'</span>';
+    h+='</div>';
+  }
+  document.getElementById('cycleCards').innerHTML=h;
+}
+
+function switchCycle(val,el){
+  currentCycle=val;
+  var cards=document.querySelectorAll('.cycle-card');
+  for(var i=0;i<cards.length;i++)cards[i].classList.remove('active');
+  if(el)el.classList.add('active');
+  var data=PERIOD_DATA[val]||PERIOD_DATA['2026-Q2'];
+  var badge=document.getElementById('statusBadge');
+  badge.textContent=data.statusLabel;
+  badge.className=data.status==='confirmed'?'status-confirmed':'status-pending';
+  document.getElementById('scoreLabel').textContent='总分 '+data.score+' · '+data.grade;
+  renderScoreDetail(val);
+}
+
+function renderScoreDetail(cycle){
+  var data=PERIOD_DATA[cycle]||PERIOD_DATA['2026-Q2'];
+  var h='<table class="result-table"><thead>';
+  h+='<tr><th style="width:200px">名称</th><th style="width:55px">权重</th><th style="width:60px">类型</th><th>完成值/完成情况</th><th>评价</th><th>上级评语</th></tr></thead><tbody>';
+  for(var i=0;i<data.items.length;i++){
+    var mod=data.items[i];
+    h+='<tr class="mod-row"><td colspan="6"><div style="display:flex;align-items:center;gap:8px"><div class="mod-dot" style="background:'+mod.modColor+'"></div><span class="mod-name">'+mod.mod+'</span><span class="mod-weight">'+mod.modWeight+'</span></div></td></tr>';
+    for(var j=0;j<mod.rows.length;j++){
+      var r=mod.rows[j];
+      h+='<tr><td style="font-weight:500;color:var(--c8)">'+r.name+'</td>';
+      h+='<td style="font-family:var(--m);font-size:12px">'+r.weight+'</td>';
+      h+='<td><span class="type-tag '+r.type+'">'+r.typeLabel+'</span></td>';
+      h+='<td style="font-size:12px;color:var(--c6)">'+r.detail+'</td>';
+      h+='<td><span class="eval-tag '+r.evalCls+'">'+r.eval+'</span></td>';
+      h+='<td style="max-width:180px;font-size:12px;color:var(--c6)">'+r.comment+'</td></tr>';
+    }
+  }
+  h+='</tbody></table>';
+  document.getElementById('scoreDetail').innerHTML=h;
+}
+
+/* ═══ INIT ═══ */
+renderCards();
+switchCycle(currentCycle);
+</script>
 </body>
 </html>

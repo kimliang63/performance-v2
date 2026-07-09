@@ -4,102 +4,270 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>HR ONE - 目标制定</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../mobile-base.css">
 <style>
-.goal-mod{margin-bottom:10px}
-.goal-mod-hd{display:flex;align-items:center;gap:8px;padding:8px 0}
-.goal-mod-color{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.goal-mod-name{font:600 var(--fs-base)/1 var(--f);color:var(--c8);flex:1}
-.goal-mod-wt{font:500 var(--fs-sm)/1 var(--fm);color:var(--c5)}
-.goal-item{padding:8px 0;border-bottom:1px solid var(--dv)}
-.goal-item:last-child{border-bottom:none}
-.goal-item-top{display:flex;align-items:center;gap:6px;margin-bottom:4px}
-.goal-item-name{flex:1;font:500 var(--fs-base)/1.3 var(--f);color:var(--c8)}
-.goal-item-type{font:500 var(--fs-xs)/1 var(--f);padding:2px 6px;border-radius:3px}
-.goal-item-type.quant{background:var(--pr50);color:var(--pr)}
-.goal-item-type.qual{background:var(--em50);color:var(--em700)}
-.goal-item-wt{font:500 var(--fs-sm)/1 var(--fm);color:var(--c5)}
-.goal-item-desc{font:400 var(--fs-sm)/1.4 var(--f);color:var(--c6);padding:6px 10px;background:var(--c0);border-radius:6px;margin-bottom:6px}
+:root{
+  --pr:#2563EB;--pr50:#EFF6FF;--pr100:#DBEAFE;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#0F172A;--c7:#334155;--c5:#64748B;--c4:#94A3B8;--c3:#CBD5E1;--c2:#E2E8F0;--c1:#F1F5F8;
+  --sf:#FFF;--bg:#F0F4F8;--s2:#F7F9FC;--s3:#EEF2F7;
+  --dv:#F1F5F9;--bd:rgba(15,23,42,.06);
+  --sx:0 1px 3px rgba(0,0,0,.05);--sm:0 2px 8px rgba(0,0,0,.06);--md:0 4px 16px rgba(0,0,0,.08);
+  --r1:10px;--r2:14px;--r3:18px;--r4:22px;
+  --f:'Inter','Noto Sans SC',system-ui,sans-serif;
+  --fm:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:#E5E7EB;color:var(--c7);display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:0;-webkit-font-smoothing:antialiased;line-height:1.5}
+
+.phone{width:390px;min-height:844px;background:var(--bg);position:relative;overflow-x:hidden;overflow-y:auto}
+
+/* Status bar */
+.status-bar{height:54px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 8px;font:600 14px/1 var(--f);color:var(--c9)}
+.status-bar-r{display:flex;align-items:center;gap:4px}
+.status-bar-r svg{display:block}
+
+/* Nav bar */
+.nav-bar{display:flex;align-items:center;height:44px;padding:0 16px;position:relative}
+.nav-title{flex:1;font:600 17px/1 var(--f);color:var(--c9);text-align:center}
+.nav-back{width:32px;height:32px;border-radius:8px;background:var(--c1);display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--c7);flex-shrink:0}
+.nav-back svg{width:16px;height:16px}
+.nav-capsule{position:absolute;right:16px;top:50%;transform:translateY(-50%);display:flex;align-items:center;border:1px solid var(--c2);border-radius:18px;overflow:hidden}
+.nav-capsule-btn{width:40px;height:28px;display:flex;align-items:center;justify-content:center;background:var(--sf);border:none;border-right:1px solid var(--c2);cursor:pointer;color:var(--c5);font-size:14px;line-height:1}
+.nav-capsule-btn:last-child{border-right:none}
+.nav-capsule-btn:active{background:var(--c1)}
+
+/* Scroll body */
+.phone-body{padding:12px 16px 32px}
+
+/* Employee info */
+.emp-bar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--sf);border-radius:var(--r2);margin-bottom:10px;box-shadow:var(--sx);border:1px solid var(--bd)}
+.emp-avatar{width:36px;height:36px;border-radius:50%;background:var(--pr50);display:flex;align-items:center;justify-content:center;font:700 16px/1 var(--f);color:var(--pr);flex-shrink:0}
+.emp-info{flex:1;min-width:0}
+.emp-name{font:600 14px/1 var(--f);color:var(--c9)}
+.emp-meta{font:400 12px/1 var(--f);color:var(--c5);margin-top:3px}
+.emp-cycle{font:500 11px/1 var(--f);padding:3px 8px;border-radius:4px;background:var(--pr50);color:var(--pr);white-space:nowrap}
+
+/* Summary row */
+.summary-row{display:flex;gap:8px;margin-bottom:12px}
+.summary-item{flex:1;background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:10px;text-align:center}
+.summary-val{font:700 16px/1 var(--fm);color:var(--c9)}
+.summary-lbl{font:400 11px/1 var(--f);color:var(--c5);margin-top:2px}
+
+/* Section header */
+.sec-hd{display:flex;align-items:center;gap:8px;padding:0 0 10px;font:600 15px/1 var(--f);color:var(--c9)}
+.sec-hd-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.sec-hd-wt{font:500 13px/1 var(--fm);color:var(--c5);margin-left:auto}
+
+/* Goal card */
+.goal-card{background:var(--sf);border-radius:var(--r2);padding:12px 14px;margin-bottom:6px;box-shadow:var(--sx);border:1px solid var(--bd)}
+.goal-card-hd{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.goal-card-name{flex:1;font:500 14px/1.3 var(--f);color:var(--c9)}
+.goal-card-wt{font:500 13px/1 var(--fm);color:var(--c5)}
+.goal-card-desc{font:400 12px/1.4 var(--f);color:var(--c5);margin-bottom:8px;padding:6px 10px;background:var(--s2);border-radius:6px}
+.goal-type-tag{font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px;flex-shrink:0}
+.goal-type-tag.quant{background:var(--pr50);color:var(--pr)}
+.goal-type-tag.qual{background:var(--em50);color:var(--em700)}
+
+.goal-metrics{display:flex;flex-direction:column;gap:8px;margin-bottom:6px}
+.goal-metric{}
+.goal-metric-val{font:600 14px/1 var(--fm);color:var(--c9)}
+.goal-metric-lbl{font:400 11px/1 var(--f);color:var(--c5);margin-bottom:4px}
+.goal-metric-lbl .req{color:var(--ro);margin-left:2px}
+
+.goal-ms-row{display:flex;flex-direction:column;gap:2px;padding:6px 10px;background:var(--s2);border-radius:6px;margin-bottom:6px}
+.goal-ms-label{font:500 10px/1 var(--f);color:var(--c4);white-space:nowrap}
+.goal-ms-val{font:400 12px/1.4 var(--f);color:var(--c5)}
+
+.goal-input-sm{width:100%;height:36px;border:1px solid var(--c2);border-radius:var(--r1);padding:0 10px;font:500 14px/1 var(--fm);color:var(--c9);outline:none;background:var(--sf)}
+.goal-input-sm:focus{border-color:var(--pr)}
+.goal-textarea-sm{width:100%;min-height:56px;border:1px solid var(--c2);border-radius:6px;padding:6px 8px;font:400 12px/1.4 var(--f);color:var(--c7);outline:none;resize:none;background:var(--sf)}
+.goal-textarea-sm:focus{border-color:var(--pr)}
+
+/* Panel (approval) */
+.panel{background:var(--sf);border-radius:var(--r2);margin-bottom:10px;box-shadow:var(--sx);border:1px solid var(--bd);overflow:hidden}
+.panel-hd{padding:14px 16px;font:600 14px/1 var(--f);color:var(--c9);border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:8px}
+.panel-bd{padding:12px 16px}
+
+/* Approval flow cells */
+.flow-item{display:flex;align-items:center;padding:12px 16px;gap:10px}
+.flow-item+.flow-item{border-top:1px solid var(--dv)}
+.flow-dot{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.flow-dot svg{width:12px;height:12px}
+.flow-info{flex:1;min-width:0}
+.flow-name{font:500 13px/1 var(--f);color:var(--c9)}
+.flow-person{font:400 12px/1 var(--f);color:var(--c5);margin-top:2px}
+.flow-badge{font:500 11px/1 var(--f);padding:2px 8px;border-radius:4px;white-space:nowrap}
+
+/* WeUI-like buttons */
+.bottom-bar{position:sticky;bottom:0;left:0;right:0;padding:10px 16px 34px;background:rgba(255,255,255,.95);border-top:1px solid var(--dv);display:flex;gap:8px;z-index:100}
+.weui-btn{display:flex;align-items:center;justify-content:center;height:44px;border-radius:var(--r1);font:500 15px/1 var(--f);border:none;cursor:pointer;padding:0 16px;transition:opacity .15s}
+.weui-btn:active{opacity:.7}
+.weui-btn_default{flex:1;background:var(--s2);color:var(--c7);border:1px solid var(--c2)}
+.weui-btn_primary{flex:1;background:var(--pr);color:#FFF}
+
+.toast{position:absolute;top:70px;left:50%;transform:translateX(-50%);background:var(--c9);color:#FFF;padding:10px 22px;border-radius:20px;font:500 13px/1 var(--f);z-index:900;opacity:0;pointer-events:none;transition:opacity .2s;white-space:nowrap}
+.toast.show{opacity:1}
+
+.gap{height:80px}
 </style>
 </head>
 <body>
-<div class="phone">
-  <div class="phone-notch"></div>
-  <div class="phone-status">9:41<div class="phone-status-r">
-    <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="6" width="3" height="6" rx="1" fill="currentColor" style="color:var(--c9)"/><rect x="4.5" y="4" width="3" height="8" rx="1" fill="currentColor" style="color:var(--c9)"/><rect x="9" y="1.5" width="3" height="10.5" rx="1" fill="currentColor" style="color:var(--c9)"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="currentColor" style="color:var(--c9)"/></svg>
-    <svg width="15" height="12" viewBox="0 0 15 12" fill="none"><rect x="0.5" y="0.5" width="12" height="11" rx="2" stroke="currentColor" style="color:var(--c9)" stroke-width="1.2"/><line x1="13" y1="4" x2="13" y2="8" stroke="currentColor" style="color:var(--c9)" stroke-width="1.2"/><rect x="2" y="2.5" width="7" height="7" rx="1" fill="currentColor" style="color:var(--c9)"/></svg>
-  </div></div>
-  <div class="weui-navigation-bar">
-    <a href="../demo-index.html" class="back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></a>
-    <span class="title">目标制定</span>
+<div class="phone" id="phone">
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span>9:41</span>
+    <div class="status-bar-r">
+      <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="6" width="3" height="6" rx="1" fill="#0F172A"/><rect x="4.5" y="4" width="3" height="8" rx="1" fill="#0F172A"/><rect x="9" y="1.5" width="3" height="10.5" rx="1" fill="#0F172A"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="#0F172A"/></svg>
+      <svg width="15" height="12" viewBox="0 0 15 12" fill="none"><rect x="0.5" y="0.5" width="12" height="11" rx="2" stroke="#0F172A" stroke-width="1.2"/><line x1="13" y1="4" x2="13" y2="8" stroke="#0F172A" stroke-width="1.2"/><rect x="2" y="2.5" width="7" height="7" rx="1" fill="#0F172A"/></svg>
+    </div>
   </div>
+
+  <!-- Nav Bar -->
+  <div class="nav-bar">
+    <a href="../demo-index.html" class="nav-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></a>
+    <span class="nav-title">目标制定</span>
+    <div class="nav-capsule">
+      <button class="nav-capsule-btn" aria-label="更多">⋯</button>
+      <button class="nav-capsule-btn" aria-label="关闭">○</button>
+    </div>
+  </div>
+
   <div class="phone-body" id="phoneBody"></div>
+
+  <!-- Bottom Bar -->
   <div class="bottom-bar">
-    <button class="weui-btn weui-btn_default" style="flex:1" onclick="showToast('已保存草稿')">保存草稿</button>
-    <button class="weui-btn weui-btn_primary" style="flex:1" onclick="showToast('已提交审批')">提交审批</button>
+    <button class="weui-btn weui-btn_default" style="flex:1" onclick="var n=Object.keys(edits).length;showToast('已保存草稿'+(n>0?'（'+n+'项已编辑）':''))">保存草稿</button>
+    <button class="weui-btn weui-btn_primary" style="flex:1" onclick="var n=Object.keys(edits).length;showToast('已提交审批'+(n>0?'（'+n+'项已编辑）':''))">提交审批</button>
   </div>
+
 </div>
+
+<!-- Toast -->
 <div class="toast" id="toast"></div>
-<script src="../mobile-base.js"></script>
+
 <script>
 var EMP={name:'张明',dept:'产品部',title:'高级产品经理',cycle:'2026年Q2'};
 
+var edits={}; // { 'g1': {challenge:110, target:105, baseline:100}, 'g4': {std2:'...', std3:'...', std4:'...'}, ... }
+
 var MODS=[
   {name:'KPI',weight:30,color:'var(--pr)',goals:[
-    {id:'g1',name:'资源利用率（通用）',type:'quant',weight:5,desc:'人员实际工作量饱和情况',target:105,challenge:110,baseline:100,unit:'%'},
-    {id:'g2',name:'HRAS UAT用户验收首次通过率',type:'quant',weight:10,desc:'需求首次业务验收通过的概率',target:98,challenge:100,baseline:95,unit:'%'},
-    {id:'g3',name:'HRAS需求评审及时率',type:'quant',weight:15,desc:'迭代版本评审的及时性情况',target:98,challenge:100,baseline:95,unit:'%'}
+    {id:'g1',name:'资源利用率（通用）',type:'quant',weight:5,target:105,challenge:110,baseline:100,unit:'%',desc:'人员实际工作量饱和情况'},
+    {id:'g2',name:'HRAS UAT用户验收首次通过率',type:'quant',weight:10,target:98,challenge:100,baseline:95,unit:'%',desc:'需求首次业务验收通过的概率'},
+    {id:'g3',name:'HRAS需求评审及时率',type:'quant',weight:15,target:98,challenge:100,baseline:95,unit:'%',desc:'迭代版本评审的及时性情况'}
   ]},
   {name:'KPA',weight:70,color:'var(--em)',goals:[
-    {id:'g4',name:'HRAS产品管理规范',type:'qual',weight:10,desc:'需求管理流程规范、产品需求规范、迭代火车管理规范、周会/月会准时完成'},
-    {id:'g5',name:'日常滚动需求响应',type:'qual',weight:10,desc:'根据业务日会需求优先级，滚动响应日常需求，输出产品解决方案'},
-    {id:'g6',name:'HR ONE 绩效重构事项推进',type:'qual',weight:25,desc:'06-10 输出AI+绩效核心页面原型；06-19 完成绩效版本4需求内审；06-24 完成需求评审'},
-    {id:'g7',name:'AI应用项目探索与落地推广',type:'qual',weight:25,desc:'06-05 完成ASSC采购侧AI应用1.0版本；06-12 对接LBU试点应用；06-26 完成1.1版本'}
+    {id:'g4',name:'HRAS产品管理规范',type:'qual',weight:10,desc:'需求管理流程规范、产品需求规范、迭代火车管理规范、周会/月会准时完成',std2:'',std3:'4项规范全部符合，遵从度≥95%',std4:''},
+    {id:'g5',name:'日常滚动需求响应',type:'qual',weight:10,desc:'根据业务日会需求优先级，滚动响应日常需求，输出产品解决方案',std2:'',std3:'按时完成全部GOFO迭代需求响应',std4:''},
+    {id:'g6',name:'HR ONE 绩效重构事项推进',type:'qual',weight:25,desc:'06-10 输出AI+绩效核心页面原型；06-19 完成绩效版本4需求内审；06-24 完成需求评审',std2:'',std3:'3个里程碑节点按时交付',std4:''},
+    {id:'g7',name:'AI应用项目探索与落地推广',type:'qual',weight:25,desc:'06-05 完成ASSC采购侧AI应用1.0版本；06-12 对接LBU试点应用；06-26 完成1.1版本',std2:'',std3:'3个版本迭代按时发布',std4:''}
   ]}
 ];
 
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+
+function updateEdit(id, field, val){
+  if(!edits[id]) edits[id]={};
+  edits[id][field]=val;
+}
+
+/* ═══ Main Page ═══ */
 function render(){
   var h='';
-  // Employee card
-  h+='<div class="weui-panel weui-panel_access" style="margin-bottom:10px"><div class="weui-cells">';
-  h+='<div class="weui-cell"><div class="weui-cell__hd"><div style="width:36px;height:36px;border-radius:50%;background:var(--pr50);display:flex;align-items:center;justify-content:center;font:700 var(--fs-lg)/1 var(--f);color:var(--pr);margin-right:12px">'+EMP.name[0]+'</div></div><div class="weui-cell__bd"><div style="font:600 var(--fs-base)/1 var(--f);color:var(--c9)">'+EMP.name+'</div><div style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5);margin-top:2px">'+EMP.title+' · '+EMP.dept+'</div></div><div class="weui-cell__ft"><span class="weui-badge" style="background:var(--pr50);color:var(--pr)">'+EMP.cycle+'</span></div></div>';
-  h+='</div></div>';
 
-  // Summary
-  var totalGoals=MODS.reduce(function(s,m){return s+m.goals.length},0);
-  h+='<div style="display:flex;gap:8px;margin-bottom:12px">';
-  h+='<div style="flex:1;background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:10px;text-align:center"><div style="font:700 var(--fs-lg)/1 var(--fm);color:var(--c9)">'+totalGoals+'</div><div style="font:400 var(--fs-xs)/1 var(--f);color:var(--c5);margin-top:2px">目标数</div></div>';
-  h+='<div style="flex:1;background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:10px;text-align:center"><div style="font:700 var(--fs-lg)/1 var(--fm);color:var(--pr)">100%</div><div style="font:400 var(--fs-xs)/1 var(--f);color:var(--c5);margin-top:2px">总权重</div></div>';
+  /* Employee info */
+  h+='<div class="emp-bar">';
+  h+='<div class="emp-avatar">'+EMP.name[0]+'</div>';
+  h+='<div class="emp-info"><div class="emp-name">'+EMP.name+'</div><div class="emp-meta">'+EMP.title+' · '+EMP.dept+'</div></div>';
+  h+='<span class="emp-cycle">'+EMP.cycle+'</span>';
   h+='</div>';
 
-  // Modules with WeUI cells
-  MODS.forEach(function(m){
-    h+='<div class="weui-panel weui-panel_access goal-mod"><div class="weui-panel__hd" style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:'+m.color+';display:inline-block"></span><span style="font:600 var(--fs-base)/1 var(--f);color:var(--c8)">'+m.name+'</span><span style="font:500 var(--fs-sm)/1 var(--fm);color:var(--c5)">权重 '+m.weight+'%</span></div><div class="weui-cells">';
-    m.goals.forEach(function(g){
+  /* Summary row */
+  var totalGoals=MODS.reduce(function(s,m){return s+m.goals.length},0);
+  h+='<div class="summary-row">';
+  h+='<div class="summary-item"><div class="summary-val">'+totalGoals+'</div><div class="summary-lbl">目标数</div></div>';
+  h+='<div class="summary-item"><div class="summary-val" style="color:var(--pr)">100%</div><div class="summary-lbl">总权重</div></div>';
+  h+='</div>';
+
+  /* Goals by module */
+  MODS.forEach(function(m,mi){
+    h+='<div class="sec-hd">';
+    h+='<span class="sec-hd-dot" style="background:'+m.color+'"></span>';
+    h+=m.name;
+    h+='<span class="sec-hd-wt">'+m.weight+'%</span>';
+    h+='</div>';
+
+    m.goals.forEach(function(g,gi){
       var isQuant=g.type==='quant';
-      h+='<div class="weui-cell"><div class="weui-cell__bd"><div class="goal-item-top"><span class="goal-item-name">'+g.name+'</span><span class="goal-item-type '+(isQuant?'quant':'qual')+'">'+(isQuant?'定量':'定性')+'</span><span class="goal-item-wt">'+g.weight+'%</span></div><div class="goal-item-desc">'+g.desc+'</div>';
+      h+='<div class="goal-card">';
+      /* Header */
+      h+='<div class="goal-card-hd">';
+      h+='<span class="goal-card-name">'+esc(g.name||'未命名目标')+'</span>';
+      h+='<span class="goal-type-tag '+(isQuant?'quant':'qual')+'">'+(isQuant?'定量':'定性')+'</span>';
+      h+='<span class="goal-card-wt">'+g.weight+'%</span>';
+      h+='</div>';
+
+
       if(isQuant){
-        h+='<div style="display:flex;gap:6px;font-size:var(--fs-sm);color:var(--c5)"><span>挑战: <strong style="color:var(--c8)">'+g.challenge+g.unit+'</strong></span><span>目标: <strong style="color:var(--c8)">'+g.target+g.unit+'</strong></span><span>保底: <strong style="color:var(--c8)">'+g.baseline+g.unit+'</strong></span></div>';
+        var ek=edits[g.id]||{};
+        var ch=ek.challenge!==undefined?ek.challenge:g.challenge;
+        var tg=ek.target!==undefined?ek.target:g.target;
+        var bl=ek.baseline!==undefined?ek.baseline:g.baseline;
+        /* Metrics */
+        h+='<div class="goal-metrics">';
+        h+='<div class="goal-metric"><div class="goal-metric-lbl">挑战值（'+g.unit+'）</div><input class="goal-input-sm" type="number" value="'+ch+'" oninput="updateEdit(\''+g.id+'\',\'challenge\',this.value)"></div>';
+        h+='<div class="goal-metric"><div class="goal-metric-lbl">目标值（'+g.unit+'） <span class="req">*</span></div><input class="goal-input-sm" type="number" value="'+tg+'" oninput="updateEdit(\''+g.id+'\',\'target\',this.value)" placeholder="必填"></div>';
+        h+='<div class="goal-metric"><div class="goal-metric-lbl">保底值（'+g.unit+'）</div><input class="goal-input-sm" type="number" value="'+bl+'" oninput="updateEdit(\''+g.id+'\',\'baseline\',this.value)"></div>';
+        h+='</div>';
+      }else{
+        var ek=edits[g.id]||{};
+        var s2=ek.std2!==undefined?ek.std2:(g.std2||'');
+        var s3=ek.std3!==undefined?ek.std3:(g.std3||'');
+        var s4=ek.std4!==undefined?ek.std4:(g.std4||'');
+        /* 指标描述 */
+        h+='<div class="goal-metric-lbl">指标描述</div>';
+        h+='<textarea class="goal-textarea-sm" placeholder="输入指标描述…" oninput="updateEdit(\''+g.id+'\',\'desc\',this.value)">'+esc(ek.desc!==undefined?ek.desc:(g.desc||''))+'</textarea>';
+        /* 衡量标准 */
+        h+='<div class="goal-metrics" style="margin-top:8px">';
+        h+='<div class="goal-metric"><div class="goal-metric-lbl">衡量标准（2分）</div><textarea class="goal-textarea-sm" placeholder="请输入2分评价标准…" oninput="updateEdit(\''+g.id+'\',\'std2\',this.value)">'+esc(s2)+'</textarea></div>';
+        h+='<div class="goal-metric"><div class="goal-metric-lbl">衡量标准（3分） <span class="req">*</span></div><textarea class="goal-textarea-sm" placeholder="请输入3分评价标准（必填）…" oninput="updateEdit(\''+g.id+'\',\'std3\',this.value)">'+esc(s3)+'</textarea></div>';
+        h+='<div class="goal-metric"><div class="goal-metric-lbl">衡量标准（4分）</div><textarea class="goal-textarea-sm" placeholder="请输入4分评价标准…" oninput="updateEdit(\''+g.id+'\',\'std4\',this.value)">'+esc(s4)+'</textarea></div>';
+        h+='</div>';
       }
-      h+='</div></div>';
+      h+='</div>';
     });
-    h+='</div></div>';
   });
 
-  // Approval flow
-  h+='<div class="weui-panel weui-panel_access"><div class="weui-panel__hd" style="font:600 var(--fs-base)/1 var(--f);color:var(--c8)">审批流程</div><div class="weui-cells">';
-  var flow=[{n:'员工提交',p:'张明',c:'var(--pr)',s:'当前',sb:'var(--pr50)',sc:'var(--pr)'},{n:'直线上级审批',p:'王总监',c:'var(--c4)',s:'待处理',sb:'var(--c1)',sc:'var(--c5)'},{n:'HRBP确认',p:'赵敏',c:'var(--c4)',s:'待处理',sb:'var(--c1)',sc:'var(--c5)'}];
+  /* Approval flow */
+  h+='<div class="panel">';
+  h+='<div class="panel-hd">审批流程</div>';
+  var flow=[{n:'员工提交',p:'张明',c:'var(--em)',s:'当前',sb:'var(--em50)',sc:'var(--em700)'},{n:'间接上级审批',p:'刘VP',c:'var(--c3)',s:'待处理',sb:'var(--c1)',sc:'var(--c5)'},{n:'直接上级审批',p:'王总监',c:'var(--c3)',s:'待处理',sb:'var(--c1)',sc:'var(--c5)'}];
   flow.forEach(function(f){
-    h+='<div class="weui-cell"><div class="weui-cell__hd"><div style="width:24px;height:24px;border-radius:50%;background:'+f.c+';display:flex;align-items:center;justify-content:center;margin-right:10px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div></div><div class="weui-cell__bd"><div style="font:500 var(--fs-sm)/1 var(--f);color:var(--c8)">'+f.n+'</div><div style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5);margin-top:2px">'+f.p+'</div></div><div class="weui-cell__ft"><span style="font:500 var(--fs-xs)/1 var(--f);padding:2px 8px;border-radius:4px;background:'+f.sb+';color:'+f.sc+'">'+f.s+'</span></div></div>';
+    h+='<div class="flow-item">';
+    h+='<div class="flow-dot" style="background:'+f.c+'"><svg viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>';
+    h+='<div class="flow-info"><div class="flow-name">'+f.n+'</div><div class="flow-person">'+f.p+'</div></div>';
+    h+='<span class="flow-badge" style="background:'+f.sb+';color:'+f.sc+'">'+f.s+'</span>';
+    h+='</div>';
   });
-  h+='</div></div><div style="height:80px"></div>';
+  h+='</div><div class="gap"></div>';
 
   document.getElementById('phoneBody').innerHTML=h;
 }
 
+/* ═══ Toast ═══ */
+var toastTimer;
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){t.classList.remove('show');},1800);
+}
+
 render();
-injectAIPanel('AI 目标助手','优化目标 · 检查权重 · 推荐指标',['优化目标描述','检查权重分配','推荐指标']);
 </script>
 </body>
 </html>

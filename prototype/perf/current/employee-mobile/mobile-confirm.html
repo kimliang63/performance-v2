@@ -4,46 +4,167 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>HR ONE - 结果确认</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../mobile-base.css">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#EFF6FF;--pr100:#DBEAFE;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#0F172A;--c7:#334155;--c5:#64748B;--c4:#94A3B8;--c3:#CBD5E1;--c2:#E2E8F0;--c1:#F1F5F8;
+  --sf:#FFF;--bg:#F0F4F8;--s2:#F7F9FC;--s3:#EEF2F7;
+  --dv:#F1F5F9;--bd:rgba(15,23,42,.06);
+  --sx:0 1px 3px rgba(0,0,0,.05);--sm:0 2px 8px rgba(0,0,0,.06);--md:0 4px 16px rgba(0,0,0,.08);
+  --r1:10px;--r2:14px;--r3:18px;--r4:22px;
+  --f:'Inter','Noto Sans SC',system-ui,sans-serif;
+  --fm:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:#E5E7EB;color:var(--c7);display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:0;-webkit-font-smoothing:antialiased;line-height:1.5}
+
+.phone{width:390px;min-height:844px;background:var(--bg);position:relative;overflow-x:hidden;overflow-y:auto}
+
+/* Status bar */
+.status-bar{height:54px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 8px;font:600 14px/1 var(--f);color:var(--c9)}
+.status-bar-r{display:flex;align-items:center;gap:4px}
+.status-bar-r svg{display:block}
+
+/* Nav bar */
+.nav-bar{display:flex;align-items:center;height:44px;padding:0 16px;position:relative}
+.nav-title{flex:1;font:600 17px/1 var(--f);color:var(--c9);text-align:center}
+.nav-back{width:32px;height:32px;border-radius:8px;background:var(--c1);display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--c7);flex-shrink:0}
+.nav-back svg{width:16px;height:16px}
+
+/* Scroll body */
+.phone-body{padding:12px 16px 32px}
+
+/* Employee info */
+.emp-bar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--sf);border-radius:var(--r2);margin-bottom:10px;box-shadow:var(--sx);border:1px solid var(--bd)}
+.emp-avatar{width:36px;height:36px;border-radius:50%;background:var(--pr50);display:flex;align-items:center;justify-content:center;font:700 16px/1 var(--f);color:var(--pr);flex-shrink:0}
+.emp-info{flex:1;min-width:0}
+.emp-name{font:600 14px/1 var(--f);color:var(--c9)}
+.emp-meta{font:400 12px/1 var(--f);color:var(--c5);margin-top:3px}
+.emp-cycle{font:500 11px/1 var(--f);padding:3px 8px;border-radius:4px;background:var(--pr50);color:var(--pr);white-space:nowrap}
+
+/* Panel cells */
+.epanel{background:var(--sf);border-radius:var(--r2);margin-bottom:10px;box-shadow:var(--sx);border:1px solid var(--bd);overflow:hidden}
+.epanel-hd{padding:12px 16px;font:600 14px/1 var(--f);color:var(--c9);border-bottom:1px solid var(--dv)}
+.ecell{display:flex;align-items:center;padding:12px 16px;gap:10px}
+.ecell+.ecell{border-top:1px solid var(--dv)}
+.ecell-hd{flex-shrink:0}
+.ecell-bd{flex:1;min-width:0}
+.ecell-ft{flex-shrink:0;text-align:right}
+
+/* Grade tags */
+.grade-tag{display:inline-block;padding:2px 8px;border-radius:4px;font:500 11px/1 var(--f);white-space:nowrap}
+.grade-tag.exceed{background:var(--em50);color:var(--em700)}
+.grade-tag.meet-plus{background:var(--pr50);color:var(--pr)}
+.grade-tag.meet{background:var(--c1);color:var(--c5)}
+.grade-tag.meet-minus{background:var(--ac50);color:var(--ac700)}
+.grade-tag.below{background:var(--ro50);color:var(--ro)}
+.grade-tag.far-below{background:var(--ro100);color:var(--ro)}
+
+/* Buttons */
+.weui-btn{display:flex;align-items:center;justify-content:center;height:44px;border-radius:var(--r1);font:500 15px/1 var(--f);border:none;cursor:pointer;padding:0 16px;transition:opacity .15s}
+.weui-btn:active{opacity:.7}
+.weui-btn_default{background:var(--s2);color:var(--c7);border:1px solid var(--c2)}
+.weui-btn_primary{background:var(--pr);color:#FFF}
+.weui-btn_warn{background:var(--ro);color:#FFF}
+
+/* Bottom bar */
+.bottom-bar{position:sticky;bottom:0;left:0;right:0;padding:10px 16px 34px;background:rgba(255,255,255,.95);border-top:1px solid var(--dv);display:flex;gap:8px;z-index:100}
+
+/* Appeal bottom sheet */
+.appeal-overlay{position:absolute;inset:0;background:rgba(0,0,0,.35);z-index:1000;display:none;align-items:flex-end}
+.appeal-overlay.open{display:flex}
+.appeal-sheet{background:var(--sf);border-radius:16px 16px 0 0;width:100%;max-height:80%;display:flex;flex-direction:column;animation:slideUp .3s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.appeal-sheet-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--dv)}
+.appeal-sheet-title{font:600 16px/1 var(--f);color:var(--c9)}
+.appeal-sheet-close{width:36px;height:36px;border:none;background:var(--c1);border-radius:50%;font-size:18px;color:var(--c5);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.appeal-sheet-bd{flex:1;overflow-y:auto;padding:14px 16px}
+.appeal-sheet-ft{display:flex;gap:8px;padding:12px 16px 34px;border-top:1px solid var(--dv)}
+
+/* Appeal items */
+.aitem{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--dv);font:400 13px/1 var(--f);color:var(--c7);cursor:pointer}
+.aitem:last-child{border-bottom:none}
+.aitem.sel{background:var(--ro50);font-weight:600;color:var(--c9)}
+
+.toast{position:absolute;top:70px;left:50%;transform:translateX(-50%);background:var(--c9);color:#FFF;padding:10px 22px;border-radius:20px;font:500 13px/1 var(--f);z-index:900;opacity:0;pointer-events:none;transition:opacity .2s;white-space:nowrap}
+.toast.show{opacity:1}
+</style>
 </head>
 <body>
-<div class="phone">
-  <div class="phone-notch"></div>
-  <div class="phone-status">9:41<div class="phone-status-r">
-    <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="6" width="3" height="6" rx="1" fill="currentColor" style="color:var(--c9)"/><rect x="4.5" y="4" width="3" height="8" rx="1" fill="currentColor" style="color:var(--c9)"/><rect x="9" y="1.5" width="3" height="10.5" rx="1" fill="currentColor" style="color:var(--c9)"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="currentColor" style="color:var(--c9)"/></svg>
-    <svg width="15" height="12" viewBox="0 0 15 12" fill="none"><rect x="0.5" y="0.5" width="12" height="11" rx="2" stroke="currentColor" style="color:var(--c9)" stroke-width="1.2"/><line x1="13" y1="4" x2="13" y2="8" stroke="currentColor" style="color:var(--c9)" stroke-width="1.2"/><rect x="2" y="2.5" width="7" height="7" rx="1" fill="currentColor" style="color:var(--c9)"/></svg>
-  </div></div>
-  <div class="weui-navigation-bar">
-    <a href="../demo-index.html" class="back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></a>
-    <span class="title">结果确认</span>
+<div class="phone" id="phone">
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span>9:41</span>
+    <div class="status-bar-r">
+      <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="6" width="3" height="6" rx="1" fill="#0F172A"/><rect x="4.5" y="4" width="3" height="8" rx="1" fill="#0F172A"/><rect x="9" y="1.5" width="3" height="10.5" rx="1" fill="#0F172A"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="#0F172A"/></svg>
+      <svg width="15" height="12" viewBox="0 0 15 12" fill="none"><rect x="0.5" y="0.5" width="12" height="11" rx="2" stroke="#0F172A" stroke-width="1.2"/><line x1="13" y1="4" x2="13" y2="8" stroke="#0F172A" stroke-width="1.2"/><rect x="2" y="2.5" width="7" height="7" rx="1" fill="#0F172A"/></svg>
+    </div>
   </div>
+
+  <!-- Nav Bar -->
+  <div class="nav-bar">
+    <a href="../demo-index.html" class="nav-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></a>
+    <span class="nav-title">结果确认</span>
+  </div>
+
   <div class="phone-body" id="phoneBody"></div>
-  <div class="bottom-bar">
-    <button class="weui-btn weui-btn_warn" style="flex:1" onclick="showToast('已提交异议')">不同意</button>
-    <button class="weui-btn weui-btn_primary" style="flex:1" onclick="showToast('已确认结果')">确认无误</button>
+
+  <!-- Appeal bottom sheet -->
+  <div class="appeal-overlay" id="appealOverlay" onclick="closeAppeal()">
+    <div class="appeal-sheet" onclick="event.stopPropagation()">
+      <div class="appeal-sheet-hd">
+        <span class="appeal-sheet-title">绩效结果申诉</span>
+        <button class="appeal-sheet-close" onclick="closeAppeal()">&#x2715;</button>
+      </div>
+      <div class="appeal-sheet-bd">
+        <div style="font:500 14px/1 var(--f);color:var(--c7);margin-bottom:8px">选择异议项 <span style="color:var(--ro)">*</span></div>
+        <div id="appealItems" style="border:1px solid var(--c3);border-radius:var(--r1);margin-bottom:12px"></div>
+        <div id="appealItemCount" style="font:400 13px/1 var(--f);color:var(--c5);margin:-8px 0 12px">已选 0 项</div>
+        <div style="font:500 14px/1 var(--f);color:var(--c7);margin-bottom:6px">申诉原因 <span style="color:var(--ro)">*</span></div>
+        <textarea id="appealReason" placeholder="请说明不同意的原因，至少10个字..." style="width:100%;min-height:72px;border:1px solid var(--c2);border-radius:var(--r1);padding:8px 10px;font:400 14px/1.5 var(--f);color:var(--c9);outline:none;resize:none;margin-bottom:12px;background:var(--sf)"></textarea>
+        <button class="weui-btn weui-btn_default" onclick="showToast('选择文件')" style="width:100%;height:40px;font-size:14px;margin-top:4px">&#x1F4CE; 上传佐证材料（选填）</button>
+      </div>
+      <div class="appeal-sheet-ft">
+        <button class="weui-btn weui-btn_default" onclick="closeAppeal()">取消</button>
+        <button class="weui-btn weui-btn_warn" onclick="submitAppeal()">提交申诉</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Submit bottom bar -->
+  <div class="bottom-bar" id="submitBar">
+    <button class="weui-btn weui-btn_primary" onclick="submitConfirm()" style="flex:1;height:48px;font-size:15px">提交</button>
   </div>
 </div>
+
 <div class="toast" id="toast"></div>
-<script src="../mobile-base.js"></script>
+
 <script>
 var MOCK={
   employee:{name:'张明',dept:'产品部',title:'高级产品经理'},
   cycle:'2026年Q2',totalScore:87.5,grade:'符合预期+',
   goals:[
-    {name:'资源利用率（通用）',weight:5,type:'定量',target:'105%',challenge:'110%',result:'108%',score:100,grade:'符合预期+'},
-    {name:'HRAS UAT用户验收首次通过率',weight:10,type:'定量',target:'98%',challenge:'100%',result:'97%',score:80,grade:'符合预期'},
-    {name:'HRAS需求评审及时率',weight:15,type:'定量',target:'98%',challenge:'100%',result:'96%',score:80,grade:'符合预期'},
-    {name:'HRAS产品管理规范',weight:10,type:'定性',result:'4项规范全部符合，遵从度95%+',score:null,grade:'符合预期+'},
-    {name:'日常滚动需求响应',weight:10,type:'定性',result:'按时完成GOFO 6月迭代',score:null,grade:'符合预期+'},
-    {name:'HR ONE 绩效重构事项推进',weight:25,type:'定性',result:'3个里程碑按时交付',score:null,grade:'符合预期+'},
-    {name:'AI应用项目探索与落地推广',weight:25,type:'定性',result:'3个版本按时发布',score:null,grade:'符合预期+'}
+    {id:'s1',name:'资源利用率（通用）',weight:5,type:'定量',target:'105%',challenge:'110%',result:'108%',score:100,grade:'符合预期+'},
+    {id:'s2',name:'HRAS UAT用户验收首次通过率',weight:10,type:'定量',target:'98%',challenge:'100%',result:'97%',score:80,grade:'符合预期'},
+    {id:'s3',name:'HRAS需求评审及时率',weight:15,type:'定量',target:'98%',challenge:'100%',result:'96%',score:80,grade:'符合预期'},
+    {id:'s4',name:'HRAS产品管理规范',weight:10,type:'定性',result:'4项规范全部符合，遵从度95%+',score:null,grade:'符合预期+'},
+    {id:'s5',name:'日常滚动需求响应',weight:10,type:'定性',result:'按时完成GOFO 6月迭代',score:null,grade:'符合预期+'},
+    {id:'s6',name:'HR ONE 绩效重构事项推进',weight:25,type:'定性',result:'3个里程碑按时交付',score:null,grade:'符合预期+'},
+    {id:'s7',name:'AI应用项目探索与落地推广',weight:25,type:'定性',result:'3个版本按时发布',score:null,grade:'符合预期+'}
   ],
   comments:[
     {name:'王总监',role:'直线上级',color:'var(--pr)',text:'Q2完成3个核心功能上线，产品迭代目标达成率高。管理能力和业务理解有待提升。'},
     {name:'刘VP',role:'双线上级',color:'var(--vi)',text:'整体表现良好，产品交付质量稳定。建议重点关注团队协作和业务视野拓展。'}
   ]
 };
+
+var selectedOpt = 1;
+var selectedItems = [];
 
 function gradeCls(g){
   if(g==='超出预期')return'grade-tag exceed';if(g==='符合预期+')return'grade-tag meet-plus';
@@ -52,36 +173,151 @@ function gradeCls(g){
   return'grade-tag meet';
 }
 
+/* ═══ Toast ═══ */
+var toastTimer;
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){t.classList.remove('show');},1800);
+}
+
+/* ═══ Confirm buttons ═══ */
+function selectOpt(n){
+  selectedOpt = n;
+  var ab = document.getElementById('btnAgree');
+  var db = document.getElementById('btnDisagree');
+  if (n === 1) {
+    ab.className = 'weui-btn weui-btn_default';
+    ab.style.cssText = 'flex:1;height:48px;font-size:15px;background:var(--em);color:#FFF;border:none';
+    ab.textContent = '认可';
+    db.className = 'weui-btn weui-btn_default';
+    db.style.cssText = 'flex:1;height:48px;font-size:15px;background:var(--sf);color:var(--ro);border:1px solid var(--ro)';
+    db.textContent = '有异议';
+  } else {
+    ab.className = 'weui-btn weui-btn_default';
+    ab.style.cssText = 'flex:1;height:48px;font-size:15px;background:var(--sf);color:var(--c5);border:1px solid var(--c3)';
+    ab.textContent = '认可';
+    db.className = 'weui-btn weui-btn_default';
+    db.style.cssText = 'flex:1;height:48px;font-size:15px;background:var(--ro);color:#FFF;border:none';
+    db.textContent = '有异议';
+  }
+}
+
+function submitConfirm(){
+  if (selectedOpt === 1) {
+    var ab = document.getElementById('btnAgree');
+    var db = document.getElementById('btnDisagree');
+    ab.disabled = true;
+    db.disabled = true;
+    db.className = 'weui-btn weui-btn_default';
+    db.style.cssText = 'flex:1;height:48px;font-size:15px;background:var(--sf);color:var(--c4);border:1px solid var(--c3);opacity:0.6';
+    showToast('已确认绩效结果');
+  } else if (selectedOpt === 2) {
+    openAppeal();
+  } else {
+    showToast('请先选择确认方式');
+  }
+}
+
+/* ═══ Appeal sheet ═══ */
+function openAppeal(){
+  selectedItems = [];
+  document.getElementById('appealReason').value = '';
+  renderAppealItems();
+  document.getElementById('appealOverlay').classList.add('open');
+}
+
+function closeAppeal(){
+  document.getElementById('appealOverlay').classList.remove('open');
+  selectedOpt = 1;
+  var ab = document.getElementById('btnAgree');
+  var db = document.getElementById('btnDisagree');
+  ab.className = 'weui-btn weui-btn_default';
+  ab.style.cssText = 'flex:1;height:48px;font-size:15px;background:var(--em);color:#FFF;border:none';
+  ab.textContent = '认可';
+  db.className = 'weui-btn weui-btn_default';
+  db.style.cssText = 'flex:1;height:48px;font-size:15px;background:var(--sf);color:var(--ro);border:1px solid var(--ro)';
+  db.textContent = '有异议';
+}
+
+function toggleItem(id){
+  var idx = selectedItems.indexOf(id);
+  if (idx >= 0) selectedItems.splice(idx, 1);
+  else selectedItems.push(id);
+  renderAppealItems();
+}
+
+function renderAppealItems(){
+  var html = '';
+  MOCK.goals.forEach(function(g) {
+    var sel = selectedItems.includes(g.id);
+    html += '<div class="aitem' + (sel ? ' sel' : '') + '" onclick="toggleItem(\'' + g.id + '\')">';
+    html += '<span style="flex:1;font:400 13px/1.3 var(--f);color:var(--c7)">' + g.name + '</span>';
+    html += '<span class="' + gradeCls(g.grade) + '">' + g.grade + '</span>';
+    html += '</div>';
+  });
+  document.getElementById('appealItems').innerHTML = html;
+  document.getElementById('appealItemCount').textContent = '已选 ' + selectedItems.length + ' 项';
+}
+
+function submitAppeal(){
+  if (selectedItems.length === 0) { showToast('请至少选择一项有异议的得分'); return; }
+  if (document.getElementById('appealReason').value.trim().length < 10) { showToast('申诉原因至少10个字符'); return; }
+  closeAppeal();
+  showToast('申诉已提交');
+}
+
+/* ═══ Render ═══ */
 function render(){
   var h='';
-  // Employee info
-  h+='<div class="weui-panel weui-panel_access" style="margin-bottom:10px"><div class="weui-cells"><div class="weui-cell"><div class="weui-cell__hd"><div style="width:36px;height:36px;border-radius:50%;background:var(--pr50);display:flex;align-items:center;justify-content:center;font:700 var(--fs-lg)/1 var(--f);color:var(--pr);margin-right:12px">'+MOCK.employee.name[0]+'</div></div><div class="weui-cell__bd"><div style="font:600 var(--fs-base)/1 var(--f);color:var(--c9)">'+MOCK.employee.name+'</div><div style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5);margin-top:2px">'+MOCK.employee.title+' · '+MOCK.employee.dept+'</div></div><div class="weui-cell__ft"><span class="weui-badge" style="background:var(--pr50);color:var(--pr)">'+MOCK.cycle+'</span></div></div></div></div>';
 
-  // Score hero
-  h+='<div style="background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:20px 16px;text-align:center;margin-bottom:10px;position:relative;overflow:hidden"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--pr),var(--em))"></div><div style="font:700 28px/1 var(--fm);color:var(--pr);margin-bottom:6px">'+MOCK.totalScore+'</div><div style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5);margin-bottom:12px">综合得分</div><span class="'+gradeCls(MOCK.grade)+'" style="padding:6px 16px;border-radius:20px">'+MOCK.grade+'</span></div>';
+  /* Employee info */
+  h+='<div class="emp-bar">';
+  h+='<div class="emp-avatar">'+MOCK.employee.name[0]+'</div>';
+  h+='<div class="emp-info"><div class="emp-name">'+MOCK.employee.name+'</div><div class="emp-meta">'+MOCK.employee.title+' · '+MOCK.employee.dept+'</div></div>';
+  h+='<span class="emp-cycle">'+MOCK.cycle+'</span>';
+  h+='</div>';
 
-  // Score detail
-  h+='<div class="weui-panel weui-panel_access"><div class="weui-panel__hd" style="font:600 var(--fs-base)/1 var(--f);color:var(--c8);padding:0 0 8px">得分明细</div><div class="weui-cells">';
+  /* Score hero card */
+  h+='<div style="background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:20px 16px;text-align:center;margin-bottom:10px">';
+  h+='<div style="font:700 40px/1 var(--fm);color:var(--pr);margin-bottom:4px">'+MOCK.totalScore+'</div>';
+  h+='<div style="font:400 12px/1 var(--f);color:var(--c5);margin-bottom:10px">加权总分</div>';
+  h+='<span class="'+gradeCls(MOCK.grade)+'" style="font-size:16px;padding:6px 20px;border-radius:20px">'+MOCK.grade+'</span>';
+
+  /* Buttons */
+  h+='<div style="margin-top:16px;display:flex;gap:8px">';
+  h+='<button class="weui-btn weui-btn_default" id="btnAgree" onclick="selectOpt(1)" style="flex:1;height:48px;font-size:15px;background:var(--em);color:#FFF;border:none">认可</button>';
+  h+='<button class="weui-btn weui-btn_default" id="btnDisagree" onclick="selectOpt(2)" style="flex:1;height:48px;font-size:15px;background:var(--sf);color:var(--ro);border:1px solid var(--ro)">有异议</button>';
+  h+='</div>';
+  h+='</div>';
+
+  /* Auto-confirm hint */
+  h+='<div style="display:flex;align-items:center;gap:6px;padding:8px 12px;margin-bottom:10px;background:var(--ac50);border:1px solid var(--ac100);border-radius:var(--r1);font:400 11px/1.3 var(--f);color:var(--ac700)">';
+  h+='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+  h+='5 个工作日内未确认，系统将自动视为认可并完成确认';
+  h+='</div>';
+
+  /* Score detail */
+  h+='<div class="epanel"><div class="epanel-hd">得分明细</div>';
   MOCK.goals.forEach(function(g){
     var isQuant=g.type==='定量';
-    h+='<div class="weui-cell"><div class="weui-cell__bd"><div style="font:500 var(--fs-base)/1.3 var(--f);color:var(--c8)">'+g.name+'</div><div style="display:flex;align-items:center;gap:6px;margin-top:4px"><span style="font:500 var(--fs-xs)/1 var(--f);padding:2px 5px;border-radius:3px;background:'+(isQuant?'var(--pr50)':'var(--em50)')+';color:'+(isQuant?'var(--pr)':'var(--em700)')+'">'+g.type+'</span><span style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5)">'+g.weight+'%</span><span style="font:400 var(--fs-sm)/1 var(--f);color:var(--c6)">'+g.result+'</span></div></div><div class="weui-cell__ft" style="display:flex;align-items:center;gap:6px">'+(isQuant?'<span style="font:700 var(--fs-lg)/1 var(--fm);color:var(--pr)">'+g.score+'</span>':'')+'<span class="'+gradeCls(g.grade)+'">'+g.grade+'</span></div></div>';
+    h+='<div class="ecell"><div class="ecell-bd"><div style="font:500 14px/1.3 var(--f);color:var(--c9)">'+g.name+'</div><div style="display:flex;align-items:center;gap:6px;margin-top:4px"><span style="font:500 10px/1 var(--f);padding:2px 5px;border-radius:3px;background:'+(isQuant?'var(--pr50)':'var(--em50)')+';color:'+(isQuant?'var(--pr)':'var(--em700)')+'">'+g.type+'</span><span style="font:400 12px/1 var(--f);color:var(--c5)">'+g.weight+'%</span><span style="font:400 12px/1 var(--f);color:var(--c5)">'+g.result+'</span></div></div><div class="ecell-ft" style="display:flex;align-items:center;gap:6px">'+(isQuant?'<span style="font:700 15px/1 var(--fm);color:var(--pr)">'+g.score+'</span>':'')+'<span class="'+gradeCls(g.grade)+'">'+g.grade+'</span></div></div>';
   });
-  h+='</div></div>';
+  h+='</div>';
 
-  // Comments
-  h+='<div class="weui-panel weui-panel_access" style="margin-top:10px"><div class="weui-panel__hd" style="font:600 var(--fs-base)/1 var(--f);color:var(--c8);padding:0 0 8px">上级评语</div><div class="weui-cells">';
+  /* Comments */
+  h+='<div class="epanel" style="margin-top:10px"><div class="epanel-hd">上级评语</div>';
   MOCK.comments.forEach(function(c){
-    h+='<div class="weui-cell"><div class="weui-cell__hd"><div style="width:24px;height:24px;border-radius:50%;background:'+c.color+';display:flex;align-items:center;justify-content:center;font:600 var(--fs-xs)/1 var(--f);color:#FFF;margin-right:10px">'+c.name[0]+'</div></div><div class="weui-cell__bd"><div style="font:500 var(--fs-sm)/1 var(--f);color:var(--c8)">'+c.name+'<span style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5);margin-left:4px">'+c.role+'</span></div><div style="font:400 var(--fs-base)/1.5 var(--f);color:var(--c7);margin-top:4px">'+c.text+'</div></div></div>';
+    h+='<div class="ecell"><div class="ecell-hd"><div style="width:24px;height:24px;border-radius:50%;background:'+c.color+';display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;margin-right:0">'+c.name[0]+'</div></div><div class="ecell-bd"><div style="font:500 13px/1 var(--f);color:var(--c9)">'+c.name+'<span style="font:400 12px/1 var(--f);color:var(--c5);margin-left:4px">'+c.role+'</span></div><div style="font:400 13px/1.5 var(--f);color:var(--c7);margin-top:4px">'+c.text+'</div></div></div>';
   });
-  h+='</div></div>';
+  h+='</div>';
 
-  // Deadline
-  h+='<div style="text-align:center;padding:12px;font:400 var(--fs-sm)/1 var(--f);color:var(--ac700)">确认截止：2026-06-25 18:00</div><div style="height:80px"></div>';
+  h+='<div style="text-align:center;padding:12px;font:400 12px/1 var(--f);color:var(--ac700)">确认截止：2026-06-25 18:00</div>';
   document.getElementById('phoneBody').innerHTML=h;
 }
 
 render();
-injectAIPanel('AI 确认助手','绩效分析 · 趋势对比 · 申诉指引',['分析我的绩效','查看成长趋势','有异议怎么办']);
 </script>
 </body>
 </html>

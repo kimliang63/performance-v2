@@ -7,13 +7,30 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../mobile-base.css">
 <style>
-.dist-card{background:var(--sf);border-radius:var(--r2);padding:14px;box-shadow:var(--sx);border:1px solid var(--bd);margin-bottom:12px}
-.dist-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
-.dist-row:last-child{margin-bottom:0}
-.dist-label{font:500 var(--fs-sm)/1 var(--f);width:28px;text-align:center}
-.dist-bar-wrap{flex:1;height:18px;background:var(--c1);border-radius:9px;overflow:hidden;position:relative}
-.dist-bar{height:100%;border-radius:9px;position:absolute;top:0;left:0}
-.dist-pct{font:600 var(--fs-sm)/1 var(--fm);width:32px;text-align:right}
+.star-rating-sm{display:flex;gap:2px;align-items:center;flex-direction:column}
+.star-rating-sm .star-row{display:flex;gap:3px}
+.star-rating-sm .star{font-size:24px;line-height:1;cursor:pointer;color:var(--c3);transition:color .12s}
+.star-rating-sm .star.sel{color:var(--ac)}
+.star-row-inline{display:flex;gap:1px}
+.star-inline{font-size:14px;color:var(--c3);cursor:pointer;line-height:1}
+.star-inline.sel{color:var(--ac)}
+
+.weui-search-bar{padding:8px 0}
+.weui-search-bar__box{display:flex;align-items:center;background:var(--c1);border-radius:var(--r1);padding:0 10px;height:32px}
+.weui-search-bar__icon{font-size:14px;margin-right:6px;flex-shrink:0}
+.weui-search-bar__input{flex:1;border:none;background:transparent;font:400 var(--fs-base)/1 var(--f);color:var(--c8);outline:none}
+.weui-search-bar__input::placeholder{color:var(--c4)}
+.weui-search-bar__clear{font:400 14px/1 var(--f);color:var(--c4);cursor:pointer;padding:0 4px;flex-shrink:0;display:none}
+.weui-search-bar__clear.show{display:block}
+
+.member-overlay{position:absolute;inset:0;background:rgba(0,0,0,.35);z-index:1000;display:none;align-items:flex-end}
+.member-sheet{background:var(--sf);border-radius:16px 16px 0 0;width:100%;max-height:85%;display:flex;flex-direction:column;animation:slideUp .3s ease}
+.member-sheet-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--dv)}
+.member-sheet-name{font:600 16px/1 var(--f);color:var(--c9)}
+.member-sheet-close{width:36px;height:36px;border:none;background:var(--c1);border-radius:50%;font-size:18px;color:var(--c5);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.member-sheet-bd{flex:1;overflow-y:auto;padding:14px 16px 34px}
+
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 </style>
 </head>
 <body>
@@ -27,66 +44,206 @@
     <a href="../demo-index.html" class="back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></a>
     <span class="title">结果审定</span>
   </div>
-  <div class="phone-body" id="phoneBody"></div>
+  <div class="phone-body" id="phoneBody">
+    <div class="weui-search-bar" style="margin:0 0 10px"><form class="weui-search-bar__form" onsubmit="return false"><div class="weui-search-bar__box"><span class="weui-search-bar__icon">🔍</span><input class="weui-search-bar__input" id="searchInput" placeholder="搜索" oninput="render()" /><span class="weui-search-bar__clear" onclick="document.getElementById('searchInput').value='';render()">✕</span></div></form></div>
+    <div id="phoneContent"></div>
+  </div>
   <div class="bottom-bar">
-    <button class="weui-btn weui-btn_primary" style="flex:1" onclick="showToast('已批量提交审定结果')">批量提交</button>
+    <button class="weui-btn weui-btn_primary" style="flex:1" onclick="showToast('已提交审定结果')">提交审定</button>
+  </div>
+
+  <!-- Member detail overlay -->
+  <div class="member-overlay" id="memberOverlay" onclick="closeMemberDetail()">
+    <div class="member-sheet" onclick="event.stopPropagation()">
+      <div class="member-sheet-hd">
+        <span class="member-sheet-name" id="mdName"></span>
+        <button class="member-sheet-close" onclick="closeMemberDetail()">✕</button>
+      </div>
+      <div class="member-sheet-bd" id="mdBody"></div>
+    </div>
   </div>
 </div>
 <div class="toast" id="toast"></div>
 <script src="../mobile-base.js"></script>
 <script>
-var GRADES=['超出预期','符合预期+','符合预期','符合预期-','低于预期'];
-var GC={'超出预期':'var(--em700)','符合预期+':'var(--pr)','符合预期':'var(--c7)','符合预期-':'var(--ac)','低于预期':'var(--ro)'};
-var GB={'超出预期':'var(--em50)','符合预期+':'var(--pr50)','符合预期':'var(--c1)','符合预期-':'var(--ac50)','低于预期':'var(--ro50)'};
-var DT={'超出预期':10,'符合预期+':30,'符合预期':40,'符合预期-':20,'低于预期':0};
+var GRADES=['远低预期','低于预期','符合预期-','符合预期','符合预期+','超出预期','远超预期'];
+var GRADE_COLOR={'远低预期':'#A1A1AA','低于预期':'#71717A','符合预期-':'#6366F1','符合预期':'#10B981','符合预期+':'#F59E0B','超出预期':'#F97316','远超预期':'#DC2626'};
+var GRADE_BG={'远低预期':'var(--c1)','低于预期':'var(--ro50)','符合预期-':'var(--vi50)','符合预期':'var(--em50)','符合预期+':'var(--ac50)','超出预期':'var(--pr50)','远超预期':'var(--ro100)'};
+var GRADE_TIPS={1:'远低预期',2:'低于预期',3:'符合预期-',4:'符合预期',5:'符合预期+',6:'超出预期',7:'远超预期'};
 
-var MEMBERS=[
-  {name:'张明',title:'高级产品经理',score:87.5,curGrade:'符合预期+',directGrade:'符合预期+',newGrade:'',reached:true},
-  {name:'李华',title:'产品经理',score:91.0,curGrade:'超出预期',directGrade:'超出预期',newGrade:'',reached:true},
-  {name:'王芳',title:'产品专员',score:77.0,curGrade:'符合预期',directGrade:'符合预期',newGrade:'',reached:true},
-  {name:'赵强',title:'高级产品经理',score:85.0,curGrade:'符合预期',directGrade:'符合预期',newGrade:'',reached:false}
+var FORCE_DIST_RULES=[
+  {grade:'远超预期',min:0,max:5},{grade:'超出预期',min:10,max:15},
+  {grade:'符合预期+',min:20,max:25},{grade:'符合预期',min:35,max:40},
+  {grade:'符合预期-',min:10,max:15},{grade:'低于预期',min:5,max:10},{grade:'远低预期',min:0,max:5}
 ];
 
-function calcDist(){
-  var dist={};GRADES.forEach(function(g){dist[g]=0});
-  MEMBERS.forEach(function(m){if(m.reached&&m.newGrade)dist[m.newGrade]++});
-  return dist;
+var MEMBERS=[
+  {name:'谭刚伟',dept:'产品部',role:'高级产品经理',group:'产品组',totalScore:64.6,grade:'符合预期-',ratifyGrade:'低于预期',stars:2,reached:true},
+  {name:'李洋杰',dept:'运营部',role:'运营总监',group:'运营组',totalScore:65.0,grade:'符合预期-',ratifyGrade:'低于预期',stars:2,reached:true},
+  {name:'秦明涛',dept:'运营部',role:'内容运营',group:'运营组',totalScore:85.0,grade:'符合预期+',ratifyGrade:'',stars:0,reached:true},
+  {name:'孙军军',dept:'产品部',role:'产品助理',group:'产品组',totalScore:81.0,grade:'符合预期+',ratifyGrade:'符合预期',stars:4,reached:true},
+  {name:'许恒勇',dept:'产品部',role:'产品总监',group:'产品组',totalScore:79.8,grade:'符合预期',ratifyGrade:'',stars:0,reached:true},
+  {name:'孙秀刚',dept:'产品部',role:'产品经理',group:'产品组',totalScore:74.5,grade:'符合预期',ratifyGrade:'',stars:0,reached:true},
+  {name:'夏涛阳',dept:'设计部',role:'设计总监',group:'设计组',totalScore:86.4,grade:'符合预期+',ratifyGrade:'',stars:0,reached:true},
+  {name:'胡芳龙',dept:'设计部',role:'设计总监',group:'设计组',totalScore:72.3,grade:'符合预期',ratifyGrade:'',stars:0,reached:false},
+  {name:'萧萍超',dept:'技术部',role:'架构师',group:'技术组',totalScore:66.4,grade:'符合预期-',ratifyGrade:'符合预期-',stars:3,reached:true},
+  {name:'胡敏红',dept:'运营部',role:'运营专员',group:'运营组',totalScore:76.2,grade:'符合预期',ratifyGrade:'符合预期',stars:4,reached:true},
+  {name:'董瑞萍',dept:'产品部',role:'产品助理',group:'产品组',totalScore:77.8,grade:'符合预期',ratifyGrade:'符合预期+',stars:5,reached:true},
+  {name:'周峰博',dept:'设计部',role:'UI设计师',group:'设计组',totalScore:61.8,grade:'低于预期',ratifyGrade:'',stars:0,reached:false},
+  {name:'孙雪红',dept:'技术部',role:'前端工程师',group:'技术组',totalScore:81.2,grade:'符合预期+',ratifyGrade:'符合预期',stars:4,reached:true},
+  {name:'李磊勇',dept:'设计部',role:'UX设计师',group:'设计组',totalScore:92.8,grade:'超出预期',ratifyGrade:'',stars:0,reached:true},
+  {name:'姚辉静',dept:'产品部',role:'高级产品经理',group:'产品组',totalScore:97.1,grade:'远超预期',ratifyGrade:'',stars:0,reached:true},
+  {name:'阎瑞博',dept:'技术部',role:'工程师',group:'技术组',totalScore:96.5,grade:'远超预期',ratifyGrade:'远超预期',stars:7,reached:true},
+  {name:'阎欣磊',dept:'设计部',role:'UX设计师',group:'设计组',totalScore:65.7,grade:'符合预期-',ratifyGrade:'',stars:0,reached:false},
+  {name:'胡明静',dept:'技术部',role:'前端工程师',group:'技术组',totalScore:85.4,grade:'符合预期+',ratifyGrade:'',stars:0,reached:false},
+  {name:'叶伟刚',dept:'设计部',role:'设计总监',group:'设计组',totalScore:83.8,grade:'符合预期+',ratifyGrade:'',stars:0,reached:true},
+  {name:'魏宁鹏',dept:'运营部',role:'高级运营',group:'运营组',totalScore:59.1,grade:'低于预期',ratifyGrade:'',stars:0,reached:true},
+  {name:'赵宇玲',dept:'产品部',role:'高级产品经理',group:'产品组',totalScore:89.4,grade:'超出预期',ratifyGrade:'',stars:0,reached:true},
+  {name:'郑刚萍',dept:'技术部',role:'架构师',group:'技术组',totalScore:65.7,grade:'符合预期-',ratifyGrade:'低于预期',stars:2,reached:true},
+  {name:'廖伟涛',dept:'产品部',role:'高级产品经理',group:'产品组',totalScore:72.5,grade:'符合预期',ratifyGrade:'符合预期+',stars:5,reached:true},
+  {name:'朱萍峰',dept:'产品部',role:'产品助理',group:'产品组',totalScore:73.2,grade:'符合预期',ratifyGrade:'符合预期-',stars:3,reached:true},
+  {name:'何强萱',dept:'技术部',role:'工程师',group:'技术组',totalScore:86.6,grade:'符合预期+',ratifyGrade:'',stars:0,reached:false},
+  {name:'魏红颖',dept:'产品部',role:'产品总监',group:'产品组',totalScore:61.8,grade:'低于预期',ratifyGrade:'',stars:0,reached:true},
+  {name:'萧磊皓',dept:'产品部',role:'产品经理',group:'产品组',totalScore:65.6,grade:'符合预期-',ratifyGrade:'低于预期',stars:2,reached:true},
+  {name:'何龙伟',dept:'设计部',role:'UI设计师',group:'设计组',totalScore:66.4,grade:'符合预期-',ratifyGrade:'低于预期',stars:2,reached:true},
+  {name:'钟皓丽',dept:'产品部',role:'产品助理',group:'产品组',totalScore:58.2,grade:'低于预期',ratifyGrade:'',stars:0,reached:true},
+  {name:'许涛欣',dept:'技术部',role:'工程师',group:'技术组',totalScore:90.9,grade:'超出预期',ratifyGrade:'符合预期+',stars:5,reached:true},
+  {name:'林娜磊',dept:'设计部',role:'设计总监',group:'设计组',totalScore:93.3,grade:'超出预期',ratifyGrade:'',stars:0,reached:true},
+  {name:'何娜红',dept:'技术部',role:'工程师',group:'技术组',totalScore:76.0,grade:'符合预期',ratifyGrade:'符合预期+',stars:5,reached:true},
+  {name:'冯敏娜',dept:'产品部',role:'高级产品经理',group:'产品组',totalScore:61.9,grade:'低于预期',ratifyGrade:'远低预期',stars:1,reached:true},
+  {name:'余芳勇',dept:'产品部',role:'产品经理',group:'产品组',totalScore:80.0,grade:'符合预期+',ratifyGrade:'',stars:0,reached:true},
+  {name:'何伟丽',dept:'产品部',role:'产品专员',group:'产品组',totalScore:70.2,grade:'符合预期',ratifyGrade:'符合预期-',stars:3,reached:true},
+  {name:'潘华洁',dept:'技术部',role:'高级工程师',group:'技术组',totalScore:86.7,grade:'符合预期+',ratifyGrade:'符合预期+',stars:5,reached:true},
+  {name:'王波蝶',dept:'产品部',role:'产品助理',group:'产品组',totalScore:63.6,grade:'符合预期-',ratifyGrade:'',stars:0,reached:true},
+  {name:'萧玲刚',dept:'产品部',role:'产品经理',group:'产品组',totalScore:92.2,grade:'超出预期',ratifyGrade:'',stars:0,reached:true},
+  {name:'周娜洁',dept:'设计部',role:'设计总监',group:'设计组',totalScore:80.0,grade:'符合预期+',ratifyGrade:'',stars:0,reached:true},
+  {name:'田瑞红',dept:'设计部',role:'UI设计师',group:'设计组',totalScore:60.0,grade:'低于预期',ratifyGrade:'',stars:0,reached:true},
+  {name:'余鹏勇',dept:'产品部',role:'产品总监',group:'产品组',totalScore:73.5,grade:'符合预期',ratifyGrade:'符合预期-',stars:3,reached:true},
+  {name:'沈宁龙',dept:'设计部',role:'视觉设计师',group:'设计组',totalScore:72.3,grade:'符合预期',ratifyGrade:'',stars:0,reached:true},
+  {name:'杜雪宇',dept:'技术部',role:'前端工程师',group:'技术组',totalScore:78.6,grade:'符合预期',ratifyGrade:'',stars:0,reached:false},
+  {name:'夏龙萍',dept:'运营部',role:'内容运营',group:'运营组',totalScore:74.0,grade:'符合预期',ratifyGrade:'符合预期',stars:4,reached:true},
+  {name:'廖伟雪',dept:'设计部',role:'设计总监',group:'设计组',totalScore:64.7,grade:'符合预期-',ratifyGrade:'',stars:0,reached:true},
+  {name:'潘皓鹏',dept:'产品部',role:'产品助理',group:'产品组',totalScore:85.9,grade:'符合预期+',ratifyGrade:'',stars:0,reached:true},
+  {name:'胡洁颖',dept:'产品部',role:'产品助理',group:'产品组',totalScore:75.0,grade:'符合预期',ratifyGrade:'符合预期+',stars:5,reached:true},
+  {name:'潘瑞龙',dept:'运营部',role:'内容运营',group:'运营组',totalScore:95.9,grade:'远超预期',ratifyGrade:'超出预期',stars:6,reached:true},
+  {name:'谭波欣',dept:'运营部',role:'高级运营',group:'运营组',totalScore:66.1,grade:'符合预期-',ratifyGrade:'低于预期',stars:2,reached:true},
+  {name:'陈峰伟',dept:'设计部',role:'UX设计师',group:'设计组',totalScore:66.7,grade:'符合预期-',ratifyGrade:'符合预期-',stars:3,reached:true}
+];
+
+MEMBERS.forEach(function(m){
+  m.stars=m.ratifyGrade?GRADES.indexOf(m.ratifyGrade)+1:0;
+});
+
+var currentGrade=null;
+
+function getFiltered(){
+  var input=document.getElementById('searchInput');
+  var q=(input&&input.value||'').trim().toLowerCase();
+  return MEMBERS.filter(function(m){
+    if(currentGrade&&(m.ratifyGrade||m.grade)!==currentGrade)return false;
+    if(q&&m.name.toLowerCase().indexOf(q)<0)return false;
+    return true;
+  });
 }
+
+function filterByGrade(grade){
+  currentGrade=currentGrade===grade?null:grade;
+  render();
+}
+
+function setStarInline(i,v){
+  MEMBERS[i].ratifyGrade=GRADES[v-1];
+  MEMBERS[i].stars=v;
+  render();
+}
+
+function renderDistTable(filtered){
+  var total=filtered.length;
+  var h='<div class="weui-cells" style="margin-top:0">';
+  FORCE_DIST_RULES.forEach(function(r){
+    var count=filtered.filter(function(m){return(m.ratifyGrade||m.grade)===r.grade;}).length;
+    var ok=count>=r.min&&count<=r.max;
+    var diff=0,dir='';
+    if(count<r.min){diff=Math.ceil(total*r.min/100)-count;dir='+';}
+    else if(count>r.max){diff=count-Math.ceil(total*r.max/100);dir='-';}
+    var sel=currentGrade===r.grade?'background:var(--pr50)':'';
+    var rowBg=!ok?'background:var(--ro50)':sel;
+    h+='<div class="weui-cell" style="'+rowBg+';cursor:pointer" onclick="filterByGrade(\''+r.grade+'\')">';
+    h+='<div class="weui-cell__bd" style="font:500 var(--fs-base)/1 var(--f);color:'+(ok?'var(--c8)':'var(--ro)')+'">'+r.grade+'</div>';
+    h+='<div class="weui-cell__ft" style="display:flex;align-items:center;gap:8px">';
+    h+='<span style="font-size:14px">'+(ok?'✅':'❌')+'</span>';
+    if(diff>0)h+='<span style="font:500 var(--fs-sm)/1 var(--f);color:var(--ro)">'+(dir==='+'?'需+':'需-')+diff+'</span>';
+    h+='</div></div>';
+  });
+  h+='</div>';
+  return h;
+}
+
+function renderMemberList(filtered){
+  var h='';
+  filtered.forEach(function(m){
+    var i=MEMBERS.indexOf(m);
+    var cg=m.ratifyGrade||m.grade;
+    h+='<div class="weui-cell">';
+    h+='<div class="weui-cell__bd">';
+    h+='<span style="font:500 var(--fs-base)/1 var(--f);color:var(--c8)">'+m.name+'</span>';
+    h+='<span style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5);margin-left:6px">'+m.dept+'</span>';
+    h+='<div class="star-row-inline" style="margin-top:4px">';
+    for(var v=1;v<=7;v++){
+      h+='<span class="star-inline'+(v<=m.stars?' sel':'')+'" data-v="'+v+'" onclick="event.stopPropagation();setStarInline('+i+','+v+')">★</span>';
+    }
+    h+='</div>';
+    h+='</div>';
+    h+='<div class="weui-cell__ft" style="display:flex;align-items:center;gap:4px">';
+    h+='<span style="font:500 var(--fs-sm)/1 var(--f);padding:2px 6px;border-radius:3px;background:'+(GRADE_BG[cg]||'')+';color:'+(GRADE_COLOR[cg]||'')+'">'+cg+'</span>';
+    h+='<span style="font:400 var(--fs-sm)/1 var(--f);color:var(--pr);cursor:pointer" onclick="event.stopPropagation();openMemberDetail('+i+')">更多</span>';
+    h+='</div></div>';
+  });
+  return h;
+}
+
+function openMemberDetail(i){
+  var m=MEMBERS[i];
+  document.getElementById('mdName').textContent=m.name;
+  var h='';
+  h+='<div class="weui-cells" style="margin-bottom:10px">';
+  h+='<div class="weui-cell"><div class="weui-cell__bd" style="color:var(--c5)">部门</div><div class="weui-cell__ft" style="color:var(--c8)">'+m.dept+'</div></div>';
+  h+='<div class="weui-cell"><div class="weui-cell__bd" style="color:var(--c5)">岗位</div><div class="weui-cell__ft" style="color:var(--c8)">'+m.role+'</div></div>';
+  h+='<div class="weui-cell"><div class="weui-cell__bd" style="color:var(--c5)">分数</div><div class="weui-cell__ft" style="font:600 var(--fs-base)/1 var(--fm);color:var(--c9)">'+m.totalScore+'</div></div>';
+  h+='<div class="weui-cell"><div class="weui-cell__bd" style="color:var(--c5)">初评等级</div><div class="weui-cell__ft"><span style="font:500 var(--fs-sm)/1 var(--f);padding:2px 8px;border-radius:3px;background:'+(GRADE_BG[m.grade]||'')+';color:'+(GRADE_COLOR[m.grade]||'')+'">'+m.grade+'</span></div></div>';
+  h+='<div class="weui-cell"><div class="weui-cell__bd" style="color:var(--c5)">审定等级</div><div class="weui-cell__ft"><span style="font:500 var(--fs-sm)/1 var(--f);padding:2px 8px;border-radius:3px;background:'+(GRADE_BG[m.ratifyGrade||m.grade]||'')+';color:'+(GRADE_COLOR[m.ratifyGrade||m.grade]||'')+'">'+(m.ratifyGrade||'待调整')+'</span></div></div>';
+  h+='</div>';
+  h+='<div style="text-align:center;padding:12px 0">';
+  h+='<div style="font:500 var(--fs-base)/1 var(--f);color:var(--c6);margin-bottom:10px">调整等级</div>';
+  h+='<div class="star-rating-sm"><div class="star-row">';
+  for(var v=1;v<=7;v++){
+    h+='<span class="star'+(v<=(m.stars||0)?' sel':'')+'" data-v="'+v+'" onclick="setStarInline('+i+','+v+');closeMemberDetail()">★</span>';
+  }
+  h+='</div></div>';
+  h+='<div style="font:600 var(--fs-base)/1 var(--f);color:var(--pr);margin-top:8px">'+(m.stars?GRADE_TIPS[m.stars]:'点击评星')+'</div>';
+  h+='</div>';
+  document.getElementById('mdBody').innerHTML=h;
+  document.getElementById('memberOverlay').style.display='flex';
+}
+function closeMemberDetail(){document.getElementById('memberOverlay').style.display='none';}
 
 function render(){
-  var h='',dist=calcDist(),reached=MEMBERS.filter(function(m){return m.reached}).length;
-  // Stats
-  h+='<div style="display:flex;gap:8px;margin-bottom:12px">';
-  h+='<div style="flex:1;background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:12px;text-align:center"><div style="font:700 var(--fs-xl)/1 var(--fm);color:var(--c9)">'+MEMBERS.length+'</div><div style="font:400 var(--fs-xs)/1 var(--f);color:var(--c5);margin-top:3px">总人数</div></div>';
-  h+='<div style="flex:1;background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:12px;text-align:center"><div style="font:700 var(--fs-xl)/1 var(--fm);color:var(--em)">'+reached+'</div><div style="font:400 var(--fs-xs)/1 var(--f);color:var(--c5);margin-top:3px">已到达</div></div>';
-  h+='<div style="flex:1;background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:12px;text-align:center"><div style="font:700 var(--fs-xl)/1 var(--fm);color:var(--ac)">'+(MEMBERS.length-reached)+'</div><div style="font:400 var(--fs-xs)/1 var(--f);color:var(--c5);margin-top:3px">未到达</div></div>';
+  var h='';
+  var filtered=getFiltered();
+
+  h+='<div class="weui-panel weui-panel_access" style="margin-bottom:10px"><div class="weui-panel__hd" style="font:600 var(--fs-base)/1 var(--f);color:var(--c9)">等级分布</div>';
+  h+=renderDistTable(filtered);
   h+='</div>';
 
-  // Distribution
-  h+='<div class="dist-card"><div style="font:600 var(--fs-base)/1 var(--f);color:var(--c8);margin-bottom:10px">等级分布 · 强制分布规则</div>';
-  GRADES.forEach(function(g){
-    var color=GC[g],count=dist[g]||0,target=Math.ceil(MEMBERS.length*DT[g]/100);
-    h+='<div class="dist-row"><span class="dist-label" style="color:'+color+'">'+g.replace('符合预期','符合').replace('超出预期','超出').replace('低于预期','低于')+'</span><div class="dist-bar-wrap"><div class="dist-bar" style="width:'+DT[g]+'%;background:'+color+';opacity:.25"></div><div class="dist-bar" style="width:'+Math.round(count/MEMBERS.length*100)+'%;background:'+color+'"></div></div><span class="dist-pct">'+count+'人</span></div>';
-  });
-  h+='</div>';
-
-  // Members
-  h+='<div class="weui-panel weui-panel_access" style="margin-bottom:10px"><div class="weui-panel__hd" style="font:600 var(--fs-base)/1 var(--f);color:var(--c8)">成员审定 ('+MEMBERS.length+'人)</div><div class="weui-cells">';
-  MEMBERS.forEach(function(m,i){
-    h+='<div class="weui-cell"><div class="weui-cell__hd"><div style="width:36px;height:36px;border-radius:50%;background:'+(GC[m.curGrade]||'var(--c5)')+';display:flex;align-items:center;justify-content:center;font:600 var(--fs-base)/1 var(--f);color:#FFF;margin-right:10px">'+m.name[0]+'</div></div><div class="weui-cell__bd"><div style="font:500 var(--fs-base)/1 var(--f);color:var(--c8)">'+m.name+'</div><div style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5);margin-top:1px">'+m.title+' · '+m.score+'分</div><div style="display:flex;align-items:center;gap:4px;margin-top:4px"><span style="font:500 var(--fs-xs)/1 var(--f);padding:1px 5px;border-radius:3px;background:'+(GB[m.curGrade]||'var(--c1)')+';color:'+(GC[m.curGrade]||'var(--c5)')+'">'+m.curGrade+'</span><span style="color:var(--c4);font-size:var(--fs-xs)">→</span><span style="font:500 var(--fs-xs)/1 var(--f);padding:1px 5px;border-radius:3px;background:'+(GB[m.directGrade]||'var(--c1)')+';color:'+(GC[m.directGrade]||'var(--c5)')+'">'+m.directGrade+'</span></div></div><div class="weui-cell__ft">'+(m.reached?'<select class="weui-select" style="width:auto" onchange="updGrade('+i+',this.value)"><option value="">请选择</option>'+GRADES.map(function(g){return'<option value="'+g+'"'+(g===m.newGrade?' selected':'')+'>'+g+'</option>'}).join('')+'</select>':'<span style="font:400 var(--fs-sm)/1 var(--f);color:var(--c4)">未到达</span>')+'</div></div>';
-  });
+  h+='<div class="weui-panel weui-panel_access" style="margin-bottom:10px"><div class="weui-panel__hd" style="font:600 var(--fs-base)/1 var(--f);color:var(--c8)">成员审定 ('+filtered.length+'人)</div><div class="weui-cells">';
+  h+=renderMemberList(filtered);
   h+='</div></div>';
 
-  // Flow
-  h+='<div class="weui-panel weui-panel_access"><div class="weui-panel__hd" style="font:600 var(--fs-base)/1 var(--f);color:var(--c8)">审批流程</div><div class="weui-cells">';
-  var flow=[{n:'HRBP批量导入',p:'赵敏',c:'var(--em)',s:'处理中',sb:'var(--pr50)',sc:'var(--pr)'},{n:'员工确认',p:'相关人员',c:'var(--c4)',s:'待处理',sb:'var(--c1)',sc:'var(--c5)'},{n:'上级审批',p:'王总监',c:'var(--c4)',s:'待处理',sb:'var(--c1)',sc:'var(--c5)'}];
-  flow.forEach(function(f){h+='<div class="weui-cell"><div class="weui-cell__hd"><div style="width:24px;height:24px;border-radius:50%;background:'+f.c+';display:flex;align-items:center;justify-content:center;margin-right:10px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div></div><div class="weui-cell__bd"><div style="font:500 var(--fs-sm)/1 var(--f);color:var(--c8)">'+f.n+'</div><div style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5);margin-top:2px">'+f.p+'</div></div><div class="weui-cell__ft"><span style="font:500 var(--fs-xs)/1 var(--f);padding:2px 8px;border-radius:4px;background:'+f.sb+';color:'+f.sc+'">'+f.s+'</span></div></div>';});
-  h+='</div></div><div style="height:80px"></div>';
-  document.getElementById('phoneBody').innerHTML=h;
+  h+='<div style="height:80px"></div>';
+  document.getElementById('phoneContent').innerHTML=h;
 }
-function updGrade(i,v){MEMBERS[i].newGrade=v;render();}
+
 render();
-injectAIPanel('AI 审定助手','等级分布 · 批量调整 · 异常检测',['分析等级分布','批量调整建议','异常检测']);
 </script>
 </body>
 </html>

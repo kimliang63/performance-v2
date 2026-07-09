@@ -3,64 +3,311 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>HR ONE - 团队目标</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../mobile-base.css">
+<title>团队绩效</title>
 <style>
-.mem-row{display:flex;align-items:center;gap:10px;padding:12px 0}
-.mem-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 var(--fs-base)/1 var(--f);color:#FFF;flex-shrink:0}
-.mem-info{flex:1;min-width:0}
-.mem-name{font:500 var(--fs-base)/1 var(--f);color:var(--c8)}
-.mem-rate{font:400 var(--fs-sm)/1 var(--f);color:var(--c5);margin-top:2px}
-.mem-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
-.prog-wrap{width:60px;height:4px;background:var(--c1);border-radius:2px;overflow:hidden}
-.prog-bar{height:100%;border-radius:2px}
+:root{
+  --pr:#2563EB;--pr50:#EFF6FF;--pr100:#DBEAFE;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#0F172A;--c7:#334155;--c5:#64748B;--c4:#94A3B8;--c3:#CBD5E1;--c2:#E2E8F0;--c1:#F1F5F8;
+  --sf:#FFF;--bg:#F0F4F8;--s2:#F7F9FC;--s3:#EEF2F7;
+  --dv:#F1F5F9;--bd:rgba(15,23,42,.06);
+  --sx:0 1px 3px rgba(0,0,0,.05);--sm:0 2px 8px rgba(0,0,0,.06);--md:0 4px 16px rgba(0,0,0,.08);
+  --r1:10px;--r2:14px;--r3:18px;--r4:22px;
+  --f:'Inter','Noto Sans SC',system-ui,sans-serif;
+  --fm:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:#E5E7EB;color:var(--c7);display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:0;-webkit-font-smoothing:antialiased;line-height:1.5}
+
+.phone{width:390px;min-height:844px;background:var(--bg);position:relative;overflow-x:hidden;overflow-y:auto}
+
+/* Status bar */
+.status-bar{height:54px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 8px;font:600 14px/1 var(--f);color:var(--c9)}
+.status-bar-r{display:flex;align-items:center;gap:4px}
+.status-bar-r svg{display:block}
+
+/* Nav bar */
+.nav-bar{display:flex;align-items:center;height:44px;padding:0 16px;position:relative}
+.nav-title{flex:1;font:600 17px/1 var(--f);color:var(--c9);text-align:center}
+.nav-back{width:32px;height:32px;border-radius:8px;background:var(--c1);display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--c7);flex-shrink:0}
+.nav-back svg{width:16px;height:16px}
+.nav-capsule{position:absolute;right:16px;top:50%;transform:translateY(-50%);display:flex;align-items:center;border:1px solid var(--c2);border-radius:18px;overflow:hidden}
+.nav-capsule-btn{width:40px;height:28px;display:flex;align-items:center;justify-content:center;background:var(--sf);border:none;border-right:1px solid var(--c2);cursor:pointer;color:var(--c5);font-size:14px;line-height:1}
+.nav-capsule-btn:last-child{border-right:none}
+.nav-capsule-btn:active{background:var(--c1)}
+
+/* Scroll body */
+.phone-body{padding:12px 16px 32px}
+
+/* Month pills */
+.month-pills{display:flex;align-items:center;gap:4px;padding:0 0 12px;overflow-x:auto}
+.month-pill{display:inline-flex;align-items:center;padding:5px 12px;border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c5);cursor:pointer;transition:all .12s;border:1px solid transparent;background:var(--sf);white-space:nowrap}
+.month-pill:active,.month-pill.active{color:var(--pr);background:var(--pr50);border-color:var(--pr);font-weight:500}
+
+/* Card base */
+.card{background:var(--sf);border-radius:var(--r2);padding:14px;margin-bottom:10px;box-shadow:var(--sx);border:1px solid var(--bd)}
+.card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.card-title{font:600 15px/1 var(--f);color:var(--c9);display:flex;align-items:center;gap:6px}
+
+/* Todo item */
+.todo-item{display:flex;align-items:center;padding:12px 0;gap:10px;text-decoration:none;color:inherit}
+.todo-item+.todo-item{border-top:1px solid var(--dv)}
+.todo-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.todo-info{flex:1;min-width:0}
+.todo-name{font:500 14px/1.3 var(--f);color:var(--c9)}
+.todo-badge{font:500 10px/1 var(--f);padding:2px 8px;border-radius:10px;white-space:nowrap;flex-shrink:0}
+
+/* Chart */
+.chart-body{position:relative;height:200px;margin-top:8px}
+.chart-body svg{display:block;width:100%;height:100%}
+
+/* Legend */
+.chart-legend{display:flex;align-items:center;gap:10px;margin-top:10px;font:400 11px/1 var(--f);color:var(--c5);flex-wrap:wrap}
+.chart-legend-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+.toast{position:absolute;top:70px;left:50%;transform:translateX(-50%);background:var(--c9);color:#FFF;padding:10px 22px;border-radius:20px;font:500 13px/1 var(--f);z-index:900;opacity:0;pointer-events:none;transition:opacity .2s;white-space:nowrap}
+.toast.show{opacity:1}
+
+.gap{height:8px}
 </style>
 </head>
 <body>
-<div class="phone">
-  <div class="phone-notch"></div>
-  <div class="phone-status">9:41<div class="phone-status-r">
-    <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="6" width="3" height="6" rx="1" fill="currentColor" style="color:var(--c9)"/><rect x="4.5" y="4" width="3" height="8" rx="1" fill="currentColor" style="color:var(--c9)"/><rect x="9" y="1.5" width="3" height="10.5" rx="1" fill="currentColor" style="color:var(--c9)"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="currentColor" style="color:var(--c9)"/></svg>
-    <svg width="15" height="12" viewBox="0 0 15 12" fill="none"><rect x="0.5" y="0.5" width="12" height="11" rx="2" stroke="currentColor" style="color:var(--c9)" stroke-width="1.2"/><line x1="13" y1="4" x2="13" y2="8" stroke="currentColor" style="color:var(--c9)" stroke-width="1.2"/><rect x="2" y="2.5" width="7" height="7" rx="1" fill="currentColor" style="color:var(--c9)"/></svg>
-  </div></div>
-  <div class="weui-navigation-bar">
-    <a href="../demo-index.html" class="back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></a>
-    <span class="title">团队目标</span>
+<div class="phone" id="phone">
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span>9:41</span>
+    <div class="status-bar-r">
+      <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="6" width="3" height="6" rx="1" fill="#0F172A"/><rect x="4.5" y="4" width="3" height="8" rx="1" fill="#0F172A"/><rect x="9" y="1.5" width="3" height="10.5" rx="1" fill="#0F172A"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="#0F172A"/></svg>
+      <svg width="15" height="12" viewBox="0 0 15 12" fill="none"><rect x="0.5" y="0.5" width="12" height="11" rx="2" stroke="#0F172A" stroke-width="1.2"/><line x1="13" y1="4" x2="13" y2="8" stroke="#0F172A" stroke-width="1.2"/><rect x="2" y="2.5" width="7" height="7" rx="1" fill="#0F172A"/></svg>
+    </div>
   </div>
-  <div class="phone-body" id="phoneBody"></div>
+
+  <!-- Nav Bar -->
+  <div class="nav-bar">
+    <a href="http://127.0.0.1:8788/manager-mobile/mobile-team-goal.html" class="nav-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></a>
+    <span class="nav-title">团队绩效</span>
+    <div class="nav-capsule">
+      <button class="nav-capsule-btn" aria-label="更多">⋯</button>
+      <button class="nav-capsule-btn" aria-label="关闭">○</button>
+    </div>
+  </div>
+
+  <div class="phone-body">
+
+    <!-- Month Pills -->
+    <div class="month-pills" id="monthPills"></div>
+
+    <!-- Todo Card -->
+    <div class="card" id="todoCard"></div>
+
+    <!-- Grade Distribution Card -->
+    <div class="card">
+      <div class="card-hd"><span class="card-title">绩效等级分布</span></div>
+      <div class="chart-body" id="chartDistBody"></div>
+    </div>
+
+    <!-- Team Trend Card -->
+    <div class="card">
+      <div class="card-hd"><span class="card-title">团队绩效趋势</span></div>
+      <div class="chart-body" id="chartTrendBody"></div>
+      <div class="chart-legend" id="chartTrendLegend"></div>
+    </div>
+
+    <div class="gap"></div>
+  </div>
+
 </div>
+
+<!-- Toast -->
 <div class="toast" id="toast"></div>
-<script src="../mobile-base.js"></script>
+
 <script>
-var MEMBERS=[
-  {name:'张明',title:'高级产品经理',completion:87,color:'var(--pr)',status:'已提交',sc:'var(--em50)',stc:'var(--em700)'},
-  {name:'李华',title:'产品经理',completion:79,color:'var(--em)',status:'已提交',sc:'var(--em50)',stc:'var(--em700)'},
-  {name:'王芳',title:'产品专员',completion:67,color:'var(--ac)',status:'填写中',sc:'var(--ac50)',stc:'var(--ac700)'},
-  {name:'赵强',title:'高级产品经理',completion:57,color:'var(--vi)',status:'填写中',sc:'var(--ac50)',stc:'var(--ac700)'}
+/* ═══ Data — aligned with PC demo-workbench-team.html ═══ */
+
+/* 待办任务 */
+var TEAM_TODOS=[
+  {text:'3人待填写目标',meta:'进行中',dot:'var(--pr)',badge:'var(--pr50)',badgeColor:'var(--pr)'},
+  {text:'2人待确认结果',meta:'待处理',dot:'var(--ac)',badge:'var(--ac50)',badgeColor:'var(--ac700)'},
+  {text:'1人评分待审批',meta:'待审批',dot:'var(--ro)',badge:'var(--ro50)',badgeColor:'var(--ro)'}
 ];
 
-function render(){
-  var h='';
-  // Stats
-  h+='<div style="display:flex;gap:8px;margin-bottom:12px">';
-  h+='<div style="flex:1;background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:12px;text-align:center"><div style="font:700 var(--fs-xl)/1 var(--fm);color:var(--c9)">'+MEMBERS.length+'</div><div style="font:400 var(--fs-xs)/1 var(--f);color:var(--c5);margin-top:3px">团队成员</div></div>';
-  var done=MEMBERS.filter(function(m){return m.status==='已提交'}).length;
-  h+='<div style="flex:1;background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:12px;text-align:center"><div style="font:700 var(--fs-xl)/1 var(--fm);color:var(--em)">'+done+'</div><div style="font:400 var(--fs-xs)/1 var(--f);color:var(--c5);margin-top:3px">已完成</div></div>';
-  var avgRate=Math.round(MEMBERS.reduce(function(s,m){return s+m.completion},0)/MEMBERS.length);
-  h+='<div style="flex:1;background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:12px;text-align:center"><div style="font:700 var(--fs-xl)/1 var(--fm);color:var(--pr)">'+avgRate+'%</div><div style="font:400 var(--fs-xs)/1 var(--f);color:var(--c5);margin-top:3px">平均完成率</div></div>';
-  h+='</div>';
+/* 等级分布 */
+var DIST_DATA={
+  '2026-06':[0,0,0,2,1,1,0],
+  '2026-05':[0,0,1,2,0,1,0],
+  '2026-04':[0,1,0,1,1,1,0],
+  '2026-03':[0,0,1,1,1,1,0],
+  '2026-02':[0,0,0,2,1,0,1],
+  '2026-01':[0,1,0,1,2,0,0]
+};
+var GRADE_LABELS=['远低预期','低于预期','符合预期-','符合预期','符合预期+','超出预期','远超预期'];
+var GRADE_COLORS=['#E11D48','#F43F5E','#F59E0B','#A1A1AA','#2563EB','#10B981','#047857'];
+var FORCE_DIST=[0.3,0.5,0.8,2.8,1.0,0.6,0.4];
 
-  // Member list via WeUI
-  h+='<div class="weui-panel weui-panel_access"><div class="weui-panel__hd" style="font:600 var(--fs-base)/1 var(--f);color:var(--c8);padding:0 0 8px">成员列表 ('+MEMBERS.length+'人)</div><div class="weui-cells">';
-  MEMBERS.forEach(function(m){
-    var pc=m.completion>=100?'var(--em)':m.completion>=60?'var(--ac)':'var(--ro)';
-    h+='<a class="weui-cell weui-cell_access" href="mobile-eval-score.html"><div class="weui-cell__hd"><div style="width:36px;height:36px;border-radius:50%;background:'+m.color+';display:flex;align-items:center;justify-content:center;font:600 var(--fs-base)/1 var(--f);color:#FFF;margin-right:10px">'+m.name[0]+'</div></div><div class="weui-cell__bd"><div style="font:500 var(--fs-base)/1 var(--f);color:var(--c8)">'+m.name+'</div><div style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5);margin-top:2px">'+m.title+'</div></div><div class="weui-cell__ft" style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span style="font:500 var(--fs-xs)/1 var(--f);padding:2px 8px;border-radius:10px;background:'+m.sc+';color:'+m.stc+'">'+m.status+'</span><div class="prog-wrap"><div class="prog-bar" style="width:'+m.completion+'%;background:'+pc+'"></div></div><span style="font:400 var(--fs-sm)/1 var(--fm);color:var(--c5)">'+m.completion+'%</span></div></a>';
-  });
-  h+='</div></div><div style="height:24px"></div>';
-  document.getElementById('phoneBody').innerHTML=h;
+/* 团队趋势 */
+var MONTH_LABELS=['7月','8月','9月','10月','11月','12月','1月','2月','3月','4月','5月','6月'];
+var MEMBER_COLORS=['#2563EB','#10B981','#8B5CF6','#F59E0B'];
+var MEMBER_TREND={
+  '张明':[3.5,3.8,4.0,4.2,4.5,4.8,4.5,4.2,4.5,4.8,5.0,4.8],
+  '李华':[4.0,4.2,4.0,4.5,4.8,5.0,4.8,4.5,4.2,4.5,4.8,4.5],
+  '王芳':[3.0,3.2,3.5,3.8,4.0,4.2,4.0,4.5,4.8,5.0,5.2,5.5],
+  '赵强':[3.8,3.5,3.2,3.5,3.8,4.0,4.2,4.0,3.8,4.0,4.2,4.5]
+};
+var GRADE_Y=['','远低预期','低于预期','符合预期-','符合预期','符合预期+','超出预期','远超预期'];
+
+var MONTHS=[
+  {v:'2026-06',t:'6月'},{v:'2026-05',t:'5月'},{v:'2026-04',t:'4月'},
+  {v:'2026-03',t:'3月'},{v:'2026-02',t:'2月'},{v:'2026-01',t:'1月'}
+];
+var currentMonth='2026-06';
+
+/* ═══ SVG — Grade Distribution Bar Chart ═══ */
+function buildDistChart(){
+  var data=DIST_DATA[currentMonth];
+  var W=342,H=200,padL=28,padR=12,padT=12,padB=40;
+  var plotW=W-padL-padR,plotH=H-padT-padB;
+  var maxVal=4;
+  var barW=Math.floor(plotW/7)-4;
+  var gap=(plotW-barW*7)/8;
+
+  var bars='';
+  for(var i=0;i<7;i++){
+    var bh=(data[i]/maxVal)*plotH;
+    var bx=padL+gap+i*(barW+gap);
+    var by=padT+plotH-bh;
+    bars+='<rect x="'+bx.toFixed(1)+'" y="'+by.toFixed(1)+'" width="'+barW+'" height="'+bh.toFixed(1)+'" rx="3" fill="'+GRADE_COLORS[i]+'"/>';
+    /* grade label */
+    bars+='<text x="'+(bx+barW/2).toFixed(1)+'" y="'+(H-4)+'" text-anchor="middle" fill="var(--c4)" font-size="9" font-family="var(--f)">'+GRADE_LABELS[i].replace('预期','')+'</text>';
+  }
+
+  /* Force distribution line */
+  var forceLine='';
+  for(var i=0;i<7;i++){
+    var fy=padT+plotH-(FORCE_DIST[i]/maxVal)*plotH;
+    var fx=padL+gap+i*(barW+gap)+barW/2;
+    if(i>0){
+      var prevFy=padT+plotH-(FORCE_DIST[i-1]/maxVal)*plotH;
+      var prevFx=padL+gap+(i-1)*(barW+gap)+barW/2;
+      forceLine+='<line x1="'+prevFx.toFixed(1)+'" y1="'+prevFy.toFixed(1)+'" x2="'+fx.toFixed(1)+'" y2="'+fy.toFixed(1)+'" stroke="#F59E0B" stroke-width="1.5" stroke-dasharray="4,3"/>';
+    }
+    forceLine+='<circle cx="'+fx.toFixed(1)+'" cy="'+fy.toFixed(1)+'" r="3" fill="#F59E0B"/>';
+  }
+
+  /* Y axis */
+  var yTicks='';
+  for(var v=0;v<=maxVal;v++){
+    var ty=padT+plotH-(v/maxVal)*plotH;
+    yTicks+='<line x1="'+padL+'" y1="'+ty.toFixed(1)+'" x2="'+(W-padR)+'" y2="'+ty.toFixed(1)+'" stroke="var(--c1)" stroke-width="1"/>';
+    yTicks+='<text x="'+(padL-4)+'" y="'+(ty+4).toFixed(1)+'" text-anchor="end" fill="var(--c4)" font-size="10" font-family="var(--fm)">'+v+'</text>';
+  }
+
+  return '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">'+yTicks+bars+forceLine+'</svg>';
 }
-render();
+
+/* ═══ SVG — Team Trend Line Chart ═══ */
+function buildTrendChart(){
+  var W=342,H=200,padL=32,padR=8,padT=12,padB=24;
+  var plotW=W-padL-padR,plotH=H-padT-padB;
+  var members=Object.keys(MEMBER_TREND);
+
+  /* Y axis grade labels */
+  var yTicks='';
+  for(var g=2;g<=6;g+=2){
+    var ty=padT+plotH-((g-1)/6)*plotH;
+    yTicks+='<line x1="'+padL+'" y1="'+ty.toFixed(1)+'" x2="'+(W-padR)+'" y2="'+ty.toFixed(1)+'" stroke="var(--c1)" stroke-width="1"/>';
+    yTicks+='<text x="'+(padL-4)+'" y="'+(ty+4).toFixed(1)+'" text-anchor="end" fill="var(--c4)" font-size="9" font-family="var(--f)">'+GRADE_Y[g]+'</text>';
+  }
+
+  /* X axis month labels */
+  var xLabels='';
+  for(var i=0;i<MONTH_LABELS.length;i++){
+    var lx=padL+(i/(MONTH_LABELS.length-1))*plotW;
+    xLabels+='<text x="'+lx.toFixed(1)+'" y="'+(H-4)+'" text-anchor="middle" fill="var(--c4)" font-size="9" font-family="var(--f)">'+MONTH_LABELS[i]+'</text>';
+  }
+
+  /* Lines */
+  var paths='';
+  for(var m=0;m<members.length;m++){
+    var name=members[m];
+    var data=MEMBER_TREND[name];
+    var d='';
+    for(var i=0;i<data.length;i++){
+      var px=padL+(i/(data.length-1))*plotW;
+      var py=padT+plotH-((data[i]-1)/6)*plotH;
+      d+=(i===0?'M':'L')+px.toFixed(1)+','+py.toFixed(1);
+    }
+    paths+='<path d="'+d+'" fill="none" stroke="'+MEMBER_COLORS[m]+'" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>';
+    /* Dots on each point */
+    for(var i=0;i<data.length;i++){
+      var px=padL+(i/(data.length-1))*plotW;
+      var py=padT+plotH-((data[i]-1)/6)*plotH;
+      paths+='<circle cx="'+px.toFixed(1)+'" cy="'+py.toFixed(1)+'" r="2.5" fill="'+MEMBER_COLORS[m]+'"/>';
+    }
+  }
+
+  return '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">'+yTicks+xLabels+paths+'</svg>';
+}
+
+/* ═══ Render Todos ═══ */
+function renderTodos(){
+  var h='<div class="card-hd"><span class="card-title">待办任务</span></div>';
+  TEAM_TODOS.forEach(function(t){
+    h+='<div class="todo-item">'+
+      '<span class="todo-dot" style="background:'+t.dot+'"></span>'+
+      '<span class="todo-info"><span class="todo-name">'+t.text+'</span></span>'+
+      '<span class="todo-badge" style="background:'+t.badge+';color:'+t.badgeColor+'">'+t.meta+'</span>'+
+    '</div>';
+  });
+  document.getElementById('todoCard').innerHTML=h;
+}
+
+/* ═══ Month Pills ═══ */
+function renderMonthPills(){
+  var h='';
+  MONTHS.forEach(function(m){
+    var active=m.v===currentMonth?' active':'';
+    h+='<span class="month-pill'+active+'" onclick="switchMonth(\''+m.v+'\',this)">'+m.t+'</span>';
+  });
+  document.getElementById('monthPills').innerHTML=h;
+}
+
+function switchMonth(val,el){
+  currentMonth=val;
+  var pills=document.querySelectorAll('.month-pill');
+  for(var i=0;i<pills.length;i++)pills[i].classList.remove('active');
+  if(el)el.classList.add('active');
+  document.getElementById('chartDistBody').innerHTML=buildDistChart();
+}
+
+/* ═══ Trend Legend ═══ */
+function renderLegend(){
+  var h='';
+  var members=Object.keys(MEMBER_TREND);
+  members.forEach(function(name,i){
+    h+='<span class="chart-legend-dot" style="background:'+MEMBER_COLORS[i]+'"></span>'+name;
+  });
+  document.getElementById('chartTrendLegend').innerHTML=h;
+}
+
+/* ═══ Toast ═══ */
+var toastTimer;
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){t.classList.remove('show');},1800);
+}
+
+/* ═══ Init ═══ */
+renderMonthPills();
+renderTodos();
+renderLegend();
+document.getElementById('chartDistBody').innerHTML=buildDistChart();
+document.getElementById('chartTrendBody').innerHTML=buildTrendChart();
 </script>
 </body>
 </html>

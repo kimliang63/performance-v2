@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE 绩效考核 · 业务场景全景图</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--pr900:#1E3A8A;
+  --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;--vi100:#EDE9FE;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --r1:6px;--r2:8px;--r3:10px;--r4:14px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fm:'JetBrains Mono','SF Mono',monospace;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --shadow-card-hover:0 8px 20px -4px rgba(0,0,0,.08),0 2px 6px -2px rgba(0,0,0,.04);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoothing:antialiased;min-height:100vh}
+
+/* Nav */
+.nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--c2);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:52px}
+.nav-logo{display:flex;align-items:center;gap:8px;font:600 15px/1 var(--f);color:var(--c9);text-decoration:none}
+.nav-logo-ic{width:28px;height:28px;border-radius:var(--r1);background:var(--pr);display:flex;align-items:center;justify-content:center}
+.nav-logo-ic svg{width:15px;height:15px;color:#FFF}
+.nav-links{display:flex;gap:4px}
+.nav-links a{font:400 13px/1 var(--f);color:var(--c5);text-decoration:none;padding:6px 12px;border-radius:var(--r1);transition:all .15s}
+.nav-links a:hover{color:var(--c8);background:var(--c0)}
+
+/* Hero */
+.hero{text-align:center;padding:36px 32px 0}
+.hero-t{font:700 34px/1.2 var(--f);color:var(--c9);letter-spacing:-.8px;margin-bottom:10px}
+.hero-s{font:400 15px/1.5 var(--f);color:var(--c5);max-width:640px;margin:0 auto}
+
+/* Perspective Tabs */
+.perspective-tabs{display:flex;justify-content:center;gap:0;margin:32px 0 0}
+.perspective-tab{position:relative;padding:12px 32px;font:500 14px/1 var(--f);color:var(--c5);cursor:pointer;border:none;background:none;border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap}
+.perspective-tab:hover{color:var(--c8);background:var(--c0)}
+.perspective-tab.active{color:var(--pr);border-bottom-color:var(--pr);font-weight:600}
+.perspective-tab .badge{display:inline-block;margin-left:6px;padding:2px 7px;border-radius:10px;font:500 10px/1 var(--f);background:var(--pr50);color:var(--pr);vertical-align:middle}
+.perspective-tab.active .badge{background:var(--pr100)}
+
+/* Period sub-tabs */
+.period-tabs{display:none;justify-content:center;gap:6px;margin:20px 0 0}
+.period-tabs.show{display:flex}
+.period-tab{padding:7px 18px;font:500 12px/1 var(--f);color:var(--c5);cursor:pointer;border:1px solid var(--c2);border-radius:20px;background:var(--sf);transition:all .15s}
+.period-tab:hover{border-color:var(--pr200);color:var(--pr)}
+.period-tab.active{background:var(--pr);color:#FFF;border-color:var(--pr)}
+
+/* Entry Hero */
+.entry-hero{display:none;padding:24px 32px 0}
+.entry-hero.show{display:block}
+.entry-hero-inner{background:linear-gradient(135deg,var(--pr50) 0%,#EEF2FF 100%);border:1px solid var(--pr100);border-radius:var(--r4);padding:24px 28px;display:flex;align-items:center;gap:28px;max-width:1320px;margin:0 auto}
+.entry-hero-left{flex-shrink:0}
+.entry-hero-ic{width:48px;height:48px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(37,99,235,.25)}
+.entry-hero-ic svg{width:22px;height:22px;color:#FFF}
+.entry-hero-body{flex:1;min-width:0}
+.entry-hero-title{font:600 16px/1.3 var(--f);color:var(--pr900);margin-bottom:4px}
+.entry-hero-desc{font:400 13px/1.5 var(--f);color:var(--pr700)}
+.entry-hero-cards{display:flex;gap:10px;flex-shrink:0;flex-wrap:wrap}
+.entry-card{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--sf);border:1px solid var(--pr200);border-radius:var(--r2);font:500 13px/1 var(--f);color:var(--pr);cursor:pointer;text-decoration:none;transition:all .15s;white-space:nowrap}
+.entry-card:hover{box-shadow:var(--shadow-card-hover);border-color:var(--pr);transform:translateY(-1px)}
+.entry-card svg{width:16px;height:16px;flex-shrink:0}
+
+/* ═══ Horizontal Columns ═══ */
+.stage-columns-wrap{overflow-x:auto;overflow-y:visible;padding:28px 32px 40px;-webkit-overflow-scrolling:touch}
+.stage-columns{display:flex;gap:16px;min-width:max-content;align-items:flex-start}
+
+/* Column */
+.stage-col{width:296px;flex-shrink:0;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);display:flex;flex-direction:column;overflow:hidden;transition:border-color .15s}
+.stage-col:hover{border-color:var(--pr200)}
+
+/* Column header */
+.col-hd{padding:16px 18px 14px;border-bottom:1px solid var(--dv);flex-shrink:0}
+.col-num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:var(--r1);background:var(--pr);font:700 14px/1 var(--fm);color:#FFF;margin-bottom:10px}
+.col-title{font:700 15px/1.2 var(--f);color:var(--c9);margin-bottom:4px}
+.col-sub{font:400 11px/1.4 var(--f);color:var(--c5)}
+
+/* Column body */
+.col-body{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10px;max-height:calc(100vh - 360px);min-height:160px}
+
+/* Role label */
+.col-role-label{display:flex;align-items:center;gap:6px;padding:4px 0 2px;margin-top:2px}
+.col-role-label:first-child{margin-top:0}
+.col-role-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.col-role-dot.employee{background:var(--pr)}
+.col-role-dot.manager{background:var(--vi)}
+.col-role-dot.hr{background:var(--em)}
+.col-role-name{font:600 11px/1 var(--f);color:var(--c6);letter-spacing:.5px}
+
+/* Card */
+.card{display:block;padding:14px 16px;background:var(--c0);border:1px solid transparent;border-radius:var(--r2);cursor:pointer;text-decoration:none;color:inherit;transition:all .15s}
+.card:hover{background:var(--sf);border-color:var(--pr200);box-shadow:var(--shadow-card-hover)}
+.card-title{font:600 13px/1.3 var(--f);color:var(--c9);margin-bottom:3px;display:flex;align-items:center;gap:6px}
+.card-arrow{font-size:12px;color:var(--c4);transition:all .15s;margin-left:auto;flex-shrink:0}
+.card:hover .card-arrow{color:var(--pr)}
+.card-desc{font:400 11px/1.4 var(--f);color:var(--c5)}
+.card-tags{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap}
+.card-tag{font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px}
+.card-tag.pc{background:var(--pr50);color:var(--pr)}
+.card-tag.mobile{background:var(--em50);color:var(--em700)}
+.card-tag.batch{background:var(--ac50);color:var(--ac700)}
+
+/* Column empty */
+.col-empty{padding:28px 18px;text-align:center;color:var(--c4);font:400 12px/1 var(--f);flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.col-empty svg{width:28px;height:28px;opacity:.3}
+
+/* Notice badge on column */
+.col-notice{display:inline-flex;align-items:center;gap:4px;margin-top:10px;padding:4px 8px;border-radius:4px;font:400 10px/1 var(--f);background:var(--ac50);color:var(--ac700)}
+.col-notice svg{width:12px;height:12px}
+
+/* ═══ HR Workbench ═══ */
+.hr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;max-width:1320px;margin:0 auto;padding:24px 32px 40px}
+.hr-block{background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);padding:24px}
+.hr-block-title{display:flex;align-items:center;gap:8px;font:600 15px/1 var(--f);color:var(--c9);margin-bottom:16px}
+.hr-block-title svg{width:18px;height:18px;color:var(--pr)}
+.hr-card-list{display:flex;flex-direction:column;gap:8px}
+.hr-card{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--c0);border-radius:var(--r1);text-decoration:none;color:inherit;transition:all .15s;font:500 13px/1 var(--f);color:var(--c7)}
+.hr-card:hover{background:var(--pr50);color:var(--pr)}
+.hr-card svg{width:15px;height:15px;color:var(--c4);flex-shrink:0}
+.hr-card .tag{font:500 10px/1 var(--f);padding:2px 7px;border-radius:4px;margin-left:auto;flex-shrink:0}
+.hr-card .tag.config{background:var(--pr50);color:var(--pr)}
+.hr-card .tag.operate{background:var(--em50);color:var(--em700)}
+.hr-card .tag.monitor{background:var(--ac50);color:var(--ac700)}
+
+/* Footer */
+.ft{text-align:center;padding:32px;font:400 12px/1 var(--f);color:var(--c4);border-top:1px solid var(--c2)}
+.ft a{color:var(--pr);text-decoration:none}
+
+@media(max-width:768px){
+  .hero-t{font-size:24px}
+  .perspective-tab{padding:10px 16px;font-size:12px}
+  .entry-hero-inner{flex-direction:column;text-align:center}
+  .entry-hero-cards{justify-content:center}
+  .stage-columns-wrap{padding:20px 16px}
+  .stage-col{width:260px}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav-logo" href="index.html">
+    <span class="nav-logo-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="12" y2="17"/></svg></span>
+    HR ONE 绩效
+  </a>
+  <div class="nav-links">
+    <a href="index.html">原型总览</a>
+    <a href="demo-index.html">演示入口</a>
+    <a href="perf-scenario-nav.html" style="color:var(--pr);font-weight:500">业务场景</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-t">绩效考核 · 业务场景全景图</div>
+  <div class="hero-s">基于《三合一绩效专题方案》梳理，阶段从左到右铺开，角色场景在阶段内从上到下展开。仅展示已有原型页面的场景。</div>
+</div>
+
+<div class="perspective-tabs" id="perspectiveTabs">
+  <button class="perspective-tab active" data-perspective="emp-monthly">
+    🧑 员工视角<span class="badge">月度</span>
+  </button>
+  <button class="perspective-tab" data-perspective="emp-yearly">
+    🧑 员工视角<span class="badge">半年度/年度</span>
+  </button>
+  <button class="perspective-tab" data-perspective="hr">
+    ⚙️ HR 工作台
+  </button>
+</div>
+
+<div class="period-tabs show" id="periodTabsWrap"></div>
+
+<div class="entry-hero show" id="entryHero">
+  <div class="entry-hero-inner">
+    <div class="entry-hero-left">
+      <div class="entry-hero-ic">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      </div>
+    </div>
+    <div class="entry-hero-body">
+      <div class="entry-hero-title">员工发起入口：规则 + 通知驱动</div>
+      <div class="entry-hero-desc">考核活动开启后，系统按规则自动生成待办并通过飞书 Bot 推送通知，员工从工作台进入办理</div>
+    </div>
+    <div class="entry-hero-cards">
+      <a class="entry-card" href="http://127.0.0.1:8788/demo-feishu-notify.html" target="_blank" style="border-color:var(--pr);background:var(--pr50);font-weight:600">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        🔔 飞书消息通知（发起入口）
+      </a>
+      <a class="entry-card" href="employee/demo-workbench-home.html" target="_blank">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        员工工作台 PC
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="stage-columns-wrap" id="stageColumnsWrap">
+  <div class="stage-columns" id="stageColumns"></div>
+</div>
+
+<div id="hrContent" style="display:none"></div>
+
+<div class="ft">
+  基于《三合一「绩效专题」阶段方案汇报》· HR ONE 绩效管理系统 · 原型演示导航<br>
+  <a href="https://ztn.feishu.cn/wiki/WR47w26kziwPAWkuDLgcQphfnjb" target="_blank">查看源文档 →</a>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// Stage definitions — only stages with actual prototypes
+// ═══════════════════════════════════════════
+const STAGES = [
+  { id:'prep',       num:1, title:'前置准备',   sub:'方案配置 · 活动发起 · 通知推送 · 工作台入口',             monthly:true, yearly:true },
+  { id:'goal',       num:2, title:'目标制定',   sub:'填写PBC目标 · 上级审批 · 双线考核审批 · 批量导入',        monthly:true, yearly:false },
+  { id:'evaluation', num:3, title:'绩效考核',   sub:'员工自评 · 直接上级评分 · 间接上级评分 · 批量导入',        monthly:true, yearly:false },
+  { id:'interview',  num:4, title:'绩效面谈',   sub:'员工填写面谈记录 · 上级确认 · 半年度考核在此结束',         monthly:true, yearly:true },
+  { id:'ratify',     num:5, title:'绩效审定',   sub:'逐级审定 · 强制分布调整 · HRBP审批(A级)',                 monthly:true, yearly:true },
+  { id:'confirm',    num:6, title:'结果确认',   sub:'员工查看确认绩效结果 · 不同意走HRBP知悉流程 · 结果公布',   monthly:true, yearly:true },
+];
+
+const ROLE_ORDER = ['employee','manager','hr'];
+const ROLE_LABEL = {
+  employee: '被考核人',
+  manager:  '管理者 / 上级',
+  hr:       'HRBP / SSC / COE',
+};
+const ROLE_DOT = { employee:'employee', manager:'manager', hr:'hr' };
+
+// ═══════════════════════════════════════════
+// Card data — each card maps to an actual prototype page
+// ═══════════════════════════════════════════
+// role: 'employee' | 'manager' | 'hr'
+// tags: 'pc' | 'mobile' | 'batch'
+
+const EMP_MONTHLY = [
+  // Stage 1: 前置准备 — employee entry points only
+  { stage:'prep', role:'employee', title:'🔔 飞书消息通知',    desc:'所有流程的发起入口。考核启动、待办提醒、 deadline 预警通过飞书Bot推送', href:'http://127.0.0.1:8788/demo-feishu-notify.html', tags:['pc'] },
+  { stage:'prep', role:'employee', title:'工作台首页',          desc:'绩效待办汇总，通知驱动进入各环节',               href:'employee/demo-workbench-home.html',       tags:['pc'] },
+
+  // Stage 2: 目标制定
+  { stage:'goal', role:'employee', title:'填写 PBC 目标',       desc:'在线填写个人PBC目标，含指标库引用与多语言',        href:'employee/demo-goal-employee-new.html',      tags:['pc'] },
+  { stage:'goal', role:'employee', title:'移动端填写目标',      desc:'手机端填写PBC目标',                               href:'employee-mobile/mobile-goal.html',          tags:['mobile'] },
+  { stage:'goal', role:'employee', title:'我的目标看板',        desc:'查看个人目标及审批状态',                          href:'employee/demo-workbench-my-goal.html',      tags:['pc'] },
+  { stage:'goal', role:'manager',  title:'直接上级审批目标',    desc:'审批下属PBC目标，可驳回重填',                     href:'manager/demo-goal-direct.html',             tags:['pc'] },
+  { stage:'goal', role:'manager',  title:'双线上级审批目标',    desc:'双线场景先双线后直线审批',                        href:'manager/demo-goal-indirect.html',           tags:['pc'] },
+  { stage:'goal', role:'manager',  title:'移动端审批目标',      desc:'手机端审批下属目标',                              href:'manager-mobile/mobile-goal-approve.html',   tags:['mobile'] },
+  { stage:'goal', role:'hr',       title:'批量导入目标',        desc:'HRBP线下收集操作类工种目标后批量导入',           href:'manager/demo-goal-batch-import.html',       tags:['pc','batch'] },
+
+  // Stage 3: 绩效考核
+  { stage:'evaluation', role:'employee', title:'绩效自评',             desc:'填写目标完成情况与自评分数',                href:'employee/demo-eval-self.html',              tags:['pc'] },
+  { stage:'evaluation', role:'employee', title:'移动端自评',           desc:'手机端完成绩效自评',                          href:'employee-mobile/mobile-eval.html',          tags:['mobile'] },
+  { stage:'evaluation', role:'manager',  title:'直接上级评分',         desc:'评估下属目标完成情况并打分',                  href:'manager/demo-eval-direct.html',             tags:['pc'] },
+  { stage:'evaluation', role:'manager',  title:'双线上级评分',         desc:'双线考核先双线后直线评分',                    href:'manager/demo-eval-indirect.html',           tags:['pc'] },
+  { stage:'evaluation', role:'manager',  title:'移动端评分',           desc:'手机端完成下属评分',                          href:'manager-mobile/mobile-eval-score.html',     tags:['mobile'] },
+  { stage:'evaluation', role:'hr',       title:'批量导入考核结果',     desc:'HRBP批量导入线下目标完成值和考核结果',       href:'manager/demo-eval-batch-import.html',       tags:['pc','batch'] },
+
+  // Stage 4: 绩效面谈
+  { stage:'interview', role:'employee', title:'填写面谈记录',      desc:'线下面谈后在线填写面谈结果',                      href:'employee/demo-interview-employee.html',     tags:['pc'] },
+  { stage:'interview', role:'employee', title:'移动端填写面谈',    desc:'手机端填写面谈记录',                              href:'employee-mobile/mobile-interview.html',     tags:['mobile'] },
+  { stage:'interview', role:'manager',  title:'确认面谈结果',      desc:'直接上级确认员工面谈记录',                        href:'manager/demo-interview-direct.html',        tags:['pc'] },
+  { stage:'interview', role:'manager',  title:'移动端确认面谈',    desc:'手机端确认面谈结果',                              href:'manager-mobile/mobile-interview-direct.html',tags:['mobile'] },
+
+  // Stage 5: 绩效审定 — manager/HR only, no employee pages
+  { stage:'ratify', role:'manager',  title:'直接上级审定',        desc:'查看所辖范围绩效分布，按强制分布调整等级',         href:'manager/demo-ratify-direct.html',           tags:['pc'] },
+  { stage:'ratify', role:'manager',  title:'双线上级审定',        desc:'双线上级逐级审定调整等级',                         href:'manager/demo-ratify-indirect.html',         tags:['pc'] },
+  { stage:'ratify', role:'manager',  title:'逐级上级审批',        desc:'按组织架构逐级审批审定结果',                       href:'manager/demo-ratify-hierarchy.html',        tags:['pc'] },
+  { stage:'ratify', role:'manager',  title:'移动端审定',          desc:'手机端完成审定调整',                               href:'manager-mobile/mobile-ratify.html',         tags:['mobile'] },
+  { stage:'ratify', role:'hr',       title:'HRBP 审批（A级）',    desc:'A级人员需HRBP额外审批',                            href:'manager/demo-ratify-hrbp.html',             tags:['pc'] },
+
+  // Stage 6: 结果确认
+  { stage:'confirm', role:'employee', title:'查看并确认绩效结果',  desc:'查看最终绩效结果，选择同意或不同意',               href:'employee/demo-confirm-employee.html',       tags:['pc'] },
+  { stage:'confirm', role:'employee', title:'移动端确认结果',      desc:'手机端确认绩效结果',                               href:'employee-mobile/mobile-confirm.html',       tags:['mobile'] },
+  { stage:'confirm', role:'employee', title:'我的绩效结果',        desc:'查看个人历史绩效结果与趋势',                       href:'employee/demo-workbench-my-result.html',    tags:['pc'] },
+  { stage:'confirm', role:'hr',       title:'HRBP 知悉（不同意）', desc:'员工不同意时HRBP知悉并协助沟通',                  href:'manager/demo-confirm-hrbp.html',            tags:['pc'] },
+  { stage:'confirm', role:'hr',       title:'绩效结果查看',        desc:'查看员工绩效结果与考核过程各节点评分明细',         href:'perf-result-view.html',                     tags:['pc'] },
+  { stage:'confirm', role:'hr',       title:'员工目标查看',        desc:'查看单个员工目标制定与完成详情',                   href:'perf-result-employee.html',                 tags:['pc'] },
+];
+
+const EMP_YEARLY = [
+  // Stage 1: 前置准备
+  { stage:'prep', role:'employee', title:'🔔 飞书消息通知',    desc:'所有流程的发起入口。考核启动、待办提醒、 deadline 预警通过飞书Bot推送', href:'http://127.0.0.1:8788/demo-feishu-notify.html', tags:['pc'] },
+  { stage:'prep', role:'employee', title:'工作台首页',          desc:'绩效待办汇总，通知驱动进入',                       href:'employee/demo-workbench-home.html',       tags:['pc'] },
+
+  // Stage 4: 绩效面谈 (core for both semi-annual and annual)
+  { stage:'interview', role:'employee', title:'填写面谈记录',      desc:'线下面谈后在线填写面谈结果',                      href:'employee/demo-interview-employee.html',     tags:['pc'] },
+  { stage:'interview', role:'employee', title:'移动端填写面谈',    desc:'手机端填写面谈记录',                              href:'employee-mobile/mobile-interview.html',     tags:['mobile'] },
+  { stage:'interview', role:'manager',  title:'确认面谈结果',      desc:'直接上级确认面谈记录（半年度考核在此结束）',      href:'manager/demo-interview-direct.html',        tags:['pc'] },
+  { stage:'interview', role:'manager',  title:'移动端确认面谈',    desc:'手机端确认面谈结果',                              href:'manager-mobile/mobile-interview-direct.html',tags:['mobile'] },
+
+  // Stage 5: 绩效审定 (annual only, manager/HR only)
+  { stage:'ratify', role:'manager',  title:'逐级上级审批',        desc:'按组织架构逐级审批审定结果',                       href:'manager/demo-ratify-hierarchy.html',        tags:['pc'] },
+  { stage:'ratify', role:'hr',       title:'HRBP 审批',           desc:'A级人员HRBP审批',                                  href:'manager/demo-ratify-hrbp.html',             tags:['pc'] },
+
+  // Stage 6: 结果确认 (annual only)
+  { stage:'confirm', role:'employee', title:'查看并确认绩效结果',  desc:'查看年度绩效结果并确认',                          href:'employee/demo-confirm-employee.html',       tags:['pc'] },
+  { stage:'confirm', role:'employee', title:'移动端确认结果',      desc:'手机端确认绩效结果',                               href:'employee-mobile/mobile-confirm.html',       tags:['mobile'] },
+  { stage:'confirm', role:'employee', title:'我的绩效结果',        desc:'查看个人历史绩效结果与趋势',                       href:'employee/demo-workbench-my-result.html',    tags:['pc'] },
+];
+
+const HR_BLOCKS = [
+  { title:'基础配置', items:[
+    { title:'指标库',       desc:'管理考核指标与使用范围',              href:'perf-base-indicator.html',      tag:'config' },
+    { title:'计算规则',     desc:'配置指标得分计算公式',                href:'perf-base-calc.html',           tag:'config' },
+    { title:'等级规则',     desc:'定义绩效等级与分数区间映射',          href:'perf-base-grade.html',          tag:'config' },
+    { title:'评价规则',     desc:'配置评价规则与评分映射',              href:'perf-base-evaluation.html',     tag:'config' },
+    { title:'衡量标准',     desc:'维护评分标准与等级描述',              href:'perf-base-standard.html',       tag:'config' },
+    { title:'强制分布',     desc:'271/280分布规则，强控/弱控',          href:'perf-forced-distribution.html',  tag:'config' },
+    { title:'绩效周期',     desc:'维护考核周期类型',                    href:'perf-base-cycle.html',          tag:'config' },
+    { title:'组织单位',     desc:'维护考核组织层级',                    href:'perf-base-unit.html',           tag:'config' },
+  ]},
+  { title:'方案设计', items:[
+    { title:'方案列表', desc:'查看和管理所有绩效方案', href:'perf-scheme-list.html',   tag:'config' },
+    { title:'方案详情', desc:'配置方案环节/考核组/表单/流程', href:'perf-scheme-detail.html', tag:'config' },
+    { title:'方案向导', desc:'分步创建新绩效方案', href:'perf-scheme-wizard.html', tag:'config' },
+  ]},
+  { title:'考核活动', items:[
+    { title:'活动列表', desc:'查看所有考核活动', href:'perf-activity.html',        tag:'operate' },
+    { title:'发起活动', desc:'选择方案+周期发起考核', href:'perf-activity-new.html',    tag:'operate' },
+    { title:'活动详情', desc:'查看活动配置与参与人员', href:'perf-activity-detail.html', tag:'operate' },
+    { title:'考核进度看板', desc:'按部门/考核组查看各环节进度', href:'perf-activity-progress.html', tag:'monitor' },
+  ]},
+  { title:'进度监控', items:[
+    { title:'团队目标进度', desc:'管理者查看下属目标制定情况', href:'manager/demo-workbench-team-goal.html', tag:'monitor' },
+    { title:'团队考核进度', desc:'管理者查看下属考核评分情况', href:'manager/demo-workbench-team-result.html', tag:'monitor' },
+    { title:'员工目标看板', desc:'员工查看个人目标与审批状态', href:'employee/demo-workbench-my-goal.html', tag:'monitor' },
+    { title:'员工绩效结果', desc:'员工查看个人绩效结果与历史', href:'employee/demo-workbench-my-result.html', tag:'monitor' },
+    { title:'团队绩效工作台', desc:'管理者团队绩效总览', href:'employee/demo-workbench-team.html', tag:'monitor' },
+  ]},
+  { title:'绩效报表', items:[
+    { title:'绩效结果报表', desc:'全员绩效结果与调整前后对比', href:'perf-report-results.html',      tag:'monitor' },
+    { title:'绩效分布报表', desc:'按等级分布查看考核结果', href:'perf-report-distribution.html', tag:'monitor' },
+    { title:'目标中心',     desc:'全员各周期目标数据', href:'perf-report-goals.html',        tag:'monitor' },
+    { title:'员工目标详情', desc:'单个员工目标完成详情', href:'perf-report-goal-detail.html',  tag:'monitor' },
+    { title:'考核进度报表', desc:'按环节查看整体进度', href:'perf-report-progress.html',     tag:'monitor' },
+    { title:'绩效分析报表', desc:'多维度绩效数据分析', href:'perf-report-analytics.html',    tag:'monitor' },
+  ]},
+  { title:'移动端', items:[
+    { title:'移动端目标填写',   desc:'手机填写PBC目标',        href:'employee-mobile/mobile-goal.html',              tag:'operate' },
+    { title:'移动端自评',       desc:'手机完成绩效自评',        href:'employee-mobile/mobile-eval.html',              tag:'operate' },
+    { title:'移动端面谈',       desc:'手机填写面谈记录',        href:'employee-mobile/mobile-interview.html',         tag:'operate' },
+    { title:'移动端结果确认',   desc:'手机确认绩效结果',        href:'employee-mobile/mobile-confirm.html',           tag:'operate' },
+    { title:'管理者移动端评分', desc:'手机完成下属评分',        href:'manager-mobile/mobile-eval-score.html',         tag:'operate' },
+    { title:'管理者移动端审批', desc:'手机审批下属目标',        href:'manager-mobile/mobile-goal-approve.html',       tag:'operate' },
+    { title:'管理者移动端面谈', desc:'手机确认面谈结果',        href:'manager-mobile/mobile-interview-direct.html',   tag:'operate' },
+    { title:'管理者移动端审定', desc:'手机完成审定调整',        href:'manager-mobile/mobile-ratify.html',             tag:'operate' },
+  ]},
+];
+
+// ═══════════════════════════════════════════
+// State
+// ═══════════════════════════════════════════
+let currentPerspective = 'emp-monthly';
+let currentPeriod = 'monthly';
+
+// ═══════════════════════════════════════════
+// Render
+// ═══════════════════════════════════════════
+
+function tagLabel(t) {
+  if (t === 'pc') return 'PC';
+  if (t === 'mobile') return '手机';
+  if (t === 'batch') return '导入';
+  return t;
+}
+
+function makeCard(c) {
+  const tags = (c.tags||[]).map(t => `<span class="card-tag ${t}">${tagLabel(t)}</span>`).join('');
+  return `
+    <a class="card" href="${c.href}" target="_blank">
+      <div class="card-title"><span>${c.title}</span><span class="card-arrow">→</span></div>
+      <div class="card-desc">${c.desc}</div>
+      ${tags ? `<div class="card-tags">${tags}</div>` : ''}
+    </a>`;
+}
+
+function makeColumn(stage, cards) {
+  // Group by role order
+  const groups = [];
+  for (const rk of ROLE_ORDER) {
+    const gCards = cards.filter(c => c.role === rk);
+    if (gCards.length > 0) groups.push({ key: rk, cards: gCards });
+  }
+
+  let html = `<div class="stage-col">`;
+  // Header
+  html += `<div class="col-hd">`;
+  html += `<div class="col-num">${stage.num}</div>`;
+  html += `<div class="col-title">${stage.title}</div>`;
+  html += `<div class="col-sub">${stage.sub}</div>`;
+  html += `</div>`;
+
+  // Body
+  if (groups.length === 0) {
+    html += `<div class="col-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>暂无原型</div>`;
+  } else {
+    html += `<div class="col-body">`;
+    for (const g of groups) {
+      html += `<div class="col-role-label">`;
+      html += `<span class="col-role-dot ${ROLE_DOT[g.key]}"></span>`;
+      html += `<span class="col-role-name">${ROLE_LABEL[g.key]}</span>`;
+      html += `</div>`;
+      for (const c of g.cards) {
+        html += makeCard(c);
+      }
+    }
+    html += `</div>`;
+  }
+
+  html += `</div>`;
+  return html;
+}
+
+function getStages() {
+  if (currentPerspective === 'emp-monthly') return STAGES.filter(s => s.monthly);
+  if (currentPerspective === 'emp-yearly') {
+    const yearlyIds = currentPeriod === 'semi-annual'
+      ? ['prep','interview']                                  // semi-annual: prep → interview → end
+      : ['prep','interview','ratify','confirm'];              // annual: prep → interview → ratify → confirm
+    return STAGES.filter(s => yearlyIds.includes(s.id));
+  }
+  return STAGES;
+}
+
+function getCards() {
+  if (currentPerspective === 'emp-monthly') return EMP_MONTHLY;
+  if (currentPerspective === 'emp-yearly') return EMP_YEARLY;
+  return [];
+}
+
+function renderColumns() {
+  const stages = getStages();
+  const cards = getCards();
+  let html = '';
+  for (const s of stages) {
+    html += makeColumn(s, cards.filter(c => c.stage === s.id));
+  }
+  document.getElementById('stageColumns').innerHTML = html;
+}
+
+function renderPeriodTabs() {
+  const wrap = document.getElementById('periodTabsWrap');
+  if (currentPerspective === 'emp-monthly') {
+    wrap.classList.add('show');
+    wrap.innerHTML = `<button class="period-tab active" data-period="monthly">📅 月度考核流程（6阶段）</button>`;
+  } else if (currentPerspective === 'emp-yearly') {
+    wrap.classList.add('show');
+    wrap.innerHTML = `
+      <button class="period-tab ${currentPeriod==='semi-annual'?'active':''}" data-period="semi-annual">📅 半年度（面谈即结束）</button>
+      <button class="period-tab ${currentPeriod==='annual'?'active':''}" data-period="annual">📅 年度（面谈→审定→确认）</button>`;
+  } else {
+    wrap.classList.remove('show');
+    wrap.innerHTML = '';
+  }
+}
+
+function renderHR() {
+  let html = '<div class="hr-grid">';
+  for (const b of HR_BLOCKS) {
+    html += `<div class="hr-block">`;
+    html += `<div class="hr-block-title" style="display:flex;align-items:center;gap:8px;font:600 15px/1 var(--f);color:var(--c9);margin-bottom:16px">${b.title}</div>`;
+    html += `<div class="hr-card-list">`;
+    for (const item of b.items) {
+      html += `<a class="hr-card" href="${item.href}" target="_blank">`;
+      html += `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`;
+      html += `<span>${item.title}</span><span style="font-size:11px;color:var(--c4);margin-left:8px">${item.desc}</span>`;
+      html += `<span class="tag ${item.tag}">${item.tag==='config'?'配置':item.tag==='operate'?'操作':'监控'}</span>`;
+      html += `</a>`;
+    }
+    html += `</div></div>`;
+  }
+  html += '</div>';
+  document.getElementById('hrContent').innerHTML = html;
+}
+
+function refresh() {
+  const isHR = currentPerspective === 'hr';
+  document.getElementById('stageColumnsWrap').style.display = isHR ? 'none' : '';
+  document.getElementById('hrContent').style.display = isHR ? '' : 'none';
+  document.getElementById('entryHero').classList.toggle('show', !isHR);
+  renderPeriodTabs();
+  if (!isHR) renderColumns();
+}
+
+// ═══════════════════════════════════════════
+// Events
+// ═══════════════════════════════════════════
+
+document.getElementById('perspectiveTabs').addEventListener('click', function(e) {
+  const tab = e.target.closest('.perspective-tab');
+  if (!tab) return;
+  const p = tab.dataset.perspective;
+  if (p === currentPerspective) return;
+  currentPerspective = p;
+  if (p === 'emp-yearly') currentPeriod = 'annual';
+  document.querySelectorAll('.perspective-tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+  refresh();
+});
+
+document.getElementById('periodTabsWrap').addEventListener('click', function(e) {
+  const tab = e.target.closest('.period-tab');
+  if (!tab) return;
+  const period = tab.dataset.period;
+  if (period === currentPeriod) return;
+  currentPeriod = period;
+  refresh();
+});
+
+// Init
+renderHR();
+refresh();
+</script>
+
+</body>
+</html>
