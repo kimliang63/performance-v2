@@ -34,8 +34,11 @@ const GHR_NAV = {
   // Module data with file paths
   M: {
     perf:{n:'绩效管理',l:'Performance',ic:'target',groups:[
-      {n:'📋 业务场景全景',ic:'settings',items:[
-        {n:'绩效周期',ic:'calendar',file:'perf-scenario-nav.html'},
+      {n:'📋 业务场景全景',ic:'grid',items:[
+        {n:'业务场景导航',ic:'target',file:'perf-scenario-nav.html'},
+      ]},
+      {n:'绩效基础配置',ic:'settings',items:[
+        {n:'绩效周期',ic:'calendar',file:'perf-base-cycle.html'},
         {n:'单位',ic:'building',file:'perf-base-unit.html'},
         {n:'等级规则',ic:'settings',file:'perf-base-grade.html'},
         {n:'计算规则',ic:'settings',file:'perf-base-calc.html'},
@@ -48,8 +51,7 @@ const GHR_NAV = {
         {n:'绩效方案',ic:'file',file:'perf-scheme-list.html'},
       ]},
       {n:'绩效活动',ic:'calendar',items:[
-        {n:'活动管理(旧)',ic:'grid',file:'perf-activity.html'},
-        {n:'活动管理',ic:'grid',file:'perf-activity-new.html'},
+        {n:'活动管理',ic:'grid',file:'perf-activity.html'},
       ]},
       {n:'工作台',ic:'home',items:[
         {n:'我的绩效',ic:'target',file:'employee/demo-workbench-home.html'},
@@ -197,6 +199,9 @@ const GHR_NAV = {
       .sb-l{font:500 10px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
       .sb-bd{flex:1;overflow-y:auto;padding:6px 8px}
       .sb-g{margin-bottom:1px}
+      .sb-g.scenario .sb-g-hd{background:var(--pr50);color:var(--pr);font-weight:700}
+      .sb-g.scenario .sb-g-hd svg{color:var(--pr)}
+      .sb-g.scenario .sb-g-hd:hover{background:var(--pr100)}
       .sb-g-hd{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--r1);cursor:pointer;transition:all .12s;font:600 14px/1 var(--f);color:var(--sb-text)}
       .sb-g-hd:hover{background:var(--sb-hover);color:var(--sb-text-hv)}
       .sb-g-hd svg{width:14px;height:14px;color:var(--sb-icon);flex-shrink:0;transition:all .15s}
@@ -415,9 +420,10 @@ const GHR_NAV = {
 
     const sb = document.getElementById('sbBd');
     let h = '';
-    m.groups.forEach(g => {
+    m.groups.forEach((g, gi) => {
       const isOpen = g.n === activeGroup;
-      h += `<div class="sb-g"><div class="sb-g-hd${isOpen ? ' on' : ''}" onclick="GHR_NAV.toggleSb(this)">${this.I[g.ic]}${g.n}</div><div class="sb-g-bd${isOpen ? ' on' : ''}">`;
+      const extraClass = gi === 0 ? ' scenario' : '';
+      h += `<div class="sb-g${extraClass}"><div class="sb-g-hd${isOpen ? ' on' : ''}" onclick="GHR_NAV.toggleSb(this)">${this.I[g.ic]}${g.n}</div><div class="sb-g-bd${isOpen ? ' on' : ''}">`;
       g.items.forEach(item => {
         if (item.children) {
           // Parent item with children (like 绩效表单)
