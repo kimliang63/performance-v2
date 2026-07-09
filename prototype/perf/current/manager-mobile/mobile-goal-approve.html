@@ -6,6 +6,36 @@
 <title>HR ONE - 目标审批</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../mobile-base.css">
+<style>
+.goal-mod{margin-bottom:10px}
+.goal-mod-hd{display:flex;align-items:center;gap:8px;padding:8px 0}
+.goal-mod-color{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.goal-mod-name{font:600 var(--fs-base)/1 var(--f);color:var(--c8);flex:1}
+.goal-mod-wt{font:500 var(--fs-sm)/1 var(--fm);color:var(--c5)}
+.goal-card{background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);padding:12px;margin-bottom:8px}
+.goal-card-hd{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.goal-card-name{flex:1;font:500 var(--fs-base)/1.3 var(--f);color:var(--c8)}
+.goal-card-type{font:500 var(--fs-xs)/1 var(--f);padding:2px 6px;border-radius:3px}
+.goal-card-type.quant{background:var(--pr50);color:var(--pr)}
+.goal-card-type.qual{background:var(--em50);color:var(--em700)}
+.goal-card-wt{font:500 var(--fs-sm)/1 var(--fm);color:var(--c5)}
+.goal-card-desc{font:400 var(--fs-sm)/1.4 var(--f);color:var(--c6);padding:6px 10px;background:var(--c0);border-radius:6px;margin-bottom:6px}
+.goal-metrics{display:flex;gap:8px}
+.goal-ms-row{display:flex;align-items:center;padding-top:4px}
+.goal-ms-label{font:400 var(--fs-sm)/1 var(--f);color:var(--c4);width:56px;flex-shrink:0}
+.goal-ms-val{font:400 var(--fs-sm)/1.4 var(--f);color:var(--c7)}
+
+.panel{background:var(--sf);border-radius:var(--r2);box-shadow:var(--sx);border:1px solid var(--bd);margin-bottom:10px}
+.panel-hd{padding:12px 14px;font:600 var(--fs-base)/1 var(--f);color:var(--c8);border-bottom:1px solid var(--dv)}
+.flow-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--dv)}
+.flow-item:last-child{border-bottom:none}
+.flow-dot{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.flow-dot svg{width:12px;height:12px}
+.flow-info{flex:1}
+.flow-name{font:500 var(--fs-base)/1 var(--f);color:var(--c8)}
+.flow-person{font:400 var(--fs-sm)/1 var(--f);color:var(--c5);margin-top:2px}
+.flow-badge{font:500 var(--fs-xs)/1 var(--f);padding:2px 8px;border-radius:4px;white-space:nowrap}
+</style>
 </head>
 <body>
 <div class="phone">
@@ -19,63 +49,77 @@
     <span class="title">目标审批</span>
   </div>
   <div class="phone-body" id="phoneBody"></div>
+  <div class="bottom-bar">
+    <button class="weui-btn weui-btn_default" style="flex:1" onclick="showToast('已退回')">退回</button>
+    <button class="weui-btn weui-btn_primary" style="flex:1" onclick="showToast('已批准')">批准</button>
+  </div>
 </div>
 <div class="toast" id="toast"></div>
 <script src="../mobile-base.js"></script>
 <script>
-var PENDING=[
-  {name:'赵强',title:'高级产品经理',color:'var(--ac)',goals:[
-    {title:'资源利用率（通用）',weight:5,deadline:'2026-06-30'},
-    {title:'HRAS UAT用户验收首次通过率',weight:10,deadline:'2026-06-30'},
-    {title:'HR ONE 绩效重构事项推进',weight:25,deadline:'2026-06-24'}
+var EMP={name:'张明',dept:'产品部',title:'高级产品经理',cycle:'2026年Q2'};
+
+var MODS=[
+  {name:'KPI',weight:30,color:'var(--pr)',goals:[
+    {name:'资源利用率（通用）',type:'quant',weight:5,unit:'%',challenge:110,target:105,baseline:100,desc:'人员实际工作量饱和情况'},
+    {name:'HRAS UAT用户验收首次通过率',type:'quant',weight:10,unit:'%',challenge:100,target:98,baseline:95,desc:'需求首次业务验收通过的概率'},
+    {name:'HRAS需求评审及时率',type:'quant',weight:15,unit:'%',challenge:100,target:98,baseline:95,desc:'迭代版本评审的及时性情况'}
   ]},
-  {name:'陈静',title:'产品助理',color:'var(--vi)',goals:[
-    {title:'HRAS产品管理规范',weight:10,deadline:'2026-06-30'},
-    {title:'AI应用项目探索与落地推广',weight:25,deadline:'2026-06-26'}
+  {name:'KPA',weight:70,color:'var(--em)',goals:[
+    {name:'HRAS产品管理规范',type:'qual',weight:10,desc:'需求管理流程规范、产品需求规范、迭代火车管理规范'},
+    {name:'日常滚动需求响应',type:'qual',weight:10,desc:'根据业务日会需求优先级，滚动响应日常需求'},
+    {name:'HR ONE 绩效重构事项推进',type:'qual',weight:25,desc:'06-10 输出原型；06-19 需求内审；06-24 需求评审'},
+    {name:'AI应用项目探索与落地推广',type:'qual',weight:25,desc:'06-05 1.0版本；06-12 LBU试点；06-26 1.1版本'}
   ]}
 ];
 
-var DONE=[
-  {name:'张明',title:'高级产品经理',color:'var(--pr)'},
-  {name:'李华',title:'产品经理',color:'var(--em)'}
-];
-
-var curTab='pending',openIdx=-1;
-
 function render(){
   var h='';
-  // Tabs
-  h+='<div class="weui-tab" style="margin-bottom:12px"><div class="weui-navbar" style="background:var(--c1);border-radius:var(--r1);padding:3px"><div class="weui-navbar__item'+(curTab==='pending'?' weui-bar__item_on':'')+'" onclick="switchTab(\'pending\')" style="padding:8px 0;font-size:var(--fs-base)">待审批 ('+PENDING.length+')</div><div class="weui-navbar__item'+(curTab==='done'?' weui-bar__item_on':'')+'" onclick="switchTab(\'done\')" style="padding:8px 0;font-size:var(--fs-base)">已审批 ('+DONE.length+')</div></div></div>';
+  // Employee card
+  h+='<div class="weui-panel weui-panel_access" style="margin-bottom:10px"><div class="weui-cells"><div class="weui-cell"><div class="weui-cell__hd"><div style="width:36px;height:36px;border-radius:50%;background:var(--pr50);display:flex;align-items:center;justify-content:center;font:700 var(--fs-lg)/1 var(--f);color:var(--pr);margin-right:12px">'+EMP.name[0]+'</div></div><div class="weui-cell__bd"><div style="font:600 var(--fs-base)/1 var(--f);color:var(--c9)">'+EMP.name+'</div><div style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5);margin-top:2px">'+EMP.title+' · '+EMP.dept+'</div></div><div class="weui-cell__ft"><span class="weui-badge" style="background:var(--pr50);color:var(--pr)">'+EMP.cycle+'</span></div></div></div></div>';
 
-  if(curTab==='pending'){
-    PENDING.forEach(function(p,i){
-      h+='<div class="weui-panel weui-panel_access" style="margin-bottom:8px"><div class="weui-cells"><div class="weui-cell weui-cell_access" onclick="toggleDetail('+i+')"><div class="weui-cell__hd"><div style="width:36px;height:36px;border-radius:50%;background:'+p.color+';display:flex;align-items:center;justify-content:center;font:600 var(--fs-base)/1 var(--f);color:#FFF;margin-right:10px">'+p.name[0]+'</div></div><div class="weui-cell__bd"><div style="font:500 var(--fs-base)/1 var(--f);color:var(--c8)">'+p.name+'</div><div style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5);margin-top:2px">'+p.title+'</div></div><div class="weui-cell__ft"><span class="weui-badge" style="background:var(--pr50);color:var(--pr)">'+p.goals.length+' 个目标</span></div></div></div>';
-      if(openIdx===i){
-        h+='<div style="padding:0 16px 12px">';
-        p.goals.forEach(function(g,j){
-          h+='<div style="background:var(--c0);border-radius:var(--r1);padding:10px 12px;margin-bottom:6px"><div style="font:500 var(--fs-sm)/1 var(--f);color:var(--c5);margin-bottom:4px">目标 '+(j+1)+'</div><div style="font:500 var(--fs-base)/1 var(--f);color:var(--c8);margin-bottom:6px">'+g.title+'</div><div style="display:flex;gap:12px;font:400 var(--fs-sm)/1 var(--f);color:var(--c5)"><span>权重 <strong style="color:var(--c7)">'+g.weight+'%</strong></span><span>截止 <strong style="color:var(--c7)">'+g.deadline+'</strong></span></div></div>';
-        });
-        h+='<div style="margin-bottom:8px"><textarea class="weui-textarea" style="min-height:60px;font-size:var(--fs-sm)" placeholder="请输入审批意见（选填）"></textarea></div>';
-        h+='<div style="display:flex;gap:8px"><button class="weui-btn weui-btn_warn" style="flex:1" onclick="handleApprove('+i+',\'reject\')">退回</button><button class="weui-btn weui-btn_primary" style="flex:1" onclick="handleApprove('+i+',\'approve\')">批准</button></div>';
-        h+='</div>';
-      }
+  // Modules
+  MODS.forEach(function(m){
+    h+='<div class="weui-panel weui-panel_access goal-mod"><div class="weui-panel__hd" style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:'+m.color+';display:inline-block"></span><span style="font:600 var(--fs-base)/1 var(--f);color:var(--c8)">'+m.name+'</span><span style="font:500 var(--fs-sm)/1 var(--fm);color:var(--c5)">权重 '+m.weight+'%</span></div><div class="weui-cells">';
+    m.goals.forEach(function(g){
+      var isQuant=g.type==='quant';
+      h+='<div class="weui-cell"><div style="width:100%">';
+      // Header
+      h+='<div class="goal-card-hd">';
+      h+='<span class="goal-card-name">'+g.name+'</span>';
+      h+='<span class="goal-card-type '+(isQuant?'quant':'qual')+'">'+(isQuant?'定量':'定性')+'</span>';
+      h+='<span class="goal-card-wt">'+g.weight+'%</span>';
       h+='</div>';
+
+      if(isQuant){
+        // Description
+        h+='<div class="goal-card-desc">'+g.desc+'</div>';
+        // Three-column metrics
+        h+='<div class="goal-metrics" style="display:flex;flex-direction:row;gap:8px">';
+        h+='<div style="flex:1;text-align:center"><div style="font:600 14px/1 var(--fm);color:var(--c9)">'+g.challenge+g.unit+'</div><div style="font:400 10px/1 var(--f);color:var(--c4);margin-top:2px">挑战值</div></div>';
+        h+='<div style="flex:1;text-align:center"><div style="font:600 14px/1 var(--fm);color:var(--c9)">'+g.target+g.unit+'</div><div style="font:400 10px/1 var(--f);color:var(--c4);margin-top:2px">目标值</div></div>';
+        h+='<div style="flex:1;text-align:center"><div style="font:600 14px/1 var(--fm);color:var(--c9)">'+g.baseline+g.unit+'</div><div style="font:400 10px/1 var(--f);color:var(--c4);margin-top:2px">保底值</div></div>';
+        h+='</div>';
+      } else {
+        // Description + measure
+        h+='<div class="goal-card-desc">'+g.desc+'</div>';
+        h+='<div class="goal-ms-row"><span class="goal-ms-label">指标描述</span><span class="goal-ms-val">'+g.desc+'</span></div>';
+      }
+      h+='</div></div>';
     });
-  } else {
-    DONE.forEach(function(d){
-      h+='<div class="weui-panel weui-panel_access"><div class="weui-cells"><div class="weui-cell"><div class="weui-cell__hd"><div style="width:36px;height:36px;border-radius:50%;background:'+d.color+';display:flex;align-items:center;justify-content:center;font:600 var(--fs-base)/1 var(--f);color:#FFF;margin-right:10px">'+d.name[0]+'</div></div><div class="weui-cell__bd"><div style="font:500 var(--fs-base)/1 var(--f);color:var(--c8)">'+d.name+'</div><div style="font:400 var(--fs-sm)/1 var(--f);color:var(--c5);margin-top:2px">'+d.title+'</div></div><div class="weui-cell__ft"><span class="weui-badge" style="background:var(--em50);color:var(--em700)">已批准</span></div></div></div></div>';
-    });
-  }
-  h+='<div style="height:24px"></div>';
+    h+='</div></div>';
+  });
+
+  // Approval flow
+  h+='<div class="panel"><div class="panel-hd">审批流程</div>';
+  h+='<div class="flow-item"><div class="flow-dot" style="background:var(--em)"><svg viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div><div class="flow-info"><div class="flow-name">间接上级审批</div><div class="flow-person">刘VP</div></div><span class="flow-badge" style="background:var(--em50);color:var(--em700)">已完成</span></div>';
+  h+='<div class="flow-item"><div class="flow-dot" style="background:var(--pr)"><svg viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div><div class="flow-info"><div class="flow-name">直接上级审批</div><div class="flow-person">王总监</div></div><span class="flow-badge" style="background:var(--pr50);color:var(--pr)">进行中</span></div>';
+  h+='</div>';
+
+  h+='<div style="height:80px"></div>';
   document.getElementById('phoneBody').innerHTML=h;
 }
-function switchTab(t){curTab=t;openIdx=-1;render();}
-function toggleDetail(i){openIdx=openIdx===i?-1:i;render();}
-function handleApprove(i,action){
-  var p=PENDING[i];
-  showToast((action==='approve'?'已批准 ':'已退回 ')+p.name+' 的目标');
-  PENDING.splice(i,1);openIdx=-1;render();
-}
+
 render();
 </script>
 </body>
