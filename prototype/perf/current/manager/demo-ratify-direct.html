@@ -635,7 +635,7 @@ function setRatifyStar(el,idx,v){
   var grade=GRADE_OPTIONS[7-v];
   MEMBERS[idx].ratifyGrade=grade;
   var label=row.parentElement.querySelector('.star-label');
-  label.textContent=grade;
+  label.textContent=grade+' · '+STAR_DESC_RATIFY[v];
   label.style.color=GRADE_COLORS[grade];
   row.parentElement.dataset.value=v;
   renderDist();
@@ -649,7 +649,7 @@ function starHover(el,entering){
     rating.querySelectorAll('.star').forEach(function(s,i){
       s.classList.toggle('hover',i<v);
     });
-    if(label){label.textContent=STAR_DESC_RATIFY[v]||'';label.style.color='var(--ac)';}
+    if(label){label.textContent=GRADE_OPTIONS[7-v]+' · '+STAR_DESC_RATIFY[v];label.style.color='var(--ac)';}
   }else{
     var saved=parseInt(rating.dataset.value);
     rating.querySelectorAll('.star').forEach(function(s,i){
@@ -657,7 +657,7 @@ function starHover(el,entering){
     });
     if(label){
       var gn=saved?GRADE_OPTIONS[7-saved]:'';
-      label.textContent=gn||'未选择';
+      label.textContent=gn?gn+' · '+STAR_DESC_RATIFY[saved]:'未选择';
       label.style.color=gn&&GRADE_COLORS[gn]?GRADE_COLORS[gn]:'var(--c4)';
     }
   }

@@ -434,6 +434,7 @@ function updateCompleted(mi,gi){
 }
 
 var STAR_DESC={1:'多项未达目标，需针对性改进',2:'基本达成目标，尚有提升空间',3:'完成全部目标，满足岗位要求',4:'全面完成目标，局部表现突出',5:'整体优于目标，常有亮点产出'};
+var STAR_GRADE={1:'低于预期',2:'符合预期-',3:'符合预期',4:'符合预期+',5:'超出预期'};
 
 function setStar(el,mi,gi,val){
   MODULES[mi].goals[gi].stars=val;
@@ -443,7 +444,7 @@ function setStar(el,mi,gi,val){
     s.classList.toggle('active',i<val);
   });
   var tip=rating.querySelector('.star-tip');
-  if(tip)tip.textContent=STAR_DESC[val]||'';
+  if(tip)tip.textContent=STAR_GRADE[val]+' · '+STAR_DESC[val];
 }
 
 function starHover(el,entering){
@@ -454,13 +455,13 @@ function starHover(el,entering){
     rating.querySelectorAll('.star').forEach(function(s,i){
       s.classList.toggle('active',i<val);
     });
-    if(tip)tip.textContent=STAR_DESC[val]||'';
+    if(tip)tip.textContent=STAR_GRADE[val]+' · '+STAR_DESC[val];
   }else{
     var saved=parseInt(rating.dataset.value);
     rating.querySelectorAll('.star').forEach(function(s,i){
       s.classList.toggle('active',i<saved);
     });
-    if(tip)tip.textContent=saved?STAR_DESC[saved]||'':'';
+    if(tip)tip.textContent=saved?STAR_GRADE[saved]+' · '+STAR_DESC[saved]:'';
   }
 }
 
