@@ -405,6 +405,16 @@ var GRADE_CLS={'超出预期':'excellent','符合预期+':'good','符合预期':
 var GRADE_DESC={'远超预期':'业绩大幅超越目标，具备标杆价值','超出预期':'整体优于目标，常有亮点产出','符合预期+':'全面完成目标，局部表现突出','符合预期':'完成全部目标，满足岗位要求','符合预期-':'基本达成目标，尚有提升空间','低于预期':'多项未达目标，需针对性改进','远低预期':'核心任务落空，整体差距显著'};
 var GRADE_COLOR={'远超预期':'var(--em700)','超出预期':'var(--em700)','符合预期+':'var(--pr)','符合预期':'var(--c7)','符合预期-':'var(--ac)','低于预期':'var(--ro)','远低预期':'var(--ro)'};
 
+function renderQuantGrade(grade){
+  if(!grade)return'—';
+  var sc={'超出预期':5,'符合预期+':4,'符合预期':3,'符合预期-':2,'低于预期':1}[grade]||0;
+  var h='<div class="star-row">';
+  for(var si=1;si<=5;si++)h+='<span class="star'+(si<=sc?' active':'')+'">★</span>';
+  h+='</div><div class="star-label" style="color:'+GRADE_COLOR[grade]+'">'+grade+'</div>';
+  h+='<div class="star-desc">'+GRADE_DESC[grade]+'</div>';
+  return h;
+}
+
 var employeeComment='本季度整体工作完成情况良好。KPI方面，资源利用率达标，UAT通过率和需求评审及时率略低于目标，已制定改进措施。KPA方面，产品管理规范落地执行，日常需求响应及时，绩效重构和AI应用项目均按里程碑计划推进完成。';
 var indirectComment='';
 
@@ -433,7 +443,7 @@ function renderModuleContainer(){
       if(isQuant){
         var grade=calcGrade(g,g.completed);
         html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">'+g.desc+'<br>挑战值: <span style="font-family:var(--m);color:var(--c7)">'+g.challenge+g.unit+'</span> / 目标值: <span style="font-family:var(--m);color:var(--c7)">'+g.target+g.unit+'</span></td>';
-        html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">完成值: <span style="font-family:var(--m);font-weight:600;color:var(--c8)">'+g.completed+g.unit+'</span><br>'+(grade?'<div style="font:500 12px/1 var(--f);color:'+GRADE_COLOR[grade]+'">'+grade+'</div><div style="font:400 11px/1.3 var(--f);color:var(--c5);margin-top:2px">'+GRADE_DESC[grade]+'</div>':'—')+'</td>';
+        html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">完成值: <span style="font-family:var(--m);font-weight:600;color:var(--c8)">'+g.completed+g.unit+'</span><br>'+renderQuantGrade(grade)+'</td>';
       }else{
         html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">'+g.measureDesc+'</td>';
         html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">'+(g.completed||'—')+'</td>';

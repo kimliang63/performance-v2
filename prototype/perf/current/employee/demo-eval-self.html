@@ -426,6 +426,16 @@ var GRADE_CLS={'超出预期':'excellent','符合预期+':'good','符合预期':
 var GRADE_DESC={'远超预期':'业绩大幅超越目标，具备标杆价值','超出预期':'整体优于目标，常有亮点产出','符合预期+':'全面完成目标，局部表现突出','符合预期':'完成全部目标，满足岗位要求','符合预期-':'基本达成目标，尚有提升空间','低于预期':'多项未达目标，需针对性改进','远低预期':'核心任务落空，整体差距显著'};
 var GRADE_COLOR={'远超预期':'var(--em700)','超出预期':'var(--em700)','符合预期+':'var(--pr)','符合预期':'var(--c7)','符合预期-':'var(--ac)','低于预期':'var(--ro)','远低预期':'var(--ro)'};
 
+function renderQuantGrade(grade){
+  if(!grade)return'—';
+  var sc={'超出预期':5,'符合预期+':4,'符合预期':3,'符合预期-':2,'低于预期':1}[grade]||0;
+  var h='<div class="star-row">';
+  for(var si=1;si<=5;si++)h+='<span class="star'+(si<=sc?' active':'')+'">★</span>';
+  h+='</div><div class="star-label" style="color:'+GRADE_COLOR[grade]+'">'+grade+'</div>';
+  h+='<div class="star-desc">'+GRADE_DESC[grade]+'</div>';
+  return h;
+}
+
 function updateCompleted(mi,gi){
   var g=MODULES[mi].goals[gi];
   var val=document.getElementById('completed_'+mi+'_'+gi).value;
@@ -433,11 +443,7 @@ function updateCompleted(mi,gi){
   if(g.type==='quant'){
     var grade=calcGrade(g,val);
     var el=document.getElementById('score_'+mi+'_'+gi);
-    if(grade){
-      el.innerHTML='<div style="font:500 12px/1 var(--f);color:'+GRADE_COLOR[grade]+'">'+grade+'</div><div style="font:400 11px/1.3 var(--f);color:var(--c5);margin-top:2px">'+GRADE_DESC[grade]+'</div>';
-    }else{
-      el.innerHTML='—';
-    }
+    el.innerHTML=renderQuantGrade(grade);
   }
 }
 
