@@ -409,7 +409,7 @@ function renderModuleContainer(){
         '<td><span class="eval-type-tag '+(isQuant?'quant':'qual')+'">'+(isQuant?'定量':'定性')+'</span></td>';
       if(isQuant){
         html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">'+g.desc+'<br>挑战值: <span style="font-family:var(--m);color:var(--c7)">'+g.challenge+g.unit+'</span> / 目标值: <span style="font-family:var(--m);color:var(--c7)">'+g.target+g.unit+'</span></td>';
-        html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">完成值: <span style="font-family:var(--m);font-weight:600;color:var(--c8)">'+g.completed+'</span><br>系统评级: '+(sysGrade?'<span class="eval-tag '+GRADE_CLS[sysGrade]+'">'+sysGrade+'</span>':'—')+'</td>';
+        html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">完成值: <span style="font-family:var(--m);font-weight:600;color:var(--c8)">'+g.completed+'</span><br>'+(sysGrade?'<div style="font:500 12px/1 var(--f);color:'+GRADE_COLOR[sysGrade]+'">'+sysGrade+'</div><div style="font:400 11px/1.3 var(--f);color:var(--c5);margin-top:2px">'+GRADE_DESC[sysGrade]+'</div>':'—')+'</td>';
       }else{
         html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">'+g.measureDesc+'</td>';
         html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">'+(g.completed||'—')+'</td>';
@@ -514,6 +514,8 @@ function calcGrade(g,completedVal){
   return'低于预期';
 }
 var GRADE_CLS={'超出预期':'excellent','符合预期+':'good','符合预期':'normal','符合预期-':'poor','低于预期':'poor'};
+var GRADE_DESC={'远超预期':'业绩大幅超越目标，具备标杆价值','超出预期':'整体优于目标，常有亮点产出','符合预期+':'全面完成目标，局部表现突出','符合预期':'完成全部目标，满足岗位要求','符合预期-':'基本达成目标，尚有提升空间','低于预期':'多项未达目标，需针对性改进','远低预期':'核心任务落空，整体差距显著'};
+var GRADE_COLOR={'远超预期':'var(--em700)','超出预期':'var(--em700)','符合预期+':'var(--pr)','符合预期':'var(--c7)','符合预期-':'var(--ac)','低于预期':'var(--ro)','远低预期':'var(--ro)'};
 
 var STAR_DESC={1:'多项未达目标，需针对性改进',2:'基本达成目标，尚有提升空间',3:'完成全部目标，满足岗位要求',4:'全面完成目标，局部表现突出',5:'整体优于目标，常有亮点产出'};
 var STAR_GRADE={1:'低于预期',2:'符合预期-',3:'符合预期',4:'符合预期+',5:'超出预期'};
