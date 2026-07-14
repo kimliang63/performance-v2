@@ -209,6 +209,11 @@ body.chat-open .ai-toggle{display:none}
 
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .fade-in{animation:fadeIn .2s ease forwards}
+.eval-tag{display:inline-block;padding:2px 8px;border-radius:3px;font:500 11px/1 var(--f)}
+.eval-tag.excellent{background:var(--em50);color:var(--em700)}
+.eval-tag.good{background:var(--pr50);color:var(--pr)}
+.eval-tag.normal{background:var(--c1);color:var(--c6)}
+.eval-tag.poor{background:var(--ro50);color:var(--ro)}
 </style>
 </head>
 <body>
@@ -397,13 +402,14 @@ function renderModuleContainer(){
       '</div></td></tr>';
     mod.goals.forEach(function(g,gi){
       var isQuant=g.type==='quant';
+      var sysGrade=isQuant?calcGrade(g,g.completed):null;
       html+='<tr>'+
         '<td><span style="font-weight:500;color:var(--c8)">'+g.name+'</span></td>'+
         '<td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">'+g.weight+'%</span></td>'+
         '<td><span class="eval-type-tag '+(isQuant?'quant':'qual')+'">'+(isQuant?'定量':'定性')+'</span></td>';
       if(isQuant){
         html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">'+g.desc+'<br>挑战值: <span style="font-family:var(--m);color:var(--c7)">'+g.challenge+g.unit+'</span> / 目标值: <span style="font-family:var(--m);color:var(--c7)">'+g.target+g.unit+'</span></td>';
-        html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">完成值: <span style="font-family:var(--m);font-weight:600;color:var(--c8)">'+g.completed+'</span></td>';
+        html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">完成值: <span style="font-family:var(--m);font-weight:600;color:var(--c8)">'+g.completed+'</span><br>系统评级: '+(sysGrade?'<span class="eval-tag '+GRADE_CLS[sysGrade]+'">'+sysGrade+'</span>':'—')+'</td>';
       }else{
         html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">'+g.measureDesc+'</td>';
         html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">'+(g.completed||'—')+'</td>';
@@ -459,7 +465,55 @@ function renderModuleContainer(){
   '</div>';
 
   document.getElementById('moduleContainer').innerHTML=html;
+  if(!initGradeManualOverride)applyWeightedInitGrade();
 }
+
+var initGradeManualOverride=false;
+
+function calcWeightedInitGrade(){
+  var totalWeight=0,weightedScore=0;
+  var gradeScoreMap={'远超预期':5.0,'超出预期':4.5,'符合预期+':4.0,'符合预期':3.0,'符合预期-':2.0,'低于预期':1.0,'远低预期':0.0};
+  MODULES.forEach(function(mod){
+    mod.goals.forEach(function(g){
+      var grade=g.indirectGrade||g.employeeGrade||(g.type==='quant'?calcGrade(g,g.completed):null);
+      if(grade&&gradeScoreMap[grade]!==undefined){
+        weightedScore+=gradeScoreMap[grade]*g.weight;
+        totalWeight+=g.weight;
+      }
+    });
+  });
+  if(totalWeight===0)return null;
+  var avg=weightedScore/totalWeight;
+  if(avg>=4.75)return 5;
+  if(avg>=3.5)return 4;
+  if(avg>=2.5)return 3;
+  if(avg>=1.5)return 2;
+  return 1;
+}
+
+function applyWeightedInitGrade(){
+  var starCount=calcWeightedInitGrade();
+  if(starCount===null)return;
+  var rating=document.getElementById('initGradeStars');
+  if(!rating)return;
+  rating.dataset.value=starCount;
+  rating.querySelectorAll('.star').forEach(function(s,i){s.classList.toggle('active',i<starCount);});
+  var label=document.getElementById('initGradeLabel');
+  var desc=document.getElementById('initGradeDesc');
+  if(label)label.textContent=STAR_GRADE[starCount]||'';
+  if(desc)desc.textContent=STAR_DESC[starCount]||'';
+  document.getElementById('initGradeValue').value=STAR_DESC[starCount]||'';
+}
+
+function calcGrade(g,completedVal){
+  var v=parseFloat(completedVal);
+  if(isNaN(v))return null;
+  if(v>=g.challenge)return'超出预期';
+  if(v>=g.target)return'符合预期+';
+  if(v>=g.baseline)return'符合预期';
+  return'低于预期';
+}
+var GRADE_CLS={'超出预期':'excellent','符合预期+':'good','符合预期':'normal','符合预期-':'poor','低于预期':'poor'};
 
 var STAR_DESC={1:'多项未达目标，需针对性改进',2:'基本达成目标，尚有提升空间',3:'完成全部目标，满足岗位要求',4:'全面完成目标，局部表现突出',5:'整体优于目标，常有亮点产出'};
 var STAR_GRADE={1:'低于预期',2:'符合预期-',3:'符合预期',4:'符合预期+',5:'超出预期'};
@@ -499,6 +553,7 @@ function starHover(el,entering){
 }
 
 function setInitGradeStar(el,val){
+  initGradeManualOverride=true;
   var rating=document.getElementById('initGradeStars');
   rating.dataset.value=val;
   rating.querySelectorAll('.star').forEach(function(s,i){

@@ -54,6 +54,11 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .eval-weight{font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px}
 .eval-target{color:var(--c6);font-size:12px}
 .eval-score{font:600 13px/1 var(--m)}.eval-score.high{color:var(--em700)}.eval-score.mid{color:var(--pr)}.eval-score.low{color:var(--ac700)}.eval-score.zero{color:var(--ro)}
+.eval-tag{display:inline-block;padding:2px 8px;border-radius:3px;font:500 11px/1 var(--f)}
+.eval-tag.excellent{background:var(--em50);color:var(--em700)}
+.eval-tag.good{background:var(--pr50);color:var(--pr)}
+.eval-tag.normal{background:var(--c1);color:var(--c6)}
+.eval-tag.poor{background:var(--ro50);color:var(--ro)}
 
 textarea.edit-cell{width:100%;border:1px solid var(--c2);border-radius:var(--r1);padding:6px 8px;font:400 13px/1.4 var(--f);color:var(--c9);background:var(--sf);transition:all .12s;font-family:var(--f);resize:vertical;min-height:56px;outline:none}
 textarea.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
@@ -367,7 +372,7 @@ function renderModuleContainer(){
     '<th style="width:70px">类型</th>'+
     '<th style="min-width:220px">衡量标准</th>'+
     '<th style="min-width:220px;position:sticky;right:160px;background:var(--c0);z-index:2">完成值/完成情况</th>'+
-    '<th style="min-width:160px;position:sticky;right:0;background:var(--c0);z-index:2">评价/得分</th>'+
+    '<th style="min-width:160px;position:sticky;right:0;background:var(--c0);z-index:2">评价等级</th>'+
     '</tr></thead><tbody>';
   MODULES.forEach(function(mod,mi){
     html+='<tr class="mod-row"><td colspan="6"><div class="eval-mod">'+
@@ -408,28 +413,28 @@ function renderModuleContainer(){
 }
 
 // 定量目标自动计算得分
-function calcScore(g,completedVal){
+function calcGrade(g,completedVal){
   var v=parseFloat(completedVal);
   if(isNaN(v))return null;
-  if(v>=g.challenge)return 120;
-  if(v>=g.target)return 100;
-  if(v>=g.baseline)return 80;
-  return 0;
+  if(v>=g.challenge)return'超出预期';
+  if(v>=g.target)return'符合预期+';
+  if(v>=g.baseline)return'符合预期';
+  return'低于预期';
 }
+
+var GRADE_CLS={'超出预期':'excellent','符合预期+':'good','符合预期':'normal','符合预期-':'poor','低于预期':'poor'};
 
 function updateCompleted(mi,gi){
   var g=MODULES[mi].goals[gi];
   var val=document.getElementById('completed_'+mi+'_'+gi).value;
   g.completed=val;
   if(g.type==='quant'){
-    var score=calcScore(g,val);
+    var grade=calcGrade(g,val);
     var el=document.getElementById('score_'+mi+'_'+gi);
-    if(score!==null){
-      el.textContent=score+'分';
-      el.className='eval-score '+(score>=100?'high':score>=80?'mid':'low');
+    if(grade){
+      el.innerHTML='<span class="eval-tag '+GRADE_CLS[grade]+'">'+grade+'</span>';
     }else{
-      el.textContent='—';
-      el.className='eval-score';
+      el.innerHTML='—';
     }
   }
 }

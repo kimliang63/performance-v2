@@ -219,6 +219,11 @@ body.chat-open .ai-toggle{display:none}
 .star-legend{font-size:11px;line-height:1.45;color:#64748B;max-width:360px}
 .score-cell{min-width:260px}
 .eval-score{font:600 13px/1 var(--m)}.eval-score.high{color:var(--em700)}.eval-score.mid{color:var(--pr)}.eval-score.low{color:var(--ac700)}.eval-score.zero{color:var(--ro)}
+.eval-tag{display:inline-block;padding:2px 8px;border-radius:3px;font:500 11px/1 var(--f)}
+.eval-tag.excellent{background:var(--em50);color:var(--em700)}
+.eval-tag.good{background:var(--pr50);color:var(--pr)}
+.eval-tag.normal{background:var(--c1);color:var(--c6)}
+.eval-tag.poor{background:var(--ro50);color:var(--ro)}
 </style>
 </head>
 <body>
@@ -388,18 +393,15 @@ var MODULES=[
     {id:'g7',name:'AI应用落地',indicator:'AI应用落地',type:'qual',weight:25,measureDesc:'06-05 完成ASSC采购侧AI应用1.0版本；06-12 对接LBU试点应用；06-26 完成1.1版本',completed:'按里程碑全部完成，1.0版本准时上线，LBU试点反馈良好，1.1版本已于6月26日发布',employeeGrade:'符合预期+',indirectStar:5}
   ]}
 ];
-function calcScore(g,completedVal){
+function calcGrade(g,completedVal){
   var v=parseFloat(completedVal);
   if(isNaN(v))return null;
-  if(v>=g.challenge)return 5.0;
-  if(v>=g.target)return parseFloat((4.0+(v-g.target)/(g.challenge-g.target)).toFixed(1));
-  if(v>=g.baseline)return parseFloat((2.0+2*(v-g.baseline)/(g.target-g.baseline)).toFixed(1));
-  return parseFloat(Math.max(0,2*v/g.baseline).toFixed(1));
+  if(v>=g.challenge)return'超出预期';
+  if(v>=g.target)return'符合预期+';
+  if(v>=g.baseline)return'符合预期';
+  return'低于预期';
 }
-function gradeToScore(grade){
-  var map={'远超预期':5.0,'超出预期':4.5,'符合预期+':4.0,'符合预期':3.0,'符合预期-':2.0,'低于预期':1.0,'远低预期':0.0};
-  return map[grade]!==undefined?map[grade]:null;
-}
+var GRADE_CLS={'超出预期':'excellent','符合预期+':'good','符合预期':'normal','符合预期-':'poor','低于预期':'poor'};
 
 var employeeComment='本季度整体工作完成情况良好。KPI方面，资源利用率达标，UAT通过率和需求评审及时率略低于目标，已制定改进措施。KPA方面，产品管理规范落地执行，日常需求响应及时，绩效重构和AI应用项目均按里程碑计划推进完成。';
 var indirectComment='';
@@ -427,15 +429,14 @@ function renderModuleContainer(){
         '<td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">'+g.weight+'%</span></td>'+
         '<td><span class="eval-type-tag '+(isQuant?'quant':'qual')+'">'+(isQuant?'定量':'定性')+'</span></td>';
       if(isQuant){
-        var score=calcScore(g,g.completed);
-        var empScore=gradeToScore(g.employeeGrade);
+        var grade=calcGrade(g,g.completed);
         html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">'+g.desc+'<br>挑战值: <span style="font-family:var(--m);color:var(--c7)">'+g.challenge+g.unit+'</span> / 目标值: <span style="font-family:var(--m);color:var(--c7)">'+g.target+g.unit+'</span></td>';
-        html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">完成值: <span style="font-family:var(--m);font-weight:600;color:var(--c8)">'+g.completed+g.unit+'</span><br><span style="font-family:var(--m);color:var(--pr)">系统评分: '+(score!==null?score.toFixed(1):'—')+'</span></td>';
+        html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">完成值: <span style="font-family:var(--m);font-weight:600;color:var(--c8)">'+g.completed+g.unit+'</span><br>系统评级: '+(grade?'<span class="eval-tag '+GRADE_CLS[grade]+'">'+grade+'</span>':'—')+'</td>';
       }else{
         html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">'+g.measureDesc+'</td>';
         html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">'+(g.completed||'—')+'</td>';
       }
-      html+='<td><span style="font-family:var(--m);font-weight:600;font-size:13px;color:var(--c8)">'+(isQuant&&gradeToScore(g.employeeGrade)!==null?gradeToScore(g.employeeGrade).toFixed(1):g.employeeGrade||'—')+'</span></td>';
+      html+='<td><span style="font-family:var(--m);font-weight:600;font-size:13px;color:var(--c8)">'+(g.employeeGrade||'—')+'</span></td>';
       html+='<td style="position:sticky;right:0;background:var(--sf);z-index:1" class="score-cell"><div class="star-rating" data-value="'+(g.indirectStar||0)+'"><div class="star-row">';
       for(var si=1;si<=5;si++){
         html+='<span class="star'+(si<=(g.indirectStar||0)?' active':'')+'" data-v="'+si+'" onclick="setIndirectStar(this,'+mi+','+gi+','+si+')" onmouseenter="starHover(this,1)" onmouseleave="starHover(this,0)">★</span>';
@@ -478,6 +479,44 @@ function renderModuleContainer(){
   '</div>';
 
   document.getElementById('moduleContainer').innerHTML=html;
+  if(!initGradeManualOverride)applyWeightedInitGrade();
+}
+
+var initGradeManualOverride=false;
+
+function calcWeightedInitGrade(){
+  var totalWeight=0,weightedScore=0;
+  var gradeScoreMap={'远超预期':5.0,'超出预期':4.5,'符合预期+':4.0,'符合预期':3.0,'符合预期-':2.0,'低于预期':1.0,'远低预期':0.0};
+  MODULES.forEach(function(mod){
+    mod.goals.forEach(function(g){
+      var grade=g.indirectGrade||g.employeeGrade||(g.type==='quant'?calcGrade(g,g.completed):null);
+      if(grade&&gradeScoreMap[grade]!==undefined){
+        weightedScore+=gradeScoreMap[grade]*g.weight;
+        totalWeight+=g.weight;
+      }
+    });
+  });
+  if(totalWeight===0)return null;
+  var avg=weightedScore/totalWeight;
+  if(avg>=4.75)return 5;
+  if(avg>=3.5)return 4;
+  if(avg>=2.5)return 3;
+  if(avg>=1.5)return 2;
+  return 1;
+}
+
+function applyWeightedInitGrade(){
+  var starCount=calcWeightedInitGrade();
+  if(starCount===null)return;
+  var rating=document.getElementById('initGradeStars');
+  if(!rating)return;
+  rating.dataset.value=starCount;
+  rating.querySelectorAll('.star').forEach(function(s,i){s.classList.toggle('active',i<starCount);});
+  var label=document.getElementById('initGradeLabel');
+  var desc=document.getElementById('initGradeDesc');
+  if(label)label.textContent=STAR_GRADE[starCount]||'';
+  if(desc)desc.textContent=STAR_DESC[starCount]||'';
+  document.getElementById('initGradeValue').value=STAR_DESC[starCount]||'';
 }
 
 function updateGrade(mi,gi,btn){
@@ -538,6 +577,7 @@ function starHover(el,entering){
 }
 
 function setInitGradeStar(el,val){
+  initGradeManualOverride=true;
   var rating=document.getElementById('initGradeStars');
   rating.dataset.value=val;
   rating.querySelectorAll('.star').forEach(function(s,i){

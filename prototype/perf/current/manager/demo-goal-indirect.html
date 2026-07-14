@@ -192,7 +192,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
       <div class="pg-hd-actions">
         <button class="btn btn-ac" onclick="showDelegateModal()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          转派
+          转交
         </button>
         <button class="btn btn-danger" onclick="showRejectModal()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -345,12 +345,12 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 
 <div class="modal-overlay" id="delegateModal">
   <div class="modal">
-    <div class="modal-t">转派审批</div>
-    <div class="modal-desc">将此审批任务转派给其他管理者。</div>
-    <textarea id="delegateReason" placeholder="请输入转派原因..."></textarea>
+    <div class="modal-t">转交审批</div>
+    <div class="modal-desc">将此审批任务转交给其他管理者。</div>
+    <textarea id="delegateReason" placeholder="请输入转交原因..."></textarea>
     <div class="modal-btns">
       <button class="btn btn-s" onclick="closeModal('delegateModal')">取消</button>
-      <button class="btn btn-ac" onclick="confirmDelegate()">确认转派</button>
+      <button class="btn btn-ac" onclick="confirmDelegate()">确认转交</button>
     </div>
   </div>
 </div>
@@ -377,6 +377,7 @@ const MODULES=[
 
 let expandedMods=new Set([0,1]);
 let expandedGoals=new Set();
+MODULES.forEach(function(m){m.goals.forEach(function(g){expandedGoals.add(g.id);});});
 
 const I={
   chevron:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>',
@@ -469,9 +470,9 @@ function confirmReject(){
 
 function confirmDelegate(){
   const reason=document.getElementById('delegateReason').value;
-  if(!reason){showToast('请填写转派原因','error');return}
+  if(!reason){showToast('请填写转交原因','error');return}
   closeModal('delegateModal');
-  showToast('已转派','success');
+  showToast('已转交','success');
 }
 
 function showMeasureDesc(gid){
