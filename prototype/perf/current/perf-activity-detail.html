@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 活动详情</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --r1:6px;--r2:8px;--r3:10px;
+  --f:'Inter','Noto Sans SC',-apple-system,sans-serif;
+  --m:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit;white-space:nowrap}
+.btn svg{width:13px;height:13px;flex-shrink:0}
+.btn-p{background:var(--pr);color:#FFF}.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
+.btn-d{background:var(--ro);color:#FFF}.btn-d:hover{background:#E11D48}
+.btn-t{background:transparent;color:var(--c5);border:1px solid transparent}.btn-t:hover{color:var(--c8);background:var(--c1)}
+.btn-gear{width:32px;height:32px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--r1);cursor:pointer;border:1px solid var(--c2);background:var(--sf);color:var(--c5);transition:all .12s}
+.btn-gear:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
+
+/* Status */
+.status{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:3px;font:500 11px/1 var(--f);white-space:nowrap}
+.status.not_started{background:var(--c1);color:var(--c6)}
+.status.active{background:var(--em50);color:var(--em700)}
+.status.paused{background:var(--ac50);color:var(--ac700)}
+.status.ended_normal{background:var(--pr50);color:var(--pr)}
+.status.ended_early{background:var(--ro50);color:var(--ro)}
+.status-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.not_started .status-dot{background:var(--c4)}
+.active .status-dot{background:var(--em);animation:pulse 2s ease-in-out infinite}
+.paused .status-dot{background:var(--ac)}
+.ended_normal .status-dot{background:var(--pr)}
+.ended_early .status-dot{background:var(--ro)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.cell-src{display:inline-block;padding:1px 6px;border-radius:3px;font:500 11px/1 var(--f)}
+.cell-src.auto{background:var(--em50);color:var(--em700)}
+.cell-src.manual{background:var(--ac50);color:var(--ac700)}
+
+/* Card */
+.card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:14px}
+.card-hd{padding:14px 18px;border-bottom:1px solid var(--dv);font:600 15px/1 var(--f);color:var(--c9)}
+.card-bd{padding:16px 18px}
+
+/* Info grid */
+.info-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px 24px}
+.info-item{display:flex;flex-direction:column;gap:2px}
+.info-label{font:400 11px/1 var(--f);color:var(--c5);text-transform:uppercase;letter-spacing:.5px}
+.info-value{font:500 13px/1.3 var(--f);color:var(--c8)}
+
+/* Stage progress */
+.stage-bar{display:flex;align-items:center;gap:0;padding:8px 0;position:relative}
+.stage-step{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;position:relative;cursor:default}
+.stage-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--f);position:relative;z-index:1;border:2px solid var(--c3);background:var(--sf);color:var(--c4)}
+.stage-dot.done{background:var(--em);border-color:var(--em);color:#FFF}
+.stage-dot.active{background:var(--pr);border-color:var(--pr);color:#FFF;box-shadow:0 0 0 4px var(--pr50)}
+.stage-line{position:absolute;top:14px;left:50%;width:100%;height:2px;background:var(--c2);z-index:0}
+.stage-line.done{background:var(--em)}
+.stage-name{font:500 11px/1 var(--f);color:var(--c6);text-align:center}
+.stage-step.active .stage-name{color:var(--pr)}
+.stage-step.done .stage-name{color:var(--em700)}
+.stage-badge{font:400 10px/1 var(--f);padding:1px 5px;border-radius:2px}
+
+/* Table */
+.tbl-wrap{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden;margin-bottom:14px}
+.tbl-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--dv)}
+.tbl-bar-l{font:600 14px/1 var(--f);color:var(--c9);display:flex;align-items:center;gap:8px}
+table{width:100%;border-collapse:collapse}
+th{background:var(--c0);padding:8px 10px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);white-space:nowrap;text-transform:uppercase;letter-spacing:.5px}
+td{padding:8px 10px;font:400 13px/1.4 var(--f);color:var(--c7);border-bottom:1px solid var(--dv);vertical-align:middle}
+tr:last-child td{border-bottom:none}tr:hover td{background:var(--c0)}
+
+/* Filter bar */
+.fl-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--dv)}
+.fl-search{display:flex;align-items:center;gap:6px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r1);padding:0 10px;height:30px;min-width:180px}
+.fl-search svg{width:14px;height:14px;color:var(--c4);flex-shrink:0}
+.fl-search input{border:none;outline:none;font:400 13px/1 var(--f);color:var(--c8);width:100%;background:transparent}
+.fl-search input::placeholder{color:var(--c4)}
+.fl-sel{height:30px;padding:0 24px 0 8px;border:1px solid var(--c2);border-radius:var(--r1);font:400 12px/1 var(--f);color:var(--c7);background:var(--sf);cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23A1A1AA' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 6px center}
+
+/* Stats */
+.stat-row{display:flex;gap:12px;padding:12px 16px;border-bottom:1px solid var(--dv)}
+.stat-item{display:flex;align-items:center;gap:6px;font:400 12px/1 var(--f);color:var(--c6)}
+.stat-num{font:600 16px/1 var(--fm);color:var(--c9)}
+
+/* Action bar */
+.act-bar{display:flex;flex-wrap:wrap;gap:6px;padding:12px 16px;border-bottom:1px solid var(--dv)}
+.dropdown{position:relative;display:inline-block}
+.dropdown-menu{position:absolute;top:100%;left:0;margin-top:4px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);box-shadow:0 10px 40px rgba(0,0,0,.12);z-index:100;min-width:150px;display:none;padding:4px 0}
+.dropdown-menu.show{display:block}
+.dropdown-item{display:block;width:100%;padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer;border:none;background:none;text-align:left;transition:all .1s}
+.dropdown-item:hover{background:var(--c0);color:var(--c9)}
+.dropdown-item.danger{color:var(--ro)}.dropdown-item.danger:hover{background:var(--ro50)}
+
+/* Modal */
+.modal-ov{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.4);z-index:2000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-ov.show{opacity:1;pointer-events:all}
+.modal{background:var(--sf);border-radius:var(--r3);box-shadow:0 20px 60px rgba(0,0,0,.15);width:600px;max-width:94vw;max-height:80vh;display:flex;flex-direction:column;overflow:hidden}
+.modal-hd{padding:14px 18px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between}
+.modal-t{font:600 15px/1 var(--f);color:var(--c9)}
+.modal-close{width:26px;height:26px;border-radius:3px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:transparent;color:var(--c5);font-size:16px;line-height:1;transition:all .12s}
+.modal-close:hover{background:var(--c1);color:var(--c7)}
+.modal-bd{padding:16px 18px;overflow-y:auto;flex:1}
+.modal-ft{padding:12px 18px;border-top:1px solid var(--dv);display:flex;gap:8px;justify-content:flex-end}
+
+/* Tooltip */
+.stage-tooltip{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:var(--c9);color:#FFF;padding:8px 12px;border-radius:var(--r1);font:400 12px/1.4 var(--f);white-space:nowrap;z-index:50;pointer-events:none;opacity:0;transition:opacity .15s;margin-bottom:6px}
+.stage-step:hover .stage-tooltip{opacity:1}
+
+/* Toast */
+.toast{position:fixed;top:64px;left:50%;transform:translateX(-50%);background:var(--em);color:#FFF;padding:10px 20px;border-radius:var(--r2);font:500 13px/1 var(--f);box-shadow:0 8px 24px rgba(16,185,129,.3);z-index:3000;opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:center;gap:8px}
+.toast.show{opacity:1}
+.toast.warn{background:var(--ac);box-shadow:0 8px 24px rgba(245,158,11,.3)}
+.toast svg{width:16px;height:16px}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .2s ease forwards}
+</style>
+</head>
+<body>
+
+<div class="ct fade-in">
+  <div id="app"></div>
+</div>
+
+<div class="toast" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span id="toastMsg"></span></div>
+
+<!-- Export Settings Modal -->
+<div class="modal-ov" id="exportSettingsModal">
+  <div class="modal" style="width:480px">
+    <div class="modal-hd"><span class="modal-t">导出设置</span><button class="modal-close" onclick="closeExportSettings()">&times;</button></div>
+    <div class="modal-bd" id="exportSettingsBody"></div>
+    <div class="modal-ft"><button class="btn btn-p" onclick="closeExportSettings()">确定</button></div>
+  </div>
+</div>
+
+<script src="navigation.js"></script>
+<script>
+GHR_NAV.init('perf', '活动管理');
+
+// ═══ DATA ═══
+var ACTIVITIES=[
+  {id:1,name:'2026年Q2绩效考核',schemeType:'季度',schemeName:'标准季度考核方案',cycle:'2026年Q2（2026/04/01 - 2026/06/30）',cycleId:'c2',creationSource:'auto',currentStage:'绩效考核',stageProgress:'2/5',anomalyCount:3,dynamicAssessment:'locked',empCount:128,status:'active',admins:['王总监','赵敏'],admin:'王总监',description:'标准季度考核',creator:'系统自动',createTime:'2026/04/01 00:00',updater:'王总监',updateTime:'2026/06/20 14:30'},
+  {id:2,name:'2026年Q3绩效考核',schemeType:'季度',schemeName:'标准季度考核方案',cycle:'2026年Q3（2026/07/01 - 2026/09/30）',cycleId:'c3',creationSource:'auto',currentStage:'',stageProgress:'0/5',anomalyCount:0,dynamicAssessment:'locked',empCount:0,status:'not_started',admins:['王总监','赵敏'],admin:'王总监',description:'标准季度考核待启动',creator:'系统自动',createTime:'2026/07/01 00:00',updater:'系统自动',updateTime:'2026/07/01 00:00'},
+  {id:3,name:'2026年Q1绩效考核',schemeType:'季度',schemeName:'标准季度考核方案',cycle:'2026年Q1（2026/01/01 - 2026/03/31）',cycleId:'c1',creationSource:'auto',currentStage:'结果确认',stageProgress:'5/5',anomalyCount:0,dynamicAssessment:'locked',empCount:96,status:'ended_normal',admins:['王总监','赵敏'],admin:'王总监',description:'Q1季度考核已正常结束',creator:'系统自动',createTime:'2026/01/01 00:00',updater:'系统自动',updateTime:'2026/04/10 09:00'},
+  {id:4,name:'2025年度绩效考核',schemeType:'年度',schemeName:'年度绩效方案 v1',cycle:'2025年度（2025/01/01 - 2025/12/31）',cycleId:'c7',creationSource:'auto',currentStage:'结果确认',stageProgress:'5/5',anomalyCount:0,dynamicAssessment:'locked',empCount:210,status:'ended_normal',admins:['刘VP','王总监'],admin:'刘VP',description:'2025年度考核已正常结束',creator:'系统自动',createTime:'2025/01/01 00:00',updater:'刘VP',updateTime:'2026/01/15 17:00'},
+  {id:5,name:'2026年6月绩效考核',schemeType:'月度',schemeName:'员工月度绩效考核',cycle:'2026年6月（2026/06/01 - 2026/06/30）',cycleId:'c11',creationSource:'auto',currentStage:'目标制定',stageProgress:'1/5',anomalyCount:1,dynamicAssessment:'dynamic',empCount:45,status:'active',admins:['赵敏'],admin:'赵敏',description:'月度考核进行中',creator:'系统自动',createTime:'2026/06/01 00:00',updater:'赵敏',updateTime:'2026/06/15 10:00'},
+  {id:6,name:'2026年7月绩效考核',schemeType:'月度',schemeName:'员工月度绩效考核',cycle:'2026年7月（2026/07/01 - 2026/07/31）',cycleId:'c12',creationSource:'auto',currentStage:'',stageProgress:'0/5',anomalyCount:0,dynamicAssessment:'dynamic',empCount:0,status:'not_started',admins:['赵敏'],admin:'赵敏',description:'月度考核待启动',creator:'系统自动',createTime:'2026/07/01 00:00',updater:'系统自动',updateTime:'2026/07/01 00:00'},
+  {id:7,name:'2026年H1半年度考核',schemeType:'半年度',schemeName:'半年度考核方案',cycle:'2026年H1（2026/01/01 - 2026/06/30）',cycleId:'c5',creationSource:'auto',currentStage:'结果审定',stageProgress:'3/5',anomalyCount:2,dynamicAssessment:'locked',empCount:85,status:'active',admins:['王总监','刘VP','赵敏'],admin:'王总监',description:'半年度考核进行中',creator:'系统自动',createTime:'2026/01/01 00:00',updater:'王总监',updateTime:'2026/06/25 16:00'},
+  {id:8,name:'2026年5月绩效考核',schemeType:'月度',schemeName:'员工月度绩效考核',cycle:'2026年5月（2026/05/01 - 2026/05/31）',cycleId:'c10',creationSource:'auto',currentStage:'结果确认',stageProgress:'4/5',anomalyCount:0,dynamicAssessment:'dynamic',empCount:42,status:'paused',admins:['赵敏'],admin:'赵敏',description:'月度考核已暂停',creator:'系统自动',createTime:'2026/05/01 00:00',updater:'赵敏',updateTime:'2026/05/28 11:00'},
+  {id:9,name:'2026年4月绩效考核',schemeType:'月度',schemeName:'员工月度绩效考核',cycle:'2026年4月（2026/04/01 - 2026/04/30）',cycleId:'c9',creationSource:'auto',currentStage:'结果确认',stageProgress:'5/5',anomalyCount:0,dynamicAssessment:'dynamic',empCount:40,status:'ended_normal',admins:['赵敏'],admin:'赵敏',description:'月度考核已结束',creator:'系统自动',createTime:'2026/04/01 00:00',updater:'系统自动',updateTime:'2026/05/05 09:00'},
+  {id:10,name:'仓储部补录考核',schemeType:'季度',schemeName:'仓储特殊考核方案',cycle:'2026年Q2（2026/04/01 - 2026/06/30）',cycleId:'c2',creationSource:'manual',currentStage:'绩效考核',stageProgress:'2/5',anomalyCount:0,dynamicAssessment:'dynamic',empCount:12,status:'active',admins:['赵敏'],admin:'赵敏',description:'仓储部补录',creator:'赵敏（SSC）',createTime:'2026/05/15',updater:'赵敏（SSC）',updateTime:'2026/06/18 09:00'},
+  {id:11,name:'新员工转正考核',schemeType:'月度',schemeName:'试用期考核方案',cycle:'2026年7月（2026/07/01 - 2026/07/31）',cycleId:'c12',creationSource:'manual',currentStage:'',stageProgress:'0/5',anomalyCount:0,dynamicAssessment:'dynamic',empCount:3,status:'not_started',admins:['赵敏'],admin:'赵敏',description:'新入职员工转正考核',creator:'赵敏（SSC）',createTime:'2026/07/01 09:00',updater:'赵敏（SSC）',updateTime:'2026/07/01 09:00'},
+  {id:12,name:'2025年补录考核',schemeType:'年度',schemeName:'年度绩效方案 v1',cycle:'2025年度（2025/01/01 - 2025/12/31）',cycleId:'c7',creationSource:'manual',currentStage:'结果确认',stageProgress:'4/5',anomalyCount:0,dynamicAssessment:'locked',empCount:5,status:'ended_early',admins:['王总监'],admin:'王总监',description:'补录活动因数据口径异常提前终止',creator:'王总监（SSC）',createTime:'2025/12/20 10:00',updater:'王总监（SSC）',updateTime:'2026/01/10 16:00'}
+];
+
+var STATUS_MAP={not_started:{label:'未进入执行',cls:'not_started'},active:{label:'执行中',cls:'active'},paused:{label:'已暂停',cls:'paused'},ended_normal:{label:'已正常结束',cls:'ended_normal'},ended_early:{label:'已提前终止',cls:'ended_early'}};
+
+var STAGES=['目标制定','绩效考核','结果审定','结果确认','绩效面谈'];
+var EMPLOYEES=[
+  {name:'张明',emp:'EMP001',dept:'产品部',group:'默认考核组',handler:'王总监',node:'绩效考核',nodeName:'直线上级评分',status:'进行中',exception:'',totalScore:87.5,grade:'符合预期+',approveGrade:'符合预期+',confirmStatus:'已确认',updateTime:'2026/06/20 14:30'},
+  {name:'李华',emp:'EMP002',dept:'产品部',group:'默认考核组',handler:'王总监',node:'绩效考核',nodeName:'直线上级评分',status:'未开始',exception:'超时',totalScore:'—',grade:'—',approveGrade:'—',confirmStatus:'—',updateTime:'—'},
+  {name:'王芳',emp:'EMP003',dept:'运营部',group:'管理层组',handler:'刘VP',node:'结果审定',nodeName:'双线上级审定',status:'已暂停',exception:'',totalScore:77.0,grade:'符合预期',approveGrade:'符合预期',confirmStatus:'待确认',updateTime:'2026/06/18 11:00'},
+  {name:'赵强',emp:'EMP004',dept:'技术部',group:'默认考核组',handler:'王总监',node:'目标制定',nodeName:'目标审批',status:'已完成',exception:'',totalScore:'—',grade:'—',approveGrade:'—',confirmStatus:'—',updateTime:'2026/06/05 16:00'},
+  {name:'陈静',emp:'EMP005',dept:'设计部',group:'默认考核组',handler:'赵敏',node:'结果确认',nodeName:'结果确认',status:'进行中',exception:'不确认',totalScore:92.0,grade:'超出预期',approveGrade:'超出预期',confirmStatus:'待确认',updateTime:'2026/06/22 09:00'},
+  {name:'周鹏',emp:'EMP006',dept:'产品部',group:'默认考核组',handler:'王总监',node:'绩效面谈',nodeName:'面谈记录',status:'未开始',exception:'缺少操作',totalScore:82.5,grade:'符合预期+',approveGrade:'符合预期+',confirmStatus:'已确认',updateTime:'2026/06/19 15:00'},
+  {name:'吴涛',emp:'EMP007',dept:'技术部',group:'管理层组',handler:'刘VP',node:'绩效考核',nodeName:'双线上级评分',status:'已完成',exception:'',totalScore:88.0,grade:'符合预期+',approveGrade:'符合预期+',confirmStatus:'已确认',updateTime:'2026/06/20 10:00'},
+  {name:'孙丽',emp:'EMP008',dept:'市场部',group:'默认考核组',handler:'赵敏',node:'目标制定',nodeName:'目标填写',status:'进行中',exception:'逾期',totalScore:'—',grade:'—',approveGrade:'—',confirmStatus:'—',updateTime:'—'},
+  {name:'刘晨',emp:'EMP009',dept:'技术部',group:'默认考核组',handler:'王总监',node:'目标制定',nodeName:'目标填写',status:'未开始',exception:'',totalScore:'—',grade:'—',approveGrade:'—',confirmStatus:'—',updateTime:'—'},
+  {name:'钱宇',emp:'EMP010',dept:'市场部',group:'默认考核组',handler:'赵敏',node:'绩效考核',nodeName:'员工自评',status:'进行中',exception:'',totalScore:'—',grade:'—',approveGrade:'—',confirmStatus:'—',updateTime:'2026/06/21 10:20'},
+  {name:'林杰',emp:'EMP011',dept:'技术部',group:'默认考核组',handler:'刘VP',node:'结果审定',nodeName:'直线上级审定',status:'进行中',exception:'缺少操作',totalScore:79.0,grade:'符合预期+',approveGrade:'—',confirmStatus:'—',updateTime:'2026/06/20 17:10'},
+  {name:'吴欣',emp:'EMP012',dept:'财务部',group:'管理层组',handler:'刘VP',node:'结果确认',nodeName:'结果确认',status:'已暂停',exception:'',totalScore:90.0,grade:'超出预期',approveGrade:'超出预期',confirmStatus:'待确认',updateTime:'2026/06/18 15:30'},
+  {name:'韩梅',emp:'EMP013',dept:'产品部',group:'默认考核组',handler:'王总监',node:'结果确认',nodeName:'结果确认',status:'已完成',exception:'超时',totalScore:75.0,grade:'符合预期',approveGrade:'符合预期',confirmStatus:'已确认',updateTime:'2026/06/17 09:00'},
+  {name:'郑凯',emp:'EMP014',dept:'运营部',group:'管理层组',handler:'刘VP',node:'绩效面谈',nodeName:'面谈记录',status:'已完成',exception:'',totalScore:84.0,grade:'符合预期+',approveGrade:'符合预期+',confirmStatus:'已确认',updateTime:'2026/06/21 16:40'}
+];
+
+var OP_LOGS=[
+  {time:'2026/06/20 14:30',operator:'王总监',operatorId:'wang',type:'评分',typeGroup:'流程处理',target:'张明',detail:'直线上级评分：符合预期+'},
+  {time:'2026/06/20 10:00',operator:'刘VP',operatorId:'liu',type:'审定',typeGroup:'流程处理',target:'吴涛',detail:'双线上级审定：符合预期+'},
+  {time:'2026/06/19 15:00',operator:'赵敏',operatorId:'zhao',type:'正常结束',typeGroup:'活动管理',target:'Q2绩效考核',detail:'记录活动正常结束操作'},
+  {time:'2026/06/18 11:00',operator:'王总监',operatorId:'wang',type:'暂停',typeGroup:'环节管理',target:'王芳',detail:'暂停结果审定环节'},
+  {time:'2026/06/15 10:00',operator:'赵敏',operatorId:'zhao',type:'催办',typeGroup:'批量操作',target:'批量',detail:'批量催办：12人'},
+  {time:'2026/06/10 09:00',operator:'赵敏',operatorId:'zhao',type:'导入',typeGroup:'数据操作',target:'Q2绩效考核',detail:'导入目标数据：45条'},
+  {time:'2026/06/05 16:00',operator:'王总监',operatorId:'wang',type:'审批',typeGroup:'流程处理',target:'赵强',detail:'目标审批通过'},
+  {time:'2026/06/01 08:00',operator:'系统自动',operatorId:'system',type:'创建',typeGroup:'活动管理',target:'Q2绩效考核',detail:'方案自动创建活动'}
+];
+
+// ═══ STATE ═══
+var activityId=null, currentView='employees', currentEmployeeIdx=-1;
+var empFilter={node:'',exception:'',group:'',dept:'',search:''};
+var oplogFilter={type:'',search:''};
+
+// Get activity ID from URL
+var params=new URLSearchParams(window.location.search);
+activityId=parseInt(params.get('id'))||1;
+
+var activity=ACTIVITIES.find(function(a){return a.id===activityId;});
+
+// ═══ FILTER PERSISTENCE ═══
+var FILTER_KEY='perf-activity-detail-filters-'+activityId;
+function loadFilters(){
+  try{var s=sessionStorage.getItem(FILTER_KEY);if(s)empFilter=JSON.parse(s);}catch(e){}
+}
+function saveFilters(){sessionStorage.setItem(FILTER_KEY,JSON.stringify(empFilter));}
+loadFilters();
+
+// ═══ BACK NAV ═══
+function backToList(){
+  try{if(document.referrer&&document.referrer.indexOf('perf-activity.html')!==-1)history.back();else window.location.href='perf-activity.html';}
+  catch(e){window.location.href='perf-activity.html';}
+}
+
+// ═══ RENDER ═══
+function renderApp(){
+  var h='';
+  if(!activity){
+    document.getElementById('app').innerHTML='<div class="card"><div class="card-bd" style="text-align:center;padding:48px"><div style="font:600 16px/1.4 var(--f);color:var(--c8);margin-bottom:8px">未找到该考核活动</div><a href="perf-activity.html" class="btn btn-s" style="text-decoration:none">返回活动列表</a></div></div>';
+    return;
+  }
+  h+='<nav style="display:flex;align-items:center;gap:4px;font:500 12px/1 var(--f);color:var(--c5);margin-bottom:12px">';
+  h+='<a href="javascript:backToList()" style="color:var(--c5);text-decoration:none">← 返回</a><span style="color:var(--c3)">|</span>';
+  h+='<span style="color:var(--c8)">活动管理 / '+activity.name+'</span>';
+  h+='</nav>';
+
+  if(currentView==='employees'){
+    h+=renderEmployeeList();
+  }else if(currentView==='oplog'){
+    h+=renderOpLogPage();
+  }else if(currentView==='scheme'){
+    h+=renderSchemeDetailPage();
+  }else if(currentView==='employeeDetail'){
+    h+=renderEmployeeDetail();
+  }
+
+  document.getElementById('app').innerHTML=h;
+}
+
+// ═══ HEADER ═══
+function renderActivityHeader(){
+  var st=STATUS_MAP[activity.status];
+  var h='';
+  h+='<div class="card"><div class="card-bd">';
+  h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">';
+  h+='<div style="display:flex;align-items:center;gap:10px"><span style="font:700 18px/1.2 var(--f);color:var(--c9)">'+activity.name+'</span><span class="status '+st.cls+'"><span class="status-dot"></span>'+st.label+'</span><span class="cell-src '+activity.creationSource+'">'+(activity.creationSource==='auto'?'自动创建':'手动补充')+'</span></div>';
+  h+='<div style="display:flex;gap:6px">';
+  h+='<button class="btn btn-s" onclick="currentView=\'scheme\';renderApp()">活动详情</button>';
+  h+='<button class="btn btn-s" onclick="currentView=\'oplog\';renderApp()">操作记录</button>';
+  h+='</div></div>';
+  h+='<div class="info-grid">';
+  h+=infoItem('创建来源',activity.creationSource==='auto'?'系统自动创建':'手动补充（SSC）');
+  h+=infoItem('关联方案','<a href="perf-scheme-detail.html" style="color:var(--pr);text-decoration:none">'+activity.schemeName+'</a>');
+  h+=infoItem('考核周期',activity.cycle);
+  h+=infoItem('活动管理员',activity.admins.join('、'));
+  h+=infoItem('考核关系',activity.dynamicAssessment==='dynamic'?'动态解析':'创建时锁定');
+  h+=infoItem('活动状态',st.label);
+  h+=infoItem('创建时间',activity.createTime);
+  h+=infoItem('最近更新',activity.updater+' · '+activity.updateTime);
+  h+='</div></div></div>';
+  return h;
+}
+function infoItem(label,value){return '<div class="info-item"><span class="info-label">'+label+'</span><span class="info-value">'+value+'</span></div>';}
+
+// ═══ STAGE PROGRESS ═══
+function renderStageProgress(){
+  var h='<div class="card"><div class="card-hd">环节进度</div><div class="card-bd">';
+  var curIdx=STAGES.indexOf(activity.currentStage);
+  var total=activity.empCount;
+  var currentDone=activity.status==='not_started'?0:activity.status==='ended_normal'?total:Math.max(0,Math.round(total*.56));
+  h+='<div class="stage-bar">';
+  STAGES.forEach(function(s,idx){
+    var isFinished=activity.status==='ended_normal'||idx<curIdx;
+    var isCurrent=idx===curIdx&&activity.status!=='ended_normal'&&activity.status!=='not_started';
+    var cls=isFinished?'done':isCurrent?'active':'';
+    var badge=isFinished?'已完成':isCurrent?(activity.status==='paused'?'已暂停':activity.status==='ended_early'?'已提前终止':'进行中'):'未开始';
+    var done=isFinished?total:isCurrent?currentDone:0;
+    h+='<div class="stage-step '+cls+'">';
+    h+='<div class="stage-tooltip">'+s+'：'+done+'/'+total+' 完成（'+(total>0?Math.round(done/total*100):0)+'%）<br>'+badge+'</div>';
+    if(idx>0)h+='<div class="stage-line'+(isFinished?' done':'')+'"></div>';
+    h+='<div class="stage-dot '+cls+'">'+(isFinished?'✓':(idx+1))+'</div>';
+    h+='<div class="stage-name">'+s+'</div>';
+    h+='</div>';
+  });
+  h+='</div>';
+
+  // Stats
+  h+='<div class="stat-row">';
+  h+='<div class="stat-item">总人数：<span class="stat-num">'+activity.empCount+'</span></div>';
+  h+='<div class="stat-item">当前环节完成：<span class="stat-num">'+currentDone+'</span> / '+total+'</div>';
+  h+='<div class="stat-item">异常：<span class="stat-num" style="color:'+(activity.anomalyCount>0?'var(--ro)':'var(--c6)')+'">'+activity.anomalyCount+'</span></div>';
+  h+='</div>';
+
+  h+='</div></div>';
+  return h;
+}
+
+// ═══ EMPLOYEE LIST ═══
+function getFilteredEmployees(){
+  return EMPLOYEES.filter(function(e){
+    if(empFilter.node&&e.node!==empFilter.node)return false;
+    if(empFilter.exception&&e.exception!==empFilter.exception)return false;
+    if(empFilter.group&&e.group!==empFilter.group)return false;
+    if(empFilter.dept&&e.dept!==empFilter.dept)return false;
+    if(empFilter.search){var q=empFilter.search.toLowerCase();if(e.name.toLowerCase().indexOf(q)===-1&&e.emp.toLowerCase().indexOf(q)===-1&&e.dept.toLowerCase().indexOf(q)===-1&&e.handler.toLowerCase().indexOf(q)===-1)return false;}
+    return true;
+  });
+}
+
+function renderEmployeeList(){
+  var data=getFilteredEmployees();
+  var h=renderActivityHeader()+renderStageProgress();
+
+  if(activity.status==='not_started'){h+='<div class="card"><div class="card-bd" style="text-align:center;padding:40px;color:var(--c4)">活动未进入执行，暂无参与人数据</div></div>';return h;}
+
+  // Filters
+  h+='<div class="tbl-wrap"><div class="tbl-bar"><div class="tbl-bar-l">参与人列表 <span style="font:400 12px/1 var(--fm);color:var(--c5);font-weight:400">展示 '+data.length+' 条</span></div></div>';
+  h+='<div class="fl-bar">';
+  h+=sel('nodeFilter',empFilter.node,['全部节点','目标制定','绩效考核','结果审定','结果确认','绩效面谈']);
+  h+=sel('exceptionFilter',empFilter.exception,['全部异常','超时','逾期','缺少操作','不确认']);
+  var groups=EMPLOYEES.map(function(e){return e.group;}).filter(function(v,i,a){return a.indexOf(v)===i;});
+  var depts=EMPLOYEES.map(function(e){return e.dept;}).filter(function(v,i,a){return a.indexOf(v)===i;});
+  h+=sel('groupFilter',empFilter.group,['全部考核组'].concat(groups));
+  h+=sel('deptFilter',empFilter.dept,['全部部门'].concat(depts));
+  h+='<div class="fl-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input id="empSearch" placeholder="姓名/工号/部门/处理人" oninput="onEmpSearch(this.value)"></div>';
+  h+='<button class="btn btn-t" onclick="resetEmpFilters()">重置</button>';
+  h+='</div>';
+
+  // Action bar (only when active/paused)
+  if(activity.status==='active'||activity.status==='paused'){
+    h+='<div class="act-bar">';
+    h+=dropdown('环节管理',['开启环节','结束环节','暂停环节','继续环节','终止环节']);
+    h+=dropdown('添加人员',['按考核组规则更新','手动添加','导入添加']);
+    h+=dropdown('导入',['导入目标数据','导入考核结果','导入审定结果']);
+    h+=dropdown('导出',['导出名单','导出目标','导出考核结果','导出审定结果','导出面谈结果']);
+    h+='<button class="btn btn-gear" onclick="openExportSettings()" title="导出设置">⚙</button>';
+    h+=dropdown('批量操作',['催办','转交','暂停','继续','终止']);
+    h+='</div>';
+  }
+
+  // Table
+  h+='<div style="overflow-x:auto"><table><thead><tr>';
+  h+='<th>姓名</th><th>工号</th><th>部门</th><th>当前处理人</th><th>当前节点</th><th>状态</th><th>考核总分</th><th>初评等级</th><th>审定等级</th><th>确认状态</th><th>异常</th><th>更新时间</th><th>操作</th>';
+  h+='</tr></thead><tbody>';
+
+  data.forEach(function(e,idx){
+    var origIdx=EMPLOYEES.indexOf(e);
+    h+='<tr>';
+    h+='<td><a href="javascript:void(0)" onclick="viewEmployeeDetail('+origIdx+')" style="font:500 13px/1.3 var(--f);color:var(--pr);text-decoration:none">'+e.name+'</a></td>';
+    h+='<td><span style="font:400 12px/1 var(--fm);color:var(--c6)">'+e.emp+'</span></td>';
+    h+='<td>'+e.dept+'</td><td>'+e.handler+'</td><td>'+e.nodeName+'</td>';
+    h+='<td><span style="font:400 12px/1 var(--f);color:'+(e.status==='已完成'?'var(--em700)':e.status==='进行中'?'var(--pr)':e.status==='已暂停'?'var(--ac)':'var(--c6)')+'">'+e.status+'</span></td>';
+    h+='<td><span style="font:500 13px/1 var(--fm);color:var(--c8)">'+e.totalScore+'</span></td>';
+    h+='<td>'+e.grade+'</td><td>'+e.approveGrade+'</td><td>'+e.confirmStatus+'</td>';
+    h+='<td>'+(e.exception?'<span style="display:inline-block;padding:1px 5px;border-radius:3px;font:500 10px/1 var(--f);background:var(--ro50);color:var(--ro)">'+e.exception+'</span>':'—')+'</td>';
+    h+='<td><span style="font:400 11px/1 var(--f);color:var(--c5)">'+e.updateTime+'</span></td>';
+    h+='<td><div style="display:flex;gap:4px">';
+    h+='<button class="btn btn-s" style="height:26px;font-size:11px;padding:0 8px" onclick="showToast(\'已催办\')">催办</button>';
+    h+='<button class="btn btn-s" style="height:26px;font-size:11px;padding:0 8px" onclick="showToast(\'已转交\')">转交</button>';
+    h+='</div></td>';
+    h+='</tr>';
+  });
+  h+='</tbody></table></div></div>';
+
+  return h;
+}
+
+function sel(id,val,opts){
+  var h='<select class="fl-sel" id="'+id+'" onchange="onEmpFilterChange(\''+id+'\',this.value)">';
+  opts.forEach(function(o,i){h+='<option value="'+(i===0?'':o)+'"'+(val===o?' selected':'')+'>'+o+'</option>';});
+  h+='</select>';return h;
+}
+
+function dropdown(label,items){
+  var h='<div class="dropdown"><button class="btn btn-s" onclick="toggleDropdown(this)">'+label+' <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" fill="none" stroke-width="1.5"/></svg></button><div class="dropdown-menu">';
+  items.forEach(function(item){
+    var isSep=item==='separator';var isDanger=item==='终止';
+    h+=isSep?'<div style="border-top:1px solid var(--dv);margin:4px 0"></div>':'<button class="dropdown-item'+(isDanger?' danger':'')+'" onclick="showToast(\'已执行：'+item+'\')">'+item+'</button>';
+  });
+  h+='</div></div>';
+  return h;
+}
+
+// ═══ EMPLOYEE DETAIL ═══
+function viewEmployeeDetail(idx){currentEmployeeIdx=idx;currentView='employeeDetail';renderApp();}
+function renderEmployeeDetail(){
+  var e=EMPLOYEES[currentEmployeeIdx];
+  var h='<nav style="display:flex;align-items:center;gap:4px;font:500 12px/1 var(--f);color:var(--c5);margin-bottom:12px">';
+  h+='<a href="javascript:backToEmployees()" style="color:var(--c5);text-decoration:none">← 返回</a><span style="color:var(--c3)">|</span>';
+  h+='<span style="color:var(--c8)">活动管理 / '+activity.name+' / '+e.name+'</span>';
+  h+='</nav>';
+
+  h+='<div class="card"><div class="card-bd">';
+  h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">';
+  h+='<div style="display:flex;align-items:center;gap:10px"><span style="font:700 16px/1.2 var(--f);color:var(--c9)">'+e.name+'</span><span style="font:400 12px/1 var(--fm);color:var(--c5)">'+e.emp+'</span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:3px;font:500 11px/1 var(--f);background:'+(e.status==='已完成'?'var(--em50)':'var(--pr50)')+';color:'+(e.status==='已完成'?'var(--em700)':'var(--pr)')+'">'+e.status+'</span></div>';
+  h+='<div style="display:flex;gap:6px"><button class="btn btn-s" onclick="showToast(\'已催办\')">催办</button><button class="btn btn-s" onclick="showToast(\'已转交\')">转交</button></div>';
+  h+='</div>';
+  h+='<div class="info-grid">';
+  h+=infoItem('部门',e.dept);h+=infoItem('岗位','高级产品经理');h+=infoItem('考核组',e.group);h+=infoItem('当前处理人',e.handler);
+  h+='</div></div></div>';
+
+  // Stage stepper
+  h+='<div class="card"><div class="card-hd">环节进度</div><div class="card-bd">';
+  var curStageIdx=STAGES.indexOf(e.node);
+  h+='<div class="stage-bar">';
+  STAGES.forEach(function(s,idx){
+    var cls=idx<curStageIdx?'done':idx===curStageIdx?'active':'';
+    h+='<div class="stage-step '+cls+'">';
+    if(idx>0)h+='<div class="stage-line'+(idx<=curStageIdx?' done':'')+'"></div>';
+    h+='<div class="stage-dot '+cls+'">'+(idx<curStageIdx?'✓':(idx+1))+'</div>';
+    h+='<div class="stage-name">'+s+'</div>';
+    h+='</div>';
+  });
+  h+='</div></div>';
+
+  // Node detail
+  h+='<div class="tbl-wrap"><div class="tbl-bar"><div class="tbl-bar-l">节点处理明细</div></div>';
+  h+='<table><thead><tr><th>节点</th><th>处理人</th><th>处理状态</th><th>提交时间</th><th>提交原因</th><th>相关表单</th></tr></thead><tbody>';
+  h+='<tr><td>'+e.nodeName+'</td><td>'+e.handler+'</td><td>'+e.status+'</td><td>'+e.updateTime+'</td><td>—</td><td><a href="#" style="color:var(--pr);text-decoration:none">查看表单</a></td></tr>';
+  h+='</tbody></table></div>';
+  return h;
+}
+
+function backToEmployees(){currentView='employees';renderApp();}
+
+// ═══ SCHEME DETAIL ═══
+function renderSchemeDetailPage(){
+  var h='<nav style="display:flex;align-items:center;gap:4px;font:500 12px/1 var(--f);color:var(--c5);margin-bottom:12px">';
+  h+='<a href="javascript:backToEmployees()" style="color:var(--c5);text-decoration:none">← 返回</a><span style="color:var(--c3)">|</span>';
+  h+='<span style="color:var(--c8)">活动管理 / '+activity.name+' / 活动详情</span></nav>';
+
+  h+='<div class="card"><div class="card-hd">活动信息</div><div class="card-bd">';
+  h+='<div class="info-grid">';
+  h+=infoItem('活动名称',activity.name);h+=infoItem('活动状态',STATUS_MAP[activity.status].label);
+  h+=infoItem('创建来源',activity.creationSource==='auto'?'系统自动创建':'手动补充');
+  h+=infoItem('关联方案',activity.schemeName);h+=infoItem('考核周期',activity.cycle);
+  h+=infoItem('考核关系',activity.dynamicAssessment==='dynamic'?'动态解析':'创建时锁定');
+  h+=infoItem('被考核人数',activity.empCount+'人');
+  h+=infoItem('创建人',activity.creator);h+=infoItem('创建时间',activity.createTime);
+  h+=infoItem('管理员',activity.admins.join('、'));
+  if(activity.description)h+=infoItem('说明',activity.description);
+  h+='</div></div></div>';
+
+  h+='<div class="card"><div class="card-hd">关联方案信息 — '+activity.schemeName+'</div><div class="card-bd">';
+  h+='<p style="font:400 13px/1.5 var(--f);color:var(--c5)">方案类型：'+activity.schemeType+' ｜ 考核环节：目标制定→绩效考核→结果审定→结果确认→绩效面谈</p>';
+  h+='<div style="margin-top:8px"><a href="perf-scheme-detail.html" class="btn btn-s" target="_blank">查看方案详情</a></div>';
+  h+='</div></div>';
+  return h;
+}
+
+// ═══ OP LOG ═══
+var OP_TYPE_TREE={活动管理:['创建','编辑','进入执行','暂停','恢复执行','正常结束','提前终止','删除'],环节管理:['开启','结束','暂停','继续','终止'],人员操作:['添加','移除','修改关系'],批量操作:['催办','转交','批量暂停','批量继续','批量终止'],数据操作:['导入','导出','导出设置'],流程处理:['提交','审批','评分','审定','确认','驳回']};
+
+function renderOpLogPage(){
+  var logs=OP_LOGS;
+  if(oplogFilter.type)logs=logs.filter(function(l){return l.type===oplogFilter.type;});
+  if(oplogFilter.search){var q=oplogFilter.search.toLowerCase();logs=logs.filter(function(l){return l.operator.toLowerCase().indexOf(q)!==-1||l.operatorId.toLowerCase().indexOf(q)!==-1||l.target.toLowerCase().indexOf(q)!==-1||l.detail.toLowerCase().indexOf(q)!==-1;});}
+
+  var h='<nav style="display:flex;align-items:center;gap:4px;font:500 12px/1 var(--f);color:var(--c5);margin-bottom:12px">';
+  h+='<a href="javascript:backToEmployees()" style="color:var(--c5);text-decoration:none">← 返回</a><span style="color:var(--c3)">|</span>';
+  h+='<span style="color:var(--c8)">活动管理 / '+activity.name+' / 操作记录</span></nav>';
+
+  h+='<div class="tbl-wrap"><div class="tbl-bar"><div class="tbl-bar-l">操作记录 <span style="font:400 12px/1 var(--fm);color:var(--c5);font-weight:400">共 '+logs.length+' 条</span></div></div>';
+
+  // Type tree filter
+  h+='<div class="fl-bar">';
+  h+='<select class="fl-sel" onchange="oplogFilter.type=this.value;renderApp()"><option value="">全部类型</option>';
+  Object.keys(OP_TYPE_TREE).forEach(function(g){h+='<optgroup label="'+g+'">';OP_TYPE_TREE[g].forEach(function(t){h+='<option value="'+t+'"'+(oplogFilter.type===t?' selected':'')+'>'+t+'</option>';});h+='</optgroup>';});
+  h+='</select>';
+  h+='<div class="fl-search"><input placeholder="操作人/对象/详情" oninput="oplogFilter.search=this.value;renderApp()"></div>';
+  h+='<button class="btn btn-t" onclick="oplogFilter={type:\'\',search:\'\'};renderApp()">重置</button>';
+  h+='</div>';
+
+  h+='<div style="overflow-x:auto"><table><thead><tr><th>时间</th><th>操作人</th><th>操作类型</th><th>操作对象</th><th>详情</th></tr></thead><tbody>';
+  logs.forEach(function(l){
+    h+='<tr><td style="font:400 12px/1 var(--fm);color:var(--c5);white-space:nowrap">'+l.time+'</td>';
+    h+='<td>'+l.operator+' <span style="font:400 10px/1 var(--fm);color:var(--c4)">'+l.operatorId+'</span></td>';
+    h+='<td><span style="display:inline-block;padding:2px 6px;border-radius:3px;font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)">'+l.type+'</span></td>';
+    h+='<td>'+l.target+'</td><td style="font:400 12px/1.4 var(--f);color:var(--c6)">'+l.detail+'</td></tr>';
+  });
+  h+='</tbody></table></div></div>';
+  return h;
+}
+
+// ═══ FILTER HANDLERS ═══
+var empFilterMap={nodeFilter:'node',exceptionFilter:'exception',groupFilter:'group',deptFilter:'dept'};
+function onEmpFilterChange(id,val){var key=empFilterMap[id];if(key)empFilter[key]=val;saveFilters();renderApp();}
+function onEmpSearch(val){empFilter.search=val;saveFilters();renderApp();}
+function resetEmpFilters(){empFilter={node:'',exception:'',group:'',dept:'',search:''};saveFilters();renderApp();}
+function toggleDropdown(btn){var menu=btn.parentElement.querySelector('.dropdown-menu');menu.classList.toggle('show');}
+document.addEventListener('click',function(e){if(!e.target.closest('.dropdown')){document.querySelectorAll('.dropdown-menu').forEach(function(m){m.classList.remove('show');});}});
+
+// ═══ EXPORT SETTINGS ═══
+var EXPORT_CATEGORIES={roster:{name:'导出名单',fields:[{key:'name',label:'姓名',def:true},{key:'emp',label:'工号',def:true},{key:'dept',label:'部门',def:true},{key:'position',label:'岗位',def:true},{key:'level',label:'职级',def:false},{key:'handler',label:'考核关系',def:true},{key:'group',label:'考核组',def:false}]}};
+var exportSettings={};
+function openExportSettings(){
+  var h='<div style="display:flex;gap:0;border-bottom:1px solid var(--dv);margin-bottom:12px">';
+  Object.keys(EXPORT_CATEGORIES).forEach(function(cat,idx){
+    h+='<button style="padding:8px 14px;border:none;background:none;font:500 13px/1 var(--f);color:var(--pr);border-bottom:2px solid var(--pr);cursor:pointer">'+EXPORT_CATEGORIES[cat].name+'</button>';
+  });
+  h+='</div>';
+  var fields=EXPORT_CATEGORIES.roster.fields;
+  fields.forEach(function(f){
+    var checked=exportSettings[f.key]!==undefined?exportSettings[f.key]:f.def;
+    h+='<label style="display:flex;align-items:center;gap:8px;padding:6px 0;cursor:pointer;font:400 13px/1 var(--f);color:var(--c7)"><input type="checkbox" '+(checked?'checked':'')+' onchange="exportSettings[\''+f.key+'\']=this.checked">'+f.label+'</label>';
+  });
+  document.getElementById('exportSettingsBody').innerHTML=h;
+  document.getElementById('exportSettingsModal').classList.add('show');
+}
+function closeExportSettings(){document.getElementById('exportSettingsModal').classList.remove('show');}
+document.getElementById('exportSettingsModal').addEventListener('click',function(e){if(e.target===this)closeExportSettings();});
+
+// ═══ TOAST ═══
+function showToast(msg,type){var t=document.getElementById('toast');document.getElementById('toastMsg').textContent=msg;t.className='toast show'+(type==='warn'?' warn':'');setTimeout(function(){t.classList.remove('show')},3000);}
+
+renderApp();
+</script>
+</body>
+</html>

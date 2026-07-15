@@ -52,8 +52,8 @@ const ADMIN_LIST=[
 ];
 
 const SCHEME={
-  name:'年度绩效方案 v2',code:'PERF-2026-001',version:'v2',enabled:true,desc:'适用于全公司季度绩效考核，采用360度评估方式，包含目标制定、绩效考核、结果审定、结果确认、绩效面谈五个环节。',
-  cycleType:'月度',gradeRule:'标准七级',downward:true,
+  name:'标准季度考核方案',code:'PERF-2026-Q01',version:'v2',enabled:true,desc:'适用于全公司季度绩效考核，采用360度评估方式，包含目标制定、绩效考核、结果审定、结果确认、绩效面谈五个环节。',
+  cycleType:'季度',gradeRule:'标准七级',downward:true,
   grades:[
     {name:'远超预期',code:'A',min:95,max:100,color:'#DC2626',bg:'#FEF2F2'},
     {name:'超出预期',code:'A-',min:85,max:94,color:'#F97316',bg:'#FFF7ED'},
@@ -84,7 +84,7 @@ const SCHEME={
     {code:'D',name:'远低预期',op:'不超过',pct:5},
   ]},
   autoCreate:{enabled:true,monthly:{direction:'前',days:7},quarterly:{direction:'前',days:7},semiannual:{direction:'前',days:14},annual:{direction:'前',days:30}},
-  admins:['EMP0088'],
+  admins:['EMP0047'],
 };
 
 const TIME_RULES_LABEL={
@@ -171,11 +171,50 @@ function render(){
         ${s.forcedDist.grades.map(d=>`<span style="font:500 13px/1 var(--f);color:var(--c7)"><strong>${d.code}</strong> ${d.name} <span style="color:var(--c5)">${d.op} ${d.pct}%</span></span>`).join('<span style="color:var(--c3)">|</span>')}
       </div>
     </div>
+
+    <!-- 关联活动 -->
+    <div class="card">
+      <div class="card-hd"><span class="card-bar" style="background:var(--pr)"></span><span class="card-title">关联活动</span></div>
+      <div id="relatedActs"></div>
+    </div>
   </div>`;
 }
 
+// ═══ RELATED ACTIVITIES ═══
+var SCHEME_ACTS=[
+  {id:1,name:'2026年Q2绩效考核',cycle:'2026年Q2',creationSource:'auto',status:'active',currentStage:'绩效考核',empCount:128,type:'current'},
+  {id:2,name:'2026年Q3绩效考核',cycle:'2026年Q3',creationSource:'auto',status:'not_started',currentStage:'',empCount:0,type:'future_created'},
+  {id:3,name:'2026年Q1绩效考核',cycle:'2026年Q1',creationSource:'auto',status:'ended_normal',currentStage:'结果确认',empCount:96,type:'history'}
+];
+var FUTURE_WAITING=[{cycle:'2026年Q4',label:'2026年Q4绩效考核'}];
+var relatedTab='current';
+var STAT_MAP_S={not_started:{label:'未进入执行',cls:'not_started'},active:{label:'执行中',cls:'active'},paused:{label:'已暂停',cls:'paused'},ended_normal:{label:'已正常结束',cls:'ended_normal'},ended_early:{label:'已提前终止',cls:'ended_early'}};
+
+function renderRelatedActs(){
+  var h='<div style="display:flex;gap:0;border-bottom:1px solid var(--dv);padding:0 18px">';
+  h+=tab('current','当前活动（'+SCHEME_ACTS.filter(function(a){return a.status==='active'||a.status==='paused';}).length+'）');
+  h+=tab('history','历史活动（'+SCHEME_ACTS.filter(function(a){return a.status==='ended_normal'||a.status==='ended_early';}).length+'）');
+  h+=tab('future','未来活动（'+(SCHEME_ACTS.filter(function(a){return a.status==='not_started';}).length+FUTURE_WAITING.length)+'）');
+  h+='</div><div style="padding:12px 18px">';
+  var items=[];
+  if(relatedTab==='current')SCHEME_ACTS.filter(function(a){return a.status==='active'||a.status==='paused';}).forEach(function(a){items.push({type:'created',data:a});});
+  else if(relatedTab==='history')SCHEME_ACTS.filter(function(a){return a.status==='ended_normal'||a.status==='ended_early';}).forEach(function(a){items.push({type:'created',data:a});});
+  else{SCHEME_ACTS.filter(function(a){return a.status==='not_started';}).forEach(function(a){items.push({type:'created',data:a});});FUTURE_WAITING.forEach(function(f){items.push({type:'waiting',data:f});});}
+  if(items.length===0){h+='<div style="color:var(--c4);padding:20px;text-align:center">暂无活动</div>';}
+  else{
+    h+='<table style="width:100%;border-collapse:collapse"><thead><tr><th>活动名称</th><th>周期</th><th>创建来源</th><th>状态</th><th>当前环节</th><th>人数</th><th>操作</th></tr></thead><tbody>';
+    items.forEach(function(item){
+      if(item.type==='waiting'){h+='<tr><td style="color:var(--c4)">'+item.data.label+'</td><td>'+item.data.cycle+'</td><td colspan="4" style="color:var(--c4)">待自动创建</td><td>—</td></tr>';}
+      else{var a=item.data,st=STAT_MAP_S[a.status];h+='<tr><td><a href="perf-activity-detail.html?id='+a.id+'" style="font:500 13px/1.3 var(--f);color:var(--pr);text-decoration:none">'+a.name+'</a></td><td>'+a.cycle+'</td><td><span style="font:400 12px/1 var(--f);color:'+(a.creationSource==='auto'?'var(--em700)':'var(--ac700)')+'">'+(a.creationSource==='auto'?'自动创建':'手动补充')+'</span></td><td><span class="status '+st.cls+'" style="font-size:11px"><span class="status-dot"></span>'+st.label+'</span></td><td>'+(a.currentStage||'—')+'</td><td>'+a.empCount+'</td><td><a href="perf-activity-detail.html?id='+a.id+'" class="btn btn-s" style="text-decoration:none;height:26px;font-size:11px;padding:0 10px">查看</a></td></tr>';}
+    });h+='</tbody></table>';
+  }h+='</div>';document.getElementById('relatedActs').innerHTML=h;
+}
+
+function tab(t,l){return '<button style="padding:10px 16px;border:none;background:none;font:500 13px/1 var(--f);color:'+(relatedTab===t?'var(--pr)':'var(--c5)')+';border-bottom:'+(relatedTab===t?'2px solid var(--pr)':'2px solid transparent')+';cursor:pointer" onclick="relatedTab=\''+t+'\';renderRelatedActs()">'+l+'</button>';}
+
 GHR_NAV.init('perf','绩效方案');
 render();
+renderRelatedActs();
 </script>
 </body>
 </html>

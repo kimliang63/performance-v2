@@ -1,5 +1,30 @@
 # 变更记录
 
+## 2026-07-15 活动管理原型统一
+
+**改造理由**: 保留下"一个活动一行"的传统活动列表方案，以 perf-activity.html 作为正式活动管理入口。不保留 perf-activity-new.html 的左右分栏结构，吸收其方案周期、自动创建和当前环节信息。
+
+### 修改文件
+
+| 文件 | 动作 | 说明 |
+|------|------|------|
+| `perf-activity.html` | 重写 | 纯列表页，12条活动（9自动+3手动），7筛选条件+sessionStorage持久化，组合列+列设置，手动补充弹窗 |
+| `perf-activity-detail.html` | 新建 | 独立详情页：覆盖列表全部12个活动，活动信息+环节进度+14条参与人场景（5筛选）+环节管理+导入导出+批量操作+操作记录 |
+| `perf-scheme-detail.html` | 修改 | 新增"关联活动"卡片：当前/历史/未来三Tab，"待自动创建"占位 |
+| `navigation.js` | 复核 | 当前版本已是单一"活动管理"入口→perf-activity.html，本次无需修改 |
+
+### 核心变化
+- 活动状态严格对应 Spec SM-002：未进入执行/执行中/已暂停/已正常结束/已提前终止
+- 手动补充入口为次级按钮，校验方案启用、周期匹配、不可重复创建
+- 详情页保留旧版参与人、操作记录、环节管理等核心能力，并补齐考核组筛选和全部活动数据映射
+- 方案详情"未来活动"区分"已创建待执行"与"待自动创建"，无虚假 activityId
+- 页面角色以 Spec 1.2 为准（SSC 主管理，HRBP 授权录入）
+
+### 未修改
+- confirmed/、archive/、perf-activity-new.html、perf-activity-launch.html、v2 目录
+
+---
+
 ## 2026-07-02 新增 4 个绩效报表页面
 - 新建: perf-report-goals.html, perf-report-results.html, perf-report-progress.html, perf-report-distribution.html
 - 内容: 目标中心/绩效结果/考核进度/绩效报表，跨周期查询+Chart.js图表
