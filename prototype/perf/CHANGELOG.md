@@ -25,6 +25,13 @@
 
 ---
 
+### 2026-07-15 评审修正
+
+- 活动列表操作恢复为紧凑文字按钮，避免 1280px 下换行和错位。
+- 活动详情恢复提交前已确认的页面设计，仅保留独立详情 URL、12 条活动映射和新版状态定义。
+
+---
+
 ## 2026-07-02 新增 4 个绩效报表页面
 - 新建: perf-report-goals.html, perf-report-results.html, perf-report-progress.html, perf-report-distribution.html
 - 内容: 目标中心/绩效结果/考核进度/绩效报表，跨周期查询+Chart.js图表

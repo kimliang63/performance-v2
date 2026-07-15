@@ -36,6 +36,8 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoo
 .btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
 .btn-d{background:var(--ro);color:#FFF}.btn-d:hover{background:#E11D48}
 .btn-t{background:transparent;color:var(--c5);border:1px solid transparent}.btn-t:hover{color:var(--c8);background:var(--c1)}
+.cell-actions{display:flex;align-items:center;gap:2px;white-space:nowrap;flex-wrap:nowrap}
+.cell-actions .btn{height:28px;padding:0 7px;font-size:12px}
 .btn-gear{width:32px;height:32px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--r1);cursor:pointer;border:1px solid var(--c2);background:var(--sf);color:var(--c5);transition:all .12s}
 .btn-gear:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
 .btn-gear svg{width:14px;height:14px}
@@ -330,7 +332,7 @@ function renderApp(){
   h+='<th style="min-width:80px">管理员</th>';
   if(columnSettings.updater)h+='<th style="min-width:64px">更新人</th>';
   if(columnSettings.updateTime)h+='<th style="min-width:120px">最近更新</th>';
-  h+='<th style="min-width:150px">操作</th>';
+  h+='<th style="min-width:178px">操作</th>';
   h+='</tr></thead><tbody>';
 
   if(pageData.length===0){
@@ -356,16 +358,16 @@ function renderApp(){
     if(columnSettings.updater)h+='<td><span style="font:400 12px/1 var(--f);color:var(--c6)">'+a.updater+'</span></td>';
     if(columnSettings.updateTime)h+='<td><span style="font:400 12px/1 var(--fm);color:var(--c5)">'+a.updateTime+'</span></td>';
     h+='<td><div class="cell-actions">';
-    h+='<a class="btn btn-s" href="perf-activity-detail.html?id='+a.id+'" style="text-decoration:none">查看</a>';
+    h+='<a class="btn btn-t" href="perf-activity-detail.html?id='+a.id+'" style="text-decoration:none">查看</a>';
     if(a.status==='not_started'){
-      h+='<button class="btn btn-p" onclick="enableActivity('+a.id+')">进入执行</button>';
-      h+='<button class="btn btn-d" onclick="deleteActivity('+a.id+')">删除</button>';
+      h+='<button class="btn btn-t" style="color:var(--pr)" onclick="enableActivity('+a.id+')">进入执行</button>';
+      h+='<button class="btn btn-t" style="color:var(--ro)" onclick="deleteActivity('+a.id+')">删除</button>';
     }else if(a.status==='active'){
-      h+='<button class="btn btn-s" onclick="pauseActivity('+a.id+')">暂停</button>';
-      h+='<button class="btn btn-d" onclick="terminateActivity('+a.id+')">提前终止</button>';
+      h+='<button class="btn btn-t" onclick="pauseActivity('+a.id+')">暂停</button>';
+      h+='<button class="btn btn-t" style="color:var(--ro)" onclick="terminateActivity('+a.id+')">提前终止</button>';
     }else if(a.status==='paused'){
-      h+='<button class="btn btn-p" onclick="resumeActivity('+a.id+')">恢复执行</button>';
-      h+='<button class="btn btn-d" onclick="terminateActivity('+a.id+')">提前终止</button>';
+      h+='<button class="btn btn-t" style="color:var(--pr)" onclick="resumeActivity('+a.id+')">恢复执行</button>';
+      h+='<button class="btn btn-t" style="color:var(--ro)" onclick="terminateActivity('+a.id+')">提前终止</button>';
     }
     h+='</div></td></tr>';
   });
