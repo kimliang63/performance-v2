@@ -84,8 +84,8 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .star-rating{display:inline-flex;flex-direction:column;align-items:center;gap:4px}
 .star-row{display:flex;gap:2px}
 .star{font-size:18px;color:var(--c3);cursor:pointer;transition:all .12s;line-height:1}
-.star.hover{color:var(--ac);transform:scale(1.15)}
-.star.sel{color:var(--ac)}
+.star.hover{transform:scale(1.15)}
+.star.sel{}
 .star-label{font:500 12px/1 var(--f);white-space:nowrap;min-width:60px;text-align:center}
 .star-desc{font:400 11px/1.3 var(--f);color:var(--c5);margin-top:2px}
 
@@ -635,8 +635,8 @@ function goPage(p){
 }
 function setRatifyStar(el,idx,v){
   var row=el.parentElement;
-  row.querySelectorAll('.star').forEach(function(s){s.classList.remove('sel');});
-  row.querySelectorAll('.star').forEach(function(s){if(parseInt(s.dataset.v)<=v)s.classList.add('sel');});
+  row.querySelectorAll('.star').forEach(function(s){s.classList.remove('sel');s.style.color='';});
+  row.querySelectorAll('.star').forEach(function(s){if(parseInt(s.dataset.v)<=v){s.classList.add('sel');s.style.color=GRADE_COLORS[grade];}});
   var grade=GRADE_OPTIONS[7-v];
   MEMBERS[idx].ratifyGrade=grade;
   var label=row.parentElement.querySelector('.star-label');
@@ -656,6 +656,7 @@ function starHover(el,entering){
     var v=parseInt(el.dataset.v);
     rating.querySelectorAll('.star').forEach(function(s,i){
       s.classList.toggle('hover',i<v);
+      s.style.color=i<v?GRADE_COLORS[GRADE_OPTIONS[7-v]]:'';
     });
     if(label){
       label.textContent=GRADE_OPTIONS[7-v];
@@ -666,6 +667,7 @@ function starHover(el,entering){
     var saved=parseInt(rating.dataset.value);
     rating.querySelectorAll('.star').forEach(function(s,i){
       s.classList.toggle('hover',false);
+      s.style.color=saved&&i<saved&&GRADE_COLORS[GRADE_OPTIONS[7-saved]]||'';
     });
     if(label){
       var gn=saved?GRADE_OPTIONS[7-saved]:'';
