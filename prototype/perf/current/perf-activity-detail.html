@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HR ONE - 活动管理</title>
+<title>HR ONE - 活动详情</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════════════════
@@ -120,6 +120,9 @@ tbody tr:last-child td{border-bottom:none}
 .cell-status.active{color:var(--em700);background:var(--em50)}
 .cell-status.ended{color:var(--c5);background:var(--c1)}
 .cell-status.archived{color:var(--vi);background:var(--vi50)}
+.cell-status.paused{color:var(--ac700);background:var(--ac50)}
+.cell-status.ended-normal{color:var(--pr);background:var(--pr50)}
+.cell-status.ended-early{color:var(--ro);background:var(--ro50)}
 .cell-count{font-family:var(--m);font-weight:600;color:var(--c8)}
 .cell-creator{font:400 12px/1 var(--f);color:var(--c6)}
 .cell-date{font:400 12px/1 var(--f);color:var(--c5);font-family:var(--m);font-size:11px}
@@ -311,10 +314,11 @@ const I={
 
 // ═══ 状态常量 ═══
 const STATUS_MAP={
-  not_started:{label:'未开始',cls:'not-started'},
-  active:{label:'进行中',cls:'active'},
-  ended:{label:'已结束',cls:'ended'},
-  archived:{label:'已归档',cls:'archived'},
+  not_started:{label:'未进入执行',cls:'not-started'},
+  active:{label:'执行中',cls:'active'},
+  paused:{label:'已暂停',cls:'paused'},
+  ended_normal:{label:'已正常结束',cls:'ended-normal'},
+  ended_early:{label:'已提前终止',cls:'ended-early'},
 };
 
 const PLANS=['年度绩效方案 v2','半年度方案 v1','月度方案 v1','年度绩效方案 v1'];
@@ -333,12 +337,20 @@ const CYCLES=[
 
 // ═══ 模拟数据 ═══
 let ACTIVITIES=[
-  {id:1,name:'2026年Q2绩效考核',plan:'年度绩效方案 v2',cycle:'Q2季度考核（2026/04/01 - 2026/06/30）',dynamicAssessment:'locked',empCount:128,status:'active',updater:'Kim',updateTime:'2026/03/15 09:30:00',creator:'Kim（HRBP经理）',createTime:'2026/03/10 10:00:00',description:'2026年Q2全员季度绩效考核，采用360度评估方式，覆盖技术部、产品部、设计部等全部门。',admin:'EMP0088',admins:['EMP0088']},
-  {id:2,name:'2026年Q3绩效考核',plan:'年度绩效方案 v2',cycle:'Q3季度考核（2026/07/01 - 2026/09/30）',dynamicAssessment:'dynamic',empCount:0,status:'not_started',updater:'Kim',updateTime:'2026/06/20 14:00:00',creator:'Kim（HRBP经理）',createTime:'2026/06/18 09:00:00',description:'Q3季度考核预配置，启用动态考核关系，考核组按最新组织架构自动匹配。',admin:'EMP0088',admins:['EMP0088']},
-  {id:3,name:'2026年Q1绩效考核',plan:'半年度方案 v1',cycle:'Q1季度考核（2026/01/01 - 2026/03/31）',dynamicAssessment:'locked',empCount:96,status:'ended',updater:'Kim',updateTime:'2026/03/31 18:00:00',creator:'张经理（COE负责人）',createTime:'2026/01/02 08:30:00',description:'Q1季度绩效考核，锁定考核关系，96人参与。',admin:'EMP0012',admins:['EMP0012']},
-  {id:4,name:'2025年度绩效考核',plan:'年度绩效方案 v1',cycle:'年度考核（2025/01/01 - 2025/12/31）',dynamicAssessment:'dynamic',empCount:210,status:'ended',updater:'Kim',updateTime:'2025/12/31 23:59:00',creator:'张经理（COE负责人）',createTime:'2025/01/05 09:00:00',description:'2025年度全员绩效考核，210人参与，已全部完成。',admin:'EMP0012',admins:['EMP0012']},
-  {id:5,name:'2024年度绩效考核',plan:'年度绩效方案 v1',cycle:'年度考核（2024/01/01 - 2024/12/31）',dynamicAssessment:'locked',empCount:195,status:'archived',updater:'张经理',updateTime:'2025/01/15 10:00:00',creator:'张经理（COE负责人）',createTime:'2024/01/03 09:00:00',description:'2024年度全员绩效考核，已归档锁定。',admin:'EMP0012',admins:['EMP0012']},
+  {id:1,name:'2026年Q2绩效考核',schemeType:'季度',schemeName:'标准季度考核方案',cycle:'2026年Q2（2026/04/01 - 2026/06/30）',cycleId:'c2',creationSource:'auto',currentStage:'绩效考核',stageProgress:'2/5',anomalyCount:3,dynamicAssessment:'locked',empCount:128,status:'active',admins:['王总监','赵敏'],admin:'王总监',description:'标准季度考核',creator:'系统自动',createTime:'2026/04/01 00:00',updater:'王总监',updateTime:'2026/06/20 14:30'},
+  {id:2,name:'2026年Q3绩效考核',schemeType:'季度',schemeName:'标准季度考核方案',cycle:'2026年Q3（2026/07/01 - 2026/09/30）',cycleId:'c3',creationSource:'auto',currentStage:'',stageProgress:'0/5',anomalyCount:0,dynamicAssessment:'locked',empCount:0,status:'not_started',admins:['王总监','赵敏'],admin:'王总监',description:'标准季度考核待启动',creator:'系统自动',createTime:'2026/07/01 00:00',updater:'系统自动',updateTime:'2026/07/01 00:00'},
+  {id:3,name:'2026年Q1绩效考核',schemeType:'季度',schemeName:'标准季度考核方案',cycle:'2026年Q1（2026/01/01 - 2026/03/31）',cycleId:'c1',creationSource:'auto',currentStage:'结果确认',stageProgress:'5/5',anomalyCount:0,dynamicAssessment:'locked',empCount:96,status:'ended_normal',admins:['王总监','赵敏'],admin:'王总监',description:'Q1季度考核已正常结束',creator:'系统自动',createTime:'2026/01/01 00:00',updater:'系统自动',updateTime:'2026/04/10 09:00'},
+  {id:4,name:'2025年度绩效考核',schemeType:'年度',schemeName:'年度绩效方案 v1',cycle:'2025年度（2025/01/01 - 2025/12/31）',cycleId:'c7',creationSource:'auto',currentStage:'结果确认',stageProgress:'5/5',anomalyCount:0,dynamicAssessment:'locked',empCount:210,status:'ended_normal',admins:['刘VP','王总监'],admin:'刘VP',description:'2025年度考核已正常结束',creator:'系统自动',createTime:'2025/01/01 00:00',updater:'刘VP',updateTime:'2026/01/15 17:00'},
+  {id:5,name:'2026年6月绩效考核',schemeType:'月度',schemeName:'员工月度绩效考核',cycle:'2026年6月（2026/06/01 - 2026/06/30）',cycleId:'c11',creationSource:'auto',currentStage:'目标制定',stageProgress:'1/5',anomalyCount:1,dynamicAssessment:'dynamic',empCount:45,status:'active',admins:['赵敏'],admin:'赵敏',description:'月度考核进行中',creator:'系统自动',createTime:'2026/06/01 00:00',updater:'赵敏',updateTime:'2026/06/15 10:00'},
+  {id:6,name:'2026年7月绩效考核',schemeType:'月度',schemeName:'员工月度绩效考核',cycle:'2026年7月（2026/07/01 - 2026/07/31）',cycleId:'c12',creationSource:'auto',currentStage:'',stageProgress:'0/5',anomalyCount:0,dynamicAssessment:'dynamic',empCount:0,status:'not_started',admins:['赵敏'],admin:'赵敏',description:'月度考核待启动',creator:'系统自动',createTime:'2026/07/01 00:00',updater:'系统自动',updateTime:'2026/07/01 00:00'},
+  {id:7,name:'2026年H1半年度考核',schemeType:'半年度',schemeName:'半年度考核方案',cycle:'2026年H1（2026/01/01 - 2026/06/30）',cycleId:'c5',creationSource:'auto',currentStage:'结果审定',stageProgress:'3/5',anomalyCount:2,dynamicAssessment:'locked',empCount:85,status:'active',admins:['王总监','刘VP','赵敏'],admin:'王总监',description:'半年度考核进行中',creator:'系统自动',createTime:'2026/01/01 00:00',updater:'王总监',updateTime:'2026/06/25 16:00'},
+  {id:8,name:'2026年5月绩效考核',schemeType:'月度',schemeName:'员工月度绩效考核',cycle:'2026年5月（2026/05/01 - 2026/05/31）',cycleId:'c10',creationSource:'auto',currentStage:'结果确认',stageProgress:'4/5',anomalyCount:0,dynamicAssessment:'dynamic',empCount:42,status:'paused',admins:['赵敏'],admin:'赵敏',description:'月度考核已暂停',creator:'系统自动',createTime:'2026/05/01 00:00',updater:'赵敏',updateTime:'2026/05/28 11:00'},
+  {id:9,name:'2026年4月绩效考核',schemeType:'月度',schemeName:'员工月度绩效考核',cycle:'2026年4月（2026/04/01 - 2026/04/30）',cycleId:'c9',creationSource:'auto',currentStage:'结果确认',stageProgress:'5/5',anomalyCount:0,dynamicAssessment:'dynamic',empCount:40,status:'ended_normal',admins:['赵敏'],admin:'赵敏',description:'月度考核已结束',creator:'系统自动',createTime:'2026/04/01 00:00',updater:'系统自动',updateTime:'2026/05/05 09:00'},
+  {id:10,name:'仓储部补录考核',schemeType:'季度',schemeName:'仓储特殊考核方案',cycle:'2026年Q2（2026/04/01 - 2026/06/30）',cycleId:'c2',creationSource:'manual',currentStage:'绩效考核',stageProgress:'2/5',anomalyCount:0,dynamicAssessment:'dynamic',empCount:12,status:'active',admins:['赵敏'],admin:'赵敏',description:'仓储部补录',creator:'赵敏（SSC）',createTime:'2026/05/15',updater:'赵敏（SSC）',updateTime:'2026/06/18 09:00'},
+  {id:11,name:'新员工转正考核',schemeType:'月度',schemeName:'试用期考核方案',cycle:'2026年7月（2026/07/01 - 2026/07/31）',cycleId:'c12',creationSource:'manual',currentStage:'',stageProgress:'0/5',anomalyCount:0,dynamicAssessment:'dynamic',empCount:3,status:'not_started',admins:['赵敏'],admin:'赵敏',description:'新入职员工转正考核',creator:'赵敏（SSC）',createTime:'2026/07/01 09:00',updater:'赵敏（SSC）',updateTime:'2026/07/01 09:00'},
+  {id:12,name:'2025年补录考核',schemeType:'年度',schemeName:'年度绩效方案 v1',cycle:'2025年度（2025/01/01 - 2025/12/31）',cycleId:'c7',creationSource:'manual',currentStage:'结果确认',stageProgress:'4/5',anomalyCount:0,dynamicAssessment:'locked',empCount:5,status:'ended_early',admins:['王总监'],admin:'王总监',description:'补录活动因数据口径异常提前终止',creator:'王总监（SSC）',createTime:'2025/12/20 10:00',updater:'王总监（SSC）',updateTime:'2026/01/10 16:00'}
 ];
+ACTIVITIES.forEach(function(a){a.plan=a.schemeName;});
 
 const HANDLER_LIST=[
   '李四（技术部经理）','王五（产品部经理）','赵六（HRBP）',
@@ -372,39 +384,7 @@ let selectedIds=new Set();
 let oplogFilter={type:'',search:''};
 let oplogTreeExpanded={};
 
-// Export settings
-let exportSettingsOpen=false;
-let exportSettingsTab='roster';
-const EXPORT_FIELDS={
-  roster:{name:'导出名单',fields:[
-    {key:'name',label:'姓名',def:true},{key:'emp',label:'工号',def:true},{key:'dept',label:'部门',def:true},
-    {key:'position',label:'岗位',def:true},{key:'level',label:'职级',def:false},{key:'relation',label:'考核关系',def:true},{key:'group',label:'考核组',def:false}
-  ]},
-  goals:{name:'导出目标',fields:[
-    {key:'name',label:'姓名',def:true},{key:'emp',label:'工号',def:true},{key:'dept',label:'部门',def:true},
-    {key:'goalName',label:'目标名称',def:true},{key:'goalType',label:'目标类型',def:true},{key:'weight',label:'权重',def:true},
-    {key:'standard',label:'衡量标准',def:true},{key:'completion',label:'完成情况',def:false}
-  ]},
-  eval:{name:'导出考核结果',fields:[
-    {key:'name',label:'姓名',def:true},{key:'emp',label:'工号',def:true},{key:'dept',label:'部门',def:true},
-    {key:'indicator',label:'指标名称',def:true},{key:'target',label:'目标值',def:true},{key:'actual',label:'完成值',def:true},
-    {key:'score',label:'得分',def:true},{key:'grade',label:'评价等级',def:true}
-  ]},
-  ratify:{name:'导出审定结果',fields:[
-    {key:'name',label:'姓名',def:true},{key:'emp',label:'工号',def:true},{key:'dept',label:'部门',def:true},
-    {key:'evalGrade',label:'初评等级',def:true},{key:'ratifyGrade',label:'审定等级',def:true},{key:'ratifier',label:'审定人',def:true},{key:'ratifyTime',label:'审定时间',def:false}
-  ]},
-  interview:{name:'导出面谈结果',fields:[
-    {key:'name',label:'姓名',def:true},{key:'emp',label:'工号',def:true},{key:'dept',label:'部门',def:true},
-    {key:'date',label:'面谈日期',def:true},{key:'content',label:'面谈内容',def:true},{key:'plan',label:'改进计划',def:true},{key:'confirm',label:'员工确认',def:false}
-  ]}
-};
-// Init settings from defaults
-if(!window._exportSettings){window._exportSettings={};for(var k in EXPORT_FIELDS){window._exportSettings[k]={};EXPORT_FIELDS[k].fields.forEach(function(f){window._exportSettings[k][f.key]=f.def;});}}
-
-function openExportSettings(){exportSettingsOpen=true;exportSettingsTab='roster';renderAll();}
-function closeExportSettings(){exportSettingsOpen=false;renderAll();}
-function toggleExportField(cat,key){window._exportSettings[cat][key]=!window._exportSettings[cat][key];renderAll();}
+// Confirm dialog
 let cfmOpen=false,cfmTitle='',cfmMsg='',cfmOnConfirm=null;
 function showConfirm(title,msg,onConfirm){cfmOpen=true;cfmTitle=title;cfmMsg=msg;cfmOnConfirm=onConfirm;renderAll();}
 function closeConfirm(){cfmOpen=false;cfmOnConfirm=null;renderAll();}
@@ -413,15 +393,6 @@ function doConfirm(){if(cfmOnConfirm)cfmOnConfirm();cfmOpen=false;cfmOnConfirm=n
 // ═══ 渲染主入口 ═══
 function renderAll(){
   renderApp();
-  /* Render standalone modals */
-  if(exportSettingsOpen){
-    var mc=document.getElementById('modalContainer');
-    if(!mc){mc=document.createElement('div');mc.id='modalContainer';document.body.appendChild(mc);}
-    mc.innerHTML=renderExportSettingsModal();
-  }else{
-    var mc=document.getElementById('modalContainer');
-    if(mc)mc.innerHTML='';
-  }
 }
 
 function getFiltered(){
@@ -518,6 +489,7 @@ function renderEmployeeList(){
   const st=STATUS_MAP[a.status];
   const canOperate=a.status==='active';
   const exceptionCount=EMPLOYEE_LIST.filter(r=>r.exception!=='-').length;
+  const displayedEmployees=getDisplayedEmployees();
 
   // 环节进度统计
   const stageNames=['目标制定','绩效考核','结果审定','结果确认','绩效面谈'];
@@ -552,14 +524,16 @@ function renderEmployeeList(){
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--dv);margin-bottom:16px">
+      <span style="font:400 13px/1 var(--f);color:var(--c6)">当前节点</span>
+      <select id="empNodeFilter" onchange="updateEmpFilter('node',this.value)" style="height:32px;padding:0 28px 0 10px;border:1px solid var(--c3);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c7);background:var(--sf);appearance:none;cursor:pointer"><option value=""${empFilter.node===''?' selected':''}>全部</option>${['目标制定','绩效考核','结果审定','结果确认','绩效面谈'].map(function(v){return '<option value="'+v+'"'+(empFilter.node===v?' selected':'')+'>'+v+'</option>';}).join('')}</select>
       <span style="font:400 13px/1 var(--f);color:var(--c6)">异常状态</span>
-      <select style="height:32px;padding:0 28px 0 10px;border:1px solid var(--c3);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c7);background:var(--sf);appearance:none;cursor:pointer"><option>全部</option><option>超时</option><option>逾期</option><option>缺少操作</option><option>不确认</option></select>
+      <select id="empExceptionFilter" onchange="updateEmpFilter('exception',this.value)" style="height:32px;padding:0 28px 0 10px;border:1px solid var(--c3);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c7);background:var(--sf);appearance:none;cursor:pointer"><option value=""${empFilter.exception===''?' selected':''}>全部</option>${['超时','逾期','缺少操作','不确认','未开启'].map(function(v){return '<option value="'+v+'"'+(empFilter.exception===v?' selected':'')+'>'+v+'</option>';}).join('')}</select>
       <span style="font:400 13px/1 var(--f);color:var(--c6)">考核组</span>
-      <select style="height:32px;padding:0 28px 0 10px;border:1px solid var(--c3);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c7);background:var(--sf);appearance:none;cursor:pointer"><option>全部</option><option>管理层组</option><option>员工组</option><option>默认组</option></select>
+      <select id="empGroupFilter" onchange="updateEmpFilter('group',this.value)" style="height:32px;padding:0 28px 0 10px;border:1px solid var(--c3);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c7);background:var(--sf);appearance:none;cursor:pointer"><option value=""${empFilter.group===''?' selected':''}>全部</option>${['管理层组','员工组','默认组'].map(function(v){return '<option value="'+v+'"'+(empFilter.group===v?' selected':'')+'>'+v+'</option>';}).join('')}</select>
       <span style="font:400 13px/1 var(--f);color:var(--c6)">部门</span>
-      <select style="height:32px;padding:0 28px 0 10px;border:1px solid var(--c3);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c7);background:var(--sf);appearance:none;cursor:pointer"><option>全部</option><option>技术部</option><option>产品部</option><option>设计部</option><option>人力资源部</option><option>市场部</option><option>运营部</option></select>
-      <input type="text" placeholder="搜索姓名、工号、部门、处理人" style="height:32px;border:1px solid var(--c3);border-radius:var(--r1);padding:0 10px;font:400 13px/1 var(--f);color:var(--c7);outline:none;width:200px" />
-      <button style="font:500 13px/1 var(--f);color:var(--c6);cursor:pointer;background:none;border:none;font-family:var(--f);display:flex;align-items:center;gap:4px" onclick="GHR_NAV.showToast('筛选已重置')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>重置</button>
+      <select id="empDeptFilter" onchange="updateEmpFilter('dept',this.value)" style="height:32px;padding:0 28px 0 10px;border:1px solid var(--c3);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c7);background:var(--sf);appearance:none;cursor:pointer"><option value=""${empFilter.dept===''?' selected':''}>全部</option>${Array.from(new Set(EMPLOYEE_LIST.map(function(e){return e.dept;}))).map(function(v){return '<option value="'+v+'"'+(empFilter.dept===v?' selected':'')+'>'+v+'</option>';}).join('')}</select>
+      <input id="empSearch" type="text" placeholder="搜索姓名、工号、部门、处理人" value="${empFilter.search}" oninput="updateEmpFilter('search',this.value)" style="height:32px;border:1px solid var(--c3);border-radius:var(--r1);padding:0 10px;font:400 13px/1 var(--f);color:var(--c7);outline:none;width:200px" />
+      <button style="font:500 13px/1 var(--f);color:var(--c6);cursor:pointer;background:none;border:none;font-family:var(--f);display:flex;align-items:center;gap:4px" onclick="resetEmpFilters()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>重置</button>
     </div>
     <div style="display:flex;align-items:center;gap:12px;padding:12px 0;flex-wrap:wrap">
       <!-- 左：当前环节 + hover全部 -->
@@ -633,6 +607,12 @@ function renderEmployeeList(){
           </div>
         </div>
 
+        <!-- 修改考核关系 -->
+        <button class="btn btn-s" onclick="showRelationModal()" style="gap:6px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          修改考核关系
+        </button>
+
         <!-- 导入 -->
         <div style="position:relative;display:inline-flex">
           <button class="btn btn-s" onclick="toggleEmpDropdown('empImportDd')" style="gap:6px">
@@ -661,12 +641,6 @@ function renderEmployeeList(){
           </div>
         </div>
 
-        <!-- 导出设置 -->
-        <button class="btn btn-s" onclick="openExportSettings()" style="gap:6px">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-          导出设置
-        </button>
-
         <!-- 批量操作 -->
         <div style="position:relative;display:inline-flex">
           <button class="btn btn-s" onclick="toggleEmpDropdown('empBatchDd')" style="gap:6px">
@@ -675,6 +649,7 @@ function renderEmployeeList(){
           <div id="empBatchDd" style="display:none;position:absolute;top:calc(100% + 4px);right:0;background:var(--sf);border:1px solid var(--c3);border-radius:var(--r1);box-shadow:0 6px 16px rgba(0,0,0,.08);min-width:120px;z-index:100;padding:4px 0">
             <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="GHR_NAV.showToast('批量催办已发送');toggleEmpDropdown('empBatchDd')">催办</div>
             <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="GHR_NAV.showToast('批量转交已提交');toggleEmpDropdown('empBatchDd')">转交</div>
+            <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="showRelationModal();toggleEmpDropdown('empBatchDd')">修改考核关系</div>
             <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="GHR_NAV.showToast('批量暂停已执行');toggleEmpDropdown('empBatchDd')">暂停</div>
             <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="GHR_NAV.showToast('批量继续已执行');toggleEmpDropdown('empBatchDd')">继续</div>
             <div style="height:1px;background:var(--dv);margin:4px 0"></div>
@@ -701,7 +676,8 @@ function renderEmployeeList(){
           <th style="background:var(--c1);font:600 12px/1 var(--f);color:var(--c6);text-align:left;padding:12px 14px;border-bottom:1px solid var(--dv);white-space:nowrap">操作</th>
         </tr></thead>
         <tbody>
-          ${EMPLOYEE_LIST.map((r,i)=>{
+          ${displayedEmployees.length?displayedEmployees.map((r,i)=>{
+            const originalIndex=EMPLOYEE_LIST.indexOf(r);
             // 等级颜色映射
             const gradeColor={'远超预期':'var(--ro)','超出预期':'var(--em700)','超出预期+':'var(--em700)','符合预期':'var(--pr)','符合预期+':'var(--ac700)','符合预期-':'var(--vi)','低于预期':'var(--c6)'};
             const gradeBg={'远超预期':'var(--ro50)','超出预期':'var(--em50)','超出预期+':'var(--em50)','符合预期':'var(--pr50)','符合预期+':'var(--ac50)','符合预期-':'var(--vi50)','低于预期':'var(--c1)'};
@@ -711,7 +687,7 @@ function renderEmployeeList(){
             const agBg=gradeBg[r.approveGrade]||null;
             return `<tr>
             <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9"><div class="ck" style="width:14px;height:14px;border:1px solid var(--c3);border-radius:3px;cursor:pointer"></div></td>
-            <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9"><a href="javascript:void(0)" onclick="viewEmployeeDetail(${i})" style="color:var(--c9);font-weight:500;text-decoration:none;cursor:pointer">${r.name}</a><div style="font:400 11px/1 var(--f);color:var(--c5);margin-top:2px">${r.nodeName} · ${r.status}${r.exception!=='-'?' · '+r.exception:''}</div></td>
+            <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9"><a href="javascript:void(0)" onclick="viewEmployeeDetail(${originalIndex})" style="color:var(--c9);font-weight:500;text-decoration:none;cursor:pointer">${r.name}</a><div style="font:400 11px/1 var(--f);color:var(--c5);margin-top:2px">${r.nodeName} · ${r.status}${r.exception!=='-'?' · '+r.exception:''}</div></td>
             <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9;font:400 12px/1 var(--f);color:var(--c6)">${r.emp}</td>
             <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9">${r.dept}</td>
             <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9">${r.handler}</td>
@@ -723,7 +699,7 @@ function renderEmployeeList(){
             <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9;font:400 12px/1 var(--f);color:var(--c6);white-space:nowrap">${r.updateTime}</td>
             <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9">
               <div style="display:flex;align-items:center;gap:2px;white-space:nowrap">
-                <a href="javascript:void(0)" onclick="viewEmployeeDetail(${i})" style="font:500 13px/1 var(--f);color:var(--c7);text-decoration:none;cursor:pointer">查看</a>
+                <a href="javascript:void(0)" onclick="viewEmployeeDetail(${originalIndex})" style="font:500 13px/1 var(--f);color:var(--c7);text-decoration:none;cursor:pointer">查看</a>
                 ${r.status!=='已完成'?`<span style="color:var(--c3);margin:0 2px">|</span>
                 <div style="position:relative">
                   <button class="btn btn-t" onclick="toggleEmpDropdown('empOp${i}')" style="font-size:12px;gap:3px">更多 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
@@ -746,24 +722,27 @@ function renderEmployeeList(){
                 </div>`:''}
               </div>
             </td>
-          </tr>`;}).join('')}
+          </tr>`;}).join(''):`<tr><td colspan="12" style="text-align:center;padding:40px;color:var(--c4);font-size:13px">暂无匹配的参与人</td></tr>`}
         </tbody>
       </table>
     </div>
     <div style="background:var(--sf);border:1px solid var(--c3);border-radius:var(--r2);box-shadow:var(--shadow-card);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;margin-top:16px">
       <div style="display:flex;align-items:center;gap:12px;font:400 13px/1 var(--f);color:var(--c7)"><span>已选 <span style="font-weight:600">0</span> 人</span><button style="font:500 13px/1 var(--f);color:var(--pr);cursor:pointer;background:none;border:none;font-family:var(--f)">清空选择</button></div>
-      <div style="display:flex;align-items:center;gap:16px"><span style="font:400 13px/1 var(--f);color:var(--c6)">共 ${EMPLOYEE_LIST.length} 条</span><div style="display:flex;align-items:center;gap:4px"><button style="min-width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:var(--r1);font:500 13px/1 var(--f);color:var(--c5);border:1px solid var(--dv);background:var(--sf);cursor:not-allowed">&lt;</button><button style="min-width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:var(--r1);font:500 13px/1 var(--f);color:#FFF;border:1px solid var(--pr);background:var(--pr)">1</button><button style="min-width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:var(--r1);font:500 13px/1 var(--f);color:var(--c7);border:1px solid var(--c3);background:var(--sf);cursor:not-allowed">&gt;</button></div></div>
+      <div style="display:flex;align-items:center;gap:16px"><span style="font:400 13px/1 var(--f);color:var(--c6)">共 ${displayedEmployees.length} 条</span><div style="display:flex;align-items:center;gap:4px"><button style="min-width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:var(--r1);font:500 13px/1 var(--f);color:var(--c5);border:1px solid var(--dv);background:var(--sf);cursor:not-allowed">&lt;</button><button style="min-width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:var(--r1);font:500 13px/1 var(--f);color:#FFF;border:1px solid var(--pr);background:var(--pr)">1</button><button style="min-width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:var(--r1);font:500 13px/1 var(--f);color:var(--c7);border:1px solid var(--c3);background:var(--sf);cursor:not-allowed">&gt;</button></div></div>
     </div>
   </div>`;
 }
 
 function renderEmployeeDetail(){
   const emp=EMPLOYEE_LIST[currentEmployeeIdx];
-  const d=EMPLOYEE_DETAIL[currentEmployeeIdx];
-  if(!emp||!d) return '';
+  if(!emp) return '';
+  const d=EMPLOYEE_DETAIL.find(function(item){return item.emp===emp.emp;})||{
+    name:emp.name,emp:emp.emp,dept:emp.dept,position:'员工',level:'—',assessor:emp.handler,
+    stages:['目标制定','绩效考核','结果审定','结果确认','绩效面谈'].map(function(name,index){return {name:name,status:index+1<emp.node?'done':index+1===emp.node&&emp.status!=='未开始'?'active':'pending',nodes:[]};})
+  };
   const nodes=NODE_DETAIL_DATA[0];
   const statusStyle={'进行中':'color:var(--pr);background:var(--pr50)','已提交':'color:var(--em700);background:var(--em50)','未开始':'color:var(--c5);background:var(--c2)'};
-  return `<div>
+  return `<div style="max-width:1120px">
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;font:400 13px/1 var(--f);color:var(--c6)">
       <a href="javascript:void(0)" onclick="backToEmployees()" style="color:var(--pr);text-decoration:none;cursor:pointer">← 返回</a>
       <span style="color:var(--c4)">|</span><span>活动详情</span><span style="color:var(--c4)">/</span><span>员工详情</span>
@@ -772,7 +751,7 @@ function renderEmployeeDetail(){
       <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px">
         <div>
           <div style="font:700 20px/1.3 var(--f);color:var(--c9);display:flex;align-items:center;gap:10px">${d.name}（${d.emp}）<span style="font:500 12px/1 var(--f);padding:2px 10px;border-radius:4px;color:var(--em700);background:var(--em50)">${emp.status}</span></div>
-          <div style="font:400 13px/1 var(--f);color:var(--c6);margin-top:6px">${d.dept}<span style="margin:0 6px;color:var(--c4)">/</span>${d.position}<span style="margin:0 6px;color:var(--c4)">/</span>员工组</div>
+          <div style="font:400 13px/1 var(--f);color:var(--c6);margin-top:6px">${d.dept}<span style="margin:0 6px;color:var(--c4)">/</span>${d.position}<span style="margin:0 6px;color:var(--c4)">/</span>${getEmpGroup(emp)}</div>
         </div>
         <div style="display:flex;gap:8px"><button class="btn btn-s" onclick="GHR_NAV.showToast('已发送催办提醒')">催办</button><button class="btn btn-s" onclick="showTransferDlg()">转交</button></div>
       </div>
@@ -820,355 +799,40 @@ function renderEmployeeDetail(){
 function renderApp(){
   const ct=document.getElementById('ct') || document.getElementById('app');
   if(!ct) return;
-  if(currentView==='employees'){
-    ct.innerHTML=renderEmployeeList();
+  if(!ACTIVITIES.some(function(a){return a.id===currentDetailId;})){
+    ct.innerHTML='<div style="background:var(--sf);border:1px solid var(--c3);border-radius:var(--r3);padding:48px;text-align:center"><div style="font:600 16px/1.4 var(--f);color:var(--c8);margin-bottom:12px">未找到该考核活动</div><a href="perf-activity.html" class="btn btn-s" style="text-decoration:none">返回活动列表</a></div>';
     return;
   }
-  if(currentView==='employeeDetail'){
-    ct.innerHTML=renderEmployeeDetail();
-    return;
-  }
-  if(currentView==='scheme'){
-    ct.innerHTML=renderSchemeDetailPage();
-    return;
-  }
-  if(currentView==='oplog'){
-    ct.innerHTML=renderOpLogPage();
-    return;
-  }
-  const data=getFiltered();
-
-  ct.innerHTML=`
-    <div class="fi">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-        <div>
-          <h1 style="font:700 20px/1.2 var(--f);color:var(--c9);margin-bottom:4px">活动管理</h1>
-          <p style="font:400 13px/1 var(--f);color:var(--c5)">管理绩效考核活动的发起与执行</p>
-        </div>
-        <button class="btn btn-p" onclick="openCreateModal()">${I.plus} 发起活动</button>
-      </div>
-      ${renderFilterBar()}
-      ${selectedIds.size>0?renderBatchBar():''}
-      ${renderTable(data)}
-    </div>
-    ${renderModals()}
-    ${cfmOpen?`<div class="cfm-ov" onclick="if(event.target===this)closeConfirm()"><div class="cfm-box"><div class="cfm-title">${cfmTitle}</div><div class="cfm-msg">${cfmMsg}</div><div class="cfm-btns"><button class="btn btn-s" onclick="closeConfirm()">取消</button><button class="btn btn-danger" onclick="doConfirm()">确认</button></div></div></div>`:''}
-  `;
+  if(currentView==='employees')ct.innerHTML=renderEmployeeList();
+  else if(currentView==='employeeDetail')ct.innerHTML=renderEmployeeDetail();
+  else if(currentView==='scheme')ct.innerHTML=renderSchemeDetailPage();
+  else if(currentView==='oplog')ct.innerHTML=renderOpLogPage();
 }
 
-function renderFilterBar(){
-  return `<div class="fl-bar">
-    <div class="fl-search">
-      ${I.search}
-      <input id="flSearch" placeholder="搜索活动名称…" value="${filter.search}" oninput="onSearchInput(this.value)" />
-    </div>
-    <select class="fl-sel" id="flStatus" onchange="onStatusChange(this.value)">
-      <option value=""${filter.status===''?' selected':''}>全部状态</option>
-      <option value="not_started"${filter.status==='not_started'?' selected':''}>未开始</option>
-      <option value="active"${filter.status==='active'?' selected':''}>进行中</option>
-      <option value="ended"${filter.status==='ended'?' selected':''}>已结束</option>
-      <option value="archived"${filter.status==='archived'?' selected':''}>已归档</option>
-    </select>
-    <div class="fl-actions">
-      <button class="btn btn-s" onclick="resetFilters()">${I.x} 重置</button>
-    </div>
-  </div>`;
-}
-
-function renderTable(data){
-  const allChecked=data.length>0 && data.every(a=>selectedIds.has(a.id));
-
-  const rows=data.map(a=>{
-    const st=STATUS_MAP[a.status];
-    const checked=selectedIds.has(a.id);
-    const dynamicLabel=a.dynamicAssessment==='dynamic'?'动态':'锁定';
-    const dynamicCls=a.dynamicAssessment==='dynamic'?'color:var(--pr);background:var(--pr50)':'color:var(--c6);background:var(--c1)';
-    return `<tr>
-      <td class="col-ck">
-        <div class="ck${checked?' on':''}" onclick="toggleSelect(${a.id})">${I.check}</div>
-      </td>
-      <td class="cell-name"><a class="cell-link" href="javascript:void(0)" onclick="viewActivity(${a.id})">${a.name}</a></td>
-      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:400 12px/1 var(--f);color:var(--c5)" title="${a.description||''}">${a.description||'—'}</td>
-      <td class="cell-cycle">${a.cycle}</td>
-      <td><span style="display:inline-flex;font:500 11px/1 var(--f);padding:3px 8px;border-radius:4px;${dynamicCls}">${dynamicLabel}</span></td>
-      <td class="cell-plan">${a.plan}</td>
-      <td class="cell-count">${a.empCount}</td>
-      <td><span class="cell-status ${st.cls}">${st.label}</span></td>
-      <td class="cell-creator">${a.updater}</td>
-      <td class="cell-date">${a.updateTime}</td>
-      <td class="cell-creator">${(a.admins||[a.admin||a.creator]).map(function(id){var found=ADMIN_LIST.find(function(x){return x.id===id;});return found?found.name:id;}).join('、')}</td>
-      <td>
-        <div class="cell-actions">
-          <button class="btn btn-t" onclick="viewActivity(${a.id})" title="查看">查看</button>
-          ${a.status==='not_started'?`<button class="btn btn-t" onclick="editActivity(${a.id})" title="编辑">编辑</button><button class="btn btn-t" onclick="enableActivity(${a.id})" title="启用" style="color:var(--em700)">启用</button>`:''}
-          ${a.status==='ended'?`<button class="btn btn-t" onclick="archiveActivity(${a.id})" title="归档" style="color:var(--vi)">归档</button><button class="btn btn-t" onclick="deleteActivity(${a.id})" title="删除" style="color:var(--ro)">删除</button>`:''}
-        </div>
-      </td>
-    </tr>`;
-  }).join('');
-
-  const pgText=data.length>0?`第 1-${data.length} 条，共 ${data.length} 条`:'暂无数据';
-
-  return `<div class="tbl-card">
-    <div class="tbl-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th class="col-ck">
-              <div class="ck${allChecked?' on':''}" onclick="toggleSelectAll()">${I.check}</div>
-            </th>
-            <th>活动名称</th>
-            <th>活动说明</th>
-            <th>考核周期</th>
-            <th>考核关系</th>
-            <th>关联方案</th>
-            <th>被考核人数</th>
-            <th>状态</th>
-            <th>更新人</th>
-            <th>最近更新时间</th>
-            <th>活动管理员</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody>${rows.length?rows:`<tr><td colspan="11" style="text-align:center;padding:40px;color:var(--c4);font-size:13px">暂无匹配的考核活动</td></tr>`}</tbody>
-      </table>
-    </div>
-    <div class="pg-bar">
-      <div class="pg-info">
-        <span>${pgText}</span>
-        <span>每页 20 条</span>
-      </div>
-      <div class="pg-nav">
-        <button class="pg-btn" disabled>${I.chevL}</button>
-        <button class="pg-btn on">1</button>
-        <button class="pg-btn" disabled>${I.chevR}</button>
-      </div>
-    </div>
-  </div>`;
-}
-
-function renderBatchBar(){
-  const ids=[...selectedIds];
-  return `<div class="batch-bar" style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;padding:12px 20px">
-    <div class="batch-info">已选 <span class="cnt">${ids.length}</span> 项</div>
-    <div class="batch-actions">
-      <button class="btn btn-s" style="color:var(--ro)" onclick="batchDelete()">批量删除</button>
-      <button class="btn btn-s" onclick="selectedIds.clear();renderApp()">取消选择</button>
-    </div>
-  </div>`;
-}
-function batchDelete(){
-  const ids=[...selectedIds];
-  showConfirm('批量删除',`确定要删除 ${ids.length} 个活动吗？此操作不可撤销。`,()=>{
-    ACTIVITIES=ACTIVITIES.filter(a=>!selectedIds.has(a.id));
-    selectedIds.clear();renderApp();GHR_NAV.showToast(`已删除 ${ids.length} 个活动`);
-  });
-}
-function deleteActivity(id){
-  const a=ACTIVITIES.find(x=>x.id===id);
-  if(!a)return;
-  showConfirm('删除活动',`确定要删除「${a.name}」吗？此操作不可撤销。`,()=>{
-    ACTIVITIES=ACTIVITIES.filter(x=>x.id!==id);selectedIds.delete(id);renderApp();GHR_NAV.showToast('已删除');
-  });
-}
-function enableActivity(id){
-  const a=ACTIVITIES.find(x=>x.id===id);
-  if(!a)return;
-  showConfirm('启用活动',`确定要启用「${a.name}」吗？启用后将进入进行中状态。`,()=>{
-    a.status='active';a.updater='当前用户';a.updateTime=formatTime(new Date());
-    renderApp();GHR_NAV.showToast('已启用');
-  });
-}
-function archiveActivity(id){
-  const a=ACTIVITIES.find(x=>x.id===id);
-  if(!a)return;
-  showConfirm('归档活动',`确定要归档「${a.name}」吗？归档后数据将锁定，不可编辑、删除。`,()=>{
-    a.status='archived';a.updater='当前用户';a.updateTime=formatTime(new Date());
-    renderApp();GHR_NAV.showToast('已归档');
-  });
-}
-
-// ═══ Modal 渲染 ═══
-function renderModals(){
-  let modalContent='';
-  if(modalState.type==='create'||modalState.type==='edit'){
-    const d=modalState.data||{};
-    const title=modalState.type==='create'?'发起活动':'编辑活动';
-    const planOptions=PLANS.map(p=>`<option value="${p}"${d.plan===p?' selected':''}>${p}</option>`).join('');
-    modalContent=`<div class="modal-hd">
-      <span class="modal-hd-t">${title}</span>
-      <button class="modal-close" onclick="closeModal()">${I.x}</button>
-    </div>
-    <div class="modal-bd">
-      <div class="form-row">
-        <div class="modal-label">活动名称<span class="req">*</span></div>
-        <input class="modal-input" id="fName" value="${d.name||''}" placeholder="请输入活动名称" />
-        <div class="form-err" id="errName">请输入活动名称</div>
-      </div>
-      <div class="form-row">
-        <div class="modal-label">关联方案<span class="req">*</span></div>
-        <select class="fl-sel" id="fPlan" style="width:100%;height:36px" onchange="onPlanChange(this.value)">
-          <option value="">请选择关联方案</option>
-          ${planOptions}
-        </select>
-        <div class="form-err" id="errPlan">请选择关联方案</div>
-      </div>
-      <div class="form-row">
-        <div class="modal-label">考核周期<span class="req">*</span></div>
-        <select class="fl-sel" id="fCycle" style="width:100%;height:36px">
-          <option value="">请选择考核周期</option>
-          <optgroup label="年度考核">
-            ${CYCLES.filter(c=>c.id==='annual').map(c=>`<option value="${c.label}" data-start="${c.start}" data-end="${c.end}"${d.cycleLabel===c.label?' selected':''}>${c.label}（${c.start} - ${c.end}）</option>`).join('')}
-          </optgroup>
-          <optgroup label="半年度考核">
-            ${CYCLES.filter(c=>c.id==='semi').map(c=>`<option value="${c.label}" data-start="${c.start}" data-end="${c.end}"${d.cycleLabel===c.label?' selected':''}>${c.label}（${c.start} - ${c.end}）</option>`).join('')}
-          </optgroup>
-          <optgroup label="季度考核">
-            ${CYCLES.filter(c=>c.id.startsWith('q')).map(c=>`<option value="${c.label}" data-start="${c.start}" data-end="${c.end}"${d.cycleLabel===c.label?' selected':''}>${c.label}（${c.start} - ${c.end}）</option>`).join('')}
-          </optgroup>
-          <optgroup label="月度考核">
-            ${CYCLES.filter(c=>!['annual','semi'].includes(c.id)&&!c.id.startsWith('q')).map(c=>`<option value="${c.label}" data-start="${c.start}" data-end="${c.end}"${d.cycleLabel===c.label?' selected':''}>${c.label}（${c.start} - ${c.end}）</option>`).join('')}
-          </optgroup>
-        </select>
-        <div class="form-err" id="errCycle">请选择考核周期</div>
-      </div>
-      <div class="form-row">
-        <div class="modal-label">动态考核关系<span class="req">*</span></div>
-        <div style="display:flex;gap:24px;padding:8px 0">
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font:400 13px/1 var(--f);color:var(--c7)">
-            <input type="radio" name="fDynamic" value="locked"${(!d.dynamicAssessment||d.dynamicAssessment==='locked')?' checked':''} style="accent-color:var(--pr)" />
-            开启时锁定考核关系
-          </label>
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font:400 13px/1 var(--f);color:var(--c7)">
-            <input type="radio" name="fDynamic" value="dynamic"${d.dynamicAssessment==='dynamic'?' checked':''} style="accent-color:var(--pr)" />
-            动态获取考核关系
-          </label>
-        </div>
-        <div style="font:400 12px/1.4 var(--f);color:var(--c5);margin-top:4px">锁定：活动发起时快照考核关系，后续不随组织调整变化；动态：每次环节启动时实时查询当前汇报关系</div>
-      </div>
-      <div class="form-row">
-        <div class="modal-label">活动管理员<span class="req">*</span></div>
-        <div style="border:1px solid var(--c2);border-radius:var(--r1);overflow:hidden">
-          <input id="fAdminSearch" style="width:100%;height:36px;padding:0 12px;border:none;border-bottom:1px solid var(--dv);border-radius:0;font:400 13px/1 var(--f);color:var(--c9);outline:none" placeholder="🔍 搜索工号/姓名…" oninput="filterAdminListAct(this.value)">
-          <div id="fAdminList" style="max-height:180px;overflow-y:auto">
-            ${ADMIN_LIST.map(a=>{
-              var sel=d.admins?d.admins.includes(a.id):(d.admin===a.id);
-              if(!d.admins&&!d.admin&&a.id==='EMP0088') sel=true;
-              return `<label style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;cursor:pointer;font:400 13px/1 var(--f);color:var(--c7);border-bottom:1px solid var(--dv);transition:background .1s;${sel?'background:var(--pr50)':''}" onmouseover="if(!this.querySelector('input').checked) this.style.background='var(--c0)'" onmouseout="if(!this.querySelector('input').checked) this.style.background=''">
-                <span style="display:flex;align-items:center;gap:8px"><input type="checkbox" value="${a.id}" ${sel?'checked':''} onchange="updateAdminSelectionAct(this)" style="accent-color:var(--pr)">${a.name}</span>
-                <span style="font:400 11px/1 var(--m);color:var(--c4)">${a.id}</span>
-              </label>`;
-            }).join('')}
-          </div>
-        </div>
-        <div id="fAdminHint" style="font:400 11px/1 var(--f);color:var(--pr);margin-top:4px;display:none"></div>
-        <div id="fAdminCount" style="font:400 11px/1 var(--f);color:var(--c5);margin-top:2px">已选 ${(()=>{var c=0;if(d.admins)c=d.admins.length;else if(d.admin)c=1;else c=1;return c;})()} 人</div>
-        <div class="form-err" id="errAdmin">请选择至少一位活动管理员</div>
-        <div style="font:400 12px/1.4 var(--f);color:var(--c5);margin-top:4px">活动管理员拥有管理考核活动的权限，包括启停环节、修改考核关系等操作</div>
-      </div>
-      <div class="form-row">
-        <div class="modal-label">活动说明</div>
-        <textarea class="modal-textarea" id="fDesc" placeholder="请输入活动说明（选填）">${d.description||''}</textarea>
-      </div>
-    </div>
-    <div class="modal-ft">
-      <button class="btn btn-s" onclick="closeModal()">取消</button>
-      <button class="btn btn-p" onclick="submitForm()">确认</button>
-    </div>`;
-  }
-
-  return `<div class="modal-ov${modalState.type?' on':''}" id="modalOv" onclick="onModalOverlayClick(event)">
-    <div class="modal">${modalContent}</div>
-  </div>`;
-}
-
-function renderExportSettingsModal(){
-  if(!exportSettingsOpen)return'';
-  var tab=exportSettingsTab;
-  var cfg=EXPORT_FIELDS[tab];
-  var tabs='';
-  for(var k in EXPORT_FIELDS){
-    tabs+='<button style="padding:8px 14px;border:none;border-bottom:2px solid '+(k===tab?'var(--pr)':'transparent')+';background:transparent;font:'+(k===tab?'500':'400')+' 13px/1 var(--f);color:'+(k===tab?'var(--pr)':'var(--c5)')+';cursor:pointer" onclick="exportSettingsTab=\''+k+'\';renderAll()">'+EXPORT_FIELDS[k].name+'</button>';
-  }
-  var fields='';
-  cfg.fields.forEach(function(f){
-    var chk=window._exportSettings[tab][f.key];
-    fields+='<label style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--dv);cursor:pointer;font:400 13px/1 var(--f);color:var(--c7)"><input type="checkbox" '+(chk?'checked':'')+' onchange="toggleExportField(\''+tab+'\',\''+f.key+'\')" style="accent-color:var(--pr)">'+f.label+'<span style="font:400 11px/1 var(--f);color:var(--c4);margin-left:auto">'+(f.def?'默认':'')+'</span></label>';
-  });
-  return `<div class="modal-ov on" onclick="if(event.target===this)closeExportSettings()">
-    <div class="modal" style="width:560px">
-      <div class="modal-hd"><span class="modal-hd-t">导出设置</span><button class="modal-close" onclick="closeExportSettings()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
-      <div class="modal-bd">
-        <div style="display:flex;gap:0;border-bottom:1px solid var(--dv);margin-bottom:16px">${tabs}</div>
-        <div style="font:500 13px/1 var(--f);color:var(--c9);margin-bottom:4px">${cfg.name} — 选择导出字段</div>
-        <div style="max-height:360px;overflow-y:auto">${fields}</div>
-      </div>
-      <div class="modal-ft">
-        <button class="btn btn-s" onclick="closeExportSettings()">关闭</button>
-      </div>
-    </div>
-  </div>`;
-}
-
-// ═══ 交互处理 ═══
-function onSearchInput(val){
-  filter.search=val.trim();
-  renderApp();
-  const el=document.getElementById('flSearch');
-  if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length)}
-}
-
-function onStatusChange(val){
-  filter.status=val;
-  renderApp();
-}
-
-function resetFilters(){
-  filter={search:'',status:''};
-  renderApp();
-}
-
-function toggleSelect(id){
-  if(selectedIds.has(id)) selectedIds.delete(id);
-  else selectedIds.add(id);
-  renderApp();
-}
-
-function toggleSelectAll(){
-  const data=getFiltered();
-  const allChecked=data.length>0 && data.every(a=>selectedIds.has(a.id));
-  if(allChecked){
-    data.forEach(a=>selectedIds.delete(a.id));
-  }else{
-    data.forEach(a=>selectedIds.add(a.id));
-  }
-  renderApp();
-}
-
-function openCreateModal(){
-  modalState={type:'create',data:{}};
-  renderApp();
-  setTimeout(()=>{
-    const el=document.getElementById('fName');
-    if(el) el.focus();
-  },50);
-}
-
-function editActivity(id){
-  const a=ACTIVITIES.find(x=>x.id===id);
-  if(!a) return;
-  const cycleLabel=a.cycle.split('（')[0]||'';
-  modalState={type:'edit',data:{...a,cycleLabel}};
-  renderApp();
-  setTimeout(()=>{
-    const el=document.getElementById('fName');
-    if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length)}
-  },50);
-}
-
-let currentView='list'; // 'list', 'employees', 'employeeDetail'
-let currentDetailId=null;
+let currentView='employees'; // 独立详情页默认展示参与人
+let currentDetailId=parseInt(new URLSearchParams(window.location.search).get('id'))||1;
 let currentEmployeeIdx=null;
+let empFilter={node:'',exception:'',group:'',dept:'',search:''};
+const EMP_FILTER_KEY='perf-activity-detail-filters-'+currentDetailId;
+try{const saved=sessionStorage.getItem(EMP_FILTER_KEY);if(saved)empFilter=JSON.parse(saved);}catch(e){}
+
+function getEmpGroup(e){
+  if(['王五','吴九','郑十二'].indexOf(e.name)>=0)return '管理层组';
+  if(['技术部','产品部'].indexOf(e.dept)>=0)return '默认组';
+  return '员工组';
+}
+function getDisplayedEmployees(){
+  return EMPLOYEE_LIST.filter(function(e){
+    if(empFilter.node&&e.nodeName!==empFilter.node)return false;
+    if(empFilter.exception&&e.exception!==empFilter.exception)return false;
+    if(empFilter.group&&getEmpGroup(e)!==empFilter.group)return false;
+    if(empFilter.dept&&e.dept!==empFilter.dept)return false;
+    if(empFilter.search){const q=empFilter.search.toLowerCase();if([e.name,e.emp,e.dept,e.handler].join(' ').toLowerCase().indexOf(q)<0)return false;}
+    return true;
+  });
+}
+function updateEmpFilter(key,value){empFilter[key]=value;sessionStorage.setItem(EMP_FILTER_KEY,JSON.stringify(empFilter));renderApp();}
+function resetEmpFilters(){empFilter={node:'',exception:'',group:'',dept:'',search:''};sessionStorage.setItem(EMP_FILTER_KEY,JSON.stringify(empFilter));renderApp();}
 
 function viewActivity(id){
   currentDetailId=id;
@@ -1177,10 +841,7 @@ function viewActivity(id){
 }
 
 function backToList(){
-  currentView='list';
-  currentDetailId=null;
-  currentEmployeeIdx=null;
-  renderApp();
+  window.location.href='perf-activity.html';
 }
 
 function backToEmployees(){
@@ -1213,10 +874,10 @@ const OP_LOGS=[
   // ═══ 活动管理类 ═══
   {time:'2026-06-27 09:15',operator:'Kim',operatorId:'EMP0088',type:'创建活动',typeGroup:'活动管理',target:'2026年Q2绩效考核',detail:'创建绩效考核活动，关联方案「年度绩效方案 v2」，考核周期Q2'},
   {time:'2026-06-26 16:00',operator:'Kim',operatorId:'EMP0088',type:'编辑活动',typeGroup:'活动管理',target:'2026年Q3绩效考核',detail:'修改活动说明，更新考核周期描述'},
-  {time:'2026-06-25 14:30',operator:'张经理',operatorId:'EMP0012',type:'启用活动',typeGroup:'活动管理',target:'2026年Q2绩效考核',detail:'将活动状态从「未开始」切换为「进行中」，启动考核流程'},
+  {time:'2026-06-25 14:30',operator:'张经理',operatorId:'EMP0012',type:'进入执行',typeGroup:'活动管理',target:'2026年Q2绩效考核',detail:'将活动状态从「未开始」切换为「进行中」，启动考核流程'},
   {time:'2026-06-24 10:00',operator:'Kim',operatorId:'EMP0088',type:'暂停活动',typeGroup:'活动管理',target:'2026年Q2绩效考核',detail:'暂停整个活动，所有进行中的环节冻结'},
-  {time:'2026-06-23 18:00',operator:'Kim',operatorId:'EMP0088',type:'继续活动',typeGroup:'活动管理',target:'2026年Q2绩效考核',detail:'恢复活动，所有环节继续执行'},
-  {time:'2026-06-22 15:00',operator:'张经理',operatorId:'EMP0012',type:'归档',typeGroup:'活动管理',target:'2025年度绩效考核',detail:'年度考核全部完成，确认归档，数据锁定'},
+  {time:'2026-06-23 18:00',operator:'Kim',operatorId:'EMP0088',type:'恢复执行',typeGroup:'活动管理',target:'2026年Q2绩效考核',detail:'恢复活动，所有环节继续执行'},
+  {time:'2026-06-22 15:00',operator:'张经理',operatorId:'EMP0012',type:'正常结束',typeGroup:'活动管理',target:'2025年度绩效考核',detail:'年度考核全部完成，确认归档，数据锁定'},
   // ═══ 环节管理类 ═══
   {time:'2026-06-21 09:30',operator:'Kim',operatorId:'EMP0088',type:'开启环节',typeGroup:'环节管理',target:'绩效考核 - 全部',detail:'手动开启绩效考核环节，128人进入考核流程'},
   {time:'2026-06-20 14:00',operator:'Kim',operatorId:'EMP0088',type:'结束环节',typeGroup:'环节管理',target:'目标制定 - 全部',detail:'手动结束目标制定环节，128人已提交目标'},
@@ -1256,7 +917,7 @@ function renderSchemeDetailPage(){
   const a=ACTIVITIES.find(x=>x.id===currentDetailId);
   if(!a) return '';
   const st=STATUS_MAP[a.status];
-  return `<div>
+  return `<div style="max-width:1120px">
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;font:400 13px/1 var(--f);color:var(--c6)">
       <a href="javascript:void(0)" onclick="backToEmployeesFromScheme()" style="color:var(--pr);text-decoration:none;cursor:pointer">← 返回</a>
       <span style="color:var(--c4)">|</span><span>活动管理</span><span style="color:var(--c4)">/</span><span>${a.name}</span><span style="color:var(--c4)">/</span><span>活动详情</span>
@@ -1336,8 +997,8 @@ function renderSchemeDetailPage(){
 function renderOpLogPage(){
   const typeCls={
     // 活动管理
-    '创建活动':'color:var(--pr);background:var(--pr50)','编辑活动':'color:var(--pr);background:var(--pr50)','启用活动':'color:var(--em700);background:var(--em50)',
-    '暂停活动':'color:var(--ac700);background:var(--ac50)','继续活动':'color:var(--em700);background:var(--em50)','归档':'color:var(--vi);background:var(--vi50)',
+    '创建活动':'color:var(--pr);background:var(--pr50)','编辑活动':'color:var(--pr);background:var(--pr50)','进入执行':'color:var(--em700);background:var(--em50)',
+    '暂停活动':'color:var(--ac700);background:var(--ac50)','恢复执行':'color:var(--em700);background:var(--em50)','正常结束':'color:var(--vi);background:var(--vi50)',
     // 环节管理
     '开启环节':'color:var(--pr);background:var(--pr50)','结束环节':'color:var(--em700);background:var(--em50)',
     '暂停环节':'color:var(--ac700);background:var(--ac50)','继续环节':'color:var(--em700);background:var(--em50)','终止环节':'color:var(--ro);background:var(--ro50)',
@@ -1376,7 +1037,7 @@ function renderOpLogPage(){
     <div id="oplogTypeDd" style="display:none;position:absolute;top:calc(100% + 4px);left:0;background:var(--sf);border:1px solid var(--c3);border-radius:var(--r1);box-shadow:var(--shadow-dropdown);min-width:220px;z-index:100;padding:4px 0;max-height:400px;overflow-y:auto">
       <div class="oplog-type-item${oplogFilter.type===''?' active':''}" onclick="oplogFilter.type='';renderApp()"><span class="dot"></span>全部类型</div>
       <div class="oplog-tree-sep"></div>
-      ${g('act','活动管理',['创建活动','编辑活动','启用活动','暂停活动','继续活动','归档'])}
+      ${g('act','活动管理',['创建活动','编辑活动','进入执行','暂停活动','恢复执行','正常结束'])}
       <div class="oplog-tree-sep"></div>
       ${g('stage','环节管理',['开启环节','结束环节','暂停环节','继续环节','终止环节'])}
       <div class="oplog-tree-sep"></div>
@@ -1391,7 +1052,7 @@ function renderOpLogPage(){
       ${g('flow','流程处理',['驳回','审批通过'])}
     </div>`;
 
-  return `<div>
+  return `<div style="max-width:1120px">
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;font:400 13px/1 var(--f);color:var(--c6)">
       <a href="javascript:void(0)" onclick="backToEmployeesFromOplog()" style="color:var(--pr);text-decoration:none;cursor:pointer">← 返回</a>
       <span style="color:var(--c4)">|</span><span>活动详情</span><span style="color:var(--c4)">/</span><span>操作记录</span>
@@ -1500,7 +1161,7 @@ function showArchiveDlg(){
           <span style="font:400 12px/1 var(--f);color:var(--ac700)">${s.pending} 人未完成</span>
         </div>`).join('')}
       </div>
-      <div style="font:400 13px/1.5 var(--f);color:var(--c6);margin-bottom:20px">请先到对应环节手动结束，再进行归档操作。</div>
+      <div style="font:400 13px/1.5 var(--f);color:var(--c6);margin-bottom:20px">请先到对应环节手动结束，再进行正常结束操作。</div>
       <div style="display:flex;justify-content:flex-end;gap:8px">
         <button class="btn btn-s" onclick="this.closest('div[style*=\"position:fixed\"]').remove()">关闭</button>
         <button class="btn btn-p" onclick="GHR_NAV.showToast('跳转到环节管理');this.closest('div[style*=\"position:fixed\"]').remove()">去处理</button>
@@ -1798,20 +1459,11 @@ function onModalOverlayClick(e){
 
 // ESC 关闭弹窗
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){
-    if(exportSettingsOpen){closeExportSettings();return;}
-    if(modalState.type)closeModal();
-  }
+  if(e.key==='Escape' && modalState.type) closeModal();
 });
 
 // ═══ 初始化 ═══
 GHR_NAV.init('perf','活动管理');
-
-/* Dedicated detail page — always shows employees view */
-var p=new URLSearchParams(window.location.search);
-var scheme=p.get('scheme');
-var map={S01:1,S02:3,S04:1,S06:1,S07:4,S08:1};
-currentView='employees';currentDetailId=map[scheme]||1;
 renderAll();
 </script>
 </body>

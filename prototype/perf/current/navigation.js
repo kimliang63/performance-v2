@@ -51,8 +51,7 @@ const GHR_NAV = {
         {n:'绩效方案',ic:'file',file:'perf-scheme-list.html'},
       ]},
       {n:'绩效活动',ic:'calendar',items:[
-        {n:'活动管理(旧)',ic:'grid',file:'perf-activity.html'},
-        {n:'活动管理',ic:'grid',file:'perf-activity-new.html'},
+        {n:'活动管理',ic:'grid',file:'perf-activity.html'},
       ]},
       {n:'工作台',ic:'home',items:[
         {n:'我的绩效',ic:'target',file:'employee/demo-workbench-home.html'},
