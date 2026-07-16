@@ -42,12 +42,12 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .grade-select select:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .grade-select::after{content:'';position:absolute;right:8px;top:50%;transform:translateY(-50%);width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid var(--c4);pointer-events:none}
 .grade-select select option{padding:8px 12px;font:400 13px/1.4 var(--f)}
-.grade-select select option[value="超出预期"]{color:var(--em700)}
+.grade-select select option[value="超出预期"]{color:var(--pr)}
 .grade-select select option[value="符合预期+"]{color:var(--ac)}
 .grade-select select option[value="符合预期"]{color:var(--ac)}
 .grade-select select option[value="符合预期-"]{color:var(--ro)}
 .grade-select select option[value="低于预期"]{color:var(--ro)}
-.grade-select select option[value="远超预期"]{color:var(--em700)}
+.grade-select select option[value="远超预期"]{color:var(--pr)}
 .grade-select select option[value="远低预期"]{color:var(--ro)}
 
 /* ═══ BUTTONS ═══ */
@@ -259,14 +259,14 @@ body.chat-open .ai-toggle{display:none}
 GHR_NAV.init('perf', '结果审定');
 
 var GRADE_OPTIONS=['远超预期','超出预期','符合预期+','符合预期','符合预期-','低于预期','远低预期'];
-var GRADE_COLORS={'远低预期':'var(--ro)','低于预期':'var(--ro)','符合预期-':'var(--ro)','符合预期':'var(--ac)','符合预期+':'var(--ac)','超出预期':'var(--em700)','远超预期':'var(--em700)'};
-var GRADE_BG={'远低预期':'var(--ro50)','低于预期':'var(--ro50)','符合预期-':'var(--ro50)','符合预期':'var(--ac50)','符合预期+':'var(--ac50)','超出预期':'var(--em50)','远超预期':'var(--em50)'};
+var GRADE_COLORS={'远低预期':'var(--ro)','低于预期':'var(--ro)','符合预期-':'var(--ro)','符合预期':'var(--ac)','符合预期+':'var(--ac)','超出预期':'var(--pr)','远超预期':'var(--pr)'};
+var GRADE_BG={'远低预期':'var(--ro50)','低于预期':'var(--ro50)','符合预期-':'var(--ro50)','符合预期':'var(--ac50)','符合预期+':'var(--ac50)','超出预期':'var(--pr50)','远超预期':'var(--pr50)'};
 var STAR_DESC_RATIFY={1:'业绩大幅超越目标，具备标杆价值',2:'整体优于目标，常有亮点产出',3:'全面完成目标，局部表现突出',4:'完成全部目标，满足岗位要求',5:'基本达成目标，尚有提升空间',6:'多项未达目标，需针对性改进',7:'核心任务落空，整体差距显著'};
 
 var DIST_RULES={
   '全部':[
-    {grade:'远超预期',pct:3,color:'var(--em700)',bg:'var(--em50)'},
-    {grade:'超出预期',pct:12,color:'var(--em700)',bg:'var(--em50)'},
+    {grade:'远超预期',pct:3,color:'var(--pr)',bg:'var(--pr50)'},
+    {grade:'超出预期',pct:12,color:'var(--pr)',bg:'var(--pr50)'},
     {grade:'符合预期+',pct:22,color:'var(--ac)',bg:'var(--ac50)'},
     {grade:'符合预期',pct:38,color:'var(--ac)',bg:'var(--ac50)'},
     {grade:'符合预期-',pct:12,color:'var(--ro)',bg:'var(--ro50)'},
@@ -274,8 +274,8 @@ var DIST_RULES={
     {grade:'远低预期',pct:5,color:'var(--ro)',bg:'var(--ro50)'}
   ],
   '产品组':[
-    {grade:'远超预期',pct:3,color:'var(--em700)',bg:'var(--em50)'},
-    {grade:'超出预期',pct:12,color:'var(--em700)',bg:'var(--em50)'},
+    {grade:'远超预期',pct:3,color:'var(--pr)',bg:'var(--pr50)'},
+    {grade:'超出预期',pct:12,color:'var(--pr)',bg:'var(--pr50)'},
     {grade:'符合预期+',pct:22,color:'var(--ac)',bg:'var(--ac50)'},
     {grade:'符合预期',pct:38,color:'var(--ac)',bg:'var(--ac50)'},
     {grade:'符合预期-',pct:12,color:'var(--ro)',bg:'var(--ro50)'},
@@ -283,8 +283,8 @@ var DIST_RULES={
     {grade:'远低预期',pct:5,color:'var(--ro)',bg:'var(--ro50)'}
   ],
   '技术组':[
-    {grade:'远超预期',pct:3,color:'var(--em700)',bg:'var(--em50)'},
-    {grade:'超出预期',pct:12,color:'var(--em700)',bg:'var(--em50)'},
+    {grade:'远超预期',pct:3,color:'var(--pr)',bg:'var(--pr50)'},
+    {grade:'超出预期',pct:12,color:'var(--pr)',bg:'var(--pr50)'},
     {grade:'符合预期+',pct:22,color:'var(--ac)',bg:'var(--ac50)'},
     {grade:'符合预期',pct:38,color:'var(--ac)',bg:'var(--ac50)'},
     {grade:'符合预期-',pct:12,color:'var(--ro)',bg:'var(--ro50)'},
@@ -292,8 +292,8 @@ var DIST_RULES={
     {grade:'远低预期',pct:5,color:'var(--ro)',bg:'var(--ro50)'}
   ],
   '设计组':[
-    {grade:'远超预期',pct:5,color:'var(--em700)',bg:'var(--em50)'},
-    {grade:'超出预期',pct:15,color:'var(--em700)',bg:'var(--em50)'},
+    {grade:'远超预期',pct:5,color:'var(--pr)',bg:'var(--pr50)'},
+    {grade:'超出预期',pct:15,color:'var(--pr)',bg:'var(--pr50)'},
     {grade:'符合预期+',pct:25,color:'var(--ac)',bg:'var(--ac50)'},
     {grade:'符合预期',pct:35,color:'var(--ac)',bg:'var(--ac50)'},
     {grade:'符合预期-',pct:12,color:'var(--ro)',bg:'var(--ro50)'},
@@ -301,8 +301,8 @@ var DIST_RULES={
     {grade:'远低预期',pct:3,color:'var(--ro)',bg:'var(--ro50)'}
   ],
   '运营组':[
-    {grade:'远超预期',pct:3,color:'var(--em700)',bg:'var(--em50)'},
-    {grade:'超出预期',pct:10,color:'var(--em700)',bg:'var(--em50)'},
+    {grade:'远超预期',pct:3,color:'var(--pr)',bg:'var(--pr50)'},
+    {grade:'超出预期',pct:10,color:'var(--pr)',bg:'var(--pr50)'},
     {grade:'符合预期+',pct:20,color:'var(--ac)',bg:'var(--ac50)'},
     {grade:'符合预期',pct:40,color:'var(--ac)',bg:'var(--ac50)'},
     {grade:'符合预期-',pct:15,color:'var(--ro)',bg:'var(--ro50)'},
