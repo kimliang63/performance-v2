@@ -39,6 +39,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .toast{position:fixed;top:64px;left:50%;transform:translateX(-50%);padding:10px 20px;border-radius:var(--r2);font:500 13px/1 var(--f);color:#FFF;z-index:3000;opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:center;gap:8px}
 .toast.show{opacity:1;pointer-events:all}
 .toast.success{background:var(--em);box-shadow:0 8px 24px rgba(16,185,129,.3)}
+.toast.warning{background:var(--ac700);box-shadow:0 8px 24px rgba(245,158,11,.3)}
 .btn-sm{height:28px;padding:0 10px;font-size:12px}
 .btn-s.btn-active{background:var(--pr50);color:var(--pr);border-color:var(--pr200)}
 .search-input{height:32px;border:1px solid var(--c2);border-radius:var(--r1);padding:0 10px 0 32px;font:400 13px/1 var(--f);color:var(--c8);outline:none;background:var(--sf);transition:border .15s;width:100%}
@@ -80,11 +81,11 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         导入Excel
       </button>
-      <button class="btn btn-s" onclick="showToast('草稿已保存','success')">
+      <button class="btn btn-s" onclick="saveLocalDraft()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
         保存草稿
       </button>
-      <button class="btn btn-p" onclick="showToast('已提交审定','success')">
+      <button class="btn btn-p" onclick="submitGoals()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>
         提交
       </button>
@@ -94,7 +95,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
   <!-- 导入操作栏 -->
   <div class="upload-bar" id="uploadBar">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-    <div class="upload-bar-text">上传 Excel 文件批量导入目标 · <a href="#" style="color:var(--pr)" onclick="showToast('模板已下载','success');return false">下载导入模板</a></div>
+    <div class="upload-bar-text">上传 Excel 后进入暂存区，可逐条删除；正式提交时按员工校验 · <a href="#" style="color:var(--pr)" onclick="showToast('模板已下载','success');return false">下载导入模板</a></div>
     <button class="btn btn-o" onclick="document.getElementById('fileInput').click()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
       选择文件
@@ -319,7 +320,7 @@ function deleteGoalRow(empIndex,goalIndex){
   if(!window.confirm('确定删除 '+emp.name+' 的目标「'+goal.name+'」吗？'))return;
   emp.goals.splice(goalIndex,1);
   render();
-  showToast('已删除 '+emp.name+' 的目标「'+goal.name+'」','success');
+  showToast('已从暂存区删除；正式提交时再按员工校验 '+emp.name,'success');
 }
 function goPage(p){currentPage=p;render();}
 function handleImport(e){
@@ -333,8 +334,38 @@ function handleImport(e){
     });
   });
   render();
-  showToast('已导入 '+MOCK_IMPORT.length+' 名员工的目标数据','success');
+  showToast('已导入 '+MOCK_IMPORT.length+' 名员工到暂存区；尚未形成正式记录','success');
   e.target.value='';
+}
+function saveLocalDraft(){
+  localStorage.setItem('perf-goal-import-draft',JSON.stringify({savedAt:new Date().toISOString(),employees:EMPLOYEES}));
+  showToast('草稿仅保存在当前浏览器，不产生服务端正式记录','success');
+}
+function validateEmployeeGoals(emp){
+  if(!emp.reached)return '当前未到达可提交节点';
+  if(!emp.goals.length)return '至少保留一条目标';
+  var keys={};var totalWeight=0;
+  for(var i=0;i<emp.goals.length;i++){
+    var g=emp.goals[i];
+    if(!g.name||!g.mod||!g.type||!g.weight)return '存在必填字段缺失';
+    var key=g.mod+'|'+g.name;
+    if(keys[key])return '目标业务键重复';
+    keys[key]=true;totalWeight+=Number(g.weight)||0;
+  }
+  if(totalWeight!==100)return '目标权重合计需为 100%';
+  return '';
+}
+function submitGoals(){
+  var success=[];var failed=[];
+  EMPLOYEES.forEach(function(emp){
+    var reason=validateEmployeeGoals(emp);
+    if(reason)failed.push(emp.name+'：'+reason);
+    else success.push(emp.name);
+  });
+  var msg='提交完成：'+success.length+' 人成功，'+failed.length+' 人失败';
+  if(failed.length)msg+='；失败员工未提交，其他员工不受影响';
+  showToast(msg,failed.length?'warning':'success');
+  console.info('目标正式提交校验结果',{success:success,failed:failed});
 }
 function showToast(msg,type){
   var t=document.getElementById('toast');

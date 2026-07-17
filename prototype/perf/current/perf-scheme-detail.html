@@ -52,7 +52,7 @@ const ADMIN_LIST=[
 ];
 
 const SCHEME={
-  name:'年度绩效方案 v2',code:'PERF-2026-001',version:'v2',enabled:true,desc:'适用于全公司季度绩效考核，采用360度评估方式，包含目标制定、绩效考核、结果审定、结果确认、绩效面谈五个环节。',
+  name:'年度绩效方案 v2',code:'PERF-2026-001',version:'v2',enabled:true,desc:'适用于全公司季度绩效考核，采用360度评估方式，包含目标制定、绩效面谈、绩效考核、结果审定、结果确认五个环节。',
   cycleType:'月度',gradeRule:'标准七级',downward:true,
   grades:[
     {name:'远超预期',code:'A',min:95,max:100,color:'#DC2626',bg:'#FEF2F2'},
@@ -69,10 +69,10 @@ const SCHEME={
   ],
   stages:[
     {name:'目标制定',desc:'员工/上级填写绩效目标',flow:'通用目标制定流程',enabled:true,autoStart:{enabled:false,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'firstDayOfPeriod',fixedOffset:0},autoEnd:{enabled:false,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'lastDayOfPeriod',fixedOffset:0}},
+    {name:'绩效面谈',desc:'上级与员工面谈',flow:'绩效面谈流程',enabled:true,autoStart:{enabled:false,mode:'relative',ref:'prevStageEnd',offsetDays:0,fixedRule:'firstDayOfPeriod',fixedOffset:0},autoEnd:{enabled:false,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'lastDayOfPeriod',fixedOffset:0}},
     {name:'绩效考核',desc:'考核人评分',flow:'通用绩效考核流程',enabled:true,autoStart:{enabled:true,mode:'relative',ref:'cycleStart',offsetDays:3,fixedRule:'firstDayOfPeriod',fixedOffset:0},autoEnd:{enabled:true,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'lastDayOfPeriod',fixedOffset:-3}},
     {name:'结果审定',desc:'审定人调整等级',flow:'汇报线逐级审定',enabled:true,autoStart:{enabled:false,mode:'relative',ref:'prevStageEnd',offsetDays:0,fixedRule:'firstDayOfPeriod',fixedOffset:0},autoEnd:{enabled:false,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'lastDayOfPeriod',fixedOffset:0}},
     {name:'结果确认',desc:'员工确认绩效结果',flow:'员工确认流程',enabled:true,autoStart:{enabled:false,mode:'relative',ref:'prevStageEnd',offsetDays:0,fixedRule:'firstDayOfPeriod',fixedOffset:0},autoEnd:{enabled:false,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'lastDayOfPeriod',fixedOffset:0}},
-    {name:'绩效面谈',desc:'上级与员工面谈',flow:'绩效面谈流程',enabled:true,autoStart:{enabled:false,mode:'relative',ref:'prevStageEnd',offsetDays:0,fixedRule:'firstDayOfPeriod',fixedOffset:0},autoEnd:{enabled:false,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'lastDayOfPeriod',fixedOffset:0}},
   ],
   forcedDist:{name:'标准七级强制分布',grades:[
     {code:'A',name:'远超预期',op:'不超过',pct:5},
