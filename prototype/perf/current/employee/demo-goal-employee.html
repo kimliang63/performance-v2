@@ -826,9 +826,7 @@ function render(){
               </div>
               `:`
               <div class="ge-sec">
-                <div class="ge-fi"><span class="ge-fi-l">衡量标准-评价梯度2</span><textarea class="inp" id="ge_ms2_${g.id}" rows="2" placeholder="请输入2分评价标准...">${(g.msLevels&&g.msLevels[0])?g.msLevels[0].condition:''}</textarea></div>
-                <div class="ge-fi" style="margin-top:8px"><span class="ge-fi-l">衡量标准-评价梯度3 <span class="req">*</span></span><textarea class="inp" id="ge_ms3_${g.id}" rows="2" placeholder="请输入3分评价标准（必填）...">${(g.msLevels&&g.msLevels[1])?g.msLevels[1].condition:''}</textarea></div>
-                <div class="ge-fi" style="margin-top:8px"><span class="ge-fi-l">衡量标准-评价梯度4</span><textarea class="inp" id="ge_ms4_${g.id}" rows="2" placeholder="请输入4分评价标准...">${(g.msLevels&&g.msLevels[2])?g.msLevels[2].condition:''}</textarea></div>
+                <div class="ge-fi"><span class="ge-fi-l">衡量标准 <span class="req">*</span></span><textarea class="inp" id="ge_desc_${g.id}" rows="4" placeholder="请输入该目标的衡量标准..." oninput="syncGoalFromForm('${g.id}')">${g.desc||''}</textarea></div>
               </div>
               `}
             </div>
@@ -859,13 +857,8 @@ function syncGoalFromForm(id){
     if(challengeEl&&!challengeEl.readOnly) g.challenge=parseFloat(challengeEl.value)||0;
     if(baselineEl&&!baselineEl.readOnly) g.baseline=parseFloat(baselineEl.value)||0;
   }else{
-    const ms2El=document.getElementById('ge_ms2_'+id);
-    const ms3El=document.getElementById('ge_ms3_'+id);
-    const ms4El=document.getElementById('ge_ms4_'+id);
-    if(!g.msLevels)g.msLevels=[];
-    if(ms2El){while(g.msLevels.length<1)g.msLevels.push({});g.msLevels[0].condition=ms2El.value;}
-    if(ms3El){while(g.msLevels.length<2)g.msLevels.push({});g.msLevels[1].condition=ms3El.value;}
-    if(ms4El){while(g.msLevels.length<3)g.msLevels.push({});g.msLevels[2].condition=ms4El.value;}
+    const descEl=document.getElementById('ge_desc_'+id);
+    if(descEl) g.desc=descEl.value;
   }
   // 更新标题行的权重显示
   const weightSpan=document.querySelector(`[data-goal-id="${id}"] .goal-weight`);
@@ -994,13 +987,8 @@ function saveInlineEdit(id,mi){
     if(challengeEl&&!challengeEl.readOnly) g.challenge=parseFloat(challengeEl.value)||0;
     if(baselineEl&&!baselineEl.readOnly) g.baseline=parseFloat(baselineEl.value)||0;
   }else{
-    const ms2El=document.getElementById('ge_ms2_'+id);
-    const ms3El=document.getElementById('ge_ms3_'+id);
-    const ms4El=document.getElementById('ge_ms4_'+id);
-    if(!g.msLevels)g.msLevels=[];
-    if(ms2El){while(g.msLevels.length<1)g.msLevels.push({});g.msLevels[0].condition=ms2El.value;}
-    if(ms3El){while(g.msLevels.length<2)g.msLevels.push({});g.msLevels[1].condition=ms3El.value;}
-    if(ms4El){while(g.msLevels.length<3)g.msLevels.push({});g.msLevels[2].condition=ms4El.value;}
+    const descEl=document.getElementById('ge_desc_'+id);
+    if(descEl) g.desc=descEl.value;
   }
 
   expandedGoals.delete(id);

@@ -52,6 +52,8 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .pager-btn.active{background:var(--pr);color:#FFF;border-color:var(--pr)}
 .pager-btn:disabled{opacity:.4;cursor:default}
 .pager-btn svg{width:14px;height:14px}
+.row-delete{border:none;background:transparent;color:var(--ro);font:500 12px/1 var(--f);cursor:pointer;padding:5px 6px;border-radius:4px;white-space:nowrap}
+.row-delete:hover{background:var(--ro50)}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .fade-in{animation:fadeIn .2s ease forwards}
 </style>
@@ -133,6 +135,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
           <th style="width:70px">挑战值</th>
           <th style="width:70px">保底值</th>
           <th style="width:64px">状态</th>
+          <th style="width:56px">操作</th>
         </tr>
       </thead>
       <tbody id="tableBody"></tbody>
@@ -261,7 +264,17 @@ function render(){
   var pageData=filtered.slice(start,start+PAGE_SIZE);
   var html='';
   pageData.forEach(function(emp){
-    emp.goals.forEach(function(g){
+    var empIndex=EMPLOYEES.indexOf(emp);
+    if(!emp.goals.length){
+      html+='<tr>';
+      html+='<td style="font-weight:500;color:var(--c8)">'+emp.name+'</td>';
+      html+='<td colspan="7" style="color:var(--c4)">暂无目标</td>';
+      html+='<td style="white-space:nowrap"><span style="font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px;background:'+(emp.reached?'var(--em50)':'var(--ac50)')+';color:'+(emp.reached?'var(--em700)':'var(--ac700)')+'">'+(emp.reached?'已到达':'未到达')+'</span></td>';
+      html+='<td>—</td>';
+      html+='</tr>';
+      return;
+    }
+    emp.goals.forEach(function(g,goalIndex){
       var u=!emp.reached;
       html+='<tr>';
       html+='<td style="font-weight:500;color:var(--c8)">'+emp.name+'</td>';
@@ -277,15 +290,19 @@ function render(){
         html+='<td'+(u?'':' class="unfilled"')+' colspan="3" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+(g.desc||'')+'">'+(u?'—':(g.desc||'—'))+'</td>';
       }
       html+='<td style="white-space:nowrap"><span style="font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px;background:'+(emp.reached?'var(--em50)':'var(--ac50)')+';color:'+(emp.reached?'var(--em700)':'var(--ac700)')+'">'+(emp.reached?'已到达':'未到达')+'</span></td>';
+      html+='<td><button class="row-delete" onclick="deleteGoalRow('+empIndex+','+goalIndex+')" title="删除该目标">删除</button></td>';
       html+='</tr>';
     });
   });
   document.getElementById('tableBody').innerHTML=html;
   var rc=filtered.filter(function(e){return e.reached;}).length;
   var uc=filtered.length-rc;
-  document.getElementById('hdImported').textContent=rc+'人';
-  document.getElementById('hdPending').textContent=uc+'人';
-  document.getElementById('listSummary').textContent='已到达 '+rc+'人 · 未到达 '+uc+'人';
+  var goalCount=filtered.reduce(function(sum,e){return sum+e.goals.length;},0);
+  var importedEl=document.getElementById('hdImported');
+  var pendingEl=document.getElementById('hdPending');
+  if(importedEl)importedEl.textContent=rc+'人';
+  if(pendingEl)pendingEl.textContent=uc+'人';
+  document.getElementById('listSummary').textContent='共 '+goalCount+' 条目标 · 已到达 '+rc+'人 · 未到达 '+uc+'人';
   var ph='<span class="pager-info">共 <b style="color:var(--c8)">'+filtered.length+'</b> 人，第 '+Math.min(start+1,filtered.length)+'-'+Math.min(start+PAGE_SIZE,filtered.length)+' 条</span><div class="pager-btns">';
   ph+='<button class="pager-btn" onclick="goPage('+(currentPage-1)+')"'+(currentPage<=1?' disabled':'')+'><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>';
   for(var p=1;p<=totalPages;p++){
@@ -294,6 +311,15 @@ function render(){
   ph+='<button class="pager-btn" onclick="goPage('+(currentPage+1)+')"'+(currentPage>=totalPages?' disabled':'')+'><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>';
   ph+='</div>';
   document.getElementById('pager').innerHTML=ph;
+}
+function deleteGoalRow(empIndex,goalIndex){
+  var emp=EMPLOYEES[empIndex];
+  var goal=emp&&emp.goals[goalIndex];
+  if(!emp||!goal)return;
+  if(!window.confirm('确定删除 '+emp.name+' 的目标「'+goal.name+'」吗？'))return;
+  emp.goals.splice(goalIndex,1);
+  render();
+  showToast('已删除 '+emp.name+' 的目标「'+goal.name+'」','success');
 }
 function goPage(p){currentPage=p;render();}
 function handleImport(e){

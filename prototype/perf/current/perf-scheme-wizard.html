@@ -664,14 +664,15 @@ function renderGroups(ct){
             <div class="tog ${grp.autoRemove&&grp.autoRemove.enabled?'on':''}" onclick="toggleAutoRemove(${gi})"><div class="tog-track"><div class="tog-knob"></div></div></div>
           </div>
           <div id="autoRemovePanel-${gi}" style="opacity:${grp.autoRemove&&grp.autoRemove.enabled?'1':'0.5'};pointer-events:${grp.autoRemove&&grp.autoRemove.enabled?'auto':'none'};transition:opacity .15s">
-            <div style="font:400 12px/1 var(--f);color:var(--c6);margin-bottom:10px">满足以下条件时，自动将人员从考核组中移除：</div>
+            <div style="font:400 12px/1 var(--f);color:var(--c6);margin-bottom:10px">员工离职时，自动将人员从考核组中移除：</div>
             <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px">
-              ${[{v:'resignation',t:'员工离职'},{v:'transfer',t:'调岗'},{v:'orgChange',t:'组织架构变更'}].map(opt=>`
+              ${[{v:'resignation',t:'员工离职'}].map(opt=>`
                 <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font:400 13px/1 var(--f);color:var(--c7)">
                   <input type="checkbox" value="${opt.v}" ${grp.autoRemove&&grp.autoRemove.conditions.includes(opt.v)?'checked':''} onchange="toggleAutoRemoveCond(${gi},'${opt.v}',this.checked)" style="accent-color:var(--pr)">
                   ${opt.t}
                 </label>`).join('')}
             </div>
+            <div style="font:400 11px/1.5 var(--f);color:var(--c5)">当前版本暂不支持因调岗或组织架构变更自动移除人员。</div>
           </div>
         </div>
       </div>
