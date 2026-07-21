@@ -1,5 +1,50 @@
 # 变更记录
 
+## 2026-07-21 导入门禁与环节级导入完成增量修复
+- 依据：工号匹配、工号+目标名称更新、个人流程状态门禁、按环节 importCompletedStages、开启环节状态校验、操作日志导出字段对齐。
+- `current/manager/demo-goal-batch-import.html`：Mock 全部带 employeeId；去掉 reached；筛选/统计/handleImport/提交统一个人流程状态口径；同名员工与重名目标逐行失败。
+- `current/manager/demo-eval-batch-import.html`：同上；handleImport 逐人门禁、部分成功与失败原因；正式提交同口径校验。
+- `current/perf-activity-detail.html`：importCompletedStages 按环节；结果确认不可导入完成；单人/批量开启校验 stageStatus；无可处理人员幂等拒绝且不写日志。
+- `scripts/update_feishu_artifacts.py`：操作日志导出字段对齐模板。
+
+## 2026-07-21 活动命名、列表操作、单人开启与导入门禁对齐 Spec 1.6
+
+| 文件 | 动作 | 说明 |
+|------|------|------|
+| `current/perf-activity.html` | 增量 | 自动创建 Mock 名称改为「年份+周期名称+方案名称」；列表行仅查看/删除；删除门禁+二次确认 |
+| `current/perf-activity-detail.html` | 增量 | 目标审批状态列；单人开启个人流程（待办+通知+日志+幂等）；去掉修改考核关系；查看考核关系；操作日志文案与 Mock；导入完成跳过 |
+| `current/manager/demo-goal-batch-import.html` | 增量 | 明确当前活动上下文；模板无活动/模板编号列说明 |
+| `current/manager/demo-eval-batch-import.html` | 增量 | 同上 |
+
+- 业务依据：Spec 1.6、decisions REQ-028～036、V3.1/V4 PRD。
+- 未改 `perf-activity-new.html`、`perf-activity-launch.html`、confirmed、archive。
+- 验证：本地静态服务浏览器验收列表删除、单人开启、导入入口与操作日志；`git diff --check` 与残留文案检索。
+
+## 2026-07-17 活动混合进度、强制结束与导入提交口径对齐
+
+| 文件 | 动作 | 说明 |
+|------|------|------|
+| `current/perf-activity-detail.html` | 重构口径 | 活动只展示一个全局业务环节；个人差异改为当前环节内的流程节点，补齐批量环节操作、首环节补加门禁、强制结束结果、离职异常、确认/申诉终态和 HRBP 只读 |
+| `current/perf-scheme-detail.html` | 修正 | 五环节顺序统一为目标制定 → 绩效面谈 → 绩效考核 → 结果审定 → 结果确认 |
+| `current/manager/demo-goal-batch-import.html` | 闭环 | 单条删除只影响暂存区；正式提交时按员工校验目标数、必填、唯一键和权重，失败员工不提交，其他员工可成功；草稿仅存浏览器 |
+
+- 原型规则依据为 Spec 1.5、V2.1、V3.1 和 V4 PRD，不再根据个人最早节点反推活动当前业务环节。
+- 强制结束不会补造表单、审批、员工确认或申诉记录；系统只撤销待办、写入配置等级并终结个人流程。
+- 本次不增加 Scope 功能数量。
+
+## 2026-07-17 目标表单与人员移除规则修正
+
+| 文件 | 动作 | 说明 |
+|------|------|------|
+| `current/employee/demo-goal-employee.html` | 修正 | 定性目标填写仅保留一个必填“衡量标准”输入框，并同步修正保存与校验逻辑 |
+| `current/manager/demo-goal-batch-import.html` | 增强 | 目标导入列表增加单条目标删除操作、删除确认、空目标状态和目标条数汇总 |
+| `current/perf-scheme-wizard.html` | 收缩范围 | 移除人员规则仅支持员工离职，调岗和组织架构变更不再作为可选项 |
+| `current/perf-scheme-detail.html` | 同步 | 方案详情按同一范围展示移除人员规则及暂不支持说明 |
+
+- V3 PRD 已将“衡量标准-衡量值”定义为单个必填输入，本次修正原型偏差。
+- V2.1、V3.1 和 V4 PRD 已明确：当前版本仅处理离职异常，不支持调岗或组织变化自动调整参与人、考核组或当前处理人。
+- 本次不修改 Scope 数量和版本归属。
+
 ## 2026-07-15 活动管理原型统一
 
 **改造理由**: 保留下"一个活动一行"的传统活动列表方案，以 perf-activity.html 作为正式活动管理入口。不保留 perf-activity-new.html 的左右分栏结构，吸收其方案周期、自动创建和当前环节信息。
