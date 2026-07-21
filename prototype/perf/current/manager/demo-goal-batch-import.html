@@ -62,7 +62,9 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 <body>
 <div class="ct fade-in">
   <nav style="display:flex;align-items:center;gap:4px;font:500 12px/1 var(--f);color:var(--c5);margin-bottom:12px">
-    <a href="../demo-index.html" style="color:var(--c5);text-decoration:none" onmouseover="this.style.color='var(--pr)'" onmouseout="this.style.color='var(--c5)'">绩效工作台</a>
+    <a href="../perf-activity.html" style="color:var(--c5);text-decoration:none" onmouseover="this.style.color='var(--pr)'" onmouseout="this.style.color='var(--c5)'">活动管理</a>
+    <span style="color:var(--c3)">/</span>
+    <a id="activityCrumb" href="../perf-activity-detail.html" style="color:var(--c5);text-decoration:none" onmouseover="this.style.color='var(--pr)'" onmouseout="this.style.color='var(--c5)'">当前活动</a>
     <span style="color:var(--c3)">/</span>
     <span style="color:var(--c8);font-weight:600">目标批量导入</span>
   </nav>
@@ -71,6 +73,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
     <div>
       <h1 style="font:700 20px/1.2 var(--f);color:var(--c9);margin:0">批量导入目标</h1>
+      <div id="activityContext" style="margin-top:8px;font:400 13px/1.4 var(--f);color:var(--c6)">活动级导入：模板无需填写活动编码、活动名称或模板编号；用工号匹配被考核人，更新时用工号+目标名称匹配。</div>
     </div>
     <div style="display:flex;gap:8px">
       <button class="btn btn-s" onclick="showToast('模板已下载','success')">
@@ -95,7 +98,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
   <!-- 导入操作栏 -->
   <div class="upload-bar" id="uploadBar">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--pr)" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-    <div class="upload-bar-text">上传 Excel 后进入暂存区，可逐条删除；正式提交时按员工校验 · <a href="#" style="color:var(--pr)" onclick="showToast('模板已下载','success');return false">下载导入模板</a></div>
+    <div class="upload-bar-text">当前活动上下文导入 · 上传 Excel 后进入暂存区，可逐条删除；正式提交时按员工校验（仅个人流程未开始可导入） · <a href="#" style="color:var(--pr)" onclick="showToast('模板已下载（无活动/模板编号列）','success');return false">下载导入模板</a></div>
     <button class="btn btn-o" onclick="document.getElementById('fileInput').click()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
       选择文件
@@ -105,16 +108,19 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 
   <!-- 筛选栏 -->
   <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;padding:12px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
-    <span style="font:500 13px/1 var(--f);color:var(--c6)">到达状态:</span>
-    <div id="statusFilter" style="display:flex;gap:8px">
+    <span style="font:500 13px/1 var(--f);color:var(--c6)">个人流程状态:</span>
+    <div id="statusFilter" style="display:flex;gap:8px;flex-wrap:wrap">
       <button class="btn btn-s btn-sm btn-active" onclick="filterStatus('全部',this)">全部</button>
-      <button class="btn btn-s btn-sm" onclick="filterStatus('已到达',this)">已到达</button>
-      <button class="btn btn-s btn-sm" onclick="filterStatus('未到达',this)">未到达</button>
+      <button class="btn btn-s btn-sm" onclick="filterStatus('未开始',this)">未开始</button>
+      <button class="btn btn-s btn-sm" onclick="filterStatus('处理中',this)">处理中</button>
+      <button class="btn btn-s btn-sm" onclick="filterStatus('已完成',this)">已完成</button>
+      <button class="btn btn-s btn-sm" onclick="filterStatus('已暂停',this)">已暂停</button>
+      <button class="btn btn-s btn-sm" onclick="filterStatus('已终止',this)">已终止</button>
     </div>
     <div style="width:1px;height:20px;background:var(--c2)"></div>
-    <div style="position:relative;flex:1;min-width:180px;max-width:260px">
+    <div style="position:relative;flex:1;min-width:180px;max-width:280px">
       <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);pointer-events:none" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--c4)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input class="search-input" placeholder="搜索员工姓名" id="searchInput" oninput="handleSearch()">
+      <input class="search-input" placeholder="搜索姓名或工号" id="searchInput" oninput="handleSearch()">
     </div>
   </div>
 
@@ -127,7 +133,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
     <table>
       <thead>
         <tr>
-          <th style="width:70px">被考核人</th>
+          <th style="width:110px">被考核人/工号</th>
           <th style="min-width:180px">目标名称</th>
           <th style="width:80px;white-space:nowrap">模块</th>
           <th style="width:70px;white-space:nowrap">类型</th>
@@ -149,7 +155,23 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 <script src="../navigation.js"></script>
 <script>
 GHR_NAV.init('perf', '目标批量导入');
+(function initActivityContext(){
+  var params=new URLSearchParams(location.search);
+  var id=params.get('activityId')||'1';
+  var name=params.get('activityName')||'2026年Q2标准季度考核方案';
+  var crumb=document.getElementById('activityCrumb');
+  var ctx=document.getElementById('activityContext');
+  if(crumb){crumb.textContent=name;crumb.href='../perf-activity-detail.html?id='+encodeURIComponent(id);}
+  if(ctx){ctx.innerHTML='当前活动：<b style="color:var(--c8)">'+name+'</b>（ID '+id+'）。活动级导入：用工号匹配；更新用工号+目标名称；仅个人流程未开始可导入；无法唯一匹配则该行失败。';}
+})();
 var currentPage=1;var PAGE_SIZE=8;var currentStatus='全部';
+var FLOW_STATUS_STYLE={
+  '未开始':{bg:'var(--ac50)',color:'var(--ac700)'},
+  '处理中':{bg:'var(--pr50)',color:'var(--pr)'},
+  '已完成':{bg:'var(--em50)',color:'var(--em700)'},
+  '已暂停':{bg:'var(--c1)',color:'var(--c6)'},
+  '已终止':{bg:'var(--ro50)',color:'var(--ro)'}
+};
 
 function filterStatus(status,btn){
   currentStatus=status;currentPage=1;
@@ -159,12 +181,36 @@ function filterStatus(status,btn){
   render();
 }
 
+function canImportByFlow(emp){
+  if(emp.hasTodo||emp.hasOnlineSubmit)return false;
+  return emp.personalFlowStatus==='未开始';
+}
+function importBlockReason(emp){
+  if(emp.hasTodo)return '已有待办，禁止导入';
+  if(emp.hasOnlineSubmit)return '已有在线正式提交，禁止导入';
+  if(emp.personalFlowStatus!=='未开始')return '个人流程状态为'+emp.personalFlowStatus+'，禁止导入';
+  return '';
+}
+function flowStatusLabel(emp){
+  if(emp.hasTodo&&emp.personalFlowStatus==='未开始')return '已有待办';
+  if(emp.hasOnlineSubmit&&emp.personalFlowStatus==='未开始')return '已有在线提交';
+  return emp.personalFlowStatus;
+}
+function flowStatusBadge(emp){
+  var label=flowStatusLabel(emp);
+  var st=FLOW_STATUS_STYLE[emp.personalFlowStatus]||FLOW_STATUS_STYLE['处理中'];
+  if(label==='已有待办'||label==='已有在线提交')st={bg:'var(--ro50)',color:'var(--ro)'};
+  return '<span style="font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px;background:'+st.bg+';color:'+st.color+'">'+label+'</span>';
+}
+function empCell(emp){
+  return '<div style="font-weight:500;color:var(--c8)">'+emp.name+'</div><div style="font:400 11px/1 var(--m);color:var(--c5);margin-top:3px">'+emp.employeeId+'</div>';
+}
+
 function getFiltered(){
   var q=(document.getElementById('searchInput').value||'').trim().toLowerCase();
   return EMPLOYEES.filter(function(e){
-    if(currentStatus==='已到达'&&!e.reached)return false;
-    if(currentStatus==='未到达'&&e.reached)return false;
-    if(q&&e.name.toLowerCase().indexOf(q)<0)return false;
+    if(currentStatus!=='全部'&&e.personalFlowStatus!==currentStatus)return false;
+    if(q&&e.name.toLowerCase().indexOf(q)<0&&String(e.employeeId).toLowerCase().indexOf(q)<0)return false;
     return true;
   });
 }
@@ -172,7 +218,7 @@ function getFiltered(){
 function handleSearch(){currentPage=1;render();}
 
 var EMPLOYEES=[
-  {name:'张明',dept:'产品部',reached:true,goals:[
+  {name:'张明',employeeId:'EMP1001',dept:'产品部',personalFlowStatus:'未开始',hasTodo:false,hasOnlineSubmit:false,goals:[
     {mod:'KPI',name:'资源利用率（通用）',type:'quant',weight:5,target:105,challenge:110,baseline:100},
     {mod:'KPI',name:'HRAS UAT用户验收首次通过率',type:'quant',weight:10,target:98,challenge:100,baseline:95},
     {mod:'KPI',name:'HRAS需求评审及时率',type:'quant',weight:15,target:98,challenge:100,baseline:95},
@@ -181,80 +227,84 @@ var EMPLOYEES=[
     {mod:'KPA',name:'HR ONE 绩效重构事项推进',type:'qual',weight:25,desc:'06-10 输出AI+绩效核心页面原型；06-19 完成绩效版本4需求内审；06-24 完成需求评审'},
     {mod:'KPA',name:'AI应用项目探索与落地推广',type:'qual',weight:25,desc:'06-05 完成ASSC采购侧AI应用1.0版本；06-12 对接LBU试点应用；06-26 完成1.1版本'}
   ]},
-  {name:'李华',dept:'产品部',reached:true,goals:[
+  {name:'张明',employeeId:'EMP1099',dept:'市场部',personalFlowStatus:'未开始',hasTodo:false,hasOnlineSubmit:false,goals:[
+    {mod:'KPI',name:'同名测试目标',type:'quant',weight:100,target:80,challenge:90,baseline:70}
+  ]},
+  {name:'李华',employeeId:'EMP1002',dept:'产品部',personalFlowStatus:'处理中',hasTodo:true,hasOnlineSubmit:false,goals:[
     {mod:'KPI',name:'产品迭代完成率',type:'quant',weight:20,target:95,challenge:100,baseline:90},
     {mod:'KPI',name:'客户需求响应及时率',type:'quant',weight:15,target:90,challenge:95,baseline:85},
     {mod:'KPA',name:'产品规划文档输出',type:'qual',weight:30,desc:'完成Q3产品路线图，包含市场分析和竞品对比'},
     {mod:'KPA',name:'跨部门协作项目推进',type:'qual',weight:20,desc:'主导2个跨部门项目，协调研发与业务资源'},
     {mod:'KPA',name:'团队知识分享',type:'qual',weight:15,desc:'每月1次技术分享，输出知识库文档'}
   ]},
-  {name:'王芳',dept:'产品部',reached:true,goals:[
+  {name:'王芳',employeeId:'EMP1003',dept:'产品部',personalFlowStatus:'已完成',hasTodo:false,hasOnlineSubmit:true,goals:[
     {mod:'KPI',name:'需求处理量',type:'quant',weight:20,target:40,challenge:50,baseline:30},
     {mod:'KPA',name:'用户反馈跟进',type:'qual',weight:30,desc:'按时响应率≥95%，建立反馈闭环机制'},
     {mod:'KPA',name:'文档规范执行',type:'qual',weight:20,desc:'需求文档规范达标，迭代文档完整'}
   ]},
-  {name:'赵强',dept:'产品部',reached:false,goals:[
+  {name:'赵强',employeeId:'EMP1004',dept:'产品部',personalFlowStatus:'未开始',hasTodo:false,hasOnlineSubmit:false,goals:[
     {mod:'KPI',name:'项目按时交付率',type:'quant',weight:25,target:90,challenge:95,baseline:85},
     {mod:'KPA',name:'技术方案评审',type:'qual',weight:30,desc:'完成3次技术方案评审，输出评审报告'},
     {mod:'KPA',name:'团队效能提升',type:'qual',weight:25,desc:'团队代码质量提升20%，建立代码审查机制'}
   ]},
-  {name:'陈静',dept:'产品部',reached:false,goals:[
+  {name:'陈静',employeeId:'EMP1005',dept:'产品部',personalFlowStatus:'未开始',hasTodo:false,hasOnlineSubmit:false,goals:[
     {mod:'KPI',name:'设计任务完成率',type:'quant',weight:20,target:85,challenge:95,baseline:80},
     {mod:'KPA',name:'设计规范建设',type:'qual',weight:30,desc:'输出设计规范文档，建立组件库'}
   ]},
-  {name:'刘洋',dept:'产品部',reached:true,goals:[
+  {name:'刘洋',employeeId:'EMP1006',dept:'产品部',personalFlowStatus:'处理中',hasTodo:true,hasOnlineSubmit:false,goals:[
     {mod:'KPI',name:'需求评审通过率',type:'quant',weight:15,target:92,challenge:98,baseline:88},
     {mod:'KPA',name:'产品方案输出',type:'qual',weight:25,desc:'输出3份产品方案，通过业务方评审'}
   ]},
-  {name:'孙丽',dept:'产品部',reached:true,goals:[
+  {name:'孙丽',employeeId:'EMP1007',dept:'产品部',personalFlowStatus:'已暂停',hasTodo:false,hasOnlineSubmit:false,goals:[
     {mod:'KPI',name:'客户满意度评分',type:'quant',weight:20,target:4.0,challenge:4.5,baseline:3.5},
     {mod:'KPA',name:'客户关系维护',type:'qual',weight:30,desc:'客户续约率100%，建立客户成功案例库'}
   ]},
-  {name:'周磊',dept:'产品部',reached:true,goals:[
+  {name:'周磊',employeeId:'EMP1008',dept:'产品部',personalFlowStatus:'已终止',hasTodo:false,hasOnlineSubmit:false,goals:[
     {mod:'KPI',name:'产品上线准时率',type:'quant',weight:20,target:90,challenge:95,baseline:85},
     {mod:'KPA',name:'迭代评审组织',type:'qual',weight:20,desc:'完成6次迭代评审，输出评审纪要'}
   ]},
-  {name:'吴涛',dept:'产品部',reached:true,goals:[
+  {name:'吴涛',employeeId:'EMP1009',dept:'产品部',personalFlowStatus:'处理中',hasTodo:true,hasOnlineSubmit:false,goals:[
     {mod:'KPI',name:'技术架构评审通过率',type:'quant',weight:20,target:95,challenge:100,baseline:90},
     {mod:'KPA',name:'技术方案输出',type:'qual',weight:30,desc:'输出5份技术方案，通过架构评审'}
   ]},
-  {name:'郑洁',dept:'产品部',reached:true,goals:[
+  {name:'郑洁',employeeId:'EMP1010',dept:'产品部',personalFlowStatus:'已完成',hasTodo:false,hasOnlineSubmit:true,goals:[
     {mod:'KPI',name:'代码审查覆盖率',type:'quant',weight:15,target:90,challenge:95,baseline:85},
     {mod:'KPA',name:'技术文档编写',type:'qual',weight:25,desc:'完成8份技术文档，覆盖核心模块'}
   ]},
-  {name:'黄鹏',dept:'产品部',reached:false,goals:[
+  {name:'黄鹏',employeeId:'EMP1011',dept:'产品部',personalFlowStatus:'未开始',hasTodo:false,hasOnlineSubmit:false,goals:[
     {mod:'KPI',name:'测试用例通过率',type:'quant',weight:20,target:88,challenge:95,baseline:82},
     {mod:'KPA',name:'自动化测试建设',type:'qual',weight:25,desc:'搭建自动化测试框架，覆盖核心场景'}
   ]},
-  {name:'林敏',dept:'产品部',reached:true,goals:[
+  {name:'林敏',employeeId:'EMP1012',dept:'产品部',personalFlowStatus:'处理中',hasTodo:true,hasOnlineSubmit:false,goals:[
     {mod:'KPI',name:'需求响应时效',type:'quant',weight:15,target:4,challenge:3,baseline:6},
     {mod:'KPA',name:'竞品分析报告',type:'qual',weight:20,desc:'输出2份竞品分析报告，覆盖主要竞品'}
   ]},
-  {name:'何杰',dept:'产品部',reached:true,goals:[
+  {name:'何杰',employeeId:'EMP1013',dept:'产品部',personalFlowStatus:'处理中',hasTodo:true,hasOnlineSubmit:false,goals:[
     {mod:'KPI',name:'接口响应时间',type:'quant',weight:15,target:200,challenge:150,baseline:300},
     {mod:'KPA',name:'系统优化方案',type:'qual',weight:25,desc:'完成3项系统优化，性能提升30%'}
   ]},
-  {name:'马超',dept:'产品部',reached:false,goals:[
+  {name:'马超',employeeId:'EMP1014',dept:'产品部',personalFlowStatus:'未开始',hasTodo:true,hasOnlineSubmit:false,goals:[
     {mod:'KPI',name:'UI设计稿交付率',type:'quant',weight:20,target:90,challenge:95,baseline:85},
     {mod:'KPA',name:'设计规范维护',type:'qual',weight:20,desc:'维护设计规范文档，更新组件库'}
   ]},
-  {name:'胡蝶',dept:'产品部',reached:false,goals:[
+  {name:'胡蝶',employeeId:'EMP1015',dept:'产品部',personalFlowStatus:'未开始',hasTodo:false,hasOnlineSubmit:true,goals:[
     {mod:'KPI',name:'Bug修复及时率',type:'quant',weight:20,target:85,challenge:92,baseline:80},
     {mod:'KPA',name:'代码质量提升',type:'qual',weight:25,desc:'代码质量评分提升至A级'}
+  ]},
+  {name:'钱重名',employeeId:'EMP1016',dept:'产品部',personalFlowStatus:'未开始',hasTodo:false,hasOnlineSubmit:false,goals:[
+    {mod:'KPI',name:'重复目标A',type:'quant',weight:50,target:80,challenge:90,baseline:70},
+    {mod:'KPA',name:'重复目标A',type:'qual',weight:50,desc:'同名目标用于验证无法唯一匹配'}
   ]}
 ];
 
-var MOCK_IMPORT=[
-  {emp:'张明',goals:[{name:'资源利用率（通用）',target:105,challenge:110,baseline:100},{name:'HRAS UAT用户验收首次通过率',target:98,challenge:100,baseline:95},{name:'HRAS需求评审及时率',target:98,challenge:100,baseline:95}]},
-  {emp:'李华',goals:[{name:'产品迭代完成率',target:95,challenge:100,baseline:90},{name:'客户需求响应及时率',target:90,challenge:95,baseline:85}]},
-  {emp:'王芳',goals:[{name:'需求处理量',target:40,challenge:50,baseline:30}]},
-  {emp:'刘洋',goals:[{name:'需求评审通过率',target:92,challenge:98,baseline:88}]},
-  {emp:'孙丽',goals:[{name:'客户满意度评分',target:4.0,challenge:4.5,baseline:3.5}]},
-  {emp:'周磊',goals:[{name:'产品上线准时率',target:90,challenge:95,baseline:85}]},
-  {emp:'吴涛',goals:[{name:'技术架构评审通过率',target:95,challenge:100,baseline:90}]},
-  {emp:'郑洁',goals:[{name:'代码审查覆盖率',target:90,challenge:95,baseline:85}]},
-  {emp:'林敏',goals:[{name:'需求响应时效',target:4,challenge:3,baseline:6}]},
-  {emp:'何杰',goals:[{name:'接口响应时间',target:200,challenge:150,baseline:300}]}
+/* 模拟 Excel 行：仅含工号+业务字段，不含活动/模板列 */
+var MOCK_IMPORT_ROWS=[
+  {employeeId:'EMP1001',goalName:'资源利用率（通用）',target:108,challenge:112,baseline:100},
+  {employeeId:'EMP1099',goalName:'同名测试目标',target:85,challenge:95,baseline:75},
+  {employeeId:'EMP1002',goalName:'产品迭代完成率',target:96,challenge:100,baseline:90},
+  {employeeId:'EMP1004',goalName:'项目按时交付率',target:92,challenge:96,baseline:85},
+  {employeeId:'EMP1016',goalName:'重复目标A',target:88,challenge:95,baseline:70},
+  {employeeId:'EMP9999',goalName:'不存在的目标',target:1,challenge:2,baseline:0}
 ];
 
 function render(){
@@ -266,44 +316,40 @@ function render(){
   var html='';
   pageData.forEach(function(emp){
     var empIndex=EMPLOYEES.indexOf(emp);
+    var allow=canImportByFlow(emp);
     if(!emp.goals.length){
       html+='<tr>';
-      html+='<td style="font-weight:500;color:var(--c8)">'+emp.name+'</td>';
+      html+='<td>'+empCell(emp)+'</td>';
       html+='<td colspan="7" style="color:var(--c4)">暂无目标</td>';
-      html+='<td style="white-space:nowrap"><span style="font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px;background:'+(emp.reached?'var(--em50)':'var(--ac50)')+';color:'+(emp.reached?'var(--em700)':'var(--ac700)')+'">'+(emp.reached?'已到达':'未到达')+'</span></td>';
+      html+='<td style="white-space:nowrap">'+flowStatusBadge(emp)+'</td>';
       html+='<td>—</td>';
       html+='</tr>';
       return;
     }
     emp.goals.forEach(function(g,goalIndex){
-      var u=!emp.reached;
       html+='<tr>';
-      html+='<td style="font-weight:500;color:var(--c8)">'+emp.name+'</td>';
+      html+='<td>'+empCell(emp)+'</td>';
       html+='<td style="font-weight:500;color:var(--c8)">'+g.name+'</td>';
       html+='<td><span class="mod-tag">'+g.mod+'</span></td>';
       html+='<td><span class="type-tag '+g.type+'">'+(g.type==='quant'?'定量':'定性')+'</span></td>';
       html+='<td style="font-family:var(--m)">'+g.weight+'%</td>';
       if(g.type==='quant'){
-        html+='<td'+(u?'':' class="unfilled"')+'>'+(u?'—':(g.target||'—'))+'</td>';
-        html+='<td'+(u?'':' class="unfilled"')+'>'+(u?'—':(g.challenge||'—'))+'</td>';
-        html+='<td'+(u?'':' class="unfilled"')+'>'+(u?'—':(g.baseline||'—'))+'</td>';
+        html+='<td class="unfilled">'+(g.target||'—')+'</td>';
+        html+='<td class="unfilled">'+(g.challenge||'—')+'</td>';
+        html+='<td class="unfilled">'+(g.baseline||'—')+'</td>';
       }else{
-        html+='<td'+(u?'':' class="unfilled"')+' colspan="3" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+(g.desc||'')+'">'+(u?'—':(g.desc||'—'))+'</td>';
+        html+='<td class="unfilled" colspan="3" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+(g.desc||'')+'">'+(g.desc||'—')+'</td>';
       }
-      html+='<td style="white-space:nowrap"><span style="font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px;background:'+(emp.reached?'var(--em50)':'var(--ac50)')+';color:'+(emp.reached?'var(--em700)':'var(--ac700)')+'">'+(emp.reached?'已到达':'未到达')+'</span></td>';
-      html+='<td><button class="row-delete" onclick="deleteGoalRow('+empIndex+','+goalIndex+')" title="删除该目标">删除</button></td>';
+      html+='<td style="white-space:nowrap">'+flowStatusBadge(emp)+'</td>';
+      html+='<td>'+(allow?'<button class="row-delete" onclick="deleteGoalRow('+empIndex+','+goalIndex+')" title="删除该目标">删除</button>':'<span style="color:var(--c4)" title="'+importBlockReason(emp)+'">—</span>')+'</td>';
       html+='</tr>';
     });
   });
   document.getElementById('tableBody').innerHTML=html;
-  var rc=filtered.filter(function(e){return e.reached;}).length;
-  var uc=filtered.length-rc;
+  var allowCount=filtered.filter(canImportByFlow).length;
+  var blockCount=filtered.length-allowCount;
   var goalCount=filtered.reduce(function(sum,e){return sum+e.goals.length;},0);
-  var importedEl=document.getElementById('hdImported');
-  var pendingEl=document.getElementById('hdPending');
-  if(importedEl)importedEl.textContent=rc+'人';
-  if(pendingEl)pendingEl.textContent=uc+'人';
-  document.getElementById('listSummary').textContent='共 '+goalCount+' 条目标 · 已到达 '+rc+'人 · 未到达 '+uc+'人';
+  document.getElementById('listSummary').textContent='共 '+goalCount+' 条目标 · 可导入(未开始) '+allowCount+'人 · 禁止导入 '+blockCount+'人';
   var ph='<span class="pager-info">共 <b style="color:var(--c8)">'+filtered.length+'</b> 人，第 '+Math.min(start+1,filtered.length)+'-'+Math.min(start+PAGE_SIZE,filtered.length)+' 条</span><div class="pager-btns">';
   ph+='<button class="pager-btn" onclick="goPage('+(currentPage-1)+')"'+(currentPage<=1?' disabled':'')+'><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>';
   for(var p=1;p<=totalPages;p++){
@@ -317,24 +363,47 @@ function deleteGoalRow(empIndex,goalIndex){
   var emp=EMPLOYEES[empIndex];
   var goal=emp&&emp.goals[goalIndex];
   if(!emp||!goal)return;
-  if(!window.confirm('确定删除 '+emp.name+' 的目标「'+goal.name+'」吗？'))return;
+  if(!window.confirm('确定删除 '+emp.name+'('+emp.employeeId+') 的目标「'+goal.name+'」吗？'))return;
   emp.goals.splice(goalIndex,1);
   render();
-  showToast('已从暂存区删除；正式提交时再按员工校验 '+emp.name,'success');
+  showToast('已从暂存区删除；正式提交时再按员工校验 '+emp.employeeId,'success');
 }
 function goPage(p){currentPage=p;render();}
 function handleImport(e){
   var file=e.target.files[0];if(!file)return;
-  MOCK_IMPORT.forEach(function(mi){
-    var emp=EMPLOYEES.find(function(e){return e.name===mi.emp;});
-    if(!emp)return;
-    mi.goals.forEach(function(ig){
-      var g=emp.goals.find(function(g){return g.name===ig.name;});
-      if(g){g.target=ig.target||'';g.challenge=ig.challenge||'';g.baseline=ig.baseline||'';}
-    });
+  var success=[];var failed=[];
+  MOCK_IMPORT_ROWS.forEach(function(row,idx){
+    var lineNo=idx+2;
+    var emp=EMPLOYEES.find(function(x){return x.employeeId===row.employeeId;});
+    if(!emp){
+      failed.push({line:lineNo,employeeId:row.employeeId,reason:'工号不在当前活动'});
+      return;
+    }
+    var block=importBlockReason(emp);
+    if(block){
+      failed.push({line:lineNo,employeeId:row.employeeId,name:emp.name,reason:block});
+      return;
+    }
+    var matches=emp.goals.filter(function(g){return g.name===row.goalName;});
+    if(!matches.length){
+      failed.push({line:lineNo,employeeId:row.employeeId,name:emp.name,reason:'目标名称无法匹配：'+row.goalName});
+      return;
+    }
+    if(matches.length>1){
+      failed.push({line:lineNo,employeeId:row.employeeId,name:emp.name,reason:'目标名称无法唯一匹配：'+row.goalName});
+      return;
+    }
+    var g=matches[0];
+    if(g.type==='quant'){
+      g.target=row.target;g.challenge=row.challenge;g.baseline=row.baseline;
+    }
+    success.push({line:lineNo,employeeId:row.employeeId,name:emp.name,goalName:row.goalName});
   });
   render();
-  showToast('已导入 '+MOCK_IMPORT.length+' 名员工到暂存区；尚未形成正式记录','success');
+  var msg='导入完成：成功 '+success.length+' 行，失败 '+failed.length+' 行（按工号匹配，部分成功）';
+  if(failed.length)msg+='；失败：'+failed.map(function(f){return f.employeeId+(f.name?'/'+f.name:'')+' '+f.reason;}).join('；');
+  showToast(msg,failed.length?'warning':'success');
+  console.info('目标导入结果',{success:success,failed:failed});
   e.target.value='';
 }
 function saveLocalDraft(){
@@ -342,28 +411,34 @@ function saveLocalDraft(){
   showToast('草稿仅保存在当前浏览器，不产生服务端正式记录','success');
 }
 function validateEmployeeGoals(emp){
-  if(!emp.reached)return '当前未到达可提交节点';
+  var block=importBlockReason(emp);
+  if(block)return block;
   if(!emp.goals.length)return '至少保留一条目标';
-  var keys={};var totalWeight=0;
+  var nameCount={};var totalWeight=0;
   for(var i=0;i<emp.goals.length;i++){
     var g=emp.goals[i];
     if(!g.name||!g.mod||!g.type||!g.weight)return '存在必填字段缺失';
-    var key=g.mod+'|'+g.name;
-    if(keys[key])return '目标业务键重复';
-    keys[key]=true;totalWeight+=Number(g.weight)||0;
+    nameCount[g.name]=(nameCount[g.name]||0)+1;
+    totalWeight+=Number(g.weight)||0;
   }
+  for(var n in nameCount){if(nameCount[n]>1)return '目标名称无法唯一匹配：'+n;}
   if(totalWeight!==100)return '目标权重合计需为 100%';
   return '';
 }
 function submitGoals(){
   var success=[];var failed=[];
   EMPLOYEES.forEach(function(emp){
+    var block=importBlockReason(emp);
+    if(block){
+      failed.push(emp.employeeId+'/'+emp.name+'：'+block);
+      return;
+    }
     var reason=validateEmployeeGoals(emp);
-    if(reason)failed.push(emp.name+'：'+reason);
-    else success.push(emp.name);
+    if(reason)failed.push(emp.employeeId+'/'+emp.name+'：'+reason);
+    else success.push(emp.employeeId+'/'+emp.name);
   });
   var msg='提交完成：'+success.length+' 人成功，'+failed.length+' 人失败';
-  if(failed.length)msg+='；失败员工未提交，其他员工不受影响';
+  if(failed.length)msg+='；失败：'+failed.slice(0,5).join('；')+(failed.length>5?'…':'');
   showToast(msg,failed.length?'warning':'success');
   console.info('目标正式提交校验结果',{success:success,failed:failed});
 }

@@ -1,29 +1,26 @@
 # 变更记录
 
-## 2026-07-18 修复活动导航入口 + HRBP 申诉详情页
+## 2026-07-21 导入门禁与环节级导入完成增量修复
+- 依据：工号匹配、工号+目标名称更新、个人流程状态门禁、按环节 importCompletedStages、开启环节状态校验、操作日志导出字段对齐。
+- `current/manager/demo-goal-batch-import.html`：Mock 全部带 employeeId；去掉 reached；筛选/统计/handleImport/提交统一个人流程状态口径；同名员工与重名目标逐行失败。
+- `current/manager/demo-eval-batch-import.html`：同上；handleImport 逐人门禁、部分成功与失败原因；正式提交同口径校验。
+- `current/perf-activity-detail.html`：importCompletedStages 按环节；结果确认不可导入完成；单人/批量开启校验 stageStatus；无可处理人员幂等拒绝且不写日志。
+- `scripts/update_feishu_artifacts.py`：操作日志导出字段对齐模板。
 
-### 事项 1：场景导航活动入口统一
-- **修改**: `perf-scenario-nav.html`
-- 考核活动区合并为单一"活动列表"入口 → `perf-activity.html`
-- 删除 `perf-activity-new.html`、`perf-activity-launch.html`、"活动列表(旧)"入口
-- 旧文件保留不删除，仅退出正式导航
+## 2026-07-21 活动命名、列表操作、单人开启与导入门禁对齐 Spec 1.6
 
-### 事项 2：HRBP 申诉只读查看页
-- **修改**: `manager/demo-confirm-hrbp.html`
-- 标题/面包屑改为"申诉详情"，状态改为"已申诉"
-- 新增只读提示：申诉已提交、结果锁定、线下沟通、系统不登记结论
-- 完整展示：异议项（按KPI/KPA分组）、申诉原因、佐证材料（文件名+大小）、提交时间
-- 审定流程只保留已完成历史节点，删除"HRBP知悉—待处理/处理中"
-- 修复 Mock 数据一致性：人员/部门/组别统一为陈静/产品部/技术组
-- 定性指标不再出现 undefined
-- 不提供任何申诉处理按钮，不引入 AI 助手
+| 文件 | 动作 | 说明 |
+|------|------|------|
+| `current/perf-activity.html` | 增量 | 自动创建 Mock 名称改为「年份+周期名称+方案名称」；列表行仅查看/删除；删除门禁+二次确认 |
+| `current/perf-activity-detail.html` | 增量 | 目标审批状态列；单人开启个人流程（待办+通知+日志+幂等）；去掉修改考核关系；查看考核关系；操作日志文案与 Mock；导入完成跳过 |
+| `current/manager/demo-goal-batch-import.html` | 增量 | 明确当前活动上下文；模板无活动/模板编号列说明 |
+| `current/manager/demo-eval-batch-import.html` | 增量 | 同上 |
 
-### 业务口径
-- 员工申诉后即进入"已申诉"终态
-- HRBP 仅查看授权范围内申诉事实，不参与处理
-- 申诉在线下沟通，不修改最终绩效结果
+- 业务依据：Spec 1.6、decisions REQ-028～036、V3.1/V4 PRD。
+- 未改 `perf-activity-new.html`、`perf-activity-launch.html`、confirmed、archive。
+- 验证：本地静态服务浏览器验收列表删除、单人开启、导入入口与操作日志；`git diff --check` 与残留文案检索。
 
----
+## 2026-07-17 活动混合进度、强制结束与导入提交口径对齐
 
 | 文件 | 动作 | 说明 |
 |------|------|------|
@@ -48,10 +45,35 @@
 - V2.1、V3.1 和 V4 PRD 已明确：当前版本仅处理离职异常，不支持调岗或组织变化自动调整参与人、考核组或当前处理人。
 - 本次不修改 Scope 数量和版本归属。
 
-## 2026-07-03 新增活动管理new页面
-- 新建: perf-activity-new.html
-- 内容: 方案分组+活动表格统一视图，含自动创建/异常处理/人员规则标识
-- 导航: navigation.js 绩效活动组新增活动管理(旧)和活动管理两入口
+## 2026-07-15 活动管理原型统一
+
+**改造理由**: 保留下"一个活动一行"的传统活动列表方案，以 perf-activity.html 作为正式活动管理入口。不保留 perf-activity-new.html 的左右分栏结构，吸收其方案周期、自动创建和当前环节信息。
+
+### 修改文件
+
+| 文件 | 动作 | 说明 |
+|------|------|------|
+| `perf-activity.html` | 重写 | 纯列表页，12条活动（9自动+3手动），7筛选条件+sessionStorage持久化，组合列+列设置，手动补充弹窗 |
+| `perf-activity-detail.html` | 新建 | 独立详情页：覆盖列表全部12个活动，活动信息+环节进度+14条参与人场景（5筛选）+环节管理+导入导出+批量操作+操作记录 |
+| `perf-scheme-detail.html` | 修改 | 新增"关联活动"卡片：当前/历史/未来三Tab，"待自动创建"占位 |
+| `navigation.js` | 复核 | 当前版本已是单一"活动管理"入口→perf-activity.html，本次无需修改 |
+
+### 核心变化
+- 活动状态严格对应 Spec SM-002：未进入执行/执行中/已暂停/已正常结束/已提前终止
+- 手动补充入口为次级按钮，校验方案启用、周期匹配、不可重复创建
+- 详情页保留旧版参与人、操作记录、环节管理等核心能力，并补齐考核组筛选和全部活动数据映射
+- 方案详情"未来活动"区分"已创建待执行"与"待自动创建"，无虚假 activityId
+- 页面角色以 Spec 1.2 为准（SSC 主管理，HRBP 授权录入）
+
+### 未修改
+- confirmed/、archive/、perf-activity-new.html、perf-activity-launch.html、v2 目录
+
+---
+
+### 2026-07-15 评审修正
+
+- 活动列表操作恢复为紧凑文字按钮，避免 1280px 下换行和错位。
+- 活动详情恢复提交前已确认的页面设计，仅保留独立详情 URL、12 条活动映射和新版状态定义。
 
 ---
 
