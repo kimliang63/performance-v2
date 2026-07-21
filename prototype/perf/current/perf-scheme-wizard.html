@@ -319,6 +319,7 @@ let form={
   gradeRule:'标准七级',
   version:1,
   forcedDistRule:'标准七级强制分布',
+  ratifySubmitMode:'',
   grades:JSON.parse(JSON.stringify(GRADES)),
   stages:JSON.parse(JSON.stringify(STAGES)),
   groups:JSON.parse(JSON.stringify(GROUPS)),
@@ -358,6 +359,8 @@ const FORCED_DIST_RULES=[
   {name:'宽松七级强制分布',desc:'A 8% / A- 12% / B+ 18% / B 35% / B- 15% / C 8% / D 4%',
    grades:[{code:'A',name:'远超预期',op:'不超过',pct:8},{code:'A-',name:'超出预期',op:'不超过',pct:12},{code:'B+',name:'符合预期+',op:'不超过',pct:18},{code:'B',name:'符合预期',op:'不低于',pct:35},{code:'B-',name:'符合预期-',op:'不超过',pct:15},{code:'C',name:'低于预期',op:'不超过',pct:8},{code:'D',name:'远低预期',op:'不超过',pct:4}]},
 ];
+
+const RATIFY_SUBMIT_MODES=['单个提交','按部门提交','按区域提交','按层级规则','全部提交'];
 
 // 模板预设：每个模板定义启用的阶段
 const TEMPLATES={
@@ -443,7 +446,7 @@ function renderNavButtons(){
   const next=idx<nav.length-1?nav[idx+1]:null;
   return `<div style="display:flex;align-items:center;justify-content:space-between;margin-top:20px;padding-top:16px;border-top:1px solid var(--dv)">
     <div>${prev?`<button class="btn btn-s" onclick="selSection('${prev}')">上一步</button>`:'<span></span>'}</div>
-    <div>${next?`<button class="btn btn-p" onclick="selSection('${next}')">下一步</button>`:'<span></span>'}</div>
+    <div>${next?`<button class="btn btn-p" onclick="goNextSection('${next}')">下一步</button>`:'<span></span>'}</div>
   </div>`;
 }
 
@@ -832,7 +835,7 @@ function renderRatifyCfg(s){
   </div>
   <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
     <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制分布规则</div>
-    <div class="form-row">
+    <div class="form-row tri">
       <div class="form-grp">
         <label class="form-lb">关联强制分布规则 <span class="req">*</span></label>
         <select class="form-input" onchange="form.forcedDistRule=this.value;render()">
@@ -842,6 +845,13 @@ function renderRatifyCfg(s){
       <div class="form-grp">
         <label class="form-lb">控制模式 <span class="req">*</span></label>
         <select class="form-input"><option>强控</option><option>弱控</option></select>
+      </div>
+      <div class="form-grp">
+        <label class="form-lb" for="ratifySubmitMode">审定提交方式 <span class="req">*</span></label>
+        <select class="form-input" id="ratifySubmitMode" required onchange="setRatifySubmitMode(this.value)">
+          <option value="" ${form.ratifySubmitMode?'':'selected'} disabled>请选择</option>
+          ${RATIFY_SUBMIT_MODES.map(mode=>`<option value="${mode}" ${form.ratifySubmitMode===mode?'selected':''}>${mode}</option>`).join('')}
+        </select>
       </div>
     </div>
     <div style="margin-top:4px"><a href="perf-forced-distribution.html" target="_blank" style="font:500 12px/1 var(--f);color:var(--pr);text-decoration:none">查看分布规则 →</a></div>
@@ -1247,8 +1257,27 @@ function updateStageAuto(stageId,type,enabled){
 
 // ═══ 导航 ═══
 function selSection(id){activeSection=id;render()}
+function setRatifySubmitMode(value){form.ratifySubmitMode=value}
+function validateRatifySubmitMode(){
+  const ratifyStage=form.stages.find(s=>s.id==='ratify');
+  if(ratifyStage&&ratifyStage.enabled&&!form.ratifySubmitMode){
+    alert('请选择审定提交方式');
+    activeSection='ratify';
+    render();
+    return false;
+  }
+  return true;
+}
+function goNextSection(id){
+  if(activeSection==='ratify'&&!validateRatifySubmitMode())return;
+  selSection(id);
+}
+function validateScheme(){
+  if(!form.name){alert('请填写方案名称');activeSection='basic';render();return false}
+  return validateRatifySubmitMode();
+}
 function toggleSec(el){el.closest('.form-sec').classList.toggle('open')}
-function submit(){if(!form.name){alert('请填写方案名称');activeSection='basic';render();return}alert('方案已提交：'+form.name)}
+function submit(){if(!validateScheme())return;alert('方案已提交：'+form.name)}
 
 function cancelEdit(){
   if(confirm('确定要取消编辑吗？未保存的更改将丢失。')){
@@ -1257,7 +1286,7 @@ function cancelEdit(){
 }
 
 function saveScheme(){
-  if(!form.name){alert('请填写方案名称');activeSection='basic';render();return}
+  if(!validateScheme())return;
   alert('方案「'+form.name+'」保存成功');
   window.location.href='perf-scheme-list.html';
 }
