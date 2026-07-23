@@ -1,5 +1,12 @@
 # 变更记录
 
+## 2026-07-23 结果审定统计卡片收起交互恢复
+
+- `current/manager/demo-ratify-direct.html`、`demo-ratify-indirect.html`、`demo-ratify-hierarchy.html`、`demo-ratify-hrbp.html`：恢复等级分布统计卡片的收起/展开入口。
+- 收起后保留各等级的当前人数、按考核组人数换算后的要求人数和需增减人数；再次展开后完整结论与图表恢复显示并重新适配宽度。
+- 依据：V3 主 PRD「结果审定页面 / 统计卡片收起」既有交互；本次不增加 Scope，不修改 Spec 与 PRD。
+- 验证：四类审定页面均通过本地浏览器收起、摘要字段、重新展开和控制台错误检查。
+
 ## 2026-07-21 结果审定提交方式补齐
 
 - `current/perf-scheme-wizard.html`：在结果审定的强制分布配置中新增必填单选“审定提交方式”，选项为单个提交、按部门提交、按区域提交、按层级规则、全部提交。
