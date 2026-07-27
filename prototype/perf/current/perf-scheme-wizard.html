@@ -254,11 +254,11 @@ const GRADES=[
 ];
 
 const STAGES=[
-  {id:'goal',name:'目标制定',desc:'员工/上级填写绩效目标',enabled:true,status:'done',flow:'通用目标制定流程',autoStart:{enabled:false,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'firstDayOfPeriod',fixedOffset:0},autoEnd:{enabled:false,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'lastDayOfPeriod',fixedOffset:0}},
-  {id:'interview',name:'绩效面谈',desc:'上级与员工面谈',enabled:true,status:'warn',flow:'绩效面谈流程',autoStart:{enabled:false,mode:'relative',ref:'prevStageEnd',offsetDays:0,fixedRule:'firstDayOfPeriod',fixedOffset:0},autoEnd:{enabled:false,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'lastDayOfPeriod',fixedOffset:0}},
-  {id:'eval',name:'绩效考核',desc:'考核人评分',enabled:true,status:'active',flow:'通用绩效考核流程',autoStart:{enabled:true,mode:'relative',ref:'cycleStart',offsetDays:3,fixedRule:'firstDayOfPeriod',fixedOffset:0},autoEnd:{enabled:true,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'lastDayOfPeriod',fixedOffset:-3}},
-  {id:'ratify',name:'结果审定',desc:'审定人调整等级',enabled:true,status:'pending',flow:'汇报线逐级审定',autoStart:{enabled:false,mode:'relative',ref:'prevStageEnd',offsetDays:0,fixedRule:'firstDayOfPeriod',fixedOffset:0},autoEnd:{enabled:false,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'lastDayOfPeriod',fixedOffset:0}},
-  {id:'confirm',name:'结果确认',desc:'员工确认绩效结果',enabled:true,status:'pending',flow:'员工确认流程',autoStart:{enabled:false,mode:'relative',ref:'prevStageEnd',offsetDays:0,fixedRule:'firstDayOfPeriod',fixedOffset:0},autoEnd:{enabled:false,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'lastDayOfPeriod',fixedOffset:0}},
+  {id:'goal',name:'目标制定',desc:'员工/上级填写绩效目标',enabled:true,status:'done',flow:'通用目标制定流程',autoStart:{enabled:false,direction:'前',days:7},autoEnd:{enabled:false,direction:'后',days:7}},
+  {id:'interview',name:'绩效面谈',desc:'上级与员工面谈',enabled:true,status:'warn',flow:'绩效面谈流程',autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14}},
+  {id:'eval',name:'绩效考核',desc:'考核人评分',enabled:true,status:'active',flow:'通用绩效考核流程',autoStart:{enabled:true,direction:'后',days:3},autoEnd:{enabled:true,direction:'后',days:30}},
+  {id:'ratify',name:'结果审定',desc:'审定人调整等级',enabled:true,status:'pending',flow:'汇报线逐级审定',autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14}},
+  {id:'confirm',name:'结果确认',desc:'员工确认绩效结果',enabled:true,status:'pending',flow:'员工确认流程',autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14}},
 ];
 
 const GROUPS=[
@@ -284,30 +284,6 @@ const ADMIN_LIST=[
   {id:'EMP0069',name:'周经理（技术部）'},
 ];
 
-const TIME_RULES={
-  'firstDayOfPeriod':    {label:'周期第一天',forType:'all'},
-  'lastDayOfPeriod':     {label:'周期最后一天',forType:'all'},
-  'lastDayOfPrevPeriod': {label:'上一周期最后一天',forType:'all'},
-  'firstDayOfNextPeriod':{label:'下一周期第一天',forType:'all'},
-  'prevMonthLastDay':    {label:'上月最后一天',forType:'月度'},
-  'prevMonthDay25':      {label:'上月25号',forType:'月度'},
-  'currentMonthDay1':    {label:'当月1号',forType:'月度'},
-  'currentMonthDay15':   {label:'当月15号',forType:'月度'},
-  'prevYearDec31':       {label:'上年12月31日',forType:'年度'},
-  'currentYearJan1':     {label:'当年1月1日',forType:'年度'},
-  'currentYearJun30':    {label:'当年6月30日',forType:'年度'},
-  'prevQuarterLastDay':  {label:'上季最后一天',forType:'季度'},
-  'currentQuarterDay1':  {label:'当季第一天',forType:'季度'},
-};
-
-function getTimeRuleLabel(key){ return TIME_RULES[key]?.label||key; }
-
-function getTimeRulesForCycle(){
-  const ct=form.cycleType||'季度';
-  const entries=Object.entries(TIME_RULES).filter(([k,v])=>v.forType==='all'||v.forType===ct);
-  return entries.map(([k,v])=>`<option value="${k}">${v.label}</option>`).join('');
-}
-
 // ═══ 状态 ═══
 let activeSection='basic', activeGroup='g1';
 let stageConfigMode='merged'; // merged | perGroup
@@ -319,6 +295,7 @@ let form={
   gradeRule:'标准七级',
   version:1,
   forcedDistRule:'标准七级强制分布',
+  ratifySubmitMode:'',
   grades:JSON.parse(JSON.stringify(GRADES)),
   stages:JSON.parse(JSON.stringify(STAGES)),
   groups:JSON.parse(JSON.stringify(GROUPS)),
@@ -358,6 +335,8 @@ const FORCED_DIST_RULES=[
   {name:'宽松七级强制分布',desc:'A 8% / A- 12% / B+ 18% / B 35% / B- 15% / C 8% / D 4%',
    grades:[{code:'A',name:'远超预期',op:'不超过',pct:8},{code:'A-',name:'超出预期',op:'不超过',pct:12},{code:'B+',name:'符合预期+',op:'不超过',pct:18},{code:'B',name:'符合预期',op:'不低于',pct:35},{code:'B-',name:'符合预期-',op:'不超过',pct:15},{code:'C',name:'低于预期',op:'不超过',pct:8},{code:'D',name:'远低预期',op:'不超过',pct:4}]},
 ];
+
+const RATIFY_SUBMIT_MODES=['全部提交','单个提交','按部门提交','按层级提交','按区域提交'];
 
 // 模板预设：每个模板定义启用的阶段
 const TEMPLATES={
@@ -443,7 +422,7 @@ function renderNavButtons(){
   const next=idx<nav.length-1?nav[idx+1]:null;
   return `<div style="display:flex;align-items:center;justify-content:space-between;margin-top:20px;padding-top:16px;border-top:1px solid var(--dv)">
     <div>${prev?`<button class="btn btn-s" onclick="selSection('${prev}')">上一步</button>`:'<span></span>'}</div>
-    <div>${next?`<button class="btn btn-p" onclick="selSection('${next}')">下一步</button>`:'<span></span>'}</div>
+    <div>${next?`<button class="btn btn-p" onclick="goNextSection('${next}')">下一步</button>`:'<span></span>'}</div>
   </div>`;
 }
 
@@ -752,17 +731,17 @@ function renderStageDetail(ct){
 function renderGoalCfg(s){
   const models=FLOW_MODELS[s.id]||[];
   const grades=getSelectedRule().grades;
-  const a=s.autoStart||{enabled:false,rule:'firstDayOfPeriod',offsetDays:0};
-  const e=s.autoEnd||{enabled:false,rule:'lastDayOfPeriod',offsetDays:0};
+  const a=ensureStageAuto(s,'start');
+  const e=ensureStageAuto(s,'end');
   return `<div class="form-row">
     <div class="form-grp"><label class="form-lb">流程模型</label><select class="form-input">${models.map(m=>`<option ${s.flow===m?'selected':''}>${m}</option>`).join('')}</select></div>
     <div class="form-grp"><label class="form-lb">开启方式</label><select class="form-input" onchange="updateStageAuto('${s.id}','start',this.value==='自动');render()"><option ${a.enabled?'':'selected'}>手动</option><option ${a.enabled?'selected':''}>自动</option></select></div>
   </div>
-  ${a.enabled?`<div id="timeRulePanel-start-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderTimeRulePanel('start',s)}</div>`:''}
+  ${a.enabled?`<div id="timeRulePanel-start-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderStageTimingPanel('start',s)}</div>`:''}
   <div class="form-row">
     <div class="form-grp"><label class="form-lb">结束方式</label><select class="form-input" onchange="updateStageAuto('${s.id}','end',this.value==='定时自动结束');render()"><option ${e.enabled?'':'selected'}>手动</option><option ${e.enabled?'selected':''}>定时自动结束</option></select></div>
   </div>
-  ${e.enabled?`<div id="timeRulePanel-end-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderTimeRulePanel('end',s)}</div>`:''}
+  ${e.enabled?`<div id="timeRulePanel-end-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderStageTimingPanel('end',s)}</div>`:''}
   <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
     <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制结束规则</div>
     <div style="display:flex;align-items:center;gap:8px">
@@ -781,8 +760,8 @@ function renderEvalCfg(s){
   };
   const nodes=FLOW_NODES[s.flow]||FLOW_NODES['通用绩效考核流程'];
   const EVAL_RULES=['通用评价规则','仓储评价规则','销售评价规则','研发评价规则'];
-  const a=s.autoStart||{enabled:false,rule:'firstDayOfPeriod',offsetDays:0};
-  const e=s.autoEnd||{enabled:false,rule:'lastDayOfPeriod',offsetDays:0};
+  const a=ensureStageAuto(s,'start');
+  const e=ensureStageAuto(s,'end');
   return `<div class="form-row">
     <div class="form-grp"><label class="form-lb">流程模型</label><select class="form-input" onchange="render()">${models.map(m=>`<option ${s.flow===m?'selected':''}>${m}</option>`).join('')}</select></div>
     <div class="form-grp"><label class="form-lb">评价规则 <span class="req">*</span></label>
@@ -794,8 +773,8 @@ function renderEvalCfg(s){
     <div class="form-grp"><label class="form-lb">开启方式</label><select class="form-input" onchange="updateStageAuto('${s.id}','start',this.value==='自动');render()"><option ${a.enabled?'':'selected'}>手动</option><option ${a.enabled?'selected':''}>自动</option></select></div>
     <div class="form-grp"><label class="form-lb">结束方式</label><select class="form-input" onchange="updateStageAuto('${s.id}','end',this.value==='定时自动结束');render()"><option ${e.enabled?'':'selected'}>手动</option><option ${e.enabled?'selected':''}>定时自动结束</option></select></div>
   </div>
-  ${a.enabled?`<div id="timeRulePanel-start-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderTimeRulePanel('start',s)}</div>`:''}
-  ${e.enabled?`<div id="timeRulePanel-end-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderTimeRulePanel('end',s)}</div>`:''}
+  ${a.enabled?`<div id="timeRulePanel-start-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderStageTimingPanel('start',s)}</div>`:''}
+  ${e.enabled?`<div id="timeRulePanel-end-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderStageTimingPanel('end',s)}</div>`:''}
   <div style="margin-top:16px"><label class="form-lb" style="margin-bottom:8px;display:block">节点权重分配 <span style="font:400 11px/1 var(--f);color:var(--c4)">（节点由流程模型「${s.flow}」决定，仅处理节点可配置权重）</span></label>
     <table class="tbl"><thead><tr><th>节点名称</th><th>节点类型</th><th>权重(%)</th></tr></thead>
     <tbody>${nodes.map(n=>`<tr><td>${n.name}</td><td><span style="font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px;${n.type==='处理'?'background:var(--pr50);color:var(--pr)':'background:var(--c1);color:var(--c5)'}">${n.type}</span></td><td>${n.type==='处理'?`<input class="form-input" type="number" value="${n.weight}" style="width:60px"> %`:'<span style="font:400 12px/1 var(--f);color:var(--c4)">—</span>'}</td></tr>`).join('')}</tbody></table>
@@ -813,18 +792,18 @@ function renderEvalCfg(s){
 function renderRatifyCfg(s){
   const models=FLOW_MODELS[s.id]||[];
   const grades=getSelectedRule().grades;
-  const a=s.autoStart||{enabled:false,rule:'firstDayOfPeriod',offsetDays:0};
-  const e=s.autoEnd||{enabled:false,rule:'lastDayOfPeriod',offsetDays:0};
+  const a=ensureStageAuto(s,'start');
+  const e=ensureStageAuto(s,'end');
   const showGroups=stageConfigMode==='merged'?form.groups:[form.groups.find(g=>g.id===(activeGroupTab[s.id]||form.groups[0]?.id))].filter(Boolean);
   return `<div class="form-row">
     <div class="form-grp"><label class="form-lb">流程模型</label><select class="form-input">${models.map(m=>`<option ${s.flow===m?'selected':''}>${m}</option>`).join('')}</select></div>
     <div class="form-grp"><label class="form-lb">开启方式</label><select class="form-input" onchange="updateStageAuto('${s.id}','start',this.value==='自动');render()"><option ${a.enabled?'':'selected'}>手动</option><option ${a.enabled?'selected':''}>自动</option></select></div>
   </div>
-  ${a.enabled?`<div id="timeRulePanel-start-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderTimeRulePanel('start',s)}</div>`:''}
+  ${a.enabled?`<div id="timeRulePanel-start-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderStageTimingPanel('start',s)}</div>`:''}
   <div class="form-row">
     <div class="form-grp"><label class="form-lb">结束方式</label><select class="form-input" onchange="updateStageAuto('${s.id}','end',this.value==='定时自动结束');render()"><option ${e.enabled?'':'selected'}>手动</option><option ${e.enabled?'selected':''}>定时自动结束</option></select></div>
   </div>
-  ${e.enabled?`<div id="timeRulePanel-end-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderTimeRulePanel('end',s)}</div>`:''}
+  ${e.enabled?`<div id="timeRulePanel-end-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderStageTimingPanel('end',s)}</div>`:''}
   <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
     <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制结束规则</div>
     <div style="display:flex;align-items:center;gap:8px">
@@ -834,7 +813,7 @@ function renderRatifyCfg(s){
   </div>
   <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
     <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制分布规则</div>
-    <div class="form-row">
+    <div class="form-row tri">
       <div class="form-grp">
         <label class="form-lb">关联强制分布规则 <span class="req">*</span></label>
         <select class="form-input" onchange="form.forcedDistRule=this.value;render()">
@@ -844,6 +823,13 @@ function renderRatifyCfg(s){
       <div class="form-grp">
         <label class="form-lb">控制模式 <span class="req">*</span></label>
         <select class="form-input"><option>强控</option><option>弱控</option></select>
+      </div>
+      <div class="form-grp">
+        <label class="form-lb" for="ratifySubmitMode">提交方式 <span class="req">*</span></label>
+        <select class="form-input" id="ratifySubmitMode" required onchange="setRatifySubmitMode(this.value)">
+          <option value="" ${form.ratifySubmitMode?'':'selected'} disabled>请选择</option>
+          ${RATIFY_SUBMIT_MODES.map(mode=>`<option value="${mode}" ${form.ratifySubmitMode===mode?'selected':''}>${mode}</option>`).join('')}
+        </select>
       </div>
     </div>
     <div style="margin-top:4px"><a href="perf-forced-distribution.html" target="_blank" style="font:500 12px/1 var(--f);color:var(--pr);text-decoration:none">查看分布规则 →</a></div>
@@ -865,17 +851,17 @@ function renderRatifyCfg(s){
 
 function renderConfirmCfg(s){
   const models=FLOW_MODELS[s.id]||[];
-  const a=s.autoStart||{enabled:false,rule:'firstDayOfPeriod',offsetDays:0};
-  const e=s.autoEnd||{enabled:false,rule:'lastDayOfPeriod',offsetDays:0};
+  const a=ensureStageAuto(s,'start');
+  const e=ensureStageAuto(s,'end');
   return `<div class="form-row">
     <div class="form-grp"><label class="form-lb">流程模型</label><select class="form-input">${models.map(m=>`<option ${s.flow===m?'selected':''}>${m}</option>`).join('')}</select></div>
     <div class="form-grp"><label class="form-lb">开启方式</label><select class="form-input" onchange="updateStageAuto('${s.id}','start',this.value==='自动');render()"><option ${a.enabled?'':'selected'}>手动</option><option ${a.enabled?'selected':''}>自动</option></select></div>
   </div>
-  ${a.enabled?`<div id="timeRulePanel-start-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderTimeRulePanel('start',s)}</div>`:''}
+  ${a.enabled?`<div id="timeRulePanel-start-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderStageTimingPanel('start',s)}</div>`:''}
   <div class="form-row">
     <div class="form-grp"><label class="form-lb">结束方式</label><select class="form-input" onchange="updateStageAuto('${s.id}','end',this.value==='定时自动结束');render()"><option ${e.enabled?'':'selected'}>手动</option><option ${e.enabled?'selected':''}>定时自动结束</option></select></div>
   </div>
-  ${e.enabled?`<div id="timeRulePanel-end-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderTimeRulePanel('end',s)}</div>`:''}
+  ${e.enabled?`<div id="timeRulePanel-end-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderStageTimingPanel('end',s)}</div>`:''}
   <div style="margin-top:12px;padding:10px 12px;background:var(--pr50);border:1px solid var(--pr100);border-radius:var(--r1)">
     <div style="font:500 12px/1.4 var(--f);color:var(--pr)">流程包含分支：员工确认「同意」→ 流程结束；员工确认「不同意」→ 通知 HRBP 知悉 → 流程结束</div>
   </div>
@@ -885,17 +871,17 @@ function renderConfirmCfg(s){
 function renderInterviewCfg(s){
   const models=FLOW_MODELS[s.id]||[];
   const grades=getSelectedRule().grades;
-  const a=s.autoStart||{enabled:false,rule:'firstDayOfPeriod',offsetDays:0};
-  const e=s.autoEnd||{enabled:false,rule:'lastDayOfPeriod',offsetDays:0};
+  const a=ensureStageAuto(s,'start');
+  const e=ensureStageAuto(s,'end');
   return `<div class="form-row">
     <div class="form-grp"><label class="form-lb">流程模型</label><select class="form-input">${models.map(m=>`<option ${s.flow===m?'selected':''}>${m}</option>`).join('')}</select></div>
     <div class="form-grp"><label class="form-lb">开启方式</label><select class="form-input" onchange="updateStageAuto('${s.id}','start',this.value==='自动');render()"><option ${a.enabled?'':'selected'}>手动</option><option ${a.enabled?'selected':''}>自动</option></select></div>
   </div>
-  ${a.enabled?`<div id="timeRulePanel-start-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderTimeRulePanel('start',s)}</div>`:''}
+  ${a.enabled?`<div id="timeRulePanel-start-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderStageTimingPanel('start',s)}</div>`:''}
   <div class="form-row">
     <div class="form-grp"><label class="form-lb">结束方式</label><select class="form-input" onchange="updateStageAuto('${s.id}','end',this.value==='定时自动结束');render()"><option ${e.enabled?'':'selected'}>手动</option><option ${e.enabled?'selected':''}>定时自动结束</option></select></div>
   </div>
-  ${e.enabled?`<div id="timeRulePanel-end-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderTimeRulePanel('end',s)}</div>`:''}
+  ${e.enabled?`<div id="timeRulePanel-end-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderStageTimingPanel('end',s)}</div>`:''}
   <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
     <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制结束规则</div>
     <div style="display:flex;align-items:center;gap:8px">
@@ -939,6 +925,7 @@ function refreshAutoCreatePanel(){
 
 function onCycleTypeChange(val){
   form.cycleType=val;
+  clampAllStageTimingDays();
   refreshAutoCreatePanel();
   updateAutoCreatePreview();
   renderSidebar();
@@ -1092,37 +1079,57 @@ function toggleAutoRemoveCond(gi,cond,checked){
   else grp.autoRemove.conditions=grp.autoRemove.conditions.filter(c=>c!==cond);
 }
 
-// ═══ 环节定时开启/结束规则 ═══
-function calcStageDate(a,type){
-  var refDate=new Date('2026-07-01'); // Mock cycle start 2026-Q3
-  var refDateEnd=new Date('2026-09-30');
-  var offset=0;
-  if(a.mode==='relative'){
-    var ref=a.ref==='cycleStart'?refDate:new Date('2026-07-15'); // mock prev stage end
-    offset=a.offsetDays||0;
-    return new Date(ref.getTime()+offset*86400000);
-  }else{
-    var rule=a.fixedRule||'firstDayOfPeriod';
-    offset=a.fixedOffset||0;
-    switch(rule){
-      case 'firstDayOfPeriod': return new Date(refDate.getTime()+offset*86400000);
-      case 'lastDayOfPeriod': return new Date(refDateEnd.getTime()+offset*86400000);
-      case 'lastDayOfPrevPeriod': return new Date(new Date('2026-06-30').getTime()+offset*86400000);
-      case 'firstDayOfNextPeriod': return new Date(new Date('2026-10-01').getTime()+offset*86400000);
-      case 'prevMonthLastDay': return new Date(new Date('2026-06-30').getTime()+offset*86400000);
-      case 'prevMonthDay25': return new Date(new Date('2026-06-25').getTime()+offset*86400000);
-      case 'currentMonthDay1': return new Date(new Date('2026-07-01').getTime()+offset*86400000);
-      case 'currentMonthDay15': return new Date(new Date('2026-07-15').getTime()+offset*86400000);
-      case 'prevYearDec31': return new Date(new Date('2025-12-31').getTime()+offset*86400000);
-      case 'currentYearJan1': return new Date(new Date('2026-01-01').getTime()+offset*86400000);
-      case 'currentYearJun30': return new Date(new Date('2026-06-30').getTime()+offset*86400000);
-      case 'prevQuarterLastDay': return new Date(new Date('2026-06-30').getTime()+offset*86400000);
-      case 'currentQuarterDay1': return new Date(new Date('2026-07-01').getTime()+offset*86400000);
-      default: return new Date(refDate.getTime()+offset*86400000);
-    }
-  }
+// ═══ 环节自动开启/结束（与自动创建活动同一套周期相对控件） ═══
+function getCycleDayLimit(){
+  var ct=form.cycleType||'月度';
+  if(ct==='月度') return 15;
+  if(ct==='季度') return 90;
+  if(ct==='半年度') return 180;
+  return 365;
 }
-
+function getCycleDayDefault(){
+  var ct=form.cycleType||'月度';
+  if(ct==='半年度') return 14;
+  if(ct==='年度') return 30;
+  return 7;
+}
+function normalizeStageTiming(a){
+  if(!a) return {enabled:false,direction:'前',days:getCycleDayDefault()};
+  if(a.direction!=='前'&&a.direction!=='后'){
+    if(typeof a.offsetDays==='number') a.direction=a.offsetDays<0?'前':'后';
+    else a.direction='前';
+  }
+  var max=getCycleDayLimit();
+  var def=getCycleDayDefault();
+  var d=parseInt(a.days,10);
+  if((!d||d<1)&&typeof a.offsetDays==='number') d=Math.abs(a.offsetDays)||def;
+  if(!d||d<1) d=def;
+  if(d>max) d=max;
+  a.days=d;
+  delete a.mode; delete a.ref; delete a.offsetDays; delete a.fixedRule; delete a.fixedOffset;
+  return a;
+}
+function ensureStageAuto(stage,type){
+  var key=type==='start'?'autoStart':'autoEnd';
+  if(!stage[key]) stage[key]={enabled:false,direction:type==='start'?'前':'后',days:getCycleDayDefault()};
+  return normalizeStageTiming(stage[key]);
+}
+function clampAllStageTimingDays(){
+  (form.stages||[]).forEach(function(s){
+    if(s.autoStart) normalizeStageTiming(s.autoStart);
+    if(s.autoEnd) normalizeStageTiming(s.autoEnd);
+  });
+}
+function calcStageDate(a){
+  var refDate=new Date('2026-07-01');
+  var days=parseInt(a&&a.days,10)||getCycleDayDefault();
+  var sign=(a&&a.direction==='后')?1:-1;
+  return new Date(refDate.getTime()+sign*days*86400000);
+}
+function formatStageTimingDesc(a){
+  a=normalizeStageTiming(a||{});
+  return '周期开始'+a.direction+' '+a.days+' 天';
+}
 function checkStageConflict(stage,type){
   if(type!=='start') return null;
   var stages=form.stages.filter(function(s){return s.enabled;});
@@ -1131,126 +1138,112 @@ function checkStageConflict(stage,type){
   if(idx<=0) return null;
   var prevStage=stages[idx-1];
   if(!prevStage.autoEnd||!prevStage.autoEnd.enabled) return null;
-  var startDate=calcStageDate(stage.autoStart,'start');
-  var prevEndDate=calcStageDate(prevStage.autoEnd,'end');
+  var startDate=calcStageDate(ensureStageAuto(stage,'start'));
+  var prevEndDate=calcStageDate(ensureStageAuto(prevStage,'end'));
   if(startDate<prevEndDate){
     return {prevStageName:prevStage.name,prevEndDate:prevEndDate,startDate:startDate};
   }
   return null;
 }
-
-function renderTimeRulePanel(type,stage){
-  var a=type==='start'?(stage.autoStart||{enabled:false,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'firstDayOfPeriod',fixedOffset:0}):(stage.autoEnd||{enabled:false,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'lastDayOfPeriod',fixedOffset:0});
-  return '<div style="font:500 12px/1 var(--f);color:var(--c6);margin-bottom:10px">'+(type==='start'?'自动开启':'自动结束')+'规则</div>'+
-    '<div id="timeRuleInner-'+type+'-'+stage.id+'">'+renderTimeRuleControls(type,stage,a)+'</div>';
+function formatStageConflict(conflict,pad){
+  if(!conflict) return '';
+  return '⚠ 上一环节「'+conflict.prevStageName+'」自动结束于 '+conflict.prevEndDate.getFullYear()+'-'+pad(conflict.prevEndDate.getMonth()+1)+'-'+pad(conflict.prevEndDate.getDate())+'<br>'+
+    '&nbsp;&nbsp;&nbsp;&nbsp;当前环节开启时间早于上一环节结束时间，请检查';
 }
-
-function renderTimeRuleControls(type,stage,a){
-  var label=type==='start'?'自动开启':'自动结束';
+function renderStageTimingPanel(type,stage){
+  var a=ensureStageAuto(stage,type);
+  var label=type==='start'?'开启':'结束';
+  var max=getCycleDayLimit();
   var previewId='timeRulePreview-'+type+'-'+stage.id;
   var pad=function(n){return String(n).padStart(2,'0');};
-  var isGoal=stage.id==='goal';
-  var resultDate=calcStageDate(a,type);
+  var resultDate=calcStageDate(a);
   var conflict=checkStageConflict(stage,type);
-
-  var desc='';
-  if(a.mode==='relative'){
-    var refLabel=a.ref==='cycleStart'?'周期开始':(a.ref==='prevStageEnd'?'上一环节结束':'周期开始');
-    desc=refLabel+(a.offsetDays>=0?'后':'前')+' '+Math.abs(a.offsetDays||0)+' 天';
-  }else{
-    desc=getTimeRuleLabel(a.fixedRule)+(a.fixedOffset?(a.fixedOffset>0?'+'+a.fixedOffset:a.fixedOffset)+'天':'');
-  }
-
-  return '<div style="margin-bottom:10px"><div style="display:flex;gap:16px">'+
-    '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font:400 13px/1 var(--f);color:var(--c7)" onclick="refreshTimeRulePanel(\''+type+'\',\''+stage.id+'\')"><div style="width:16px;height:16px;border-radius:50%;border:2px solid '+(a.mode==='relative'?'var(--pr)':'var(--c3)')+';display:flex;align-items:center;justify-content:center">'+(a.mode==='relative'?'<div style="width:8px;height:8px;border-radius:50%;background:var(--pr)"></div>':'')+'</div>周期相对时间</label>'+
-    '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font:400 13px/1 var(--f);color:var(--c7)" onclick="refreshTimeRulePanel(\''+type+'\',\''+stage.id+'\')"><div style="width:16px;height:16px;border-radius:50%;border:2px solid '+(a.mode==='fixed'?'var(--pr)':'var(--c3)')+';display:flex;align-items:center;justify-content:center">'+(a.mode==='fixed'?'<div style="width:8px;height:8px;border-radius:50%;background:var(--pr)"></div>':'')+'</div>周期固定时间</label>'+
-    '</div></div>'+
-    (a.mode==='relative'?(
-      '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px">'+
-        '<div style="display:flex;align-items:center;gap:6px"><span style="font:400 12px/1 var(--f);color:var(--c7)">参考点</span>'+
-          '<select class="form-input" style="width:160px" onchange="updateTimeRule(\''+stage.id+'\',\''+type+'\',\'ref\',this.value);updateTimeRulePreview(\''+type+'\',\''+stage.id+'\')">'+
-            (isGoal?'':'<option value="prevStageEnd" '+(a.ref==='prevStageEnd'?'selected':'')+'>上一环节结束后</option>')+
-            '<option value="cycleStart" '+(a.ref==='cycleStart'?'selected':'')+'>周期开始后</option>'+
-          '</select></div>'+
-        '<div style="display:flex;align-items:center;gap:6px"><span style="font:400 12px/1 var(--f);color:var(--c7)">偏移</span>'+
-          '<input class="form-input" type="number" value="'+(a.offsetDays||0)+'" min="-30" max="30" style="width:70px" oninput="updateTimeRule(\''+stage.id+'\',\''+type+'\',\'offsetDays\',parseInt(this.value)||0);updateTimeRulePreview(\''+type+'\',\''+stage.id+'\')"><span style="font:400 12px/1 var(--f);color:var(--c5)">天（正数延后，负数提前）</span></div>'+
-      '</div>'
-    ):(
-      '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px">'+
-        '<div style="display:flex;align-items:center;gap:6px"><span style="font:400 12px/1 var(--f);color:var(--c7)">参考点</span>'+
-          '<select class="form-input" style="width:180px" onchange="updateTimeRule(\''+stage.id+'\',\''+type+'\',\'fixedRule\',this.value);updateTimeRulePreview(\''+type+'\',\''+stage.id+'\')">'+getTimeRulesForCycleWithSelected(a.fixedRule)+'</select></div>'+
-        '<div style="display:flex;align-items:center;gap:6px"><span style="font:400 12px/1 var(--f);color:var(--c7)">偏移</span>'+
-          '<input class="form-input" type="number" value="'+(a.fixedOffset||0)+'" min="-30" max="30" style="width:70px" oninput="updateTimeRule(\''+stage.id+'\',\''+type+'\',\'fixedOffset\',parseInt(this.value)||0);updateTimeRulePreview(\''+type+'\',\''+stage.id+'\')"><span style="font:400 12px/1 var(--f);color:var(--c5)">天</span></div>'+
-      '</div>'
-    ))+
-    '<div id="'+previewId+'" style="margin-top:10px;padding:8px 12px;background:var(--pr50);border:1px solid var(--pr100);border-radius:var(--r1);font:400 12px/1.3 var(--f);color:var(--pr700)">'+
-      '📅 预览：预计 '+resultDate.getFullYear()+'-'+pad(resultDate.getMonth()+1)+'-'+pad(resultDate.getDate())+' 自动'+label+'（'+desc+'）'+
+  var desc=formatStageTimingDesc(a);
+  return '<div style="font:500 12px/1 var(--f);color:var(--c6);margin-bottom:10px">自动'+label+'时间</div>'+
+    '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px">'+
+      '<span style="font:400 13px/1 var(--f);color:var(--c7)">周期开始</span>'+
+      '<select class="form-input" style="width:80px" onchange="setStageTimingField(\''+stage.id+'\',\''+type+'\',\'direction\',this.value)">'+
+        '<option value="前" '+(a.direction==='前'?'selected':'')+'>前</option>'+
+        '<option value="后" '+(a.direction==='后'?'selected':'')+'>后</option>'+
+      '</select>'+
+      '<input class="form-input" type="number" value="'+a.days+'" min="1" max="'+max+'" style="width:60px" oninput="setStageTimingDays(\''+stage.id+'\',\''+type+'\',this.value,this)">'+
+      '<span style="font:400 13px/1 var(--f);color:var(--c7)">天</span>'+
     '</div>'+
-    (conflict?'<div style="margin-top:8px;padding:8px 12px;background:var(--ro50);border:1px solid var(--ro100);border-radius:var(--r1);font:400 12px/1.3 var(--f);color:var(--ro)">'+
-      '⚠ 上一环节「'+conflict.prevStageName+'」自动结束于 '+conflict.prevEndDate.getFullYear()+'-'+pad(conflict.prevEndDate.getMonth()+1)+'-'+pad(conflict.prevEndDate.getDate())+'<br>'+
-      '&nbsp;&nbsp;&nbsp;&nbsp;当前环节开启时间早于上一环节结束时间，请检查'+
-    '</div>':'')+
-  '';
+    '<div id="'+previewId+'" style="margin-top:10px;padding:8px 12px;background:var(--pr50);border:1px solid var(--pr100);border-radius:var(--r1);font:400 12px/1.3 var(--f);color:var(--pr700)">'+
+      '📅 预览：预计自动'+label+'日期 '+resultDate.getFullYear()+'-'+pad(resultDate.getMonth()+1)+'-'+pad(resultDate.getDate())+'（'+desc+'）'+
+    '</div>'+
+    '<div id="timeRuleConflict-'+type+'-'+stage.id+'" style="margin-top:8px;padding:8px 12px;background:var(--ro50);border:1px solid var(--ro100);border-radius:var(--r1);font:400 12px/1.3 var(--f);color:var(--ro);display:'+(conflict?'block':'none')+'">'+
+      formatStageConflict(conflict,pad)+
+    '</div>';
 }
-
-function refreshTimeRulePanel(type,stageId){
+function setStageTimingField(stageId,type,field,value){
   var stage=form.stages.find(function(s){return s.id===stageId;});
   if(!stage) return;
-  var a=type==='start'?stage.autoStart:stage.autoEnd;
-  if(!a) return;
-  // Toggle mode
-  a.mode=(a.mode==='relative'?'fixed':'relative');
-  var el=document.getElementById('timeRuleInner-'+type+'-'+stageId);
-  if(el){
-    el.innerHTML=renderTimeRuleControls(type,stage,a);
-  }
+  var a=ensureStageAuto(stage,type);
+  a[field]=value;
+  updateStageTimingPreview(type,stageId);
 }
-
-function getTimeRulesForCycleWithSelected(selectedKey){
-  var ct=form.cycleType||'季度';
-  return Object.entries(TIME_RULES).filter(function(e){return e[1].forType==='all'||e[1].forType===ct;}).map(function(e){return '<option value="'+e[0]+'" '+(e[0]===selectedKey?'selected':'')+'>'+e[1].label+'</option>';}).join('');
-}
-
-function updateTimeRule(stageId,type,field,value){
+function setStageTimingDays(stageId,type,raw,inputEl){
   var stage=form.stages.find(function(s){return s.id===stageId;});
-  if(!stage)return;
-  var target=type==='start'?stage.autoStart:stage.autoEnd;
-  if(target) target[field]=value;
+  if(!stage) return;
+  var a=ensureStageAuto(stage,type);
+  var max=getCycleDayLimit();
+  var def=getCycleDayDefault();
+  var d=parseInt(raw,10);
+  if(!d||d<1) d=def;
+  if(d>max) d=max;
+  a.days=d;
+  if(inputEl) inputEl.value=d;
+  updateStageTimingPreview(type,stageId);
 }
-
-function updateTimeRulePreview(type,stageId){
+function updateStageTimingPreview(type,stageId){
   var el=document.getElementById('timeRulePreview-'+type+'-'+stageId);
-  if(!el)return;
+  if(!el) return;
   var stage=form.stages.find(function(s){return s.id===stageId;});
-  if(!stage)return;
-  var a=type==='start'?stage.autoStart:stage.autoEnd;
-  if(!a)return;
+  if(!stage) return;
+  var a=ensureStageAuto(stage,type);
   var pad=function(n){return String(n).padStart(2,'0');};
   var label=type==='start'?'开启':'结束';
-  var resultDate=calcStageDate(a,type);
-  var desc='';
-  if(a.mode==='relative'){
-    var refLabel=a.ref==='cycleStart'?'周期开始':(a.ref==='prevStageEnd'?'上一环节结束':'周期开始');
-    desc=refLabel+(a.offsetDays>=0?'后':'前')+' '+Math.abs(a.offsetDays||0)+' 天';
-  }else{
-    desc=getTimeRuleLabel(a.fixedRule)+(a.fixedOffset?(a.fixedOffset>0?'+'+a.fixedOffset:a.fixedOffset)+'天':'');
-  }
+  var resultDate=calcStageDate(a);
+  var desc=formatStageTimingDesc(a);
   var conflict=checkStageConflict(stage,type);
-  el.innerHTML='📅 预览：预计 '+resultDate.getFullYear()+'-'+pad(resultDate.getMonth()+1)+'-'+pad(resultDate.getDate())+' 自动'+label+'（'+desc+'）'+
-    (conflict?'<div style="margin-top:6px;padding:6px 8px;background:var(--ro50);border:1px solid var(--ro100);border-radius:var(--r1);font:400 11px/1.3 var(--f);color:var(--ro)">⚠ 上一环节「'+conflict.prevStageName+'」自动结束于 '+conflict.prevEndDate.getFullYear()+'-'+pad(conflict.prevEndDate.getMonth()+1)+'-'+pad(conflict.prevEndDate.getDate())+'<br>&nbsp;&nbsp;&nbsp;当前环节开启时间早于上一环节结束时间，请检查</div>':'');
+  el.innerHTML='📅 预览：预计自动'+label+'日期 '+resultDate.getFullYear()+'-'+pad(resultDate.getMonth()+1)+'-'+pad(resultDate.getDate())+'（'+desc+'）';
+  var conflictEl=document.getElementById('timeRuleConflict-'+type+'-'+stageId);
+  if(conflictEl){
+    conflictEl.style.display=conflict?'block':'none';
+    conflictEl.innerHTML=formatStageConflict(conflict,pad);
+  }
 }
-
 function updateStageAuto(stageId,type,enabled){
   var stage=form.stages.find(function(s){return s.id===stageId;});
-  if(!stage)return;
-  if(type==='start') stage.autoStart.enabled=enabled;
-  if(type==='end') stage.autoEnd.enabled=enabled;
+  if(!stage) return;
+  var a=ensureStageAuto(stage,type);
+  a.enabled=enabled;
 }
 
 // ═══ 导航 ═══
 function selSection(id){activeSection=id;render()}
+function setRatifySubmitMode(value){form.ratifySubmitMode=value}
+function validateRatifySubmitMode(){
+  const ratifyStage=form.stages.find(s=>s.id==='ratify');
+  if(ratifyStage&&ratifyStage.enabled&&!form.ratifySubmitMode){
+    alert('请选择提交方式');
+    activeSection='ratify';
+    render();
+    return false;
+  }
+  return true;
+}
+function goNextSection(id){
+  if(activeSection==='ratify'&&!validateRatifySubmitMode())return;
+  selSection(id);
+}
+function validateScheme(){
+  if(!form.name){alert('请填写方案名称');activeSection='basic';render();return false}
+  return validateRatifySubmitMode();
+}
 function toggleSec(el){el.closest('.form-sec').classList.toggle('open')}
-function submit(){if(!form.name){alert('请填写方案名称');activeSection='basic';render();return}alert('方案已提交：'+form.name)}
+function submit(){if(!validateScheme())return;alert('方案已提交：'+form.name)}
 
 function cancelEdit(){
   if(confirm('确定要取消编辑吗？未保存的更改将丢失。')){
@@ -1259,7 +1252,7 @@ function cancelEdit(){
 }
 
 function saveScheme(){
-  if(!form.name){alert('请填写方案名称');activeSection='basic';render();return}
+  if(!validateScheme())return;
   alert('方案「'+form.name+'」保存成功');
   window.location.href='perf-scheme-list.html';
 }

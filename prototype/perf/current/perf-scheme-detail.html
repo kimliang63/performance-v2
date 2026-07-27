@@ -68,11 +68,11 @@ const SCHEME={
     {name:'仓储特殊组',isDefault:false,rules:'部门 等于 仓储部 且 职级 属于 L5,L6',evalRule:'仓储评价规则',autoRemove:{enabled:false,conditions:[]}},
   ],
   stages:[
-    {name:'目标制定',desc:'员工/上级填写绩效目标',flow:'通用目标制定流程',enabled:true,autoStart:{enabled:false,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'firstDayOfPeriod',fixedOffset:0},autoEnd:{enabled:false,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'lastDayOfPeriod',fixedOffset:0}},
-    {name:'绩效面谈',desc:'上级与员工面谈',flow:'绩效面谈流程',enabled:true,autoStart:{enabled:false,mode:'relative',ref:'prevStageEnd',offsetDays:0,fixedRule:'firstDayOfPeriod',fixedOffset:0},autoEnd:{enabled:false,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'lastDayOfPeriod',fixedOffset:0}},
-    {name:'绩效考核',desc:'考核人评分',flow:'通用绩效考核流程',enabled:true,autoStart:{enabled:true,mode:'relative',ref:'cycleStart',offsetDays:3,fixedRule:'firstDayOfPeriod',fixedOffset:0},autoEnd:{enabled:true,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'lastDayOfPeriod',fixedOffset:-3}},
-    {name:'结果审定',desc:'审定人调整等级',flow:'汇报线逐级审定',enabled:true,autoStart:{enabled:false,mode:'relative',ref:'prevStageEnd',offsetDays:0,fixedRule:'firstDayOfPeriod',fixedOffset:0},autoEnd:{enabled:false,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'lastDayOfPeriod',fixedOffset:0}},
-    {name:'结果确认',desc:'员工确认绩效结果',flow:'员工确认流程',enabled:true,autoStart:{enabled:false,mode:'relative',ref:'prevStageEnd',offsetDays:0,fixedRule:'firstDayOfPeriod',fixedOffset:0},autoEnd:{enabled:false,mode:'relative',ref:'cycleStart',offsetDays:0,fixedRule:'lastDayOfPeriod',fixedOffset:0}},
+    {name:'目标制定',desc:'员工/上级填写绩效目标',flow:'通用目标制定流程',enabled:true,autoStart:{enabled:false,direction:'前',days:7},autoEnd:{enabled:false,direction:'后',days:7}},
+    {name:'绩效面谈',desc:'上级与员工面谈',flow:'绩效面谈流程',enabled:true,autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14}},
+    {name:'绩效考核',desc:'考核人评分',flow:'通用绩效考核流程',enabled:true,autoStart:{enabled:true,direction:'后',days:3},autoEnd:{enabled:true,direction:'后',days:30}},
+    {name:'结果审定',desc:'审定人调整等级',flow:'汇报线逐级审定',enabled:true,autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14}},
+    {name:'结果确认',desc:'员工确认绩效结果',flow:'员工确认流程',enabled:true,autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14}},
   ],
   forcedDist:{name:'标准七级强制分布',grades:[
     {code:'A',name:'远超预期',op:'不超过',pct:5},
@@ -83,17 +83,17 @@ const SCHEME={
     {code:'C',name:'低于预期',op:'不超过',pct:10},
     {code:'D',name:'远低预期',op:'不超过',pct:5},
   ]},
+  ratifySubmitMode:'按层级提交',
   autoCreate:{enabled:true,monthly:{direction:'前',days:7},quarterly:{direction:'前',days:7},semiannual:{direction:'前',days:14},annual:{direction:'前',days:30}},
   admins:['EMP0088'],
 };
 
-const TIME_RULES_LABEL={
-  'firstDayOfPeriod':'周期第一天','lastDayOfPeriod':'周期最后一天','lastDayOfPrevPeriod':'上一周期最后一天',
-  'firstDayOfNextPeriod':'下一周期第一天','prevMonthLastDay':'上月最后一天','prevMonthDay25':'上月25号',
-  'currentMonthDay1':'当月1号','currentMonthDay15':'当月15号','prevYearDec31':'上年12月31日',
-  'currentYearJan1':'当年1月1日','currentYearJun30':'当年6月30日','prevQuarterLastDay':'上季最后一天','currentQuarterDay1':'当季第一天',
-};
-function ruleLabel(k){return TIME_RULES_LABEL[k]||k;}
+function formatStageTiming(a){
+  if(!a||!a.enabled) return '';
+  var dir=a.direction==='后'?'后':'前';
+  var days=parseInt(a.days,10)||0;
+  return '周期开始'+dir+' '+days+' 天';
+}
 
 function render(){
   const s=SCHEME;
@@ -160,7 +160,7 @@ function render(){
       <div style="display:flex;flex-direction:column;gap:6px">
         ${s.stages.map(st=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--dv);border-radius:var(--r1)">
           <div><span style="font:500 13px/1 var(--f);color:var(--c9)">${st.name}</span><span style="font:400 12px/1 var(--f);color:var(--c5);margin-left:8px">${st.desc}</span></div>
-          <div style="display:flex;align-items:center;gap:10px"><span style="font:400 11px/1 var(--f);color:var(--c5);font-family:var(--m)">${st.flow}</span><span style="font:500 11px/1 var(--f);padding:2px 8px;border-radius:3px;background:var(--em50);color:var(--em700)">${st.enabled?'已启用':'已停用'}</span>${st.autoStart&&st.autoStart.enabled?`<span style="font:400 11px/1 var(--f);color:var(--pr);margin-left:2px">自动开启: ${(function(a){if(a.mode==='relative'){var r=a.ref==='cycleStart'?'周期开始':a.ref==='prevStageEnd'?'上一环节结束':'周期开始';return r+(a.offsetDays>=0?'后':'前')+Math.abs(a.offsetDays||0)+'天';}else{return ruleLabel(a.fixedRule)+(a.fixedOffset?(a.fixedOffset>0?'+'+a.fixedOffset:a.fixedOffset)+'天':'');}})(st.autoStart)}</span>`:''}${st.autoEnd&&st.autoEnd.enabled?`<span style="font:400 11px/1 var(--f);color:var(--ac700);margin-left:2px">自动结束: ${(function(a){if(a.mode==='relative'){var r=a.ref==='cycleStart'?'周期开始':a.ref==='prevStageEnd'?'上一环节结束':'周期开始';return r+(a.offsetDays>=0?'后':'前')+Math.abs(a.offsetDays||0)+'天';}else{return ruleLabel(a.fixedRule)+(a.fixedOffset?(a.fixedOffset>0?'+'+a.fixedOffset:a.fixedOffset)+'天':'');}})(st.autoEnd)}</span>`:''}</div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end"><span style="font:400 11px/1 var(--f);color:var(--c5);font-family:var(--m)">${st.flow}</span><span style="font:500 11px/1 var(--f);padding:2px 8px;border-radius:3px;background:var(--em50);color:var(--em700)">${st.enabled?'已启用':'已停用'}</span>${st.name==='结果审定'?`<span style="font:400 11px/1 var(--f);color:var(--c7)">提交方式：${s.ratifySubmitMode||'—'}</span>`:''}${st.autoStart&&st.autoStart.enabled?`<span style="font:400 11px/1 var(--f);color:var(--pr);margin-left:2px">自动开启: ${formatStageTiming(st.autoStart)}</span>`:''}${st.autoEnd&&st.autoEnd.enabled?`<span style="font:400 11px/1 var(--f);color:var(--ac700);margin-left:2px">自动结束: ${formatStageTiming(st.autoEnd)}</span>`:''}</div>
         </div>`).join('')}
       </div>
     </div>
@@ -168,6 +168,7 @@ function render(){
     <!-- 强制分布 -->
     <div class="card">
       <div class="card-hd"><span class="card-bar" style="background:var(--em)"></span><span class="card-title">强制分布 · ${s.forcedDist.name}</span></div>
+      <div style="margin-bottom:12px"><lbl>提交方式</lbl><val>${s.ratifySubmitMode||'—'}</val></div>
       <div style="display:flex;flex-wrap:wrap;gap:10px">
         ${s.forcedDist.grades.map(d=>`<span style="font:500 13px/1 var(--f);color:var(--c7)"><strong>${d.code}</strong> ${d.name} <span style="color:var(--c5)">${d.op} ${d.pct}%</span></span>`).join('<span style="color:var(--c3)">|</span>')}
       </div>
