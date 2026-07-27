@@ -444,22 +444,40 @@ const EMPLOYEE_LIST = [
 
 // 当前活动处于唯一的全局业务环节“结果确认”。个人差异只体现在该环节内的流程节点。
 // importCompletedStages 仅记录可导入的业务环节：目标制定/绩效考核/结果审定/绩效面谈；结果确认不可导入。
+// 列表枚举：目标制定/面谈/考核/审定=未开始|进行中|已完成；绩效结果确认=未开始|进行中|已确认|已申诉。
+// forceEnded / confirmAppealPending 仅供人员详情内部事实，不进入列表字段枚举。
 const PERSONAL_FLOW_STATE={
-  EMP009:{flowNode:'待员工处理',status:'未开始',handler:'-',confirmStatus:'-',goalApproval:'未开始',importCompletedStages:[]},
-  EMP002:{flowNode:'员工确认',status:'进行中',handler:'李四',confirmStatus:'-',goalApproval:'制定中',importCompletedStages:[]},
-  EMP005:{flowNode:'员工确认',status:'进行中',handler:'孙七',exception:'超时',confirmStatus:'-',goalApproval:'制定中',importCompletedStages:[]},
-  EMP007:{flowNode:'待员工处理',status:'未开始',handler:'-',confirmStatus:'-',goalApproval:'已生效',importCompletedStages:['目标制定']},
-  EMP001:{flowNode:'员工确认',status:'进行中',handler:'张三',exception:'逾期',confirmStatus:'-',goalApproval:'已生效',importCompletedStages:[]},
-  EMP003:{flowNode:'申诉提交',status:'进行中',handler:'王五',confirmStatus:'申诉处理中',goalApproval:'已生效',importCompletedStages:[]},
-  EMP004:{flowNode:'申诉提交',status:'进行中',handler:'赵六',exception:'缺少操作',confirmStatus:'申诉处理中',goalApproval:'已生效',importCompletedStages:[]},
-  EMP006:{flowNode:'员工确认',status:'进行中',handler:'周八',confirmStatus:'-',goalApproval:'已生效',importCompletedStages:[]},
-  EMP010:{flowNode:'员工确认',status:'已暂停',handler:'吴九',confirmStatus:'-',goalApproval:'已生效',importCompletedStages:[]},
-  EMP012:{flowNode:'已确认',status:'已完成',handler:'-',confirmStatus:'已确认',goalApproval:'已生效',importCompletedStages:[]},
-  EMP013:{flowNode:'已申诉',status:'已完成',handler:'-',confirmStatus:'已申诉',goalApproval:'已生效',importCompletedStages:[]},
-  EMP014:{flowNode:'系统强制结束',status:'已完成',handler:'系统',confirmStatus:'系统强制结束',goalApproval:'—',importCompletedStages:[]},
-  EMP008:{flowNode:'员工确认',status:'进行中',handler:'陈十一',confirmStatus:'-',goalApproval:'已生效',importCompletedStages:[]},
-  EMP011:{flowNode:'已确认',status:'已完成',handler:'-',confirmStatus:'已确认',goalApproval:'已生效',importCompletedStages:[]},
+  EMP009:{flowNode:'待员工处理',status:'未开始',handler:'-',confirmStatus:'未开始',goalApproval:'未开始',interviewStatus:'未开始',evalStatus:'未开始',reviewStatus:'未开始',importCompletedStages:[]},
+  EMP002:{flowNode:'员工确认',status:'进行中',handler:'李四',confirmStatus:'未开始',goalApproval:'进行中',interviewStatus:'未开始',evalStatus:'未开始',reviewStatus:'未开始',importCompletedStages:[]},
+  EMP005:{flowNode:'员工确认',status:'进行中',handler:'孙七',exception:'超时',confirmStatus:'未开始',goalApproval:'进行中',interviewStatus:'未开始',evalStatus:'未开始',reviewStatus:'未开始',importCompletedStages:[]},
+  EMP007:{flowNode:'待员工处理',status:'未开始',handler:'-',confirmStatus:'未开始',goalApproval:'已完成',interviewStatus:'未开始',evalStatus:'进行中',reviewStatus:'未开始',importCompletedStages:['目标制定']},
+  EMP001:{flowNode:'员工确认',status:'进行中',handler:'张三',exception:'逾期',confirmStatus:'未开始',goalApproval:'已完成',interviewStatus:'未开始',evalStatus:'进行中',reviewStatus:'未开始',importCompletedStages:[]},
+  EMP003:{flowNode:'申诉提交',status:'进行中',handler:'王五',confirmStatus:'进行中',confirmAppealPending:true,goalApproval:'已完成',interviewStatus:'未开始',evalStatus:'已完成',reviewStatus:'进行中',importCompletedStages:[]},
+  EMP004:{flowNode:'申诉提交',status:'进行中',handler:'赵六',exception:'缺少操作',confirmStatus:'进行中',confirmAppealPending:true,goalApproval:'已完成',interviewStatus:'未开始',evalStatus:'已完成',reviewStatus:'进行中',importCompletedStages:[]},
+  EMP006:{flowNode:'员工确认',status:'进行中',handler:'周八',confirmStatus:'进行中',goalApproval:'已完成',interviewStatus:'未开始',evalStatus:'已完成',reviewStatus:'已完成',importCompletedStages:[]},
+  EMP010:{flowNode:'员工确认',status:'已暂停',handler:'吴九',confirmStatus:'进行中',goalApproval:'已完成',interviewStatus:'未开始',evalStatus:'已完成',reviewStatus:'已完成',importCompletedStages:[]},
+  EMP012:{flowNode:'已确认',status:'已完成',handler:'-',confirmStatus:'已确认',goalApproval:'已完成',interviewStatus:'未开始',evalStatus:'已完成',reviewStatus:'已完成',importCompletedStages:[]},
+  EMP013:{flowNode:'已申诉',status:'已完成',handler:'-',confirmStatus:'已申诉',goalApproval:'已完成',interviewStatus:'未开始',evalStatus:'已完成',reviewStatus:'已完成',importCompletedStages:[]},
+  EMP014:{flowNode:'系统强制结束',status:'已完成',handler:'系统',confirmStatus:'未开始',forceEnded:true,goalApproval:'已完成',interviewStatus:'未开始',evalStatus:'已完成',reviewStatus:'已完成',importCompletedStages:[]},
+  EMP008:{flowNode:'员工确认',status:'进行中',handler:'陈十一',confirmStatus:'未开始',goalApproval:'已完成',interviewStatus:'进行中',evalStatus:'已完成',reviewStatus:'已完成',importCompletedStages:[]},
+  EMP011:{flowNode:'已确认',status:'已完成',handler:'-',confirmStatus:'已确认',goalApproval:'已完成',interviewStatus:'已完成',evalStatus:'已完成',reviewStatus:'已完成',importCompletedStages:[]},
 };
+function normalizeGoalStatus(v){
+  if(v==='制定中')return '进行中';
+  if(v==='已生效')return '已完成';
+  if(v==='未开始'||v==='进行中'||v==='已完成')return v;
+  return '未开始';
+}
+function normalizeConfirmStatus(v){
+  if(v==='申诉处理中')return '进行中';
+  if(v==='系统强制结束')return '未开始';
+  if(v==='未开始'||v==='进行中'||v==='已确认'||v==='已申诉')return v;
+  return '未开始';
+}
+function normalizeStageStatus(v){
+  if(v==='未开始'||v==='进行中'||v==='已完成')return v;
+  return '未开始';
+}
 function hasImportCompletedForStage(emp,stage){
   if(!stage||stage==='结果确认')return false;
   return (emp.importCompletedStages||[]).indexOf(stage)>=0;
@@ -469,6 +487,15 @@ function stageAllowsPersonalOpen(a){
   var s=a.stageStatus||'';
   return s==='开启中'||s==='处理中';
 }
+function empStatusTagStyle(v){
+  if(v==='进行中')return 'color:var(--pr);background:var(--pr50)';
+  if(v==='已完成'||v==='已确认')return 'color:var(--em700);background:var(--em50)';
+  if(v==='已暂停'||v==='已申诉')return 'color:var(--ac700);background:var(--ac50)';
+  return 'color:var(--c6);background:var(--c1)';
+}
+function empStatusTag(v){
+  return '<span style="font:500 12px/1 var(--f);padding:2px 8px;border-radius:4px;white-space:nowrap;'+empStatusTagStyle(v)+'">'+v+'</span>';
+}
 EMPLOYEE_LIST.forEach(function(emp){
   const state=PERSONAL_FLOW_STATE[emp.emp]||{};
   emp.node=5;
@@ -477,8 +504,13 @@ EMPLOYEE_LIST.forEach(function(emp){
   emp.handler=state.handler===undefined?emp.handler:state.handler;
   emp.exception=state.exception||'-';
   emp.exceptionCls=emp.exception==='超时'?'color:var(--ro);background:var(--ro50)':emp.exception==='-'?'':'color:var(--ac700);background:var(--ac50)';
-  emp.confirmStatus=state.confirmStatus||'-';
-  emp.goalApproval=state.goalApproval||'已生效';
+  emp.forceEnded=!!state.forceEnded;
+  emp.confirmAppealPending=!!state.confirmAppealPending;
+  emp.confirmStatus=normalizeConfirmStatus(state.confirmStatus);
+  emp.goalApproval=normalizeGoalStatus(state.goalApproval);
+  emp.interviewStatus=normalizeStageStatus(state.interviewStatus);
+  emp.evalStatus=normalizeStageStatus(state.evalStatus);
+  emp.reviewStatus=normalizeStageStatus(state.reviewStatus);
   emp.importCompletedStages=Array.isArray(state.importCompletedStages)?state.importCompletedStages.slice():[];
   emp.todoCreated=emp.status!=='未开始';
   if(emp.totalScore===null)emp.totalScore=75;
@@ -503,7 +535,7 @@ const EMPLOYEE_DETAIL = [
 ];
 
 function buildPersonalFlowNodes(emp){
-  if(emp.confirmStatus==='系统强制结束'){
+  if(emp.forceEnded){
     return [{node:'方案强制结束',handler:'系统',status:'系统结束',time:emp.updateTime,submitAction:'按方案配置写入等级 '+emp.approveGrade,form:'结果详情'}];
   }
   if(emp.confirmStatus==='已申诉'){
@@ -519,7 +551,7 @@ function buildPersonalFlowNodes(emp){
       {node:'确认终态',handler:'系统',status:'已确认',time:emp.updateTime,submitAction:'不可逆',form:'结果详情'},
     ];
   }
-  if(emp.confirmStatus==='申诉处理中'){
+  if(emp.confirmAppealPending){
     return [
       {node:'员工申诉',handler:emp.name,status:'进行中',time:'-',submitAction:'申诉',form:'申诉表'},
       {node:'申诉终态',handler:'系统',status:'未开始',time:'-',submitAction:'-',form:'结果详情'},
@@ -554,7 +586,7 @@ function renderEmployeeList(){
     return {name,total,done,active,pending,exception,pct:Math.round(done/total*100),color:stageColors[idx]};
   });
   const currentStageName=a.currentStage||'未开启';
-  const flowNodeOptions=Array.from(new Set(EMPLOYEE_LIST.map(function(e){return e.nodeName;})));
+  const flowStatusOptions=['未开始','进行中','已暂停','已完成'];
 
   return `<div>
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;font:400 13px/1 var(--f);color:var(--c6)">
@@ -573,8 +605,8 @@ function renderEmployeeList(){
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--dv);margin-bottom:16px">
-      <span style="font:400 13px/1 var(--f);color:var(--c6)">当前流程节点</span>
-      <select id="empNodeFilter" onchange="updateEmpFilter('node',this.value)" style="height:32px;padding:0 28px 0 10px;border:1px solid var(--c3);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c7);background:var(--sf);appearance:none;cursor:pointer"><option value=""${empFilter.node===''?' selected':''}>全部</option>${flowNodeOptions.map(function(v){return '<option value="'+v+'"'+(empFilter.node===v?' selected':'')+'>'+v+'</option>';}).join('')}</select>
+      <span style="font:400 13px/1 var(--f);color:var(--c6)">流程状态</span>
+      <select id="empFlowStatusFilter" onchange="updateEmpFilter('flowStatus',this.value)" style="height:32px;padding:0 28px 0 10px;border:1px solid var(--c3);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c7);background:var(--sf);appearance:none;cursor:pointer"><option value=""${empFilter.flowStatus===''?' selected':''}>全部</option>${flowStatusOptions.map(function(v){return '<option value="'+v+'"'+(empFilter.flowStatus===v?' selected':'')+'>'+v+'</option>';}).join('')}</select>
       <span style="font:400 13px/1 var(--f);color:var(--c6)">异常状态</span>
       <select id="empExceptionFilter" onchange="updateEmpFilter('exception',this.value)" style="height:32px;padding:0 28px 0 10px;border:1px solid var(--c3);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c7);background:var(--sf);appearance:none;cursor:pointer"><option value=""${empFilter.exception===''?' selected':''}>全部</option>${['超时','逾期','缺少操作'].map(function(v){return '<option value="'+v+'"'+(empFilter.exception===v?' selected':'')+'>'+v+'</option>';}).join('')}</select>
       <span style="font:400 13px/1 var(--f);color:var(--c6)">考核组</span>
@@ -653,12 +685,6 @@ function renderEmployeeList(){
           </div>
         </div>
 
-        <!-- 查看考核关系 -->
-        <button class="btn btn-s" onclick="showViewRelationModal()" style="gap:6px">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-          查看考核关系
-        </button>
-
         <!-- 导入 -->
         <div style="position:relative;display:inline-flex">
           <button class="btn btn-s" onclick="toggleEmpDropdown('empImportDd')" style="gap:6px">
@@ -706,18 +732,23 @@ function renderEmployeeList(){
       </div>
     </div>
     <div style="background:var(--sf);border:1px solid var(--c3);border-radius:var(--r2);box-shadow:var(--shadow-card);overflow-x:auto">
-      <table style="border-collapse:collapse;min-width:1240px;width:100%">
+      <table style="border-collapse:collapse;min-width:1880px;width:100%">
         <thead><tr>
           <th style="background:var(--c1);font:600 12px/1 var(--f);color:var(--c6);text-align:left;padding:12px 14px;border-bottom:1px solid var(--dv);white-space:nowrap"><div class="ck" style="width:14px;height:14px;border:1px solid var(--c3);border-radius:3px;cursor:pointer"></div></th>
           <th style="background:var(--c1);font:600 12px/1 var(--f);color:var(--c6);text-align:left;padding:12px 14px;border-bottom:1px solid var(--dv);white-space:nowrap">姓名</th>
           <th style="background:var(--c1);font:600 12px/1 var(--f);color:var(--c6);text-align:left;padding:12px 14px;border-bottom:1px solid var(--dv);white-space:nowrap">工号</th>
           <th style="background:var(--c1);font:600 12px/1 var(--f);color:var(--c6);text-align:left;padding:12px 14px;border-bottom:1px solid var(--dv);white-space:nowrap">部门</th>
+          <th style="background:var(--c1);font:600 12px/1 var(--f);color:var(--c6);text-align:left;padding:12px 14px;border-bottom:1px solid var(--dv);white-space:nowrap">考核组</th>
+          <th style="background:var(--c1);font:600 12px/1 var(--f);color:var(--c6);text-align:left;padding:12px 14px;border-bottom:1px solid var(--dv);white-space:nowrap">当前流程状态</th>
           <th style="background:var(--c1);font:600 12px/1 var(--f);color:var(--c6);text-align:left;padding:12px 14px;border-bottom:1px solid var(--dv);white-space:nowrap">当前处理人</th>
-          <th style="background:var(--c1);font:600 12px/1 var(--f);color:var(--c6);text-align:left;padding:12px 14px;border-bottom:1px solid var(--dv);white-space:nowrap">目标审批状态</th>
+          <th style="background:var(--c1);font:600 12px/1 var(--f);color:var(--c6);text-align:left;padding:12px 14px;border-bottom:1px solid var(--dv);white-space:nowrap">目标制定</th>
+          <th style="background:var(--c1);font:600 12px/1 var(--f);color:var(--c6);text-align:left;padding:12px 14px;border-bottom:1px solid var(--dv);white-space:nowrap">绩效面谈</th>
+          <th style="background:var(--c1);font:600 12px/1 var(--f);color:var(--c6);text-align:left;padding:12px 14px;border-bottom:1px solid var(--dv);white-space:nowrap">绩效考核</th>
           <th style="background:var(--c1);font:600 12px/1 var(--f);color:var(--c6);text-align:left;padding:12px 14px;border-bottom:1px solid var(--dv);white-space:nowrap">考核总分</th>
           <th style="background:var(--c1);font:600 12px/1 var(--f);color:var(--c6);text-align:left;padding:12px 14px;border-bottom:1px solid var(--dv);white-space:nowrap">初评等级</th>
+          <th style="background:var(--c1);font:600 12px/1 var(--f);color:var(--c6);text-align:left;padding:12px 14px;border-bottom:1px solid var(--dv);white-space:nowrap">结果审定</th>
           <th style="background:var(--c1);font:600 12px/1 var(--f);color:var(--c6);text-align:left;padding:12px 14px;border-bottom:1px solid var(--dv);white-space:nowrap">审定等级</th>
-          <th style="background:var(--c1);font:600 12px/1 var(--f);color:var(--c6);text-align:left;padding:12px 14px;border-bottom:1px solid var(--dv);white-space:nowrap">确认状态</th>
+          <th style="background:var(--c1);font:600 12px/1 var(--f);color:var(--c6);text-align:left;padding:12px 14px;border-bottom:1px solid var(--dv);white-space:nowrap">绩效结果确认</th>
           <th style="background:var(--c1);font:600 12px/1 var(--f);color:var(--c6);text-align:left;padding:12px 14px;border-bottom:1px solid var(--dv);white-space:nowrap">异常状态</th>
           <th style="background:var(--c1);font:600 12px/1 var(--f);color:var(--c6);text-align:left;padding:12px 14px;border-bottom:1px solid var(--dv);white-space:nowrap">更新时间</th>
           <th style="background:var(--c1);font:600 12px/1 var(--f);color:var(--c6);text-align:left;padding:12px 14px;border-bottom:1px solid var(--dv);white-space:nowrap">操作</th>
@@ -732,21 +763,28 @@ function renderEmployeeList(){
             const gBg=gradeBg[r.grade]||null;
             const agColor=gradeColor[r.approveGrade]||null;
             const agBg=gradeBg[r.approveGrade]||null;
-            const goalStyle=r.goalApproval==='已生效'?'color:var(--em700);background:var(--em50)':r.goalApproval==='制定中'?'color:var(--pr);background:var(--pr50)':r.goalApproval==='未开始'?'color:var(--c6);background:var(--c1)':'';
             const stageImportDone=hasImportCompletedForStage(r,a.currentStage);
             const canStart=canOperate&&stageAllowsPersonalOpen(a)&&r.status==='未开始'&&!stageImportDone&&!r.todoCreated;
+            const nameHints=[];
+            if(stageImportDone)nameHints.push('导入完成('+a.currentStage+')');
+            if(r.exception!=='-')nameHints.push(r.exception);
             return `<tr>
             <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9"><div class="ck" style="width:14px;height:14px;border:1px solid var(--c3);border-radius:3px;cursor:pointer"></div></td>
-            <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9"><a href="javascript:void(0)" onclick="viewEmployeeDetail(${originalIndex})" style="color:var(--c9);font-weight:500;text-decoration:none;cursor:pointer">${r.name}</a><div style="font:400 11px/1 var(--f);color:var(--c5);margin-top:2px">${r.nodeName} · ${r.status}${stageImportDone?' · 导入完成('+a.currentStage+')':''}${r.exception!=='-'?' · '+r.exception:''}</div></td>
+            <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9"><a href="javascript:void(0)" onclick="viewEmployeeDetail(${originalIndex})" style="color:var(--c9);font-weight:500;text-decoration:none;cursor:pointer">${r.name}</a>${nameHints.length?`<div style="font:400 11px/1 var(--f);color:var(--c5);margin-top:2px">${nameHints.join(' · ')}</div>`:''}</td>
             <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9;font:400 12px/1 var(--f);color:var(--c6)">${r.emp}</td>
-            <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9">${r.dept}</td>
-            <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9">${r.handler}</td>
-            <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9">${r.goalApproval==='—'||!r.goalApproval?'<span style="color:var(--c4)">—</span>':`<span style="font:500 12px/1 var(--f);padding:2px 8px;border-radius:4px;${goalStyle}">${r.goalApproval}</span>`}</td>
+            <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9;white-space:nowrap">${r.dept}</td>
+            <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9;white-space:nowrap">${getEmpGroup(r)}</td>
+            <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9">${empStatusTag(r.status)}</td>
+            <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9;white-space:nowrap">${r.handler}</td>
+            <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9">${empStatusTag(r.goalApproval)}</td>
+            <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9">${empStatusTag(r.interviewStatus)}</td>
+            <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9">${empStatusTag(r.evalStatus)}</td>
             <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9;text-align:center"><span style="font:600 13px/1 var(--m);color:${r.totalScore===null?'var(--c4)':'var(--c8)'}">${r.totalScore===null?'—':r.totalScore}</span></td>
-            <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9">${r.grade==='-'?'<span style="color:var(--c4)">—</span>':`<span style="font:500 12px/1 var(--f);padding:2px 8px;border-radius:4px;color:${gColor};background:${gBg}">${r.grade}</span>`}</td>
-            <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9">${r.approveGrade==='-'?'<span style="color:var(--c4)">—</span>':`<span style="font:500 12px/1 var(--f);padding:2px 8px;border-radius:4px;color:${agColor};background:${agBg}">${r.approveGrade}</span>`}</td>
-            <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9">${r.confirmStatus==='-'?'<span style="color:var(--c4)">—</span>':`<span style="font:500 12px/1 var(--f);padding:2px 8px;border-radius:4px;${r.confirmStatus==='已申诉'?'color:var(--ac700);background:var(--ac50)':r.confirmStatus==='申诉处理中'?'color:var(--pr);background:var(--pr50)':r.confirmStatus==='系统强制结束'?'color:var(--vi);background:var(--vi50)':'color:var(--em700);background:var(--em50)'}">${r.confirmStatus}</span>`}</td>
-            <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9">${r.exception==='-'?'<span style="color:var(--c4)">—</span>':`<span style="font:500 12px/1 var(--f);padding:2px 8px;border-radius:4px;${r.exceptionCls}">${r.exception}</span>`}</td>
+            <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9">${r.grade==='-'?'<span style="color:var(--c4)">—</span>':`<span style="font:500 12px/1 var(--f);padding:2px 8px;border-radius:4px;color:${gColor};background:${gBg};white-space:nowrap">${r.grade}</span>`}</td>
+            <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9">${empStatusTag(r.reviewStatus)}</td>
+            <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9">${r.approveGrade==='-'?'<span style="color:var(--c4)">—</span>':`<span style="font:500 12px/1 var(--f);padding:2px 8px;border-radius:4px;color:${agColor};background:${agBg};white-space:nowrap">${r.approveGrade}</span>`}</td>
+            <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9">${empStatusTag(r.confirmStatus)}</td>
+            <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9">${r.exception==='-'?'<span style="color:var(--c4)">—</span>':`<span style="font:500 12px/1 var(--f);padding:2px 8px;border-radius:4px;white-space:nowrap;${r.exceptionCls}">${r.exception}</span>`}</td>
             <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9;font:400 12px/1 var(--f);color:var(--c6);white-space:nowrap">${r.updateTime}</td>
             <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9">
               <div style="display:flex;align-items:center;gap:2px;white-space:nowrap">
@@ -773,7 +811,7 @@ function renderEmployeeList(){
                 </div>`:''}
               </div>
             </td>
-          </tr>`;}).join(''):`<tr><td colspan="13" style="text-align:center;padding:40px;color:var(--c4);font-size:13px">暂无匹配的参与人</td></tr>`}
+          </tr>`;}).join(''):`<tr><td colspan="18" style="text-align:center;padding:40px;color:var(--c4);font-size:13px">暂无匹配的参与人</td></tr>`}
         </tbody>
       </table>
     </div>
@@ -873,9 +911,21 @@ function renderApp(){
 let currentView='employees'; // 独立详情页默认展示参与人
 let currentDetailId=parseInt(new URLSearchParams(window.location.search).get('id'))||1;
 let currentEmployeeIdx=null;
-let empFilter={node:'',exception:'',group:'',dept:'',search:''};
+let empFilter={flowStatus:'',exception:'',group:'',dept:'',search:''};
 const EMP_FILTER_KEY='perf-activity-detail-filters-'+currentDetailId;
-try{const saved=sessionStorage.getItem(EMP_FILTER_KEY);if(saved)empFilter=JSON.parse(saved);}catch(e){}
+try{
+  const saved=sessionStorage.getItem(EMP_FILTER_KEY);
+  if(saved){
+    const parsed=JSON.parse(saved)||{};
+    empFilter={
+      flowStatus:parsed.flowStatus||'',
+      exception:parsed.exception||'',
+      group:parsed.group||'',
+      dept:parsed.dept||'',
+      search:parsed.search||''
+    };
+  }
+}catch(e){}
 
 function getEmpGroup(e){
   if(['王五','吴九','郑十二'].indexOf(e.name)>=0)return '管理层组';
@@ -884,7 +934,7 @@ function getEmpGroup(e){
 }
 function getDisplayedEmployees(){
   return EMPLOYEE_LIST.filter(function(e){
-    if(empFilter.node&&e.nodeName!==empFilter.node)return false;
+    if(empFilter.flowStatus&&e.status!==empFilter.flowStatus)return false;
     if(empFilter.exception&&e.exception!==empFilter.exception)return false;
     if(empFilter.group&&getEmpGroup(e)!==empFilter.group)return false;
     if(empFilter.dept&&e.dept!==empFilter.dept)return false;
@@ -892,8 +942,12 @@ function getDisplayedEmployees(){
     return true;
   });
 }
-function updateEmpFilter(key,value){empFilter[key]=value;sessionStorage.setItem(EMP_FILTER_KEY,JSON.stringify(empFilter));renderApp();}
-function resetEmpFilters(){empFilter={node:'',exception:'',group:'',dept:'',search:''};sessionStorage.setItem(EMP_FILTER_KEY,JSON.stringify(empFilter));renderApp();}
+function updateEmpFilter(key,value){
+  empFilter[key]=value;
+  sessionStorage.setItem(EMP_FILTER_KEY,JSON.stringify(empFilter));
+  renderApp();
+}
+function resetEmpFilters(){empFilter={flowStatus:'',exception:'',group:'',dept:'',search:''};sessionStorage.setItem(EMP_FILTER_KEY,JSON.stringify(empFilter));renderApp();}
 
 function viewActivity(id){
   currentDetailId=id;
@@ -1274,6 +1328,20 @@ function openActivityImport(kind){
   }
 }
 
+// 个人流程开启成功后，按当前全局业务环节同步对应阶段展示字段为「进行中」；终态不覆盖。
+function syncStageStatusOnPersonalOpen(emp,stage){
+  if(!emp||!stage)return;
+  var field=stage==='目标制定'?'goalApproval':stage==='绩效面谈'?'interviewStatus':stage==='绩效考核'?'evalStatus':stage==='结果审定'?'reviewStatus':stage==='结果确认'?'confirmStatus':null;
+  if(!field)return;
+  var cur=emp[field];
+  if(field==='confirmStatus'){
+    if(cur==='已确认'||cur==='已申诉')return;
+  }else if(cur==='已完成'){
+    return;
+  }
+  emp[field]='进行中';
+}
+
 function startPersonalFlow(idx){
   var a=ACTIVITIES.find(function(x){return x.id===currentDetailId;});
   var emp=EMPLOYEE_LIST[idx];
@@ -1295,6 +1363,7 @@ function startPersonalFlow(idx){
   emp.todoCreated=true;
   emp.exception='-';
   emp.exceptionCls='';
+  syncStageStatusOnPersonalOpen(emp,a.currentStage);
   OP_LOGS.unshift({
     time:now.slice(0,16),operator:'当前用户',operatorId:'EMP0000',type:'开启个人流程',typeGroup:'人员操作',
     target:(a.currentStage||'当前环节')+' - '+emp.name,
@@ -1323,6 +1392,7 @@ function batchOpenCurrentStage(){
       emp.handler=emp.name;
       emp.updateTime=now;
       emp.todoCreated=true;
+      syncStageStatusOnPersonalOpen(emp,a.currentStage);
       opened++;
     }
   });
@@ -1339,31 +1409,6 @@ function batchOpenCurrentStage(){
   OP_LOGS.unshift({time:now,operator:'当前用户',operatorId:'EMP0000',type:'开启环节',typeGroup:'环节管理',target:(a.currentStage||'当前环节')+' - 全部适用人员',detail:'批量开启当前环节；成功 '+opened+' 人创建流程与待办，跳过导入完成 '+skipped+' 人',result:'成功',todoResult:'已创建'+opened+'/跳过'+skipped,notifyResult:'已发送'+opened});
   GHR_NAV.showToast('已开启 '+opened+' 人并发送待办'+(skipped?'，跳过导入完成 '+skipped+' 人':''));
   renderApp();
-}
-
-function showViewRelationModal(){
-  var a=ACTIVITIES.find(function(x){return x.id===currentDetailId;});
-  var mode=a&&a.dynamicAssessment==='dynamic'?'动态':'锁定';
-  var rows=EMPLOYEE_LIST.slice(0,8).map(function(e){
-    var d=EMPLOYEE_DETAIL.find(function(x){return x.emp===e.emp;})||{};
-    return '<tr><td style="padding:10px 12px;border-bottom:1px solid var(--dv)">'+e.name+'</td><td style="padding:10px 12px;border-bottom:1px solid var(--dv)">'+e.emp+'</td><td style="padding:10px 12px;border-bottom:1px solid var(--dv)">'+(d.assessor||e.handler||'—')+'</td><td style="padding:10px 12px;border-bottom:1px solid var(--dv)">'+getEmpGroup(e)+'</td></tr>';
-  }).join('');
-  var ov=document.createElement('div');
-  ov.id='relModalOv';
-  ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:2000;display:flex;align-items:center;justify-content:center';
-  ov.innerHTML='<div class="modal" style="width:640px;max-width:90vw;max-height:85vh;overflow-y:auto">'+
-    '<div class="modal-hd"><span class="modal-hd-t">查看考核关系</span><button class="modal-close" onclick="document.getElementById(\'relModalOv\').remove()">'+I.x+'</button></div>'+
-    '<div class="modal-bd">'+
-    '<div style="font:400 13px/1.5 var(--f);color:var(--c6);margin-bottom:12px">当前活动考核关系模式：<b style="color:var(--c8)">'+mode+'</b>。当前版本不支持人工修改员工考核关系；转交仅调整当前待办处理人。</div>'+
-    '<table style="width:100%;border-collapse:collapse"><thead><tr>'+
-    '<th style="text-align:left;padding:8px 12px;background:var(--c0);font:600 12px/1 var(--f);color:var(--c5)">姓名</th>'+
-    '<th style="text-align:left;padding:8px 12px;background:var(--c0);font:600 12px/1 var(--f);color:var(--c5)">工号</th>'+
-    '<th style="text-align:left;padding:8px 12px;background:var(--c0);font:600 12px/1 var(--f);color:var(--c5)">考核人</th>'+
-    '<th style="text-align:left;padding:8px 12px;background:var(--c0);font:600 12px/1 var(--f);color:var(--c5)">考核组</th>'+
-    '</tr></thead><tbody>'+rows+'</tbody></table></div>'+
-    '<div class="modal-ft"><button class="btn btn-p" onclick="document.getElementById(\'relModalOv\').remove()">关闭</button></div></div>';
-  ov.addEventListener('click',function(e){if(e.target===ov)ov.remove();});
-  document.body.appendChild(ov);
 }
 
 function formatTime(d){
