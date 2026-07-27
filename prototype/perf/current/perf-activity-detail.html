@@ -407,7 +407,7 @@ function getFiltered(){
 
 const EMPLOYEE_LIST = [
   // ═══ 1. 目标制定 ═══
-  // 1.1 未开启 — 只有「开启」操作
+  // 1.1 未开启 — 只有「手动开启」操作
   {name:'刘十二',emp:'EMP009',dept:'技术部',handler:'-',node:1,nodeName:'目标制定',status:'未开始',exception:'未开启',exceptionCls:'color:var(--ac700);background:var(--ac50)',totalScore:null,grade:'-',approveGrade:'-',confirmStatus:'-',updateTime:'-'},
   // 1.2 目标制定中(正常) — 催办/转交/暂停/终止
   {name:'李四',emp:'EMP002',dept:'产品部',handler:'王五',node:1,nodeName:'目标制定',status:'进行中',exception:'-',exceptionCls:'',totalScore:null,grade:'-',approveGrade:'-',confirmStatus:'-',updateTime:'2025-05-20 14:20'},
@@ -734,7 +734,7 @@ function renderEmployeeList(){
             const agBg=gradeBg[r.approveGrade]||null;
             const goalStyle=r.goalApproval==='已生效'?'color:var(--em700);background:var(--em50)':r.goalApproval==='制定中'?'color:var(--pr);background:var(--pr50)':r.goalApproval==='未开始'?'color:var(--c6);background:var(--c1)':'';
             const stageImportDone=hasImportCompletedForStage(r,a.currentStage);
-            const canStart=canOperate&&stageAllowsPersonalOpen(a)&&r.status==='未开始'&&!stageImportDone;
+            const canStart=canOperate&&stageAllowsPersonalOpen(a)&&r.status==='未开始'&&!stageImportDone&&!r.todoCreated;
             return `<tr>
             <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9"><div class="ck" style="width:14px;height:14px;border:1px solid var(--c3);border-radius:3px;cursor:pointer"></div></td>
             <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9"><a href="javascript:void(0)" onclick="viewEmployeeDetail(${originalIndex})" style="color:var(--c9);font-weight:500;text-decoration:none;cursor:pointer">${r.name}</a><div style="font:400 11px/1 var(--f);color:var(--c5);margin-top:2px">${r.nodeName} · ${r.status}${stageImportDone?' · 导入完成('+a.currentStage+')':''}${r.exception!=='-'?' · '+r.exception:''}</div></td>
@@ -755,9 +755,9 @@ function renderEmployeeList(){
                 <div style="position:relative">
                   <button class="btn btn-t" onclick="toggleEmpDropdown('empOp${i}')" style="font-size:12px;gap:3px">更多 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
                   <div id="empOp${i}" style="display:none;position:absolute;top:calc(100% + 4px);right:0;background:var(--sf);border:1px solid var(--c3);border-radius:var(--r1);box-shadow:0 6px 16px rgba(0,0,0,.08);min-width:140px;z-index:100;padding:4px 0">
-                    ${stageImportDone?`<div style="padding:6px 12px;font:400 12px/1 var(--f);color:var(--c4);cursor:default" title="当前环节已有导入结果，无需启动个人流程">开启（导入完成）</div>`:
-                    canStart?`<div style="padding:6px 12px;font:400 12px/1 var(--f);color:var(--pr);cursor:pointer;font-weight:500" onclick="startPersonalFlow(${originalIndex});toggleEmpDropdown('empOp${i}')">开启</div>`:
-                    r.status==='未开始'?`<div style="padding:6px 12px;font:400 12px/1 var(--f);color:var(--c4);cursor:not-allowed" title="环节状态不允许或活动不可操作">开启（当前不可用）</div>`:
+                    ${stageImportDone?`<div style="padding:6px 12px;font:400 12px/1 var(--f);color:var(--c4);cursor:default" title="当前环节已有导入结果，无需启动个人流程">手动开启（导入完成）</div>`:
+                    canStart?`<div style="padding:6px 12px;font:400 12px/1 var(--f);color:var(--pr);cursor:pointer;font-weight:500" onclick="startPersonalFlow(${originalIndex});toggleEmpDropdown('empOp${i}')">手动开启</div>`:
+                    r.status==='未开始'?`<div style="padding:6px 12px;font:400 12px/1 var(--f);color:var(--c4);cursor:not-allowed" title="环节状态不允许或活动不可操作">手动开启（当前不可用）</div>`:
                     r.status==='已暂停'?
                     `<div style="padding:6px 12px;font:400 12px/1 var(--f);color:var(--pr);cursor:pointer" onclick="GHR_NAV.showToast('已继续');toggleEmpDropdown('empOp${i}')">继续</div>
                      <div style="height:1px;background:var(--dv);margin:3px 0"></div>
@@ -1278,9 +1278,13 @@ function startPersonalFlow(idx){
   var a=ACTIVITIES.find(function(x){return x.id===currentDetailId;});
   var emp=EMPLOYEE_LIST[idx];
   if(!a||!emp)return;
+  if(a.status==='paused'){GHR_NAV.showToast('活动已暂停，无法手动开启');return;}
+  if(a.status==='ended_normal'||a.status==='ended_early'||a.status==='not_started'){GHR_NAV.showToast('活动非执行中，无法开启个人流程');return;}
   if(a.status!=='active'){GHR_NAV.showToast('活动非执行中，无法开启个人流程');return;}
+  if(a.stageStatus==='结束中'||a.stageStatus==='已结束'||a.stageStatus==='已终止'||a.stageStatus==='已暂停'){GHR_NAV.showToast('当前环节状态为'+a.stageStatus+'，禁止开启个人流程');return;}
   if(!stageAllowsPersonalOpen(a)){GHR_NAV.showToast('当前环节状态为'+(a.stageStatus||'未知')+'，禁止开启个人流程');return;}
   if(hasImportCompletedForStage(emp,a.currentStage)){GHR_NAV.showToast('该员工当前环节已有导入完成结果，无需启动个人流程');return;}
+  if(emp.status==='已完成'||emp.status==='已终止'||emp.status==='已暂停'||emp.status==='进行中'){GHR_NAV.showToast('个人流程已开启或不可开启，操作已拒绝');return;}
   if(emp.status!=='未开始'){GHR_NAV.showToast('个人流程已开启或不可开启，操作已拒绝');return;}
   if(emp.todoCreated){GHR_NAV.showToast('待办已存在，重复开启已拒绝');return;}
   var now=formatTime(new Date()).replace(/\//g,'-');
