@@ -1019,79 +1019,37 @@ const OP_LOGS=[
 function renderSchemeDetailPage(){
   const a=ACTIVITIES.find(x=>x.id===currentDetailId);
   if(!a) return '';
-  const st=STATUS_MAP[a.status];
+  const embeddedVersion=(a.schemeName.match(/\s(v\d+)$/i)||[])[1];
+  const schemeVersion=embeddedVersion||(a.schemeName==='标准季度考核方案'?'v2':'v1');
+  const schemeDisplayName=a.schemeName.replace(/\s(v\d+)$/i,'');
+  const schemeDetailUrl='perf-scheme-detail.html?scheme='+encodeURIComponent(schemeDisplayName)+'&version='+encodeURIComponent(schemeVersion);
+  const admins=(a.admins||[a.admin||a.creator]).map(function(id){
+    var found=ADMIN_LIST.find(function(x){return x.id===id;});
+    return found?found.name:id;
+  }).join('、');
   return `<div style="max-width:1120px">
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;font:400 13px/1 var(--f);color:var(--c6)">
       <a href="javascript:void(0)" onclick="backToEmployeesFromScheme()" style="color:var(--pr);text-decoration:none;cursor:pointer">← 返回</a>
       <span style="color:var(--c4)">|</span><span>活动管理</span><span style="color:var(--c4)">/</span><span>${a.name}</span><span style="color:var(--c4)">/</span><span>活动详情</span>
     </div>
 
-    <!-- 第一层：活动信息 -->
     <div style="background:var(--sf);border:1px solid var(--c3);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px;margin-bottom:16px">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px"><span style="width:3px;height:14px;background:var(--pr);border-radius:2px;flex-shrink:0"></span><span style="font:600 14px/1.3 var(--f);color:var(--c9)">活动信息</span></div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px 24px">
         <div><div class="info-item-label">活动名称</div><div class="info-item-value">${a.name}</div></div>
-        <div><div class="info-item-label">活动状态</div><div class="info-item-value"><span class="cell-status ${st.cls}">${st.label}</span></div></div>
+        <div><div class="info-item-label">创建方式</div><div class="info-item-value">${a.creationSource==='auto'?'自动创建':'手动补充'}</div></div>
         <div><div class="info-item-label">考核周期</div><div class="info-item-value">${a.cycle}</div></div>
         <div><div class="info-item-label">考核关系</div><div class="info-item-value"><span style="font:500 12px/1 var(--f);padding:2px 8px;border-radius:4px;${a.dynamicAssessment==='dynamic'?'color:var(--pr);background:var(--pr50)':'color:var(--c6);background:var(--c1)'}">${a.dynamicAssessment==='dynamic'?'动态':'锁定'}</span></div></div>
-        <div><div class="info-item-label">关联方案</div><div class="info-item-value" style="color:var(--pr)">${a.plan}</div></div>
-        <div><div class="info-item-label">被考核人数</div><div class="info-item-value" style="font-family:var(--m)">${a.empCount} 人</div></div>
-        <div><div class="info-item-label">发起人</div><div class="info-item-value">${a.creator}</div></div>
-        <div><div class="info-item-label">发起时间</div><div class="info-item-value" style="font-family:var(--m);font-size:12px">${a.createTime}</div></div>
-        <div><div class="info-item-label">活动管理员</div><div class="info-item-value">${(a.admins||[a.admin||a.creator]).map(function(id){var found=ADMIN_LIST.find(function(x){return x.id===id;});return found?found.name:id;}).join('、')}</div></div>
-      </div>
-      ${a.description?`<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)"><div class="info-item-label">活动说明</div><div class="info-item-value" style="margin-top:4px">${a.description}</div></div>`:''}
-    </div>
-
-    <!-- 第二层：关联方案信息 -->
-    <div style="background:var(--sf);border:1px solid var(--c3);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px;margin-bottom:16px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-        <div style="display:flex;align-items:center;gap:8px"><span style="width:3px;height:14px;background:var(--vi);border-radius:2px;flex-shrink:0"></span><span style="font:600 14px/1.3 var(--f);color:var(--c9)">关联方案</span></div>
-        <button class="btn btn-t" onclick="window.open('perf-scheme-detail.html','_blank')" style="font-size:12px">查看方案详情 →</button>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px">
-        <div><div class="info-item-label">方案名称</div><div class="info-item-value">${a.plan}</div></div>
-        <div><div class="info-item-label">方案编号</div><div class="info-item-value" style="font-family:var(--m)">PERF-2026-001</div></div>
-        <div><div class="info-item-label">方案版本</div><div class="info-item-value">v2</div></div>
-        <div><div class="info-item-label">启用状态</div><div class="info-item-value" style="color:var(--em)">已启用</div></div>
-        <div><div class="info-item-label">周期类型</div><div class="info-item-value">季度</div></div>
-        <div><div class="info-item-label">关联周期</div><div class="info-item-value">${a.cycle}</div></div>
-        <div><div class="info-item-label">向下公开</div><div class="info-item-value">开启</div></div>
-        <div><div class="info-item-label">等级规则</div><div class="info-item-value">标准五级</div></div>
-        <div style="grid-column:1/-1"><div class="info-item-label">方案描述</div><div class="info-item-value">适用于全公司季度绩效考核，采用360度评估方式，包含目标制定、绩效面谈、绩效考核、结果审定、结果确认五个环节。</div></div>
-      </div>
-      <!-- 绩效等级 -->
-      <div style="border-top:1px solid var(--dv);padding-top:16px;margin-bottom:16px">
-        <div class="info-item-label" style="margin-bottom:8px">绩效等级 · 标准五级</div>
-        <div style="display:flex;flex-wrap:wrap;gap:6px">
-          <span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:4px;font:500 12px/1 var(--f);background:var(--ro50);color:var(--ro)">远超预期 <strong>A</strong> 90-100分</span>
-          <span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:4px;font:500 12px/1 var(--f);background:var(--ac50);color:var(--ac700)">符合预期+ <strong>B+</strong> 80-89分</span>
-          <span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:4px;font:500 12px/1 var(--f);background:var(--em50);color:var(--em700)">符合预期 <strong>B</strong> 70-79分</span>
-          <span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:4px;font:500 12px/1 var(--f);background:var(--vi50);color:var(--vi)">符合预期- <strong>B-</strong> 60-69分</span>
-          <span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:4px;font:500 12px/1 var(--f);background:var(--c1);color:var(--c6)">低于预期 <strong>C</strong> 0-59分</span>
+        <div>
+          <div class="info-item-label">关联方案&amp;版本</div>
+          <div class="info-item-value"><a href="${schemeDetailUrl}" style="color:var(--pr);text-decoration:none;font-weight:500">${schemeDisplayName}</a><span style="margin-left:8px;font:500 11px/1 var(--m);color:var(--vi);background:var(--vi50);padding:2px 7px;border-radius:4px">${schemeVersion}</span></div>
         </div>
-      </div>
-      <!-- 考核组 -->
-      <div style="border-top:1px solid var(--dv);padding-top:16px;margin-bottom:16px">
-        <div class="info-item-label" style="margin-bottom:8px">考核组</div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <div style="padding:10px 14px;border:1px solid var(--dv);border-radius:var(--r1)"><div style="display:flex;align-items:center;gap:8px"><span style="font:600 13px/1 var(--f);color:var(--c9)">默认考核组</span><span style="font:500 10px/1 var(--f);padding:1px 6px;border-radius:3px;background:var(--pr50);color:var(--pr)">默认</span></div><div style="font:400 12px/1 var(--f);color:var(--c6);margin-top:4px">适用规则：部门 属于 产品部,技术部,市场部</div><div style="font:400 12px/1 var(--f);color:var(--c6);margin-top:2px">评价规则：通用评价规则</div><div style="font:400 12px/1 var(--f);color:var(--c6);margin-top:2px">排除人员：-</div></div>
-          <div style="padding:10px 14px;border:1px solid var(--dv);border-radius:var(--r1)"><div style="font:600 13px/1 var(--f);color:var(--c9)">仓储特殊组</div><div style="font:400 12px/1 var(--f);color:var(--c6);margin-top:4px">适用规则：部门 等于 仓储部 且 职级 属于 L5,L6</div><div style="font:400 12px/1 var(--f);color:var(--c6);margin-top:2px">评价规则：仓储评价规则</div><div style="font:400 12px/1 var(--f);color:var(--c6);margin-top:2px">排除人员：张三</div></div>
-        </div>
-      </div>
-      <!-- 考核环节 -->
-      <div style="border-top:1px solid var(--dv);padding-top:16px;margin-bottom:16px">
-        <div class="info-item-label" style="margin-bottom:8px">考核环节</div>
-        <div style="display:flex;flex-direction:column;gap:6px">
-          ${[{n:'目标制定',d:'员工/上级填写绩效目标',f:'通用目标制定流程'},{n:'绩效面谈',d:'上级与员工面谈',f:'绩效面谈流程'},{n:'绩效考核',d:'考核人评分',f:'通用绩效考核流程'},{n:'结果审定',d:'审定人调整等级',f:'汇报线逐级审定'},{n:'结果确认',d:'员工确认或申诉绩效结果',f:'员工确认流程'}].map(s=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border:1px solid var(--dv);border-radius:var(--r1)"><div><span style="font:500 13px/1 var(--f);color:var(--c9)">${s.n}</span><span style="font:400 12px/1 var(--f);color:var(--c5);margin-left:8px">${s.d}</span></div><div style="display:flex;align-items:center;gap:8px"><span style="font:400 11px/1 var(--f);color:var(--c5);font-family:var(--m)">${s.f}</span><span style="font:500 11px/1 var(--f);padding:2px 8px;border-radius:3px;background:var(--em50);color:var(--em700)">已启用</span></div></div>`).join('')}
-        </div>
-      </div>
-      <!-- 强制分布 -->
-      <div style="border-top:1px solid var(--dv);padding-top:16px">
-        <div class="info-item-label" style="margin-bottom:6px">强制分布 · 标准强制分布</div>
-        <div style="display:flex;flex-wrap:wrap;gap:8px">
-          ${[{g:'A',n:'远超预期',op:'不超过',pct:10},{g:'B+',n:'符合预期+',op:'不超过',pct:20},{g:'B',n:'符合预期',op:'不低于',pct:40},{g:'B-',n:'符合预期-',op:'不超过',pct:20},{g:'C',n:'低于预期',op:'不低于',pct:10}].map(d=>`<span style="font:500 12px/1 var(--f);color:var(--c7)">${d.g} ${d.n} <span style="color:var(--c5)">${d.op} ${d.pct}%</span></span>`).join('<span style="color:var(--c3)">|</span>')}
-        </div>
+        <div><div class="info-item-label">活动管理员</div><div class="info-item-value">${admins}</div></div>
+        <div style="grid-column:1/-1"><div class="info-item-label">活动说明</div><div class="info-item-value">${a.description||'—'}</div></div>
+        <div><div class="info-item-label">创建人</div><div class="info-item-value">${a.creator}</div></div>
+        <div><div class="info-item-label">创建时间</div><div class="info-item-value" style="font-family:var(--m);font-size:12px">${a.createTime}</div></div>
+        <div><div class="info-item-label">最近修改人</div><div class="info-item-value">${a.updater||'—'}</div></div>
+        <div><div class="info-item-label">最近修改时间</div><div class="info-item-value" style="font-family:var(--m);font-size:12px">${a.updateTime||'—'}</div></div>
       </div>
     </div>
   </div>`;
@@ -1180,16 +1138,14 @@ function renderOpLogPage(){
           <th style="font:600 12px/1 var(--f);color:var(--c5);text-align:left;padding:10px 14px;border-bottom:1px solid var(--dv);background:var(--c0);white-space:nowrap;letter-spacing:.2px;text-transform:uppercase">操作人</th>
           <th style="font:600 12px/1 var(--f);color:var(--c5);text-align:left;padding:10px 14px;border-bottom:1px solid var(--dv);background:var(--c0);white-space:nowrap;letter-spacing:.2px;text-transform:uppercase">操作类型</th>
           <th style="font:600 12px/1 var(--f);color:var(--c5);text-align:left;padding:10px 14px;border-bottom:1px solid var(--dv);background:var(--c0);white-space:nowrap;letter-spacing:.2px;text-transform:uppercase">操作对象</th>
-          <th style="font:600 12px/1 var(--f);color:var(--c5);text-align:left;padding:10px 14px;border-bottom:1px solid var(--dv);background:var(--c0);white-space:nowrap;letter-spacing:.2px;text-transform:uppercase">详情</th>
         </tr></thead>
         <tbody>
           ${filtered.length?filtered.map(l=>`<tr>
             <td style="padding:12px 14px;border-bottom:1px solid #F1F5F9;font:400 12px/1 var(--f);color:var(--c6);font-family:'SF Mono','JetBrains Mono',monospace;white-space:nowrap">${l.time}</td>
-            <td style="padding:12px 14px;border-bottom:1px solid #F1F5F9"><span style="font:500 13px/1 var(--f);color:var(--c9)">${l.operator}</span><span style="font:400 11px/1 var(--f);color:var(--c5);margin-left:6px;font-family:var(--m)">${l.operatorId}</span></td>
+            <td style="padding:12px 14px;border-bottom:1px solid #F1F5F9"><span style="font:500 13px/1 var(--f);color:var(--c9)">${l.operator}</span></td>
             <td style="padding:12px 14px;border-bottom:1px solid #F1F5F9"><span style="font:500 12px/1 var(--f);padding:2px 10px;border-radius:4px;${typeCls[l.type]||''}">${l.type}</span></td>
-            <td style="padding:12px 14px;border-bottom:1px solid #F1F5F9;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${l.target}">${l.target}</td>
-            <td style="padding:12px 14px;border-bottom:1px solid #F1F5F9;max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${l.detail}">${l.detail}</td>
-          </tr>`).join(''):`<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--c4);font-size:13px">暂无匹配的操作日志</td></tr>`}
+            <td style="padding:12px 14px;border-bottom:1px solid #F1F5F9;max-width:480px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${l.target}">${l.target}</td>
+          </tr>`).join(''):`<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--c4);font-size:13px">暂无匹配的操作日志</td></tr>`}
         </tbody>
       </table>
     </div>
