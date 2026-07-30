@@ -669,6 +669,8 @@ function renderEmployeeList(){
   const canUseToolbar=canOperate||a.status==='not_started';
   const canAddParticipant=a.status==='not_started'||(canOperate&&a.currentStage==='目标制定');
   const exceptionCount=EMPLOYEE_LIST.filter(r=>r.exception!=='正常考核').length;
+  const normalInProgressCount=EMPLOYEE_LIST.filter(r=>r.exception==='正常考核'&&getParticipantStageStatus(r,a)==='进行中'&&!r.flowOpeningException).length;
+  const flowExceptionCount=EMPLOYEE_LIST.filter(r=>r.flowOpeningException).length;
   const displayedEmployees=getDisplayedEmployees();
 
   // 业务环节是活动级唯一状态；个人差异只在当前环节流程节点内。
@@ -740,7 +742,9 @@ function renderEmployeeList(){
       <!-- 中：统计数字 -->
       <div style="display:flex;align-items:center;gap:16px">
         <span style="font:400 13px/1 var(--f);color:var(--c6)"><span style="font:700 20px/1 var(--f);color:var(--c9)">${EMPLOYEE_LIST.length}</span> 总人数</span>
+        <span style="font:400 13px/1 var(--f);color:var(--c6)"><span style="font:700 20px/1 var(--f);color:var(--pr)">${normalInProgressCount}</span> 正常进行人数</span>
         <span style="font:400 13px/1 var(--f);color:var(--c6)"><span style="font:700 20px/1 var(--f);color:var(--em)">${EMPLOYEE_LIST.filter(r=>r.status==='已完成').length}</span> 完成</span>
+        <span style="font:400 13px/1 var(--f);color:var(--c6)"><span style="font:700 20px/1 var(--f);color:var(--ac)">${flowExceptionCount}</span> 流程异常人数</span>
         <span style="font:400 13px/1 var(--f);color:var(--c6)"><span style="font:700 20px/1 var(--f);color:var(--ro)">${exceptionCount}</span> 异常</span>
       </div>
 
@@ -797,6 +801,7 @@ function renderEmployeeList(){
             <div style="padding:8px 14px;font:400 11px/1.5 var(--f);color:var(--c5);border-bottom:1px solid var(--dv);max-width:260px">仅可导入当前环节数据，仅可导入状态为未开始/已终止的被考核人</div>
             <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="openActivityImport('goal');toggleEmpDropdown('empImportDd')">导入目标数据</div>
             <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="openActivityImport('eval');toggleEmpDropdown('empImportDd')">导入考核结果</div>
+            ${a.schemeType!=='月度'?`<div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="openActivityImport('interview');toggleEmpDropdown('empImportDd')">导入面谈结果</div>`:''}
             <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="GHR_NAV.showToast('审定导入：仅处理结果审定个人流程未开始的人员');toggleEmpDropdown('empImportDd')">导入审定结果</div>
           </div>
         </div>
@@ -822,12 +827,14 @@ function renderEmployeeList(){
             批量操作 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
           <div id="empBatchDd" style="display:none;position:absolute;top:calc(100% + 4px);right:0;background:var(--sf);border:1px solid var(--c3);border-radius:var(--r1);box-shadow:0 6px 16px rgba(0,0,0,.08);min-width:120px;z-index:100;padding:4px 0">
+            <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--pr);cursor:pointer" onclick="GHR_NAV.showToast('批量开启已提交');toggleEmpDropdown('empBatchDd')">开启</div>
             <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="GHR_NAV.showToast('批量催办已发送');toggleEmpDropdown('empBatchDd')">催办</div>
             <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="GHR_NAV.showToast('批量转交已提交');toggleEmpDropdown('empBatchDd')">转交</div>
             <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="GHR_NAV.showToast('批量暂停已执行');toggleEmpDropdown('empBatchDd')">暂停</div>
             <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="GHR_NAV.showToast('批量继续已执行');toggleEmpDropdown('empBatchDd')">继续</div>
             <div style="height:1px;background:var(--dv);margin:4px 0"></div>
             <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--ro);cursor:pointer" onclick="GHR_NAV.showToast('批量终止已执行');toggleEmpDropdown('empBatchDd')">终止</div>
+            <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--ro);cursor:pointer" onclick="GHR_NAV.showToast('仅首个环节未开始或进行中且未过截止时间可移除');toggleEmpDropdown('empBatchDd')">移除</div>
           </div>
         </div>
         `:''}
@@ -1111,6 +1118,35 @@ const OP_LOGS=[
   {time:'2026-05-27 16:00',operator:'张经理',operatorId:'EMP0012',type:'审批通过',typeGroup:'流程处理',target:'结果审定 - 管理层组',detail:'管理层组审定结果审批通过'},
 ];
 
+function getFilteredOperationLogs(){
+  return OP_LOGS.filter(function(l){
+    if(oplogFilter.type&&l.type!==oplogFilter.type)return false;
+    if(oplogFilter.search){
+      var q=oplogFilter.search.toLowerCase();
+      if(!l.operator.toLowerCase().includes(q)&&!l.operatorId.toLowerCase().includes(q)&&!l.target.toLowerCase().includes(q)&&!l.detail.toLowerCase().includes(q))return false;
+    }
+    return true;
+  });
+}
+
+function exportOperationLogs(){
+  var rows=getFilteredOperationLogs();
+  var csvCell=function(value){return '"'+String(value||'').replace(/"/g,'""')+'"';};
+  var csv=[['时间','操作人','操作类型','操作对象'].map(csvCell).join(',')].concat(rows.map(function(l){
+    return [l.time,l.operator,l.type,l.target].map(csvCell).join(',');
+  })).join('\r\n');
+  var blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  var url=URL.createObjectURL(blob);
+  var link=document.createElement('a');
+  link.href=url;
+  link.download='活动操作日志-'+currentDetailId+'.csv';
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(function(){URL.revokeObjectURL(url);},0);
+  GHR_NAV.showToast('操作日志已导出，共 '+rows.length+' 条');
+}
+
 function renderSchemeDetailPage(){
   const a=ACTIVITIES.find(x=>x.id===currentDetailId);
   if(!a) return '';
@@ -1167,14 +1203,7 @@ function renderOpLogPage(){
   };
 
   // 筛选逻辑
-  const filtered=OP_LOGS.filter(l=>{
-    if(oplogFilter.type && l.type!==oplogFilter.type) return false;
-    if(oplogFilter.search){
-      const q=oplogFilter.search.toLowerCase();
-      if(!l.operator.toLowerCase().includes(q)&&!l.operatorId.toLowerCase().includes(q)&&!l.target.toLowerCase().includes(q)&&!l.detail.toLowerCase().includes(q)) return false;
-    }
-    return true;
-  });
+  const filtered=getFilteredOperationLogs();
 
   // 类型分组
   const arrowSvg='<svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
@@ -1222,6 +1251,7 @@ function renderOpLogPage(){
         <input id="oplogSearch" placeholder="搜索操作人姓名、工号、操作对象…" value="${oplogFilter.search}" oninput="oplogFilter.search=this.value;renderApp()" />
       </div>
       <div class="fl-actions">
+        <button class="btn btn-s" onclick="exportOperationLogs()">导出</button>
         <button class="btn btn-s" onclick="oplogFilter={type:'',search:''};renderApp()">${I.x} 重置</button>
       </div>
     </div>
@@ -1376,6 +1406,9 @@ function openActivityImport(kind){
   if(kind==='eval'){
     location.href='manager/demo-eval-batch-import.html?activityId='+encodeURIComponent(currentDetailId)+'&activityName='+encodeURIComponent(name);
     return;
+  }
+  if(kind==='interview'){
+    GHR_NAV.showToast('面谈导入：仅处理绩效面谈个人流程未开始的人员');
   }
 }
 
