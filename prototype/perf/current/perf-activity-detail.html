@@ -378,6 +378,7 @@ ACTIVITIES.forEach(function(a){a.plan=a.schemeName;});
 
 const STAGE_ORDER=['目标制定','绩效面谈','绩效考核','结果审定','结果确认'];
 const PARTICIPANT_STAGE_STATUSES=['未开始','进行中','已暂停','已完成','已终止','导入完成'];
+const EXCEPTION_STATUSES=['正常考核','终止考核','无需考核'];
 const STAGE_SHORT_NAMES={
   '目标制定':'目标','绩效面谈':'面谈','绩效考核':'考核','结果审定':'审定','结果确认':'确认'
 };
@@ -439,18 +440,18 @@ const EMPLOYEE_LIST = [
   {name:'刘十二',emp:'EMP009',dept:'技术部',handler:'-',node:1,nodeName:'目标制定',status:'未开始',exception:'未开启',exceptionCls:'color:var(--ac700);background:var(--ac50)',totalScore:null,grade:'-',approveGrade:'-',confirmStatus:'-',updateTime:'-'},
   // 1.2 目标制定中(正常) — 催办/转交/暂停/终止
   {name:'李四',emp:'EMP002',dept:'产品部',handler:'王五',node:1,nodeName:'目标制定',status:'进行中',exception:'-',exceptionCls:'',totalScore:null,grade:'-',approveGrade:'-',confirmStatus:'-',updateTime:'2025-05-20 14:20'},
-  // 1.3 目标制定中(异常-超时) — 催办/转交/暂停/终止
-  {name:'孙七',emp:'EMP005',dept:'技术部',handler:'李四',node:1,nodeName:'目标制定',status:'进行中',exception:'超时',exceptionCls:'color:var(--ro);background:var(--ro50)',totalScore:null,grade:'-',approveGrade:'-',confirmStatus:'-',updateTime:'2025-05-18 11:30'},
+  // 1.3 目标制定中(异常-终止考核)
+  {name:'孙七',emp:'EMP005',dept:'技术部',handler:'李四',node:1,nodeName:'目标制定',status:'进行中',exception:'终止考核',exceptionCls:'color:var(--ro);background:var(--ro50)',totalScore:null,grade:'-',approveGrade:'-',confirmStatus:'-',updateTime:'2025-05-18 11:30'},
   // ═══ 2. 绩效考核 ═══
   // 2.1 绩效考核中(正常) — 催办/转交/暂停/终止
   {name:'钱十',emp:'EMP007',dept:'市场部',handler:'郑十一',node:2,nodeName:'绩效考核',status:'进行中',exception:'-',exceptionCls:'',totalScore:55,grade:'低于预期',approveGrade:'-',confirmStatus:'-',updateTime:'2025-05-23 09:50'},
-  // 2.2 绩效考核中(异常-逾期) — 催办/转交/暂停/终止
-  {name:'张三',emp:'EMP001',dept:'技术部',handler:'李四',node:2,nodeName:'绩效考核',status:'进行中',exception:'逾期',exceptionCls:'color:var(--ac700);background:var(--ac50)',totalScore:82,grade:'超出预期',approveGrade:'-',confirmStatus:'-',updateTime:'2025-05-23 16:30'},
+  // 2.2 绩效考核中(异常-无需考核)
+  {name:'张三',emp:'EMP001',dept:'技术部',handler:'李四',node:2,nodeName:'绩效考核',status:'进行中',exception:'无需考核',exceptionCls:'color:var(--c6);background:var(--c1)',totalScore:82,grade:'超出预期',approveGrade:'-',confirmStatus:'-',updateTime:'2025-05-23 16:30'},
   // ═══ 3. 结果审定 ═══
   // 3.1 审定中(正常) — 催办/转交/暂停/终止
   {name:'王五',emp:'EMP003',dept:'技术部',handler:'李四',node:3,nodeName:'结果审定',status:'进行中',exception:'-',exceptionCls:'',totalScore:73,grade:'符合预期',approveGrade:'-',confirmStatus:'-',updateTime:'2025-05-23 10:15'},
-  // 3.2 审定中(异常-缺少操作) — 催办/转交/暂停/终止
-  {name:'赵六',emp:'EMP004',dept:'设计部',handler:'孙七',node:3,nodeName:'结果审定',status:'进行中',exception:'缺少操作',exceptionCls:'color:var(--ac700);background:var(--ac50)',totalScore:68,grade:'符合预期-',approveGrade:'-',confirmStatus:'-',updateTime:'2025-05-21 09:40'},
+  // 3.2 审定中 — 催办/转交/暂停/终止
+  {name:'赵六',emp:'EMP004',dept:'设计部',handler:'孙七',node:3,nodeName:'结果审定',status:'进行中',exception:'-',exceptionCls:'',totalScore:68,grade:'符合预期-',approveGrade:'-',confirmStatus:'-',updateTime:'2025-05-21 09:40'},
   // ═══ 4. 结果确认 ═══
   // 4.1 确认中(正常) — 催办/转交/暂停/终止
   {name:'周八',emp:'EMP006',dept:'人力资源部',handler:'吴九',node:4,nodeName:'结果确认',status:'进行中',exception:'-',exceptionCls:'',totalScore:71,grade:'符合预期',approveGrade:'符合预期-',confirmStatus:'-',updateTime:'2025-05-22 15:10'},
@@ -477,11 +478,11 @@ const EMPLOYEE_LIST = [
 const PERSONAL_FLOW_STATE={
   EMP009:{flowNode:'待员工处理',status:'未开始',handler:'-',confirmStatus:'未开始',goalApproval:'未开始',interviewStatus:'未开始',evalStatus:'未开始',reviewStatus:'未开始',importCompletedStages:[]},
   EMP002:{flowNode:'员工确认',status:'进行中',handler:'李四',confirmStatus:'未开始',goalApproval:'进行中',interviewStatus:'未开始',evalStatus:'未开始',reviewStatus:'未开始',importCompletedStages:[]},
-  EMP005:{flowNode:'员工确认',status:'进行中',handler:'孙七',exception:'超时',confirmStatus:'未开始',goalApproval:'进行中',interviewStatus:'未开始',evalStatus:'未开始',reviewStatus:'未开始',importCompletedStages:[]},
+  EMP005:{flowNode:'员工确认',status:'进行中',handler:'孙七',exception:'终止考核',confirmStatus:'未开始',goalApproval:'进行中',interviewStatus:'未开始',evalStatus:'未开始',reviewStatus:'未开始',importCompletedStages:[]},
   EMP007:{flowNode:'待员工处理',status:'未开始',handler:'-',confirmStatus:'未开始',goalApproval:'已完成',interviewStatus:'未开始',evalStatus:'进行中',reviewStatus:'未开始',importCompletedStages:['目标制定']},
-  EMP001:{flowNode:'员工确认',status:'进行中',handler:'张三',exception:'逾期',confirmStatus:'未开始',goalApproval:'已完成',interviewStatus:'未开始',evalStatus:'进行中',reviewStatus:'未开始',importCompletedStages:[]},
+  EMP001:{flowNode:'员工确认',status:'进行中',handler:'张三',exception:'无需考核',confirmStatus:'未开始',goalApproval:'已完成',interviewStatus:'未开始',evalStatus:'进行中',reviewStatus:'未开始',importCompletedStages:[]},
   EMP003:{flowNode:'申诉提交',status:'进行中',handler:'王五',confirmStatus:'进行中',confirmAppealPending:true,goalApproval:'已完成',interviewStatus:'未开始',evalStatus:'已完成',reviewStatus:'进行中',importCompletedStages:[]},
-  EMP004:{flowNode:'申诉提交',status:'进行中',handler:'赵六',exception:'缺少操作',confirmStatus:'进行中',confirmAppealPending:true,goalApproval:'已完成',interviewStatus:'未开始',evalStatus:'已完成',reviewStatus:'进行中',importCompletedStages:[]},
+  EMP004:{flowNode:'申诉提交',status:'进行中',handler:'赵六',confirmStatus:'进行中',confirmAppealPending:true,goalApproval:'已完成',interviewStatus:'未开始',evalStatus:'已完成',reviewStatus:'进行中',importCompletedStages:[]},
   EMP006:{flowNode:'员工确认',status:'进行中',handler:'周八',confirmStatus:'进行中',goalApproval:'已完成',interviewStatus:'未开始',evalStatus:'已完成',reviewStatus:'已完成',importCompletedStages:[]},
   EMP010:{flowNode:'员工确认',status:'已暂停',handler:'吴九',confirmStatus:'进行中',goalApproval:'已完成',interviewStatus:'未开始',evalStatus:'已完成',reviewStatus:'已完成',importCompletedStages:[]},
   EMP012:{flowNode:'已确认',status:'已完成',handler:'-',confirmStatus:'已确认',goalApproval:'已完成',interviewStatus:'未开始',evalStatus:'已完成',reviewStatus:'已完成',importCompletedStages:[]},
@@ -594,8 +595,12 @@ EMPLOYEE_LIST.forEach(function(emp){
   emp.nodeName=state.flowNode||'员工确认';
   emp.status=state.status||'进行中';
   emp.handler=state.handler===undefined?emp.handler:state.handler;
-  emp.exception=state.exception||'-';
-  emp.exceptionCls=emp.exception==='超时'?'color:var(--ro);background:var(--ro50)':emp.exception==='-'?'':'color:var(--ac700);background:var(--ac50)';
+  emp.exception=state.exception||'正常考核';
+  emp.exceptionCls=emp.exception==='终止考核'
+    ?'color:var(--ro);background:var(--ro50)'
+    :emp.exception==='无需考核'
+      ?'color:var(--c6);background:var(--c1)'
+      :'color:var(--em700);background:var(--em50)';
   emp.forceEnded=!!state.forceEnded;
   emp.confirmAppealPending=!!state.confirmAppealPending;
   emp.confirmStatus=normalizeConfirmStatus(state.confirmStatus);
@@ -663,7 +668,7 @@ function renderEmployeeList(){
   const canOperate=a.status==='active';
   const canUseToolbar=canOperate||a.status==='not_started';
   const canAddParticipant=a.status==='not_started'||(canOperate&&a.currentStage==='目标制定');
-  const exceptionCount=EMPLOYEE_LIST.filter(r=>r.exception!=='-').length;
+  const exceptionCount=EMPLOYEE_LIST.filter(r=>r.exception!=='正常考核').length;
   const displayedEmployees=getDisplayedEmployees();
 
   // 业务环节是活动级唯一状态；个人差异只在当前环节流程节点内。
@@ -703,7 +708,7 @@ function renderEmployeeList(){
       <span style="font:400 13px/1 var(--f);color:var(--c6)">当前进度</span>
       <select id="empFlowStatusFilter" onchange="updateEmpFilter('flowStatus',this.value)" style="height:32px;padding:0 28px 0 10px;border:1px solid var(--c3);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c7);background:var(--sf);appearance:none;cursor:pointer"><option value=""${empFilter.flowStatus===''?' selected':''}>全部</option>${flowStatusOptions.map(function(v){return '<option value="'+v+'"'+(empFilter.flowStatus===v?' selected':'')+'>'+v+'</option>';}).join('')}</select>
       <span style="font:400 13px/1 var(--f);color:var(--c6)">异常状态</span>
-      <select id="empExceptionFilter" onchange="updateEmpFilter('exception',this.value)" style="height:32px;padding:0 28px 0 10px;border:1px solid var(--c3);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c7);background:var(--sf);appearance:none;cursor:pointer"><option value=""${empFilter.exception===''?' selected':''}>全部</option>${['超时','逾期','缺少操作'].map(function(v){return '<option value="'+v+'"'+(empFilter.exception===v?' selected':'')+'>'+v+'</option>';}).join('')}</select>
+      <select id="empExceptionFilter" onchange="updateEmpFilter('exception',this.value)" style="height:32px;padding:0 28px 0 10px;border:1px solid var(--c3);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c7);background:var(--sf);appearance:none;cursor:pointer"><option value=""${empFilter.exception===''?' selected':''}>全部</option>${EXCEPTION_STATUSES.map(function(v){return '<option value="'+v+'"'+(empFilter.exception===v?' selected':'')+'>'+v+'</option>';}).join('')}</select>
       <span style="font:400 13px/1 var(--f);color:var(--c6)">考核组</span>
       <select id="empGroupFilter" onchange="updateEmpFilter('group',this.value)" style="height:32px;padding:0 28px 0 10px;border:1px solid var(--c3);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c7);background:var(--sf);appearance:none;cursor:pointer"><option value=""${empFilter.group===''?' selected':''}>全部</option>${['管理层组','员工组','默认组'].map(function(v){return '<option value="'+v+'"'+(empFilter.group===v?' selected':'')+'>'+v+'</option>';}).join('')}</select>
       <span style="font:400 13px/1 var(--f);color:var(--c6)">部门</span>
@@ -860,7 +865,7 @@ function renderEmployeeList(){
             const canStart=canOperate&&stageAllowsPersonalOpen(a)&&r.status==='未开始'&&!stageImportDone&&!r.todoCreated;
             const nameHints=[];
             if(stageImportDone)nameHints.push('导入完成('+a.currentStage+')');
-            if(r.exception!=='-')nameHints.push(r.exception);
+            if(r.exception!=='正常考核')nameHints.push(r.exception);
             return `<tr>
             <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9"><div class="ck" style="width:14px;height:14px;border:1px solid var(--c3);border-radius:3px;cursor:pointer"></div></td>
             <td style="padding:13px 14px;border-bottom:1px solid #F1F5F9"><a href="javascript:void(0)" onclick="viewEmployeeDetail(${originalIndex})" style="color:var(--c9);font-weight:500;text-decoration:none;cursor:pointer">${r.name}</a>${nameHints.length?`<div style="font:400 11px/1 var(--f);color:var(--c5);margin-top:2px">${nameHints.join(' · ')}</div>`:''}</td>
@@ -1407,8 +1412,8 @@ function startPersonalFlow(idx){
   emp.handler=emp.name;
   emp.updateTime=now.slice(0,16);
   emp.todoCreated=true;
-  emp.exception='-';
-  emp.exceptionCls='';
+  emp.exception='正常考核';
+  emp.exceptionCls='color:var(--em700);background:var(--em50)';
   syncStageStatusOnPersonalOpen(emp,a.currentStage);
   OP_LOGS.unshift({
     time:now.slice(0,16),operator:'当前用户',operatorId:'EMP0000',type:'开启个人流程',typeGroup:'人员操作',
