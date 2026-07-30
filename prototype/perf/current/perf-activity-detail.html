@@ -233,6 +233,23 @@ tbody tr:last-child td{border-bottom:none}
 .form-row:last-child{margin-bottom:0}
 .form-err{font:400 11px/1 var(--f);color:var(--ro);margin-top:4px;display:none}
 .form-err.show{display:block}
+.manual-add-tip{
+  margin-top:8px;padding:9px 10px;border-radius:var(--r1);
+  background:var(--pr50);color:var(--c6);font:400 12px/1.5 var(--f);
+}
+.manual-add-list{
+  margin-top:8px;border:1px solid var(--c3);border-radius:var(--r2);
+  max-height:248px;overflow:auto;
+}
+.manual-add-row{
+  min-height:52px;padding:9px 12px;display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid var(--dv);cursor:pointer;transition:background .12s;
+}
+.manual-add-row:last-child{border-bottom:none}
+.manual-add-row:hover{background:var(--c1)}
+.manual-add-row.disabled{cursor:not-allowed;background:var(--c1);opacity:.72}
+.manual-add-row input{width:15px;height:15px;accent-color:var(--pr);flex-shrink:0}
+.manual-add-empty{padding:36px 16px;text-align:center;color:var(--c5);font:400 13px/1.5 var(--f)}
 
 /* ═══ ANIMATION ═══ */
 @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
@@ -390,6 +407,16 @@ const HANDLER_LIST=[
 ];
 
 const GROUP_LIST=['默认考核组','仓储特殊组','管理层组'];
+const PARTICIPANT_GROUPS=['默认组','员工组','管理层组'];
+const PARTICIPANT_CANDIDATES=[
+  {name:'张三',emp:'EMP001',dept:'技术部',assessmentGroup:'默认组'},
+  {name:'许十六',emp:'EMP016',dept:'技术部',assessmentGroup:'默认组'},
+  {name:'陈十一',emp:'EMP008',dept:'运营部',assessmentGroup:'员工组'},
+  {name:'彭十七',emp:'EMP017',dept:'市场部',assessmentGroup:'员工组'},
+  {name:'蒋十八',emp:'EMP018',dept:'运营部',assessmentGroup:'员工组'},
+  {name:'王五',emp:'EMP003',dept:'技术部',assessmentGroup:'管理层组'},
+  {name:'方总监',emp:'EMP019',dept:'财务部',assessmentGroup:'管理层组'}
+];
 
 const ADMIN_LIST=[
   {id:'EMP0088',name:'Kim（HRBP经理）'},
@@ -786,7 +813,7 @@ function renderEmployeeList(){
           </button>
           <div id="empAddDd" style="display:none;position:absolute;top:calc(100% + 4px);right:0;background:var(--sf);border:1px solid var(--c3);border-radius:var(--r1);box-shadow:0 6px 16px rgba(0,0,0,.08);min-width:180px;z-index:100;padding:4px 0">
             <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="GHR_NAV.showToast('校验唯一考核组后，补加人员从首环节首节点启动并继承原截止时间');toggleEmpDropdown('empAddDd')">按考核组规则补加</div>
-            <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="GHR_NAV.showToast('补加事务和首节点流程创建将原子提交');toggleEmpDropdown('empAddDd')">手动补加</div>
+            <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="openManualAddParticipantModal();toggleEmpDropdown('empAddDd')">手动添加</div>
             <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="GHR_NAV.showToast('导入仅产生暂存结果，正式提交时逐人校验');toggleEmpDropdown('empAddDd')">导入补加</div>
           </div>
         </div>
@@ -1013,6 +1040,7 @@ let currentView='employees'; // 独立详情页默认展示参与人
 let currentDetailId=parseInt(new URLSearchParams(window.location.search).get('id'))||1;
 let currentEmployeeIdx=null;
 let empFilter={flowStatus:'',exception:'',group:'',dept:'',search:''};
+let manualAddParticipantState={group:'默认组',search:'',selected:new Set()};
 const EMP_FILTER_KEY='perf-activity-detail-filters-'+currentDetailId;
 try{
   const saved=sessionStorage.getItem(EMP_FILTER_KEY);
@@ -1029,9 +1057,158 @@ try{
 }catch(e){}
 
 function getEmpGroup(e){
+  if(e.assessmentGroup)return e.assessmentGroup;
   if(['王五','吴九','郑十二'].indexOf(e.name)>=0)return '管理层组';
   if(['技术部','产品部'].indexOf(e.dept)>=0)return '默认组';
   return '员工组';
+}
+function getExistingParticipantGroup(empId){
+  const existing=EMPLOYEE_LIST.find(function(e){return e.emp===empId;});
+  return existing?getEmpGroup(existing):'';
+}
+function getManualAddCandidates(){
+  const q=manualAddParticipantState.search.trim().toLowerCase();
+  return PARTICIPANT_CANDIDATES.filter(function(candidate){
+    if(candidate.assessmentGroup!==manualAddParticipantState.group)return false;
+    if(!q)return true;
+    return [candidate.name,candidate.emp,candidate.dept].join(' ').toLowerCase().indexOf(q)>=0;
+  });
+}
+function renderManualAddCandidateList(){
+  const list=document.getElementById('manualAddCandidateList');
+  const count=document.getElementById('manualAddSelectedCount');
+  if(!list)return;
+  const candidates=getManualAddCandidates();
+  list.innerHTML=candidates.length?candidates.map(function(candidate){
+    const existingGroup=getExistingParticipantGroup(candidate.emp);
+    const duplicated=!!existingGroup;
+    const checked=manualAddParticipantState.selected.has(candidate.emp);
+    return '<label class="manual-add-row'+(duplicated?' disabled':'')+'">'
+      +'<input type="checkbox" value="'+candidate.emp+'" '+(checked?'checked ':'')+(duplicated?'disabled ':'')
+      +'onchange="toggleManualAddCandidate(\''+candidate.emp+'\',this.checked)">'
+      +'<span style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:'+(duplicated?'var(--c2)':'var(--pr50)')+';color:'+(duplicated?'var(--c5)':'var(--pr)')+';font:600 12px/1 var(--f);flex-shrink:0">'+candidate.name.slice(-1)+'</span>'
+      +'<span style="min-width:0;flex:1"><span style="display:block;font:500 13px/1.3 var(--f);color:var(--c8)">'+candidate.name+'（'+candidate.emp+'）</span>'
+      +'<span style="display:block;margin-top:4px;font:400 12px/1 var(--f);color:var(--c5)">'+candidate.dept+' · 系统匹配 '+candidate.assessmentGroup+'</span></span>'
+      +(duplicated?'<span style="font:500 11px/1 var(--f);padding:3px 7px;border-radius:4px;color:var(--c6);background:var(--c2);white-space:nowrap">已在'+existingGroup+'</span>':'')
+      +'</label>';
+  }).join(''):'<div class="manual-add-empty">未找到符合该考核组规则的人员</div>';
+  if(count)count.textContent='已选 '+manualAddParticipantState.selected.size+' 人';
+}
+function toggleManualAddCandidate(empId,checked){
+  if(getExistingParticipantGroup(empId)){
+    manualAddParticipantState.selected.delete(empId);
+    renderManualAddCandidateList();
+    return;
+  }
+  if(checked)manualAddParticipantState.selected.add(empId);
+  else manualAddParticipantState.selected.delete(empId);
+  const count=document.getElementById('manualAddSelectedCount');
+  if(count)count.textContent='已选 '+manualAddParticipantState.selected.size+' 人';
+  const err=document.getElementById('manualAddError');
+  if(err)err.classList.remove('show');
+}
+function changeManualAddGroup(group){
+  manualAddParticipantState.group=group;
+  manualAddParticipantState.search='';
+  manualAddParticipantState.selected.clear();
+  const search=document.getElementById('manualAddSearch');
+  if(search)search.value='';
+  const err=document.getElementById('manualAddError');
+  if(err)err.classList.remove('show');
+  renderManualAddCandidateList();
+}
+function searchManualAddCandidates(value){
+  manualAddParticipantState.search=value;
+  renderManualAddCandidateList();
+}
+function closeManualAddParticipantModal(){
+  const overlay=document.getElementById('manualAddParticipantModal');
+  if(overlay)overlay.remove();
+}
+function openManualAddParticipantModal(){
+  const activity=ACTIVITIES.find(function(a){return a.id===currentDetailId;});
+  const allowed=activity&&(activity.status==='not_started'||(activity.status==='active'&&activity.currentStage==='目标制定'));
+  if(!allowed){
+    GHR_NAV.showToast('首个环节已结束，参与人已冻结；请新建同方案同周期的关联补充活动');
+    return;
+  }
+  closeManualAddParticipantModal();
+  manualAddParticipantState={group:'默认组',search:'',selected:new Set()};
+  const overlay=document.createElement('div');
+  overlay.id='manualAddParticipantModal';
+  overlay.className='modal-ov on';
+  overlay.innerHTML='<div class="modal" role="dialog" aria-modal="true" aria-labelledby="manualAddTitle" style="width:620px">'
+    +'<div class="modal-hd"><div id="manualAddTitle" class="modal-hd-t">手动添加人员</div>'
+    +'<button class="modal-close" aria-label="关闭" onclick="closeManualAddParticipantModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>'
+    +'<div class="modal-bd" style="max-height:68vh;overflow:auto">'
+    +'<div class="form-row"><div class="modal-label">考核组<span class="req">*</span></div>'
+    +'<select id="manualAddGroup" class="modal-input" onchange="changeManualAddGroup(this.value)">'+PARTICIPANT_GROUPS.map(function(group){return '<option value="'+group+'">'+group+'</option>';}).join('')+'</select>'
+    +'<div class="manual-add-tip">考核组仅用于筛选系统按活动快照唯一匹配到该组的人员，不会修改人员归组。</div></div>'
+    +'<div class="form-row"><div class="modal-label">选择人员<span class="req">*</span></div>'
+    +'<input id="manualAddSearch" class="modal-input" type="search" placeholder="搜索姓名、工号、部门" oninput="searchManualAddCandidates(this.value)">'
+    +'<div id="manualAddCandidateList" class="manual-add-list"></div>'
+    +'<div id="manualAddError" class="form-err">请选择至少一名可添加的人员</div></div></div>'
+    +'<div class="modal-ft" style="align-items:center"><span id="manualAddSelectedCount" style="margin-right:auto;font:400 12px/1 var(--f);color:var(--c5)">已选 0 人</span>'
+    +'<button class="btn btn-s" onclick="closeManualAddParticipantModal()">取消</button>'
+    +'<button class="btn btn-p" onclick="submitManualAddParticipants()">确认添加</button></div></div>';
+  overlay.addEventListener('click',function(e){if(e.target===overlay)closeManualAddParticipantModal();});
+  document.body.appendChild(overlay);
+  renderManualAddCandidateList();
+  const groupSelect=document.getElementById('manualAddGroup');
+  if(groupSelect)groupSelect.focus();
+}
+function submitManualAddParticipants(){
+  const activity=ACTIVITIES.find(function(a){return a.id===currentDetailId;});
+  const error=document.getElementById('manualAddError');
+  const allowed=activity&&(activity.status==='not_started'||(activity.status==='active'&&activity.currentStage==='目标制定'));
+  if(!allowed){
+    if(error){error.textContent='当前活动已不允许补加人员';error.classList.add('show');}
+    return;
+  }
+  const selected=PARTICIPANT_CANDIDATES.filter(function(candidate){
+    return manualAddParticipantState.selected.has(candidate.emp)&&candidate.assessmentGroup===manualAddParticipantState.group;
+  });
+  if(!selected.length){
+    if(error){error.textContent='请选择至少一名可添加的人员';error.classList.add('show');}
+    return;
+  }
+  const duplicated=selected.filter(function(candidate){return !!getExistingParticipantGroup(candidate.emp);});
+  if(duplicated.length){
+    duplicated.forEach(function(candidate){manualAddParticipantState.selected.delete(candidate.emp);});
+    if(error){
+      error.textContent=duplicated.map(function(candidate){return candidate.name;}).join('、')+' 已在考核组中，不能重复添加';
+      error.classList.add('show');
+    }
+    renderManualAddCandidateList();
+    return;
+  }
+  const isExecuting=activity.status==='active';
+  const now=formatTime(new Date()).replace(/\//g,'-').slice(0,16);
+  selected.forEach(function(candidate){
+    EMPLOYEE_LIST.push({
+      name:candidate.name,emp:candidate.emp,dept:candidate.dept,assessmentGroup:candidate.assessmentGroup,
+      handler:isExecuting?candidate.name:'-',node:1,nodeName:'目标制定',
+      status:isExecuting?'进行中':'未开始',exception:'正常考核',
+      exceptionCls:'color:var(--em700);background:var(--em50)',
+      totalScore:75,grade:'符合预期',approveGrade:'符合预期',confirmStatus:'未开始',
+      updateTime:now,forceEnded:false,confirmAppealPending:false,goalApproval:isExecuting?'进行中':'未开始',
+      interviewStatus:'未开始',evalStatus:'未开始',reviewStatus:'未开始',
+      importCompletedStages:[],todoCreated:isExecuting,flowOpeningException:false
+    });
+  });
+  activity.empCount=(activity.empCount||0)+selected.length;
+  activity.updater='当前用户';
+  activity.updateTime=now;
+  OP_LOGS.unshift({
+    time:now,operator:'当前用户',operatorId:'EMP0000',type:'补加人员',typeGroup:'人员管理',
+    target:selected.map(function(candidate){return candidate.name+'（'+candidate.emp+'）';}).join('、'),
+    detail:'手动添加至'+manualAddParticipantState.group+'；系统按活动快照校验唯一考核组、重复参与和流程门禁'
+      +(isExecuting?'，并从首环节首节点启动个人流程':'，将在首环节开启时进入个人流程'),
+    result:'成功',todoResult:isExecuting?'已创建'+selected.length:'尚未创建',notifyResult:isExecuting?'已发送'+selected.length:'无需通知'
+  });
+  closeManualAddParticipantModal();
+  renderApp();
+  GHR_NAV.showToast(isExecuting?'已添加 '+selected.length+' 人，个人流程与待办已创建':'已添加 '+selected.length+' 人，将在首环节开启时进入流程');
 }
 function getDisplayedEmployees(){
   const activity=ACTIVITIES.find(function(a){return a.id===currentDetailId;});
@@ -1622,7 +1799,10 @@ function onModalOverlayClick(e){
 
 // ESC 关闭弹窗
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape' && modalState.type) closeModal();
+  if(e.key==='Escape'){
+    if(document.getElementById('manualAddParticipantModal'))closeManualAddParticipantModal();
+    else if(modalState.type)closeModal();
+  }
 });
 
 // ═══ 初始化 ═══
