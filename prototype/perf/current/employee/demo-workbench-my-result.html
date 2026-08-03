@@ -140,6 +140,17 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
     </div>
   </div>
 
+  <!-- 评语 -->
+  <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden">
+    <div class="section">
+      <div class="section-hd">
+        <div class="section-icon" style="background:var(--em)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <span class="section-title">评语</span>
+      </div>
+      <div id="commentDetail"></div>
+    </div>
+  </div>
+
   <!-- 面谈记录 -->
   <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden">
     <div class="section">
@@ -369,27 +380,46 @@ function switchCycle(val,el){
   badge.className=data.status==='confirmed'?'status-confirmed':'status-pending';
   document.getElementById('scoreLabel').textContent='总分 '+data.score+' · '+data.grade;
   renderScoreDetail(val);
+  renderCommentDetail(val);
 }
 
 function renderScoreDetail(cycle){
   var data=PERIOD_DATA[cycle]||PERIOD_DATA['2026-Q2'];
   var h='<table class="result-table"><thead>';
-  h+='<tr><th style="width:200px">名称</th><th style="width:55px">权重</th><th style="width:60px">类型</th><th>完成值/完成情况</th><th>评价</th><th>上级评语</th></tr></thead><tbody>';
+  h+='<tr><th style="width:200px">名称</th><th style="width:55px">权重</th><th style="width:60px">类型</th><th>完成值/完成情况</th><th>评价</th></tr></thead><tbody>';
   for(var i=0;i<data.items.length;i++){
     var mod=data.items[i];
-    h+='<tr class="mod-row"><td colspan="6"><div style="display:flex;align-items:center;gap:8px"><div class="mod-dot" style="background:'+mod.modColor+'"></div><span class="mod-name">'+mod.mod+'</span><span class="mod-weight">'+mod.modWeight+'</span></div></td></tr>';
+    h+='<tr class="mod-row"><td colspan="5"><div style="display:flex;align-items:center;gap:8px"><div class="mod-dot" style="background:'+mod.modColor+'"></div><span class="mod-name">'+mod.mod+'</span><span class="mod-weight">'+mod.modWeight+'</span></div></td></tr>';
     for(var j=0;j<mod.rows.length;j++){
       var r=mod.rows[j];
       h+='<tr><td style="font-weight:500;color:var(--c8)">'+r.name+'</td>';
       h+='<td style="font-family:var(--m);font-size:12px">'+r.weight+'</td>';
       h+='<td><span class="type-tag '+r.type+'">'+r.typeLabel+'</span></td>';
       h+='<td style="font-size:12px;color:var(--c6)">'+r.detail+'</td>';
-      h+='<td><span class="eval-tag '+r.evalCls+'">'+r.eval+'</span></td>';
-      h+='<td style="max-width:180px;font-size:12px;color:var(--c6)">'+r.comment+'</td></tr>';
+      h+='<td><span class="eval-tag '+r.evalCls+'">'+r.eval+'</span></td></tr>';
     }
   }
   h+='</tbody></table>';
   document.getElementById('scoreDetail').innerHTML=h;
+}
+
+function renderCommentDetail(cycle){
+  var data=PERIOD_DATA[cycle]||PERIOD_DATA['2026-Q2'];
+  var employeeComment=data.periodLabel+'整体工作完成情况良好。KPI方面，资源利用率达标，UAT通过率和需求评审及时率仍有提升空间；KPA方面，各项重点工作均按计划推进。';
+  var supervisorComment='张明在'+data.periodLabel+'整体表现良好，重点项目推进有力，跨部门协作表现突出。建议继续保持执行优势，并持续提升需求评审及时率。';
+  var h='<div style="padding:2px 0 16px;border-bottom:1px solid var(--dv)">'+
+    '<div style="font:500 13px/1 var(--f);color:var(--c8);margin-bottom:8px;display:flex;align-items:center;gap:6px">'+
+      '<span style="width:22px;height:22px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">张</span>员工自评'+
+    '</div>'+
+    '<div style="font:400 13px/1.7 var(--f);color:var(--c7);padding-left:28px">'+employeeComment+'</div>'+
+  '</div>'+
+  '<div style="padding-top:16px">'+
+    '<div style="font:500 13px/1 var(--f);color:var(--c8);margin-bottom:8px;display:flex;align-items:center;gap:6px">'+
+      '<span style="width:22px;height:22px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">王</span>上级评语'+
+    '</div>'+
+    '<div style="font:400 13px/1.7 var(--f);color:var(--c7);padding-left:28px">'+supervisorComment+'</div>'+
+  '</div>';
+  document.getElementById('commentDetail').innerHTML=h;
 }
 
 /* ═══ INIT ═══ */
