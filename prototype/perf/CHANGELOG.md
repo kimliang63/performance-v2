@@ -1,5 +1,10 @@
 # 变更记录
 
+## 2026-08-03 我的绩效结果展示调整
+
+- `current/employee/demo-workbench-my-result.html`：仅删除“审定信息”整块、底部“已确认 2026-06-28 14:30”展示及下载入口，保留线上原页的其他布局、样式、周期切换和面谈记录。
+- 本次不修改 Scope、Spec 或 PRD。
+
 ## 2026-08-03 原型公共导航与通知跳转 404 修复
 
 - `current/perf-report-goals.html`、`perf-report-results.html`、`perf-report-progress.html`、`perf-report-distribution.html`、`perf-report-goal-detail.html`：修正根目录页面错误使用上一级 `navigation.js` 的路径，恢复公共导航、页面初始化和报表内容渲染。
