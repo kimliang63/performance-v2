@@ -1,5 +1,13 @@
 # 变更记录
 
+## 2026-08-03 原型公共导航与通知跳转 404 修复
+
+- `current/perf-report-goals.html`、`perf-report-results.html`、`perf-report-progress.html`、`perf-report-distribution.html`、`perf-report-goal-detail.html`：修正根目录页面错误使用上一级 `navigation.js` 的路径，恢复公共导航、页面初始化和报表内容渲染。
+- `current/demo-feishu-notify.html`：修正面包屑、员工通知卡片和管理者通知卡片的页面路径，并把两个已失效的旧文件名对齐当前目标审批、面谈确认页面。
+- `current/index.html`：修正原型总览中已失效的绩效工作台入口，指向当前员工工作台页面。
+- 本次仅修复既有原型的资源和页面跳转，不修改 Scope、Spec 或 PRD。
+- 验证：对 `current/` 下 65 个非归档 HTML 页面逐页检查，修复后控制台无错误、页面无空白；公共导航 18 个页面入口和通知卡片跳转均可访问；`git diff --check` 通过。
+
 ## 2026-07-30 活动手动添加人员弹窗
 
 - `current/perf-activity-detail.html`：在“添加人员”菜单新增可操作的“手动添加”弹窗，支持按考核组筛选并多选人员；考核组只用于筛选系统按活动快照唯一匹配的人员，不支持人工调整归组。
