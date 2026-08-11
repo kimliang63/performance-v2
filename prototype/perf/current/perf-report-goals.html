@@ -39,7 +39,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 
 .tbl-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden;margin-bottom:16px}
 .tbl-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse}
+table{width:100%;border-collapse:collapse;min-width:1500px}
 thead th{background:var(--c0);font:600 12px/1 var(--f);color:var(--c5);text-align:left;padding:10px 14px;border-bottom:1px solid var(--dv);white-space:nowrap;letter-spacing:.2px;text-transform:uppercase}
 tbody td{font:400 13px/1.4 var(--f);color:var(--c7);padding:12px 14px;border-bottom:1px solid var(--dv);vertical-align:middle}
 tbody tr{transition:background .1s}
@@ -48,6 +48,9 @@ tbody tr:nth-child(even){background:var(--c0)}
 tbody tr:nth-child(even):hover{background:var(--pr50)}
 tbody tr:last-child td{border-bottom:none}
 .mono{font-family:var(--m);font-size:12px}
+.cell-long{min-width:180px;max-width:280px;white-space:normal}
+.gradient-list{min-width:240px;display:flex;flex-direction:column;gap:4px;white-space:normal}
+.gradient-name{color:var(--c5);font-weight:500}
 
 .tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:3px;font:500 11px/1 var(--f);white-space:nowrap}
 .tag-em{background:var(--em50);color:var(--em700)}
@@ -147,38 +150,25 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&exportSetti
 //   s5: 审批通过/目标生效 — status='已提交', currentNode='目标生效', currentHandler=''
 
 var GOAL_DATA=[
-  // === 未开始 (3条) ===
-  {empId:'EMP0001',name:'张明',dept:'产品部',period:'2026年6月',activity:'2026年6月-产品部考核',status:'未开始',currentNode:'',currentHandler:''},
-  {empId:'EMP0011',name:'钱敏',dept:'产品部',period:'2026年6月',activity:'2026年6月-产品部考核',status:'未开始',currentNode:'',currentHandler:''},
-  {empId:'EMP0013',name:'林燕',dept:'市场部',period:'2026年5月',activity:'2026年5月-市场部考核',status:'未开始',currentNode:'',currentHandler:''},
-
-  // === 员工填写中 (3条) ===
-  {empId:'EMP0006',name:'刘洋',dept:'产品部',period:'2026年6月',activity:'2026年6月-产品部考核',status:'填写中',currentNode:'目标制定',currentHandler:'刘洋'},
-  {empId:'EMP0010',name:'孙鹏',dept:'运营部',period:'2026年6月',activity:'2026年6月-运营部考核',status:'填写中',currentNode:'目标制定',currentHandler:'孙鹏'},
-  {empId:'EMP0015',name:'马丽',dept:'运营部',period:'2026年5月',activity:'2026年5月-运营部考核',status:'填写中',currentNode:'目标制定',currentHandler:'马丽'},
-
-  // === 双线上级审批中 (3条) ===
-  {empId:'EMP0002',name:'李华',dept:'技术部',period:'2026年6月',activity:'2026年6月-技术部考核',status:'填写中',currentNode:'双线上级审批',currentHandler:'刘VP'},
-  {empId:'EMP0008',name:'吴强',dept:'市场部',period:'2026年6月',activity:'2026年6月-市场部考核',status:'填写中',currentNode:'双线上级审批',currentHandler:'刘VP'},
-  {empId:'EMP0014',name:'何涛',dept:'设计部',period:'2026年5月',activity:'2026年5月-设计部考核',status:'填写中',currentNode:'双线上级审批',currentHandler:'刘VP'},
-
-  // === 直接上级审批中 (3条) ===
-  {empId:'EMP0004',name:'赵磊',dept:'设计部',period:'2026年6月',activity:'2026年6月-设计部考核',status:'填写中',currentNode:'直接上级审批',currentHandler:'王总监'},
-  {empId:'EMP0009',name:'郑丽',dept:'设计部',period:'2026年6月',activity:'2026年6月-设计部考核',status:'填写中',currentNode:'直接上级审批',currentHandler:'王总监'},
-  {empId:'EMP0012',name:'黄波',dept:'技术部',period:'2026年5月',activity:'2026年5月-技术部考核',status:'填写中',currentNode:'直接上级审批',currentHandler:'王总监'},
-
-  // === 审批通过/目标生效 (5条) ===
-  {empId:'EMP0003',name:'王芳',dept:'市场部',period:'2026年6月',activity:'2026年6月-市场部考核',status:'已提交',currentNode:'目标生效',currentHandler:''},
-  {empId:'EMP0005',name:'陈静',dept:'运营部',period:'2026年6月',activity:'2026年6月-运营部考核',status:'已提交',currentNode:'目标生效',currentHandler:''},
-  {empId:'EMP0007',name:'周婷',dept:'技术部',period:'2026年6月',activity:'2026年6月-技术部考核',status:'已提交',currentNode:'目标生效',currentHandler:''},
-  {empId:'EMP0016',name:'朱伟',dept:'产品部',period:'2026年5月',activity:'2026年5月-产品部考核',status:'已提交',currentNode:'目标生效',currentHandler:''},
-  {empId:'EMP0017',name:'胡洁',dept:'技术部',period:'2026年5月',activity:'2026年5月-技术部考核',status:'已提交',currentNode:'目标生效',currentHandler:''},
+  {empId:'EMP0001',name:'张明',dept:'产品部',period:'2026年Q2',activity:'2026年Q2标准季度考核方案',goal:'完成新员工入职体验优化',weight:'30%',type:'定量',standard:'阶梯目标值',gradient1:'满意度 ≥ 85%',gradient2:'满意度 ≥ 90%',gradient3:'满意度 ≥ 95%',unit:'%'},
+  {empId:'EMP0001',name:'张明',dept:'产品部',period:'2026年Q2',activity:'2026年Q2标准季度考核方案',goal:'绩效产品需求按期交付',weight:'40%',type:'定量',standard:'阶梯完成率',gradient1:'按期率 ≥ 80%',gradient2:'按期率 ≥ 90%',gradient3:'按期率 = 100%',unit:'%'},
+  {empId:'EMP0001',name:'张明',dept:'产品部',period:'2026年Q2',activity:'2026年Q2标准季度考核方案',goal:'提升跨团队协作质量',weight:'30%',type:'定性',standard:'行为等级描述',gradient1:'能主动同步风险',gradient2:'能推动多方达成一致',gradient3:'形成可复用协作机制',unit:'—'},
+  {empId:'EMP0002',name:'李华',dept:'技术部',period:'2026年Q2',activity:'2026年Q2标准季度考核方案',goal:'核心服务可用性提升',weight:'50%',type:'定量',standard:'阶梯目标值',gradient1:'99.90%',gradient2:'99.95%',gradient3:'99.99%',unit:'%'},
+  {empId:'EMP0002',name:'李华',dept:'技术部',period:'2026年Q2',activity:'2026年Q2标准季度考核方案',goal:'关键项目技术方案评审',weight:'50%',type:'定性',standard:'行为等级描述',gradient1:'方案完整可落地',gradient2:'识别并关闭关键风险',gradient3:'沉淀团队技术规范',unit:'—'},
+  {empId:'EMP0003',name:'王芳',dept:'市场部',period:'2026年Q2',activity:'2026年Q2标准季度考核方案',goal:'重点市场活动获客',weight:'60%',type:'定量',standard:'阶梯目标值',gradient1:'800',gradient2:'1000',gradient3:'1200',unit:'人'},
+  {empId:'EMP0003',name:'王芳',dept:'市场部',period:'2026年Q2',activity:'2026年Q2标准季度考核方案',goal:'品牌内容质量提升',weight:'40%',type:'定性',standard:'行为等级描述',gradient1:'内容按计划发布',gradient2:'重点内容形成传播',gradient3:'形成行业影响力',unit:'—'},
+  {empId:'EMP0005',name:'陈静',dept:'运营部',period:'2026年6月',activity:'2026年6月运营月度考核',goal:'客户工单按时解决率',weight:'70%',type:'定量',standard:'阶梯完成率',gradient1:'≥ 90%',gradient2:'≥ 95%',gradient3:'≥ 98%',unit:'%'},
+  {empId:'EMP0005',name:'陈静',dept:'运营部',period:'2026年6月',activity:'2026年6月运营月度考核',goal:'运营流程优化',weight:'30%',type:'定性',standard:'行为等级描述',gradient1:'完成问题识别',gradient2:'完成方案落地',gradient3:'效果稳定并推广',unit:'—'},
+  {empId:'EMP0007',name:'周婷',dept:'技术部',period:'2026年6月',activity:'2026年6月研发月度考核',goal:'线上缺陷修复时效',weight:'60%',type:'定量',standard:'阶梯时效值',gradient1:'48',gradient2:'24',gradient3:'12',unit:'小时'},
+  {empId:'EMP0007',name:'周婷',dept:'技术部',period:'2026年6月',activity:'2026年6月研发月度考核',goal:'代码评审质量',weight:'40%',type:'定性',standard:'行为等级描述',gradient1:'按规范完成评审',gradient2:'主动识别系统风险',gradient3:'推动质量机制改进',unit:'—'},
+  {empId:'EMP0016',name:'朱伟',dept:'产品部',period:'2026年H1',activity:'2026年H1产品半年度考核',goal:'产品路线图重点事项达成',weight:'50%',type:'定量',standard:'阶梯完成率',gradient1:'≥ 80%',gradient2:'≥ 90%',gradient3:'= 100%',unit:'%'},
+  {empId:'EMP0016',name:'朱伟',dept:'产品部',period:'2026年H1',activity:'2026年H1产品半年度考核',goal:'用户研究体系建设',weight:'50%',type:'定性',standard:'行为等级描述',gradient1:'完成研究计划',gradient2:'洞察进入产品决策',gradient3:'建立持续研究机制',unit:'—'},
 ];
 
 var DEPTS=['全部','产品部','技术部','市场部','设计部','运营部'];
-var STATUSES=['全部状态','未开始','填写中','已提交'];
+var TYPES=['全部类型','定量','定性'];
 
-var filter={search:'',cycle:'',dept:'',status:''};
+var filter={search:'',cycle:'',activity:'',dept:'',type:''};
 var currentPage=1;
 var pageSize=10;
 
@@ -188,22 +178,35 @@ function getCycles(){
   return Object.keys(set).sort().reverse();
 }
 
+function getActivities(){
+  var set={};
+  for(var i=0;i<GOAL_DATA.length;i++){set[GOAL_DATA[i].activity]=1;}
+  return Object.keys(set).sort();
+}
+
 function getFiltered(){
   return GOAL_DATA.filter(function(d){
-    if(filter.search&&d.name.indexOf(filter.search)===-1&&d.empId.indexOf(filter.search)===-1)return false;
+    if(filter.search&&d.name.indexOf(filter.search)===-1&&d.empId.indexOf(filter.search)===-1&&d.goal.indexOf(filter.search)===-1)return false;
     if(filter.cycle&&d.period!==filter.cycle)return false;
+    if(filter.activity&&d.activity!==filter.activity)return false;
     if(filter.dept&&d.dept!==filter.dept)return false;
-    if(filter.status&&filter.status!=='全部状态'&&d.status!==filter.status)return false;
+    if(filter.type&&filter.type!=='全部类型'&&d.type!==filter.type)return false;
     return true;
   });
 }
 
-function statusTag(s){return s==='已提交'?'tag-em':s==='填写中'?'tag-pr':'tag-c5';}
-function nodeTag(n){
-  if(!n)return '<span style="color:var(--c4)">—</span>';
-  if(n==='目标生效')return '<span class="tag tag-em">'+n+'</span>';
-  if(n==='目标制定')return '<span class="tag tag-ac">'+n+'</span>';
-  return '<span class="tag tag-pr">'+n+'</span>';
+function gradientValue(value,unit){
+  if(!value)return '—';
+  if(!unit||unit==='—'||value.indexOf(unit)!==-1)return value;
+  return value+unit;
+}
+
+function gradientCell(d){
+  var names=d.gradientNames||(d.type==='定量'?['保底值','目标值','挑战值']:['达标','良好','优秀']);
+  var values=[d.gradient1,d.gradient2,d.gradient3];
+  return '<div class="gradient-list">'+values.map(function(value,index){
+    return '<div><span class="gradient-name">'+names[index]+'：</span>'+gradientValue(value,d.unit)+'</div>';
+  }).join('')+'</div>';
 }
 
 function render(){
@@ -215,24 +218,26 @@ function render(){
   var page=data.slice(start,start+pageSize);
 
   var cycleOptions=getCycles().map(function(c){return '<option value="'+c+'"'+(filter.cycle===c?' selected':'')+'>'+c+'</option>';}).join('');
+  var activityOptions=getActivities().map(function(a){return '<option value="'+a+'"'+(filter.activity===a?' selected':'')+'>'+a+'</option>';}).join('');
   var deptOptions=DEPTS.slice(1).map(function(d){return '<option value="'+d+'"'+(filter.dept===d?' selected':'')+'>'+d+'</option>';}).join('');
-  var statusOptions=STATUSES.map(function(s){return '<option value="'+s+'"'+(filter.status===s?' selected':'')+'>'+s+'</option>';}).join('');
+  var typeOptions=TYPES.map(function(t){return '<option value="'+t+'"'+(filter.type===t?' selected':'')+'>'+t+'</option>';}).join('');
 
   var html='<div class="fi">'+
     '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">'+
-      '<div><h1 style="font:700 20px/1.2 var(--f);color:var(--c9);margin-bottom:4px">目标中心</h1><p style="font:400 13px/1 var(--f);color:var(--c5)">查看全员各周期目标数据</p></div>'+
+      '<div><h1 style="font:700 20px/1.2 var(--f);color:var(--c9);margin-bottom:4px">目标报表</h1><p style="font:400 13px/1 var(--f);color:var(--c5)">按员工 × 活动 × 目标查看当前有效目标数据</p></div>'+
       '<div style="display:flex;gap:8px"><button class="btn btn-s" onclick="handleExport()">'+I.download+' 导出</button><button class="btn btn-s" onclick="openExportSettings()" title="导出设置">'+I.settings+' 导出设置</button></div>'+
     '</div>'+
     '<div class="fl-bar">'+
-      '<div class="fl-search">'+I.search+'<input id="flSearch" placeholder="搜索姓名或工号…" value="'+filter.search+'" oninput="onSearch(this.value)"></div>'+
+      '<div class="fl-search">'+I.search+'<input id="flSearch" placeholder="搜索姓名、工号或目标名称…" value="'+filter.search+'" oninput="onSearch(this.value)"></div>'+
       '<select class="fl-sel" onchange="onCycle(this.value)"><option value="">全部周期</option>'+cycleOptions+'</select>'+
+      '<select class="fl-sel" onchange="onActivity(this.value)"><option value="">全部活动</option>'+activityOptions+'</select>'+
       '<select class="fl-sel" onchange="onDept(this.value)"><option value="">全部部门</option>'+deptOptions+'</select>'+
-      '<select class="fl-sel" onchange="onStatus(this.value)">'+statusOptions+'</select>'+
+      '<select class="fl-sel" onchange="onType(this.value)">'+typeOptions+'</select>'+
       '<div class="fl-actions"><button class="btn btn-s" onclick="resetFilters()">'+I.x+' 重置</button></div>'+
     '</div>'+
     '<div class="tbl-card">'+
       '<div class="tbl-wrap"><table><thead><tr>'+
-        '<th>姓名</th><th>工号</th><th>部门</th><th>周期</th><th>绩效活动</th><th>状态</th><th>当前节点</th><th>当前处理人</th><th>操作</th>'+
+        '<th>姓名</th><th>工号</th><th>部门</th><th>周期</th><th>活动名称</th><th>目标名称</th><th>权重</th><th>类型</th><th>衡量标准</th><th>衡量标准-梯度值</th>'+
       '</tr></thead><tbody>';
 
   for(var i=0;i<page.length;i++){
@@ -242,11 +247,12 @@ function render(){
       '<td class="mono">'+d.empId+'</td>'+
       '<td>'+d.dept+'</td>'+
       '<td>'+d.period+'</td>'+
-      '<td><a class="lk" href="perf-activity-detail.html">'+d.activity+'</a></td>'+
-      '<td><span class="tag '+statusTag(d.status)+'">'+d.status+'</span></td>'+
-      '<td>'+nodeTag(d.currentNode)+'</td>'+
-      '<td>'+(d.currentHandler||'<span style="color:var(--c4)">—</span>')+'</td>'+
-      '<td><a class="lk" href="perf-report-goal-detail.html?id='+d.empId+'" target="_blank">查看详情</a></td>'+
+      '<td class="cell-long">'+d.activity+'</td>'+
+      '<td class="cell-long" style="font-weight:500;color:var(--c9)">'+d.goal+'</td>'+
+      '<td>'+d.weight+'</td>'+
+      '<td><span class="tag '+(d.type==='定量'?'tag-pr':'tag-ac')+'">'+d.type+'</span></td>'+
+      '<td>'+d.standard+'</td>'+
+      '<td>'+gradientCell(d)+'</td>'+
       '</tr>';
   }
 
@@ -264,10 +270,11 @@ function render(){
 
 function onSearch(v){filter.search=v;currentPage=1;render();}
 function onCycle(v){filter.cycle=v;currentPage=1;render();}
+function onActivity(v){filter.activity=v;currentPage=1;render();}
 function onDept(v){filter.dept=v;currentPage=1;render();}
-function onStatus(v){filter.status=v;currentPage=1;render();}
+function onType(v){filter.type=v;currentPage=1;render();}
 function goPage(p){currentPage=p;render();}
-function resetFilters(){filter={search:'',cycle:'',dept:'',status:''};currentPage=1;render();}
+function resetFilters(){filter={search:'',cycle:'',activity:'',dept:'',type:''};currentPage=1;render();}
 function handleExport(){alert('导出功能（原型占位）');}
 
 render();
