@@ -39,7 +39,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 
 .tbl-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden;margin-bottom:16px}
 .tbl-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse}
+table{width:100%;border-collapse:collapse;min-width:900px}
 thead th{background:var(--c0);font:600 12px/1 var(--f);color:var(--c5);text-align:left;padding:10px 14px;border-bottom:1px solid var(--dv);white-space:nowrap;letter-spacing:.2px;text-transform:uppercase}
 tbody td{font:400 13px/1.4 var(--f);color:var(--c7);padding:12px 14px;border-bottom:1px solid var(--dv);vertical-align:middle}
 tbody tr{transition:background .1s}
@@ -74,25 +74,18 @@ tbody tr:last-child td{border-bottom:none}
 .lk{color:var(--pr);cursor:pointer;text-decoration:none;font-weight:500}
 .lk:hover{text-decoration:underline}
 
+.tbl-head{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid var(--dv)}.tbl-title{font-size:14px;font-weight:600;color:var(--c9)}.cutoff{font-size:11px;color:var(--c5)}
+.filter-row{display:flex;gap:10px;flex-wrap:wrap;width:100%}.filter-row+.filter-row{padding-top:12px;margin-top:2px;border-top:1px solid var(--dv)}.fl-search.activity{min-width:240px}.summary{font-size:12px;color:var(--c5);align-self:center}.summary strong{color:var(--c9)}table{min-width:1480px}tbody td{white-space:nowrap}.tag-ne{background:var(--c1);color:var(--c6)}.empty{text-align:center!important;padding:52px!important;color:var(--c5)}
+.mask{position:fixed;inset:0;background:rgba(24,24,27,.4);display:flex;align-items:center;justify-content:center;padding:24px;z-index:999}.modal{width:min(680px,100%);max-height:calc(100vh - 48px);overflow:auto;background:var(--sf);border-radius:12px;box-shadow:0 20px 55px rgba(0,0,0,.22)}.modal-head,.modal-foot{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--dv)}.modal-head h2{font-size:17px;color:var(--c9)}.modal-body{padding:20px}.modal-foot{justify-content:flex-end;border-top:1px solid var(--dv);border-bottom:0;gap:8px}.close{border:0;background:transparent;font-size:22px;color:var(--c5);cursor:pointer}.detail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px 20px}.detail-grid dt{font-size:11px;color:var(--c5);margin-bottom:4px}.detail-grid dd{font-size:13px;color:var(--c8);font-weight:500}.result-flow{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px;padding-top:18px;border-top:1px solid var(--dv)}.result-box{padding:12px;background:var(--c0);border:1px solid var(--c2);border-radius:var(--r2)}.result-box span{display:block;font-size:11px;color:var(--c5);margin-bottom:4px}.result-box strong{font-size:13px;color:var(--c9)}.checks{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.checks label{display:flex;align-items:center;gap:8px;padding:9px;border:1px solid var(--c2);border-radius:var(--r1);font-size:12px;cursor:pointer}.checks input{accent-color:var(--pr)}.notice{margin-top:14px;padding:10px 12px;background:var(--pr50);color:var(--pr700);border-radius:var(--r1);font-size:12px}.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);padding:10px 16px;background:var(--c9);color:#fff;border-radius:var(--r1);font-size:12px;z-index:1000}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(--pr);outline-offset:2px}@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}@media(max-width:700px){.detail-grid,.result-flow,.checks{grid-template-columns:1fr}.fl-search,.fl-search.activity{width:100%}}
+
 @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .fi{animation:fi .25s ease forwards}
-
-.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:2000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
-.modal-ov.on{opacity:1;pointer-events:all}
-.modal{background:var(--sf);border-radius:var(--r4);box-shadow:0 20px 60px -15px rgba(0,0,0,.2);width:520px;max-width:90vw;transform:translateY(8px) scale(.98);transition:transform .2s ease}
-.modal-ov.on .modal{transform:translateY(0) scale(1)}
-.modal-hd{display:flex;align-items:center;justify-content:space-between;padding:18px 22px 14px;border-bottom:1px solid var(--dv)}
-.modal-hd-t{font:600 15px/1.2 var(--f);color:var(--c9)}
-.modal-close{width:28px;height:28px;border-radius:var(--r1);border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--c4);transition:all .12s}
-.modal-close:hover{background:var(--c1);color:var(--c7)}
-.modal-close svg{width:16px;height:16px}
-.modal-bd{padding:18px 22px}
-.modal-ft{display:flex;justify-content:flex-end;gap:8px;padding:14px 22px 18px;border-top:1px solid var(--dv)}
 </style>
 </head>
 <body>
 <div id="app"></div>
-<div id="modalContainer"></div>
+<div id="overlay"></div><div id="toast"></div>
 <script src="navigation.js"></script>
 <script>
 GHR_NAV.init('perf', '绩效结果');
@@ -101,49 +94,8 @@ var I={
   search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
   x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
   download:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
-  settings:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+  upload:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5M12 3v12"/></svg>',
 };
-
-var EXPORT_FIELDS={
-  roster:{name:'导出名单',fields:[
-    {key:'name',label:'姓名',def:true},{key:'emp',label:'工号',def:true},{key:'dept',label:'部门',def:true},
-    {key:'position',label:'岗位',def:true},{key:'level',label:'职级',def:false},{key:'relation',label:'考核关系',def:true},{key:'group',label:'考核组',def:false}
-  ]},
-  goals:{name:'导出目标',fields:[
-    {key:'name',label:'姓名',def:true},{key:'emp',label:'工号',def:true},{key:'dept',label:'部门',def:true},
-    {key:'goalName',label:'目标名称',def:true},{key:'goalType',label:'目标类型',def:true},{key:'weight',label:'权重',def:true},
-    {key:'standard',label:'衡量标准',def:true},{key:'completion',label:'完成情况',def:false}
-  ]},
-  eval:{name:'导出考核结果',fields:[
-    {key:'name',label:'姓名',def:true},{key:'emp',label:'工号',def:true},{key:'dept',label:'部门',def:true},
-    {key:'indicator',label:'指标名称',def:true},{key:'target',label:'目标值',def:true},{key:'actual',label:'完成值',def:true},
-    {key:'score',label:'得分',def:true},{key:'grade',label:'评价等级',def:true}
-  ]},
-  ratify:{name:'导出审定结果',fields:[
-    {key:'name',label:'姓名',def:true},{key:'emp',label:'工号',def:true},{key:'dept',label:'部门',def:true},
-    {key:'evalGrade',label:'初评等级',def:true},{key:'ratifyGrade',label:'审定等级',def:true},{key:'ratifier',label:'审定人',def:true},{key:'ratifyTime',label:'审定时间',def:false}
-  ]},
-  interview:{name:'导出面谈结果',fields:[
-    {key:'name',label:'姓名',def:true},{key:'emp',label:'工号',def:true},{key:'dept',label:'部门',def:true},
-    {key:'date',label:'面谈日期',def:true},{key:'content',label:'面谈内容',def:true},{key:'plan',label:'改进计划',def:true},{key:'confirm',label:'员工确认',def:false}
-  ]}
-};
-var exportSettingsOpen=false,exportSettingsTab='roster';
-if(!window._exportSettings){window._exportSettings={};for(var k in EXPORT_FIELDS){window._exportSettings[k]={};EXPORT_FIELDS[k].fields.forEach(function(f){window._exportSettings[k][f.key]=f.def;});}}
-function openExportSettings(){exportSettingsOpen=true;renderExportSettings();}
-function closeExportSettings(){exportSettingsOpen=false;renderExportSettings();}
-function toggleExportField(cat,key){window._exportSettings[cat][key]=!window._exportSettings[cat][key];renderExportSettings();}
-function renderExportSettings(){
-  var mc=document.getElementById('modalContainer');
-  if(!mc)return;
-  if(!exportSettingsOpen){mc.innerHTML='';return;}
-  var tab=exportSettingsTab,cfg=EXPORT_FIELDS[tab];
-  var tabs='';for(var k in EXPORT_FIELDS){tabs+='<button style="padding:8px 14px;border:none;border-bottom:2px solid '+(k===tab?'var(--pr)':'transparent')+';background:transparent;font:'+(k===tab?'500':'400')+' 13px/1 var(--f);color:'+(k===tab?'var(--pr)':'var(--c5)')+';cursor:pointer" onclick="exportSettingsTab=\''+k+'\';renderExportSettings()">'+EXPORT_FIELDS[k].name+'</button>';}
-  var fields='';cfg.fields.forEach(function(f){var chk=window._exportSettings[tab][f.key];fields+='<label style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--dv);cursor:pointer;font:400 13px/1 var(--f);color:var(--c7)"><input type="checkbox" '+(chk?'checked':'')+' onchange="toggleExportField(\''+tab+'\',\''+f.key+'\')" style="accent-color:var(--pr)">'+f.label+'<span style="font:400 11px/1 var(--f);color:var(--c4);margin-left:auto">'+(f.def?'默认':'')+'</span></label>';});
-  var xSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
-  mc.innerHTML='<div class="modal-ov on" onclick="if(event.target===this)closeExportSettings()"><div class="modal" style="width:560px"><div class="modal-hd"><span class="modal-hd-t">导出设置</span><button class="modal-close" onclick="closeExportSettings()">'+xSvg+'</button></div><div class="modal-bd"><div style="display:flex;gap:0;border-bottom:1px solid var(--dv);margin-bottom:16px">'+tabs+'</div><div style="font:500 13px/1 var(--f);color:var(--c9);margin-bottom:4px">'+cfg.name+' — 选择导出字段</div><div style="max-height:360px;overflow-y:auto">'+fields+'</div></div><div class="modal-ft"><button class="btn btn-s" onclick="closeExportSettings()">关闭</button></div></div></div>';
-}
-document.addEventListener('keydown',function(e){if(e.key==='Escape'&&exportSettingsOpen){closeExportSettings();}});
 
 var GRADE_CODE={'远超预期':'S','超出预期':'A','符合预期+':'Bp','符合预期':'B','符合预期-':'Bm','低于预期':'C','远低预期':'D'};
 var GRADE_MAP={S:'grade-S',A:'grade-A',Bp:'grade-Bp',B:'grade-B',Bm:'grade-Bm',C:'grade-C',D:'grade-D'};
@@ -161,17 +113,19 @@ var RESULT_DATA=[];
 for(var i=0;i<20;i++){
   RESULT_DATA.push({
     empId:'EMP'+String(i+1).padStart(4,'0'),name:names[i],dept:depts[i],job:jobs[i],period:allPeriods[i],
-    activity:allPeriods[i]+'-'+depts[i]+'考核',
-    score:scores[i],grade:grades[i],ratifyGrade:ratifyGrades[i],confirm:confirms[i]
+    activity:allPeriods[i]+'-'+depts[i]+'考核',cycleType:'季度',rule:'七级绩效等级',personStatus:i===19?'离职':'在职',employment:['正式员工','劳务派遣','实习生'][i%3],region:i%3===0?'华东':'华南',level:['P7','P6','P6','P5','P5'][i%5],
+    score:scores[i],grade:grades[i],adjustedGrade:i===14?'符合预期-':grades[i],ratifyGrade:ratifyGrades[i],confirm:confirms[i],source:i===18?'报表导入':'活动更新',dataStatus:i===18?'活动管理员导入':'已完成',updated:'2026-08-'+String(10-i%7).padStart(2,'0')+' '+String(9+i%8).padStart(2,'0')+':'+String(i*7%60).padStart(2,'0')
   });
 }
+RESULT_DATA.sort(function(a,b){return b.period.localeCompare(a.period,'zh-CN')||a.empId.localeCompare(b.empId);});
 
 var DEPTS=['全部','产品部','技术部','市场部','设计部','运营部'];
 var CONFIRM_STATUSES=['全部状态','已确认','待确认','已申诉'];
 
-var filter={search:'',cycle:'',dept:'',status:''};
+var filter={search:'',activity:'',cycle:'',dept:'',rule:'',dataStatus:'',status:''};
 var currentPage=1;
 var pageSize=10;
+var filterTimer;
 
 function getCycles(){
   var set={};
@@ -182,8 +136,11 @@ function getCycles(){
 function getFiltered(){
   return RESULT_DATA.filter(function(d){
     if(filter.search&&d.name.indexOf(filter.search)===-1&&d.empId.indexOf(filter.search)===-1)return false;
+    if(filter.activity&&d.activity.indexOf(filter.activity)===-1)return false;
     if(filter.cycle&&d.period!==filter.cycle)return false;
     if(filter.dept&&d.dept!==filter.dept)return false;
+    if(filter.rule&&d.rule!==filter.rule)return false;
+    if(filter.dataStatus&&d.dataStatus!==filter.dataStatus)return false;
     if(filter.status&&filter.status!=='全部状态'&&d.confirm!==filter.status)return false;
     return true;
   });
@@ -205,24 +162,21 @@ function render(){
   var cycleOptions=getCycles().map(function(c){return '<option value="'+c+'"'+(filter.cycle===c?' selected':'')+'>'+c+'</option>';}).join('');
   var deptOptions=DEPTS.slice(1).map(function(d){return '<option value="'+d+'"'+(filter.dept===d?' selected':'')+'>'+d+'</option>';}).join('');
   var statusOptions=CONFIRM_STATUSES.map(function(s){return '<option value="'+s+'"'+(filter.status===s?' selected':'')+'>'+s+'</option>';}).join('');
-
   var html='<div class="fi">'+
     '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">'+
-      '<div><h1 style="font:700 20px/1.2 var(--f);color:var(--c9);margin-bottom:4px">绩效结果</h1><p style="font:400 13px/1 var(--f);color:var(--c5)">查看全员各周期绩效结果数据</p></div>'+
-      '<div style="display:flex;gap:8px"><button class="btn btn-s" onclick="handleExport()">'+I.download+' 导出</button><button class="btn btn-s" onclick="openExportSettings()" title="导出设置">'+I.settings+' 导出设置</button></div>'+
+      '<div><h1 style="font:700 20px/1.2 var(--f);color:var(--c9);margin-bottom:4px">绩效结果</h1><p style="font:400 13px/1 var(--f);color:var(--c5)">按员工、周期与活动查看当前有效的绩效结果</p></div>'+
+      '<div style="display:flex;gap:8px"><button class="btn btn-s" onclick="openImport()">'+I.upload+' 导入</button><button class="btn btn-s" onclick="openExport()">导出设置</button><button class="btn btn-p" onclick="handleExport()">'+I.download+' 导出</button></div>'+
     '</div>'+
     '<div class="fl-bar">'+
-      '<div class="fl-search">'+I.search+'<input id="flSearch" placeholder="搜索姓名或工号…" value="'+filter.search+'" oninput="onSearch(this.value)"></div>'+
-      '<select class="fl-sel" onchange="onCycle(this.value)"><option value="">全部周期</option>'+cycleOptions+'</select>'+
-      '<select class="fl-sel" onchange="onDept(this.value)"><option value="">全部部门</option>'+deptOptions+'</select>'+
-      '<select class="fl-sel" onchange="onStatus(this.value)">'+statusOptions+'</select>'+
-      '<div class="fl-actions"><button class="btn btn-s" onclick="resetFilters()">'+I.x+' 重置</button></div>'+
+      '<div class="filter-row"><div class="fl-search">'+I.search+'<input id="flSearch" aria-label="员工" placeholder="姓名或工号" value="'+filter.search+'" oninput="onSearch(this.value)"></div><div class="fl-search activity">'+I.search+'<input aria-label="考核活动" placeholder="考核活动名称" value="'+filter.activity+'" oninput="onActivity(this.value)"></div><select aria-label="周期" class="fl-sel" onchange="onCycle(this.value)"><option value="">全部周期</option>'+cycleOptions+'</select><select aria-label="部门" class="fl-sel" onchange="onDept(this.value)"><option value="">全部部门</option>'+deptOptions+'</select></div>'+
+      '<div class="filter-row"><select aria-label="等级规则" class="fl-sel" onchange="onRule(this.value)"><option value="">全部等级规则</option><option value="七级绩效等级"'+(filter.rule?' selected':'')+'>七级绩效等级</option></select><select aria-label="数据状态" class="fl-sel" onchange="onDataStatus(this.value)"><option value="">全部数据状态</option><option value="已完成"'+(filter.dataStatus==='已完成'?' selected':'')+'>已完成</option><option value="活动管理员导入"'+(filter.dataStatus==='活动管理员导入'?' selected':'')+'>活动管理员导入</option></select><select aria-label="确认状态" class="fl-sel" onchange="onStatus(this.value)">'+statusOptions+'</select><span class="summary">已找到 <strong>'+total+'</strong> 条当前有效结果</span><div class="fl-actions"><button class="btn btn-s" onclick="resetFilters()">'+I.x+' 重置</button><button class="btn btn-p" onclick="showToast(\'已按当前条件查询\')">查询</button></div></div>'+
     '</div>'+
     '<div class="tbl-card">'+
-      '<div class="tbl-wrap"><table><thead><tr>'+
-        '<th>姓名</th><th>工号</th><th>部门</th><th>岗位</th><th>周期</th><th>绩效活动</th><th>考核总分</th><th>初评等级</th><th>最终等级</th><th>确认状态</th><th>操作</th>'+
+      '<div class="tbl-head"><span class="tbl-title">结果明细</span><span class="cutoff">数据截止 2026-08-11 18:00</span></div><div class="tbl-wrap"><table><thead><tr>'+
+        '<th>姓名</th><th>工号</th><th>部门</th><th>人员状态</th><th>用工形式</th><th>划分区域</th><th>岗位</th><th>职级</th><th>周期类型</th><th>周期</th><th>绩效活动</th><th>等级规则</th><th>考核总分</th><th>初评等级</th><th>最终等级</th><th>确认状态</th><th>数据来源</th><th>更新时间</th>'+
       '</tr></thead><tbody>';
 
+  if(!page.length)html+='<tr><td class="empty" colspan="18">数据尚未产生，请调整筛选条件</td></tr>';
   for(var i=0;i<page.length;i++){
     var d=page[i];
     var ct=d.confirm==='已确认'?'tag-em':d.confirm==='待确认'?'tag-ac':'tag-ro';
@@ -230,14 +184,13 @@ function render(){
       '<td style="font-weight:500;color:var(--c9)">'+d.name+'</td>'+
       '<td class="mono">'+d.empId+'</td>'+
       '<td>'+d.dept+'</td>'+
+      '<td><span class="tag '+(d.personStatus==='在职'?'tag-em':'tag-ne')+'">'+d.personStatus+'</span></td><td>'+d.employment+'</td><td>'+d.region+'</td>'+
       '<td>'+d.job+'</td>'+
-      '<td>'+d.period+'</td>'+
-      '<td><a class="lk" href="perf-activity-detail.html">'+d.activity+'</a></td>'+
-      '<td class="mono" style="font-weight:600">'+d.score.toFixed(1)+'</td>'+
-      '<td>'+d.grade+'</td>'+
+      '<td>'+d.level+'</td><td>'+d.cycleType+'</td><td>'+d.period+'</td><td>'+d.activity+'</td><td>'+d.rule+'</td>'+
+      '<td class="mono" style="font-weight:600">'+d.score.toFixed(2)+'</td><td>'+d.adjustedGrade+'</td>'+
       '<td><span class="grade-tag '+gradeClass(d.ratifyGrade)+'">'+d.ratifyGrade+'</span></td>'+
       '<td><span class="tag '+ct+'">'+d.confirm+'</span></td>'+
-      '<td><a class="lk" onclick="viewDetail(\''+d.empId+'\')">查看详情</a></td>'+
+      '<td><span class="tag '+(d.source==='活动更新'?'tag-em':'tag-ne')+'">'+d.source+'</span></td><td class="mono">'+d.updated+'</td>'+
       '</tr>';
   }
 
@@ -253,14 +206,23 @@ function render(){
   document.getElementById('app').innerHTML=html;
 }
 
-function onSearch(v){filter.search=v;currentPage=1;render();}
+function onSearch(v){filter.search=v;currentPage=1;clearTimeout(filterTimer);filterTimer=setTimeout(render,180);}
+function onActivity(v){filter.activity=v;currentPage=1;clearTimeout(filterTimer);filterTimer=setTimeout(render,180);}
 function onCycle(v){filter.cycle=v;currentPage=1;render();}
 function onDept(v){filter.dept=v;currentPage=1;render();}
+function onRule(v){filter.rule=v;currentPage=1;render();}
+function onDataStatus(v){filter.dataStatus=v;currentPage=1;render();}
 function onStatus(v){filter.status=v;currentPage=1;render();}
 function goPage(p){currentPage=p;render();}
-function resetFilters(){filter={search:'',cycle:'',dept:'',status:''};currentPage=1;render();}
-function handleExport(){alert('导出功能（原型占位）');}
-function viewDetail(id){alert('查看 '+id+' 绩效详情（原型占位）');}
+function resetFilters(){clearTimeout(filterTimer);filter={search:'',activity:'',cycle:'',dept:'',rule:'',dataStatus:'',status:''};currentPage=1;render();showToast('筛选条件已重置');}
+function showModal(title,body,foot){document.getElementById('overlay').innerHTML='<div class="mask" onclick="if(event.target===this)closeModal()"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-head"><h2 id="modalTitle">'+title+'</h2><button class="close" aria-label="关闭" onclick="closeModal()">×</button></div><div class="modal-body">'+body+'</div><div class="modal-foot">'+foot+'</div></section></div>';document.querySelector('.close').focus();}
+function closeModal(){document.getElementById('overlay').innerHTML='';}
+function handleExport(){showToast('正在导出当前 '+getFiltered().length+' 条结果');}
+function openExport(){var fs=['姓名','工号','部门','岗位','周期','绩效活动','等级规则','考核总分','初评等级','最终等级','确认状态','数据来源','更新时间'];showModal('导出设置','<div class="checks">'+fs.map(function(x){return '<label><input type="checkbox" checked> '+x+'</label>';}).join('')+'</div><div class="notice">仅导出当前查询范围和当前用户有权查看的字段，并附带查询条件与数据截止时间。</div>','<button class="btn btn-s" onclick="closeModal()">取消</button><button class="btn btn-p" onclick="closeModal();handleExport()">确认导出</button>');}
+function openImport(){showModal('导入绩效结果','<div style="padding:28px;text-align:center;border:1px dashed var(--c3);border-radius:8px;background:var(--c0)"><strong style="display:block;margin-bottom:8px">上传绩效结果文件</strong><input id="importFile" type="file" accept=".xlsx"><p style="font-size:12px;color:var(--c5);margin-top:8px">按工号、周期、等级规则和最终等级匹配</p></div><div class="notice">报表导入不会覆盖活动更新数据；已有报表导入记录时更新原记录。</div>','<button class="btn btn-s" onclick="showToast(\'模板下载已触发（原型）\')">下载模板</button><button class="btn btn-p" onclick="validateImport()">上传并校验</button>');}
+function validateImport(){var f=document.getElementById('importFile');if(!f.files.length){showToast('请先选择 .xlsx 文件');return;}closeModal();showToast('文件已通过格式校验（原型）');}
+var toastTimer;function showToast(msg){clearTimeout(toastTimer);document.getElementById('toast').innerHTML='<div class="toast" role="status">'+msg+'</div>';toastTimer=setTimeout(function(){document.getElementById('toast').innerHTML='';},2200);}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();});
 
 render();
 </script>
