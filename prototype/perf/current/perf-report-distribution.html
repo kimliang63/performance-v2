@@ -30,7 +30,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 
 .fl-bar{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .fl-sel{height:32px;padding:0 28px 0 10px;border:1px solid var(--c2);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c7);background:var(--sf) url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center;appearance:none;cursor:pointer;transition:all .12s;outline:none;-webkit-appearance:none;-moz-appearance:none}
-.fl-sel:focus{border-color:var(--pr)}
+.fl-sel:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr100)}
 .fl-actions{display:flex;gap:6px;margin-left:auto}
 
 .card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px;margin-bottom:16px}
@@ -142,6 +142,16 @@ var GRADE_INDEX={'远低预期':1,'低于预期':2,'符合预期-':3,'符合预�
 var GRADE_NAMES=['','远低预期','低于预期','符合预期-','符合预期','符合预期+','超出预期','远超预期'];
 var DEPT_KEYS=['1级部门01','1级部门02','1级部门03','1级部门04','1级部门05','2级部门01','2级部门02','2级部门03','2级部门04','2级部门05','3级部门01','3级部门02','3级部门03','3级部门04','3级部门05'];
 var DEPTS=['全部'].concat(DEPT_KEYS);
+var ACTIVITIES=[
+  {value:'all',label:'全部绩效活动',factor:1,bias:0},
+  {value:'employee',label:'员工月度绩效考核',factor:.72,bias:-.1},
+  {value:'manager',label:'管理干部月度考核',factor:.28,bias:.35}
+];
+var GRADE_RULES=[
+  {value:'all',label:'全部等级规则',factor:1,bias:0},
+  {value:'seven',label:'七级绩效等级',factor:.76,bias:-.05},
+  {value:'manager-seven',label:'管理干部七级绩效等级',factor:.24,bias:.25}
+];
 
 var SUB_DEPTS={
   '1级部门01':['2级部门01','2级部门02','2级部门03'],
@@ -213,6 +223,34 @@ function trendDeptLabel(dept){
 
 var currentMonth='2026-06';
 var currentDept='全部';
+var currentActivity='all';
+var currentGradeRule='all';
+
+function getFilterOption(options,value){
+  for(var i=0;i<options.length;i++){if(options[i].value===value)return options[i];}
+  return options[0];
+}
+
+function getFilterFactor(){
+  return getFilterOption(ACTIVITIES,currentActivity).factor*getFilterOption(GRADE_RULES,currentGradeRule).factor;
+}
+
+function applyReportFilters(data){
+  var factor=getFilterFactor();
+  if(factor===1)return data;
+  var filtered={count:Math.max(1,Math.round(data.count*factor)),initial:{},final:{}};
+  var initialTotal=0,finalTotal=0;
+  for(var g=0;g<GRADES.length;g++){
+    var grade=GRADES[g];
+    filtered.initial[grade]=Math.max(0,Math.round((data.initial[grade]||0)*factor));
+    filtered.final[grade]=Math.max(0,Math.round((data.final[grade]||0)*factor));
+    initialTotal+=filtered.initial[grade];
+    finalTotal+=filtered.final[grade];
+  }
+  filtered.initial['符合预期']=Math.max(0,filtered.initial['符合预期']+filtered.count-initialTotal);
+  filtered.final['符合预期']=Math.max(0,filtered.final['符合预期']+filtered.count-finalTotal);
+  return filtered;
+}
 
 function getDeptData(month,dept){
   if(dept==='全部'){
@@ -224,14 +262,14 @@ function getDeptData(month,dept){
       merged.count+=dd.count;
       for(var g=0;g<GRADES.length;g++){merged.initial[GRADES[g]]+=dd.initial[GRADES[g]];merged.final[GRADES[g]]+=dd.final[GRADES[g]];}
     }
-    return merged;
+    return applyReportFilters(merged);
   }
-  return MONTHLY_DATA[month][dept]||{count:0,initial:{},final:{}};
+  return applyReportFilters(MONTHLY_DATA[month][dept]||{count:0,initial:{},final:{}});
 }
 
 function renderFilters(){
   var html='<span style="font:500 12px/1 var(--f);color:var(--c5);margin-right:4px">周期</span>'+
-    '<select class="fl-sel" onchange="setMonth(MONTH_MAP[this.value])">';
+    '<select class="fl-sel" aria-label="周期" onchange="setMonth(MONTH_MAP[this.value])">';
   for(var i=0;i<MONTH_OPTIONS.length;i++){
     var mk=MONTH_MAP[MONTH_OPTIONS[i]];
     html+='<option value="'+MONTH_OPTIONS[i]+'"'+(mk===currentMonth?' selected':'')+'>'+MONTH_OPTIONS[i]+'</option>';
@@ -239,9 +277,21 @@ function renderFilters(){
   html+='</select>'+
     '<span style="width:1px;height:20px;background:var(--c2);margin:0 8px"></span>'+
     '<span style="font:500 12px/1 var(--f);color:var(--c5);margin-right:4px">部门</span>'+
-    '<select class="fl-sel" onchange="setDept(this.value)">';
+    '<select class="fl-sel" aria-label="部门" onchange="setDept(this.value)">';
   for(var i=0;i<DEPTS.length;i++){
     html+='<option value="'+DEPTS[i]+'"'+(DEPTS[i]===currentDept?' selected':'')+'>'+DEPTS[i]+'</option>';
+  }
+  html+='</select><span style="width:1px;height:20px;background:var(--c2);margin:0 8px"></span>'+
+    '<span style="font:500 12px/1 var(--f);color:var(--c5);margin-right:4px">绩效活动</span>'+
+    '<select class="fl-sel" aria-label="绩效活动" onchange="setActivity(this.value)">';
+  for(var i=0;i<ACTIVITIES.length;i++){
+    html+='<option value="'+ACTIVITIES[i].value+'"'+(ACTIVITIES[i].value===currentActivity?' selected':'')+'>'+ACTIVITIES[i].label+'</option>';
+  }
+  html+='</select><span style="width:1px;height:20px;background:var(--c2);margin:0 8px"></span>'+
+    '<span style="font:500 12px/1 var(--f);color:var(--c5);margin-right:4px">等级规则</span>'+
+    '<select class="fl-sel" aria-label="等级规则" onchange="setGradeRule(this.value)">';
+  for(var i=0;i<GRADE_RULES.length;i++){
+    html+='<option value="'+GRADE_RULES[i].value+'"'+(GRADE_RULES[i].value===currentGradeRule?' selected':'')+'>'+GRADE_RULES[i].label+'</option>';
   }
   html+='</select><div class="fl-actions"><button class="btn btn-s" onclick="resetFilters()">重置</button></div>';
   document.getElementById('filterBar').innerHTML=html;
@@ -300,6 +350,12 @@ function renderDistChart(){
 function renderTrendChart(){
   var dept=currentDept==='全部'?'1级部门01':currentDept;
   var trendData=buildSubTrend(dept);
+  var trendBias=getFilterOption(ACTIVITIES,currentActivity).bias+getFilterOption(GRADE_RULES,currentGradeRule).bias;
+  if(trendBias!==0){
+    Object.keys(trendData).forEach(function(key){
+      trendData[key]=trendData[key].map(function(value){return value===null?null:Math.round(Math.max(1,Math.min(7,value+trendBias))*10)/10;});
+    });
+  }
   var keys=Object.keys(trendData).filter(function(k){return k!=='_parent';});
   var subColors=['#93C5FD','#6EE7B7','#FCD34D','#FDA4AF','#C4B5FD'];
   var datasets=[];
@@ -381,7 +437,7 @@ function renderStats(){
   var prevRate=prevTotal?(prevDone/prevTotal*100).toFixed(1):null;
   // Appeal count: mock based on department size
   var appealSeed=currentDept==='全部'?currentMonth.charCodeAt(6)*3+7:(currentMonth.charCodeAt(6)+DEPT_KEYS.indexOf(currentDept))*2;
-  var appeals=Math.max(0,Math.round(Math.sin(appealSeed)*3+2));
+  var appeals=Math.max(0,Math.round((Math.sin(appealSeed)*3+2)*getFilterFactor()));
 
   var totalChange=prevTotal?((total-prevTotal)/prevTotal*100).toFixed(1):null;
   var totalArrow=totalChange!==null?(totalChange>=0?'<span class="up">↑ '+totalChange+'%</span>':'<span class="down">↓ '+Math.abs(totalChange)+'%</span>'):'';
@@ -400,7 +456,9 @@ function renderStats(){
 
 function setMonth(m){currentMonth=m;render();}
 function setDept(v){currentDept=v;render();}
-function resetFilters(){currentMonth='2026-06';currentDept='全部';render();}
+function setActivity(v){currentActivity=v;render();}
+function setGradeRule(v){currentGradeRule=v;render();}
+function resetFilters(){currentMonth='2026-06';currentDept='全部';currentActivity='all';currentGradeRule='all';render();}
 function handleExport(){alert('导出功能（原型占位）');}
 
 function render(){
