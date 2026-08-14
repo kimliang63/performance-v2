@@ -39,13 +39,16 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoo
 .row .card{margin-bottom:0}
 
 /* Task */
-.task{display:flex;flex-direction:column;padding:var(--sp-md) 0;border-bottom:1px solid var(--dv);cursor:pointer;transition:background 0.12s}
-.task:hover{background:var(--c0)}
-.task:last-child{border-bottom:none}
-.task-name{font:500 13px/1 var(--f);color:var(--c8);margin-bottom:var(--sp-xs)}
-.task-row{display:flex;align-items:center;justify-content:space-between}
-.task-meta{font:400 12px/1 var(--f);color:var(--c5)}
-.task-action{font:500 12px/1 var(--f);color:var(--pr);cursor:pointer;text-decoration:none}
+.task{display:grid;grid-template-columns:28px minmax(0,1fr) auto;align-items:center;gap:12px;padding:12px 14px;background:#F8FAFC;border-radius:6px;cursor:pointer;margin-bottom:10px;transition:background .12s}
+.task:hover{background:#F1F5F9}
+.task:last-child{margin-bottom:0}
+.task-avatar{width:24px;height:24px;border:2px solid currentColor;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--f)}
+.task-avatar.mint{color:#2DD4BF}.task-avatar.cyan{color:#0EA5E9}.task-avatar.orange{color:#F59E0B}
+.task-main{min-width:0}
+.task-name{font:400 13px/1.35 var(--f);color:var(--c8);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.task-meta{font:400 12px/1 var(--f);color:var(--c4);margin-top:8px}
+.task-action{font:500 12px/1 var(--f);color:var(--pr);cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:3px;white-space:nowrap}
+.task-action svg{width:14px;height:14px}
 .task-action:hover{color:var(--pr700)}
 
 /* Score Layer 1 */
@@ -148,23 +151,33 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoo
     <!-- 待办任务 -->
     <div class="card">
       <div class="card-hd">
-        <span class="card-t" style="position:relative">待办<span style="position:absolute;top:-4px;right:-22px;min-width:16px;height:16px;border-radius:8px;background:var(--ro);color:#FFF;font:700 10px/16px var(--f);text-align:center;padding:0 4px">2</span></span>
+        <span class="card-t" style="position:relative">待办<span style="position:absolute;top:-4px;right:-22px;min-width:16px;height:16px;border-radius:8px;background:var(--ro);color:#FFF;font:700 10px/16px var(--f);text-align:center;padding:0 4px">3</span></span>
         <span class="card-action" onclick="showToast('查看更多')">更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
       </div>
       <div class="card-bd">
-        <div class="task" onclick="location.href='demo-goal-employee.html'">
-          <div class="task-name">填写6月绩效目标</div>
-          <div class="task-row">
-            <span class="task-meta">截止 6/30</span>
-            <span class="task-action">去处理</span>
+        <div class="task" onclick="showToast('跳转至绩效面谈流程')">
+          <span class="task-avatar mint">员</span>
+          <div class="task-main">
+            <div class="task-name">员工吴振兴 提交的 绩效面谈流程-徐德贵(zt22650)</div>
+            <div class="task-meta">23小时前</div>
           </div>
+          <span class="task-action"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13.2 7.6A5.4 5.4 0 1 1 11.6 4"/><path d="M13.2 3.2v4.4H8.8"/></svg>去处理</span>
         </div>
-        <div class="task" onclick="location.href='demo-confirm-employee.html'">
-          <div class="task-name">确认5月绩效结果</div>
-          <div class="task-row">
-            <span class="task-meta">截止 7/5</span>
-            <span class="task-action">去处理</span>
+        <div class="task" onclick="showToast('跳转至目标填写')">
+          <span class="task-avatar cyan">员</span>
+          <div class="task-main">
+            <div class="task-name">员工吴振兴 提交的 目标制定-线上制定目标通用流程-徐德贵(zt22650)</div>
+            <div class="task-meta">2026年08月11日 19:14</div>
           </div>
+          <span class="task-action"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13.2 7.6A5.4 5.4 0 1 1 11.6 4"/><path d="M13.2 3.2v4.4H8.8"/></svg>去处理</span>
+        </div>
+        <div class="task" onclick="showToast('跳转至目标填写')">
+          <span class="task-avatar orange">员</span>
+          <div class="task-main">
+            <div class="task-name">员工吴振兴 提交的 目标制定-线上制定目标通用流程-徐德贵(zt22650)</div>
+            <div class="task-meta">2026年08月11日 18:49</div>
+          </div>
+          <span class="task-action"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13.2 7.6A5.4 5.4 0 1 1 11.6 4"/><path d="M13.2 3.2v4.4H8.8"/></svg>去处理</span>
         </div>
       </div>
     </div>

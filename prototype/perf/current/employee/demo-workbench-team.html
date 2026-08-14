@@ -31,12 +31,15 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoo
 .card-action svg{width:14px;height:14px}
 .card-bd{padding:20px 24px}
 
-.task{display:flex;flex-direction:column;padding:14px 0;border-bottom:1px solid var(--dv);cursor:pointer}
-.task:last-child{border-bottom:none}
-.task-name{font:500 13px/1 var(--f);color:var(--c8);margin-bottom:var(--sp-xs)}
-.task-row{display:flex;align-items:center;justify-content:space-between}
-.task-meta{font:400 12px/1 var(--f);color:var(--c5)}
-.task-action{font:500 12px/1 var(--f);color:var(--pr);cursor:pointer;text-decoration:none}
+.task{display:grid;grid-template-columns:28px minmax(0,1fr) auto;align-items:center;gap:12px;padding:12px 14px;background:#F8FAFC;border-radius:6px;cursor:pointer;margin-bottom:10px}
+.task:last-child{margin-bottom:0}
+.task-avatar{width:24px;height:24px;border:2px solid currentColor;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--f)}
+.task-avatar.mint{color:#2DD4BF}.task-avatar.cyan{color:#0EA5E9}.task-avatar.orange{color:#F59E0B}
+.task-main{min-width:0}
+.task-name{font:400 13px/1.35 var(--f);color:var(--c8);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.task-meta{font:400 12px/1 var(--f);color:var(--c4);margin-top:8px}
+.task-action{font:500 12px/1 var(--f);color:var(--pr);cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:3px;white-space:nowrap}
+.task-action svg{width:14px;height:14px}
 .task-action:hover{color:var(--pr700)}
 
 /* Month tabs */
@@ -44,6 +47,10 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoo
 .month-tab{font:500 12px/1 var(--f);padding:3px 10px;border-radius:var(--r1);cursor:pointer;color:var(--c5);transition:all .12s}
 .month-tab:hover{color:var(--pr);background:var(--pr50)}
 .month-tab.on{background:var(--pr);color:#FFF}
+
+.card-tools{display:flex;align-items:center;gap:var(--sp-md)}
+.grade-rule-select{height:30px;min-width:140px;padding:0 28px 0 10px;border:1px solid var(--c3);border-radius:var(--r1);background:var(--sf);font:400 12px/1 var(--f);color:var(--c7);outline:none;cursor:pointer}
+.grade-rule-select:hover,.grade-rule-select:focus{border-color:var(--pr)}
 
 .toast{position:fixed;top:70px;right:24px;padding:12px 18px;border-radius:var(--r2);font:500 13px/1.3 var(--f);box-shadow:0 10px 40px -10px rgba(0,0,0,.12);z-index:3000;transform:translateX(120%);transition:transform .25s ease}
 .toast.on{transform:translateX(0)}
@@ -77,51 +84,33 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoo
     <!-- 待办任务 -->
     <div class="card" style="margin-bottom:0">
       <div class="card-hd">
-        <span class="card-t" style="position:relative">待办<span style="position:absolute;top:-4px;right:-22px;min-width:16px;height:16px;border-radius:8px;background:var(--ro);color:#FFF;font:700 10px/16px var(--f);text-align:center;padding:0 4px">6</span></span>
+        <span class="card-t" style="position:relative">待办<span style="position:absolute;top:-4px;right:-22px;min-width:16px;height:16px;border-radius:8px;background:var(--ro);color:#FFF;font:700 10px/16px var(--f);text-align:center;padding:0 4px">3</span></span>
         <span class="card-action" onclick="showToast('查看更多')">更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
       </div>
       <div class="card-bd">
-        <div class="task" onclick="showToast('跳转至目标填写')">
-          <div class="task-name">张明 — 目标填写</div>
-          <div class="task-row">
-            <span class="task-meta">截止 6/30</span>
-            <span class="task-action">去处理</span>
+        <div class="task" onclick="showToast('跳转至绩效面谈流程')">
+          <span class="task-avatar mint">员</span>
+          <div class="task-main">
+            <div class="task-name">员工吴振兴 提交的 绩效面谈流程-徐德贵(zt22650)</div>
+            <div class="task-meta">23小时前</div>
           </div>
+          <span class="task-action"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13.2 7.6A5.4 5.4 0 1 1 11.6 4"/><path d="M13.2 3.2v4.4H8.8"/></svg>去处理</span>
         </div>
         <div class="task" onclick="showToast('跳转至目标填写')">
-          <div class="task-name">王芳 — 目标填写</div>
-          <div class="task-row">
-            <span class="task-meta">截止 6/30</span>
-            <span class="task-action">去处理</span>
+          <span class="task-avatar cyan">员</span>
+          <div class="task-main">
+            <div class="task-name">员工吴振兴 提交的 目标制定-线上制定目标通用流程-徐德贵(zt22650)</div>
+            <div class="task-meta">2026年08月11日 19:14</div>
           </div>
+          <span class="task-action"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13.2 7.6A5.4 5.4 0 1 1 11.6 4"/><path d="M13.2 3.2v4.4H8.8"/></svg>去处理</span>
         </div>
         <div class="task" onclick="showToast('跳转至目标填写')">
-          <div class="task-name">赵强 — 目标填写</div>
-          <div class="task-row">
-            <span class="task-meta">截止 6/30</span>
-            <span class="task-action">去处理</span>
+          <span class="task-avatar orange">员</span>
+          <div class="task-main">
+            <div class="task-name">员工吴振兴 提交的 目标制定-线上制定目标通用流程-徐德贵(zt22650)</div>
+            <div class="task-meta">2026年08月11日 18:49</div>
           </div>
-        </div>
-        <div class="task" onclick="showToast('跳转至结果确认')">
-          <div class="task-name">李华 — 结果确认</div>
-          <div class="task-row">
-            <span class="task-meta">截止 7/5</span>
-            <span class="task-action">去处理</span>
-          </div>
-        </div>
-        <div class="task" onclick="showToast('跳转至结果确认')">
-          <div class="task-name">王芳 — 结果确认</div>
-          <div class="task-row">
-            <span class="task-meta">截止 7/5</span>
-            <span class="task-action">去处理</span>
-          </div>
-        </div>
-        <div class="task" onclick="showToast('跳转至评分审批')">
-          <div class="task-name">赵强 — 评分审批</div>
-          <div class="task-row">
-            <span class="task-meta">逾期 2 天</span>
-            <span class="task-action" style="color:var(--ro)">去处理</span>
-          </div>
+          <span class="task-action"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13.2 7.6A5.4 5.4 0 1 1 11.6 4"/><path d="M13.2 3.2v4.4H8.8"/></svg>去处理</span>
         </div>
       </div>
     </div>
@@ -130,7 +119,13 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoo
     <div class="card" style="margin-bottom:0">
       <div class="card-hd">
         <span class="card-t">绩效等级分布</span>
-        <span class="card-action" onclick="showToast('查看更多')">更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+        <div class="card-tools">
+          <select class="grade-rule-select" id="gradeRuleSelect" aria-label="结果等级规则">
+            <option value="seven">结果等级：七级制</option>
+            <option value="five">结果等级：五级制</option>
+          </select>
+          <span class="card-action" onclick="showToast('查看更多')">更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+        </div>
       </div>
       <div class="card-bd">
         <canvas id="chartDist" style="height:300px"></canvas>
@@ -163,130 +158,114 @@ function showToast(msg, type) {
   setTimeout(function() { t.classList.remove('on'); }, 2500);
 }
 
-// ===== 绩效等级分布 (bar) =====
-var DIST_DATA = {
-  '2026-06': [0, 0, 0, 2, 1, 1, 0],
-  '2026-05': [0, 0, 1, 2, 0, 1, 0],
-  '2026-04': [0, 1, 0, 1, 1, 1, 0],
-};
-var GRADE_LABELS = ['远低预期','低于预期','符合预期-','符合预期','符合预期+','超出预期','远超预期'];
-var GRADE_COLORS = ['#E11D48','#F43F5E','#F59E0B','#A1A1AA','#2563EB','#10B981','#047857'];
-
-var distChart = new Chart(document.getElementById('chartDist'), {
-  type: 'bar',
-  data: {
-    labels: GRADE_LABELS,
-    datasets: [{
-      data: DIST_DATA['2026-06'],
-      backgroundColor: GRADE_COLORS,
-      borderRadius: 6,
-      barPercentage: 0.55,
-      categoryPercentage: 0.7
-    }]
+// ===== 团队绩效图表 =====
+var PERIOD_KEYS = ['2025-07','2025-08','2025-09','2025-10','2025-11','2025-12','2026-01','2026-02','2026-03','2026-04','2026-05','2026-06'];
+var PERIODS = ['2025年7月','2025年8月','2025年9月','2025年10月','2025年11月','2025年12月','2026年1月','2026年2月','2026年3月','2026年4月','2026年5月','2026年6月'];
+var GRADE_RULES = {
+  seven: {
+    levels: ['远低预期','低于预期','符合预期-','符合预期','符合预期+','超出预期','远超预期'],
+    colors: ['#E11D48','#F43F5E','#F59E0B','#A1A1AA','#2563EB','#10B981','#047857'],
+    current: {'张明':'符合预期+','李华':'超出预期','王芳':'符合预期','赵强':'符合预期'},
+    history: [
+      {'张明':'符合预期','李华':'符合预期+','王芳':'符合预期-','赵强':'符合预期'},
+      {'张明':'符合预期-','李华':'符合预期+','王芳':'符合预期','赵强':'低于预期'},
+      {'张明':'符合预期','李华':'超出预期','王芳':'符合预期','赵强':'符合预期-'},
+      {'张明':'符合预期+','李华':'超出预期','王芳':'符合预期','赵强':'符合预期'},
+      {'张明':'符合预期+','李华':'超出预期','王芳':'符合预期','赵强':'符合预期'},
+      {'张明':'超出预期','李华':'超出预期','王芳':'符合预期+','赵强':'符合预期'},
+      {'张明':'符合预期','李华':'超出预期','王芳':'符合预期+','赵强':'符合预期-'},
+      {'张明':'符合预期','李华':'符合预期+','王芳':'符合预期','赵强':'符合预期-'},
+      {'张明':'符合预期+','李华':'超出预期','王芳':'符合预期','赵强':'符合预期-'},
+      {'张明':'超出预期','李华':'超出预期','王芳':'符合预期+','赵强':'符合预期'},
+      {'张明':'符合预期+','李华':'超出预期','王芳':'符合预期+','赵强':'符合预期'},
+      {'张明':'符合预期+','李华':'超出预期','王芳':'符合预期','赵强':'符合预期'}
+    ]
   },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { display: false },
-      tooltip: { callbacks: { label: function(ctx){ return ctx.raw + ' 人' } } }
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        max: 4,
-        ticks: { stepSize: 1, font: { family: 'JetBrains Mono, SF Mono, monospace', size: 11 }, color: '#A1A1AA' },
-        grid: { color: '#E4E4E7', drawTicks: false }
-      },
-      x: {
-        ticks: { font: { family: 'Inter, Noto Sans SC, sans-serif', size: 10 }, color: '#A1A1AA', maxRotation: 0 },
-        grid: { display: false }
-      }
-    }
+  five: {
+    levels: ['D','C','B','A','S'],
+    colors: ['#E11D48','#F59E0B','#A1A1AA','#2563EB','#10B981'],
+    current: {'张明':'A','李华':'S','王芳':'B','赵强':'B'},
+    history: [
+      {'张明':'B','李华':'A','王芳':'C','赵强':'B'},
+      {'张明':'C','李华':'A','王芳':'B','赵强':'C'},
+      {'张明':'B','李华':'S','王芳':'B','赵强':'C'},
+      {'张明':'A','李华':'S','王芳':'B','赵强':'B'},
+      {'张明':'A','李华':'S','王芳':'B','赵强':'B'},
+      {'张明':'S','李华':'S','王芳':'A','赵强':'B'},
+      {'张明':'B','李华':'S','王芳':'A','赵强':'C'},
+      {'张明':'B','李华':'A','王芳':'B','赵强':'C'},
+      {'张明':'A','李华':'S','王芳':'B','赵强':'C'},
+      {'张明':'S','李华':'S','王芳':'A','赵强':'B'},
+      {'张明':'A','李华':'S','王芳':'A','赵强':'B'},
+      {'张明':'A','李华':'S','王芳':'B','赵强':'B'}
+    ]
   }
-});
-
-function switchDistMonth(month) {
-  document.querySelectorAll('.month-tab').forEach(function(t){ t.classList.remove('on'); });
-  event.target.classList.add('on');
-  distChart.data.datasets[0].data = DIST_DATA[month];
-  distChart.update();
-}
-
-// ===== 团队绩效趋势（分组柱状图 + 团队均值折线） =====
-var MONTH_LABELS = ['7月','8月','9月','10月','11月','12月','1月','2月','3月','4月','5月','6月'];
-var MEMBER_COLORS = ['#2563EB','#10B981','#8B5CF6','#F59E0B'];
-var MEMBER_TREND = {
-  '张明': [3.5, 3.8, 4.0, 4.2, 4.5, 4.8, 4.5, 4.2, 4.5, 4.8, 5.0, 4.8],
-  '李华': [4.0, 4.2, 4.0, 4.5, 4.8, 5.0, 4.8, 4.5, 4.2, 4.5, 4.8, 4.5],
-  '王芳': [3.0, 3.2, 3.5, 3.8, 4.0, 4.2, 4.0, 4.5, 4.8, 5.0, 5.2, 5.5],
-  '赵强': [3.8, 3.5, 3.2, 3.5, 3.8, 4.0, 4.2, 4.0, 3.8, 4.0, 4.2, 4.5],
 };
-var GRADE_Y_LABELS = ['','远低预期','低于预期','符合预期-','符合预期','符合预期+','超出预期','远超预期'];
+var distChart;
+var trendChart;
 
-var members = Object.keys(MEMBER_TREND);
-var avgData = [];
-for (var m = 0; m < 12; m++) {
-  var sum = 0;
-  for (var i = 0; i < members.length; i++) { sum += MEMBER_TREND[members[i]][m]; }
-  avgData.push(parseFloat((sum / members.length).toFixed(2)));
+function makeTrendDatasets(rule) {
+  return rule.levels.map(function(level, levelIndex) {
+    var members = rule.history.map(function(period) {
+      return Object.keys(period).filter(function(name){ return period[name] === level; });
+    });
+    return {
+      label: level,
+      data: members.map(function(names, periodIndex){ return {x:PERIODS[periodIndex],y:names.length}; }),
+      memberNames: members,
+      backgroundColor: rule.colors[levelIndex],
+      borderRadius: 3,
+      borderSkipped: false,
+      barPercentage: 0.9,
+      categoryPercentage: 0.8
+    };
+  });
 }
 
-var barDatasets = members.map(function(name, i) {
-  return {
+function renderTeamCharts(ruleKey) {
+  var rule = GRADE_RULES[ruleKey];
+  var cycleIndex = PERIOD_KEYS.indexOf(typeof currentCycle === 'undefined' ? '2026-06' : currentCycle);
+  var currentResults = cycleIndex >= 0 ? rule.history[cycleIndex] : rule.current;
+  var sortedMembers = Object.keys(currentResults).sort(function(a,b) {
+    return rule.levels.indexOf(currentResults[a]) - rule.levels.indexOf(currentResults[b]);
+  });
+  var rankData = sortedMembers.map(function(name){ return {x:name,y:rule.levels.indexOf(currentResults[name])+1}; });
+  var memberColors = sortedMembers.map(function(name){ return rule.colors[rule.levels.indexOf(currentResults[name])]; });
+
+  if (distChart) distChart.destroy();
+  distChart = new Chart(document.getElementById('chartDist'), {
     type: 'bar',
-    label: name,
-    data: MEMBER_TREND[name],
-    backgroundColor: MEMBER_COLORS[i] + '99',
-    borderColor: MEMBER_COLORS[i],
-    borderWidth: 1,
-    borderRadius: 4,
-    barPercentage: 0.7,
-    categoryPercentage: 0.8
-  };
-});
-
-barDatasets.push({
-  type: 'line',
-  label: '团队均值',
-  data: avgData,
-  borderColor: '#F43F5E',
-  backgroundColor: 'transparent',
-  borderWidth: 2.5,
-  borderDash: [6, 3],
-  pointRadius: 4,
-  pointBackgroundColor: '#F43F5E',
-  tension: 0.3
-});
-
-new Chart(document.getElementById('chartTrend'), {
-  type: 'bar',
-  data: { labels: MONTH_LABELS, datasets: barDatasets },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { position: 'bottom', labels: { font: { family: 'Inter, Noto Sans SC, sans-serif', size: 12 }, usePointStyle: true, padding: 16 } },
-      tooltip: { callbacks: { label: function(ctx){ return ctx.dataset.label + '：' + ctx.raw.toFixed(1) } } }
-    },
-    scales: {
-      y: {
-        min: 1, max: 7,
-        ticks: {
-          stepSize: 1,
-          callback: function(v){ return GRADE_Y_LABELS[v] || '' },
-          font: { family: 'Inter, Noto Sans SC, sans-serif', size: 11 },
-          color: '#A1A1AA'
-        },
-        grid: { color: '#E4E4E7', drawTicks: false }
-      },
-      x: {
-        ticks: { font: { family: 'Inter, Noto Sans SC, sans-serif', size: 11 }, color: '#A1A1AA' },
-        grid: { display: false }
+    data: {labels:sortedMembers,datasets:[{data:rankData,backgroundColor:memberColors,borderRadius:6,barPercentage:.46,categoryPercentage:.72}]},
+    options: {
+      responsive:true,maintainAspectRatio:false,animation:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{title:function(items){return items[0].label},label:function(ctx){return '绩效结果：'+rule.levels[ctx.raw.y-1]}}}},
+      scales:{
+        y:{min:0,max:rule.levels.length,ticks:{stepSize:1,callback:function(v){return v>0?rule.levels[v-1]:''},font:{family:'Inter, Noto Sans SC, sans-serif',size:10},color:'#71717A'},grid:{color:'#E4E4E7',drawTicks:false}},
+        x:{ticks:{font:{family:'Inter, Noto Sans SC, sans-serif',size:11},color:'#71717A',maxRotation:0},grid:{display:false}}
       }
     }
-  }
-});
+  });
+
+  if (trendChart) trendChart.destroy();
+  trendChart = new Chart(document.getElementById('chartTrend'), {
+    type:'bar',
+    data:{labels:PERIODS,datasets:makeTrendDatasets(rule)},
+    options:{
+      responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:'nearest',intersect:true},
+      plugins:{
+        legend:{display:true,position:'bottom',labels:{usePointStyle:true,pointStyle:'rectRounded',boxWidth:8,boxHeight:8,padding:10,font:{family:'Inter, Noto Sans SC, sans-serif',size:10},color:'#71717A'}},
+        tooltip:{callbacks:{title:function(items){return items[0].label},label:function(ctx){var names=ctx.dataset.memberNames[ctx.dataIndex];return names.length?ctx.dataset.label+'（'+names.length+'人）：'+names.join('、'):''}},filter:function(item){return item.raw.y>0}}
+      },
+      scales:{
+        y:{beginAtZero:true,max:4,stacked:false,ticks:{stepSize:1,callback:function(v){return v+'人'},font:{family:'JetBrains Mono, SF Mono, monospace',size:10},color:'#71717A'},grid:{color:'#E4E4E7',drawTicks:false}},
+        x:{stacked:false,ticks:{maxRotation:0,autoSkip:true,maxTicksLimit:12,callback:function(v){return this.getLabelForValue(v).replace('年','/').replace('月','')},font:{family:'Inter, Noto Sans SC, sans-serif',size:10},color:'#71717A'},grid:{display:false}}
+      }
+    }
+  });
+}
+
+document.getElementById('gradeRuleSelect').addEventListener('change',function(){renderTeamCharts(this.value)});
+renderTeamCharts('seven');
 </script>
 <script src="../navigation.js"></script>
 <script>
@@ -323,6 +302,7 @@ function switchCycle(val,el){
   var pills=document.querySelectorAll('.cycle-pill');
   for(var i=0;i<pills.length;i++)pills[i].classList.remove('active');
   if(el)el.classList.add('active');
+  if(typeof renderTeamCharts==='function')renderTeamCharts(document.getElementById('gradeRuleSelect').value);
 }
 renderPills();
 </script>
