@@ -3,7 +3,7 @@
 ## 2026-08-15 工作台入口补齐
 
 - `current/employee/demo-workbench-team.html`：绩效等级分布和团队绩效趋势两个模块的“更多”统一跳转到绩效结果报表 `current/perf-report-results.html`。
-- `current/employee/demo-workbench-home.html`：“我的目标”模块的“更多”跳转到带周期切换的员工“我的目标”页面 `current/employee/demo-workbench-my-goal-bak.html`。
+- `current/employee/demo-workbench-home.html`：“我的目标”模块的“更多”跳转到正式员工“我的目标”页面 `current/employee/demo-workbench-my-goal.html`。
 - 本次仅补齐既有 V5 工作台入口，不修改 Scope、Spec 或 V5 PRD。
 
 ## 2026-08-14 团队绩效工作台图表口径调整
