@@ -1,5 +1,12 @@
 # 变更记录
 
+## 2026-08-15 目标与结果报表人员字段补齐
+
+- `current/perf-report-goals.html`、`current/perf-report-results.html`：统一补齐姓名、工号、人员状态、用工形式、划分区域、岗位、职级和入职日期。
+- 部门字段统一拆分为当前部门、全路径部门、二级部门至八级部门；不存在的组织层级显示“—”。
+- 两个报表的导出设置同步增加全部人员与部门层级字段。
+- 本次属于既有 V5 报表字段补齐，V5 Scope 项数不变。
+
 ## 2026-08-15 工作台入口补齐
 
 - `current/employee/demo-workbench-team.html`：绩效等级分布和团队绩效趋势两个模块的“更多”统一跳转到绩效结果报表 `current/perf-report-results.html`。

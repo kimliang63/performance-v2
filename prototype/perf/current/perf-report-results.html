@@ -75,7 +75,7 @@ tbody tr:last-child td{border-bottom:none}
 .lk:hover{text-decoration:underline}
 
 .tbl-head{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid var(--dv)}.tbl-title{font-size:14px;font-weight:600;color:var(--c9)}.cutoff{font-size:11px;color:var(--c5)}
-.filter-row{display:flex;gap:10px;flex-wrap:wrap;width:100%}.filter-row+.filter-row{padding-top:12px;margin-top:2px;border-top:1px solid var(--dv)}.fl-search.activity{min-width:240px}.summary{font-size:12px;color:var(--c5);align-self:center}.summary strong{color:var(--c9)}table{min-width:1480px}tbody td{white-space:nowrap}.tag-ne{background:var(--c1);color:var(--c6)}.empty{text-align:center!important;padding:52px!important;color:var(--c5)}
+.filter-row{display:flex;gap:10px;flex-wrap:wrap;width:100%}.filter-row+.filter-row{padding-top:12px;margin-top:2px;border-top:1px solid var(--dv)}.fl-search.activity{min-width:240px}.summary{font-size:12px;color:var(--c5);align-self:center}.summary strong{color:var(--c9)}table{min-width:3300px}tbody td{white-space:nowrap}.cell-long{min-width:280px;white-space:normal!important}.tag-ne{background:var(--c1);color:var(--c6)}.empty{text-align:center!important;padding:52px!important;color:var(--c5)}
 .mask{position:fixed;inset:0;background:rgba(24,24,27,.4);display:flex;align-items:center;justify-content:center;padding:24px;z-index:999}.modal{width:min(680px,100%);max-height:calc(100vh - 48px);overflow:auto;background:var(--sf);border-radius:12px;box-shadow:0 20px 55px rgba(0,0,0,.22)}.modal-head,.modal-foot{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--dv)}.modal-head h2{font-size:17px;color:var(--c9)}.modal-body{padding:20px}.modal-foot{justify-content:flex-end;border-top:1px solid var(--dv);border-bottom:0;gap:8px}.close{border:0;background:transparent;font-size:22px;color:var(--c5);cursor:pointer}.detail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px 20px}.detail-grid dt{font-size:11px;color:var(--c5);margin-bottom:4px}.detail-grid dd{font-size:13px;color:var(--c8);font-weight:500}.result-flow{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px;padding-top:18px;border-top:1px solid var(--dv)}.result-box{padding:12px;background:var(--c0);border:1px solid var(--c2);border-radius:var(--r2)}.result-box span{display:block;font-size:11px;color:var(--c5);margin-bottom:4px}.result-box strong{font-size:13px;color:var(--c9)}.checks{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.checks label{display:flex;align-items:center;gap:8px;padding:9px;border:1px solid var(--c2);border-radius:var(--r1);font-size:12px;cursor:pointer}.checks input{accent-color:var(--pr)}.notice{margin-top:14px;padding:10px 12px;background:var(--pr50);color:var(--pr700);border-radius:var(--r1);font-size:12px}.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);padding:10px 16px;background:var(--c9);color:#fff;border-radius:var(--r1);font-size:12px;z-index:1000}
 button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(--pr);outline-offset:2px}@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}@media(max-width:700px){.detail-grid,.result-flow,.checks{grid-template-columns:1fr}.fl-search,.fl-search.activity{width:100%}}
 
@@ -109,11 +109,27 @@ var grades=['符合预期+','超出预期','符合预期','符合预期+','符�
 var ratifyGrades=['符合预期+','超出预期','符合预期','符合预期+','符合预期','超出预期','符合预期','符合预期+','符合预期+','符合预期','符合预期','远超预期','符合预期-','符合预期','符合预期-','超出预期','符合预期','符合预期','符合预期+','低于预期'];
 var confirms=['已确认','已确认','已确认','已确认','已确认','已确认','已确认','已确认','已确认','已确认','已确认','已确认','已确认','已确认','待确认','待确认','待确认','待确认','待确认','已申诉'];
 
+function orgProfile(dept,region){
+  var deptLevel2='中国区';
+  var deptLevel3=region+'区域';
+  var deptLevel4=(dept==='产品部'||dept==='技术部'||dept==='设计部')?'产品研发中心':'市场运营中心';
+  var deptLevel5=dept;
+  return {
+    currentDept:dept,
+    fullDept:[deptLevel2,deptLevel3,deptLevel4,deptLevel5].join(' / '),
+    deptLevel2:deptLevel2,deptLevel3:deptLevel3,deptLevel4:deptLevel4,deptLevel5:deptLevel5,
+    deptLevel6:'—',deptLevel7:'—',deptLevel8:'—'
+  };
+}
+
 var RESULT_DATA=[];
 for(var i=0;i<20;i++){
+  var region=i%3===0?'华东':'华南';
+  var org=orgProfile(depts[i],region);
   RESULT_DATA.push({
-    empId:'EMP'+String(i+1).padStart(4,'0'),name:names[i],dept:depts[i],job:jobs[i],period:allPeriods[i],
-    activity:allPeriods[i]+'-'+depts[i]+'考核',cycleType:'季度',rule:'七级绩效等级',personStatus:i===19?'离职':'在职',employment:['正式员工','劳务派遣','实习生'][i%3],region:i%3===0?'华东':'华南',level:['P7','P6','P6','P5','P5'][i%5],
+    empId:'EMP'+String(i+1).padStart(4,'0'),name:names[i],dept:depts[i],currentDept:org.currentDept,fullDept:org.fullDept,
+    deptLevel2:org.deptLevel2,deptLevel3:org.deptLevel3,deptLevel4:org.deptLevel4,deptLevel5:org.deptLevel5,deptLevel6:org.deptLevel6,deptLevel7:org.deptLevel7,deptLevel8:org.deptLevel8,
+    job:jobs[i],period:allPeriods[i],activity:allPeriods[i]+'-'+depts[i]+'考核',cycleType:'季度',rule:'七级绩效等级',personStatus:i===19?'离职':'在职',employment:['正式员工','劳务派遣','实习生'][i%3],region:region,level:['P7','P6','P6','P5','P5'][i%5],hireDate:(2020+i%5)+'-'+String(i%12+1).padStart(2,'0')+'-'+String(i%25+1).padStart(2,'0'),
     score:scores[i],grade:grades[i],adjustedGrade:i===14?'符合预期-':grades[i],ratifyGrade:ratifyGrades[i],confirm:confirms[i],source:i===18?'报表导入':'活动更新',dataStatus:i===18?'活动管理员导入':'已完成',updated:'2026-08-'+String(10-i%7).padStart(2,'0')+' '+String(9+i%8).padStart(2,'0')+':'+String(i*7%60).padStart(2,'0')
   });
 }
@@ -173,20 +189,21 @@ function render(){
     '</div>'+
     '<div class="tbl-card">'+
       '<div class="tbl-head"><span class="tbl-title">结果明细</span><span class="cutoff">数据截止 2026-08-11 18:00</span></div><div class="tbl-wrap"><table><thead><tr>'+
-        '<th>姓名</th><th>工号</th><th>部门</th><th>人员状态</th><th>用工形式</th><th>划分区域</th><th>岗位</th><th>职级</th><th>周期类型</th><th>周期</th><th>绩效活动</th><th>等级规则</th><th>考核总分</th><th>初评等级</th><th>最终等级</th><th>确认状态</th><th>数据来源</th><th>更新时间</th>'+
+        '<th>姓名</th><th>工号</th><th>当前部门</th><th>全路径部门</th><th>二级部门</th><th>三级部门</th><th>四级部门</th><th>五级部门</th><th>六级部门</th><th>七级部门</th><th>八级部门</th><th>人员状态</th><th>用工形式</th><th>划分区域</th><th>岗位</th><th>职级</th><th>入职日期</th><th>周期类型</th><th>周期</th><th>绩效活动</th><th>等级规则</th><th>考核总分</th><th>初评等级</th><th>最终等级</th><th>确认状态</th><th>数据来源</th><th>更新时间</th>'+
       '</tr></thead><tbody>';
 
-  if(!page.length)html+='<tr><td class="empty" colspan="18">数据尚未产生，请调整筛选条件</td></tr>';
+  if(!page.length)html+='<tr><td class="empty" colspan="27">数据尚未产生，请调整筛选条件</td></tr>';
   for(var i=0;i<page.length;i++){
     var d=page[i];
     var ct=d.confirm==='已确认'?'tag-em':d.confirm==='待确认'?'tag-ac':'tag-ro';
     html+='<tr>'+
       '<td style="font-weight:500;color:var(--c9)">'+d.name+'</td>'+
       '<td class="mono">'+d.empId+'</td>'+
-      '<td>'+d.dept+'</td>'+
+      '<td>'+d.currentDept+'</td><td class="cell-long">'+d.fullDept+'</td>'+
+      '<td>'+d.deptLevel2+'</td><td>'+d.deptLevel3+'</td><td>'+d.deptLevel4+'</td><td>'+d.deptLevel5+'</td><td>'+d.deptLevel6+'</td><td>'+d.deptLevel7+'</td><td>'+d.deptLevel8+'</td>'+
       '<td><span class="tag '+(d.personStatus==='在职'?'tag-em':'tag-ne')+'">'+d.personStatus+'</span></td><td>'+d.employment+'</td><td>'+d.region+'</td>'+
       '<td>'+d.job+'</td>'+
-      '<td>'+d.level+'</td><td>'+d.cycleType+'</td><td>'+d.period+'</td><td>'+d.activity+'</td><td>'+d.rule+'</td>'+
+      '<td>'+d.level+'</td><td class="mono">'+d.hireDate+'</td><td>'+d.cycleType+'</td><td>'+d.period+'</td><td>'+d.activity+'</td><td>'+d.rule+'</td>'+
       '<td class="mono" style="font-weight:600">'+d.score.toFixed(2)+'</td><td>'+d.adjustedGrade+'</td>'+
       '<td><span class="grade-tag '+gradeClass(d.ratifyGrade)+'">'+d.ratifyGrade+'</span></td>'+
       '<td><span class="tag '+ct+'">'+d.confirm+'</span></td>'+
@@ -218,7 +235,7 @@ function resetFilters(){clearTimeout(filterTimer);filter={search:'',activity:'',
 function showModal(title,body,foot){document.getElementById('overlay').innerHTML='<div class="mask" onclick="if(event.target===this)closeModal()"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-head"><h2 id="modalTitle">'+title+'</h2><button class="close" aria-label="关闭" onclick="closeModal()">×</button></div><div class="modal-body">'+body+'</div><div class="modal-foot">'+foot+'</div></section></div>';document.querySelector('.close').focus();}
 function closeModal(){document.getElementById('overlay').innerHTML='';}
 function handleExport(){showToast('正在导出当前 '+getFiltered().length+' 条结果');}
-function openExport(){var fs=['姓名','工号','部门','岗位','周期','绩效活动','等级规则','考核总分','初评等级','最终等级','确认状态','数据来源','更新时间'];showModal('导出设置','<div class="checks">'+fs.map(function(x){return '<label><input type="checkbox" checked> '+x+'</label>';}).join('')+'</div><div class="notice">仅导出当前查询范围和当前用户有权查看的字段，并附带查询条件与数据截止时间。</div>','<button class="btn btn-s" onclick="closeModal()">取消</button><button class="btn btn-p" onclick="closeModal();handleExport()">确认导出</button>');}
+function openExport(){var fs=['姓名','工号','当前部门','全路径部门','二级部门','三级部门','四级部门','五级部门','六级部门','七级部门','八级部门','人员状态','用工形式','划分区域','岗位','职级','入职日期','周期类型','周期','绩效活动','等级规则','考核总分','初评等级','最终等级','确认状态','数据来源','更新时间'];showModal('导出设置','<div class="checks">'+fs.map(function(x){return '<label><input type="checkbox" checked> '+x+'</label>';}).join('')+'</div><div class="notice">仅导出当前查询范围和当前用户有权查看的字段，并附带查询条件与数据截止时间。</div>','<button class="btn btn-s" onclick="closeModal()">取消</button><button class="btn btn-p" onclick="closeModal();handleExport()">确认导出</button>');}
 function openImport(){showModal('导入绩效结果','<div style="padding:28px;text-align:center;border:1px dashed var(--c3);border-radius:8px;background:var(--c0)"><strong style="display:block;margin-bottom:8px">上传绩效结果文件</strong><input id="importFile" type="file" accept=".xlsx"><p style="font-size:12px;color:var(--c5);margin-top:8px">按工号、周期、等级规则和最终等级匹配</p></div><div class="notice">报表导入不会覆盖活动更新数据；已有报表导入记录时更新原记录。</div>','<button class="btn btn-s" onclick="showToast(\'模板下载已触发（原型）\')">下载模板</button><button class="btn btn-p" onclick="validateImport()">上传并校验</button>');}
 function validateImport(){var f=document.getElementById('importFile');if(!f.files.length){showToast('请先选择 .xlsx 文件');return;}closeModal();showToast('文件已通过格式校验（原型）');}
 var toastTimer;function showToast(msg){clearTimeout(toastTimer);document.getElementById('toast').innerHTML='<div class="toast" role="status">'+msg+'</div>';toastTimer=setTimeout(function(){document.getElementById('toast').innerHTML='';},2200);}

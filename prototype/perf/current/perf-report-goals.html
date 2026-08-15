@@ -39,7 +39,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 
 .tbl-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden;margin-bottom:16px}
 .tbl-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;min-width:1500px}
+table{width:100%;border-collapse:collapse;min-width:3300px}
 thead th{background:var(--c0);font:600 12px/1 var(--f);color:var(--c5);text-align:left;padding:10px 14px;border-bottom:1px solid var(--dv);white-space:nowrap;letter-spacing:.2px;text-transform:uppercase}
 tbody td{font:400 13px/1.4 var(--f);color:var(--c7);padding:12px 14px;border-bottom:1px solid var(--dv);vertical-align:middle}
 tbody tr{transition:background .1s}
@@ -100,29 +100,33 @@ var I={
   settings:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
 };
 
+var PERSON_EXPORT_FIELDS=[
+  {key:'name',label:'姓名',def:true},{key:'emp',label:'工号',def:true},{key:'currentDept',label:'当前部门',def:true},
+  {key:'fullDept',label:'全路径部门',def:true},{key:'deptLevel2',label:'二级部门',def:true},{key:'deptLevel3',label:'三级部门',def:true},
+  {key:'deptLevel4',label:'四级部门',def:true},{key:'deptLevel5',label:'五级部门',def:true},{key:'deptLevel6',label:'六级部门',def:true},
+  {key:'deptLevel7',label:'七级部门',def:true},{key:'deptLevel8',label:'八级部门',def:true},{key:'personStatus',label:'人员状态',def:true},
+  {key:'employment',label:'用工形式',def:true},{key:'region',label:'划分区域',def:true},{key:'position',label:'岗位',def:true},
+  {key:'level',label:'职级',def:true},{key:'hireDate',label:'入职日期',def:true}
+];
+
 var EXPORT_FIELDS={
-  roster:{name:'导出名单',fields:[
-    {key:'name',label:'姓名',def:true},{key:'emp',label:'工号',def:true},{key:'dept',label:'部门',def:true},
-    {key:'position',label:'岗位',def:true},{key:'level',label:'职级',def:false},{key:'relation',label:'考核关系',def:true},{key:'group',label:'考核组',def:false}
-  ]},
-  goals:{name:'导出目标',fields:[
-    {key:'name',label:'姓名',def:true},{key:'emp',label:'工号',def:true},{key:'dept',label:'部门',def:true},
+  roster:{name:'导出名单',fields:PERSON_EXPORT_FIELDS.concat([
+    {key:'relation',label:'考核关系',def:true},{key:'group',label:'考核组',def:false}
+  ])},
+  goals:{name:'导出目标',fields:PERSON_EXPORT_FIELDS.concat([
     {key:'goalName',label:'目标名称',def:true},{key:'goalType',label:'目标类型',def:true},{key:'weight',label:'权重',def:true},
     {key:'standard',label:'衡量标准',def:true},{key:'completion',label:'完成情况',def:false}
-  ]},
-  eval:{name:'导出考核结果',fields:[
-    {key:'name',label:'姓名',def:true},{key:'emp',label:'工号',def:true},{key:'dept',label:'部门',def:true},
+  ])},
+  eval:{name:'导出考核结果',fields:PERSON_EXPORT_FIELDS.concat([
     {key:'indicator',label:'指标名称',def:true},{key:'target',label:'目标值',def:true},{key:'actual',label:'完成值',def:true},
     {key:'score',label:'得分',def:true},{key:'grade',label:'评价等级',def:true}
-  ]},
-  ratify:{name:'导出审定结果',fields:[
-    {key:'name',label:'姓名',def:true},{key:'emp',label:'工号',def:true},{key:'dept',label:'部门',def:true},
+  ])},
+  ratify:{name:'导出审定结果',fields:PERSON_EXPORT_FIELDS.concat([
     {key:'evalGrade',label:'初评等级',def:true},{key:'ratifyGrade',label:'审定等级',def:true},{key:'ratifier',label:'审定人',def:true},{key:'ratifyTime',label:'审定时间',def:false}
-  ]},
-  interview:{name:'导出面谈结果',fields:[
-    {key:'name',label:'姓名',def:true},{key:'emp',label:'工号',def:true},{key:'dept',label:'部门',def:true},
+  ])},
+  interview:{name:'导出面谈结果',fields:PERSON_EXPORT_FIELDS.concat([
     {key:'date',label:'面谈日期',def:true},{key:'content',label:'面谈内容',def:true},{key:'plan',label:'改进计划',def:true},{key:'confirm',label:'员工确认',def:false}
-  ]}
+  ])}
 };
 var exportSettingsOpen=false,exportSettingsTab='roster';
 if(!window._exportSettings){window._exportSettings={};for(var k in EXPORT_FIELDS){window._exportSettings[k]={};EXPORT_FIELDS[k].fields.forEach(function(f){window._exportSettings[k][f.key]=f.def;});}}
@@ -140,6 +144,29 @@ function renderExportSettings(){
   mc.innerHTML='<div class="modal-ov on" onclick="if(event.target===this)closeExportSettings()"><div class="modal" style="width:560px"><div class="modal-hd"><span class="modal-hd-t">导出设置</span><button class="modal-close" onclick="closeExportSettings()">'+xSvg+'</button></div><div class="modal-bd"><div style="display:flex;gap:0;border-bottom:1px solid var(--dv);margin-bottom:16px">'+tabs+'</div><div style="font:500 13px/1 var(--f);color:var(--c9);margin-bottom:4px">'+cfg.name+' — 选择导出字段</div><div style="max-height:360px;overflow-y:auto">'+fields+'</div></div><div class="modal-ft"><button class="btn btn-s" onclick="closeExportSettings()">关闭</button></div></div></div>';
 }
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&exportSettingsOpen){closeExportSettings();}});
+
+function personProfile(dept,region,job,level,status,employment,hireDate,center){
+  var deptLevel2='中国区';
+  var deptLevel3=region+'区域';
+  var deptLevel4=center;
+  var deptLevel5=dept;
+  return {
+    currentDept:dept,
+    fullDept:[deptLevel2,deptLevel3,deptLevel4,deptLevel5].join(' / '),
+    deptLevel2:deptLevel2,deptLevel3:deptLevel3,deptLevel4:deptLevel4,deptLevel5:deptLevel5,
+    deptLevel6:'—',deptLevel7:'—',deptLevel8:'—',
+    personStatus:status,employment:employment,region:region,job:job,level:level,hireDate:hireDate
+  };
+}
+
+var PERSON_META={
+  EMP0001:personProfile('产品部','华东','高级产品经理','P7','在职','正式员工','2022-03-15','产品研发中心'),
+  EMP0002:personProfile('技术部','华东','高级工程师','P7','在职','正式员工','2021-07-01','产品研发中心'),
+  EMP0003:personProfile('市场部','华南','市场经理','P6','在职','正式员工','2023-02-20','市场运营中心'),
+  EMP0005:personProfile('运营部','华南','运营主管','P6','在职','劳务派遣','2024-01-08','市场运营中心'),
+  EMP0007:personProfile('技术部','华东','前端工程师','P6','在职','正式员工','2023-06-12','产品研发中心'),
+  EMP0016:personProfile('产品部','华东','产品总监','P9','在职','正式员工','2019-09-16','产品研发中心')
+};
 
 // Goal workflow: 目标制定(员工) → 间接上级审批 → 直接上级审批 → 目标生效
 // Scenarios:
@@ -164,6 +191,11 @@ var GOAL_DATA=[
   {empId:'EMP0016',name:'朱伟',dept:'产品部',period:'2026年H1',activity:'2026年H1产品半年度考核',goal:'产品路线图重点事项达成',weight:'50%',type:'定量',standard:'阶梯完成率',gradient1:'≥ 80%',gradient2:'≥ 90%',gradient3:'= 100%',unit:'%'},
   {empId:'EMP0016',name:'朱伟',dept:'产品部',period:'2026年H1',activity:'2026年H1产品半年度考核',goal:'用户研究体系建设',weight:'50%',type:'定性',standard:'行为等级描述',gradient1:'完成研究计划',gradient2:'洞察进入产品决策',gradient3:'建立持续研究机制',unit:'—'},
 ];
+
+GOAL_DATA.forEach(function(d){
+  var profile=PERSON_META[d.empId];
+  if(profile)Object.keys(profile).forEach(function(key){d[key]=profile[key];});
+});
 
 var DEPTS=['全部','产品部','技术部','市场部','设计部','运营部'];
 var TYPES=['全部类型','定量','定性'];
@@ -237,7 +269,7 @@ function render(){
     '</div>'+
     '<div class="tbl-card">'+
       '<div class="tbl-wrap"><table><thead><tr>'+
-        '<th>姓名</th><th>工号</th><th>部门</th><th>周期</th><th>活动名称</th><th>目标名称</th><th>权重</th><th>类型</th><th>衡量标准</th><th>衡量标准-梯度值</th>'+
+        '<th>姓名</th><th>工号</th><th>当前部门</th><th>全路径部门</th><th>二级部门</th><th>三级部门</th><th>四级部门</th><th>五级部门</th><th>六级部门</th><th>七级部门</th><th>八级部门</th><th>人员状态</th><th>用工形式</th><th>划分区域</th><th>岗位</th><th>职级</th><th>入职日期</th><th>周期</th><th>活动名称</th><th>目标名称</th><th>权重</th><th>类型</th><th>衡量标准</th><th>衡量标准-梯度值</th>'+
       '</tr></thead><tbody>';
 
   for(var i=0;i<page.length;i++){
@@ -245,7 +277,9 @@ function render(){
     html+='<tr>'+
       '<td style="font-weight:500;color:var(--c9)">'+d.name+'</td>'+
       '<td class="mono">'+d.empId+'</td>'+
-      '<td>'+d.dept+'</td>'+
+      '<td>'+d.currentDept+'</td><td class="cell-long">'+d.fullDept+'</td>'+
+      '<td>'+d.deptLevel2+'</td><td>'+d.deptLevel3+'</td><td>'+d.deptLevel4+'</td><td>'+d.deptLevel5+'</td><td>'+d.deptLevel6+'</td><td>'+d.deptLevel7+'</td><td>'+d.deptLevel8+'</td>'+
+      '<td><span class="tag '+(d.personStatus==='在职'?'tag-em':'tag-c5')+'">'+d.personStatus+'</span></td><td>'+d.employment+'</td><td>'+d.region+'</td><td>'+d.job+'</td><td>'+d.level+'</td><td class="mono">'+d.hireDate+'</td>'+
       '<td>'+d.period+'</td>'+
       '<td class="cell-long">'+d.activity+'</td>'+
       '<td class="cell-long" style="font-weight:500;color:var(--c9)">'+d.goal+'</td>'+
