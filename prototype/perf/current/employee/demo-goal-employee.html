@@ -46,7 +46,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 
 /* Page header */
 .pg-hd{margin-bottom:16px}
-.pg-hd-top{position:sticky;top:0;z-index:900;display:flex;align-items:center;justify-content:space-between;min-height:56px;padding:12px 20px;margin-bottom:12px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);box-shadow:var(--shadow-card)}
+.pg-hd-top{position:sticky;top:-24px;z-index:900;display:flex;align-items:center;justify-content:space-between;min-height:56px;padding:12px 20px;margin-bottom:12px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);box-shadow:var(--shadow-card)}
 .pg-hd-title{font:700 20px/1.2 var(--f);color:var(--c9);letter-spacing:-.3px}
 .pg-hd-actions{display:flex;gap:8px}
 .pg-hd-summary{display:flex;align-items:center;gap:24px;padding:12px 20px;margin-bottom:16px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);box-shadow:var(--shadow-card)}
@@ -66,7 +66,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .mod-section.vi{}
 .mod-section.ro{}
 
-.mod-hd{position:sticky;top:var(--page-action-h,56px);z-index:800;display:flex;align-items:center;padding:14px 20px;cursor:pointer;user-select:none;transition:background .12s,box-shadow .12s;gap:12px;background:var(--sf);border-radius:var(--r3) var(--r3) 0 0}
+.mod-hd{position:sticky;top:calc(var(--page-action-h,56px) - 24px);z-index:800;display:flex;align-items:center;padding:14px 20px;cursor:pointer;user-select:none;transition:background .12s,box-shadow .12s;gap:12px;background:var(--sf);border-radius:var(--r3) var(--r3) 0 0}
 .mod-hd:hover{background:var(--c0)}
 .mod-hd.is-stuck{box-shadow:0 4px 12px rgba(0,0,0,.08);border-bottom:1px solid var(--c2)}
 .mod-hd-icon{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#FFF}
@@ -403,7 +403,7 @@ body.chat-open .ai-toggle{display:none}
 <!-- Navigation will be injected by navigation.js -->
 
 <!-- Main content -->
-<div class="ct fade-in">
+<div class="page-content fade-in">
   <!-- Breadcrumb -->
   <nav style="display:flex;align-items:center;gap:4px;font:500 12px/1 var(--f);color:var(--c5);margin-bottom:12px">
     <a href="../demo-index.html" style="color:var(--c5);text-decoration:none;transition:color .12s" onmouseover="this.style.color='var(--pr)'" onmouseout="this.style.color='var(--c5)'">绩效工作台</a>
@@ -1354,7 +1354,7 @@ function reorderApprovalFlowCells(){
 }
 
 function setupStickyHeaders(){
-  const scroller=document.querySelector('.ct');
+  const scroller=document.getElementById('ct');
   const pageAction=document.querySelector('.pg-hd-top');
   if(!scroller||!pageAction)return;
   const syncOffset=()=>document.documentElement.style.setProperty('--page-action-h',pageAction.offsetHeight+'px');
