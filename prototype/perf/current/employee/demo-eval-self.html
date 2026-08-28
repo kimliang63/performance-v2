@@ -46,12 +46,11 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 /* ═══ EVAL TABLE ═══ */
 .eval-list{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden;overflow-x:auto}
 .eval-list table{width:100%;border-collapse:collapse}
-.eval-list thead{position:sticky;top:0;z-index:10}
-.eval-list th{background:var(--c0);padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
 .eval-list td{padding:10px 16px;font:400 13px/1.4 var(--f);color:var(--c7);border-bottom:1px solid var(--dv);vertical-align:top}
 .eval-list tr:last-child td{border-bottom:none}
 .eval-list tr:hover td{background:var(--c0)}
 .eval-list .mod-row td{background:var(--c0);padding:10px 16px;border-bottom:1px solid var(--dv)}
+.eval-list .mod-row.module-spaced td{border-top:12px solid var(--bg)}
 .eval-list .mod-row:hover td{background:var(--c0)}
 .eval-mod{display:flex;align-items:center;gap:8px}
 .eval-mod-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
@@ -373,15 +372,9 @@ var MODULES=[
 var overallComment='';
 
 function renderModuleContainer(){
-  var html='<div class="eval-list"><table><thead><tr>'+
-    '<th style="width:180px">名称</th>'+
-    '<th style="width:55px">权重</th>'+
-    '<th style="min-width:220px">衡量标准</th>'+
-    '<th style="min-width:220px;position:sticky;right:160px;background:var(--c0);z-index:2">完成值/完成情况</th>'+
-    '<th style="min-width:160px;position:sticky;right:0;background:var(--c0);z-index:2">评价等级</th>'+
-    '</tr></thead><tbody>';
+  var html='<div class="eval-list"><table><tbody>';
   MODULES.forEach(function(mod,mi){
-    html+='<tr class="mod-row"><td colspan="5"><div class="eval-mod">'+
+    html+='<tr class="mod-row'+(mi?' module-spaced':'')+'"><td colspan="5"><div class="eval-mod">'+
       '<div class="eval-mod-dot" style="background:'+mod.color+'"></div>'+
       '<span class="eval-mod-name">'+mod.name+'</span>'+
       '<span class="eval-mod-weight">'+mod.weight+'%</span>'+
