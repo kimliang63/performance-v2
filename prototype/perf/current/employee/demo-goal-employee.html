@@ -50,17 +50,21 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .pg-hd-main{display:flex;align-items:center;min-width:0}
 .pg-hd-right{display:flex;align-items:center;gap:16px;margin-left:auto}
 .pg-hd-title{font:700 20px/1.2 var(--f);color:var(--c9);letter-spacing:-.3px}
-.pg-hd-actions{display:flex;gap:8px}
+.pg-hd-actions{display:flex;align-items:center;gap:8px}
 .pg-hd-summary{display:flex;align-items:center;gap:12px;padding-right:16px;border-right:1px solid var(--c2);white-space:nowrap}
-.pg-hd-summary .sum-item{font:500 12px/1 var(--f);color:var(--c5)}
-.pg-hd-summary .sum-info{font-weight:600;color:var(--c8)}
-.pg-hd-summary .sum-val{font-family:var(--m);font-weight:700;color:var(--pr)}
+.pg-hd-summary .sum-value{font:600 12px/1 var(--f);color:var(--c8)}
+.pg-hd-summary .sum-sep{font:400 12px/1 var(--f);color:var(--c3)}
+.pg-hd-summary .sum-val{font-family:var(--m);font-weight:700;color:var(--em700)}
 .pg-hd-summary .sum-val.warn{color:var(--ro)}
-.pg-hd-summary #validSummary{display:inline}
-.pg-hd-summary .sum-err{display:inline-flex;align-items:center;gap:3px;font:500 11px/1 var(--f);color:var(--ro);background:var(--ro50);padding:3px 6px;border-radius:3px}
-.pg-hd-summary .sum-err svg{width:12px;height:12px}
-.pg-hd-summary .sum-ok{display:inline-flex;align-items:center;gap:3px;font:500 11px/1 var(--f);color:var(--em700)}
-.pg-hd-summary .sum-ok svg{width:12px;height:12px}
+.action-more{position:relative}
+.btn-more{width:34px;padding:0;justify-content:center;background:var(--sf);color:var(--c6);border:1px solid var(--c2)}
+.btn-more:hover,.btn-more.on{border-color:var(--pr200);color:var(--pr);background:var(--pr50)}
+.btn-more span{font:700 13px/1 var(--f);letter-spacing:2px;transform:translateY(-2px)}
+.action-menu{position:absolute;top:calc(100% + 6px);right:0;z-index:1200;min-width:128px;padding:5px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);box-shadow:0 10px 28px rgba(15,23,42,.14);display:none}
+.action-menu.open{display:block}
+.action-menu-item{width:100%;display:flex;align-items:center;gap:8px;padding:8px 10px;border:0;border-radius:var(--r1);background:transparent;color:var(--c7);font:500 13px/1 var(--f);cursor:pointer;text-align:left}
+.action-menu-item:hover{background:var(--c1);color:var(--c9)}
+.action-menu-item svg{width:14px;height:14px;color:var(--c5);flex-shrink:0}
 
 /* ═══ MODULE SECTION ═══ */
 .mod-section{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:visible;border:1px solid var(--c2)}
@@ -74,8 +78,9 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .mod-hd-icon{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#FFF}
 .mod-hd-icon svg{width:13px;height:13px;color:#FFF}
 .mod-hd-title{font:500 12px/1 var(--f);color:var(--c5);flex:1;text-transform:uppercase;letter-spacing:.5px}
-.mod-hd-stats{display:flex;align-items:center;gap:12px;font:400 12px/1 var(--f);color:var(--c5)}
-.mod-hd-stats strong{font-family:var(--m);font-weight:600;color:var(--c8)}
+.mod-hd-stats{display:flex;align-items:center;gap:14px;color:var(--c6)}
+.mod-hd-stat{font:600 14px/1 var(--f);color:var(--c8)}
+.mod-hd-stat:first-child{font-family:var(--m)}
 .mod-hd-sep{width:1px;height:14px;background:var(--c2)}
 .mod-hd-add{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:var(--r1);font:500 12px/1 var(--f);color:var(--pr);background:transparent;border:1px solid var(--pr200);cursor:pointer;transition:all .12s;font-family:inherit}
 .mod-hd-add:hover{background:var(--pr50);border-color:var(--pr)}
@@ -424,25 +429,26 @@ body.chat-open .ai-toggle{display:none}
     </div>
     <div class="pg-hd-right">
       <div class="pg-hd-summary">
-        <span class="sum-item">周期 <strong class="sum-info">2026年6月</strong></span>
-        <span class="sum-item">节点 <strong class="sum-info">目标填写</strong></span>
-        <span class="sum-item">权重 <span class="sum-val" id="sumWeight">100%</span></span>
-        <span class="sum-item"><strong id="sumGoals" style="font-family:var(--m);font-weight:600;color:var(--c8)">7</strong> 个目标</span>
-        <span id="validSummary"></span>
+        <span class="sum-value">2026年6月</span>
+        <span class="sum-sep">|</span>
+        <span class="sum-value">目标填写</span>
+        <span class="sum-sep">|</span>
+        <span class="sum-val" id="sumWeight">100%</span>
       </div>
       <div class="pg-hd-actions">
-        <button class="btn btn-s" onclick="showToast('草稿已保存','success')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-          保存草稿
-        </button>
-        <button class="btn btn-o" onclick="exportGoals()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          导出
-        </button>
         <button class="btn btn-p" onclick="validateAndSubmit()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
           提交
         </button>
+        <div class="action-more">
+          <button class="btn btn-more" id="moreActionBtn" aria-label="更多操作" aria-haspopup="menu" aria-expanded="false" onclick="toggleActionMenu(event)">
+            <span aria-hidden="true">•••</span>
+          </button>
+          <div class="action-menu" id="actionMenu" role="menu">
+            <button class="action-menu-item" role="menuitem" onclick="showToast('草稿已保存','success');closeActionMenu()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>保存草稿</button>
+            <button class="action-menu-item" role="menuitem" onclick="closeActionMenu();exportGoals()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>导出</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -811,8 +817,8 @@ function render(){
         <div class="mod-hd-icon" style="background:${m.color}">${I[m.icon]||I.target}</div>
         <div class="mod-hd-title">${m.name}</div>
         <div class="mod-hd-stats">
-          <span>权重 <strong>${tw}%</strong></span>
-          <span>${m.goals.length} 个目标</span>
+          <span class="mod-hd-stat">${tw}%</span>
+          <span class="mod-hd-stat">${m.goals.length} 个目标</span>
         </div>
         <div class="mod-hd-sep"></div>
         <button class="mod-hd-add" onclick="event.stopPropagation();openIndicatorPicker(null,${mi})" title="从指标库选择">
@@ -964,18 +970,9 @@ function deleteGoal(id,mi){
 }
 
 function updateTotals(){
-  const tg=MODULES.reduce((s,m)=>s+m.goals.length,0);
   const tw=MODULES.reduce((s,m)=>s+m.goals.reduce((gs,g)=>gs+g.weight,0),0);
-  document.getElementById('sumGoals').textContent=tg;
   document.getElementById('sumWeight').textContent=tw+'%';
   document.getElementById('sumWeight').className='sum-val'+(tw===100?'':' warn');
-
-  const el=document.getElementById('validSummary');
-  if(tw!==100){
-    el.innerHTML='';
-  }else{
-    el.innerHTML=tg>0?`<span class="sum-ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>已校验</span>`:'';
-  }
 }
 
 // ═══ EDIT SIDEBAR ═══
@@ -1342,6 +1339,22 @@ function showToast(msg,type){
   t.className='validate-toast show'+(type==='success'?' success':type==='warn'?' warn':'');
   setTimeout(()=>t.classList.remove('show'),3000);
 }
+function toggleActionMenu(event){
+  event.stopPropagation();
+  const menu=document.getElementById('actionMenu');
+  const button=document.getElementById('moreActionBtn');
+  const open=menu.classList.toggle('open');
+  button.classList.toggle('on',open);
+  button.setAttribute('aria-expanded',String(open));
+}
+function closeActionMenu(){
+  const menu=document.getElementById('actionMenu');
+  const button=document.getElementById('moreActionBtn');
+  if(menu)menu.classList.remove('open');
+  if(button){button.classList.remove('on');button.setAttribute('aria-expanded','false')}
+}
+document.addEventListener('click',event=>{if(!event.target.closest('.action-more'))closeActionMenu()});
+document.addEventListener('keydown',event=>{if(event.key==='Escape')closeActionMenu()});
 function showMeasureDesc(id){
   const d=findGoal(id);if(!d)return;
   showToast((d.goal.desc||'暂无指标描述'),'info');
