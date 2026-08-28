@@ -47,10 +47,11 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 /* Page header */
 .pg-hd{margin-bottom:16px}
 .pg-hd-top{position:sticky;top:-24px;z-index:900;display:flex;align-items:center;justify-content:space-between;min-height:56px;padding:12px 20px;margin-bottom:12px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);box-shadow:var(--shadow-card)}
-.pg-hd-main{display:flex;align-items:center;gap:16px;min-width:0}
+.pg-hd-main{display:flex;align-items:center;min-width:0}
+.pg-hd-right{display:flex;align-items:center;gap:16px;margin-left:auto}
 .pg-hd-title{font:700 20px/1.2 var(--f);color:var(--c9);letter-spacing:-.3px}
 .pg-hd-actions{display:flex;gap:8px}
-.pg-hd-summary{display:flex;align-items:center;gap:12px;padding-left:16px;border-left:1px solid var(--c2);white-space:nowrap}
+.pg-hd-summary{display:flex;align-items:center;gap:12px;padding-right:16px;border-right:1px solid var(--c2);white-space:nowrap}
 .pg-hd-summary .sum-item{font:500 12px/1 var(--f);color:var(--c5)}
 .pg-hd-summary .sum-val{font-family:var(--m);font-weight:700;color:var(--pr)}
 .pg-hd-summary .sum-val.warn{color:var(--ro)}
@@ -67,7 +68,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .mod-section.vi{}
 .mod-section.ro{}
 
-.mod-hd{position:sticky;top:calc(var(--page-action-h,56px) - 24px);z-index:800;display:flex;align-items:center;padding:14px 20px;cursor:pointer;user-select:none;transition:background .12s,box-shadow .12s;gap:12px;background:var(--sf);border-radius:var(--r3) var(--r3) 0 0}
+.mod-hd{position:sticky;top:calc(var(--page-action-h,56px) - 16px);z-index:800;display:flex;align-items:center;padding:14px 20px;cursor:pointer;user-select:none;transition:background .12s,box-shadow .12s;gap:12px;background:var(--sf);border-radius:var(--r3) var(--r3) 0 0}
 .mod-hd:hover{background:var(--c0)}
 .mod-hd.is-stuck{box-shadow:0 4px 12px rgba(0,0,0,.08);border-bottom:1px solid var(--c2)}
 .mod-hd-icon{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#FFF}
@@ -158,6 +159,9 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .ge-fi.inline{flex-direction:row;align-items:center;gap:6px;min-width:0}
 .ge-fi.inline .ge-fi-l{white-space:nowrap;flex-shrink:0}
 .ge-inline-control{display:flex;align-items:center;gap:4px;min-width:0;flex:1}
+.ge-num-field .ge-inline-control{flex:0 0 auto}
+.ge-num-field .inp{width:72px;flex:0 0 72px}
+.ge-rule-field .ge-inline-control{min-width:180px}
 .ge-rule-value{min-width:0;font:400 12px/1.4 var(--f);color:var(--c6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ge-fi-l{font:400 11px/1 var(--f);color:var(--c5);display:flex;align-items:center;gap:4px}
 .ge-fi-l .req{color:var(--ro);margin-left:2px}
@@ -250,7 +254,8 @@ textarea.inp{min-height:60px;resize:vertical;font-family:var(--f);line-height:1.
 @media (max-width:900px){
   .pg-hd-top{align-items:flex-start;gap:12px;flex-wrap:wrap}
   .pg-hd-main{flex-wrap:wrap;gap:8px 12px}
-  .pg-hd-summary{padding-left:0;border-left:none}
+  .pg-hd-right{width:100%;flex-wrap:wrap;justify-content:flex-end;gap:8px 12px}
+  .pg-hd-summary{padding-right:0;border-right:none}
   .pg-hd-actions{width:100%;justify-content:flex-end}
   .mod-hd{flex-wrap:wrap}
   .mod-hd-title{min-width:120px}
@@ -420,13 +425,14 @@ body.chat-open .ai-toggle{display:none}
   <div class="pg-hd-top">
     <div class="pg-hd-main">
       <div class="pg-hd-title">目标制定</div>
+    </div>
+    <div class="pg-hd-right">
       <div class="pg-hd-summary">
         <span class="sum-item">权重 <span class="sum-val" id="sumWeight">100%</span></span>
         <span class="sum-item"><strong id="sumGoals" style="font-family:var(--m);font-weight:600;color:var(--c8)">7</strong> 个目标</span>
         <span id="validSummary"></span>
       </div>
-    </div>
-    <div class="pg-hd-actions">
+      <div class="pg-hd-actions">
         <button class="btn btn-s" onclick="showToast('草稿已保存','success')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
           保存草稿
@@ -439,6 +445,7 @@ body.chat-open .ai-toggle{display:none}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
           提交
         </button>
+      </div>
     </div>
   </div>
   <!-- Module sections -->
@@ -833,7 +840,7 @@ function render(){
           <div class="goal-summary" onclick="toggleGoal('${g.id}')">
             <div class="goal-drag" onclick="event.stopPropagation()" title="拖拽排序"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/></svg></div>
             <div class="goal-icon" style="background:var(--pr50);color:var(--pr);font:700 12px/1 var(--m)">${gi+1}</div>
-            ${isOpen?`<input class="goal-name-input" id="ge_name_${g.id}" value="${g.name}" onclick="event.stopPropagation()" oninput="syncGoalFromForm('${g.id}')" />`:`<span class="goal-name">${g.name}${g.aiFilled?aiTag():''}</span>`}
+            ${isOpen?`<input class="goal-name-input" id="ge_name_${g.id}" value="${g.name}" placeholder="${g.type==='quant'?'请输入定量目标名称':'请输入定性目标名称'}" onclick="event.stopPropagation()" oninput="syncGoalFromForm('${g.id}')" />`:`<span class="goal-name">${g.name}${g.aiFilled?aiTag():''}</span>`}
             ${isOpen?`<input type="number" min="0" max="100" value="${g.weight}" onclick="event.stopPropagation()" oninput="syncGoalFromForm('${g.id}')" id="ge_weight_${g.id}" style="width:50px;font:700 13px/1 var(--m);color:var(--pr);border:1px solid var(--pr200);border-radius:var(--r1);padding:2px 4px;text-align:center;background:var(--pr50);outline:none;flex-shrink:0"  /><span style="font:700 13px/1 var(--m);color:var(--pr);margin-left:2px">%</span>`:`<span class="goal-weight" onclick="event.stopPropagation();editWeightInline('${g.id}')" style="cursor:pointer" title="点击编辑权重">${g.weight}%</span>`}
             <div class="goal-meta">
               <div class="goal-actions">
@@ -845,11 +852,11 @@ function render(){
             <div class="ge-form">
               ${g.type==='quant'?`
               <div class="ge-sec">
-                <div class="ge-row f3" style="grid-template-columns:repeat(3,minmax(150px,180px)) minmax(240px,1fr)">
-                  <div class="ge-fi inline"><label class="ge-fi-l" for="ge_challenge_${g.id}">挑战值${(linked||g.aiFilled)?aiTag():''}：</label><div class="ge-inline-control"><input class="inp num" id="ge_challenge_${g.id}" type="number" value="${g.challenge}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')"/><span style="font:400 11px/1 var(--f);color:var(--c5);flex-shrink:0">${g.unit||''}</span></div></div>
-                  <div class="ge-fi inline"><label class="ge-fi-l" for="ge_target_${g.id}">目标值 <span class="req">*</span>${(linked||g.aiFilled)?aiTag():''}：</label><div class="ge-inline-control"><input class="inp num" id="ge_target_${g.id}" type="number" value="${g.target}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')"/><span style="font:400 11px/1 var(--f);color:var(--c5);flex-shrink:0">${g.unit||''}</span></div></div>
-                  <div class="ge-fi inline"><label class="ge-fi-l" for="ge_baseline_${g.id}">保底值：</label><div class="ge-inline-control"><input class="inp num" id="ge_baseline_${g.id}" type="number" value="${g.baseline}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')"/><span style="font:400 11px/1 var(--f);color:var(--c5);flex-shrink:0">${g.unit||''}</span></div></div>
-                  <div class="ge-fi inline"><span class="ge-fi-l">计算规则：</span><div class="ge-rule-value" title="${g.ruleFormula||g.rule||'未配置'}">${g.rule||'未配置'}${g.ruleFormula?` · ${g.ruleFormula}`:''}</div></div>
+                <div class="ge-row f3" style="grid-template-columns:repeat(3,max-content) minmax(240px,1fr)">
+                  <div class="ge-fi inline ge-num-field"><label class="ge-fi-l" for="ge_challenge_${g.id}">挑战值${(linked||g.aiFilled)?aiTag():''}：</label><div class="ge-inline-control"><input class="inp num" id="ge_challenge_${g.id}" type="number" value="${g.challenge}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')"/><span style="font:400 11px/1 var(--f);color:var(--c5);flex-shrink:0">${g.unit||''}</span></div></div>
+                  <div class="ge-fi inline ge-num-field"><label class="ge-fi-l" for="ge_target_${g.id}">目标值 <span class="req">*</span>${(linked||g.aiFilled)?aiTag():''}：</label><div class="ge-inline-control"><input class="inp num" id="ge_target_${g.id}" type="number" value="${g.target}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')"/><span style="font:400 11px/1 var(--f);color:var(--c5);flex-shrink:0">${g.unit||''}</span></div></div>
+                  <div class="ge-fi inline ge-num-field"><label class="ge-fi-l" for="ge_baseline_${g.id}">保底值：</label><div class="ge-inline-control"><input class="inp num" id="ge_baseline_${g.id}" type="number" value="${g.baseline}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')"/><span style="font:400 11px/1 var(--f);color:var(--c5);flex-shrink:0">${g.unit||''}</span></div></div>
+                  <div class="ge-fi inline ge-rule-field"><label class="ge-fi-l" for="ge_rule_${g.id}">计算规则：</label><div class="ge-inline-control">${g.isNew?`<input class="inp" id="ge_rule_${g.id}" value="${g.ruleFormula||''}" placeholder="请输入计算规则" oninput="syncGoalFromForm('${g.id}')"/>`:`<div class="ge-rule-value" title="${g.ruleFormula||g.rule||'未配置'}">${g.rule||'未配置'}${g.ruleFormula?` · ${g.ruleFormula}`:''}</div>`}</div></div>
                 </div>
               </div>
               `:`
@@ -881,9 +888,11 @@ function syncGoalFromForm(id){
     const targetEl=document.getElementById('ge_target_'+id);
     const challengeEl=document.getElementById('ge_challenge_'+id);
     const baselineEl=document.getElementById('ge_baseline_'+id);
+    const ruleEl=document.getElementById('ge_rule_'+id);
     if(targetEl&&!targetEl.readOnly) g.target=parseFloat(targetEl.value)||0;
     if(challengeEl&&!challengeEl.readOnly) g.challenge=parseFloat(challengeEl.value)||0;
     if(baselineEl&&!baselineEl.readOnly) g.baseline=parseFloat(baselineEl.value)||0;
+    if(ruleEl) g.ruleFormula=ruleEl.value;
   }else{
     const descEl=document.getElementById('ge_desc_'+id);
     if(descEl) g.desc=descEl.value;
@@ -899,30 +908,26 @@ function toggleGoal(id){expandedGoals.has(id)?expandedGoals.delete(id):expandedG
 
 let createTargetModIdx=0;
 function addGoal(mi){
-  createTargetModIdx=mi;
   const isQuant=mi===0;
-  document.getElementById('createGoalTitle').textContent=isQuant?'新增 KPI 定量目标':'新增 KPA 定性目标';
-  document.getElementById('createGoalHint').textContent=isQuant?'KPI 仅允许新增定量目标':'KPA 仅允许新增定性目标';
-  document.getElementById('createGoalBody').innerHTML=isQuant?`
-    <div class="create-help">本模块固定新增定量目标，保存后可继续补充或调整计算规则。</div>
-    <div class="create-grid">
-      <div class="create-field"><label for="createGoalName">名称 <span class="req">*</span></label><input class="inp" id="createGoalName" placeholder="请输入目标名称"/></div>
-      <div class="create-field"><label for="createGoalWeight">权重(%) <span class="req">*</span></label><input class="inp num" id="createGoalWeight" type="number" min="0" max="100" value="10"/></div>
-      <div class="create-grid three full">
-        <div class="create-field"><label for="createGoalChallenge">挑战值</label><input class="inp num" id="createGoalChallenge" type="number" value="110"/></div>
-        <div class="create-field"><label for="createGoalTarget">目标值 <span class="req">*</span></label><input class="inp num" id="createGoalTarget" type="number" value="100"/></div>
-        <div class="create-field"><label for="createGoalBaseline">保底值</label><input class="inp num" id="createGoalBaseline" type="number" value="80"/></div>
-      </div>
-      <div class="create-field full"><label for="createGoalDesc">指标描述</label><textarea class="inp" id="createGoalDesc" rows="4" placeholder="请输入指标定义、数据来源等说明"></textarea></div>
-    </div>`:`
-    <div class="create-help">本模块固定新增定性目标，无需选择目标类型。</div>
-    <div class="create-grid">
-      <div class="create-field"><label for="createGoalName">名称 <span class="req">*</span></label><input class="inp" id="createGoalName" placeholder="请输入目标名称"/></div>
-      <div class="create-field"><label for="createGoalWeight">权重(%) <span class="req">*</span></label><input class="inp num" id="createGoalWeight" type="number" min="0" max="100" value="10"/></div>
-      <div class="create-field full"><label for="createGoalDesc">衡量标准 <span class="req">*</span></label><textarea class="inp" id="createGoalDesc" rows="5" placeholder="请输入该定性目标的衡量标准"></textarea></div>
-    </div>`;
-  openModal('createGoalModal');
-  setTimeout(()=>document.getElementById('createGoalName')?.focus(),0);
+  const id='g'+Date.now();
+  const goal={
+    id,name:'',indicator:'',type:isQuant?'quant':'qual',weight:10,desc:'',
+    measure:isQuant?'梯度评分':'定性评分',measureText:'',
+    target:isQuant?'':1,challenge:isQuant?'':1,baseline:isQuant?'':1,
+    unit:isQuant?'%':'',rule:isQuant?'':'-',ruleFormula:'',msLevels:[],
+    linkedIndicatorId:null,i18n:{},isNew:true
+  };
+  MODULES[mi].goals.push(goal);
+  expandedMods.add(mi);
+  expandedGoals.add(id);
+  render();
+  requestAnimationFrame(()=>{
+    const row=document.querySelector(`[data-goal-id="${id}"]`);
+    const nameInput=document.getElementById('ge_name_'+id);
+    if(nameInput)nameInput.focus({preventScroll:true});
+    if(row)row.scrollIntoView({behavior:'smooth',block:'center'});
+  });
+  showToast(isQuant?'已在 KPI 末尾新增定量目标':'已在 KPA 末尾新增定性目标','success');
 }
 function confirmCreateGoal(){
   const isQuant=createTargetModIdx===0;
@@ -1365,7 +1370,7 @@ function setupStickyHeaders(){
   const syncOffset=()=>document.documentElement.style.setProperty('--page-action-h',pageAction.offsetHeight+'px');
   const syncState=()=>{
     const scrollerTop=scroller.getBoundingClientRect().top;
-    const moduleTop=scrollerTop+pageAction.offsetHeight;
+    const moduleTop=scrollerTop+pageAction.offsetHeight+8;
     document.querySelectorAll('.mod-hd').forEach(header=>{
       const section=header.closest('.mod-section');
       const rect=header.getBoundingClientRect();
