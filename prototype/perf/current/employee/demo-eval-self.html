@@ -66,7 +66,9 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .eval-target{color:var(--c6);font-size:12px}
 .eval-score{font:600 13px/1 var(--m)}.eval-score.high{color:var(--em700)}.eval-score.mid{color:var(--pr)}.eval-score.low{color:var(--ac700)}.eval-score.zero{color:var(--ro)}
 .quant-score{display:inline-flex;align-items:baseline;gap:2px;font:700 18px/1 var(--m);color:var(--pr)}
-.quant-score-unit{font:500 12px/1 var(--f);color:var(--c5)}
+.quant-completion{padding-right:8px!important}
+.quant-completion input{display:block;margin-left:auto}
+.quant-score-cell{padding-left:8px!important}
 .eval-tag{display:inline-block;padding:2px 8px;border-radius:3px;font:500 11px/1 var(--f)}
 .eval-tag.excellent{background:var(--em50);color:var(--em700)}
 .eval-tag.good{background:var(--pr50);color:var(--pr)}
@@ -393,8 +395,8 @@ function renderModuleContainer(){
         '<td><span class="eval-weight">'+g.weight+'%</span></td>';
       if(isQuant){
         html+='<td class="measure-cell" style="font:400 12px/1.6 var(--f);color:var(--c6)">'+g.desc+'<br>挑战值: <span style="font-family:var(--m);color:var(--c7)">'+g.challenge+g.unit+'</span> / 目标值: <span style="font-family:var(--m);color:var(--c7)">'+g.target+g.unit+'</span></td>';
-        html+='<td class="completion-cell"><input class="edit-cell" type="number" id="completed_'+mi+'_'+gi+'" placeholder="输入完成值" oninput="updateCompleted('+mi+','+gi+')"></td>';
-        html+='<td id="score_'+mi+'_'+gi+'" class="eval-score score-cell">—</td>';
+        html+='<td class="completion-cell quant-completion"><input class="edit-cell" type="number" id="completed_'+mi+'_'+gi+'" placeholder="输入完成值" oninput="updateCompleted('+mi+','+gi+')"></td>';
+        html+='<td id="score_'+mi+'_'+gi+'" class="eval-score score-cell quant-score-cell">—</td>';
       }else{
         html+='<td class="measure-cell" style="font:400 12px/1.6 var(--f);color:var(--c6)">'+g.measureDesc+'</td>';
         html+='<td class="completion-cell"><textarea class="edit-cell-sm" id="completed_'+mi+'_'+gi+'" placeholder="描述完成情况…" oninput="updateCompleted('+mi+','+gi+')">'+g.completed+'</textarea></td>';
@@ -431,7 +433,7 @@ function formatQuantScore(score){
 
 function renderQuantScore(score){
   if(score===null)return'—';
-  return'<span class="quant-score">'+formatQuantScore(score)+'<span class="quant-score-unit">分</span></span>';
+  return'<span class="quant-score">'+formatQuantScore(score)+'</span>';
 }
 
 function updateCompleted(mi,gi){
@@ -496,7 +498,7 @@ function exportSelfEval(){
   var rows=[['模块','目标名称','权重(%)','衡量标准','完成值/完成情况','评价结果']];
   MODULES.forEach(function(mod){
     mod.goals.forEach(function(g){
-      var result=g.type==='quant'?(formatQuantScore(calcQuantScore(g.completed))+(g.completed?'分':'')):(STAR_GRADE[g.stars]||'');
+      var result=g.type==='quant'?formatQuantScore(calcQuantScore(g.completed)):(STAR_GRADE[g.stars]||'');
       rows.push([mod.name,g.name,g.weight,g.type==='quant'?g.desc:g.measureDesc,g.completed||'',result]);
     });
   });
