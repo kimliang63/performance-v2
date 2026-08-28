@@ -65,6 +65,8 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .eval-weight{font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px}
 .eval-target{color:var(--c6);font-size:12px}
 .eval-score{font:600 13px/1 var(--m)}.eval-score.high{color:var(--em700)}.eval-score.mid{color:var(--pr)}.eval-score.low{color:var(--ac700)}.eval-score.zero{color:var(--ro)}
+.quant-score{display:inline-flex;align-items:baseline;gap:2px;font:700 18px/1 var(--m);color:var(--pr)}
+.quant-score-unit{font:500 12px/1 var(--f);color:var(--c5)}
 .eval-tag{display:inline-block;padding:2px 8px;border-radius:3px;font:500 11px/1 var(--f)}
 .eval-tag.excellent{background:var(--em50);color:var(--em700)}
 .eval-tag.good{background:var(--pr50);color:var(--pr)}
@@ -415,28 +417,21 @@ function renderModuleContainer(){
   document.getElementById('moduleContainer').innerHTML=html;
 }
 
-// 定量目标自动计算得分
-function calcGrade(g,completedVal){
+// 定量目标按完成值换算五分制得分，不生成评价等级
+function calcQuantScore(completedVal){
   var v=parseFloat(completedVal);
   if(isNaN(v))return null;
-  if(v>=g.challenge)return'超出预期';
-  if(v>=g.target)return'符合预期+';
-  if(v>=g.baseline)return'符合预期';
-  return'低于预期';
+  return Math.round(Math.max(0,Math.min(5,v/20))*10)/10;
 }
 
-var GRADE_CLS={'超出预期':'excellent','符合预期+':'good','符合预期':'normal','符合预期-':'poor','低于预期':'poor'};
-var GRADE_DESC={'远超预期':'业绩大幅超越目标，具备标杆价值','超出预期':'整体优于目标，常有亮点产出','符合预期+':'全面完成目标，局部表现突出','符合预期':'完成全部目标，满足岗位要求','符合预期-':'基本达成目标，尚有提升空间','低于预期':'多项未达目标，需针对性改进','远低预期':'核心任务落空，整体差距显著'};
-var GRADE_COLOR={'远超预期':'var(--em700)','超出预期':'var(--em700)','符合预期+':'var(--pr)','符合预期':'var(--c7)','符合预期-':'var(--ac)','低于预期':'var(--ro)','远低预期':'var(--ro)'};
+function formatQuantScore(score){
+  if(score===null)return'';
+  return Number.isInteger(score)?String(score):score.toFixed(1);
+}
 
-function renderQuantGrade(grade){
-  if(!grade)return'—';
-  var sc={'超出预期':5,'符合预期+':4,'符合预期':3,'符合预期-':2,'低于预期':1}[grade]||0;
-  var h='<div class="star-row">';
-  for(var si=1;si<=5;si++)h+='<span class="star'+(si<=sc?' active':'')+'">★</span>';
-  h+='</div><div class="star-label" style="color:'+GRADE_COLOR[grade]+'">'+grade+'</div>';
-  h+='<div class="star-desc">'+GRADE_DESC[grade]+'</div>';
-  return h;
+function renderQuantScore(score){
+  if(score===null)return'—';
+  return'<span class="quant-score">'+formatQuantScore(score)+'<span class="quant-score-unit">分</span></span>';
 }
 
 function updateCompleted(mi,gi){
@@ -444,9 +439,9 @@ function updateCompleted(mi,gi){
   var val=document.getElementById('completed_'+mi+'_'+gi).value;
   g.completed=val;
   if(g.type==='quant'){
-    var grade=calcGrade(g,val);
+    var score=calcQuantScore(val);
     var el=document.getElementById('score_'+mi+'_'+gi);
-    el.innerHTML=renderQuantGrade(grade);
+    el.innerHTML=renderQuantScore(score);
   }
 }
 
@@ -498,11 +493,11 @@ function saveDraft(){
 }
 
 function exportSelfEval(){
-  var rows=[['模块','目标名称','权重(%)','衡量标准','完成值/完成情况','评价等级']];
+  var rows=[['模块','目标名称','权重(%)','衡量标准','完成值/完成情况','评价结果']];
   MODULES.forEach(function(mod){
     mod.goals.forEach(function(g){
-      var grade=g.type==='quant'?calcGrade(g,g.completed):(STAR_GRADE[g.stars]||'');
-      rows.push([mod.name,g.name,g.weight,g.type==='quant'?g.desc:g.measureDesc,g.completed||'',grade||'']);
+      var result=g.type==='quant'?(formatQuantScore(calcQuantScore(g.completed))+(g.completed?'分':'')):(STAR_GRADE[g.stars]||'');
+      rows.push([mod.name,g.name,g.weight,g.type==='quant'?g.desc:g.measureDesc,g.completed||'',result]);
     });
   });
   var csv=rows.map(function(row){return row.map(function(cell){return'"'+String(cell).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
