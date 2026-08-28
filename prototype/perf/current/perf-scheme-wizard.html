@@ -152,6 +152,32 @@ textarea.form-input{height:auto;padding:8px 10px;resize:vertical;min-height:60px
 .rule-row select,.rule-row input{height:32px;padding:0 8px;border:1px solid var(--c2);border-radius:var(--r1);font:400 12px/1 var(--f);color:var(--c7);background:var(--sf);outline:none}
 .rule-row select:focus,.rule-row input:focus{border-color:var(--pr)}
 
+/* ═══ AUTO REMOVE RULES ═══ */
+.ar-panel{transition:opacity .15s}
+.ar-panel.is-off{opacity:.5;pointer-events:none}
+.ar-list{display:flex;flex-direction:column;gap:8px}
+.ar-rule{padding:8px 10px;border:1px solid var(--dv);border-radius:var(--r1);background:var(--c0)}
+.ar-rule-hd{display:flex;align-items:center;gap:8px;cursor:pointer;font:500 13px/1 var(--f);color:var(--c8);user-select:none}
+.ar-rule-hd input{accent-color:var(--pr)}
+.ar-rule-cfg{margin-top:8px;padding-left:24px;display:flex;flex-direction:column;gap:8px}
+.ar-days{display:flex;align-items:center;gap:6px;font:400 12px/1 var(--f);color:var(--c6);flex-wrap:wrap}
+.ar-days input{width:64px;height:28px;padding:0 8px;border:1px solid var(--c2);border-radius:var(--r1);font:400 12px/1 var(--f);color:var(--c9);background:var(--sf);outline:none;text-align:center}
+.ar-days input:focus{border-color:var(--pr)}
+.ar-leave{display:flex;align-items:flex-start;gap:8px}
+.ar-leave-lb{font:400 12px/28px var(--f);color:var(--c6);flex-shrink:0}
+.leave-ms{position:relative;flex:1;min-width:180px}
+.leave-ms-trigger{width:100%;min-height:28px;padding:3px 28px 3px 8px;border:1px solid var(--c2);border-radius:var(--r1);background:var(--sf);cursor:pointer;display:flex;flex-wrap:wrap;align-items:center;gap:4px;text-align:left;font:400 12px/1 var(--f);color:var(--c7);position:relative;font-family:inherit}
+.leave-ms-trigger:hover{border-color:var(--c3)}
+.leave-ms.open .leave-ms-trigger{border-color:var(--pr)}
+.leave-ms-trigger::after{content:'';position:absolute;right:10px;top:50%;margin-top:-2px;border:4px solid transparent;border-top-color:var(--c4)}
+.leave-ms-ph{color:var(--c4)}
+.leave-ms-tag{display:inline-flex;align-items:center;height:20px;padding:0 6px;border-radius:3px;background:var(--pr50);color:var(--pr);font:500 11px/20px var(--f)}
+.leave-ms-menu{display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:30;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r1);box-shadow:var(--shadow-card-hover);padding:6px 0;max-height:220px;overflow-y:auto}
+.leave-ms.open .leave-ms-menu{display:block}
+.leave-ms-opt{display:flex;align-items:center;gap:8px;padding:6px 10px;cursor:pointer;font:400 12px/1 var(--f);color:var(--c7)}
+.leave-ms-opt:hover{background:var(--c0)}
+.leave-ms-opt input{accent-color:var(--pr)}
+
 /* ═══ GROUP PANEL ═══ */
 .grp-panel{display:flex;gap:16px}
 .grp-list{width:200px;flex-shrink:0;display:flex;flex-direction:column;gap:4px}
@@ -256,14 +282,15 @@ const GRADES=[
 const STAGES=[
   {id:'goal',name:'目标制定',desc:'员工/上级填写绩效目标',enabled:true,status:'done',flow:'通用目标制定流程',autoStart:{enabled:false,direction:'前',days:7},autoEnd:{enabled:false,direction:'后',days:7}},
   {id:'interview',name:'绩效面谈',desc:'上级与员工面谈',enabled:true,status:'warn',flow:'绩效面谈流程',autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14}},
-  {id:'eval',name:'绩效考核',desc:'考核人评分',enabled:true,status:'active',flow:'通用绩效考核流程',autoStart:{enabled:true,direction:'后',days:3},autoEnd:{enabled:true,direction:'后',days:30}},
+  {id:'eval',name:'绩效考核',desc:'考核人评分',enabled:true,status:'active',flow:'通用绩效考核流程',autoStart:{enabled:true,direction:'后',days:3},autoEnd:{enabled:true,direction:'后',days:30},scoreCalculation:{enabled:false,mode:''}},
   {id:'ratify',name:'结果审定',desc:'审定人调整等级',enabled:true,status:'pending',flow:'汇报线逐级审定',autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14}},
   {id:'confirm',name:'结果确认',desc:'员工确认绩效结果',enabled:true,status:'pending',flow:'员工确认流程',autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14}},
 ];
 
+const LEAVE_TYPES=['年假','病假','事假','婚假','产假','陪产假','育儿假','工伤假','无薪假'];
 const GROUPS=[
-  {id:'g1',name:'默认考核组',rules:[{field:'部门',op:'属于',val:'产品部,技术部,市场部'}],evalRule:'通用评价规则',isDefault:true,autoRemove:{enabled:true,conditions:['resignation']}},
-  {id:'g2',name:'仓储特殊组',rules:[{field:'部门',op:'等于',val:'仓储部'},{field:'职级',op:'属于',val:'L5,L6'}],evalRule:'仓储评价规则',isDefault:false,autoRemove:{enabled:false,conditions:[]}},
+  {id:'g1',name:'默认考核组',rules:[{field:'部门',op:'属于',val:'产品部,技术部,市场部'}],evalRule:'通用评价规则',isDefault:true,autoRemove:{enabled:true,resignation:{enabled:true,days:7},leaveStart:{enabled:true,leaveTypes:['产假','育儿假'],days:7},leaveEnd:{enabled:true,leaveTypes:['产假','育儿假'],days:7},conditions:['resignation','leaveStart','leaveEnd']}},
+  {id:'g2',name:'仓储特殊组',rules:[{field:'部门',op:'等于',val:'仓储部'},{field:'职级',op:'属于',val:'L5,L6'}],evalRule:'仓储评价规则',isDefault:false,autoRemove:{enabled:false,resignation:{enabled:false,days:7},leaveStart:{enabled:false,leaveTypes:[],days:7},leaveEnd:{enabled:false,leaveTypes:[],days:7},conditions:[]}},
 ];
 
 const FLOW_MODELS={
@@ -609,7 +636,7 @@ function renderGroups(ct){
       <button class="btn btn-p" onclick="addGroup()">${I.plus} 新增考核组</button>
     </div>
     ${form.groups.map((grp,gi)=>`
-    <div class="form-sec open" style="margin-bottom:12px">
+    <div class="form-sec open" style="margin-bottom:12px;overflow:visible">
       <div class="form-sec-hd" onclick="toggleSec(this)">
         <div class="form-sec-hd-l">
           <span class="form-sec-t">${grp.name}</span>
@@ -637,23 +664,7 @@ function renderGroups(ct){
           </div>`}).join('')}
           <button class="btn btn-s btn-sm" onclick="form.groups[${gi}].rules.push({field:'部门',op:'等于',val:''});render()">${I.plus} 添加规则</button>
         </div>
-        <div>
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-            <span style="font:600 12px/1 var(--f);color:var(--c6)">三、移除人员规则</span>
-            <div class="tog ${grp.autoRemove&&grp.autoRemove.enabled?'on':''}" onclick="toggleAutoRemove(${gi})"><div class="tog-track"><div class="tog-knob"></div></div></div>
-          </div>
-          <div id="autoRemovePanel-${gi}" style="opacity:${grp.autoRemove&&grp.autoRemove.enabled?'1':'0.5'};pointer-events:${grp.autoRemove&&grp.autoRemove.enabled?'auto':'none'};transition:opacity .15s">
-            <div style="font:400 12px/1 var(--f);color:var(--c6);margin-bottom:10px">员工离职时，自动将人员从考核组中移除：</div>
-            <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px">
-              ${[{v:'resignation',t:'员工离职'}].map(opt=>`
-                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font:400 13px/1 var(--f);color:var(--c7)">
-                  <input type="checkbox" value="${opt.v}" ${grp.autoRemove&&grp.autoRemove.conditions.includes(opt.v)?'checked':''} onchange="toggleAutoRemoveCond(${gi},'${opt.v}',this.checked)" style="accent-color:var(--pr)">
-                  ${opt.t}
-                </label>`).join('')}
-            </div>
-            <div style="font:400 11px/1.5 var(--f);color:var(--c5)">当前版本暂不支持因调岗或组织架构变更自动移除人员。</div>
-          </div>
-        </div>
+        ${renderAutoRemovePanel(grp,gi)}
       </div>
     </div>`).join('')}
     ${renderNavButtons()}
@@ -662,7 +673,7 @@ function renderGroups(ct){
 
 function addGroup(){
   const id='g'+(form.groups.length+1);
-  form.groups.push({id,name:'新考核组',rules:[{field:'部门',op:'等于',val:''}],evalRule:'通用评价规则',autoRemove:{enabled:false,conditions:[]}});
+  form.groups.push({id,name:'新考核组',rules:[{field:'部门',op:'等于',val:''}],evalRule:'通用评价规则',autoRemove:emptyAutoRemove()});
   render();
 }
 
@@ -762,6 +773,7 @@ function renderEvalCfg(s){
   const EVAL_RULES=['通用评价规则','仓储评价规则','销售评价规则','研发评价规则'];
   const a=ensureStageAuto(s,'start');
   const e=ensureStageAuto(s,'end');
+  const calc=ensureEvalScoreCalculation(s);
   return `<div class="form-row">
     <div class="form-grp"><label class="form-lb">流程模型</label><select class="form-input" onchange="render()">${models.map(m=>`<option ${s.flow===m?'selected':''}>${m}</option>`).join('')}</select></div>
     <div class="form-grp"><label class="form-lb">评价规则 <span class="req">*</span></label>
@@ -775,11 +787,27 @@ function renderEvalCfg(s){
   </div>
   ${a.enabled?`<div id="timeRulePanel-start-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderStageTimingPanel('start',s)}</div>`:''}
   ${e.enabled?`<div id="timeRulePanel-end-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderStageTimingPanel('end',s)}</div>`:''}
-  <div style="margin-top:16px"><label class="form-lb" style="margin-bottom:8px;display:block">节点权重分配 <span style="font:400 11px/1 var(--f);color:var(--c4)">（节点由流程模型「${s.flow}」决定，仅处理节点可配置权重）</span></label>
+  <div style="margin-top:16px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+      <div>
+        <div style="font:600 13px/1.3 var(--f);color:var(--c9)">是否系统计算考核总分与初评等级</div>
+        <div style="font:400 11px/1.5 var(--f);color:var(--c4);margin-top:4px">默认关闭；开启后选择系统计算范围</div>
+      </div>
+      <div class="tog ${calc.enabled?'on':''}" onclick="toggleEvalScoreCalculation()"><div class="tog-track"><div class="tog-knob"></div></div></div>
+    </div>
+    ${calc.enabled?`<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--dv)">
+      <div class="radio-group" style="gap:24px">
+        <label class="radio ${calc.mode==='totalScore'?'on':''}" onclick="setEvalScoreCalculationMode('totalScore')"><span class="radio-dot"></span><span>仅计算考核总分</span></label>
+        <label class="radio ${calc.mode==='totalScoreAndGrade'?'on':''}" onclick="setEvalScoreCalculationMode('totalScoreAndGrade')"><span class="radio-dot"></span><span>计算总分与初评等级</span></label>
+      </div>
+      <div class="form-hint" style="margin-top:8px">选择任一计算方式后，需配置参与计算的处理节点权重。</div>
+    </div>`:''}
+  </div>
+  ${calc.enabled&&calc.mode?`<div style="margin-top:16px"><label class="form-lb" style="margin-bottom:8px;display:block">节点权重分配 <span style="font:400 11px/1 var(--f);color:var(--c4)">（节点由流程模型「${s.flow}」决定，仅处理节点可配置权重）</span></label>
     <table class="tbl"><thead><tr><th>节点名称</th><th>节点类型</th><th>权重(%)</th></tr></thead>
     <tbody>${nodes.map(n=>`<tr><td>${n.name}</td><td><span style="font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px;${n.type==='处理'?'background:var(--pr50);color:var(--pr)':'background:var(--c1);color:var(--c5)'}">${n.type}</span></td><td>${n.type==='处理'?`<input class="form-input" type="number" value="${n.weight}" style="width:60px"> %`:'<span style="font:400 12px/1 var(--f);color:var(--c4)">—</span>'}</td></tr>`).join('')}</tbody></table>
     <div class="wt-sum"><span>总权重：</span><span class="${nodes.filter(n=>n.type==='处理').reduce((s,n)=>s+n.weight,0)===100?'ok':'err'}">${nodes.filter(n=>n.type==='处理').reduce((s,n)=>s+n.weight,0)}%</span><span style="color:var(--c4)">（处理节点需等于 100%）</span></div>
-  </div>
+  </div>`:''}
   <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
     <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制结束规则</div>
     <div style="display:flex;align-items:center;gap:8px">
@@ -787,6 +815,27 @@ function renderEvalCfg(s){
       <select class="form-input" style="width:160px">${grades.map(g=>`<option${g.code==='B-'?' selected':''}>${g.name}</option>`).join('')}</select>
     </div>
   </div>`;
+}
+
+function ensureEvalScoreCalculation(s){
+  if(!s.scoreCalculation||typeof s.scoreCalculation!=='object') s.scoreCalculation={enabled:false,mode:''};
+  s.scoreCalculation.enabled=!!s.scoreCalculation.enabled;
+  if(s.scoreCalculation.mode!=='totalScore'&&s.scoreCalculation.mode!=='totalScoreAndGrade') s.scoreCalculation.mode='';
+  return s.scoreCalculation;
+}
+function toggleEvalScoreCalculation(){
+  const s=form.stages.find(stage=>stage.id==='eval');
+  if(!s)return;
+  const calc=ensureEvalScoreCalculation(s);
+  calc.enabled=!calc.enabled;
+  render();
+}
+function setEvalScoreCalculationMode(mode){
+  const s=form.stages.find(stage=>stage.id==='eval');
+  if(!s)return;
+  const calc=ensureEvalScoreCalculation(s);
+  calc.mode=mode==='totalScoreAndGrade'?'totalScoreAndGrade':'totalScore';
+  render();
 }
 
 function renderRatifyCfg(s){
@@ -1063,20 +1112,144 @@ function renderAutoCreate(ct){
 }
 
 // ═══ 自动移除人员规则 ═══
+function escHtml(s){
+  return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function clampAutoRemoveDays(v){
+  var n=parseInt(v,10);
+  if(isNaN(n)) return 7;
+  if(n<1) return 1;
+  if(n>365) return 365;
+  return n;
+}
+function filterLeaveTypes(list){
+  if(!Array.isArray(list)) return [];
+  return LEAVE_TYPES.filter(function(t){return list.indexOf(t)>=0;});
+}
+function emptyAutoRemove(){
+  return {enabled:false,resignation:{enabled:false,days:7},leaveStart:{enabled:false,leaveTypes:[],days:7},leaveEnd:{enabled:false,leaveTypes:[],days:7},conditions:[]};
+}
+function syncAutoRemoveConditions(ar){
+  ar.conditions=[];
+  if(ar.resignation&&ar.resignation.enabled) ar.conditions.push('resignation');
+  if(ar.leaveStart&&ar.leaveStart.enabled) ar.conditions.push('leaveStart');
+  if(ar.leaveEnd&&ar.leaveEnd.enabled) ar.conditions.push('leaveEnd');
+  return ar;
+}
+function ensureAutoRemove(grp){
+  var ar=grp.autoRemove;
+  if(!ar||typeof ar!=='object') ar={enabled:false};
+  var hasStructured=!!(ar.resignation||ar.leaveStart||ar.leaveEnd);
+  grp.autoRemove=syncAutoRemoveConditions({
+    enabled:!!ar.enabled,
+    resignation:{
+      enabled:hasStructured?!!(ar.resignation&&ar.resignation.enabled):!!(ar.conditions&&ar.conditions.indexOf('resignation')>=0),
+      days:clampAutoRemoveDays(ar.resignation&&ar.resignation.days)
+    },
+    leaveStart:{
+      enabled:!!(ar.leaveStart&&ar.leaveStart.enabled),
+      leaveTypes:filterLeaveTypes(ar.leaveStart&&ar.leaveStart.leaveTypes),
+      days:clampAutoRemoveDays(ar.leaveStart&&ar.leaveStart.days)
+    },
+    leaveEnd:{
+      enabled:!!(ar.leaveEnd&&ar.leaveEnd.enabled),
+      leaveTypes:filterLeaveTypes(ar.leaveEnd&&ar.leaveEnd.leaveTypes),
+      days:clampAutoRemoveDays(ar.leaveEnd&&ar.leaveEnd.days)
+    }
+  });
+  return grp.autoRemove;
+}
+function renderLeaveMsTriggerInner(types){
+  if(!types||!types.length) return '<span class="leave-ms-ph">请选择假种</span>';
+  return types.map(function(t){return '<span class="leave-ms-tag">'+escHtml(t)+'</span>';}).join('');
+}
+function renderLeaveMs(gi,key,types){
+  return '<div class="leave-ms" data-gi="'+gi+'" data-rule="'+key+'">'+
+    '<button type="button" class="leave-ms-trigger" onclick="event.stopPropagation();toggleLeaveMs(event,'+gi+',\''+key+'\')">'+renderLeaveMsTriggerInner(types)+'</button>'+
+    '<div class="leave-ms-menu" id="leaveMs-'+gi+'-'+key+'">'+
+      LEAVE_TYPES.map(function(t){
+        var on=types.indexOf(t)>=0;
+        return '<label class="leave-ms-opt" onclick="event.stopPropagation()"><input type="checkbox" '+(on?'checked':'')+' onchange="toggleLeaveType('+gi+',\''+key+'\',\''+t+'\',this.checked)">'+escHtml(t)+'</label>';
+      }).join('')+
+    '</div></div>';
+}
+function renderDaysRow(gi,key,prefix,days){
+  return '<div class="ar-days"><span>'+prefix+'</span>'+
+    '<input type="number" min="1" max="365" value="'+escHtml(days)+'" oninput="setAutoRemoveDays('+gi+',\''+key+'\',this)" onblur="normalizeAutoRemoveDaysInput('+gi+',\''+key+'\',this)">'+
+    '<span>天内有效</span></div>';
+}
+function renderAutoRemoveRule(gi,key,label,ar){
+  var rule=ar[key];
+  var cfg='';
+  if(rule.enabled){
+    var parts=[];
+    if(key==='leaveStart'||key==='leaveEnd'){
+      parts.push('<div class="ar-leave"><span class="ar-leave-lb">假种</span>'+renderLeaveMs(gi,key,rule.leaveTypes)+'</div>');
+    }
+    parts.push(renderDaysRow(gi,key,key==='leaveEnd'?'周期结束前':'周期开始后',rule.days));
+    cfg='<div class="ar-rule-cfg">'+parts.join('')+'</div>';
+  }
+  return '<div class="ar-rule"><label class="ar-rule-hd"><input type="checkbox" '+(rule.enabled?'checked':'')+' onchange="toggleAutoRemoveRule('+gi+',\''+key+'\',this.checked)">'+label+'</label>'+cfg+'</div>';
+}
+function renderAutoRemovePanel(grp,gi){
+  var ar=ensureAutoRemove(grp);
+  return '<div>'+
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'+
+      '<span style="font:600 12px/1 var(--f);color:var(--c6)">三、移除人员规则</span>'+
+      '<div class="tog '+(ar.enabled?'on':'')+'" onclick="toggleAutoRemove('+gi+')"><div class="tog-track"><div class="tog-knob"></div></div></div>'+
+    '</div>'+
+    '<div id="autoRemovePanel-'+gi+'" class="ar-panel'+(ar.enabled?'':' is-off')+'">'+
+      '<div class="ar-list">'+
+        renderAutoRemoveRule(gi,'resignation','员工离职',ar)+
+        renderAutoRemoveRule(gi,'leaveStart','开始休假',ar)+
+        renderAutoRemoveRule(gi,'leaveEnd','结束休假',ar)+
+      '</div></div></div>';
+}
 function toggleAutoRemove(gi){
-  const grp=form.groups[gi];
-  if(!grp.autoRemove) grp.autoRemove={enabled:false,conditions:[]};
-  grp.autoRemove.enabled=!grp.autoRemove.enabled;
-  const panel=document.getElementById('autoRemovePanel-'+gi);
-  if(panel){ panel.style.opacity=grp.autoRemove.enabled?'1':'0.5'; panel.style.pointerEvents=grp.autoRemove.enabled?'auto':'none'; }
+  var grp=form.groups[gi];
+  var ar=ensureAutoRemove(grp);
+  ar.enabled=!ar.enabled;
   render();
 }
-
-function toggleAutoRemoveCond(gi,cond,checked){
-  const grp=form.groups[gi];
-  if(!grp.autoRemove) grp.autoRemove={enabled:false,conditions:[]};
-  if(checked){ if(!grp.autoRemove.conditions.includes(cond)) grp.autoRemove.conditions.push(cond); }
-  else grp.autoRemove.conditions=grp.autoRemove.conditions.filter(c=>c!==cond);
+function toggleAutoRemoveRule(gi,key,checked){
+  var grp=form.groups[gi];
+  var ar=ensureAutoRemove(grp);
+  ar[key].enabled=!!checked;
+  syncAutoRemoveConditions(ar);
+  render();
+}
+function setAutoRemoveDays(gi,key,el){
+  var raw=el.value;
+  if(raw===''||raw==='-') return;
+  var n=parseInt(raw,10);
+  if(isNaN(n)) return;
+  if(n<1){n=1;el.value=n;}
+  if(n>365){n=365;el.value=n;}
+  ensureAutoRemove(form.groups[gi])[key].days=n;
+}
+function normalizeAutoRemoveDaysInput(gi,key,el){
+  var n=clampAutoRemoveDays(el.value);
+  ensureAutoRemove(form.groups[gi])[key].days=n;
+  el.value=n;
+}
+function toggleLeaveType(gi,key,type,checked){
+  var ar=ensureAutoRemove(form.groups[gi]);
+  var list=ar[key].leaveTypes.slice();
+  if(checked){ if(list.indexOf(type)<0) list.push(type); }
+  else list=list.filter(function(t){return t!==type;});
+  ar[key].leaveTypes=filterLeaveTypes(list);
+  var trigger=document.querySelector('.leave-ms[data-gi="'+gi+'"][data-rule="'+key+'"] .leave-ms-trigger');
+  if(trigger) trigger.innerHTML=renderLeaveMsTriggerInner(ar[key].leaveTypes);
+}
+function closeAllLeaveMs(){
+  document.querySelectorAll('.leave-ms.open').forEach(function(el){el.classList.remove('open');});
+}
+function toggleLeaveMs(ev,gi,key){
+  if(ev) ev.stopPropagation();
+  var wrap=document.querySelector('.leave-ms[data-gi="'+gi+'"][data-rule="'+key+'"]');
+  var wasOpen=wrap&&wrap.classList.contains('open');
+  closeAllLeaveMs();
+  if(wrap&&!wasOpen) wrap.classList.add('open');
 }
 
 // ═══ 环节自动开启/结束（与自动创建活动同一套周期相对控件） ═══
@@ -1256,6 +1429,12 @@ function saveScheme(){
   alert('方案「'+form.name+'」保存成功');
   window.location.href='perf-scheme-list.html';
 }
+
+document.addEventListener('click',function(e){
+  var t=e.target;
+  if(t&&t.closest&&t.closest('.leave-ms')) return;
+  closeAllLeaveMs();
+});
 
 // Initialize navigation first to create the content container
 GHR_NAV.init('perf', '绩效方案');

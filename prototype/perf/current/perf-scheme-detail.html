@@ -64,13 +64,13 @@ const SCHEME={
     {name:'远低预期',code:'D',min:0,max:39,color:'#A1A1AA',bg:'#FAFAFA'},
   ],
   groups:[
-    {name:'默认考核组',isDefault:true,rules:'部门 属于 产品部,技术部,市场部',evalRule:'通用评价规则',autoRemove:{enabled:true,conditions:['resignation']}},
-    {name:'仓储特殊组',isDefault:false,rules:'部门 等于 仓储部 且 职级 属于 L5,L6',evalRule:'仓储评价规则',autoRemove:{enabled:false,conditions:[]}},
+    {name:'默认考核组',isDefault:true,rules:'部门 属于 产品部,技术部,市场部',evalRule:'通用评价规则',autoRemove:{enabled:true,resignation:{enabled:true,days:7},leaveStart:{enabled:true,leaveTypes:['产假','育儿假'],days:7},leaveEnd:{enabled:true,leaveTypes:['产假','育儿假'],days:7},conditions:['resignation','leaveStart','leaveEnd']}},
+    {name:'仓储特殊组',isDefault:false,rules:'部门 等于 仓储部 且 职级 属于 L5,L6',evalRule:'仓储评价规则',autoRemove:{enabled:false,resignation:{enabled:false,days:7},leaveStart:{enabled:false,leaveTypes:[],days:7},leaveEnd:{enabled:false,leaveTypes:[],days:7},conditions:[]}},
   ],
   stages:[
     {name:'目标制定',desc:'员工/上级填写绩效目标',flow:'通用目标制定流程',enabled:true,autoStart:{enabled:false,direction:'前',days:7},autoEnd:{enabled:false,direction:'后',days:7}},
     {name:'绩效面谈',desc:'上级与员工面谈',flow:'绩效面谈流程',enabled:true,autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14}},
-    {name:'绩效考核',desc:'考核人评分',flow:'通用绩效考核流程',enabled:true,autoStart:{enabled:true,direction:'后',days:3},autoEnd:{enabled:true,direction:'后',days:30}},
+    {name:'绩效考核',desc:'考核人评分',flow:'通用绩效考核流程',enabled:true,autoStart:{enabled:true,direction:'后',days:3},autoEnd:{enabled:true,direction:'后',days:30},scoreCalculation:{enabled:false,mode:''}},
     {name:'结果审定',desc:'审定人调整等级',flow:'汇报线逐级审定',enabled:true,autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14}},
     {name:'结果确认',desc:'员工确认绩效结果',flow:'员工确认流程',enabled:true,autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14}},
   ],
@@ -88,11 +88,72 @@ const SCHEME={
   admins:['EMP0088'],
 };
 
+const LEAVE_TYPES=['年假','病假','事假','婚假','产假','陪产假','育儿假','工伤假','无薪假'];
+
+function escHtml(s){
+  return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function clampAutoRemoveDays(v){
+  var n=parseInt(v,10);
+  if(isNaN(n)) return 7;
+  if(n<1) return 1;
+  if(n>365) return 365;
+  return n;
+}
+function filterLeaveTypes(list){
+  if(!Array.isArray(list)) return [];
+  return LEAVE_TYPES.filter(function(t){return list.indexOf(t)>=0;});
+}
+function normalizeAutoRemove(ar){
+  if(!ar||typeof ar!=='object') ar={enabled:false};
+  var hasStructured=!!(ar.resignation||ar.leaveStart||ar.leaveEnd);
+  return {
+    enabled:!!ar.enabled,
+    resignation:{
+      enabled:hasStructured?!!(ar.resignation&&ar.resignation.enabled):!!(ar.conditions&&ar.conditions.indexOf('resignation')>=0),
+      days:clampAutoRemoveDays(ar.resignation&&ar.resignation.days)
+    },
+    leaveStart:{
+      enabled:!!(ar.leaveStart&&ar.leaveStart.enabled),
+      leaveTypes:filterLeaveTypes(ar.leaveStart&&ar.leaveStart.leaveTypes),
+      days:clampAutoRemoveDays(ar.leaveStart&&ar.leaveStart.days)
+    },
+    leaveEnd:{
+      enabled:!!(ar.leaveEnd&&ar.leaveEnd.enabled),
+      leaveTypes:filterLeaveTypes(ar.leaveEnd&&ar.leaveEnd.leaveTypes),
+      days:clampAutoRemoveDays(ar.leaveEnd&&ar.leaveEnd.days)
+    }
+  };
+}
+function formatLeaveTypes(types){
+  return types&&types.length?types.map(escHtml).join('、'):'未选择假种';
+}
+function renderAutoRemoveSummary(raw){
+  var ar=normalizeAutoRemove(raw);
+  if(!ar.enabled) return '';
+  var items=[];
+  if(ar.resignation.enabled) items.push('员工离职：周期开始后 '+escHtml(ar.resignation.days)+' 天内有效');
+  if(ar.leaveStart.enabled) items.push('开始休假：假种 '+formatLeaveTypes(ar.leaveStart.leaveTypes)+'；周期开始后 '+escHtml(ar.leaveStart.days)+' 天内有效');
+  if(ar.leaveEnd.enabled) items.push('结束休假：假种 '+formatLeaveTypes(ar.leaveEnd.leaveTypes)+'；周期结束前 '+escHtml(ar.leaveEnd.days)+' 天内有效');
+  var body=items.length
+    ? items.map(function(t){return '<div style="font:400 12px/1.5 var(--f);color:var(--c7)">'+t+'</div>';}).join('')
+    : '<div style="font:400 12px/1 var(--f);color:var(--c5)">未配置</div>';
+  return '<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--dv)">'+
+    '<div style="font:600 12px/1 var(--f);color:var(--c6);margin-bottom:6px">移除人员规则</div>'+body+'</div>';
+}
+
 function formatStageTiming(a){
   if(!a||!a.enabled) return '';
   var dir=a.direction==='后'?'后':'前';
   var days=parseInt(a.days,10)||0;
   return '周期开始'+dir+' '+days+' 天';
+}
+
+function formatEvalScoreCalculation(c){
+  if(!c||!c.enabled) return '关闭';
+  if(c.mode==='totalScore') return '仅计算考核总分';
+  if(c.mode==='totalScoreAndGrade') return '计算总分与初评等级';
+  return '已开启，未选择计算范围';
 }
 
 function render(){
@@ -143,14 +204,7 @@ function render(){
             <div style="font:400 12px/1 var(--f);color:var(--c7)">${g.rules}</div>
             <div style="font:400 12px/1 var(--f);color:var(--c5);margin-top:2px">评价规则：${g.evalRule}</div>
           </div>
-          ${g.autoRemove&&g.autoRemove.enabled?`
-          <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--dv)">
-            <div style="font:600 12px/1 var(--f);color:var(--c6);margin-bottom:6px">移除人员规则</div>
-            <div style="font:400 12px/1 var(--f);color:var(--c7)">
-              ${g.autoRemove.conditions.includes('resignation')?'员工离职':'未配置'}
-            </div>
-            <div style="font:400 11px/1.5 var(--f);color:var(--c5);margin-top:4px">当前版本暂不支持因调岗或组织架构变更自动移除人员。</div>
-          </div>`:''}
+          ${renderAutoRemoveSummary(g.autoRemove)}
         </div>`).join('')}
       </div>
     </div>
@@ -161,7 +215,7 @@ function render(){
       <div style="display:flex;flex-direction:column;gap:6px">
         ${s.stages.map(st=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--dv);border-radius:var(--r1)">
           <div><span style="font:500 13px/1 var(--f);color:var(--c9)">${st.name}</span><span style="font:400 12px/1 var(--f);color:var(--c5);margin-left:8px">${st.desc}</span></div>
-          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end"><span style="font:400 11px/1 var(--f);color:var(--c5);font-family:var(--m)">${st.flow}</span><span style="font:500 11px/1 var(--f);padding:2px 8px;border-radius:3px;background:var(--em50);color:var(--em700)">${st.enabled?'已启用':'已停用'}</span>${st.name==='结果审定'?`<span style="font:400 11px/1 var(--f);color:var(--c7)">提交方式：${s.ratifySubmitMode||'—'}</span>`:''}${st.autoStart&&st.autoStart.enabled?`<span style="font:400 11px/1 var(--f);color:var(--pr);margin-left:2px">自动开启: ${formatStageTiming(st.autoStart)}</span>`:''}${st.autoEnd&&st.autoEnd.enabled?`<span style="font:400 11px/1 var(--f);color:var(--ac700);margin-left:2px">自动结束: ${formatStageTiming(st.autoEnd)}</span>`:''}</div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end"><span style="font:400 11px/1 var(--f);color:var(--c5);font-family:var(--m)">${st.flow}</span><span style="font:500 11px/1 var(--f);padding:2px 8px;border-radius:3px;background:var(--em50);color:var(--em700)">${st.enabled?'已启用':'已停用'}</span>${st.name==='绩效考核'?`<span style="font:400 11px/1 var(--f);color:var(--c7)">系统计算：${formatEvalScoreCalculation(st.scoreCalculation)}</span>`:''}${st.name==='结果审定'?`<span style="font:400 11px/1 var(--f);color:var(--c7)">提交方式：${s.ratifySubmitMode||'—'}</span>`:''}${st.autoStart&&st.autoStart.enabled?`<span style="font:400 11px/1 var(--f);color:var(--pr);margin-left:2px">自动开启: ${formatStageTiming(st.autoStart)}</span>`:''}${st.autoEnd&&st.autoEnd.enabled?`<span style="font:400 11px/1 var(--f);color:var(--ac700);margin-left:2px">自动结束: ${formatStageTiming(st.autoEnd)}</span>`:''}</div>
         </div>`).join('')}
       </div>
     </div>
