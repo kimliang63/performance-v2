@@ -65,8 +65,17 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .eval-weight{font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px}
 .eval-target{color:var(--c6);font-size:12px}
 .eval-score{font:600 13px/1 var(--m)}.eval-score.high{color:var(--em700)}.eval-score.mid{color:var(--pr)}.eval-score.low{color:var(--ac700)}.eval-score.zero{color:var(--ro)}
-.quant-score{display:inline-flex;align-items:baseline;gap:2px;font:700 18px/1 var(--m);color:var(--pr)}
+.quant-result-cell{padding-right:24px!important}
+.quant-result{display:grid;grid-template-columns:72px 24px minmax(150px,1fr);align-items:center;gap:12px;max-width:420px}
+.quant-result-arrow{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--c1);color:var(--c5)}
+.quant-result-arrow svg{width:13px;height:13px}
+.quant-score-result{display:grid;grid-template-columns:auto minmax(90px,1fr);align-items:center;gap:10px;min-width:0}
+.quant-score{display:inline-flex;align-items:baseline;gap:2px;font:700 18px/1 var(--m);color:var(--pr);white-space:nowrap}
 .quant-score-unit{font:500 12px/1 var(--f);color:var(--c5)}
+.quant-score-pending{font:500 12px/1 var(--f);color:var(--c4);white-space:nowrap}
+.quant-score-meter{height:6px;border-radius:999px;background:var(--c1);overflow:hidden}
+.quant-score-meter-fill{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--pr),#60A5FA);transition:width .2s ease}
+@media (prefers-reduced-motion:reduce){.quant-score-meter-fill{transition:none}}
 .eval-tag{display:inline-block;padding:2px 8px;border-radius:3px;font:500 11px/1 var(--f)}
 .eval-tag.excellent{background:var(--em50);color:var(--em700)}
 .eval-tag.good{background:var(--pr50);color:var(--pr)}
@@ -393,8 +402,7 @@ function renderModuleContainer(){
         '<td><span class="eval-weight">'+g.weight+'%</span></td>';
       if(isQuant){
         html+='<td class="measure-cell" style="font:400 12px/1.6 var(--f);color:var(--c6)">'+g.desc+'<br>挑战值: <span style="font-family:var(--m);color:var(--c7)">'+g.challenge+g.unit+'</span> / 目标值: <span style="font-family:var(--m);color:var(--c7)">'+g.target+g.unit+'</span></td>';
-        html+='<td class="completion-cell"><input class="edit-cell" type="number" id="completed_'+mi+'_'+gi+'" placeholder="输入完成值" oninput="updateCompleted('+mi+','+gi+')"></td>';
-        html+='<td id="score_'+mi+'_'+gi+'" class="eval-score score-cell">—</td>';
+        html+='<td class="quant-result-cell" colspan="2"><div class="quant-result"><input class="edit-cell" type="number" id="completed_'+mi+'_'+gi+'" placeholder="输入完成值" oninput="updateCompleted('+mi+','+gi+')"><span class="quant-result-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></span><div id="score_'+mi+'_'+gi+'" class="quant-score-result">'+renderQuantScore(null)+'</div></div></td>';
       }else{
         html+='<td class="measure-cell" style="font:400 12px/1.6 var(--f);color:var(--c6)">'+g.measureDesc+'</td>';
         html+='<td class="completion-cell"><textarea class="edit-cell-sm" id="completed_'+mi+'_'+gi+'" placeholder="描述完成情况…" oninput="updateCompleted('+mi+','+gi+')">'+g.completed+'</textarea></td>';
@@ -430,8 +438,9 @@ function formatQuantScore(score){
 }
 
 function renderQuantScore(score){
-  if(score===null)return'—';
-  return'<span class="quant-score">'+formatQuantScore(score)+'<span class="quant-score-unit">分</span></span>';
+  var percent=score===null?0:score/5*100;
+  var scoreText=score===null?'<span class="quant-score-pending">输入后计算</span>':'<span class="quant-score">'+formatQuantScore(score)+'<span class="quant-score-unit">分</span></span>';
+  return scoreText+'<span class="quant-score-meter" aria-hidden="true"><span class="quant-score-meter-fill" style="width:'+percent+'%"></span></span>';
 }
 
 function updateCompleted(mi,gi){
