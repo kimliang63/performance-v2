@@ -45,15 +45,11 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
 /* Page header */
-.pg-hd{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:16px}
-.pg-hd-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.pg-hd{margin-bottom:16px}
+.pg-hd-top{position:sticky;top:0;z-index:900;display:flex;align-items:center;justify-content:space-between;min-height:56px;padding:12px 20px;margin-bottom:12px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);box-shadow:var(--shadow-card)}
 .pg-hd-title{font:700 20px/1.2 var(--f);color:var(--c9);letter-spacing:-.3px}
 .pg-hd-actions{display:flex;gap:8px}
-.pg-hd-info{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 24px;font:400 13px/1 var(--f);color:var(--c5);margin-bottom:12px;padding:12px 16px;background:var(--c0);border-radius:var(--r2)}
-.pg-hd-info-item{display:flex;flex-direction:column;gap:2px}
-.pg-hd-info-label{font:400 11px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px}
-.pg-hd-info-value{font:500 13px/1.3 var(--f);color:var(--c8)}
-.pg-hd-summary{display:flex;align-items:center;gap:24px;padding-top:12px;border-top:1px solid var(--dv)}
+.pg-hd-summary{display:flex;align-items:center;gap:24px;padding:12px 20px;margin-bottom:16px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);box-shadow:var(--shadow-card)}
 .pg-hd-summary .sum-item{font:500 13px/1 var(--f);color:var(--c6)}
 .pg-hd-summary .sum-val{font-family:var(--m);font-weight:700;color:var(--pr)}
 .pg-hd-summary .sum-val.warn{color:var(--ro)}
@@ -64,14 +60,15 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .pg-hd-summary .sum-ok svg{width:12px;height:12px}
 
 /* ═══ MODULE SECTION ═══ */
-.mod-section{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden;border:1px solid var(--c2)}
+.mod-section{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:visible;border:1px solid var(--c2)}
 .mod-section.em{}
 .mod-section.ac{}
 .mod-section.vi{}
 .mod-section.ro{}
 
-.mod-hd{display:flex;align-items:center;padding:14px 20px;cursor:pointer;user-select:none;transition:background .12s;gap:12px}
+.mod-hd{position:sticky;top:var(--page-action-h,56px);z-index:800;display:flex;align-items:center;padding:14px 20px;cursor:pointer;user-select:none;transition:background .12s,box-shadow .12s;gap:12px;background:var(--sf);border-radius:var(--r3) var(--r3) 0 0}
 .mod-hd:hover{background:var(--c0)}
+.mod-hd.is-stuck{box-shadow:0 4px 12px rgba(0,0,0,.08);border-bottom:1px solid var(--c2)}
 .mod-hd-icon{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#FFF}
 .mod-hd-icon svg{width:13px;height:13px;color:#FFF}
 .mod-hd-title{font:500 12px/1 var(--f);color:var(--c5);flex:1;text-transform:uppercase;letter-spacing:.5px}
@@ -86,7 +83,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .mod-hd-chevron svg{width:14px;height:14px}
 
 .mod-body{max-height:0;overflow:hidden;transition:max-height .35s ease}
-.mod-body.open{max-height:2000px}
+.mod-body.open{max-height:10000px}
 
 /* ═══ GOAL ROW ═══ */
 .goal-row{border-top:1px solid var(--dv);transition:background .1s}
@@ -155,6 +152,10 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .ge-row.f3{grid-template-columns:100px 100px 100px}
 .ge-row .full{grid-column:1/-1}
 .ge-fi{display:flex;flex-direction:column;gap:3px}
+.ge-fi.inline{flex-direction:row;align-items:center;gap:6px;min-width:0}
+.ge-fi.inline .ge-fi-l{white-space:nowrap;flex-shrink:0}
+.ge-inline-control{display:flex;align-items:center;gap:4px;min-width:0;flex:1}
+.ge-rule-value{min-width:0;font:400 12px/1.4 var(--f);color:var(--c6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ge-fi-l{font:400 11px/1 var(--f);color:var(--c5);display:flex;align-items:center;gap:4px}
 .ge-fi-l .req{color:var(--ro);margin-left:2px}
 .ge-fi-val{font:500 13px/1.4 var(--f);color:var(--c8);padding:7px 0}
@@ -233,6 +234,24 @@ textarea.inp{min-height:60px;resize:vertical;font-family:var(--f);line-height:1.
 .confirm-title{font:600 15px/1.3 var(--f);color:var(--c9);margin-bottom:6px}
 .confirm-desc{font:400 13px/1.5 var(--f);color:var(--c6);margin-bottom:20px}
 .confirm-actions{display:flex;justify-content:flex-end;gap:8px}
+
+/* ═══ CREATE GOAL ═══ */
+.create-grid{display:grid;grid-template-columns:1fr 160px;gap:14px 16px}
+.create-grid.three{grid-template-columns:repeat(3,1fr)}
+.create-grid .full{grid-column:1/-1}
+.create-field{display:flex;flex-direction:column;gap:6px}
+.create-field label{font:500 12px/1 var(--f);color:var(--c6)}
+.create-field label .req{color:var(--ro)}
+.create-help{font:400 12px/1.5 var(--f);color:var(--c5);padding:10px 12px;background:var(--pr50);border:1px solid var(--pr100);border-radius:var(--r1);margin-bottom:14px}
+
+@media (max-width:900px){
+  .pg-hd-top{align-items:flex-start;gap:12px;flex-wrap:wrap}
+  .pg-hd-actions{width:100%;justify-content:flex-end}
+  .mod-hd{flex-wrap:wrap}
+  .mod-hd-title{min-width:120px}
+  .create-grid,.create-grid.three{grid-template-columns:1fr}
+  .create-grid .full{grid-column:auto}
+}
 
 /* ═══ TOOLTIP ═══ */
 .field-tip{position:relative;display:inline-flex;align-items:center;margin-left:4px;cursor:help}
@@ -392,13 +411,12 @@ body.chat-open .ai-toggle{display:none}
     <span style="color:var(--c8);font-weight:600">员工制定</span>
   </nav>
 
-  <!-- Page header -->
-  <div class="pg-hd">
-    <div class="pg-hd-top">
-      <div style="display:flex;align-items:center;gap:10px">
-        <div class="pg-hd-title">目标制定</div>
-      </div>
-      <div class="pg-hd-actions">
+  <!-- Sticky page title and actions -->
+  <div class="pg-hd-top">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="pg-hd-title">目标制定</div>
+    </div>
+    <div class="pg-hd-actions">
         <button class="btn btn-s" onclick="showToast('草稿已保存','success')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
           保存草稿
@@ -411,21 +429,12 @@ body.chat-open .ai-toggle{display:none}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
           提交
         </button>
-      </div>
     </div>
-    <div class="pg-hd-info">
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">考核周期</span><span class="pg-hd-info-value">2026年6月</span></div>
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">员工</span><span class="pg-hd-info-value">张明 (EMP20240315)</span></div>
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">部门</span><span class="pg-hd-info-value">产品部</span></div>
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">职位</span><span class="pg-hd-info-value">高级产品经理</span></div>
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">发起日期</span><span class="pg-hd-info-value">2026年4月1日</span></div>
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">状态</span><span class="pg-hd-info-value" style="color:var(--pr)">● 填写中</span></div>
-    </div>
-    <div class="pg-hd-summary">
-      <span class="sum-item">总权重: <span class="sum-val" id="sumWeight">100%</span></span>
-      <span class="sum-item">总目标数: <strong id="sumGoals" style="font-family:var(--m);font-weight:600;color:var(--c8)">7</strong></span>
-      <span id="validSummary"></span>
-    </div>
+  </div>
+  <div class="pg-hd-summary">
+    <span class="sum-item">总权重: <span class="sum-val" id="sumWeight">100%</span></span>
+    <span class="sum-item">总目标数: <strong id="sumGoals" style="font-family:var(--m);font-weight:600;color:var(--c8)">7</strong></span>
+    <span id="validSummary"></span>
   </div>
 
   <!-- Module sections -->
@@ -437,15 +446,15 @@ body.chat-open .ai-toggle{display:none}
       <span style="font:600 15px/1 var(--f);color:var(--c9)">审批流程</span>
     </div>
     <div style="padding:0">
-      <table style="width:100%;border-collapse:collapse">
+      <table id="approvalFlowTable" style="width:100%;border-collapse:collapse">
         <thead>
           <tr style="background:var(--c0)">
             <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">节点</th>
             <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">处理人</th>
-            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">流入时间</th>
-            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">流出时间</th>
             <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">状态</th>
             <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">原因/备注</th>
+            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">流入时间</th>
+            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">流出时间</th>
           </tr>
         </thead>
         <tbody>
@@ -543,12 +552,12 @@ body.chat-open .ai-toggle{display:none}
 <div class="modal-overlay" id="copyModal">
   <div class="modal">
     <div class="modal-header">
-      <span class="modal-title">复制历史目标</span>
+      <span class="modal-title" id="copyModalTitle">复制历史目标</span>
       <button class="modal-close" onclick="closeModal('copyModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="modal-body">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
-        <select class="inp" style="width:160px" id="histPeriod" onchange="renderHistTable()">
+        <select class="inp" style="width:160px" id="histPeriod" onchange="histSelected.clear();renderHistTable()">
           <option>2026年5月</option><option>2026年4月</option><option>2026年3月</option>
         </select>
         <span style="font:400 12px/1 var(--f);color:var(--c5)">选择要复制的目标</span>
@@ -585,7 +594,7 @@ body.chat-open .ai-toggle{display:none}
 <!-- ═══ INDICATOR PICKER MODAL ═══ -->
 <div class="modal-overlay" id="indicatorModal">
   <div class="modal">
-    <div class="modal-header"><span class="modal-title">选择关联指标</span><button class="modal-close" onclick="closeModal('indicatorModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="modal-header"><span class="modal-title" id="indicatorModalTitle">选择关联指标</span><button class="modal-close" onclick="closeModal('indicatorModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
     <div class="modal-body">
       <div style="margin-bottom:12px"><input class="inp" placeholder="搜索指标名称..." id="kpiSearch" oninput="filterKPI()"></div>
       <div class="kpi-cat-bar" id="kpiCatBar"></div>
@@ -606,6 +615,24 @@ body.chat-open .ai-toggle{display:none}
       <div class="ef-fi"><span class="ef-fi-l">英文</span><input class="inp" id="langEn"/></div>
     </div>
     <div class="modal-footer"><span></span><div style="display:flex;gap:8px"><button class="btn btn-s" onclick="closeModal('langModal')">取消</button><button class="btn btn-p" onclick="saveLang()">保存</button></div></div>
+  </div>
+</div>
+
+<!-- ═══ CREATE GOAL MODAL ═══ -->
+<div class="modal-overlay" id="createGoalModal">
+  <div class="modal" style="width:640px">
+    <div class="modal-header">
+      <span class="modal-title" id="createGoalTitle">新增目标</span>
+      <button class="modal-close" onclick="closeModal('createGoalModal')" aria-label="关闭"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body" id="createGoalBody"></div>
+    <div class="modal-footer">
+      <span class="modal-footer-l" id="createGoalHint"></span>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-s" onclick="closeModal('createGoalModal')">取消</button>
+        <button class="btn btn-p" onclick="confirmCreateGoal()">确定新增</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -796,8 +823,6 @@ function render(){
     }else{
       m.goals.forEach((g,gi)=>{
         const isOpen=expandedGoals.has(g.id);
-        const typeLabel=g.type==='quant'?'定量':'定性';
-        const typeClass=g.type==='quant'?'quant':'qual';
         const linked=g.linkedIndicatorId?MOCK_INDICATORS.find(k=>k.id===g.linkedIndicatorId):null;
         const isFilled=g.type==='quant'?(g.target>0&&g.challenge>0&&g.baseline>0):(g.desc&&g.desc.trim().length>0);
         h+=`<div class="goal-row" data-goal-id="${g.id}">
@@ -807,7 +832,6 @@ function render(){
             ${isOpen?`<input class="goal-name-input" id="ge_name_${g.id}" value="${g.name}" onclick="event.stopPropagation()" oninput="syncGoalFromForm('${g.id}')" />`:`<span class="goal-name">${g.name}${g.aiFilled?aiTag():''}</span>`}
             ${isOpen?`<input type="number" min="0" max="100" value="${g.weight}" onclick="event.stopPropagation()" oninput="syncGoalFromForm('${g.id}')" id="ge_weight_${g.id}" style="width:50px;font:700 13px/1 var(--m);color:var(--pr);border:1px solid var(--pr200);border-radius:var(--r1);padding:2px 4px;text-align:center;background:var(--pr50);outline:none;flex-shrink:0"  /><span style="font:700 13px/1 var(--m);color:var(--pr);margin-left:2px">%</span>`:`<span class="goal-weight" onclick="event.stopPropagation();editWeightInline('${g.id}')" style="cursor:pointer" title="点击编辑权重">${g.weight}%</span>`}
             <div class="goal-meta">
-              <span class="goal-type ${typeClass}">${typeLabel}</span>
               <div class="goal-actions">
                 <button class="goal-act del" title="删除" onclick="event.stopPropagation();deleteGoal('${g.id}',${mi})">${I.trash}</button>
               </div>
@@ -817,11 +841,11 @@ function render(){
             <div class="ge-form">
               ${g.type==='quant'?`
               <div class="ge-sec">
-                <div class="ge-row f3" style="grid-template-columns:100px 100px 100px 1fr">
-                  <div class="ge-fi"><span class="ge-fi-l">挑战值${(linked||g.aiFilled)?aiTag():''}</span><div style="display:flex;align-items:center;gap:4px"><input class="inp num" id="ge_challenge_${g.id}" type="number" value="${g.challenge}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')" style="flex:1"/><span style="font:400 11px/1 var(--f);color:var(--c5);flex-shrink:0">${g.unit||''}</span></div></div>
-                  <div class="ge-fi"><span class="ge-fi-l">目标值 <span class="req">*</span>${(linked||g.aiFilled)?aiTag():''}</span><div style="display:flex;align-items:center;gap:4px"><input class="inp num" id="ge_target_${g.id}" type="number" value="${g.target}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')" style="flex:1"/><span style="font:400 11px/1 var(--f);color:var(--c5);flex-shrink:0">${g.unit||''}</span></div></div>
-                  <div class="ge-fi"><span class="ge-fi-l">保底值</span><div style="display:flex;align-items:center;gap:4px"><input class="inp num" id="ge_baseline_${g.id}" type="number" value="${g.baseline}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')" style="flex:1"/><span style="font:400 11px/1 var(--f);color:var(--c5);flex-shrink:0">${g.unit||''}</span></div></div>
-                  <div class="ge-fi"><span class="ge-fi-l">指标描述</span><div style="font:400 11px/1.4 var(--f);color:var(--c5);padding-top:6px">${g.desc||'—'}</div></div>
+                <div class="ge-row f3" style="grid-template-columns:repeat(3,minmax(150px,180px)) minmax(240px,1fr)">
+                  <div class="ge-fi inline"><label class="ge-fi-l" for="ge_challenge_${g.id}">挑战值${(linked||g.aiFilled)?aiTag():''}：</label><div class="ge-inline-control"><input class="inp num" id="ge_challenge_${g.id}" type="number" value="${g.challenge}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')"/><span style="font:400 11px/1 var(--f);color:var(--c5);flex-shrink:0">${g.unit||''}</span></div></div>
+                  <div class="ge-fi inline"><label class="ge-fi-l" for="ge_target_${g.id}">目标值 <span class="req">*</span>${(linked||g.aiFilled)?aiTag():''}：</label><div class="ge-inline-control"><input class="inp num" id="ge_target_${g.id}" type="number" value="${g.target}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')"/><span style="font:400 11px/1 var(--f);color:var(--c5);flex-shrink:0">${g.unit||''}</span></div></div>
+                  <div class="ge-fi inline"><label class="ge-fi-l" for="ge_baseline_${g.id}">保底值：</label><div class="ge-inline-control"><input class="inp num" id="ge_baseline_${g.id}" type="number" value="${g.baseline}" ${linked?'readonly':''} oninput="syncGoalFromForm('${g.id}')"/><span style="font:400 11px/1 var(--f);color:var(--c5);flex-shrink:0">${g.unit||''}</span></div></div>
+                  <div class="ge-fi inline"><span class="ge-fi-l">计算规则：</span><div class="ge-rule-value" title="${g.ruleFormula||g.rule||'未配置'}">${g.rule||'未配置'}${g.ruleFormula?` · ${g.ruleFormula}`:''}</div></div>
                 </div>
               </div>
               `:`
@@ -868,12 +892,55 @@ function syncGoalFromForm(id){
 function toggleMod(mi){expandedMods.has(mi)?expandedMods.delete(mi):expandedMods.add(mi);render()}
 function toggleGoal(id){expandedGoals.has(id)?expandedGoals.delete(id):expandedGoals.add(id);render()}
 
+let createTargetModIdx=0;
 function addGoal(mi){
+  createTargetModIdx=mi;
+  const isQuant=mi===0;
+  document.getElementById('createGoalTitle').textContent=isQuant?'新增 KPI 定量目标':'新增 KPA 定性目标';
+  document.getElementById('createGoalHint').textContent=isQuant?'KPI 仅允许新增定量目标':'KPA 仅允许新增定性目标';
+  document.getElementById('createGoalBody').innerHTML=isQuant?`
+    <div class="create-help">本模块固定新增定量目标，保存后可继续补充或调整计算规则。</div>
+    <div class="create-grid">
+      <div class="create-field"><label for="createGoalName">名称 <span class="req">*</span></label><input class="inp" id="createGoalName" placeholder="请输入目标名称"/></div>
+      <div class="create-field"><label for="createGoalWeight">权重(%) <span class="req">*</span></label><input class="inp num" id="createGoalWeight" type="number" min="0" max="100" value="10"/></div>
+      <div class="create-grid three full">
+        <div class="create-field"><label for="createGoalChallenge">挑战值</label><input class="inp num" id="createGoalChallenge" type="number" value="110"/></div>
+        <div class="create-field"><label for="createGoalTarget">目标值 <span class="req">*</span></label><input class="inp num" id="createGoalTarget" type="number" value="100"/></div>
+        <div class="create-field"><label for="createGoalBaseline">保底值</label><input class="inp num" id="createGoalBaseline" type="number" value="80"/></div>
+      </div>
+      <div class="create-field full"><label for="createGoalDesc">指标描述</label><textarea class="inp" id="createGoalDesc" rows="4" placeholder="请输入指标定义、数据来源等说明"></textarea></div>
+    </div>`:`
+    <div class="create-help">本模块固定新增定性目标，无需选择目标类型。</div>
+    <div class="create-grid">
+      <div class="create-field"><label for="createGoalName">名称 <span class="req">*</span></label><input class="inp" id="createGoalName" placeholder="请输入目标名称"/></div>
+      <div class="create-field"><label for="createGoalWeight">权重(%) <span class="req">*</span></label><input class="inp num" id="createGoalWeight" type="number" min="0" max="100" value="10"/></div>
+      <div class="create-field full"><label for="createGoalDesc">衡量标准 <span class="req">*</span></label><textarea class="inp" id="createGoalDesc" rows="5" placeholder="请输入该定性目标的衡量标准"></textarea></div>
+    </div>`;
+  openModal('createGoalModal');
+  setTimeout(()=>document.getElementById('createGoalName')?.focus(),0);
+}
+function confirmCreateGoal(){
+  const isQuant=createTargetModIdx===0;
+  const name=document.getElementById('createGoalName').value.trim();
+  const weight=Number(document.getElementById('createGoalWeight').value);
+  const desc=document.getElementById('createGoalDesc').value.trim();
+  if(!name){showToast('请输入目标名称');return}
+  if(!Number.isFinite(weight)||weight<0||weight>100){showToast('权重需在 0% 到 100% 之间');return}
+  if(!isQuant&&!desc){showToast('请输入衡量标准');return}
   const id='g'+Date.now();
-  MODULES[mi].goals.push({id,name:'新目标',indicator:'',type:'qual',weight:10,desc:'',measure:'',measureText:'',target:1,challenge:1,baseline:1,rule:'-',ruleFormula:'',msLevels:[],linkedIndicatorId:null,i18n:{}});
-  expandedMods.add(mi);
+  const goal={id,name,indicator:'',type:isQuant?'quant':'qual',weight,desc,measure:isQuant?'梯度评分':'定性评分',measureText:'',target:1,challenge:1,baseline:1,unit:isQuant?'%':'',rule:isQuant?'标准梯度计算':'-',ruleFormula:isQuant?'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))':'',msLevels:[],linkedIndicatorId:null,i18n:{}};
+  if(isQuant){
+    goal.challenge=Number(document.getElementById('createGoalChallenge').value)||0;
+    goal.target=Number(document.getElementById('createGoalTarget').value)||0;
+    goal.baseline=Number(document.getElementById('createGoalBaseline').value)||0;
+    if(!goal.target){showToast('请输入目标值');return}
+  }
+  MODULES[createTargetModIdx].goals.push(goal);
+  expandedMods.add(createTargetModIdx);
   expandedGoals.add(id);
+  closeModal('createGoalModal');
   render();
+  showToast(isQuant?'已新增定量目标':'已新增定性目标','success');
 }
 function closeGoalTypePopup(){document.getElementById('addGoalPopup').classList.remove('show')}
 
@@ -1005,18 +1072,25 @@ function unlinkIndicator(id){
 
 // ═══ COPY MODAL ═══
 let copyTargetModIdx=0;
+function requiredGoalType(mi){return mi===0?'quant':'qual'}
+function eligibleHistoryGoals(period){
+  const required=requiredGoalType(copyTargetModIdx);
+  return (HISTORY[period]||[]).filter(g=>g.type===required);
+}
 function openCopyModal(mi){
   copyTargetModIdx=mi;
   histSelected.clear();
   document.getElementById('histPeriod').value='2026年5月';
-  document.getElementById('copyModLabel').textContent='将复制到「'+MODULES[mi].name+'」模块';
+  const typeLabel=requiredGoalType(mi)==='quant'?'定量':'定性';
+  document.getElementById('copyModalTitle').textContent='复制历史'+typeLabel+'目标';
+  document.getElementById('copyModLabel').textContent='仅显示并复制'+typeLabel+'目标到「'+MODULES[mi].name+'」模块';
   renderHistTable();
   openModal('copyModal');
 }
 
 function renderHistTable(){
   const period=document.getElementById('histPeriod').value;
-  const goals=HISTORY[period]||[];
+  const goals=eligibleHistoryGoals(period);
   let h=`<thead><tr><th><span class="chk ${histSelected.size===goals.length&&goals.length?'on':''}" onclick="toggleAllHist()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span></th><th>目标名称</th><th>模块</th><th>类型</th><th>权重</th><th>目标值</th></tr></thead><tbody>`;
   goals.forEach((g,i)=>{
     h+=`<tr onclick="toggleHistItem(${i})"><td><span class="chk ${histSelected.has(i)?'on':''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span></td><td style="font-weight:500;color:var(--c8)">${g.name}</td><td>${g.module}</td><td>${g.type==='quant'?'定量':'定性'}</td><td style="font-family:var(--m)">${g.weight}</td><td style="font-family:var(--m)">${g.target}</td></tr>`;
@@ -1029,7 +1103,7 @@ function renderHistTable(){
 function toggleHistItem(i){histSelected.has(i)?histSelected.delete(i):histSelected.add(i);renderHistTable()}
 function toggleAllHist(){
   const period=document.getElementById('histPeriod').value;
-  const goals=HISTORY[period]||[];
+  const goals=eligibleHistoryGoals(period);
   if(histSelected.size===goals.length)histSelected.clear();
   else{histSelected.clear();goals.forEach((_,i)=>histSelected.add(i))}
   renderHistTable();
@@ -1038,7 +1112,7 @@ function toggleAllHist(){
 function confirmCopy(){
   if(!histSelected.size){showToast('请至少选择一个目标');return}
   const period=document.getElementById('histPeriod').value;
-  const goals=HISTORY[period]||[];
+  const goals=eligibleHistoryGoals(period);
   const mod=MODULES[copyTargetModIdx];
   let count=0;
   histSelected.forEach(i=>{
@@ -1087,15 +1161,19 @@ document.addEventListener('click',e=>{const p=document.getElementById('addGoalPo
 let kpiPickerGoalId=null, kpiPickerModIdx=null;
 function openIndicatorPicker(goalId,mi){
   kpiPickerGoalId=goalId;kpiPickerModIdx=mi;
-  selectedKpiId=null;kpiFilterCat='全部';kpiFilterType='全部';kpiFilterNature='全部';
+  const typeLabel=requiredGoalType(mi)==='quant'?'定量':'定性';
+  document.getElementById('indicatorModalTitle').textContent=MODULES[mi].name+' · 选择'+typeLabel+'指标';
+  document.getElementById('kpiSearch').value='';
+  selectedKpiId=null;kpiFilterCat='全部';kpiFilterType=typeLabel;kpiFilterNature='全部';
   renderKpiList();
   openModal('indicatorModal');
 }
 function renderKpiList(){
   const q=(document.getElementById('kpiSearch')?.value||'').toLowerCase();
-  const allCats=MOCK_INDICATORS.map(k=>k.category);
+  const requiredType=requiredGoalType(kpiPickerModIdx)==='quant'?'定量':'定性';
+  const candidates=MOCK_INDICATORS.filter(k=>k.type===requiredType);
+  const allCats=candidates.map(k=>k.category);
   const cats=['全部',...new Set(allCats)];
-  const types=['全部','定量','定性','加减分'];
   const natures=['全部','正向','负向'];
 
   // Filter bar
@@ -1103,15 +1181,13 @@ function renderKpiList(){
   filterHtml+='<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;align-items:center">';
   filterHtml+='<span style="font:500 12px/1 var(--f);color:var(--c5);min-width:32px">分类:</span>';
   filterHtml+=cats.map(c=>{
-    const count=c==='全部'?MOCK_INDICATORS.length:allCats.filter(x=>x===c).length;
+    const count=c==='全部'?candidates.length:allCats.filter(x=>x===c).length;
     return `<span class="kpi-cat ${kpiFilterCat===c?'on':''}" onclick="kpiFilterCat='${c}';renderKpiList()">${c}<span class="kpi-cat-count">(${count})</span></span>`;
   }).join('');
   filterHtml+='</div>';
   filterHtml+='<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;align-items:center">';
   filterHtml+='<span style="font:500 12px/1 var(--f);color:var(--c5);min-width:32px">类型:</span>';
-  filterHtml+=types.map(t=>{
-    return `<span class="kpi-cat ${kpiFilterType===t?'on':''}" onclick="kpiFilterType='${t}';renderKpiList()">${t}</span>`;
-  }).join('');
+  filterHtml+=`<span class="kpi-cat on" style="cursor:default">${requiredType}</span>`;
   filterHtml+='<span style="font:500 12px/1 var(--f);color:var(--c5);min-width:32px;margin-left:8px">性质:</span>';
   filterHtml+=natures.map(n=>{
     return `<span class="kpi-cat ${kpiFilterNature===n?'on':''}" onclick="kpiFilterNature='${n}';renderKpiList()">${n}</span>`;
@@ -1119,9 +1195,8 @@ function renderKpiList(){
   filterHtml+='</div>';
   document.getElementById('kpiCatBar').innerHTML=filterHtml;
 
-  const filtered=MOCK_INDICATORS.filter(k=>{
+  const filtered=candidates.filter(k=>{
     if(kpiFilterCat!=='全部'&&k.category!==kpiFilterCat)return false;
-    if(kpiFilterType!=='全部'&&k.type!==kpiFilterType)return false;
     if(kpiFilterNature!=='全部'&&k.nature!==kpiFilterNature)return false;
     if(q&&!k.name.toLowerCase().includes(q))return false;
     return true;
@@ -1166,12 +1241,14 @@ function confirmIndicator(){
   if(!selectedKpiId){showToast('请选择一个指标');return}
   const kpi=MOCK_INDICATORS.find(k=>k.id===selectedKpiId);
   if(!kpi)return;
+  const requiredType=requiredGoalType(kpiPickerModIdx)==='quant'?'定量':'定性';
+  if(kpi.type!==requiredType){showToast(MODULES[kpiPickerModIdx].name+' 仅允许选择'+requiredType+'指标');return}
   if(kpiPickerGoalId){
     // 更新已有目标
     const d=findGoal(kpiPickerGoalId);if(!d)return;
     const g=d.goal;
     g.name=kpi.name;g.indicator=kpi.name;g.type=kpi.type==='定量'?'quant':'qual';
-    g.unit=kpi.unit;g.rule=kpi.rule;g.desc=kpi.desc;
+    g.unit=kpi.unit;g.rule=kpi.type==='定量'?'标准梯度计算':'-';g.ruleFormula=kpi.type==='定量'?'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))':'';g.desc=kpi.desc;
     g.linkedIndicatorId=kpi.id;
     closeModal('indicatorModal');
     expandedGoals.add(kpiPickerGoalId);
@@ -1184,7 +1261,7 @@ function confirmIndicator(){
       id,name:kpi.name,indicator:kpi.name,type:isQuant?'quant':'qual',
       weight:10,desc:kpi.desc,measure:isQuant?'梯度评分':'定性评分',
       target:0,challenge:0,baseline:0,unit:kpi.unit,
-      rule:kpi.rule,ruleFormula:'',msLevels:[],linkedIndicatorId:kpi.id,aiFilled:false
+      rule:isQuant?'标准梯度计算':'-',ruleFormula:isQuant?'IF(实际>=挑战,120,IF(实际>=目标,100,IF(实际>=保底,80,0)))':'',msLevels:[],linkedIndicatorId:kpi.id,aiFilled:false
     });
     expandedMods.add(mi);
     expandedGoals.add(id);
@@ -1266,9 +1343,43 @@ function showMeasureDesc(id){
   showToast((d.goal.desc||'暂无指标描述'),'info');
 }
 
+function reorderApprovalFlowCells(){
+  const table=document.getElementById('approvalFlowTable');
+  if(!table||table.dataset.reordered==='true')return;
+  table.querySelectorAll('tbody tr').forEach(row=>{
+    const cells=Array.from(row.children);
+    [0,1,4,5,2,3].forEach(index=>row.appendChild(cells[index]));
+  });
+  table.dataset.reordered='true';
+}
+
+function setupStickyHeaders(){
+  const scroller=document.querySelector('.ct');
+  const pageAction=document.querySelector('.pg-hd-top');
+  if(!scroller||!pageAction)return;
+  const syncOffset=()=>document.documentElement.style.setProperty('--page-action-h',pageAction.offsetHeight+'px');
+  const syncState=()=>{
+    const scrollerTop=scroller.getBoundingClientRect().top;
+    const moduleTop=scrollerTop+pageAction.offsetHeight;
+    document.querySelectorAll('.mod-hd').forEach(header=>{
+      const section=header.closest('.mod-section');
+      const rect=header.getBoundingClientRect();
+      const sectionRect=section.getBoundingClientRect();
+      header.classList.toggle('is-stuck',rect.top<=moduleTop+1&&sectionRect.bottom>moduleTop+header.offsetHeight);
+    });
+  };
+  syncOffset();
+  syncState();
+  scroller.addEventListener('scroll',syncState,{passive:true});
+  window.addEventListener('resize',()=>{syncOffset();syncState()},{passive:true});
+  if(window.ResizeObserver)new ResizeObserver(()=>{syncOffset();syncState()}).observe(pageAction);
+}
+
 // Initialize navigation first to create the content container
 GHR_NAV.init('perf', '目标制定·填写');
+reorderApprovalFlowCells();
 render();
+setupStickyHeaders();
 
 // ═══ AI CHAT ═══
 const AI_SHORTCUTS=[
