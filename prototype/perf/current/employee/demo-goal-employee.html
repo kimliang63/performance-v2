@@ -47,16 +47,17 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 /* Page header */
 .pg-hd{margin-bottom:16px}
 .pg-hd-top{position:sticky;top:-24px;z-index:900;display:flex;align-items:center;justify-content:space-between;min-height:56px;padding:12px 20px;margin-bottom:12px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);box-shadow:var(--shadow-card)}
+.pg-hd-main{display:flex;align-items:center;gap:16px;min-width:0}
 .pg-hd-title{font:700 20px/1.2 var(--f);color:var(--c9);letter-spacing:-.3px}
 .pg-hd-actions{display:flex;gap:8px}
-.pg-hd-summary{display:flex;align-items:center;gap:24px;padding:12px 20px;margin-bottom:16px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);box-shadow:var(--shadow-card)}
-.pg-hd-summary .sum-item{font:500 13px/1 var(--f);color:var(--c6)}
+.pg-hd-summary{display:flex;align-items:center;gap:12px;padding-left:16px;border-left:1px solid var(--c2);white-space:nowrap}
+.pg-hd-summary .sum-item{font:500 12px/1 var(--f);color:var(--c5)}
 .pg-hd-summary .sum-val{font-family:var(--m);font-weight:700;color:var(--pr)}
 .pg-hd-summary .sum-val.warn{color:var(--ro)}
 .pg-hd-summary #validSummary{display:inline}
-.pg-hd-summary .sum-err{display:inline-flex;align-items:center;gap:4px;font:500 11px/1 var(--f);color:var(--ro);background:var(--ro50);padding:3px 8px;border-radius:3px}
+.pg-hd-summary .sum-err{display:inline-flex;align-items:center;gap:3px;font:500 11px/1 var(--f);color:var(--ro);background:var(--ro50);padding:3px 6px;border-radius:3px}
 .pg-hd-summary .sum-err svg{width:12px;height:12px}
-.pg-hd-summary .sum-ok{display:inline-flex;align-items:center;gap:4px;font:500 11px/1 var(--f);color:var(--em700);background:var(--em50);padding:3px 8px;border-radius:3px}
+.pg-hd-summary .sum-ok{display:inline-flex;align-items:center;gap:3px;font:500 11px/1 var(--f);color:var(--em700)}
 .pg-hd-summary .sum-ok svg{width:12px;height:12px}
 
 /* ═══ MODULE SECTION ═══ */
@@ -142,6 +143,8 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 /* ═══ INLINE EDIT FORM ═══ */
 .goal-edit{padding:0 20px 16px 82px;display:none}
 .goal-edit.open{display:block;animation:fadeIn .2s ease}
+.goal-row.qual.is-open .goal-summary{padding-bottom:6px}
+.goal-edit.qual .ge-form{padding-top:0}
 .ge-form{padding:12px 0}
 .ge-sec{margin-bottom:14px}
 .ge-sec:last-child{margin-bottom:0}
@@ -246,6 +249,8 @@ textarea.inp{min-height:60px;resize:vertical;font-family:var(--f);line-height:1.
 
 @media (max-width:900px){
   .pg-hd-top{align-items:flex-start;gap:12px;flex-wrap:wrap}
+  .pg-hd-main{flex-wrap:wrap;gap:8px 12px}
+  .pg-hd-summary{padding-left:0;border-left:none}
   .pg-hd-actions{width:100%;justify-content:flex-end}
   .mod-hd{flex-wrap:wrap}
   .mod-hd-title{min-width:120px}
@@ -413,8 +418,13 @@ body.chat-open .ai-toggle{display:none}
 
   <!-- Sticky page title and actions -->
   <div class="pg-hd-top">
-    <div style="display:flex;align-items:center;gap:10px">
+    <div class="pg-hd-main">
       <div class="pg-hd-title">目标制定</div>
+      <div class="pg-hd-summary">
+        <span class="sum-item">权重 <span class="sum-val" id="sumWeight">100%</span></span>
+        <span class="sum-item"><strong id="sumGoals" style="font-family:var(--m);font-weight:600;color:var(--c8)">7</strong> 个目标</span>
+        <span id="validSummary"></span>
+      </div>
     </div>
     <div class="pg-hd-actions">
         <button class="btn btn-s" onclick="showToast('草稿已保存','success')">
@@ -431,12 +441,6 @@ body.chat-open .ai-toggle{display:none}
         </button>
     </div>
   </div>
-  <div class="pg-hd-summary">
-    <span class="sum-item">总权重: <span class="sum-val" id="sumWeight">100%</span></span>
-    <span class="sum-item">总目标数: <strong id="sumGoals" style="font-family:var(--m);font-weight:600;color:var(--c8)">7</strong></span>
-    <span id="validSummary"></span>
-  </div>
-
   <!-- Module sections -->
   <div id="moduleContainer"></div>
 
@@ -825,7 +829,7 @@ function render(){
         const isOpen=expandedGoals.has(g.id);
         const linked=g.linkedIndicatorId?MOCK_INDICATORS.find(k=>k.id===g.linkedIndicatorId):null;
         const isFilled=g.type==='quant'?(g.target>0&&g.challenge>0&&g.baseline>0):(g.desc&&g.desc.trim().length>0);
-        h+=`<div class="goal-row" data-goal-id="${g.id}">
+        h+=`<div class="goal-row ${g.type} ${isOpen?'is-open':''}" data-goal-id="${g.id}">
           <div class="goal-summary" onclick="toggleGoal('${g.id}')">
             <div class="goal-drag" onclick="event.stopPropagation()" title="拖拽排序"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/></svg></div>
             <div class="goal-icon" style="background:var(--pr50);color:var(--pr);font:700 12px/1 var(--m)">${gi+1}</div>
@@ -837,7 +841,7 @@ function render(){
               </div>
             </div>
           </div>
-          <div class="goal-edit ${isOpen?'open':''}">
+          <div class="goal-edit ${g.type} ${isOpen?'open':''}">
             <div class="ge-form">
               ${g.type==='quant'?`
               <div class="ge-sec">
@@ -850,7 +854,7 @@ function render(){
               </div>
               `:`
               <div class="ge-sec">
-                <div class="ge-fi"><span class="ge-fi-l">衡量标准 <span class="req">*</span></span><textarea class="inp" id="ge_desc_${g.id}" rows="4" placeholder="请输入该目标的衡量标准..." oninput="syncGoalFromForm('${g.id}')">${g.desc||''}</textarea></div>
+                <div class="ge-fi"><textarea class="inp" id="ge_desc_${g.id}" rows="4" aria-label="衡量标准" placeholder="请输入衡量标准，说明目标完成要求及判断依据" oninput="syncGoalFromForm('${g.id}')">${g.desc||''}</textarea></div>
               </div>
               `}
             </div>
@@ -887,6 +891,7 @@ function syncGoalFromForm(id){
   // 更新标题行的权重显示
   const weightSpan=document.querySelector(`[data-goal-id="${id}"] .goal-weight`);
   if(weightSpan) weightSpan.textContent='权重: '+g.weight;
+  updateTotals();
 }
 
 function toggleMod(mi){expandedMods.has(mi)?expandedMods.delete(mi):expandedMods.add(mi);render()}
@@ -968,9 +973,9 @@ function updateTotals(){
 
   const el=document.getElementById('validSummary');
   if(tw!==100){
-    el.innerHTML=`<span class="sum-err"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>总权重 ${tw}%，需等于 100%</span>`;
+    el.innerHTML=`<span class="sum-err"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>需为 100%</span>`;
   }else{
-    el.innerHTML=tg>0?`<span class="sum-ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>权重校验通过</span>`:'';
+    el.innerHTML=tg>0?`<span class="sum-ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>已校验</span>`:'';
   }
 }
 
