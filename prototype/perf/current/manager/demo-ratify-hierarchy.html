@@ -23,6 +23,23 @@
 body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
 
+/* ═══ PAGE HEADER ═══ */
+.pg-hd-top{position:sticky;top:-24px;z-index:900;display:flex;align-items:center;justify-content:space-between;min-height:56px;padding:12px 20px;margin-bottom:12px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);box-shadow:var(--shadow-card)}
+.pg-hd-main{display:flex;align-items:center;min-width:0}
+.pg-hd-title{font:700 20px/1.2 var(--f);color:var(--c9);letter-spacing:-.3px}
+.pg-hd-right{display:flex;align-items:center;gap:16px;margin-left:auto}
+.pg-hd-summary{display:flex;align-items:center;gap:12px;padding-right:16px;border-right:1px solid var(--c2);white-space:nowrap}
+.pg-hd-summary .sum-value{font:600 12px/1 var(--f);color:var(--c8)}
+.pg-hd-summary .sum-sep{font:400 12px/1 var(--f);color:var(--c3)}
+.pg-hd-actions{display:flex;align-items:center;gap:8px}
+.header-toggle svg{transition:transform .15s}
+.header-toggle[aria-expanded="false"] svg{transform:rotate(180deg)}
+.btn-sm{height:28px;padding:0 10px;font-size:12px}
+
+.dist-filters{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:12px;padding:8px 16px;display:flex;align-items:center;gap:16px}
+.filter-label{font:500 13px/1 var(--f);color:var(--c6)}
+.filter-actions{display:flex;gap:8px}
+.filter-divider{width:1px;height:20px;background:var(--c2)}
 
 /* ═══ TABLE ═══ */
 .eval-list{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden;margin-bottom:12px}
@@ -108,6 +125,30 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .dist-cond-item .delta.ok{color:var(--em700)}
 .dist-cond-item .delta.bad{color:var(--ro)}
 
+.dist-status-table{width:100%;border-collapse:collapse;table-layout:fixed}
+.dist-status-table th{padding:8px 10px;background:var(--c0);border-bottom:1px solid var(--dv);font:600 11px/1.2 var(--f);color:var(--c6);text-align:left}
+.dist-status-table td{padding:8px 10px;border-bottom:1px solid var(--dv);font:400 12px/1.35 var(--f);color:var(--c6)}
+.dist-status-table tbody tr:last-child td{border-bottom:none}
+.dist-status-table tbody tr{cursor:pointer;transition:background .12s}
+.dist-status-table tbody tr:hover,.dist-status-table tbody tr.active{background:var(--pr50)}
+.dist-grade-name{font-weight:600;color:var(--c8)}
+.dist-status{display:inline-flex;align-items:center;padding:3px 8px;border-radius:var(--r1);font:500 11px/1 var(--f);white-space:nowrap}
+.dist-status.ok{color:var(--em700);background:var(--em50)}
+.dist-status.bad{color:var(--ro);background:var(--ro50)}
+.dist-summary-line{display:flex;align-items:center;gap:0;overflow-x:auto;white-space:nowrap;font:500 12px/1 var(--f);color:var(--c6)}
+.dist-summary-item{display:inline-flex;align-items:center;gap:4px}
+.dist-summary-item+.dist-summary-item::before{content:'|';padding:0 10px;color:var(--c3);font-weight:400}
+.dist-summary-value.ok{color:var(--em700)}
+.dist-summary-value.bad{color:var(--ro)}
+
+@media (max-width:980px){
+  .pg-hd-top{align-items:flex-start;gap:12px;flex-wrap:wrap;top:-12px}
+  .pg-hd-right{width:100%;justify-content:space-between;flex-wrap:wrap}
+  .dist-filters{align-items:flex-start;flex-wrap:wrap}
+  .filter-divider{display:none}
+  .dist-grid{grid-template-columns:1fr}
+}
+
 /* ═══ AI CHAT ═══ */
 .ai-chat{position:fixed;top:52px;right:0;width:380px;height:calc(100vh - 52px);background:var(--sf);border-left:1px solid var(--dv);z-index:900;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s ease}
 body.chat-open .ai-chat{transform:translateX(0)}
@@ -185,24 +226,40 @@ body.chat-open .ai-toggle{display:none}
     <span style="color:var(--c8);font-weight:600">结果审定</span>
   </nav>
 
-  <!-- Title row -->
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-    <div>
-      <h1 style="font:700 20px/1.2 var(--f);color:var(--c9);margin:0">逐级上级审定</h1>
-    </div>
-    <div style="display:flex;gap:8px">
-      <button class="btn btn-s" onclick="showToast('导出成功','success')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        导出
-      </button>
-      <button class="btn btn-p" onclick="batchRatify()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>
-        提交
-      </button>
+  <!-- Page header -->
+  <div class="pg-hd-top">
+    <div class="pg-hd-main"><h1 class="pg-hd-title">逐级上级审定</h1></div>
+    <div class="pg-hd-right">
+      <div class="pg-hd-summary" aria-label="审定上下文"><span class="sum-value">2026年4-6月</span><span class="sum-sep">|</span><span class="sum-value">逐级上级审定</span></div>
+      <div class="pg-hd-actions">
+        <button class="btn btn-p" onclick="batchRatify()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>提交</button>
+        <button class="btn btn-s" onclick="showToast('导出成功','success')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>导出</button>
+        <button class="btn btn-s header-toggle" id="distToggleBtn" type="button" aria-expanded="true" aria-controls="distOverview" onclick="toggleDistCard()">收起<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
+      </div>
     </div>
   </div>
 
-    <!-- 等级分布 -->
+  <!-- 考核组筛选 -->
+  <div class="dist-filters" id="distFilters">
+    <span class="filter-label">考核组</span>
+    <div class="filter-actions" id="groupFilter">
+      <button class="btn btn-s btn-sm btn-active" onclick="filterGroup('全部',this)">全部</button>
+      <button class="btn btn-s btn-sm" onclick="filterGroup('产品组',this)">产品组</button>
+      <button class="btn btn-s btn-sm" onclick="filterGroup('技术组',this)">技术组</button>
+      <button class="btn btn-s btn-sm" onclick="filterGroup('设计组',this)">设计组</button>
+      <button class="btn btn-s btn-sm" onclick="filterGroup('运营组',this)">运营组</button>
+    </div>
+    <div class="filter-divider"></div>
+    <span class="filter-label">到达状态</span>
+    <div class="filter-actions" id="statusFilter">
+      <button class="btn btn-s btn-sm btn-active" onclick="filterStatus('全部',this)">全部</button>
+      <button class="btn btn-s btn-sm" onclick="filterStatus('已到达',this)">已到达</button>
+      <button class="btn btn-s btn-sm" onclick="filterStatus('未到达',this)">未到达</button>
+    </div>
+  </div>
+
+  <!-- 等级分布 -->
+  <div id="distOverview">
   <div class="dist-grid" id="distExpanded">
     <div>
       <div id="distConclusion" style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:14px 16px"></div>
@@ -210,7 +267,6 @@ body.chat-open .ai-toggle{display:none}
     <div class="dist-chart" style="display:flex;flex-direction:column">
       <div class="dist-chart-title-row">
         <div class="dist-chart-title">等级分布</div>
-        <button class="dist-collapse-btn" id="distCollapseBtn" type="button" aria-expanded="true" onclick="toggleDistCard()">收起 ▲</button>
       </div>
       <div style="display:flex;gap:16px;margin-bottom:10px;font:400 12px/1 var(--f);color:var(--c5)" id="statRow">
         <span>总人数 <b style="font-family:var(--m);font-weight:600;color:var(--c9)" id="statTotal">—</b></span>
@@ -222,30 +278,8 @@ body.chat-open .ai-toggle{display:none}
     </div>
   </div>
   <div class="dist-card-collapsed" id="distCollapsed" style="display:none" aria-hidden="true">
-    <div class="dist-collapsed-hd">
-      <span class="dist-collapsed-title">等级分布摘要</span>
-      <button class="dist-collapse-btn" id="distExpandBtn" type="button" aria-expanded="false" onclick="toggleDistCard()">展开 ▼</button>
-    </div>
-    <div class="dist-condensed" id="distCondensed"></div>
+    <div class="dist-summary-line" id="distCondensed" aria-label="等级符合情况"></div>
   </div>
-
-  <!-- 考核组筛选 -->
-  <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:12px;padding:8px 16px;display:flex;align-items:center;gap:16px">
-    <span style="font:500 13px/1 var(--f);color:var(--c6)">考核组:</span>
-    <div id="groupFilter" style="display:flex;gap:8px">
-      <button class="btn btn-s btn-sm btn-active" onclick="filterGroup('全部',this)">全部</button>
-      <button class="btn btn-s btn-sm" onclick="filterGroup('产品组',this)">产品组</button>
-      <button class="btn btn-s btn-sm" onclick="filterGroup('技术组',this)">技术组</button>
-      <button class="btn btn-s btn-sm" onclick="filterGroup('设计组',this)">设计组</button>
-      <button class="btn btn-s btn-sm" onclick="filterGroup('运营组',this)">运营组</button>
-    </div>
-    <div style="width:1px;height:20px;background:var(--c2)"></div>
-    <span style="font:500 13px/1 var(--f);color:var(--c6)">到达状态:</span>
-    <div id="statusFilter" style="display:flex;gap:8px">
-      <button class="btn btn-s btn-sm btn-active" onclick="filterStatus('全部',this)">全部</button>
-      <button class="btn btn-s btn-sm" onclick="filterStatus('已到达',this)">已到达</button>
-      <button class="btn btn-s btn-sm" onclick="filterStatus('未到达',this)">未到达</button>
-    </div>
   </div>
 
   <!-- 团队成员列表 -->
@@ -259,10 +293,10 @@ body.chat-open .ai-toggle{display:none}
         <tr>
           <th>被考核人</th>
           <th>部门</th>
-          <th>职位</th>
+          <th>岗位</th>
           <th>考核组</th>
           <th>状态</th>
-          <th>审定前总分</th>
+          <th>考核得分</th>
           <th>初评等级</th>
           <th>双线上级调整等级</th>
           <th>调整等级</th>
@@ -413,22 +447,21 @@ function getFilteredMembers(){
   });
 }
 
+function getDistributionMembers(){
+  return MEMBERS.filter(function(m){return currentGroup==='全部'||m.group===currentGroup;});
+}
+
 
 
 function renderDist(){
   window._selectedBar=null;
-  var filtered=MEMBERS.filter(function(m){
-    if(currentGroup!=='全部'&&m.group!==currentGroup)return false;
-    if(currentStatus==='已到达'&&!m.reached)return false;
-    if(currentStatus==='未到达'&&m.reached)return false;
-    return true;
-  });
+  var filtered=getDistributionMembers();
   var total=filtered.length;
   var labels=GRADE_OPTIONS;
   var beforeData=labels.map(function(g){return filtered.filter(function(m){return m.grade===g;}).length;});
   var afterData=labels.map(function(g){return filtered.filter(function(m){return(m.ratifyGrade||m.grade)===g;}).length;});
   var forceMin=FORCE_DIST.map(function(r){return Math.ceil(total*r.min/100);});
-  var forceMax=FORCE_DIST.map(function(r){return Math.ceil(total*r.max/100);});
+  var forceMax=FORCE_DIST.map(function(r){return Math.floor(total*r.max/100);});
 
   if(window._distChart)window._distChart.destroy();
   var ctx=document.getElementById('chartDist');
@@ -486,19 +519,20 @@ function renderDist(){
 }
 
 function renderDistRules(){
-  var filtered=getFilteredMembers();
+  var filtered=getDistributionMembers();
   var total=filtered.length;
   var allGrades=[];
   var hasViolation=false;
   FORCE_DIST.forEach(function(r){
     var count=filtered.filter(function(m){return(m.ratifyGrade||m.grade)===r.grade;}).length;
-    var pct=total>0?Math.round(count/total*100):0;
-    var ok=pct>=r.min&&pct<=r.max;
+    var minCount=Math.ceil(total*r.min/100);
+    var maxCount=Math.floor(total*r.max/100);
+    var ok=count>=minCount&&count<=maxCount;
     if(!ok)hasViolation=true;
-    var need=0,dir='ok';
-    if(pct<r.min){need=Math.ceil(total*r.min/100)-count;dir='out';}
-    else if(pct>r.max){need=count-Math.ceil(total*r.max/100);dir='in';}
-    allGrades.push({grade:r.grade,count:count,min:r.min,max:r.max,ok:ok,dir:dir,need:need});
+    var delta='符合';
+    if(count<minCount)delta='+'+(minCount-count);
+    else if(count>maxCount)delta='-'+(count-maxCount);
+    allGrades.push({grade:r.grade,count:count,minCount:minCount,maxCount:maxCount,ok:ok,delta:delta});
   });
   var el=document.getElementById('distConclusion');
   if(!el)return;
@@ -513,40 +547,16 @@ function renderDistRules(){
   html+='</div>';
   html+='<div style="border-top:1px solid var(--dv);padding-top:12px">';
   html+='<div style="font:600 12px/1 var(--f);color:var(--c8);margin-bottom:10px">各等级状态</div>';
-  html+='<div style="display:flex;flex-direction:column;gap:4px">';
+  html+='<table class="dist-status-table"><colgroup><col style="width:30%"><col style="width:24%"><col style="width:18%"><col></colgroup><thead><tr><th>等级</th><th>要求</th><th>实际</th><th>是否符合</th></tr></thead><tbody>';
   allGrades.forEach(function(d){
-    var isActive=currentGrade===d.grade;
-    var bg=isActive?'var(--pr50)':'transparent';
-    var br=isActive?'1px solid var(--pr200)':'1px solid transparent';
-    var icon=d.ok?'✅':'❌';
-    var statusText=d.ok?'符合':'';
-    var statusColor=d.ok?'var(--em700)':'var(--ro)';
-    var detail='';
-    if(!d.ok){
-      detail=d.dir==='out'?'需调入'+d.need+'人':'需调出'+d.need+'人';
-    }
-    html+='<div style="display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:var(--r1);background:'+bg+';border:'+br+';cursor:pointer;font:400 12px/1.4 var(--f);color:var(--c7)" onclick="filterByConclusion(\''+d.grade+'\')">';
-    html+='<span style="font-size:13px;flex-shrink:0">'+icon+'</span>';
-    html+='<span style="font-weight:600;color:var(--c8);min-width:56px;flex-shrink:0">'+d.grade+'</span>';
-    html+='<span style="color:var(--c5);flex-shrink:0">要求'+d.min+'–'+d.max+'人</span>';
-    html+='<span style="color:var(--c5);flex-shrink:0">实际'+d.count+'人</span>';
-    html+='<span style="font-weight:500;color:'+statusColor+';margin-left:auto;flex-shrink:0">'+statusText+detail+'</span>';
-    html+='</div>';
+    var required=d.minCount===d.maxCount?d.minCount+'人':d.minCount+'–'+d.maxCount+'人';
+    var statusText=d.ok?'符合':'不符合（'+d.delta+'）';
+    html+='<tr class="'+(currentGrade===d.grade?'active':'')+'" onclick="filterByConclusion(\''+d.grade+'\')"><td><span class="dist-grade-name">'+d.grade+'</span></td><td>'+required+'</td><td>'+d.count+'人</td><td><span class="dist-status '+(d.ok?'ok':'bad')+'">'+statusText+'</span></td></tr>';
   });
-  html+='</div></div>';
+  html+='</tbody></table></div>';
   el.innerHTML=html;
   var condensed=allGrades.map(function(d){
-    var minCount=Math.ceil(total*d.min/100);
-    var maxCount=Math.floor(total*d.max/100);
-    var summaryOk=d.count>=minCount&&d.count<=maxCount;
-    var delta=summaryOk?'无需调整':(d.count<minCount?'需 +'+(minCount-d.count)+'人':'需 -'+(d.count-maxCount)+'人');
-    var required=minCount===maxCount?minCount+'人':minCount+'–'+maxCount+'人';
-    return '<div class="dist-cond-item">'
-      +'<span class="name">'+d.grade+'</span>'
-      +'<span class="current">当前 '+d.count+'人</span>'
-      +'<span class="required">要求 '+required+'</span>'
-      +'<span class="delta '+(summaryOk?'ok':'bad')+'">'+delta+'</span>'
-      +'</div>';
+    return '<span class="dist-summary-item"><span>'+d.grade+'：</span><span class="dist-summary-value '+(d.ok?'ok':'bad')+'">'+d.delta+'</span></span>';
   }).join('');
   var condensedEl=document.getElementById('distCondensed');
   if(condensedEl)condensedEl.innerHTML=condensed;
@@ -624,10 +634,11 @@ function renderPager(total,totalPages){
 }
 
 function updateStats(filtered){
-  var total=filtered.length;
-  var reached=filtered.filter(function(m){return m.reached;}).length;
+  var distributionMembers=getDistributionMembers();
+  var total=distributionMembers.length;
+  var reached=distributionMembers.filter(function(m){return m.reached;}).length;
   var unreached=total-reached;
-  var pending=filtered.filter(function(m){return m.reached&&!m.ratifyGrade;}).length;
+  var pending=distributionMembers.filter(function(m){return m.reached&&!m.ratifyGrade;}).length;
   document.getElementById('statTotal').textContent=total;
   document.getElementById('statReached').textContent=reached;
   document.getElementById('statUnreached').textContent=unreached;
@@ -638,8 +649,10 @@ function updateStats(filtered){
   if(hdTotal)hdTotal.textContent=total+'人';
   if(hdReached)hdReached.textContent=reached+'人';
   if(hdPending)hdPending.textContent=pending+'人';
+  var listReached=filtered.filter(function(m){return m.reached;}).length;
+  var listUnreached=filtered.length-listReached;
   var summary=document.getElementById('listSummary');
-  if(summary)summary.textContent='已到达 '+reached+'人 · 未到达 '+unreached+'人';
+  if(summary)summary.textContent='已到达 '+listReached+'人 · 未到达 '+listUnreached+'人';
 }
 
 function setActiveBtn(containerId,btn){
@@ -674,9 +687,9 @@ function goPage(p){
 }
 function setRatifyStar(el,idx,v){
   var row=el.parentElement;
+  var grade=GRADE_OPTIONS[7-v];
   row.querySelectorAll('.star').forEach(function(s){s.classList.remove('sel');s.style.color='';});
   row.querySelectorAll('.star').forEach(function(s){if(parseInt(s.dataset.v)<=v){s.classList.add('sel');s.style.color=GRADE_COLORS[grade];}});
-  var grade=GRADE_OPTIONS[7-v];
   MEMBERS[idx].ratifyGrade=grade;
   var label=row.parentElement.querySelector('.star-label');
   label.textContent=grade;
@@ -722,14 +735,16 @@ function toggleDistCard(){
   isDistCollapsed=!isDistCollapsed;
   var expanded=document.getElementById('distExpanded');
   var collapsed=document.getElementById('distCollapsed');
-  var collapseBtn=document.getElementById('distCollapseBtn');
-  var expandBtn=document.getElementById('distExpandBtn');
+  var filters=document.getElementById('distFilters');
+  var toggleBtn=document.getElementById('distToggleBtn');
   expanded.style.display=isDistCollapsed?'none':'grid';
   expanded.setAttribute('aria-hidden',isDistCollapsed?'true':'false');
+  filters.style.display=isDistCollapsed?'none':'flex';
+  filters.setAttribute('aria-hidden',isDistCollapsed?'true':'false');
   collapsed.style.display=isDistCollapsed?'block':'none';
   collapsed.setAttribute('aria-hidden',isDistCollapsed?'false':'true');
-  collapseBtn.setAttribute('aria-expanded',isDistCollapsed?'false':'true');
-  expandBtn.setAttribute('aria-expanded',isDistCollapsed?'false':'true');
+  toggleBtn.setAttribute('aria-expanded',isDistCollapsed?'false':'true');
+  toggleBtn.firstChild.nodeValue=isDistCollapsed?'展开':'收起';
   if(!isDistCollapsed&&window._distChart){
     setTimeout(function(){window._distChart.resize();},50);
   }
