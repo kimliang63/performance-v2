@@ -62,7 +62,9 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .eval-score{font:600 13px/1 var(--m)}.eval-score.high{color:var(--em700)}.eval-score.mid{color:var(--pr)}.eval-score.low{color:var(--ac700)}.eval-score.zero{color:var(--ro)}
 .quant-score{display:inline-flex;align-items:baseline;gap:2px;font:700 18px/1 var(--m);color:var(--pr)}
 .quant-completion{padding-left:8px!important;padding-right:8px!important}
-.quant-completion input{display:block;margin-left:auto}
+.quant-input-wrap{display:flex;align-items:center;justify-content:flex-end;gap:4px}
+.quant-input-wrap input{display:block;margin-left:0}
+.quant-unit{flex-shrink:0;font:500 12px/1 var(--m);color:var(--c5)}
 .quant-score-cell{padding-left:8px!important;padding-right:8px!important}
 .eval-tag{display:inline-block;padding:2px 8px;border-radius:3px;font:500 11px/1 var(--f)}
 .eval-tag.excellent{background:var(--em50);color:var(--em700)}
@@ -377,8 +379,8 @@ function renderModuleContainer(){
       '<span class="eval-mod-name" id="eval_module_'+mi+'">'+mod.name+'</span></div>'+
       '<div class="eval-mod-stats"><span class="eval-mod-weight">'+mod.weight+'%</span><span class="eval-mod-count">'+mod.goals.length+' 个目标</span></div>'+
       '</div>'+
-      '<div class="eval-module-table'+(isQuantModule?' quant-table':'')+'"><table><colgroup>'+(isQuantModule?'<col style="width:20%"><col style="width:8%"><col><col style="width:88px"><col style="width:64px">':'<col style="width:20%"><col style="width:8%"><col style="width:32%"><col style="width:22%"><col style="width:18%">')+'</colgroup>'+
-      '<thead><tr><th>指标名称</th><th>权重</th><th>目标 / 评价标准</th><th>'+(isQuantModule?'完成值（%）':'自评描述')+'</th><th>'+(isQuantModule?'得分':'评价结果')+'</th></tr></thead><tbody>';
+      '<div class="eval-module-table'+(isQuantModule?' quant-table':'')+'"><table><colgroup>'+(isQuantModule?'<col style="width:20%"><col style="width:8%"><col><col style="width:104px"><col style="width:64px">':'<col style="width:20%"><col style="width:8%"><col><col style="width:22%"><col style="width:150px">')+'</colgroup>'+
+      '<thead><tr><th>指标名称</th><th>权重</th><th>衡量标准</th><th>'+(isQuantModule?'完成值':'完成情况')+'</th><th>'+(isQuantModule?'得分':'评价结果')+'</th></tr></thead><tbody>';
     mod.goals.forEach(function(g,gi){
       var isQuant=g.type==='quant';
       html+='<tr>'+
@@ -386,11 +388,11 @@ function renderModuleContainer(){
         '<td><span class="eval-weight">'+g.weight+'%</span></td>';
       if(isQuant){
         html+='<td class="measure-cell" style="font:400 12px/1.6 var(--f);color:var(--c6)">'+g.desc+'<br>挑战值: <span style="font-family:var(--m);color:var(--c7)">'+g.challenge+g.unit+'</span> / 目标值: <span style="font-family:var(--m);color:var(--c7)">'+g.target+g.unit+'</span></td>';
-        html+='<td class="completion-cell quant-completion"><input class="edit-cell" type="number" id="completed_'+mi+'_'+gi+'" aria-label="'+g.name+'完成值" placeholder="输入完成值" oninput="updateCompleted('+mi+','+gi+')"></td>';
+        html+='<td class="completion-cell quant-completion"><div class="quant-input-wrap"><input class="edit-cell" type="number" id="completed_'+mi+'_'+gi+'" aria-label="'+g.name+'完成值" placeholder="输入完成值" oninput="updateCompleted('+mi+','+gi+')"><span class="quant-unit">'+g.unit+'</span></div></td>';
         html+='<td id="score_'+mi+'_'+gi+'" class="eval-score score-cell quant-score-cell">—</td>';
       }else{
         html+='<td class="measure-cell" style="font:400 12px/1.6 var(--f);color:var(--c6)">'+g.measureDesc+'</td>';
-        html+='<td class="completion-cell"><textarea class="edit-cell-sm" id="completed_'+mi+'_'+gi+'" aria-label="'+g.name+'自评描述" placeholder="描述完成情况…" oninput="updateCompleted('+mi+','+gi+')">'+g.completed+'</textarea></td>';
+        html+='<td class="completion-cell"><textarea class="edit-cell-sm" id="completed_'+mi+'_'+gi+'" aria-label="'+g.name+'完成情况" placeholder="描述完成情况…" oninput="updateCompleted('+mi+','+gi+')">'+g.completed+'</textarea></td>';
         html+='<td class="score-cell"><div class="star-rating" id="stars_'+mi+'_'+gi+'" data-value="'+(g.stars||0)+'"><div class="star-row">';
         for(var si=1;si<=5;si++){
           html+='<span class="star'+(si<=(g.stars||0)?' active':'')+'" data-v="'+si+'" onclick="setStar(this,'+mi+','+gi+','+si+')" onmouseenter="starHover(this,1)" onmouseleave="starHover(this,0)">★</span>';
