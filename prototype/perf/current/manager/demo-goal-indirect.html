@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HR ONE - 目标审批·双线上级</title>
+<title>HR ONE - 目标审批 - 双线上级</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -26,6 +26,11 @@
 body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
 
+/* Flow badge */
+.flow-badge{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:var(--r1);background:var(--pr50);border:1px solid var(--pr200);font:500 12px/1 var(--f);color:var(--pr)}
+.flow-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--pr);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
 /* Header */
 .hdr{height:52px;background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:1100}
 .hdr-l{display:flex;align-items:center;gap:14px}
@@ -36,10 +41,6 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .hdr-sep{width:1px;height:20px;background:var(--c2);margin:0 2px}
 .hdr-r{margin-left:auto;display:flex;align-items:center;gap:10px}
 .avatar{width:30px;height:30px;border-radius:50%;background:var(--vi);display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--f);color:#FFF}
-
-.flow-badge{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:var(--r1);background:var(--pr50);border:1px solid var(--pr200);font:500 12px/1 var(--f);color:var(--pr)}
-.flow-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--pr);animation:pulse 2s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
 .breadcrumb{display:flex;align-items:center;gap:4px;font:500 12px/1 var(--f);color:var(--c5);margin-bottom:12px}
 .breadcrumb a{color:var(--c5);text-decoration:none;transition:color .12s}
@@ -52,12 +53,15 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 /* Page header */
 .pg-hd{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:16px}
 .pg-hd-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.pg-hd-title{font:700 20px/1.2 var(--f);color:var(--c9)}
+.pg-hd-title{font:700 20px/1.2 var(--f);color:var(--c9);letter-spacing:-.3px}
 .pg-hd-actions{display:flex;gap:8px}
-.pg-hd-info{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 24px;font:400 13px/1 var(--f);color:var(--c5);padding:12px 16px;background:var(--c0);border-radius:var(--r2)}
+.pg-hd-info{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 24px;font:400 13px/1 var(--f);color:var(--c5);margin-bottom:12px;padding:12px 16px;background:var(--c0);border-radius:var(--r2)}
 .pg-hd-info-item{display:flex;flex-direction:column;gap:2px}
 .pg-hd-info-label{font:400 11px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px}
 .pg-hd-info-value{font:500 13px/1.3 var(--f);color:var(--c8)}
+.pg-hd-summary{display:flex;align-items:center;gap:24px;padding-top:12px;border-top:1px solid var(--dv)}
+.pg-hd-summary .sum-item{font:500 13px/1 var(--f);color:var(--c6)}
+.pg-hd-summary .sum-val{font-family:var(--m);font-weight:700;color:var(--pr)}
 
 /* Buttons */
 .btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
@@ -70,11 +74,15 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .btn-danger:hover{background:var(--ro50);border-color:var(--ro)}
 .btn-ac{background:var(--sf);color:var(--ac700);border:1px solid var(--ac100)}
 .btn-ac:hover{background:var(--ac50);border-color:var(--ac)}
+.btn-o{background:var(--sf);color:var(--pr);border:1px solid var(--pr200)}
+.btn-o:hover{background:var(--pr50);border-color:var(--pr)}
+.btn-sm{height:28px;padding:0 10px;font-size:12px}
+.btn-sm svg{width:12px;height:12px}
 
 /* Module section */
 .mod-section{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden;border:1px solid var(--c2)}
 .mod-section.em{}
-.mod-hd{display:flex;align-items:center;padding:14px 20px;gap:12px;cursor:pointer;user-select:none;transition:background .12s}
+.mod-hd{display:flex;align-items:center;padding:14px 20px;cursor:pointer;user-select:none;transition:background .12s;gap:12px}
 .mod-hd:hover{background:var(--c0)}
 .mod-hd-icon{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#FFF}
 .mod-hd-icon svg{width:13px;height:13px;color:#FFF}
@@ -94,23 +102,18 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .goal-row:last-child{border-bottom:none}
 .goal-summary{display:flex;align-items:center;padding:14px 20px;gap:10px;cursor:pointer}
 .goal-drag{color:var(--c3);cursor:grab;flex-shrink:0;display:flex;align-items:center;user-select:none}
-.goal-drag:active{cursor:grabbing;color:var(--pr)}
 .goal-drag svg{width:14px;height:14px}
 .goal-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.goal-icon svg{width:14px;height:14px}
 .goal-icon.pr{background:var(--pr50);color:var(--pr)}
 .goal-icon.em{background:var(--em50);color:var(--em)}
 .goal-name{flex:1;font:600 14px/1.3 var(--f);color:var(--c9)}
-.goal-meta{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.goal-weight{font:700 14px/1 var(--m);color:var(--pr);background:var(--pr50);padding:3px 8px;border-radius:var(--r1);flex-shrink:0}
 .goal-type{font:500 11px/1 var(--f);padding:2px 7px;border-radius:3px;background:var(--c1);color:var(--c6)}
 .goal-type.quant{background:var(--pr50);color:var(--pr)}
 .goal-type.qual{background:var(--vi50);color:var(--vi)}
-.goal-weight{font:700 14px/1 var(--m);color:var(--pr);background:var(--pr50);padding:3px 8px;border-radius:var(--r1);flex-shrink:0}
-.goal-chevron{width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:var(--c4);transition:transform .25s;flex-shrink:0}
-.goal-chevron.open{transform:rotate(180deg)}
-.goal-chevron svg{width:14px;height:14px}
+.goal-actions{display:flex;align-items:center;gap:4px}
 
-/* Goal detail - read only */
+/* Goal edit detail */
 .goal-edit{padding:0 20px 16px 82px;display:none}
 .goal-edit.open{display:block;animation:fadeIn .2s ease}
 .ge-form{padding:12px 0}
@@ -120,18 +123,29 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .ge-sec-title::before{content:'';width:3px;height:12px;background:var(--pr);border-radius:2px;flex-shrink:0}
 .ge-sec-title svg{width:13px;height:13px;color:var(--pr)}
 .ge-row{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px}
-.ge-row.f3{grid-template-columns:1fr 1fr 1fr}
-.ge-row .full{grid-column:1/-1}
+.ge-row.f3{grid-template-columns:100px 100px 100px}
 .ge-fi{display:flex;flex-direction:column;gap:3px}
-.ge-fi-l{font:400 11px/1 var(--f);color:var(--c5)}
-.ge-fi-v{font:500 13px/1.4 var(--f);color:var(--c8)}
-.ge-fi-v.mono{font-family:var(--m)}
+.ge-fi-l{font:400 11px/1 var(--f);color:var(--c5);display:flex;align-items:center;gap:4px}
+.ge-fi-val{font:500 13px/1.4 var(--f);color:var(--c8);padding:7px 0}
 .ge-linked{display:flex;align-items:center;gap:4px;padding:5px 8px;background:var(--pr50);border:1px solid var(--pr200);border-radius:var(--r1);font:500 12px/1 var(--f);color:var(--pr)}
 .ge-linked svg{width:12px;height:12px;flex-shrink:0}
-.ge-rule-box{margin-top:8px;padding:8px 10px;background:var(--c0);border-radius:var(--r1)}
-.ge-rule-box code{font:400 11px/1.5 var(--m);color:var(--c8);white-space:pre-wrap;word-break:break-all}
-.ge-rule-lbl{font:500 10px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
-
+.ge-quant-grid{display:grid;grid-template-columns:repeat(3,max-content) minmax(280px,1fr);gap:10px 28px;align-items:start}
+.ge-inline-pair{display:flex;align-items:baseline;gap:4px;min-height:30px;color:var(--c8);font:400 13px/1.5 var(--f)}
+.ge-inline-pair .label{color:var(--c5);font-size:12px;white-space:nowrap}
+.ge-inline-pair .value{font-weight:500;color:var(--c8)}
+.ge-inline-pair .mono{font-family:var(--m)}
+.measure-box{min-height:88px;padding:10px 12px;border:1px solid var(--c2);border-radius:var(--r1);background:var(--c0);font:400 13px/1.65 var(--f);color:var(--c8);white-space:pre-wrap}
+.flow-table{width:100%;border-collapse:collapse}
+.flow-table th{padding:10px 16px;background:var(--c0);border-bottom:1px solid var(--dv);font:600 11px/1 var(--f);color:var(--c5);text-align:left;letter-spacing:.5px}
+.flow-table td{padding:12px 16px;border-bottom:1px solid var(--dv);font:400 13px/1.4 var(--f);color:var(--c6);vertical-align:middle}
+.flow-table tr:last-child td{border-bottom:0}
+.flow-node,.flow-person{display:flex;align-items:center;gap:7px}
+.flow-dot{width:8px;height:8px;border-radius:50%;background:var(--c3);flex-shrink:0}
+.flow-dot.done{background:var(--em)}.flow-dot.current{background:var(--pr)}
+.flow-avatar{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--c1);color:var(--c5);font:600 10px/1 var(--f)}
+.flow-avatar.done{background:var(--em);color:#fff}.flow-avatar.current{background:var(--pr);color:#fff}
+.flow-status{display:inline-flex;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f)}
+.flow-status.done{background:var(--em50);color:var(--em700)}.flow-status.current{background:var(--pr50);color:var(--pr)}.flow-status.wait{background:var(--c1);color:var(--c5)}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
 /* Approval comment */
@@ -146,9 +160,9 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .toast.error{background:var(--ro);color:#FFF}
 
 /* Modal */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:2000;align-items:center;justify-content:center}
-.modal-overlay.on{display:flex}
-.modal{background:var(--sf);border-radius:var(--r3);padding:24px;width:420px;box-shadow:var(--shadow-modal)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:2000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.on{opacity:1;pointer-events:all}
+.modal{background:var(--sf);border-radius:var(--r4);box-shadow:var(--shadow-modal);padding:24px;width:420px}
 .modal-t{font:600 16px/1 var(--f);color:var(--c9);margin-bottom:12px}
 .modal-desc{font:400 13px/1.5 var(--f);color:var(--c6);margin-bottom:12px}
 .modal textarea{width:100%;height:80px;border:1px solid var(--c2);border-radius:var(--r1);padding:10px 12px;font:400 13px/1.5 var(--f);resize:vertical;outline:none;font-family:inherit}
@@ -168,12 +182,8 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
     <span style="font:500 13px/1 var(--f);color:var(--c5)">绩效工作台</span>
   </div>
   <div class="hdr-r">
-    <div class="flow-badge">
-      <span class="dot"></span>
-      双线上级审批
-    </div>
-    <span style="font:500 12px/1 var(--f);color:var(--c5)">刘VP - VP</span>
-    <div class="avatar">李</div>
+    <span style="font:500 12px/1 var(--f);color:var(--c5)">刘VP - 产品VP</span>
+    <div class="avatar">刘</div>
   </div>
 </div>
 
@@ -188,145 +198,52 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 
   <div class="pg-hd">
     <div class="pg-hd-top">
-      <div class="pg-hd-title">目标审批·双线上级</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="pg-hd-title">目标审批·双线上级</div>
+        <span class="flow-badge"><span class="dot"></span>双线上级审批</span>
+      </div>
       <div class="pg-hd-actions">
-        <button class="btn btn-ac" onclick="showDelegateModal()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          转交
-        </button>
-        <button class="btn btn-danger" onclick="showRejectModal()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          退回
-        </button>
-        <button class="btn btn-p" onclick="approveGoal()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          批准
-        </button>
+        <button class="btn btn-s" onclick="showRejectModal()">驳回</button>
+        <button class="btn btn-p" onclick="approveGoal()">提交</button>
       </div>
     </div>
     <div class="pg-hd-info">
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">申请人</span><span class="pg-hd-info-value">张明</span></div>
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">部门</span><span class="pg-hd-info-value">产品部</span></div>
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">岗位</span><span class="pg-hd-info-value">高级产品经理</span></div>
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">提交时间</span><span class="pg-hd-info-value">2026-06-10</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">考核方案</span><span class="pg-hd-info-value">产品部2026年6月绩效考核</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">考核周期</span><span class="pg-hd-info-value">2026年6月</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">被评人</span><span class="pg-hd-info-value">张明</span></div>
+    </div>
+    <div class="pg-hd-summary">
+      <span class="sum-item">总权重: <span class="sum-val">100%</span></span>
+      <span class="sum-item">总目标数: <strong>7</strong></span>
     </div>
   </div>
 
   <div id="moduleContainer"></div>
 
-  <div class="approval-box">
-    <div style="padding:14px 20px;border-bottom:1px solid var(--dv)">
-      <div style="font:600 14px/1 var(--f);color:var(--c8)">审批意见</div>
-    </div>
-    <div style="padding:16px 20px">
-      <textarea id="approvalComment" placeholder="请输入审批意见..."></textarea>
-    </div>
-  </div>
-
   <!-- 审批流程 -->
   <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-top:16px;overflow:hidden">
     <div style="padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between">
       <span style="font:600 15px/1 var(--f);color:var(--c9)">审批流程</span>
-      <span style="font:400 12px/1 var(--f);color:var(--c5)">员工制定流程</span>
     </div>
-    <div style="padding:0">
-      <table style="width:100%;border-collapse:collapse">
-        <thead>
-          <tr style="background:var(--c0)">
-            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">节点</th>
-            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">处理人</th>
-            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">流入时间</th>
-            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">流出时间</th>
-            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">状态</th>
-            <th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px">原因/备注</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr style="background:var(--pr50)">
-            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c8);border-bottom:1px solid var(--dv)">
-              <div style="display:flex;align-items:center;gap:6px">
-                <span style="width:8px;height:8px;border-radius:50%;background:var(--pr);flex-shrink:0"></span>
-                目标填写
-              </div>
-            </td>
-            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)">
-              <div style="display:flex;align-items:center;gap:6px">
-                <span style="width:22px;height:22px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">张</span>
-                <span style="font:400 13px/1 var(--f);color:var(--c8)">张明</span>
-              </div>
-            </td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c7);border-bottom:1px solid var(--dv)">2026-06-01 09:00</td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
-            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)">
-              <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)">
-                <span style="width:6px;height:6px;border-radius:50%;background:var(--pr);animation:pulse 2s ease-in-out infinite"></span>
-                处理中
-              </span>
-            </td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c5);border-bottom:1px solid var(--dv)">当前节点</td>
-          </tr>
-          <tr>
-            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c6);border-bottom:1px solid var(--dv)">
-              <div style="display:flex;align-items:center;gap:6px">
-                <span style="width:8px;height:8px;border-radius:50%;background:var(--c3);flex-shrink:0"></span>
-                直属上级审批
-              </div>
-            </td>
-            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)">
-              <div style="display:flex;align-items:center;gap:6px">
-                <span style="width:22px;height:22px;border-radius:50%;background:var(--c1);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:var(--c5);flex-shrink:0">李</span>
-                <span style="font:400 13px/1 var(--f);color:var(--c6)">刘VP</span>
-              </div>
-            </td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
-            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)">
-              <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--c1);color:var(--c5)">待处理</span>
-            </td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
-          </tr>
-          <tr>
-            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c6);border-bottom:1px solid var(--dv)">
-              <div style="display:flex;align-items:center;gap:6px">
-                <span style="width:8px;height:8px;border-radius:50%;background:var(--c3);flex-shrink:0"></span>
-                间接上级审批
-              </div>
-            </td>
-            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)">
-              <div style="display:flex;align-items:center;gap:6px">
-                <span style="width:22px;height:22px;border-radius:50%;background:var(--c1);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:var(--c5);flex-shrink:0">李</span>
-                <span style="font:400 13px/1 var(--f);color:var(--c6)">刘VP</span>
-              </div>
-            </td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
-            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)">
-              <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--c1);color:var(--c5)">待处理</span>
-            </td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);border-bottom:1px solid var(--dv)">—</td>
-          </tr>
-          <tr>
-            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c6)">
-              <div style="display:flex;align-items:center;gap:6px">
-                <span style="width:8px;height:8px;border-radius:50%;background:var(--c3);flex-shrink:0"></span>
-                HR确认
-              </div>
-            </td>
-            <td style="padding:12px 16px">
-              <div style="display:flex;align-items:center;gap:6px">
-                <span style="width:22px;height:22px;border-radius:50%;background:var(--c1);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:var(--c5);flex-shrink:0">赵</span>
-                <span style="font:400 13px/1 var(--f);color:var(--c6)">赵敏</span>
-              </div>
-            </td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4)">—</td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4)">—</td>
-            <td style="padding:12px 16px">
-              <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--c1);color:var(--c5)">待处理</span>
-            </td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4)">—</td>
-          </tr>
-        </tbody>
-      </table>
+    <table class="flow-table">
+      <thead><tr><th>节点</th><th>处理人</th><th>状态</th><th>原因/备注</th><th>流入时间</th><th>流出时间</th></tr></thead>
+      <tbody>
+        <tr><td><div class="flow-node"><span class="flow-dot done"></span>目标填写</div></td><td><div class="flow-person"><span class="flow-avatar done">张</span>张明</div></td><td><span class="flow-status done">已完成</span></td><td>目标已提交</td><td>2026-06-01 09:00</td><td>2026-06-01 11:30</td></tr>
+        <tr style="background:var(--pr50)"><td><div class="flow-node"><span class="flow-dot current"></span>双线上级审批</div></td><td><div class="flow-person"><span class="flow-avatar current">刘</span>刘VP</div></td><td><span class="flow-status current">处理中</span></td><td>当前节点</td><td>2026-06-01 11:30</td><td>—</td></tr>
+        <tr><td><div class="flow-node"><span class="flow-dot"></span>直线上级审批</div></td><td><div class="flow-person"><span class="flow-avatar">王</span>王总监</div></td><td><span class="flow-status wait">待处理</span></td><td>—</td><td>—</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal-overlay" id="approveModal">
+  <div class="modal">
+    <div class="modal-t">提交审批</div>
+    <div class="modal-desc">请输入审批意见，提交后目标将进入直线上级审批节点。</div>
+    <textarea id="approvalComment" placeholder="请输入审批意见..."></textarea>
+    <div class="modal-btns">
+      <button class="btn btn-s" onclick="closeModal('approveModal')">取消</button>
+      <button class="btn btn-p" onclick="confirmApprove()">确认提交</button>
     </div>
   </div>
 </div>
@@ -339,18 +256,6 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
     <div class="modal-btns">
       <button class="btn btn-s" onclick="closeModal('rejectModal')">取消</button>
       <button class="btn btn-danger" onclick="confirmReject()">确认退回</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="delegateModal">
-  <div class="modal">
-    <div class="modal-t">转交审批</div>
-    <div class="modal-desc">将此审批任务转交给其他管理者。</div>
-    <textarea id="delegateReason" placeholder="请输入转交原因..."></textarea>
-    <div class="modal-btns">
-      <button class="btn btn-s" onclick="closeModal('delegateModal')">取消</button>
-      <button class="btn btn-ac" onclick="confirmDelegate()">确认转交</button>
     </div>
   </div>
 </div>
@@ -372,12 +277,8 @@ const MODULES=[
     {id:'g5',name:'【产品设计】日常滚动需求响应',indicator:'日常需求响应',type:'qual',weight:10,aiFilled:true,desc:'根据业务日会需求优先级，滚动响应日常需求，输出产品解决方案，计划事项如下：\n05/18 已完成GOFO6月双周上半月迭代需求评审：费控系统对接需求、签字报表支持按薪酬制度区分\n06/12 完成GOFO6月双周上半月迭代需求验收',measure:'定性评分',target:1,challenge:1,baseline:1,rule:'-',ruleFormula:'',msLevels:[{level:'符合预期',color:'var(--em)',score:'100分',condition:'按时完成需求响应和验收'},{level:'低于预期',color:'var(--ro)',score:'0分',condition:'未按时完成'}]},
     {id:'g6',name:'【产品设计】HR ONE 绩效重构事项推进',indicator:'绩效重构推进',type:'qual',weight:25,desc:'计划事项：\n06-10 输出AI+绩效核心用户页面原型，给新哥、蔡老师汇报整体内容，并确认后续版本页面落地方式\n06-19 完成绩效版本4（考核活动管理）需求内审\n06-24 完成绩效版本4（考核活动管理）需求评审',measure:'定性评分',target:1,challenge:1,baseline:1,rule:'-',ruleFormula:'',msLevels:[{level:'符合预期',color:'var(--em)',score:'100分',condition:'按时完成各里程碑'},{level:'低于预期',color:'var(--ro)',score:'0分',condition:'未按时完成'}]},
     {id:'g7',name:'【应用探索】AI应用项目探索与落地推广',indicator:'AI应用落地',type:'qual',weight:25,desc:'06-05 输出ASSC采购侧AI项目管理应用1.0版本（登录、项目管理、节点管理），进行测试试用阶段\n06-12 对接LBU AI 应用场景需求，启动第一个试点应用落地\n06-26 完成ASSC采购侧AI项目管理应用1.1版本（私聊/群聊场景的对话式更新项目、节点进度）',measure:'定性评分',target:1,challenge:1,baseline:1,rule:'-',ruleFormula:'',msLevels:[{level:'符合预期',color:'var(--em)',score:'100分',condition:'按时完成各版本交付'},{level:'低于预期',color:'var(--ro)',score:'0分',condition:'未按时完成'}]},
-  ]}
+  ]},
 ];
-
-let expandedMods=new Set([0,1]);
-let expandedGoals=new Set();
-MODULES.forEach(function(m){m.goals.forEach(function(g){expandedGoals.add(g.id);});});
 
 const I={
   chevron:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>',
@@ -385,8 +286,12 @@ const I={
   target:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
   users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
   chart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
-  doc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
+  info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
 };
+
+let expandedMods=new Set([0,1]);
+let expandedGoals=new Set();
+MODULES.forEach(function(m){m.goals.forEach(function(g){expandedGoals.add(g.id);});});
 
 function render(){
   const c=document.getElementById('moduleContainer');
@@ -394,10 +299,11 @@ function render(){
   MODULES.forEach((m,mi)=>{
     const open=expandedMods.has(mi);
     const tw=m.goals.reduce((s,g)=>s+g.weight,0);
+    const iconColor=m.color;
     h+=`<div class="mod-section ${m.accent}">
       <div class="mod-hd" onclick="toggleMod(${mi})">
-        <div class="mod-hd-icon" style="background:${m.color}">${I[m.icon]||I.target}</div>
-        <div class="mod-hd-title">${m.name}</div>
+        <div class="mod-hd-icon" style="background:${iconColor}">${I[m.icon]||I.target}</div>
+        <div class="mod-hd-title" style="font:600 15px/1 var(--f);color:var(--c9);text-transform:none;letter-spacing:0">${m.name}</div>
         <div class="mod-hd-stats">
           <span>权重 <strong>${tw}%</strong></span>
           <span>${m.goals.length} 个目标</span>
@@ -407,37 +313,30 @@ function render(){
       </div>
       <div class="mod-body ${open?'open':''}">`;
     m.goals.forEach((g,gi)=>{
-      const gOpen=expandedGoals.has(g.id);
+      const isOpen=expandedGoals.has(g.id);
       const isQ=g.type==='quant';
-      const typeLabel=isQ?'定量':'定性';
-      const typeClass=isQ?'quant':'qual';
       h+=`<div class="goal-row">
         <div class="goal-summary" onclick="toggleGoal('${g.id}')">
-          <div class="goal-drag" onclick="event.stopPropagation()" title="拖拽排序">${I.drag}</div>
-          <div class="goal-icon ${m.color==='var(--em)'?'em':'pr'}" style="font:700 12px/1 var(--m)">${gi+1}</div>
+          <div class="goal-drag" onclick="event.stopPropagation()">${I.drag}</div>
+          <div class="goal-icon ${isQ?'pr':'em'}" style="font:700 12px/1 var(--m)">${gi+1}</div>
           <span class="goal-name">${g.name}</span>
           <span class="goal-weight">${g.weight}%</span>
-          <div class="goal-meta">
-            <span class="goal-type ${typeClass}">${typeLabel}</span>
-            <div class="goal-chevron ${gOpen?'open':''}">${I.chevron}</div>
-          </div>
+          <div class="mod-hd-chevron ${isOpen?'open':''}" style="width:20px;height:20px">${I.chevron}</div>
         </div>
-        <div class="goal-edit ${gOpen?'open':''}">
+        <div class="goal-edit ${isOpen?'open':''}">
           <div class="ge-form">
             ${isQ?`
             <div class="ge-sec">
-              <div class="ge-row f3" style="grid-template-columns:100px 100px 100px 1fr">
-                <div class="ge-fi"><span class="ge-fi-l">挑战值</span><span class="ge-fi-v mono">${g.challenge} ${g.unit||''}</span></div>
-                <div class="ge-fi"><span class="ge-fi-l">目标值 <span class="req">*</span></span><span class="ge-fi-v mono">${g.target} ${g.unit||''}</span></div>
-                <div class="ge-fi"><span class="ge-fi-l">保底值</span><span class="ge-fi-v mono">${g.baseline} ${g.unit||''}</span></div>
-                <div class="ge-fi"><span class="ge-fi-l">指标描述</span><span class="ge-fi-v" style="white-space:pre-wrap">${g.desc||'—'}</span></div>
+              <div class="ge-quant-grid">
+                <div class="ge-inline-pair"><span class="label">挑战值：</span><span class="value mono">${g.challenge}${g.unit||''}</span></div>
+                <div class="ge-inline-pair"><span class="label">目标值：</span><span class="value mono">${g.target}${g.unit||''}</span></div>
+                <div class="ge-inline-pair"><span class="label">保底值：</span><span class="value mono">${g.baseline}${g.unit||''}</span></div>
+                <div class="ge-inline-pair"><span class="label">指标描述：</span><span class="value" style="white-space:pre-wrap">${g.desc||'—'}</span></div>
               </div>
             </div>
             `:`
             <div class="ge-sec">
-              <div class="ge-fi"><span class="ge-fi-l">衡量标准-评价梯度2</span><span class="ge-fi-v">${(g.msLevels&&g.msLevels[0])?g.msLevels[0].condition:'—'}</span></div>
-              <div class="ge-fi" style="margin-top:8px"><span class="ge-fi-l">衡量标准-评价梯度3 <span class="req">*</span></span><span class="ge-fi-v">${(g.msLevels&&g.msLevels[1])?g.msLevels[1].condition:'—'}</span></div>
-              <div class="ge-fi" style="margin-top:8px"><span class="ge-fi-l">衡量标准-评价梯度4</span><span class="ge-fi-v">${(g.msLevels&&g.msLevels[2])?g.msLevels[2].condition:'—'}</span></div>
+              <div class="ge-fi"><span class="ge-fi-l" style="margin-bottom:6px">衡量标准</span><div class="measure-box">${(g.msLevels||[]).map(function(level){return level.level+'：'+level.condition;}).join('\n')||'—'}</div></div>
             </div>
             `}
           </div>
@@ -453,12 +352,18 @@ function toggleMod(mi){expandedMods.has(mi)?expandedMods.delete(mi):expandedMods
 function toggleGoal(id){expandedGoals.has(id)?expandedGoals.delete(id):expandedGoals.add(id);render()}
 
 function approveGoal(){
-  const comment=document.getElementById('approvalComment').value;
-  showToast('已批准，目标进入下一审批节点','success');
+  document.getElementById('approvalComment').value='';
+  document.getElementById('approveModal').classList.add('on');
+}
+
+function confirmApprove(){
+  const comment=document.getElementById('approvalComment').value.trim();
+  if(!comment){showToast('请填写审批意见','error');return}
+  closeModal('approveModal');
+  showToast('已提交，目标进入直线上级审批节点','success');
 }
 
 function showRejectModal(){document.getElementById('rejectModal').classList.add('on')}
-function showDelegateModal(){document.getElementById('delegateModal').classList.add('on')}
 function closeModal(id){document.getElementById(id).classList.remove('on')}
 
 function confirmReject(){
@@ -468,19 +373,6 @@ function confirmReject(){
   showToast('已退回，申请人将收到通知','success');
 }
 
-function confirmDelegate(){
-  const reason=document.getElementById('delegateReason').value;
-  if(!reason){showToast('请填写转交原因','error');return}
-  closeModal('delegateModal');
-  showToast('已转交','success');
-}
-
-function showMeasureDesc(gid){
-  for(const m of MODULES){
-    const g=m.goals.find(g=>g.id===gid);
-    if(g){showToast(g.desc||'暂无指标描述');return}
-  }
-}
 function showToast(msg,type){
   const t=document.getElementById('toast');
   t.textContent=msg;

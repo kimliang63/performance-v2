@@ -39,7 +39,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 
 .tbl-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden;margin-bottom:16px}
 .tbl-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;min-width:1500px}
+table{width:100%;border-collapse:collapse;min-width:3300px}
 thead th{background:var(--c0);font:600 12px/1 var(--f);color:var(--c5);text-align:left;padding:10px 14px;border-bottom:1px solid var(--dv);white-space:nowrap;letter-spacing:.2px;text-transform:uppercase}
 tbody td{font:400 13px/1.4 var(--f);color:var(--c7);padding:12px 14px;border-bottom:1px solid var(--dv);vertical-align:middle}
 tbody tr{transition:background .1s}
@@ -86,6 +86,29 @@ var I={
   download:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
 };
 
+function personProfile(dept,region,job,level,status,employment,hireDate,center){
+  var deptLevel2='中国区';
+  var deptLevel3=region+'区域';
+  var deptLevel4=center;
+  var deptLevel5=dept;
+  return {
+    currentDept:dept,
+    fullDept:[deptLevel2,deptLevel3,deptLevel4,deptLevel5].join(' / '),
+    deptLevel2:deptLevel2,deptLevel3:deptLevel3,deptLevel4:deptLevel4,deptLevel5:deptLevel5,
+    deptLevel6:'—',deptLevel7:'—',deptLevel8:'—',
+    personStatus:status,employment:employment,region:region,job:job,level:level,hireDate:hireDate
+  };
+}
+
+var PERSON_META={
+  EMP0001:personProfile('产品部','华东','高级产品经理','P7','在职','正式员工','2022-03-15','产品研发中心'),
+  EMP0002:personProfile('技术部','华东','高级工程师','P7','在职','正式员工','2021-07-01','产品研发中心'),
+  EMP0003:personProfile('市场部','华南','市场经理','P6','在职','正式员工','2023-02-20','市场运营中心'),
+  EMP0005:personProfile('运营部','华南','运营主管','P6','在职','劳务派遣','2024-01-08','市场运营中心'),
+  EMP0007:personProfile('技术部','华东','前端工程师','P6','在职','正式员工','2023-06-12','产品研发中心'),
+  EMP0016:personProfile('产品部','华东','产品总监','P9','在职','正式员工','2019-09-16','产品研发中心')
+};
+
 var GOAL_DATA=[
   {empId:'EMP0001',name:'张明',dept:'产品部',period:'2026年Q2',activity:'2026年Q2标准季度考核方案',goal:'完成新员工入职体验优化',weight:'30%',type:'定量',standard:'阶梯目标值',gradient1:'满意度 ≥ 85%',gradient2:'满意度 ≥ 90%',gradient3:'满意度 ≥ 95%',unit:'%'},
   {empId:'EMP0001',name:'张明',dept:'产品部',period:'2026年Q2',activity:'2026年Q2标准季度考核方案',goal:'绩效产品需求按期交付',weight:'40%',type:'定量',standard:'阶梯完成率',gradient1:'按期率 ≥ 80%',gradient2:'按期率 ≥ 90%',gradient3:'按期率 = 100%',unit:'%'},
@@ -101,6 +124,11 @@ var GOAL_DATA=[
   {empId:'EMP0016',name:'朱伟',dept:'产品部',period:'2026年H1',activity:'2026年H1产品半年度考核',goal:'产品路线图重点事项达成',weight:'50%',type:'定量',standard:'阶梯完成率',gradient1:'≥ 80%',gradient2:'≥ 90%',gradient3:'= 100%',unit:'%'},
   {empId:'EMP0016',name:'朱伟',dept:'产品部',period:'2026年H1',activity:'2026年H1产品半年度考核',goal:'用户研究体系建设',weight:'50%',type:'定性',standard:'行为等级描述',gradient1:'完成研究计划',gradient2:'洞察进入产品决策',gradient3:'建立持续研究机制',unit:'—'},
 ];
+
+GOAL_DATA.forEach(function(d){
+  var profile=PERSON_META[d.empId];
+  if(profile)Object.keys(profile).forEach(function(key){d[key]=profile[key];});
+});
 
 var DEPTS=['全部','产品部','技术部','市场部','设计部','运营部'];
 var TYPES=['全部类型','定量','定性'];
@@ -174,7 +202,7 @@ function render(){
     '</div>'+
     '<div class="tbl-card">'+
       '<div class="tbl-wrap"><table><thead><tr>'+
-        '<th>姓名</th><th>工号</th><th>部门</th><th>周期</th><th>活动名称</th><th>目标名称</th><th>权重</th><th>类型</th><th>衡量标准</th><th>衡量标准-梯度值</th>'+
+        '<th>姓名</th><th>工号</th><th>当前部门</th><th>全路径部门</th><th>二级部门</th><th>三级部门</th><th>四级部门</th><th>五级部门</th><th>六级部门</th><th>七级部门</th><th>八级部门</th><th>人员状态</th><th>用工形式</th><th>划分区域</th><th>岗位</th><th>职级</th><th>入职日期</th><th>周期</th><th>活动名称</th><th>目标名称</th><th>权重</th><th>类型</th><th>衡量标准</th><th>衡量标准-梯度值</th>'+
       '</tr></thead><tbody>';
 
   for(var i=0;i<page.length;i++){
@@ -182,7 +210,9 @@ function render(){
     html+='<tr>'+
       '<td style="font-weight:500;color:var(--c9)">'+d.name+'</td>'+
       '<td class="mono">'+d.empId+'</td>'+
-      '<td>'+d.dept+'</td>'+
+      '<td>'+d.currentDept+'</td><td class="cell-long">'+d.fullDept+'</td>'+
+      '<td>'+d.deptLevel2+'</td><td>'+d.deptLevel3+'</td><td>'+d.deptLevel4+'</td><td>'+d.deptLevel5+'</td><td>'+d.deptLevel6+'</td><td>'+d.deptLevel7+'</td><td>'+d.deptLevel8+'</td>'+
+      '<td><span class="tag '+(d.personStatus==='在职'?'tag-em':'tag-c5')+'">'+d.personStatus+'</span></td><td>'+d.employment+'</td><td>'+d.region+'</td><td>'+d.job+'</td><td>'+d.level+'</td><td class="mono">'+d.hireDate+'</td>'+
       '<td>'+d.period+'</td>'+
       '<td class="cell-long">'+d.activity+'</td>'+
       '<td class="cell-long" style="font-weight:500;color:var(--c9)">'+d.goal+'</td>'+

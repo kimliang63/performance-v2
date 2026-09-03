@@ -1,5 +1,27 @@
 # 变更记录
 
+## 2026-09-03 目标审批与直线上级审定布局收紧
+
+- `current/manager/demo-goal-direct.html`：定性目标衡量标准紧贴目标名称行，压缩目标标题行下边距与详情区上边距；KPI/KPA 模块标题移除折叠箭头、分隔线与点击收起，内容始终展开，移除模块展开状态与 `toggleMod` 逻辑，权重与目标数继续显示。
+- `current/manager/demo-ratify-direct.html`：筛选顺序固定为“员工姓名/工号搜索 → 部门 → 划分区域 → 考核组 → 是否到达”，到达筛选标签由“到达状态”改为“是否到达”，选项与默认值不变；团队成员表“调整等级”列收紧为内容自适应宽度，多余空间分配给前面信息列，7 颗星、等级文案与说明不裁切。
+- 本次为纯交互/样式调整，不改 Scope、Spec 或 PRD。
+
+## 2026-09-03 直线上级目标审批页对齐目标制定页
+
+- `current/manager/demo-goal-direct.html`：页头改为与目标制定页一致的独立吸顶标题栏，标题收敛为“目标审批”；考核周期、当前节点、总权重、总目标数并入标题栏摘要，总权重与总目标数不再在人员信息区下方单独占行。人员信息区仅保留姓名、部门、职位，去掉考核方案、考核周期、被评人。
+- 标题栏操作收敛为“提交 + 更多”，驳回收进更多菜单，菜单支持点击外部与 Esc 关闭；提交仍打开审批意见弹窗，驳回仍打开退回弹窗。
+- 目标明细固定展开，移除每条目标的折叠箭头与点击收起入口；KPI/KPA 模块级展开/收起保持不变；定性目标详情去掉“衡量标准”字段名，仅保留文本框式只读内容。
+- 本次为纯交互调整，不改 Scope、Spec 或 PRD。
+
+## 2026-09-02 目标审批、结果审定与确认页面评审对齐
+
+- `current/employee/demo-goal-employee.html`：移除 KPI“新增”入口；指标库关联或复制历史形成的定量指标名称统一只读，保留指标库选择和复制历史入口。
+- `current/manager/demo-goal-direct.html`、`current/manager/demo-goal-indirect.html`：双线上级审批页完整沿用直线上级审批页结构；定量目标改为“字段名：值”的横向布局，定性目标的衡量标准合并为一个文本框式区域，目标行移除定量/定性标签；审批意见改为点击提交后在弹窗中必填，审批流程按目标制定页样式和实际节点顺序展示。
+- `current/employee/demo-eval-self.html`：审批流程字段调整为“节点、处理人、原因、流入时间、流出时间”，移除状态列。
+- `current/manager/demo-ratify-hierarchy.html`、`current/manager/demo-ratify-direct.html`、`current/manager/demo-ratify-indirect.html`：三类审定页面统一逐级审定版式；标题栏增加吸顶，等级差异摘要并入“等级分布”标题行；筛选区固定放在图表下、成员列表上，收起图表时仍保留。新增部门和划分区域组织树多选筛选，筛选只影响成员列表，不改变分布统计。
+- `current/employee/demo-confirm-employee.html`：结果卡下新增本年度历史月度绩效等级卡片；同步移除原型中“超时自动认可”的错误承诺，申诉提示对齐当前 HRBP 线下处理规则。
+- 本次属于既有 V3/V5 页面样式和交互补齐，不新增业务范围，不修改 Scope、Spec 或 PRD。
+
 ## 2026-08-28 绩效自评填写页交互对齐
 
 - `current/employee/demo-eval-self.html`：移除页面信息卡、填写中状态和目标类型列；考核周期与当前节点压缩进标题操作栏。
@@ -14,6 +36,8 @@
 - KPI/KPA 第三列表头统一为“衡量标准”，KPA 填写列改为“完成情况”；KPI 完成值单位移至输入框右侧，完成值列调整为 104px。KPA 评价结果列按五颗星及内边距固定为 150px，衡量标准列自适应占满剩余宽度。
 - KPA 结果列表头进一步统一为“自评结果”；直线上级、双线上级评分页对齐员工自评页的吸顶标题栏与 KPI/KPA 独立模块卡片，保留历史绩效、初评、评语、驳回和转交能力。
 - `current/manager/demo-ratify-hierarchy.html`：顶部对齐自评页标题栏，筛选区移至标题栏下方；等级符合情况改为“等级 / 要求 / 实际 / 是否符合”表格。收起操作统一进入标题栏，收起后隐藏筛选、结论与图表，只展示各等级的符合或人数差值摘要；到达状态筛选不再改变强制分布结论，人数上限按向下取整计算。
+- `current/manager/demo-eval-indirect.html`、`current/manager/demo-eval-direct.html`：顶部操作收敛为“提交评分 + 更多”，驳回和转交进入更多菜单。定量 KPI 沿用自评页五列结构，只读展示完成值计算得分；定性 KPA 按评分节点展示评价结果，双线上级页为“员工自评 / 双线上级评价”，直线上级页增加“直线上级评价”，当前节点保留评星操作。
+- `current/manager/demo-ratify-hierarchy.html`：左右分布区域合并为同一卡片并共用“等级分布”标题，统计数据右对齐到标题行，收起/展开移至该标题最右侧；移除总体结论、规则状态与人数说明，只保留等级分布表格。筛选区最左侧新增员工姓名/工号搜索，到达状态仅保留“已到达 / 未到达”且默认已到达，搜索和状态筛选只影响成员列表，不改变当前考核组的分布统计。页面操作收敛为“提交 + 更多”，导出和驳回进入更多菜单。
 - 本次仅调整既有 V3 绩效考核与结果审定原型交互，不修改 Scope、Spec 或 V3 PRD。
 
 ## 2026-08-28 目标制定填写页交互新版本
@@ -42,6 +66,35 @@
 - `current/perf-scheme-detail.html`：总开关关闭时不展示规则区；开启时按新结构展示已启用规则的假种和有效窗口摘要。
 - 默认考核组演示开启三条规则：离职 7 天，开始/结束休假均选产假、育儿假且 7 天；仓储特殊组总开关关闭；新增考核组三条均未勾选、days=7。autoRemove 以 structured enabled / leaveTypes / days 为准，并保留 conditions 兼容。
 - 本次仅改方案向导、方案详情和本变更记录，不修改 Scope、Spec 或 PRD。
+
+## 2026-08-19 工作台绩效等级颜色与团队 Mock 数据调整
+
+- `current/employee/demo-workbench-home.html`、`current/employee/demo-workbench-team.html`：绩效等级颜色统一为“超出预期/远超预期”绿色、“符合预期+／符合预期／符合预期-”橙色、“低于预期／远低预期”红色。
+- `current/employee/demo-workbench-team.html`：绩效等级分布与团队绩效趋势 Mock 数据由 4 人扩充为 10 人，七级制与五级制同步补齐。
+- `current/employee/demo-workbench-home.html`：修复周期切换时“我的目标”标题更新路径失效导致的脚本报错。
+- 本次仅调整既有 V5 工作台视觉口径与 Mock 数据，不修改 Scope、Spec 或 V5 PRD。
+
+## 2026-08-15 目标与结果报表人员字段补齐
+
+- `current/perf-report-goals.html`、`current/perf-report-results.html`：统一补齐姓名、工号、人员状态、用工形式、划分区域、岗位、职级和入职日期。
+- 部门字段统一拆分为当前部门、全路径部门、二级部门至八级部门；不存在的组织层级显示“—”。
+- `current/perf-report-results.html` 的导出设置同步增加全部人员与部门层级字段。
+- 同步更新 Spec 1.10 与 V5 PRD；V5 Scope 项数不变。
+
+## 2026-08-15 工作台入口补齐
+
+- `current/employee/demo-workbench-team.html`：绩效等级分布和团队绩效趋势两个模块的“更多”统一跳转到绩效结果报表 `current/perf-report-results.html`。
+- `current/employee/demo-workbench-home.html`：“我的目标”模块的“更多”跳转到正式员工“我的目标”页面 `current/employee/demo-workbench-my-goal.html`。
+- 本次仅补齐既有 V5 工作台入口，不修改 Scope、Spec 或 V5 PRD。
+
+## 2026-08-14 团队绩效工作台图表口径调整
+
+- `current/employee/demo-workbench-team.html` 以线上 `performance-v2` 当前版本为基线增量修改，保留周期切换、待办、等级分布和趋势图结构；不恢复已移除的成员目标、团队总览和统计卡片。
+- `current/employee/demo-workbench-team.html` 与 `current/employee/demo-workbench-home.html` 的待办区统一替换为 3 条流程待办，采用彩色员工图标、流程名称、提交时间和右侧“去处理”的紧凑卡片结构。
+- `current/employee/demo-workbench-team.html`：绩效等级分布改为按员工展示当前周期绩效结果，纵轴使用绩效结果等级，员工按等级从低到高排序。
+- 等级分布右上角新增结果等级规则下拉，可在七级制与五级制之间切换，图表等级刻度、颜色和人员结果同步刷新。
+- 团队绩效趋势改为按绩效周期升序展示的分组人数柱状图，同一周期内每个等级一根独立柱子并使用独立图例；悬停柱子展示等级名称、人数和团队成员名单。
+- 本次仅调整既有 V5 管理者工作台图表展示与交互，不修改 Scope、Spec 或 V5 PRD。
 
 ## 2026-08-11 绩效结果报表对齐飞书 PRD
 

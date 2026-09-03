@@ -35,6 +35,16 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .pg-hd-summary .sum-sep{font:400 12px/1 var(--f);color:var(--c3)}
 .btn-reject{background:var(--sf);border:1px solid var(--ro100);color:var(--ro)}
 .btn-reject:hover{background:var(--ro50);border-color:var(--ro);color:var(--ro)}
+.action-more{position:relative}
+.action-more-trigger[aria-expanded="true"]{border-color:var(--pr200);color:var(--pr);background:var(--pr50)}
+.action-more-trigger svg{transition:transform .15s}
+.action-more-trigger[aria-expanded="true"] svg{transform:rotate(180deg)}
+.action-more-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:1000;display:none;min-width:120px;padding:4px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);box-shadow:var(--shadow-dropdown)}
+.action-more-menu.open{display:block}
+.action-more-item{display:flex;align-items:center;width:100%;height:34px;padding:0 10px;border:0;border-radius:var(--r1);background:transparent;color:var(--c7);font:500 13px/1 var(--f);text-align:left;cursor:pointer}
+.action-more-item:hover,.action-more-item:focus-visible{background:var(--c0);color:var(--c9);outline:none}
+.action-more-item.danger{color:var(--ro)}
+.action-more-item.danger:hover,.action-more-item.danger:focus-visible{background:var(--ro50);color:var(--ro)}
 
 @media (max-width:980px){
   .pg-hd-top{align-items:flex-start;gap:12px;flex-wrap:wrap;top:-12px}
@@ -75,6 +85,8 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .eval-module-table tbody tr:hover td{background:var(--c0)}
 .result-badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--c1);color:var(--c6);white-space:nowrap}
 .completion-readonly{font:400 12px/1.6 var(--f);color:var(--c6)}
+.computed-score{display:inline-flex;align-items:baseline;font:700 16px/1 var(--m);color:var(--pr)}
+.computed-score-cell{padding-left:8px!important;padding-right:8px!important}
 
 /* ═══ INPUT ═══ */
 input.edit-cell{border:1px solid var(--c2);border-radius:var(--r1);padding:5px 8px;font:400 13px/1 var(--f);color:var(--c9);background:var(--sf);transition:all .12s;width:80px;outline:none;text-align:center;font-family:var(--m)}
@@ -267,8 +279,13 @@ body.chat-open .ai-toggle{display:none}
       </div>
       <div class="pg-hd-actions">
         <button class="btn btn-p" onclick="submitEval()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>提交评分</button>
-        <button class="btn btn-reject" onclick="rejectEval()">驳回</button>
-        <button class="btn btn-s" onclick="transferEval()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>转交</button>
+        <div class="action-more">
+          <button class="btn btn-s action-more-trigger" id="directMoreBtn" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="directMoreMenu" onclick="toggleActionMenu(event,'directMoreBtn','directMoreMenu')">更多<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+          <div class="action-more-menu" id="directMoreMenu" role="menu" aria-labelledby="directMoreBtn">
+            <button class="action-more-item danger" type="button" role="menuitem" onclick="closeActionMenus();rejectEval()">驳回</button>
+            <button class="action-more-item" type="button" role="menuitem" onclick="closeActionMenus();transferEval()">转交</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -396,8 +413,8 @@ function renderModuleContainer(){
     html+='<section class="eval-module-card" aria-labelledby="direct_module_'+mi+'">'+
       '<div class="eval-module-hd"><div class="eval-module-main"><div class="eval-mod-icon" style="background:'+mod.color+'">'+modIcon+'</div><span class="eval-mod-name" id="direct_module_'+mi+'">'+mod.name+'</span></div>'+
       '<div class="eval-mod-stats"><span class="eval-mod-weight">'+mod.weight+'%</span><span class="eval-mod-count">'+mod.goals.length+' 个目标</span></div></div>'+
-      '<div class="eval-module-table"><table><colgroup><col style="width:180px"><col style="width:64px"><col><col style="width:180px"><col style="width:120px"><col style="width:120px"><col style="width:150px"></colgroup>'+
-      '<thead><tr><th>指标名称</th><th>权重</th><th>衡量标准</th><th>'+(isQuantModule?'完成值':'完成情况')+'</th><th>员工自评结果</th><th>双线上级结果</th><th>直线上级结果</th></tr></thead><tbody>';
+      '<div class="eval-module-table"><table><colgroup>'+(isQuantModule?'<col style="width:20%"><col style="width:8%"><col><col style="width:104px"><col style="width:64px">':'<col style="width:18%"><col style="width:7%"><col><col style="width:20%"><col style="width:112px"><col style="width:112px"><col style="width:150px">')+'</colgroup>'+
+      (isQuantModule?'<thead><tr><th>指标名称</th><th>权重</th><th>衡量标准</th><th>完成值</th><th>得分</th></tr></thead>':'<thead><tr><th>指标名称</th><th>权重</th><th>衡量标准</th><th>完成情况</th><th>员工自评</th><th>双线上级评价</th><th>直线上级评价</th></tr></thead>')+'<tbody>';
     mod.goals.forEach(function(g,gi){
       var isQuant=g.type==='quant';
       html+='<tr>'+
@@ -411,12 +428,16 @@ function renderModuleContainer(){
         html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">'+g.measureDesc+'</td>';
         html+='<td class="completion-readonly">'+(g.completed||'—')+'</td>';
       }
-      html+='<td><span class="result-badge">'+g.employeeGrade+'</span></td><td><span class="result-badge">'+g.indirectGrade+'</span></td>'+
-        '<td class="score-cell"><div class="star-rating" id="direct_score_'+mi+'_'+gi+'" data-value="'+(g.directStar||0)+'"><div class="star-row">';
-      for(var si=1;si<=5;si++){
-        html+='<span class="star'+(si<=(g.directStar||0)?' active':'')+'" data-v="'+si+'" onclick="setDirectStar(this,'+mi+','+gi+','+si+')" onmouseenter="starHover(this,1)" onmouseleave="starHover(this,0)">★</span>';
+      if(isQuant){
+        html+='<td class="computed-score-cell"><span class="computed-score">'+formatCalculatedScore(getCalculatedScore(g))+'</span></td>';
+      }else{
+        html+='<td><span class="result-badge">'+(g.employeeGrade||'—')+'</span></td><td><span class="result-badge">'+(g.indirectGrade||'—')+'</span></td>'+
+          '<td class="score-cell"><div class="star-rating" id="direct_score_'+mi+'_'+gi+'" data-value="'+(g.directStar||0)+'"><div class="star-row">';
+        for(var si=1;si<=5;si++){
+          html+='<span class="star'+(si<=(g.directStar||0)?' active':'')+'" data-v="'+si+'" onclick="setDirectStar(this,'+mi+','+gi+','+si+')" onmouseenter="starHover(this,1)" onmouseleave="starHover(this,0)">★</span>';
+        }
+        html+='</div><div class="star-label">'+(STAR_GRADE[g.directStar]||'')+'</div><div class="star-desc">'+(STAR_DESC[g.directStar]||'')+'</div></div></td>';
       }
-      html+='</div><div class="star-label">'+(STAR_GRADE[g.directStar]||'')+'</div><div class="star-desc">'+(STAR_DESC[g.directStar]||'')+'</div></div></td>';
       html+='</tr>';
     });
     html+='</tbody></table></div></section>';
@@ -466,6 +487,21 @@ function renderModuleContainer(){
 }
 
 var initGradeManualOverride=false;
+
+function getCalculatedScore(goal){
+  if(goal.type==='quant'){
+    var completed=parseFloat(goal.completed);
+    if(isNaN(completed))return null;
+    return Math.round(Math.max(0,Math.min(5,completed/20))*10)/10;
+  }
+  var gradeScore={'远超预期':5,'超出预期':5,'符合预期+':4,'符合预期':3,'符合预期-':2,'低于预期':1,'远低预期':1};
+  return gradeScore[goal.employeeGrade]||null;
+}
+
+function formatCalculatedScore(score){
+  if(score===null)return'—';
+  return Number.isInteger(score)?String(score):score.toFixed(1);
+}
 
 function calcWeightedInitGrade(){
   var totalWeight=0,weightedScore=0;
@@ -599,6 +635,20 @@ function starHoverInit(el,entering){
 function submitEval(){showToast('评分已提交','success');}
 function rejectEval(){showToast('已驳回，将退回给双线上级重新评分','warn');}
 function transferEval(){showToast('已转交，等待其他管理者处理','success');}
+function closeActionMenus(){
+  document.querySelectorAll('.action-more-menu.open').forEach(function(menu){menu.classList.remove('open');});
+  document.querySelectorAll('.action-more-trigger[aria-expanded="true"]').forEach(function(btn){btn.setAttribute('aria-expanded','false');});
+}
+function toggleActionMenu(event,buttonId,menuId){
+  event.stopPropagation();
+  var button=document.getElementById(buttonId);
+  var menu=document.getElementById(menuId);
+  var shouldOpen=!menu.classList.contains('open');
+  closeActionMenus();
+  if(shouldOpen){menu.classList.add('open');button.setAttribute('aria-expanded','true');}
+}
+document.addEventListener('click',closeActionMenus);
+document.addEventListener('keydown',function(event){if(event.key==='Escape')closeActionMenus();});
 function showToast(msg,type){
   var t=document.getElementById('toast');
   document.getElementById('toastMsg').textContent=msg;

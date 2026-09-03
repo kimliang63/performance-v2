@@ -59,6 +59,21 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .score-badge.mid{background:var(--pr50);color:var(--pr)}
 .score-badge.low{background:var(--ac50);color:var(--ac700)}
 
+/* ═══ MONTHLY HISTORY ═══ */
+.history-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:16px}
+.history-hd{display:flex;align-items:center;gap:8px;margin-bottom:16px;font:600 14px/1 var(--f);color:var(--c9)}
+.history-hd svg{width:16px;height:16px;color:var(--pr)}
+.history-months{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.history-month{min-height:84px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid var(--c2);border-radius:var(--r2);background:var(--sf);transition:all .12s}
+.history-month:hover{border-color:var(--pr200);transform:translateY(-1px);box-shadow:var(--shadow-card)}
+.history-month-label{font:500 12px/1 var(--f);color:var(--c5);margin-bottom:9px}
+.history-month-grade{font:700 18px/1.2 var(--f);color:var(--c7)}
+.history-month.s5{background:var(--em50);border-color:var(--em100)}.history-month.s5 .history-month-grade{color:var(--em700)}
+.history-month.s4{background:var(--pr50);border-color:var(--pr100)}.history-month.s4 .history-month-grade{color:var(--pr)}
+.history-month.s3{background:var(--c0)}.history-month.s3 .history-month-grade{color:var(--c7)}
+.history-month.s2{background:var(--ac50);border-color:var(--ac100)}.history-month.s2 .history-month-grade{color:var(--ac700)}
+@media(max-width:900px){.history-months{grid-template-columns:repeat(3,1fr)}}
+
 /* ═══ TOAST ═══ */
 .validate-toast{position:fixed;top:64px;left:50%;transform:translateX(-50%);background:var(--em);color:#FFF;padding:10px 20px;border-radius:var(--r2);font:500 13px/1 var(--f);box-shadow:0 8px 24px rgba(16,185,129,.3);z-index:3000;opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:center;gap:8px}
 .validate-toast.show{opacity:1;pointer-events:all}
@@ -225,15 +240,27 @@ body.chat-open .ai-toggle{display:none}
           <div class="confirm-btn confirm-btn-agree" onclick="openConfirmModal()">
             <div class="confirm-btn-icon">✓ 认可结果</div>
           </div>
-          <div class="confirm-btn-hint">如未在 5 个工作日内确认结果，系统将自动视为认可并完成确认。</div>
+          <div class="confirm-btn-hint">确认后不可撤回；超时处理以考核方案配置为准。</div>
         </div>
         <div>
           <div class="confirm-btn confirm-btn-disagree" onclick="openAppealModal()">
             <div class="confirm-btn-icon">✗ 有异议，申请申诉</div>
           </div>
-          <div class="confirm-btn-hint">请选择有异议的得分项、填写申诉原因并上传佐证材料（选填），HRBP 将在 3 个工作日内处理。</div>
+          <div class="confirm-btn-hint">请选择异议项并填写原因；提交后通知 HRBP 线下处理，最终结果保持锁定。</div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- 今年历史月度绩效结果 -->
+  <div class="history-card" aria-label="2026年历史月度绩效结果">
+    <div class="history-hd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>2026年历史月度绩效结果</div>
+    <div class="history-months">
+      <div class="history-month s3"><span class="history-month-label">1月</span><span class="history-month-grade">符合预期</span></div>
+      <div class="history-month s3"><span class="history-month-label">2月</span><span class="history-month-grade">符合预期</span></div>
+      <div class="history-month s4"><span class="history-month-label">3月</span><span class="history-month-grade">符合预期+</span></div>
+      <div class="history-month s4"><span class="history-month-label">4月</span><span class="history-month-grade">符合预期+</span></div>
+      <div class="history-month s5"><span class="history-month-label">5月</span><span class="history-month-grade">超出预期</span></div>
     </div>
   </div>
 
@@ -507,7 +534,7 @@ function submitAppeal() {
   if (hasErr) return;
   var fileCount = uploadedFiles.filter(Boolean).length;
   closeAppealModal();
-  showToast('已提交申诉 · ' + selectedItems.length + ' 项异议' + (fileCount > 0 ? ' · ' + fileCount + ' 份材料' : '') + ' · HRBP将在3个工作日内处理', 'warn');
+  showToast('已提交申诉 · ' + selectedItems.length + ' 项异议' + (fileCount > 0 ? ' · ' + fileCount + ' 份材料' : '') + ' · 已通知HRBP线下处理', 'warn');
 }
 
 // ═══ AI CHAT ═══
@@ -566,8 +593,8 @@ function handleAiAction(action){
         ],actions:['分析我的绩效','有异议怎么办']});
         break;
       case '有异议怎么办':
-        AI_MSGS.push({role:'bot',text:'❓ 如果你对绩效结果有异议：\n\n1. 点击「有异议，申请申诉」\n2. 勾选有异议的得分项\n3. 填写申诉原因（至少10个字）\n4. 可选上传佐证材料\n5. 点击提交，HRBP将在3个工作日内处理\n\n💡 建议：\n• 先冷静分析，确认是否有误解\n• 准备具体数据或事实依据\n• 异议不影响后续绩效改进计划',time:aiNow(),cards:[
-          {t:'申诉指引',d:'3个工作日内HRBP处理',tag:'流程说明',tc:'pr'}
+        AI_MSGS.push({role:'bot',text:'❓ 如果你对绩效结果有异议：\n\n1. 点击「有异议，申请申诉」\n2. 勾选有异议的得分项\n3. 填写申诉原因（至少10个字）\n4. 可选上传佐证材料\n5. 点击提交，系统通知HRBP线下处理\n\n💡 建议：\n• 先冷静分析，确认是否有误解\n• 准备具体数据或事实依据\n• 申诉不会自动修改或解锁最终绩效结果',time:aiNow(),cards:[
+          {t:'申诉指引',d:'提交后通知HRBP线下处理',tag:'流程说明',tc:'pr'}
         ],actions:['分析我的绩效','查看成长趋势']});
         break;
       default:
