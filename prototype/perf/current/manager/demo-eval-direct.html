@@ -25,14 +25,31 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
 
 /* ═══ PAGE HEADER ═══ */
-.pg-hd{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:16px}
-.pg-hd-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.pg-hd-top{position:sticky;top:-24px;z-index:900;display:flex;align-items:center;justify-content:space-between;min-height:56px;padding:12px 20px;margin-bottom:16px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);box-shadow:var(--shadow-card)}
+.pg-hd-main{display:flex;align-items:center;min-width:0}
+.pg-hd-right{display:flex;align-items:center;gap:16px;margin-left:auto}
 .pg-hd-title{font:700 20px/1.2 var(--f);color:var(--c9);letter-spacing:-.3px}
-.pg-hd-actions{display:flex;gap:8px}
-.pg-hd-info{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 24px;font:400 13px/1 var(--f);color:var(--c5);padding:12px 16px;background:var(--c0);border-radius:var(--r2)}
-.pg-hd-info-item{display:flex;flex-direction:column;gap:2px}
-.pg-hd-info-label{font:400 11px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px}
-.pg-hd-info-value{font:500 13px/1.3 var(--f);color:var(--c8)}
+.pg-hd-actions{display:flex;align-items:center;gap:8px}
+.pg-hd-summary{display:flex;align-items:center;gap:12px;padding-right:16px;border-right:1px solid var(--c2);white-space:nowrap}
+.pg-hd-summary .sum-value{font:600 12px/1 var(--f);color:var(--c8)}
+.pg-hd-summary .sum-sep{font:400 12px/1 var(--f);color:var(--c3)}
+.btn-reject{background:var(--sf);border:1px solid var(--ro100);color:var(--ro)}
+.btn-reject:hover{background:var(--ro50);border-color:var(--ro);color:var(--ro)}
+.action-more{position:relative}
+.action-more-trigger[aria-expanded="true"]{border-color:var(--pr200);color:var(--pr);background:var(--pr50)}
+.action-more-trigger svg{transition:transform .15s}
+.action-more-trigger[aria-expanded="true"] svg{transform:rotate(180deg)}
+.action-more-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:1000;display:none;min-width:120px;padding:4px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);box-shadow:var(--shadow-dropdown)}
+.action-more-menu.open{display:block}
+.action-more-item{display:flex;align-items:center;width:100%;height:34px;padding:0 10px;border:0;border-radius:var(--r1);background:transparent;color:var(--c7);font:500 13px/1 var(--f);text-align:left;cursor:pointer}
+.action-more-item:hover,.action-more-item:focus-visible{background:var(--c0);color:var(--c9);outline:none}
+.action-more-item.danger{color:var(--ro)}
+.action-more-item.danger:hover,.action-more-item.danger:focus-visible{background:var(--ro50);color:var(--ro)}
+
+@media (max-width:980px){
+  .pg-hd-top{align-items:flex-start;gap:12px;flex-wrap:wrap;top:-12px}
+  .pg-hd-right{width:100%;justify-content:space-between;flex-wrap:wrap}
+}
 
 /* ═══ EVAL TABLE ═══ */
 .eval-list{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden;overflow-x:auto}
@@ -48,6 +65,28 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .eval-mod-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .eval-mod-name{font:600 13px/1 var(--f);color:var(--c8)}
 .eval-mod-weight{font-family:var(--m);font-weight:500;font-size:12px;color:var(--c5);background:var(--c1);padding:2px 8px;border-radius:4px}
+
+/* ═══ SELF-EVAL ALIGNED MODULES ═══ */
+.eval-modules{display:flex;flex-direction:column;gap:16px}
+.eval-module-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden}
+.eval-module-hd{display:flex;align-items:center;gap:12px;min-height:54px;padding:13px 20px;border-bottom:1px solid var(--dv)}
+.eval-module-main{display:flex;align-items:center;gap:12px;min-width:0;flex:1}
+.eval-mod-icon{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#FFF}
+.eval-mod-icon svg{width:13px;height:13px}
+.eval-module-hd .eval-mod-name{font:600 13px/1 var(--f);color:var(--c7);text-transform:uppercase;letter-spacing:.4px}
+.eval-mod-stats{display:flex;align-items:center;gap:14px}
+.eval-mod-stats .eval-mod-weight,.eval-mod-count{padding:0;background:transparent;border-radius:0;font:600 14px/1 var(--f);color:var(--c8)}
+.eval-mod-stats .eval-mod-weight{font-family:var(--m)}
+.eval-module-table{overflow-x:auto}
+.eval-module-table table{width:100%;border-collapse:collapse;table-layout:fixed}
+.eval-module-table th{padding:9px 12px;background:var(--c0);border-bottom:1px solid var(--dv);font:600 11px/1.2 var(--f);color:var(--c6);text-align:left;white-space:nowrap}
+.eval-module-table td{padding:10px 12px;font:400 13px/1.4 var(--f);color:var(--c7);border-bottom:1px solid var(--dv);vertical-align:top}
+.eval-module-table tbody tr:last-child td{border-bottom:none}
+.eval-module-table tbody tr:hover td{background:var(--c0)}
+.result-badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--c1);color:var(--c6);white-space:nowrap}
+.completion-readonly{font:400 12px/1.6 var(--f);color:var(--c6)}
+.computed-score{display:inline-flex;align-items:baseline;font:700 16px/1 var(--m);color:var(--pr)}
+.computed-score-cell{padding-left:8px!important;padding-right:8px!important}
 
 /* ═══ INPUT ═══ */
 input.edit-cell{border:1px solid var(--c2);border-radius:var(--r1);padding:5px 8px;font:400 13px/1 var(--f);color:var(--c9);background:var(--sf);transition:all .12s;width:80px;outline:none;text-align:center;font-family:var(--m)}
@@ -85,14 +124,14 @@ textarea.edit-cell::placeholder{color:var(--c4)}
 .grade-btn.faded{opacity:0.4;background:var(--c1);color:var(--c4)}
 
 /* ═══ STAR RATING ═══ */
-.star-rating{display:flex;flex-direction:column;gap:6px;align-items:flex-start;min-width:220px}
-.star-row{display:flex;align-items:center;gap:4px;height:24px}
+.star-rating{display:flex;flex-direction:column;gap:6px;align-items:flex-start;min-width:0}
+.star-row{display:flex;align-items:center;gap:2px;height:24px}
 .star{width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:20px;line-height:1;cursor:pointer;color:#D1D5DB;transition:color .12s}
 .star.active{color:#F59E0B}
 .star:hover{color:#F59E0B}
 .star-label{font:500 12px/1 var(--f);white-space:nowrap}
 .star-desc{font:400 11px/1.3 var(--f);color:var(--c5)}
-.score-cell{min-width:260px}
+.score-cell{min-width:0;padding-right:8px!important}
 
 /* ═══ HISTORY CARD ═══ */
 .hist-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:16px}
@@ -230,41 +269,24 @@ body.chat-open .ai-toggle{display:none}
   </nav>
 
   <!-- Page header -->
-  <div class="pg-hd">
-    <div class="pg-hd-top">
-      <div style="display:flex;align-items:center;gap:10px">
-        <div class="pg-hd-title">直线上级评分</div>
-        <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)">
-          <span style="width:6px;height:6px;border-radius:50%;background:var(--pr);animation:pulse 2s ease-in-out infinite"></span>
-          直接上级评分
-        </span>
+  <div class="pg-hd-top">
+    <div class="pg-hd-main"><div class="pg-hd-title">直线上级评分</div></div>
+    <div class="pg-hd-right">
+      <div class="pg-hd-summary" aria-label="评分上下文">
+        <span class="sum-value">2026年4-6月</span><span class="sum-sep">|</span>
+        <span class="sum-value">直线上级评分</span><span class="sum-sep">|</span>
+        <span class="sum-value">张明</span>
       </div>
       <div class="pg-hd-actions">
-        <button class="btn btn-s" onclick="showToast('草稿已保存','success')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-          保存草稿
-        </button>
-        <button class="btn btn-s" style="color:var(--ro);border-color:var(--ro100)" onclick="rejectEval()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-          驳回
-        </button>
-        <button class="btn btn-s" onclick="transferEval()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
-          转交
-        </button>
-        <button class="btn btn-p" onclick="submitEval()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          提交评分
-        </button>
+        <button class="btn btn-p" onclick="submitEval()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>提交评分</button>
+        <div class="action-more">
+          <button class="btn btn-s action-more-trigger" id="directMoreBtn" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="directMoreMenu" onclick="toggleActionMenu(event,'directMoreBtn','directMoreMenu')">更多<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+          <div class="action-more-menu" id="directMoreMenu" role="menu" aria-labelledby="directMoreBtn">
+            <button class="action-more-item danger" type="button" role="menuitem" onclick="closeActionMenus();rejectEval()">驳回</button>
+            <button class="action-more-item" type="button" role="menuitem" onclick="closeActionMenus();transferEval()">转交</button>
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="pg-hd-info">
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">考核方案</span><span class="pg-hd-info-value">产品部2026年Q2绩效考核</span></div>
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">考核周期</span><span class="pg-hd-info-value">2026年4-6月</span></div>
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">被评人</span><span class="pg-hd-info-value">张明</span></div>
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">部门</span><span class="pg-hd-info-value">产品部</span></div>
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">岗位</span><span class="pg-hd-info-value">高级产品经理</span></div>
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">评分范围</span><span class="pg-hd-info-value">全部模块</span></div>
     </div>
   </div>
 
@@ -384,47 +406,43 @@ var indirectComment='张明在产品规划和执行方面展现了较强的能�
 var directComment='';
 
 function renderModuleContainer(){
-  var html='<div class="eval-list"><table><thead><tr>'+
-    '<th style="width:180px">名称</th>'+
-    '<th style="width:55px">权重</th>'+
-    '<th style="width:70px">类型</th>'+
-    '<th style="min-width:200px">衡量标准</th>'+
-    '<th style="min-width:200px">完成值/完成情况</th>'+
-    '<th style="min-width:140px">员工自评</th>'+
-    '<th style="min-width:160px">双线上级评分</th>'+
-    '<th style="min-width:220px;position:sticky;right:0;background:var(--c0);z-index:2">直线上级评分</th>'+
-    '</tr></thead><tbody>';
+  var html='<div class="eval-modules">';
   MODULES.forEach(function(mod,mi){
-    html+='<tr class="mod-row"><td colspan="8"><div class="eval-mod">'+
-      '<div class="eval-mod-dot" style="background:'+mod.color+'"></div>'+
-      '<span class="eval-mod-name">'+mod.name+'</span>'+
-      '<span class="eval-mod-weight">'+mod.weight+'%</span>'+
-      '</div></td></tr>';
+    var isQuantModule=mod.name==='KPI';
+    var modIcon=isQuantModule?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>';
+    html+='<section class="eval-module-card" aria-labelledby="direct_module_'+mi+'">'+
+      '<div class="eval-module-hd"><div class="eval-module-main"><div class="eval-mod-icon" style="background:'+mod.color+'">'+modIcon+'</div><span class="eval-mod-name" id="direct_module_'+mi+'">'+mod.name+'</span></div>'+
+      '<div class="eval-mod-stats"><span class="eval-mod-weight">'+mod.weight+'%</span><span class="eval-mod-count">'+mod.goals.length+' 个目标</span></div></div>'+
+      '<div class="eval-module-table"><table><colgroup>'+(isQuantModule?'<col style="width:20%"><col style="width:8%"><col><col style="width:104px"><col style="width:64px">':'<col style="width:18%"><col style="width:7%"><col><col style="width:20%"><col style="width:112px"><col style="width:112px"><col style="width:150px">')+'</colgroup>'+
+      (isQuantModule?'<thead><tr><th>指标名称</th><th>权重</th><th>衡量标准</th><th>完成值</th><th>得分</th></tr></thead>':'<thead><tr><th>指标名称</th><th>权重</th><th>衡量标准</th><th>完成情况</th><th>员工自评</th><th>双线上级评价</th><th>直线上级评价</th></tr></thead>')+'<tbody>';
     mod.goals.forEach(function(g,gi){
       var isQuant=g.type==='quant';
-      var sysGrade=isQuant?calcGrade(g,g.completed):null;
       html+='<tr>'+
         '<td><span style="font-weight:500;color:var(--c8)">'+g.name+'</span></td>'+
-        '<td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">'+g.weight+'%</span></td>'+
-        '<td><span class="eval-type-tag '+(isQuant?'quant':'qual')+'">'+(isQuant?'定量':'定性')+'</span></td>';
+        '<td><span style="font-family:var(--m);font-weight:500;color:var(--c6);font-size:12px">'+g.weight+'%</span></td>';
       if(isQuant){
         html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">'+g.desc+'<br>挑战值: <span style="font-family:var(--m);color:var(--c7)">'+g.challenge+g.unit+'</span> / 目标值: <span style="font-family:var(--m);color:var(--c7)">'+g.target+g.unit+'</span></td>';
-        html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">完成值: <span style="font-family:var(--m);font-weight:600;color:var(--c8)">'+g.completed+'</span><br>'+renderQuantGrade(sysGrade)+'</td>';
+        var completedText=String(g.completed).slice(-g.unit.length)===g.unit?g.completed:g.completed+g.unit;
+        html+='<td class="completion-readonly"><span style="font-family:var(--m);font-weight:600;color:var(--c8)">'+completedText+'</span></td>';
       }else{
         html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">'+g.measureDesc+'</td>';
-        html+='<td style="font:400 12px/1.6 var(--f);color:var(--c6)">'+(g.completed||'—')+'</td>';
+        html+='<td class="completion-readonly">'+(g.completed||'—')+'</td>';
       }
-      html+='<td><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--c1);color:var(--c6)">'+g.employeeGrade+'</span></td>'+
-        '<td><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--c1);color:var(--c6)">'+g.indirectGrade+'</span></td>'+
-        '<td class="score-cell" style="position:sticky;right:0;background:var(--sf);z-index:1"><div class="star-rating" data-value="'+(g.directStar||0)+'"><div class="star-row">';
-      for(var si=1;si<=5;si++){
-        html+='<span class="star'+(si<=(g.directStar||0)?' active':'')+'" data-v="'+si+'" onclick="setDirectStar(this,'+mi+','+gi+','+si+')" onmouseenter="starHover(this,1)" onmouseleave="starHover(this,0)">★</span>';
+      if(isQuant){
+        html+='<td class="computed-score-cell"><span class="computed-score">'+formatCalculatedScore(getCalculatedScore(g))+'</span></td>';
+      }else{
+        html+='<td><span class="result-badge">'+(g.employeeGrade||'—')+'</span></td><td><span class="result-badge">'+(g.indirectGrade||'—')+'</span></td>'+
+          '<td class="score-cell"><div class="star-rating" id="direct_score_'+mi+'_'+gi+'" data-value="'+(g.directStar||0)+'"><div class="star-row">';
+        for(var si=1;si<=5;si++){
+          html+='<span class="star'+(si<=(g.directStar||0)?' active':'')+'" data-v="'+si+'" onclick="setDirectStar(this,'+mi+','+gi+','+si+')" onmouseenter="starHover(this,1)" onmouseleave="starHover(this,0)">★</span>';
+        }
+        html+='</div><div class="star-label">'+(STAR_GRADE[g.directStar]||'')+'</div><div class="star-desc">'+(STAR_DESC[g.directStar]||'')+'</div></div></td>';
       }
-      html+='</div><div class="star-label"></div><div class="star-desc"></div></div></td>';
       html+='</tr>';
     });
+    html+='</tbody></table></div></section>';
   });
-  html+='</tbody></table></div>';
+  html+='</div>';
 
   // 初评等级 - 评星
   html+='<div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-top:16px;padding:20px 24px">'+
@@ -469,6 +487,21 @@ function renderModuleContainer(){
 }
 
 var initGradeManualOverride=false;
+
+function getCalculatedScore(goal){
+  if(goal.type==='quant'){
+    var completed=parseFloat(goal.completed);
+    if(isNaN(completed))return null;
+    return Math.round(Math.max(0,Math.min(5,completed/20))*10)/10;
+  }
+  var gradeScore={'远超预期':5,'超出预期':5,'符合预期+':4,'符合预期':3,'符合预期-':2,'低于预期':1,'远低预期':1};
+  return gradeScore[goal.employeeGrade]||null;
+}
+
+function formatCalculatedScore(score){
+  if(score===null)return'—';
+  return Number.isInteger(score)?String(score):score.toFixed(1);
+}
 
 function calcWeightedInitGrade(){
   var totalWeight=0,weightedScore=0;
@@ -602,6 +635,20 @@ function starHoverInit(el,entering){
 function submitEval(){showToast('评分已提交','success');}
 function rejectEval(){showToast('已驳回，将退回给双线上级重新评分','warn');}
 function transferEval(){showToast('已转交，等待其他管理者处理','success');}
+function closeActionMenus(){
+  document.querySelectorAll('.action-more-menu.open').forEach(function(menu){menu.classList.remove('open');});
+  document.querySelectorAll('.action-more-trigger[aria-expanded="true"]').forEach(function(btn){btn.setAttribute('aria-expanded','false');});
+}
+function toggleActionMenu(event,buttonId,menuId){
+  event.stopPropagation();
+  var button=document.getElementById(buttonId);
+  var menu=document.getElementById(menuId);
+  var shouldOpen=!menu.classList.contains('open');
+  closeActionMenus();
+  if(shouldOpen){menu.classList.add('open');button.setAttribute('aria-expanded','true');}
+}
+document.addEventListener('click',closeActionMenus);
+document.addEventListener('keydown',function(event){if(event.key==='Escape')closeActionMenus();});
 function showToast(msg,type){
   var t=document.getElementById('toast');
   document.getElementById('toastMsg').textContent=msg;
@@ -685,18 +732,11 @@ function applyAiSuggestion(type){
       {mi:1,gi:3,grade:'符合预期+'}
     ];
     grades.forEach(function(g){
-      if(g.starRating){
-        MODULES[g.mi].goals[g.gi].starRating=g.starRating;
-        var starDiv=document.getElementById('grade_'+g.mi+'_'+g.gi).parentElement.querySelector('.star-rating');
-        if(starDiv){setStar(starDiv.querySelector('.star'),g.starRating);}
-      }else{
-        MODULES[g.mi].goals[g.gi].grade=g.grade;
-        var gr=document.getElementById('grade_'+g.mi+'_'+g.gi);
-        if(gr){
-          var btn=gr.parentElement.querySelector('.grade-btn[data-grade="'+g.grade+'"]');
-          if(btn){updateGrade(g.mi,g.gi,btn);}
-        }
-      }
+      var gradeStars={'低于预期':1,'符合预期-':2,'符合预期':3,'符合预期+':4,'超出预期':5};
+      var value=g.starRating||gradeStars[g.grade]||0;
+      var rating=document.getElementById('direct_score_'+g.mi+'_'+g.gi);
+      var star=rating&&rating.querySelector('.star[data-v="'+value+'"]');
+      if(star)setDirectStar(star,g.mi,g.gi,value);
     });
     directComment='张明本季度整体表现优秀，KPI基本达标，KPA均按时完成。资源利用率超额完成，绩效重构和AI应用项目推进有力。建议继续保持跨部门协作优势，持续提升需求评审及时率。综合评价：符合预期+。';
     var dc=document.getElementById('directComment');

@@ -185,7 +185,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoo
     <!-- 我的目标 -->
     <div class="card">
       <div class="card-hd">
-        <span class="card-t">我的目标</span>
+        <span class="card-t" id="myGoalTitle">我的目标</span>
         <span class="card-action" onclick="location.href='demo-workbench-my-goal.html'">更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
       </div>
       <div class="card-bd">
@@ -253,13 +253,13 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoo
         </div>
       </div>
       <div class="perf-legend">
-        <div class="perf-legend-dot" style="background:#E11D48"></div>远低预期
+        <div class="perf-legend-dot" style="background:#F43F5E"></div>远低预期
         <div class="perf-legend-dot" style="background:#F43F5E"></div>低于预期
         <div class="perf-legend-dot" style="background:#F59E0B"></div>符合预期-
-        <div class="perf-legend-dot" style="background:#A1A1AA"></div>符合预期
-        <div class="perf-legend-dot" style="background:#2563EB"></div>符合预期+
+        <div class="perf-legend-dot" style="background:#F59E0B"></div>符合预期
+        <div class="perf-legend-dot" style="background:#F59E0B"></div>符合预期+
         <div class="perf-legend-dot" style="background:#10B981"></div>超出预期
-        <div class="perf-legend-dot" style="background:#047857"></div>远超预期
+        <div class="perf-legend-dot" style="background:#10B981"></div>远超预期
       </div>
     </div>
   </div>
@@ -286,7 +286,7 @@ function showToast(msg, type) {
       labels: ['2021', '2022', '2023', '2024', '2025'],
       datasets: [{
         data: [3, 4, 4, 5, 6],
-        backgroundColor: ['#A1A1AA', '#2563EB', '#2563EB', '#10B981', '#047857']
+        backgroundColor: ['#F59E0B', '#F59E0B', '#F59E0B', '#10B981', '#10B981']
       }]
     },
     options: {
@@ -332,7 +332,7 @@ function showToast(msg, type) {
       labels: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
       datasets: [{
         data: [3, 4, 2, 5, 6, 5, 4, 3, 5, 4, 6, 5],
-        backgroundColor: ['#F43F5E','#E11D48','#F59E0B','#A1A1AA','#A1A1AA','#2563EB','#2563EB','#A1A1AA','#10B981','#2563EB','#10B981','#047857']
+        backgroundColor: ['#F59E0B','#F59E0B','#F43F5E','#F59E0B','#10B981','#F59E0B','#F59E0B','#F59E0B','#F59E0B','#F59E0B','#10B981','#F59E0B']
       }]
     },
     options: {
@@ -483,10 +483,11 @@ function switchCycle(val,el){
   var statusEl=document.getElementById('perfStatus');
   if(statusEl){
     var g=d.status||'超出预期';
-    var gc=g==='超出预期'||g==='远超预期'?'var(--em700)':g==='符合预期'||g==='符合预期+'?'var(--pr)':g==='符合预期-'?'var(--ac700)':'var(--c6)';
+    var gc=g==='超出预期'||g==='远超预期'?'var(--em700)':g==='符合预期+'||g==='符合预期'||g==='符合预期-'?'var(--ac700)':'var(--ro)';
     statusEl.innerHTML='<span style="font:700 22px/1 var(--fm);color:'+gc+'">'+g+'</span> <span style="color:var(--c4)">|</span> '+d.period;
   }
-  if(goalNames.length>0)goalNames[0].parentElement.parentElement.previousElementSibling.querySelector('.card-t').textContent='我的目标 · '+d.goalPeriod;
+  var goalTitle=document.getElementById('myGoalTitle');
+  if(goalTitle)goalTitle.textContent='我的目标 · '+d.goalPeriod;
 }
 </script>
 <script src="../navigation.js"></script>
