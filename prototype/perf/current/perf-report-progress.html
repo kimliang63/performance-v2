@@ -11,16 +11,18 @@
   --em:#10B981;--em50:#ECFDF5;--em100:#D1FAE5;--em700:#047857;
   --ac:#F59E0B;--ac50:#FFFBEB;--ac100:#FDE68A;--ac700:#B45309;
   --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
   --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
   --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
   --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --shadow-modal:0 25px 60px -12px rgba(0,0,0,.2);
   --r1:6px;--r2:8px;--r3:10px;
   --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
   --m:'JetBrains Mono','SF Mono',monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
-::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
 
 .btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
 .btn svg{width:13px;height:13px}
@@ -28,62 +30,152 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
 
 .fl-bar{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.fl-search{display:flex;align-items:center;gap:6px;background:var(--c0);border:1px solid var(--c2);border-radius:var(--r1);padding:0 10px;height:32px;min-width:200px;transition:all .15s}
+.fl-bar .fl-search{margin-bottom:0;min-width:220px}
+.fl-sel{height:32px;padding:0 28px 0 10px;border:1px solid var(--c2);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c7);background:var(--sf) url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center;appearance:none;cursor:pointer;transition:all .12s;outline:none;-webkit-appearance:none;-moz-appearance:none}
+.fl-sel:focus{border-color:var(--pr)}
+.fl-actions{display:flex;gap:6px;margin-left:auto}
+.fl-hint{font:400 12px/1 var(--f);color:var(--c5)}
+.fl-hint b{font-weight:600;color:var(--c9)}
+
+.st-row{display:flex;align-items:stretch;background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden}
+.st-item{flex:1;min-width:0;padding:16px 18px;pointer-events:none;position:relative}
+.st-item:not(:last-child)::after{content:'';position:absolute;top:16px;bottom:16px;right:0;width:1px;background:var(--c2)}
+.st-item-label{font:400 13px/1 var(--f);color:var(--c5);margin-bottom:8px}
+.st-item-value{font:700 22px/1 var(--m);color:var(--c9);margin-bottom:12px}
+.st-item-bar{height:3px;background:var(--c1);border-radius:2px;overflow:hidden}
+.st-item-fill{height:100%;border-radius:2px;background:var(--em);transition:width .6s ease}
+.st-item.is-zero .st-item-value{color:var(--c4)}
+.st-item.is-em .st-item-value{color:var(--em700)}
+.st-item.is-ac .st-item-value{color:var(--ac700)}
+.st-item.is-pr .st-item-value{color:var(--pr)}
+.st-item.is-zero .st-item-fill{background:var(--c4)}
+.st-item.is-em .st-item-fill{background:var(--em)}
+.st-item.is-ac .st-item-fill{background:var(--ac)}
+.st-item.is-pr .st-item-fill{background:var(--pr)}
+
+.org-pick{position:relative;min-width:180px;z-index:20}
+.org-trig{height:32px;width:100%;padding:0 28px 0 10px;border:1px solid var(--c2);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c7);background:var(--sf);display:flex;align-items:center;cursor:pointer;outline:none;text-align:left;position:relative}
+.org-trig:hover{border-color:var(--c3)}
+.org-trig.is-open,.org-trig:focus{border-color:var(--pr)}
+.org-trig-txt{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.org-trig .org-caret{position:absolute;right:10px;color:var(--c4);pointer-events:none}
+.org-panel{position:absolute;top:calc(100% + 4px);left:0;z-index:30;min-width:280px;max-height:360px;overflow:auto;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r1);box-shadow:0 10px 40px -10px rgba(0,0,0,.12),0 2px 10px -2px rgba(0,0,0,.04);padding:6px}
+.fl-filter{position:relative;z-index:20}
+.fl-filter .btn.is-open{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.fl-badge{display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;padding:0 5px;margin-left:2px;border-radius:8px;background:var(--pr);color:#FFF;font:600 10px/1 var(--m)}
+.fl-pop{position:absolute;top:calc(100% + 4px);left:0;z-index:30;width:320px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r1);box-shadow:0 10px 40px -10px rgba(0,0,0,.12),0 2px 10px -2px rgba(0,0,0,.04);padding:12px}
+.fl-pop-lab{font:500 12px/1.4 var(--f);color:var(--c6);margin-bottom:6px}
+.fl-pop .fl-search{width:100%;min-width:0;margin-bottom:0}
+.fl-pop-ft{display:flex;justify-content:flex-end;gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid var(--dv)}
+.ex-wrap{position:relative;z-index:20}
+.ex-wrap .btn.is-open{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ex-wrap .btn svg:last-of-type{width:10px;height:10px;flex-shrink:0}
+.ex-wrap .btn.is-open svg:last-of-type{transform:rotate(180deg)}
+.ex-menu{position:absolute;top:calc(100% + 4px);right:0;z-index:30;min-width:160px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r1);box-shadow:0 10px 40px -10px rgba(0,0,0,.12),0 2px 10px -2px rgba(0,0,0,.04);padding:4px}
+.ex-item{display:block;width:100%;text-align:left;border:none;background:transparent;padding:8px 12px;border-radius:var(--r1);font:400 13px/1.3 var(--f);color:var(--c7);cursor:pointer}
+.ex-item:hover{background:var(--pr50);color:var(--pr)}
+.org-item{display:flex;align-items:center;gap:2px;min-height:30px;padding-right:8px;border-radius:var(--r1);font:400 13px/1.3 var(--f);color:var(--c7)}
+.org-item:hover{background:var(--c0)}
+.org-item.is-on{background:var(--pr50);color:var(--pr);font-weight:600}
+.org-item-name{flex:1;cursor:pointer;padding:4px 6px;border-radius:var(--r1)}
+.org-chev,.dept-chev{width:18px;height:18px;border:none;background:transparent;color:var(--c5);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;border-radius:var(--r1);padding:0}
+.org-chev svg,.dept-chev svg{width:10px;height:10px;transform:rotate(-90deg);transition:transform .12s}
+.org-chev.is-open svg,.dept-chev.is-open svg{transform:rotate(0deg)}
+.org-chev:hover,.dept-chev:hover{background:var(--c1);color:var(--c7)}
+.org-chev-ph,.dept-chev-ph{width:18px;height:18px;flex-shrink:0}
+.dept-cell{display:flex;align-items:center;gap:4px}
+.dept-name.is-toggle{cursor:pointer}
+.dept-name.is-toggle:hover{color:var(--pr)}
+.dept-sub .dept-name{font-weight:500;color:var(--c8)}
+
+.tbl-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden}
+.view-tabs{display:flex;align-items:center;gap:0;padding:0 16px;background:var(--c0);border-bottom:1px solid var(--dv)}
+.view-tab{height:40px;padding:0 16px;border:none;background:transparent;font:500 13px/1 var(--f);color:var(--c5);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+.view-tab:hover{color:var(--c8)}
+.view-tab.is-on{color:var(--pr);font-weight:600;border-bottom-color:var(--pr)}
+.tbl-wrap{overflow:auto;max-height:calc(100vh - 240px)}
+table{width:100%;border-collapse:separate;border-spacing:0}
+.rate-cell{display:flex;align-items:center;justify-content:flex-start;gap:6px;min-width:0;min-height:22px;padding:0;margin:0;pointer-events:none}
+.rate-bar{flex:1;height:4px;min-width:24px;background:var(--c1);border-radius:2px;overflow:hidden}
+.rate-fill{height:100%;border-radius:2px;background:var(--em);transition:width .6s ease}
+.rate{font-family:var(--m);font-size:12px;font-weight:600;color:var(--c8);white-space:nowrap;width:34px;flex-shrink:0;text-align:right}
+.rate-zero{color:var(--c4);font-weight:500}
+.rate-ac{color:var(--ac700)}
+.rate-pr{color:var(--pr)}
+thead th{font:600 12px/1.2 var(--f);color:var(--c5);text-align:left;padding:8px 8px;border-bottom:1px solid var(--c2);border-right:1px solid var(--dv);white-space:nowrap;background:var(--c0);letter-spacing:.2px}
+thead .g-th{font:600 12px/1 var(--f);color:var(--c8);padding:9px 8px;border-bottom:1px solid var(--c2);cursor:pointer;user-select:none;background:var(--c0)}
+thead .g-th:hover{background:var(--c1)}
+.g-th-in{display:inline-flex;align-items:center;justify-content:flex-start;gap:4px}
+.g-th svg{width:10px;height:10px;flex-shrink:0;opacity:.75}
+.g-th.is-off svg{transform:rotate(-90deg)}
+.g-th-n{font:600 12px/1 var(--m);color:var(--c4);width:12px;flex-shrink:0}
+.g-chk{display:inline-flex;align-items:center;flex-shrink:0;cursor:pointer;line-height:0}
+.g-chk input{width:13px;height:13px;margin:0;accent-color:var(--pr);cursor:pointer}
+thead .g-part,tbody .g-part{width:1%;min-width:56px;max-width:68px;padding:6px 4px;text-align:center;white-space:nowrap}
+.g-part .num-link{justify-content:center;padding:2px 0;width:100%}
+thead .dept-h,tbody .dept-c{position:sticky;left:0;z-index:3;text-align:left;width:1%;min-width:176px;padding:8px 16px;border-right:1px solid var(--c2);background:var(--sf)}
+thead .dept-h{z-index:4;background:var(--c0);text-align:left;font:600 12px/1 var(--f);color:var(--c5);letter-spacing:.2px}
+thead .count-g-th{width:124px;min-width:124px;max-width:124px;font:600 12px/1 var(--f);color:var(--c8);padding:9px 6px;background:var(--c0);cursor:default}
+thead .part-h,tbody .part-c{width:1%;min-width:68px;max-width:68px;padding:6px 4px;text-align:center;border-right:1px solid var(--c2);white-space:nowrap}
+thead .part-h{font:600 12px/1.2 var(--f);color:var(--c5);letter-spacing:.2px}
+thead .skip-h,tbody .skip-c{width:1%;min-width:56px;max-width:56px;padding:6px 4px;text-align:center;border-right:2px solid var(--c3);white-space:nowrap}
+thead .skip-h{font:600 12px/1.2 var(--f);color:var(--c5);letter-spacing:.2px}
+.part-c .num-link,.skip-c .num-link{justify-content:center;padding:2px 0;width:100%}
+tbody td{font:400 13px/1.3 var(--f);color:var(--c7);padding:8px 8px;border-bottom:1px solid var(--dv);border-right:1px solid var(--dv);text-align:left;vertical-align:middle}
+tbody tr:hover td{background:var(--c0)}
+tbody tr:hover .dept-c,tbody tr:hover .part-c,tbody tr:hover .skip-c{background:var(--c0)}
+tbody tr:last-child td{border-bottom:none}
+.dept-name{font:600 13px/1.3 var(--f);color:var(--c9);white-space:nowrap}
+.dept-n{font-weight:400;color:var(--c5)}
+.num{font-family:var(--m);font-size:13px;font-weight:500;color:var(--c4);display:inline-flex;align-items:center;justify-content:flex-start;line-height:1.2;vertical-align:middle}
+.num-link{color:var(--c8);cursor:pointer;background:none;border:none;padding:2px 4px 2px 0;border-radius:var(--r1);font:500 13px/1.2 var(--m);display:inline-flex;align-items:center;justify-content:flex-start;vertical-align:middle;transition:all .12s}
+.num-link:hover{background:var(--c1);text-decoration:underline}
+.num-link.on{background:var(--c8);color:#FFF}
+.num-em,.num-link.num-em{color:var(--em700)}
+.num-ro,.num-link.num-ro{color:var(--ro)}
+.num-ac,.num-link.num-ac{color:var(--ac700)}
+.num-idle,.num-link.num-idle{color:var(--c4)}
+.num-ink,.num-link.num-ink{color:var(--c8)}
+.num-link.on,.num-link.on.num-em,.num-link.on.num-ro,.num-link.on.num-ac,.num-link.on.num-idle,.num-link.on.num-ink{background:var(--c8);color:#FFF}
+.g-split{border-right:2px solid var(--c3)!important}
+.total-row td{background:var(--c0);font-weight:600}
+.total-row .dept-c,.total-row .part-c,.total-row .skip-c{background:var(--c0)}
+.total-row:hover td,.total-row:hover .dept-c,.total-row:hover .part-c,.total-row:hover .skip-c{background:var(--c0)}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:2000;display:flex;align-items:center;justify-content:center;padding:24px}
+.modal{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-modal);width:min(1120px,calc(100vw - 48px));max-height:80vh;overflow:hidden;display:flex;flex-direction:column}
+.modal-hd{padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.modal-hd-title{font:600 15px/1.3 var(--f);color:var(--c9)}
+.modal-close{width:28px;height:28px;border-radius:var(--r1);border:none;background:transparent;color:var(--c5);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.modal-close:hover{background:var(--c1);color:var(--c7)}
+.modal-bd{flex:1;min-height:0;overflow:hidden;padding:16px 20px;display:flex;flex-direction:column}
+.modal-tools{display:flex;align-items:center;gap:8px;flex-shrink:0;margin-bottom:12px}
+.modal-tools .fl-search{flex:1;min-width:0;margin-bottom:0}
+.modal-tbl-wrap{flex:1;min-height:0;overflow:auto}
+.modal-ft{padding:12px 20px;border-top:1px solid var(--dv);display:flex;align-items:center;justify-content:flex-start}
+.col-set-modal{width:min(400px,calc(100vw - 48px));max-height:70vh}
+.col-set-item{display:flex;align-items:center;gap:8px;min-height:36px;padding:0 8px;border-radius:var(--r1);font:400 13px/1.3 var(--f);color:var(--c7);cursor:pointer}
+.col-set-item:hover{background:var(--c0)}
+.col-set-item input{width:13px;height:13px;margin:0;accent-color:var(--pr);cursor:pointer}
+.flow-tbl{width:100%;border-collapse:collapse;min-width:1080px}
+.flow-tbl th{padding:8px 12px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);background:var(--c0);white-space:nowrap;position:sticky;top:0;z-index:1}
+.flow-tbl td{padding:9px 12px;font:400 12px/1.4 var(--f);color:var(--c7);border-bottom:1px solid var(--dv)}
+.flow-tbl tr:last-child td{border-bottom:none}
+.fl-search{display:flex;align-items:center;gap:6px;background:var(--c0);border:1px solid var(--c2);border-radius:var(--r1);padding:0 10px;height:32px;min-width:200px;margin-bottom:12px;transition:all .15s}
 .fl-search:focus-within{background:var(--sf);border-color:var(--pr)}
 .fl-search svg{color:var(--c4);flex-shrink:0;width:13px;height:13px}
 .fl-search input{border:none;background:transparent;outline:none;font:13px/1 var(--f);width:100%;color:var(--c9)}
 .fl-search input::placeholder{color:var(--c4)}
-.fl-sel{height:32px;padding:0 28px 0 10px;border:1px solid var(--c2);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c7);background:var(--sf) url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center;appearance:none;cursor:pointer;transition:all .12s;outline:none;-webkit-appearance:none;-moz-appearance:none}
-.fl-sel:focus{border-color:var(--pr)}
-.fl-actions{display:flex;gap:6px;margin-left:auto}
-
-.tbl-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden;margin-bottom:16px}
-.tbl-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;min-width:900px}
-thead th{background:var(--c0);font:600 12px/1 var(--f);color:var(--c5);text-align:left;padding:10px 14px;border-bottom:1px solid var(--dv);white-space:nowrap;letter-spacing:.2px;text-transform:uppercase}
-tbody td{font:400 13px/1.4 var(--f);color:var(--c7);padding:12px 14px;border-bottom:1px solid var(--dv);vertical-align:middle}
-tbody tr{transition:background .1s}
-tbody tr:hover{background:var(--c0)}
-tbody tr:nth-child(even){background:var(--c0)}
-tbody tr:nth-child(even):hover{background:var(--pr50)}
-tbody tr:last-child td{border-bottom:none}
-.mono{font-family:var(--m);font-size:12px}
-
 .tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:3px;font:500 11px/1 var(--f);white-space:nowrap}
+.tag-pr{background:var(--pr50);color:var(--pr)}
 .tag-em{background:var(--em50);color:var(--em700)}
 .tag-ac{background:var(--ac50);color:var(--ac700)}
-.tag-pr{background:var(--pr50);color:var(--pr)}
 .tag-ro{background:var(--ro50);color:var(--ro)}
-
-.lk{color:var(--pr);cursor:pointer;text-decoration:none;font-weight:500}
-.lk:hover{text-decoration:underline}
-
-.pg-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-top:1px solid var(--dv);font:400 12px/1 var(--f);color:var(--c5)}
-.pg-info{display:flex;align-items:center;gap:16px}
-.pg-nav{display:flex;align-items:center;gap:4px}
-.pg-btn{width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;border:1px solid var(--c2);background:var(--sf);cursor:pointer;color:var(--c5);font:500 12px/1 var(--f);transition:all .12s}
-.pg-btn:hover{border-color:var(--pr);color:var(--pr)}
-.pg-btn.on{background:var(--pr);border-color:var(--pr);color:#FFF}
-.pg-btn:disabled{opacity:.4;cursor:not-allowed}
-
-.lk{color:var(--pr);cursor:pointer;text-decoration:none;font-weight:500}
-.lk:hover{text-decoration:underline}
-
-/* ═══ MODAL ═══ */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:2000;display:flex;align-items:center;justify-content:center}
-.modal{background:var(--sf);border-radius:var(--r3);box-shadow:0 20px 60px rgba(0,0,0,.15);width:720px;max-height:80vh;overflow:hidden;display:flex;flex-direction:column}
-.modal-hd{padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between}
-.modal-hd-title{font:600 15px/1 var(--f);color:var(--c9)}
-.modal-close{width:28px;height:28px;border-radius:var(--r1);border:none;background:transparent;color:var(--c5);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px}
-.modal-close:hover{background:var(--c1);color:var(--c7)}
-.modal-bd{flex:1;overflow-y:auto;padding:16px 20px}
-.modal-ft{padding:12px 20px;border-top:1px solid var(--dv);display:flex;justify-content:flex-end}
-.flow-tbl{width:100%;border-collapse:collapse;font-size:12px}
-.flow-tbl th{padding:8px 12px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);background:var(--c0)}
-.flow-tbl td{padding:8px 12px;font:400 12px/1.4 var(--f);color:var(--c7);border-bottom:1px solid var(--dv)}
+.empty{text-align:center;padding:36px 12px;color:var(--c4);font:400 13px/1.4 var(--f)}
+.mono{font-family:var(--m);font-size:12px}
 
 @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.fi{animation:fi .25s ease forwards}
+.fi{animation:fi .2s ease forwards}
 </style>
 </head>
 <body>
@@ -93,146 +185,1025 @@ tbody tr:last-child td{border-bottom:none}
 GHR_NAV.init('perf', '考核进度');
 
 var I={
-  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
   x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
   download:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
-  bell:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>',
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
+  chev:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>',
+  caret:'<svg class="org-caret" viewBox="0 0 10 6" fill="none" width="10" height="6"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  settings:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+  filter:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>'
 };
 
-var names=['张明','李华','王芳','赵磊','陈静','刘洋','周婷','吴强','郑丽','孙鹏','钱敏','黄波','林燕','何涛','马丽','朱伟','胡洁','郭明','杨峰','沈云','许亮','邓超','彭飞','蒋浩','韩雪'];
-var depts=['产品部','技术部','市场部','设计部','运营部','产品部','技术部','市场部','设计部','运营部','产品部','技术部','市场部','设计部','运营部','产品部','技术部','市场部','设计部','运营部','产品部','技术部','市场部','设计部','运营部'];
-var allPeriods=['2026年Q2','2026年Q2','2026年Q2','2026年Q2','2026年Q2','2026年Q2','2026年Q2','2026年Q2','2026年Q2','2026年Q2','2026年Q2','2026年Q2','2026年Q1','2026年Q1','2026年Q1','2026年Q1','2026年Q1','2026年Q1','2026年Q1','2026年Q1','2026年Q1','2026年Q1','2026年Q1','2026年Q1','2026年Q1'];
-/* Status by node: 未开始='', 填写中=currentNode, 已完成='done' */
-var nodeStatus=['绩效考核','结果审定','结果确认','绩效面谈','done','直接上级审批','绩效考核','结果审定','目标制定','绩效考核','done','目标制定','绩效考核','绩效考核','结果审定','结果确认','done','绩效考核','直接上级审批','结果审定','绩效考核','直接上级审批','目标制定','绩效考核','直接上级审批'];
-var handlers=['王总监','王总监','张明','王总监','','王总监','王总监','王总监','张明','王总监','','王总监','王总监','王总监','王总监','王总监','','王总监','刘VP','王总监','王总监','刘VP','张明','王总监','刘VP'];
+var GROUPS=[
+  {id:'goal',name:'目标制定',cls:'goal',cols:['未开始','制定中','审批中','已完成','已终止'],rates:['目标提交率','完成率'],order:[
+    {type:'part',key:'参与'},{type:'col',key:'未开始'},{type:'col',key:'制定中'},{type:'rate',key:'目标提交率'},
+    {type:'col',key:'审批中'},{type:'col',key:'已完成'},{type:'col',key:'已终止'},{type:'rate',key:'完成率'}
+  ]},
+  {id:'talk',name:'绩效面谈',cls:'talk',cols:['未开始','进行中','已完成','已终止'],rates:['完成率']},
+  {id:'eval',name:'绩效考核',cls:'eval',cols:['未开始','自评中','考核人评分','已完成','已终止'],rates:['自评完成率','完成率'],order:[
+    {type:'part',key:'参与'},{type:'col',key:'未开始'},{type:'col',key:'自评中'},{type:'rate',key:'自评完成率'},
+    {type:'col',key:'考核人评分'},{type:'col',key:'已完成'},{type:'col',key:'已终止'},{type:'rate',key:'完成率'}
+  ]},
+  {id:'ratify',name:'结果审定',cls:'ratify',cols:['未开始','进行中','已完成'],rates:['完成率']},
+  {id:'confirm',name:'结果确认',cls:'confirm',cols:['未开始','进行中','已确认','申诉'],rates:['完成率']}
+];
 
-var STAGE_ORDER=['目标制定','直接上级审批','绩效考核','直接上级评分','结果审定','结果确认','绩效面谈'];
-var FLOW_HANDLERS=['张明','王总监','张明','王总监','刘VP','张明','王总监'];
+var ORG_TREE={id:'all',name:'全部组织',kind:'root',children:[
+  {id:'cn',name:'中国区',kind:'region',children:[
+    {id:'rd',name:'产品研发中心',kind:'center',children:[
+      {id:'prod',name:'产品部',kind:'dept',children:[
+        {id:'prod-1',name:'产品一组',kind:'team'},
+        {id:'prod-2',name:'产品二组',kind:'team'}
+      ]},
+      {id:'tech',name:'技术部',kind:'dept',children:[
+        {id:'tech-plat',name:'平台研发',kind:'team'},
+        {id:'tech-app',name:'应用研发',kind:'team'}
+      ]}
+    ]},
+    {id:'mkt',name:'市场中心',kind:'center',children:[
+      {id:'market',name:'市场部',kind:'dept',children:[
+        {id:'market-brand',name:'品牌组',kind:'team'},
+        {id:'market-ch',name:'渠道组',kind:'team'}
+      ]},
+      {id:'design',name:'设计部',kind:'dept',children:[
+        {id:'design-ux',name:'体验设计',kind:'team'}
+      ]},
+      {id:'ops',name:'运营部',kind:'dept',children:[
+        {id:'ops-user',name:'用户运营',kind:'team'}
+      ]}
+    ]}
+  ]}
+]};
 
-/* Derive status: '' → 未开始, 'done' → 已完成, otherwise → 填写中 */
-function deriveStatus(ns){
-  if(!ns)return'未开始';
-  if(ns==='done')return'已完成';
-  return'填写中';
-}
+var ORG_INDEX={};
+(function indexOrg(node, parent){
+  node.parent=parent||null;
+  node.hasChildren=!!(node.children&&node.children.length);
+  ORG_INDEX[node.id]=node;
+  (node.children||[]).forEach(function(ch){ indexOrg(ch, node); });
+})(ORG_TREE, null);
 
-var PROGRESS_DATA=[];
-for(var i=0;i<25;i++){
-  var ns=nodeStatus[i],cs=ns==='done'?'':ns,st=deriveStatus(ns);
-  var steps=[];
-  for(var j=0;j<STAGE_ORDER.length;j++){
-    var sj=STAGE_ORDER[j];
-    var isDone=st==='已完成'||(st==='填写中'&&STAGE_ORDER.indexOf(sj)<STAGE_ORDER.indexOf(cs));
-    var isCurrent=sj===cs&&st==='填写中';
-    var isPending=!isDone&&!isCurrent;
-    steps.push({stage:sj,handler:FLOW_HANDLERS[j],inTime:isDone?'2026-0'+Math.floor(Math.random()*6+1)+'-'+String(Math.floor(Math.random()*28+1)).padStart(2,'0'):'—',outTime:isDone?'2026-0'+Math.floor(Math.random()*6+1)+'-'+String(Math.floor(Math.random()*28+1)).padStart(2,'0'):'—',status:isDone?'✓ 完成':isCurrent?'● 处理中':'○ 待处理',done:isDone,current:isCurrent});
+var DEPT_META={
+  '产品部':{area:'中国区 · 产品研发中心',jobs:['产品经理','高级产品经理','产品专家'],ranks:['P5','P6','P7']},
+  '技术部':{area:'中国区 · 产品研发中心',jobs:['后端工程师','前端工程师','技术专家'],ranks:['P5','P6','P7']},
+  '市场部':{area:'中国区 · 市场中心',jobs:['市场策划','品牌经理','渠道经理'],ranks:['P4','P5','P6']},
+  '设计部':{area:'中国区 · 市场中心',jobs:['体验设计师','视觉设计师','设计专家'],ranks:['P5','P6','P7']},
+  '运营部':{area:'中国区 · 市场中心',jobs:['用户运营','活动运营','运营专家'],ranks:['P4','P5','P6']}
+};
+var EVAL_GROUP_BY_ORG={
+  'prod-1':'产品一组','prod-2':'产品二组',
+  'tech-plat':'技术一组','tech-app':'技术二组',
+  'market-brand':'市场一组','market-ch':'市场二组',
+  'design-ux':'设计一组','ops-user':'运营一组'
+};
+
+function person(p){
+  p.skip=!!(p.skip||p.goal==='未参与考核'||p.eval==='未参与考核');
+  if(p.skip){
+    p.goal='未参与考核';
+    p.talk='未参与考核';
+    p.eval='未参与考核';
+    p.ratify='未参与考核';
+    p.confirm='未参与考核';
+    if(!p.node) p.node='未参与考核';
   }
-  PROGRESS_DATA.push({empId:'EMP'+String(i+1).padStart(4,'0'),name:names[i],dept:depts[i],period:allPeriods[i],activity:allPeriods[i]+'-'+depts[i]+'考核',currentStage:cs,currentHandler:ns==='done'?'':(handlers[i]||''),status:st,flowSteps:steps});
+  p.activity=p.period+'-'+p.dept+'考核';
+  var leaf=ORG_INDEX[p.orgId];
+  p.orgName=leaf?leaf.name:p.dept;
+  if(!p.evalGroup) p.evalGroup=EVAL_GROUP_BY_ORG[p.orgId]||p.orgName||p.dept;
+  if(!p.talk){
+    if(p.goal!=='已完成'&&p.goal!=='已通过') p.talk='未开始';
+    else if(p.eval!=='未开始') p.talk='已完成';
+    else p.talk='进行中';
+  }
+  var n=parseInt(String(p.empId).replace(/\D/g,''),10)||1;
+  var meta=DEPT_META[p.dept]||{area:'中国区',jobs:['专员'],ranks:['P4']};
+  if(!p.empStatus) p.empStatus=n%11===0?'试用':(n%13===0?'待离职':'在职');
+  if(!p.workType) p.workType=n%8===0?'劳务派遣':(n%9===0?'实习':'劳动合同');
+  if(!p.area) p.area=meta.area;
+  if(!p.job) p.job=meta.jobs[n%meta.jobs.length];
+  if(!p.rank) p.rank=meta.ranks[n%meta.ranks.length];
+  if(!p.hireDate){
+    var y=2016+(n%8);
+    var mo=('0'+((n%12)+1)).slice(-2);
+    var d=('0'+((n%27)+1)).slice(-2);
+    p.hireDate=y+'-'+mo+'-'+d;
+  }
+  if(!p.handler){
+    if(p.skip) p.handler='陈HRBP';
+    else if(p.eval==='自评中'||p.node==='自评中') p.handler=p.name;
+    else if(p.confirm==='申诉'||p.node==='申诉') p.handler='陈HRBP';
+    else p.handler='王总监';
+  }
+  return p;
 }
 
-var DEPTS=['全部','产品部','技术部','市场部','设计部','运营部'];
-var STATUSES=['全部状态','未开始','填写中','已完成'];
+var PEOPLE=[
+  person({empId:'EMP0001',name:'张明',dept:'产品部',orgId:'prod-1',period:'2026年Q2',node:'已终止',handler:'',goal:'已完成',eval:'已终止',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0006',name:'刘洋',dept:'产品部',orgId:'prod-1',period:'2026年Q2',node:'已终止',handler:'',goal:'已完成',talk:'已终止',eval:'未开始',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0011',name:'钱敏',dept:'产品部',orgId:'prod-1',period:'2026年Q2',node:'考核人评分',handler:'王总监',goal:'已完成',eval:'考核人评分',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0016',name:'朱伟',dept:'产品部',orgId:'prod-1',period:'2026年Q2',node:'目标审批',handler:'王总监',goal:'审批中',eval:'未开始',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0021',name:'许亮',dept:'产品部',orgId:'prod-2',period:'2026年Q2',node:'目标审批',handler:'王总监',goal:'审批中',eval:'未开始',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0026',name:'曹颖',dept:'产品部',orgId:'prod-2',period:'2026年Q2',node:'已完成',handler:'',goal:'已完成',eval:'已完成',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0031',name:'冯佳',dept:'产品部',orgId:'prod-2',period:'2026年Q2',node:'目标审批',handler:'王总监',goal:'审批中',eval:'未开始',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0036',name:'薛宁',dept:'产品部',orgId:'prod-2',period:'2026年Q2',node:'已完成',handler:'',goal:'已完成',eval:'已完成',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0002',name:'李华',dept:'技术部',orgId:'tech-plat',period:'2026年Q2',node:'已终止',handler:'',goal:'已完成',eval:'已终止',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0007',name:'周婷',dept:'技术部',orgId:'tech-plat',period:'2026年Q2',node:'自评中',handler:'周婷',goal:'已完成',eval:'自评中',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0012',name:'黄波',dept:'技术部',orgId:'tech-plat',period:'2026年Q2',node:'已终止',handler:'',goal:'已完成',talk:'已终止',eval:'未开始',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0017',name:'胡洁',dept:'技术部',orgId:'tech-plat',period:'2026年Q2',node:'自评中',handler:'胡洁',goal:'已完成',eval:'自评中',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0022',name:'邓超',dept:'技术部',orgId:'tech-app',period:'2026年Q2',node:'目标审批',handler:'王总监',goal:'审批中',eval:'未开始',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0027',name:'潘磊',dept:'技术部',orgId:'tech-app',period:'2026年Q2',node:'目标审批',handler:'王总监',goal:'审批中',eval:'未开始',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0032',name:'韩梅',dept:'技术部',orgId:'tech-app',period:'2026年Q2',node:'目标审批',handler:'王总监',goal:'审批中',eval:'未开始',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0037',name:'邱峰',dept:'技术部',orgId:'tech-app',period:'2026年Q2',node:'考核人评分',handler:'王总监',goal:'已完成',eval:'考核人评分',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0003',name:'王芳',dept:'市场部',orgId:'market-brand',period:'2026年Q2',node:'已完成',handler:'',goal:'已完成',eval:'已完成',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0008',name:'吴强',dept:'市场部',orgId:'market-brand',period:'2026年Q2',node:'已完成',handler:'',goal:'已完成',eval:'已完成',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0013',name:'林燕',dept:'市场部',orgId:'market-brand',period:'2026年Q2',node:'已完成',handler:'',goal:'已完成',eval:'已完成',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0018',name:'郭明',dept:'市场部',orgId:'market-ch',period:'2026年Q2',node:'已完成',handler:'',goal:'已完成',eval:'已完成',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0023',name:'彭飞',dept:'市场部',orgId:'market-ch',period:'2026年Q2',node:'已完成',handler:'',goal:'已完成',eval:'已完成',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0028',name:'丁雪',dept:'市场部',orgId:'market-ch',period:'2026年Q2',node:'已完成',handler:'',goal:'已完成',eval:'已完成',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0004',name:'赵磊',dept:'设计部',orgId:'design-ux',period:'2026年Q2',node:'已完成',handler:'',goal:'已完成',eval:'已完成',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0009',name:'郑丽',dept:'设计部',orgId:'design-ux',period:'2026年Q2',node:'目标审批',handler:'王总监',goal:'审批中',eval:'未开始',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0014',name:'何涛',dept:'设计部',orgId:'design-ux',period:'2026年Q2',node:'目标审批',handler:'王总监',goal:'审批中',eval:'未开始',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0019',name:'杨峰',dept:'设计部',orgId:'design-ux',period:'2026年Q2',node:'已完成',handler:'',goal:'已完成',eval:'已完成',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0024',name:'蒋浩',dept:'设计部',orgId:'design-ux',period:'2026年Q2',node:'已完成',handler:'',goal:'已完成',eval:'已完成',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0029',name:'卢倩',dept:'设计部',orgId:'design-ux',period:'2026年Q2',node:'目标审批',handler:'王总监',goal:'审批中',eval:'未开始',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0005',name:'陈静',dept:'运营部',orgId:'ops-user',period:'2026年Q2',node:'已完成',handler:'',goal:'已完成',eval:'已完成',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0010',name:'孙鹏',dept:'运营部',orgId:'ops-user',period:'2026年Q2',node:'考核人评分',handler:'王总监',goal:'已完成',eval:'考核人评分',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0015',name:'马丽',dept:'运营部',orgId:'ops-user',period:'2026年Q2',node:'已完成',handler:'',goal:'已完成',eval:'已完成',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0020',name:'沈云',dept:'运营部',orgId:'ops-user',period:'2026年Q2',node:'自评中',handler:'沈云',goal:'已完成',eval:'自评中',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0025',name:'韩雪',dept:'运营部',orgId:'ops-user',period:'2026年Q2',node:'已完成',handler:'',goal:'已完成',eval:'已完成',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0030',name:'姜涛',dept:'运营部',orgId:'ops-user',period:'2026年Q2',node:'已完成',handler:'',goal:'已完成',eval:'已完成',ratify:'未开始',confirm:'未开始'}),
+  person({empId:'EMP0041',name:'魏岚',dept:'产品部',orgId:'prod-1',period:'2026年Q2',node:'未参与考核',handler:'',goal:'未参与考核',eval:'未参与考核',ratify:'未参与考核',confirm:'未参与考核'}),
+  person({empId:'EMP0042',name:'石磊',dept:'技术部',orgId:'tech-plat',period:'2026年Q2',node:'未参与考核',handler:'',goal:'未参与考核',eval:'未参与考核',ratify:'未参与考核',confirm:'未参与考核'}),
+  person({empId:'EMP0043',name:'秦悦',dept:'市场部',orgId:'market-brand',period:'2026年Q2',node:'未参与考核',handler:'',goal:'未参与考核',eval:'未参与考核',ratify:'未参与考核',confirm:'未参与考核'}),
+  person({empId:'EMP0044',name:'叶舟',dept:'设计部',orgId:'design-ux',period:'2026年Q2',node:'未参与考核',handler:'',goal:'未参与考核',eval:'未参与考核',ratify:'未参与考核',confirm:'未参与考核'}),
+  person({empId:'EMP0045',name:'唐宁',dept:'运营部',orgId:'ops-user',period:'2026年Q2',node:'未参与考核',handler:'',goal:'未参与考核',eval:'未参与考核',ratify:'未参与考核',confirm:'未参与考核'}),
+  person({empId:'EMP0101',name:'张明',dept:'产品部',orgId:'prod-1',period:'2026年Q1',node:'已确认',handler:'',goal:'已完成',eval:'已完成',ratify:'已完成',confirm:'已确认'}),
+  person({empId:'EMP0102',name:'李华',dept:'技术部',orgId:'tech-plat',period:'2026年Q1',node:'已确认',handler:'',goal:'已完成',eval:'已完成',ratify:'已完成',confirm:'已确认'}),
+  person({empId:'EMP0103',name:'王芳',dept:'市场部',orgId:'market-brand',period:'2026年Q1',node:'申诉',handler:'陈HRBP',goal:'已完成',eval:'已完成',ratify:'已完成',confirm:'申诉'}),
+  person({empId:'EMP0104',name:'赵磊',dept:'设计部',orgId:'design-ux',period:'2026年Q1',node:'已确认',handler:'',goal:'已完成',eval:'已完成',ratify:'已完成',confirm:'已确认'}),
+  person({empId:'EMP0105',name:'陈静',dept:'运营部',orgId:'ops-user',period:'2026年Q1',node:'已确认',handler:'',goal:'已完成',eval:'已完成',ratify:'已完成',confirm:'已确认'}),
+  person({empId:'EMP0106',name:'刘洋',dept:'产品部',orgId:'prod-2',period:'2026年Q1',node:'已确认',handler:'',goal:'已完成',eval:'已完成',ratify:'已完成',confirm:'已确认'}),
+  person({empId:'EMP0107',name:'周婷',dept:'技术部',orgId:'tech-app',period:'2026年Q1',node:'已确认',handler:'',goal:'已完成',eval:'已完成',ratify:'已完成',confirm:'已确认'}),
+  person({empId:'EMP0108',name:'吴强',dept:'市场部',orgId:'market-ch',period:'2026年Q1',node:'已确认',handler:'',goal:'已完成',eval:'已完成',ratify:'已完成',confirm:'已确认'})
+];
 
-var filter={search:'',cycle:'',dept:'',status:''};
-var currentPage=1;
-var pageSize=10;
+var filter={cycle:'2026年Q2',orgId:'all',activity:'',area:''};
+var viewMode='dept';
+var filterOpen=false;
+var collapsed={};
+var groupOn={count:true,goal:true,talk:true,eval:true,ratify:true,confirm:true};
+var expanded={};
+var pickerExpanded={cn:1,rd:1,mkt:1,prod:1,tech:1,market:1,design:1,ops:1};
+var orgPanelOpen=false;
+var modalState=null;
+var colSetOpen=false;
+var exportOpen=false;
+var firstPaint=true;
 
 function getCycles(){
   var set={};
-  for(var i=0;i<PROGRESS_DATA.length;i++){set[PROGRESS_DATA[i].period]=1;}
+  for(var i=0;i<PEOPLE.length;i++) set[PEOPLE[i].period]=1;
   return Object.keys(set).sort().reverse();
 }
+function getAreas(){
+  var set={};
+  for(var i=0;i<PEOPLE.length;i++){
+    var parts=parseAreaPath(PEOPLE[i].area);
+    var path='';
+    for(var j=0;j<parts.length;j++){
+      path=path?path+' · '+parts[j]:parts[j];
+      set[path]=1;
+    }
+  }
+  return Object.keys(set).sort();
+}
+function parseAreaPath(area){
+  return String(area||'').split(' · ').map(function(s){ return s.trim(); }).filter(Boolean);
+}
+function qid(id){
+  return String(id).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+}
+function nodeTitle(id){
+  if(id==='total') return '合计';
+  if(ORG_INDEX[id]) return ORG_INDEX[id].name;
+  if(String(id).indexOf('area:')===0){
+    var parts=parseAreaPath(id.slice(5));
+    return parts.length?parts[parts.length-1]:id;
+  }
+  if(String(id).indexOf('grp:')===0){
+    var rest=id.slice(4);
+    var i=rest.lastIndexOf('||');
+    return i>=0?rest.slice(i+2):rest;
+  }
+  if(String(id).indexOf('act:')===0) return id.slice(4);
+  return id;
+}
 
-function getFiltered(){
-  return PROGRESS_DATA.filter(function(d){
-    if(filter.search&&d.name.indexOf(filter.search)===-1&&d.empId.indexOf(filter.search)===-1&&d.currentHandler.indexOf(filter.search)===-1)return false;
-    if(filter.cycle&&d.period!==filter.cycle)return false;
-    if(filter.dept&&d.dept!==filter.dept)return false;
-    if(filter.status&&filter.status!=='全部状态'&&d.status!==filter.status)return false;
+function collectIds(node, out){
+  out=out||[];
+  if(!node) return out;
+  out.push(node.id);
+  (node.children||[]).forEach(function(ch){ collectIds(ch, out); });
+  return out;
+}
+
+function inSubtree(orgId, personOrgId){
+  if(!orgId||orgId==='all'||orgId==='total') return true;
+  var node=ORG_INDEX[orgId];
+  if(!node) return false;
+  return collectIds(node).indexOf(personOrgId)!==-1;
+}
+function inNode(nodeId, p){
+  if(!nodeId||nodeId==='all'||nodeId==='total') return true;
+  if(String(nodeId).indexOf('area:')===0){
+    var path=nodeId.slice(5);
+    return p.area===path || (p.area&&p.area.indexOf(path+' · ')===0);
+  }
+  if(String(nodeId).indexOf('grp:')===0){
+    var rest=nodeId.slice(4);
+    var i=rest.lastIndexOf('||');
+    var act=i>=0?rest.slice(0,i):'';
+    var grp=i>=0?rest.slice(i+2):rest;
+    return p.activity===act && p.evalGroup===grp;
+  }
+  if(String(nodeId).indexOf('act:')===0) return p.activity===nodeId.slice(4);
+  return inSubtree(nodeId, p.orgId);
+}
+
+function getPeople(){
+  var act=(filter.activity||'').trim();
+  var orgId=filter.orgId||'all';
+  return PEOPLE.filter(function(d){
+    if(filter.cycle&&d.period!==filter.cycle) return false;
+    if(filter.area&&d.area!==filter.area&&!(d.area&&d.area.indexOf(filter.area+' · ')===0)) return false;
+    if(!inSubtree(orgId, d.orgId)) return false;
+    if(act&&d.activity.indexOf(act)===-1) return false;
     return true;
   });
 }
 
-function showFlow(empId){
-  var d=PROGRESS_DATA.find(function(r){return r.empId===empId;});
-  if(!d)return;
-  var html='<div class="modal-overlay" onclick="closeModal()"><div class="modal" onclick="event.stopPropagation()">'+
-    '<div class="modal-hd"><span class="modal-hd-title">'+d.name+' · 考核进度明细</span><button class="modal-close" onclick="closeModal()">✕</button></div>'+
-    '<div class="modal-bd"><table class="flow-tbl"><thead><tr><th>环节</th><th>处理人</th><th>流入时间</th><th>流出时间</th><th>状态</th></tr></thead><tbody>';
-  for(var i=0;i<d.flowSteps.length;i++){
-    var fs=d.flowSteps[i];
-    var sc=fs.done?'var(--em700)':fs.current?'var(--pr)':'var(--c4)';
-    html+='<tr><td>'+fs.stage+'</td><td>'+fs.handler+'</td><td>'+fs.inTime+'</td><td>'+fs.outTime+'</td><td style="color:'+sc+'">'+fs.status+'</td></tr>';
-  }
-  html+='</tbody></table></div><div class="modal-ft"><button class="btn btn-s" onclick="closeModal()">关闭</button></div></div></div>';
-  document.getElementById('modalContainer').innerHTML=html;
+function emptyRow(org){
+  return {id:org.id,name:org.name,kind:org.kind,total:0,skip:0,goal:{},talk:{},eval:{},ratify:{},confirm:{},children:[]};
 }
-function closeModal(){document.getElementById('modalContainer').innerHTML='';}
+
+function colKey(groupId, status){
+  if(groupId==='goal' && status==='目标制定中') return '制定中';
+  if(groupId==='goal' && status==='已通过') return '已完成';
+  if(groupId==='ratify' && (status==='审定人评级'||status==='审批中')) return '进行中';
+  return status;
+}
+
+function addCount(row,p){
+  GROUPS.forEach(function(g){
+    var key=colKey(g.id, p[g.id]);
+    row[g.id][key]=(row[g.id][key]||0)+1;
+  });
+}
+
+function mergeCounts(target, src){
+  target.total+=src.total;
+  target.skip+=(src.skip||0);
+  GROUPS.forEach(function(g){
+    Object.keys(src[g.id]).forEach(function(k){
+      target[g.id][k]=(target[g.id][k]||0)+src[g.id][k];
+    });
+  });
+}
+
+function rollup(node, byLeaf){
+  var row=emptyRow(node);
+  (node.children||[]).forEach(function(ch){
+    var child=rollup(ch, byLeaf);
+    if(child.total>0){
+      row.children.push(child);
+      mergeCounts(row, child);
+    }
+  });
+  (byLeaf[node.id]||[]).forEach(function(p){
+    row.total+=1;
+    if(p.skip) row.skip+=1;
+    else addCount(row,p);
+  });
+  return row;
+}
+
+function tableRoots(selected){
+  if(!selected) selected=ORG_TREE;
+  if(selected.kind==='dept'||selected.kind==='team') return [selected];
+  var out=[];
+  function walk(n){
+    if(n.kind==='dept'){ out.push(n); return; }
+    (n.children||[]).forEach(walk);
+  }
+  walk(selected);
+  return out;
+}
+function getDeptRows(people){
+  var byLeaf={};
+  people.forEach(function(p){
+    if(!byLeaf[p.orgId]) byLeaf[p.orgId]=[];
+    byLeaf[p.orgId].push(p);
+  });
+  var selected=ORG_INDEX[filter.orgId]||ORG_TREE;
+  return tableRoots(selected).map(function(n){ return rollup(n, byLeaf); }).filter(function(r){ return r.total>0; });
+}
+function getAreaForest(people){
+  var map={};
+  var roots=[];
+  people.forEach(function(p){
+    var parts=parseAreaPath(p.area);
+    var path='';
+    var parent=null;
+    parts.forEach(function(part){
+      path=path?path+' · '+part:part;
+      var id='area:'+path;
+      if(!map[id]){
+        var node={id:id,name:part,kind:'area',children:[]};
+        map[id]=node;
+        if(parent) parent.children.push(node);
+        else roots.push(node);
+      }
+      parent=map[id];
+    });
+  });
+  return {map:map, roots:roots};
+}
+function getAreaRows(people){
+  var forest=getAreaForest(people);
+  var byLeaf={};
+  people.forEach(function(p){
+    var id='area:'+p.area;
+    if(!byLeaf[id]) byLeaf[id]=[];
+    byLeaf[id].push(p);
+  });
+  var starts=forest.roots;
+  if(filter.area&&forest.map['area:'+filter.area]) starts=[forest.map['area:'+filter.area]];
+  return starts.map(function(n){ return rollup(n, byLeaf); }).filter(function(r){ return r.total>0; });
+}
+function getActivityRows(people){
+  var acts={};
+  people.forEach(function(p){
+    var aid='act:'+p.activity;
+    if(!acts[aid]) acts[aid]={id:aid,name:p.activity,kind:'activity',groups:{}};
+    var gname=p.evalGroup||'';
+    if(!gname){
+      if(!acts[aid].ungrouped) acts[aid].ungrouped=[];
+      acts[aid].ungrouped.push(p);
+      return;
+    }
+    var gid='grp:'+p.activity+'||'+gname;
+    if(!acts[aid].groups[gid]) acts[aid].groups[gid]=emptyRow({id:gid,name:gname,kind:'evalGroup'});
+    var g=acts[aid].groups[gid];
+    g.total+=1;
+    if(p.skip) g.skip+=1;
+    else addCount(g, p);
+  });
+  return Object.keys(acts).sort().map(function(aid){
+    var a=acts[aid];
+    var row=emptyRow({id:a.id,name:a.name,kind:'activity'});
+    Object.keys(a.groups).sort().forEach(function(gid){
+      var ch=a.groups[gid];
+      row.children.push(ch);
+      mergeCounts(row, ch);
+    });
+    (a.ungrouped||[]).forEach(function(p){
+      row.total+=1;
+      if(p.skip) row.skip+=1;
+      else addCount(row, p);
+    });
+    return row;
+  });
+}
+function getRows(){
+  var people=getPeople();
+  if(viewMode==='area') return getAreaRows(people);
+  if(viewMode==='activity') return getActivityRows(people);
+  return getDeptRows(people);
+}
+
+function skipPeople(orgId){
+  return getPeople().filter(function(p){
+    return inNode(orgId, p) && p.skip;
+  });
+}
+function partPeople(orgId){
+  return getPeople().filter(function(p){
+    return inNode(orgId, p) && !p.skip;
+  });
+}
+
+function cellPeople(orgId,groupId,col){
+  if(groupId==='skip') return skipPeople(orgId);
+  if(groupId==='part'||col==='参与') return partPeople(orgId);
+  var g=GROUPS.find(function(x){ return x.id===groupId; })||{id:groupId};
+  return getPeople().filter(function(p){
+    return inNode(orgId, p) && !p.skip && colKey(g.id, p[g.id])===col;
+  });
+}
+
+function ensureModalHost(){
+  var el=document.getElementById('modalRoot');
+  if(!el){
+    el=document.createElement('div');
+    el.id='modalRoot';
+    document.body.appendChild(el);
+  }
+  return el;
+}
+
+function closeModal(){
+  modalState=null;
+  if(!colSetOpen){
+    var host=document.getElementById('modalRoot');
+    if(host) host.innerHTML='';
+  }
+  render();
+}
+function closeColSet(){
+  colSetOpen=false;
+  if(!modalState){
+    var host=document.getElementById('modalRoot');
+    if(host) host.innerHTML='';
+  }
+  render();
+}
+
+function colTitle(groupId,col){
+  if(groupId==='skip') return '未参与';
+  if(groupId==='part'||col==='参与') return '参与';
+  return col;
+}
+
+function modalGroupRef(groupId){
+  if(groupId==='skip') return {id:'skip',name:'未参与'};
+  if(groupId==='part') return {id:'part',name:'参与'};
+  return GROUPS.find(function(g){ return g.id===groupId; });
+}
+
+function cellStageStatus(p,groupId,col){
+  if(groupId==='skip') return {stage:'—',status:'未参与'};
+  if(groupId==='part'){
+    if(p.skip) return {stage:'—',status:'未参与'};
+    if(p.confirm&&p.confirm!=='未开始') return {stage:'结果确认',status:p.confirm};
+    if(p.ratify&&p.ratify!=='未开始') return {stage:'结果审定',status:colKey('ratify',p.ratify)};
+    if(p.eval&&p.eval!=='未开始') return {stage:'绩效考核',status:p.eval};
+    if(p.talk&&p.talk!=='未开始') return {stage:'绩效面谈',status:p.talk};
+    return {stage:'目标制定',status:colKey('goal',p.goal)};
+  }
+  var g=GROUPS.find(function(x){ return x.id===groupId; });
+  if(col==='参与') return {stage:g?g.name:'',status:colKey(groupId, p[groupId])};
+  return {stage:g?g.name:'',status:col};
+}
+
+function openCell(orgId,groupId,col){
+  colSetOpen=false;
+  filterOpen=false;
+  exportOpen=false;
+  var list=cellPeople(orgId,groupId,col);
+  modalState={orgId:orgId,orgName:nodeTitle(orgId),groupId:groupId,col:col,search:''};
+  render();
+  renderModal(modalGroupRef(groupId),list);
+}
+
+function renderModal(group,list){
+  var q=(modalState.search||'').trim();
+  var shown=list.filter(function(p){
+    if(!q) return true;
+    return p.name.indexOf(q)!==-1 || p.empId.toLowerCase().indexOf(q.toLowerCase())!==-1;
+  });
+  var html='<div class="modal-overlay" onclick="closeModal()"><div class="modal" onclick="event.stopPropagation()">'+
+    '<div class="modal-hd"><div><div class="modal-hd-title">考核进度明细</div></div>'+
+    '<button class="modal-close" onclick="closeModal()" aria-label="关闭">'+I.x+'</button></div>'+
+    '<div class="modal-bd">'+
+      '<div class="modal-tools"><div class="fl-search">'+I.search+'<input id="modalSearch" placeholder="搜索姓名或工号…" value="'+(modalState.search||'')+'" oninput="onModalSearch(this.value)"></div>'+
+      '<button type="button" class="btn btn-s" onclick="exportModalList()">导出</button></div>';
+  if(!shown.length){
+    html+='<div class="empty">没有匹配的人员</div>';
+  }else{
+    html+='<div class="modal-tbl-wrap"><table class="flow-tbl"><thead><tr><th>姓名（工号）</th><th>部门</th><th>人员状态</th><th>用工形式</th><th>划分区域</th><th>岗位</th><th>职级</th><th>入职日期</th><th>活动名称</th><th>当前环节</th><th>当前处理人</th><th>当前状态</th></tr></thead><tbody>';
+    shown.forEach(function(p){
+      var ss=cellStageStatus(p,modalState.groupId,modalState.col);
+      var st=ss.status==='已终止'||ss.status==='申诉'?'<span class="tag tag-ro">'+ss.status+'</span>':ss.status==='已完成'||ss.status==='已确认'?'<span class="tag tag-em">'+ss.status+'</span>':ss.status==='未开始'||ss.status==='未参与'?'<span class="tag">'+ss.status+'</span>':'<span class="tag tag-pr">'+ss.status+'</span>';
+      html+='<tr><td style="font-weight:500;color:var(--c9);white-space:nowrap">'+p.name+'（'+p.empId+'）</td><td>'+p.dept+'</td><td>'+p.empStatus+'</td><td>'+p.workType+'</td><td>'+p.area+'</td><td>'+p.job+'</td><td>'+p.rank+'</td><td class="mono">'+p.hireDate+'</td><td>'+p.activity+'</td><td>'+ss.stage+'</td><td>'+p.handler+'</td><td>'+st+'</td></tr>';
+    });
+    html+='</tbody></table></div>';
+  }
+  html+='</div><div class="modal-ft"><span class="fl-hint">共 '+shown.length+' 人</span></div></div></div>';
+  ensureModalHost().innerHTML=html;
+  var input=document.getElementById('modalSearch');
+  if(input){
+    input.focus();
+    var v=input.value;
+    input.setSelectionRange(v.length,v.length);
+  }
+}
+
+function onModalSearch(v){
+  if(!modalState) return;
+  modalState.search=v;
+  var list=cellPeople(modalState.orgId,modalState.groupId,modalState.col);
+  renderModal(modalGroupRef(modalState.groupId),list);
+}
+
+function csvCell(v){
+  v=String(v==null?'':v);
+  if(/[",\n]/.test(v)) return '"'+v.replace(/"/g,'""')+'"';
+  return v;
+}
+function downloadCsv(filename, lines, toast){
+  var blob=new Blob(['\ufeff'+lines.join('\n')],{type:'text/csv;charset=utf-8'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+  GHR_NAV.showToast(toast);
+}
+function exportModalList(){
+  if(!modalState) return;
+  var list=cellPeople(modalState.orgId,modalState.groupId,modalState.col);
+  var q=(modalState.search||'').trim();
+  var shown=list.filter(function(p){
+    if(!q) return true;
+    return p.name.indexOf(q)!==-1 || p.empId.toLowerCase().indexOf(q.toLowerCase())!==-1;
+  });
+  var headers=['姓名（工号）','部门','人员状态','用工形式','划分区域','岗位','职级','入职日期','活动名称','当前环节','当前处理人','当前状态'];
+  var lines=[headers.map(csvCell).join(',')];
+  shown.forEach(function(p){
+    var ss=cellStageStatus(p,modalState.groupId,modalState.col);
+    lines.push([p.name+'（'+p.empId+'）',p.dept,p.empStatus,p.workType,p.area,p.job,p.rank,p.hireDate,p.activity,ss.stage,p.handler,ss.status].map(csvCell).join(','));
+  });
+  downloadCsv('考核进度明细.csv', lines, '已导出 '+shown.length+' 人');
+}
+
+function statusCls(col, n){
+  if(!n) return '';
+  if(col==='申诉'||col==='已终止') return ' num-ro';
+  if(col==='已通过'||col==='已完成'||col==='已确认') return ' num-em';
+  if(col==='未开始') return ' num-idle';
+  return ' num-ac';
+}
+
+function countBtn(row,g,col){
+  var n=row[g.id][col]||0;
+  var extra=statusCls(col, n);
+  var on=modalState&&modalState.orgId===row.id&&modalState.groupId===g.id&&modalState.col===col?' on':'';
+  return '<button class="num-link'+extra+on+'" onclick="openCell(\''+qid(row.id)+'\',\''+g.id+'\',\''+col+'\')">'+n+'</button>';
+}
+
+function isOff(g){ return !!collapsed[g.id]; }
+function isGroupOn(id){ return groupOn[id]!==false; }
+function visGroups(){ return GROUPS.filter(function(g){ return isGroupOn(g.id); }); }
+function visBlockCount(){ return (isGroupOn('count')?1:0)+visGroups().length; }
+function lastVisGroupId(){ var list=visGroups(); return list.length?list[list.length-1].id:''; }
+function colBlocks(){
+  return [{id:'count',name:'考核人数'}].concat(GROUPS.map(function(g){ return {id:g.id,name:g.name}; }));
+}
+function toggleGroupVis(id){
+  if(isGroupOn(id)){
+    if(visBlockCount()<=1){ GHR_NAV.showToast('至少保留一个分组'); if(colSetOpen) renderColSet(); return; }
+    groupOn[id]=false;
+  }else groupOn[id]=true;
+  render();
+}
+function openColSet(){
+  modalState=null;
+  colSetOpen=true;
+  orgPanelOpen=false;
+  filterOpen=false;
+  exportOpen=false;
+  render();
+}
+function renderColSet(){
+  var html='<div class="modal-overlay" onclick="closeColSet()"><div class="modal col-set-modal" onclick="event.stopPropagation()">'+
+    '<div class="modal-hd"><div><div class="modal-hd-title">列设置</div></div>'+
+    '<button class="modal-close" onclick="closeColSet()" aria-label="关闭">'+I.x+'</button></div>'+
+    '<div class="modal-bd" style="padding:12px 16px">';
+  colBlocks().forEach(function(b){
+    html+='<label class="col-set-item"><input type="checkbox"'+(isGroupOn(b.id)?' checked':'')+' onchange="toggleGroupVis(\''+b.id+'\')"> '+b.name+'</label>';
+  });
+  html+='</div></div></div>';
+  ensureModalHost().innerHTML=html;
+}
+function groupItems(g){
+  var rates=g.rates||[];
+  if(g.order){
+    if(isOff(g)) return g.order.filter(function(it){ return it.type==='rate'; });
+    return g.order;
+  }
+  var items=[];
+  if(!isOff(g)){
+    items.push({type:'part',key:'参与'});
+    (g.cols||[]).forEach(function(c){ items.push({type:'col',key:c}); });
+  }
+  rates.forEach(function(c){ items.push({type:'rate',key:c}); });
+  return items;
+}
+function groupSpan(g){
+  return Math.max(groupItems(g).length,1);
+}
+
+function groupRates(row,g){
+  var n=row.total-(row.skip||0);
+  function pct(part){ return n?Math.round(part/n*100):null; }
+  if(g.id==='goal'){
+    var passed=(row.goal['已完成']||0)+(row.goal['已通过']||0);
+    return {
+      '目标提交率': pct((row.goal['审批中']||0)+passed),
+      '完成率': pct(passed)
+    };
+  }
+  if(g.id==='talk'){
+    return { '完成率': pct(row.talk['已完成']||0) };
+  }
+  if(g.id==='eval'){
+    var scored=row.eval['已完成']||0;
+    return {
+      '自评完成率': pct((row.eval['考核人评分']||0)+scored),
+      '完成率': pct(scored)
+    };
+  }
+  if(g.id==='ratify'){
+    return { '完成率': pct(row.ratify['已完成']||0) };
+  }
+  if(g.id==='confirm'){
+    return { '完成率': pct(row.confirm['已确认']||0) };
+  }
+  return {};
+}
+
+function pctTone(pct){
+  if(pct===null||pct===0) return {cls:'is-zero', fill:'var(--c4)', text:'rate-zero'};
+  if(pct===100) return {cls:'is-em', fill:'var(--em)', text:'num-em'};
+  if(pct<60) return {cls:'is-ac', fill:'var(--ac)', text:'rate-ac'};
+  return {cls:'is-pr', fill:'var(--pr)', text:'rate-pr'};
+}
+
+function rateCell(pct){
+  if(pct===null) return '<span class="rate rate-zero">—</span>';
+  var w=Math.max(0,Math.min(100,pct));
+  var t=pctTone(pct);
+  return '<div class="rate-cell"><div class="rate-bar"><div class="rate-fill" style="width:'+w+'%;background:'+t.fill+'"></div></div><span class="rate '+t.text+'">'+pct+'%</span></div>';
+}
+
+function cardPct(pct){ return pct===null?0:pct; }
+
+function renderStatCards(totals){
+  var goal=groupRates(totals, GROUPS.find(function(g){ return g.id==='goal'; }));
+  var ev=groupRates(totals, GROUPS.find(function(g){ return g.id==='eval'; }));
+  var rat=groupRates(totals, GROUPS.find(function(g){ return g.id==='ratify'; }));
+  var conf=groupRates(totals, GROUPS.find(function(g){ return g.id==='confirm'; }));
+  var cards=[
+    {label:'目标提交率',pct:cardPct(goal['目标提交率'])},
+    {label:'目标完成率',pct:cardPct(goal['完成率'])},
+    {label:'自评提交率',pct:cardPct(ev['自评完成率'])},
+    {label:'审定完成率',pct:cardPct(rat['完成率'])},
+    {label:'结果确认完成率',pct:cardPct(conf['完成率'])}
+  ];
+  var html='<div class="st-row">';
+  cards.forEach(function(c){
+    var t=pctTone(c.pct);
+    html+='<div class="st-item '+t.cls+'"><div class="st-item-label">'+c.label+'</div><div class="st-item-value">'+c.pct+'%</div><div class="st-item-bar"><div class="st-item-fill" style="width:'+c.pct+'%"></div></div></div>';
+  });
+  return html+'</div>';
+}
+
+function stagePartBtn(row,g){
+  var n=row.total-(row.skip||0);
+  var on=modalState&&modalState.orgId===row.id&&modalState.groupId===g.id&&modalState.col==='参与'?' on':'';
+  return '<button class="num-link num-ink'+on+'" onclick="openCell(\''+qid(row.id)+'\',\''+g.id+'\',\'参与\')">'+n+'</button>';
+}
+
+function groupCells(row,g,i,isTotal){
+  var html='';
+  var items=groupItems(g);
+  var vals=groupRates(row,g);
+  items.forEach(function(it,j){
+    var last=j===items.length-1&&g.id!==lastVisGroupId();
+    var inner;
+    if(it.type==='rate') inner=rateCell(vals[it.key]);
+    else if(it.type==='part') inner=stagePartBtn(row,g);
+    else inner=countBtn(row,g,it.key);
+    var cls=(it.type==='part'?'g-part':'')+(last?' g-split':'');
+    html+='<td'+(cls?' class="'+cls.trim()+'"':'')+'>'+inner+'</td>';
+  });
+  return html;
+}
+
+function renderOrgTreeNodes(node, depth){
+  var kids=node.children||[];
+  var hasKids=kids.length>0;
+  var open=node.id==='all'||!!pickerExpanded[node.id];
+  var html='<div class="org-item'+(filter.orgId===node.id?' is-on':'')+'" style="padding-left:'+(4+depth*16)+'px">';
+  if(hasKids&&node.id!=='all'){
+    html+='<button type="button" class="org-chev'+(open?' is-open':'')+'" onclick="togglePickerNode(\''+node.id+'\',event)" aria-label="'+(open?'收起':'展开')+'">'+I.chev+'</button>';
+  }else{
+    html+='<span class="org-chev-ph"></span>';
+  }
+  html+='<span class="org-item-name" onclick="selectOrg(\''+node.id+'\')">'+node.name+'</span></div>';
+  if(hasKids&&open){
+    kids.forEach(function(ch){ html+=renderOrgTreeNodes(ch, depth+1); });
+  }
+  return html;
+}
+
+function dimHeader(){
+  return viewMode==='area'?'划分区域':viewMode==='activity'?'活动名称':'部门名称';
+}
+function renderViewTabs(){
+  var tabs=[{id:'dept',name:'部门'},{id:'area',name:'划分区域'},{id:'activity',name:'绩效活动'}];
+  var html='<div class="view-tabs">';
+  tabs.forEach(function(t){
+    html+='<button type="button" class="view-tab'+(viewMode===t.id?' is-on':'')+'" onclick="setView(\''+t.id+'\')">'+t.name+'</button>';
+  });
+  return html+'</div>';
+}
+function extraFilterCount(){
+  return (filter.activity||'').trim()?1:0;
+}
+function renderFilter(){
+  var n=extraFilterCount();
+  var act=String(filter.activity||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+  var html='<div class="fl-filter" id="flFilter">'+
+    '<button type="button" class="btn btn-s'+(filterOpen?' is-open':'')+'" onclick="toggleFilter(event)" aria-expanded="'+(filterOpen?'true':'false')+'">'+
+      I.filter+' 筛选'+(n?'<span class="fl-badge">'+n+'</span>':'')+
+    '</button>';
+  if(filterOpen){
+    html+='<div class="fl-pop" onclick="event.stopPropagation()">'+
+      '<div class="fl-pop-lab">绩效活动</div>'+
+      '<div class="fl-search">'+I.search+'<input id="actSearch" placeholder="搜索绩效活动…" value="'+act+'" oninput="onActivity(this.value)"></div>'+
+      '<div class="fl-pop-ft"><button type="button" class="btn btn-s" onclick="resetPanelFilters()">重置</button><button type="button" class="btn btn-p" onclick="applyFilterPanel()">确定</button></div>'+
+    '</div>';
+  }
+  return html+'</div>';
+}
+function renderExport(){
+  var html='<div class="ex-wrap" id="exWrap">'+
+    '<button type="button" class="btn btn-s'+(exportOpen?' is-open':'')+'" onclick="toggleExport(event)" aria-expanded="'+(exportOpen?'true':'false')+'">'+
+      I.download+' 导出 '+I.chev+
+    '</button>';
+  if(exportOpen){
+    html+='<div class="ex-menu" onclick="event.stopPropagation()">'+
+      '<button type="button" class="ex-item" onclick="exportView()">导出视图明细</button>'+
+      '<button type="button" class="ex-item" onclick="exportPeople()">导出人员明细</button>'+
+    '</div>';
+  }
+  return html+'</div>';
+}
+
+function renderOrgPicker(){
+  var cur=ORG_INDEX[filter.orgId]||ORG_TREE;
+  var html='<div class="org-pick" id="orgPick">'+
+    '<button type="button" class="org-trig'+(orgPanelOpen?' is-open':'')+'" onclick="toggleOrgPanel(event)" aria-expanded="'+(orgPanelOpen?'true':'false')+'">'+
+      '<span class="org-trig-txt">'+cur.name+'</span>'+I.caret+
+    '</button>';
+  if(orgPanelOpen){
+    html+='<div class="org-panel" id="orgPanel" onclick="event.stopPropagation()">'+renderOrgTreeNodes(ORG_TREE, 0)+'</div>';
+  }
+  return html+'</div>';
+}
+
+function partCell(row, isTotal){
+  var n=row.total-(row.skip||0);
+  var on=modalState&&modalState.orgId===row.id&&modalState.groupId==='part'?' on':'';
+  return '<td class="part-c"><button class="num-link num-ink'+on+'" onclick="openCell(\''+qid(row.id)+'\',\'part\',\'参与\')">'+n+'</button></td>';
+}
+
+function skipCell(row, isTotal){
+  var n=row.skip||0;
+  var extra=n?' num-idle':'';
+  var on=modalState&&modalState.orgId===row.id&&modalState.groupId==='skip'?' on':'';
+  return '<td class="skip-c"><button class="num-link'+extra+on+'" onclick="openCell(\''+qid(row.id)+'\',\'skip\',\'未参与\')">'+n+'</button></td>';
+}
+
+function deptCell(row, depth){
+  var canToggle=row.children&&row.children.length>0;
+  var pad=depth*18;
+  var chev=canToggle
+    ? '<button type="button" class="dept-chev'+(expanded[row.id]?' is-open':'')+'" onclick="toggleExpand(\''+qid(row.id)+'\')" aria-label="'+(expanded[row.id]?'收起':'展开')+'">'+I.chev+'</button>'
+    : '<span class="dept-chev-ph"></span>';
+  var nameCls='dept-name'+(canToggle?' is-toggle':'');
+  var nameClick=canToggle?' onclick="toggleExpand(\''+qid(row.id)+'\')"':'';
+  return '<td class="dept-c"><div class="dept-cell" style="padding-left:'+pad+'px">'+chev+'<span class="'+nameCls+'"'+nameClick+'>'+row.name+'</span></div></td>';
+}
+
+function renderOrgRows(row, depth){
+  var html='<tr'+(depth?' class="dept-sub"':'')+'>'+deptCell(row, depth);
+  if(isGroupOn('count')) html+=partCell(row,false)+skipCell(row,false);
+  GROUPS.forEach(function(g,i){ if(isGroupOn(g.id)) html+=groupCells(row,g,i,false); });
+  html+='</tr>';
+  if(row.children&&row.children.length&&expanded[row.id]){
+    row.children.forEach(function(ch){ html+=renderOrgRows(ch, depth+1); });
+  }
+  return html;
+}
 
 function render(){
-  var data=getFiltered();
-  var total=data.length;
-  var totalPages=Math.ceil(total/pageSize)||1;
-  if(currentPage>totalPages)currentPage=totalPages;
-  var start=(currentPage-1)*pageSize;
-  var page=data.slice(start,start+pageSize);
+  var rows=getRows();
+  var people=getPeople();
+  var cycleOptions=getCycles().map(function(c){ return '<option value="'+c+'"'+(filter.cycle===c?' selected':'')+'>'+c+'</option>'; }).join('');
+  var areaOptions=getAreas().map(function(a){ return '<option value="'+a.replace(/"/g,'&quot;')+'"'+(filter.area===a?' selected':'')+'>'+a+'</option>'; }).join('');
+  var totals={id:'total',name:'合计',total:people.length,skip:0,goal:{},talk:{},eval:{},ratify:{},confirm:{}};
+  people.forEach(function(p){
+    if(p.skip) totals.skip+=1;
+    else addCount(totals,p);
+  });
 
-  var cycleOptions=getCycles().map(function(c){return '<option value="'+c+'"'+(filter.cycle===c?' selected':'')+'>'+c+'</option>';}).join('');
-  var deptOptions=DEPTS.slice(1).map(function(d){return '<option value="'+d+'"'+(filter.dept===d?' selected':'')+'>'+d+'</option>';}).join('');
-  var statusOptions=STATUSES.map(function(s){return '<option value="'+s+'"'+(filter.status===s?' selected':'')+'>'+s+'</option>';}).join('');
-
-  var html='<div class="fi">'+
+  var html='<div'+(firstPaint?' class="fi"':'')+'>'+
     '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">'+
-      '<div><h1 style="font:700 20px/1.2 var(--f);color:var(--c9);margin-bottom:4px">考核进度</h1><p style="font:400 13px/1 var(--f);color:var(--c5)">查看全员各周期考核进度</p></div>'+
-      '<div style="display:flex;gap:8px"><button class="btn btn-s" onclick="handleExport()">'+I.download+' 导出</button><button class="btn btn-p" onclick="handleRemind()">'+I.bell+' 批量催办</button></div>'+
+      '<div><h1 style="font:700 20px/1.2 var(--f);color:var(--c9);margin-bottom:4px">考核进度</h1><p style="font:400 13px/1 var(--f);color:var(--c5)">按部门、划分区域或绩效活动统计各环节当前人数，点击行展开下级，点击人数查看名单</p></div>'+
+      '<div style="display:flex;gap:8px"><button class="btn btn-s" onclick="openColSet()">'+I.settings+' 设置</button>'+renderExport()+'</div>'+
     '</div>'+
     '<div class="fl-bar">'+
-      '<div class="fl-search">'+I.search+'<input id="flSearch" placeholder="搜索姓名或工号…" value="'+filter.search+'" oninput="onSearch(this.value)"></div>'+
       '<select class="fl-sel" onchange="onCycle(this.value)"><option value="">全部周期</option>'+cycleOptions+'</select>'+
-      '<select class="fl-sel" onchange="onDept(this.value)"><option value="">全部部门</option>'+deptOptions+'</select>'+
-      '<select class="fl-sel" onchange="onStatus(this.value)">'+statusOptions+'</select>'+
+      renderOrgPicker()+
+      '<select class="fl-sel" onchange="onArea(this.value)" aria-label="划分区域"><option value="">全部划分区域</option>'+areaOptions+'</select>'+
+      renderFilter()+
       '<div class="fl-actions"><button class="btn btn-s" onclick="resetFilters()">'+I.x+' 重置</button></div>'+
     '</div>'+
-    '<div class="tbl-card">'+
-      '<div class="tbl-wrap"><table><thead><tr>'+
-        '<th>姓名</th><th>工号</th><th>部门</th><th>绩效活动</th><th>当前环节</th><th>当前处理人</th><th>状态</th><th>操作</th>'+
-      '</tr></thead><tbody>';
+    renderStatCards(totals)+
+    '<div class="tbl-card">'+renderViewTabs()+
+    '<div class="tbl-wrap"><table style="min-width:'+(176+(isGroupOn('count')?68+56:0)+visGroups().reduce(function(n,g){ return n+groupSpan(g)*88; },0))+'px"><thead>'+
+      '<tr><th class="dept-h" rowspan="2">'+dimHeader()+'</th>';
+  if(isGroupOn('count')) html+='<th class="count-g-th g-split" colspan="2">考核人数</th>';
+  GROUPS.forEach(function(g){
+    if(!isGroupOn(g.id)) return;
+    html+='<th class="g-th'+(isOff(g)?' is-off':'')+(g.id===lastVisGroupId()?'':' g-split')+'" colspan="'+groupSpan(g)+'" onclick="toggleGroup(\''+g.id+'\')" aria-expanded="'+(isOff(g)?'false':'true')+'" title="'+(isOff(g)?'展开人数列':'收起人数列，只看完成率')+'"><span class="g-th-in">'+I.chev+' '+g.name+'</span></th>';
+  });
+  html+='</tr><tr>';
+  if(isGroupOn('count')) html+='<th class="part-h">参与</th><th class="skip-h">未参与</th>';
+  GROUPS.forEach(function(g,i){
+    if(!isGroupOn(g.id)) return;
+    var items=groupItems(g);
+    items.forEach(function(it,j){
+      var last=j===items.length-1&&g.id!==lastVisGroupId();
+      var cls=(it.type==='part'?'g-part':'')+(last?' g-split':'');
+      html+='<th'+(cls?' class="'+cls.trim()+'"':'')+'>'+it.key+'</th>';
+    });
+  });
+  html+='</tr></thead><tbody>';
 
-  for(var i=0;i<page.length;i++){
-    var d=page[i];
-    var sc=d.status==='已完成'?'tag-em':d.status==='填写中'?'tag-pr':'tag-c5';
-    html+='<tr>'+
-      '<td style="font-weight:500;color:var(--c9)">'+d.name+'</td>'+
-      '<td class="mono">'+d.empId+'</td>'+
-      '<td>'+d.dept+'</td>'+
-      '<td><a class="lk" href="perf-activity-detail.html">'+d.activity+'</a></td>'+
-      '<td>'+(d.currentStage?'<span class="tag tag-pr">'+d.currentStage+'</span>':'<span style="color:var(--c4)">—</span>')+'</td>'+
-      '<td>'+(d.currentHandler||'<span style="color:var(--c4)">—</span>')+'</td>'+
-      '<td><span class="tag '+sc+'">'+d.status+'</span></td>'+
-      '<td><a class="lk" href="perf-activity.html">查看明细</a></td>'+
-      '</tr>';
+  var emptySpan=1+(isGroupOn('count')?2:0)+visGroups().reduce(function(n,g){ return n+groupSpan(g); },0);
+  if(!rows.length){
+    html+='<tr><td class="empty" colspan="'+emptySpan+'">没有匹配的数据</td></tr>';
+  }else{
+    html+='<tr class="total-row"><td class="dept-c"><span class="dept-name">合计</span></td>';
+    if(isGroupOn('count')) html+=partCell(totals,true)+skipCell(totals,true);
+    GROUPS.forEach(function(g,i){ if(isGroupOn(g.id)) html+=groupCells(totals,g,i,true); });
+    html+='</tr>';
+    rows.forEach(function(row){ html+=renderOrgRows(row, 0); });
   }
 
-  html+='</tbody></table></div>'+
-    '<div class="pg-bar">'+
-      '<div class="pg-info"><span>第 '+(total?start+1:0)+'-'+Math.min(start+pageSize,total)+' 条，共 '+total+' 条</span></div>'+
-      '<div class="pg-nav">';
-  for(var p=1;p<=totalPages;p++){
-    html+='<button class="pg-btn'+(p===currentPage?' on':'')+'" onclick="goPage('+p+')">'+p+'</button>';
-  }
-  html+='</div></div></div></div>';
-
+  html+='</tbody></table></div></div></div>';
   document.getElementById('app').innerHTML=html;
+  firstPaint=false;
+  if(colSetOpen) renderColSet();
+  if(filterOpen){
+    var input=document.getElementById('actSearch');
+    if(input){
+      input.focus();
+      var t=input.value;
+      input.setSelectionRange(t.length,t.length);
+    }
+  }
 }
 
-function onSearch(v){filter.search=v;currentPage=1;render();}
-function onCycle(v){filter.cycle=v;currentPage=1;render();}
-function onDept(v){filter.dept=v;currentPage=1;render();}
-function onStatus(v){filter.status=v;currentPage=1;render();}
-function goPage(p){currentPage=p;render();}
-function resetFilters(){filter={search:'',cycle:'',dept:'',status:''};currentPage=1;render();}
-function handleExport(){alert('导出功能（原型占位）');}
-function handleRemind(){alert('批量催办功能（原型占位）');}
+function onCycle(v){filter.cycle=v;orgPanelOpen=false;filterOpen=false;exportOpen=false;colSetOpen=false;closeModal();}
+function onArea(v){filter.area=v;orgPanelOpen=false;filterOpen=false;exportOpen=false;colSetOpen=false;closeModal();}
+function setView(id){
+  viewMode=id;
+  expanded={};
+  filterOpen=false;
+  exportOpen=false;
+  if(modalState) closeModal();
+  else render();
+}
+function toggleFilter(ev){
+  if(ev) ev.stopPropagation();
+  filterOpen=!filterOpen;
+  orgPanelOpen=false;
+  exportOpen=false;
+  render();
+}
+function applyFilterPanel(){ filterOpen=false; render(); }
+function resetPanelFilters(){ filter.activity=''; filterOpen=true; render(); }
+function toggleOrgPanel(ev){
+  if(ev) ev.stopPropagation();
+  orgPanelOpen=!orgPanelOpen;
+  filterOpen=false;
+  exportOpen=false;
+  render();
+}
+function togglePickerNode(id, ev){
+  if(ev) ev.stopPropagation();
+  var panel=document.getElementById('orgPanel');
+  var top=panel?panel.scrollTop:0;
+  pickerExpanded[id]=!pickerExpanded[id];
+  render();
+  var next=document.getElementById('orgPanel');
+  if(next) next.scrollTop=top;
+}
+function selectOrg(id){
+  filter.orgId=id;
+  orgPanelOpen=false;
+  if(modalState) closeModal();
+  else render();
+}
+function onActivity(v){
+  filter.activity=v;
+  filterOpen=true;
+  if(modalState) closeModal();
+  else render();
+}
+function toggleGroup(id){
+  collapsed[id]=!collapsed[id];
+  render();
+}
+function toggleExpand(id){
+  expanded[id]=!expanded[id];
+  render();
+}
+function resetFilters(){filter={cycle:'2026年Q2',orgId:'all',activity:'',area:''};orgPanelOpen=false;filterOpen=false;exportOpen=false;colSetOpen=false;closeModal();}
+function exportRowVals(row){
+  var vals=[row.name];
+  if(isGroupOn('count')) vals.push(row.total-(row.skip||0), row.skip||0);
+  visGroups().forEach(function(g){
+    var items=groupItems(g);
+    var rates=groupRates(row,g);
+    items.forEach(function(it){
+      if(it.type==='rate') vals.push(rates[it.key]==null?'':rates[it.key]+'%');
+      else if(it.type==='part') vals.push(row.total-(row.skip||0));
+      else vals.push(row[g.id][it.key]||0);
+    });
+  });
+  return vals;
+}
+function toggleExport(ev){
+  if(ev) ev.stopPropagation();
+  exportOpen=!exportOpen;
+  filterOpen=false;
+  orgPanelOpen=false;
+  render();
+}
+function exportView(){
+  exportOpen=false;
+  var h1=[dimHeader()];
+  var h2=[dimHeader()];
+  if(isGroupOn('count')){ h1.push('考核人数','考核人数'); h2.push('参与','未参与'); }
+  visGroups().forEach(function(g){
+    groupItems(g).forEach(function(it){ h1.push(g.name); h2.push(it.key); });
+  });
+  var people=getPeople();
+  var totals={id:'total',name:'合计',total:people.length,skip:0,goal:{},talk:{},eval:{},ratify:{},confirm:{}};
+  people.forEach(function(p){ if(p.skip) totals.skip+=1; else addCount(totals,p); });
+  var lines=[h1.map(csvCell).join(','), h2.map(csvCell).join(','), exportRowVals(totals).map(csvCell).join(',')];
+  function walk(row){
+    lines.push(exportRowVals(row).map(csvCell).join(','));
+    if(row.children&&row.children.length&&expanded[row.id]) row.children.forEach(walk);
+  }
+  getRows().forEach(walk);
+  downloadCsv('考核进度-视图明细.csv', lines, '已导出当前视图明细');
+  render();
+}
+function exportPeople(){
+  exportOpen=false;
+  var headers=['姓名（工号）','部门','人员状态','用工形式','划分区域','岗位','职级','入职日期','活动名称','当前环节','当前处理人','当前状态'];
+  var lines=[headers.map(csvCell).join(',')];
+  getPeople().forEach(function(p){
+    var ss=cellStageStatus(p,'part','参与');
+    lines.push([p.name+'（'+p.empId+'）',p.dept,p.empStatus,p.workType,p.area,p.job,p.rank,p.hireDate,p.activity,ss.stage,p.handler,ss.status].map(csvCell).join(','));
+  });
+  downloadCsv('考核进度-人员明细.csv', lines, '已导出 '+getPeople().length+' 人');
+  render();
+}
+
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Escape') return;
+  if(modalState) closeModal();
+  else if(colSetOpen) closeColSet();
+  else if(exportOpen){ exportOpen=false; render(); }
+  else if(filterOpen){ filterOpen=false; render(); }
+  else if(orgPanelOpen){ orgPanelOpen=false; render(); }
+});
+document.addEventListener('click',function(e){
+  var need=false;
+  if(orgPanelOpen){
+    var wrap=document.getElementById('orgPick');
+    if(!(wrap&&wrap.contains(e.target))){ orgPanelOpen=false; need=true; }
+  }
+  if(filterOpen){
+    var fil=document.getElementById('flFilter');
+    if(!(fil&&fil.contains(e.target))){ filterOpen=false; need=true; }
+  }
+  if(exportOpen){
+    var ex=document.getElementById('exWrap');
+    if(!(ex&&ex.contains(e.target))){ exportOpen=false; need=true; }
+  }
+  if(need) render();
+});
 
 render();
 </script>
