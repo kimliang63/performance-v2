@@ -1,0 +1,115 @@
+/* V6 AI 表单助手：对话框承载任务结果/总结，表单承载填写内容 */
+
+.ai-chat{position:fixed;top:52px;right:0;width:400px;height:calc(100vh - 52px);background:var(--sf);border-left:1px solid var(--dv);z-index:900;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s ease}
+body.chat-open .ai-chat{transform:translateX(0)}
+body.chat-open .page-wrap,
+body.chat-open .main,
+body.chat-open .content-wrap{margin-right:400px;transition:margin-right .3s ease}
+
+.ai-chat-hd{padding:14px 16px;border-bottom:1px solid var(--dv);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.ai-chat-hd-ic{width:32px;height:32px;border-radius:var(--r2);background:var(--pr);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ai-chat-hd-ic svg{width:16px;height:16px;color:#FFF}
+.ai-chat-hd-t{font:600 14px/1.2 var(--f);color:var(--c9)}
+.ai-chat-hd-s{font:400 11px/1.3 var(--f);color:var(--c5);margin-top:2px}
+.ai-chat-close{margin-left:auto;width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:transparent;color:var(--c5)}
+.ai-chat-close:hover{background:var(--c1);color:var(--c7)}
+
+.ai-chat-bd{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px}
+.ai-msg{max-width:100%;animation:aiMsgIn .25s ease}
+@keyframes aiMsgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.ai-msg.bot{align-self:stretch}
+.ai-msg.user{align-self:flex-end;max-width:88%}
+.ai-msg-bd{padding:12px 14px;border-radius:var(--r2);font:400 13px/1.55 var(--f)}
+.ai-msg.bot .ai-msg-bd{background:var(--c0,#FAFAFA);color:var(--c8);border-bottom-left-radius:4px}
+.ai-msg.user .ai-msg-bd{background:var(--pr);color:#FFF;border-bottom-right-radius:4px}
+.ai-msg-time{font:400 10px/1 var(--f);color:var(--c4);margin-top:4px}
+.ai-msg.user .ai-msg-time{text-align:right}
+
+.ai-shortcuts{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.ai-shortcut{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);cursor:pointer;text-align:left;transition:border-color .12s,background .12s}
+.ai-shortcut:hover{border-color:var(--pr200,#C7D7FE);background:var(--pr50)}
+.ai-shortcut-icon{width:28px;height:28px;border-radius:6px;background:var(--pr50);color:var(--pr);display:flex;align-items:center;justify-content:center;flex-shrink:0;font:600 12px/1 var(--f)}
+.ai-shortcut-text{flex:1;min-width:0}
+.ai-shortcut-label{font:600 13px/1.3 var(--f);color:var(--c8)}
+
+/* 任务结果摘要：不承载表单字段明细 */
+.ai-result{margin-top:10px;border:1px solid var(--c2);border-radius:var(--r2);background:var(--sf);overflow:hidden}
+.ai-result-hd{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;background:var(--c0,#FAFAFA);border-bottom:1px solid var(--dv)}
+.ai-result-title{font:600 13px/1.3 var(--f);color:var(--c8)}
+.ai-result-tag{font:500 10px/1 var(--f);padding:3px 6px;border-radius:3px;white-space:nowrap}
+.ai-result-tag.pr{color:var(--pr);background:var(--pr50)}
+.ai-result-tag.em{color:var(--em700);background:var(--em50)}
+.ai-result-tag.ac{color:var(--ac700,#B45309);background:var(--ac50)}
+.ai-result-tag.ro{color:var(--ro);background:var(--ro50)}
+.ai-result-bd{padding:10px 12px}
+.ai-result-sum{font:400 12px/1.5 var(--f);color:var(--c6);margin-bottom:8px}
+.ai-result-stats{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.ai-result-stat{font:500 11px/1 var(--f);padding:5px 8px;border-radius:4px;background:var(--c1);color:var(--c7)}
+.ai-result-details{display:flex;flex-direction:column;gap:8px;margin:8px 0}
+.ai-result-groups{display:flex;flex-direction:column;gap:12px;margin:4px 0 8px}
+.ai-mod-group{border:1px solid var(--c2);border-radius:var(--r2);overflow:hidden;background:var(--sf)}
+.ai-mod-hd{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;background:var(--c0,#FAFAFA);border-bottom:1px solid var(--dv)}
+.ai-mod-name{font:600 12px/1.2 var(--f);color:var(--c8);letter-spacing:.3px}
+.ai-mod-meta{font:500 11px/1 var(--f);color:var(--c5)}
+.ai-mod-goals{display:flex;flex-direction:column;gap:0}
+.ai-mod-goals .ai-detail-card{border:none;border-radius:0;border-bottom:1px solid var(--dv);background:var(--sf);padding:10px 12px}
+.ai-mod-goals .ai-detail-card:last-child{border-bottom:none}
+.ai-detail-card{border:1px solid var(--c2);border-radius:var(--r1);background:var(--c0,#FAFAFA);padding:10px}
+.ai-detail-hd{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin-bottom:8px}
+.ai-detail-title{font:600 13px/1.35 var(--f);color:var(--c8)}
+.ai-detail-badges{display:flex;flex-wrap:wrap;gap:4px}
+.ai-detail-badge{font:500 10px/1 var(--f);padding:3px 6px;border-radius:3px;background:var(--pr50);color:var(--pr)}
+.ai-detail-fields{display:flex;flex-direction:column;gap:6px}
+.ai-detail-row{display:grid;grid-template-columns:64px 1fr;gap:8px;align-items:start}
+.ai-detail-k{font:500 11px/1.4 var(--f);color:var(--c5);padding-top:1px}
+.ai-detail-v{font:400 12px/1.5 var(--f);color:var(--c7);word-break:break-word}
+.ai-detail-body{font:400 12px/1.5 var(--f);color:var(--c7)}
+.ai-result-list{margin:0;padding-left:16px;font:400 12px/1.55 var(--f);color:var(--c6)}
+.ai-result-list li{margin:2px 0}
+.ai-result-ft{display:flex;flex-wrap:wrap;gap:6px;padding:0 12px 12px}
+.ai-result-ft .ai-msg-btn{margin:0}
+
+.ai-msg-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.ai-msg-btn{font:500 12px/1 var(--f);padding:7px 12px;border-radius:var(--r1);border:1px solid var(--c2);background:var(--sf);color:var(--c6);cursor:pointer;transition:all .12s}
+.ai-msg-btn:hover{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-msg-btn.primary{border-color:var(--pr);color:#FFF;background:var(--pr)}
+.ai-msg-btn.primary:hover{background:var(--pr700)}
+.ai-msg-btn:disabled{opacity:.5;cursor:not-allowed}
+
+.ai-typing{display:inline-flex;gap:4px;align-items:center;padding:4px 0}
+.ai-typing i{width:5px;height:5px;border-radius:50%;background:var(--c4);animation:aiDot 1s infinite ease-in-out}
+.ai-typing i:nth-child(2){animation-delay:.15s}
+.ai-typing i:nth-child(3){animation-delay:.3s}
+@keyframes aiDot{0%,80%,100%{opacity:.3;transform:translateY(0)}40%{opacity:1;transform:translateY(-2px)}}
+
+.ai-file-list{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.ai-file{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r1);font:400 12px/1 var(--f)}
+.ai-file-name{flex:1;color:var(--c8);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ai-file-size{color:var(--c4);font-family:var(--m);font-size:11px}
+.ai-file-status{font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px}
+.ai-file-status.parsed{color:var(--em700);background:var(--em50)}
+.ai-file-status.parsing{color:var(--pr);background:var(--pr50)}
+
+.ai-chat-ft{padding:12px 14px;border-top:1px solid var(--dv);display:flex;gap:8px;align-items:center;flex-shrink:0;background:var(--sf)}
+.ai-chat-input{flex:1;height:38px;border:1px solid var(--c2);border-radius:var(--r2);padding:0 12px;font:400 13px/1 var(--f);color:var(--c8);outline:none}
+.ai-chat-input:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
+.ai-chat-send,.ai-chat-upload{width:38px;height:38px;border-radius:var(--r2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.ai-chat-send{background:var(--pr);border:none;color:#FFF}
+.ai-chat-send:hover{background:var(--pr700)}
+.ai-chat-upload{background:var(--sf);border:1px solid var(--c2);color:var(--c5);position:relative}
+.ai-chat-upload:hover{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.ai-chat-upload input{position:absolute;inset:0;opacity:0;cursor:pointer}
+
+.ai-toggle{position:fixed;bottom:80px;right:24px;width:52px;height:52px;border-radius:50%;background:var(--pr);border:none;box-shadow:0 4px 14px rgba(37,99,235,.28);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:950;transition:transform .2s,box-shadow .2s}
+.ai-toggle:hover{transform:scale(1.06);box-shadow:0 6px 18px rgba(37,99,235,.36)}
+.ai-toggle svg{width:22px;height:22px;color:#FFF}
+body.chat-open .ai-toggle{display:none}
+
+/* 表单侧：AI 填入高亮 */
+.ai-form-flash{animation:aiFormFlash 1.6s ease}
+@keyframes aiFormFlash{
+  0%{box-shadow:0 0 0 0 rgba(37,99,235,.35);background:var(--pr50)}
+  100%{box-shadow:none;background:transparent}
+}
+tr.ai-form-flash td, .goal-card.ai-form-flash, .ai-filled-mark{outline:none}
+.ai-filled-badge{display:inline-flex;align-items:center;gap:4px;margin-left:6px;padding:1px 6px;border-radius:3px;font:500 10px/1.4 var(--f);color:var(--pr);background:var(--pr50);vertical-align:middle}

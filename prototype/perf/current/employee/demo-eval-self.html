@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HR ONE - 绩效考核·自评</title>
+<link rel="stylesheet" href="../shared/ai-form-assistant.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -349,6 +350,7 @@ body.chat-open .ai-toggle{display:none}
 <div class="validate-toast" id="validateToast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span id="toastMsg"></span></div>
 
 <script src="../navigation.js"></script>
+<script src="../shared/ai-form-assistant.js"></script>
 <script>
 GHR_NAV.init('perf', '绩效自评');
 
@@ -493,184 +495,21 @@ function showToast(msg,type){
   setTimeout(function(){t.classList.remove('show')},3000);
 }
 
-// ═══ AI CHAT ═══
-var AI_SHORTCUTS=[
-  {icon:'📄',label:'解析文件自动填写',desc:'上传周报/日报/项目文档，AI自动提取进度和完成情况'},
-  {icon:'📝',label:'批量填写完成情况',desc:'根据目标完成度自动填入完成值和评价'},
-  {icon:'📊',label:'查看完成度详情',desc:'逐项分析目标完成情况'}
-];
-var AI_MSGS=[
-  {role:'bot',text:'你好，我是 AI 绩效助手 👋\n\n我可以帮你完成绩效自评：\n• 上传文件，AI自动解析并填写\n• 基于目标完成度自动填入完成值\n• 分析各目标完成情况',time:'09:30',shortcuts:true}
-];
-function renderAiChat(){
-  var bd=document.getElementById('chatBd');
-  if(!bd)return;
-  bd.innerHTML=AI_MSGS.map(function(m){
-    var html='<div class="ai-msg '+m.role+'"><div class="ai-msg-bd">'+m.text.replace(/\n/g,'<br/>')+'</div>';
-    if(m.shortcuts){html+='<div class="ai-shortcuts">'+AI_SHORTCUTS.map(function(s){return '<div class="ai-shortcut" onclick="handleAiAction(\''+s.label+'\')"><span class="ai-shortcut-icon">'+s.icon+'</span><div class="ai-shortcut-text"><div class="ai-shortcut-label">'+s.label+'</div><div class="ai-shortcut-desc">'+s.desc+'</div></div></div>';}).join('')+'</div>';}
-    if(m.upload){html+='<div class="ai-upload" id="aiUpload" onclick="document.getElementById(\'aiFileInput\').click()" ondragover="event.preventDefault();this.classList.add(\'dragover\')" ondragleave="this.classList.remove(\'dragover\')" ondrop="event.preventDefault();this.classList.remove(\'dragover\');handleFileDrop(event)"><div class="ai-upload-icon">📎</div><div class="ai-upload-text">点击或拖拽上传文件</div><div class="ai-upload-hint">支持 Word、Excel、PDF、TXT，可多选</div><input type="file" id="aiFileInput" class="ai-upload-input" multiple accept=".doc,.docx,.xls,.xlsx,.pdf,.txt" onchange="handleFileSelect(event)"></div>';}
-    if(m.files){html+='<div class="ai-file-list">'+m.files.map(function(f){return '<div class="ai-file"><span class="ai-file-icon">📄</span><span class="ai-file-name">'+f.name+'</span><span class="ai-file-size">'+f.size+'</span><span class="ai-file-status parsed">已解析</span></div>';}).join('')+'</div>';}
-    if(m.cards){html+=m.cards.map(function(c){return '<div class="ai-msg-card"><div class="ai-msg-card-t">'+c.t+'</div><div class="ai-msg-card-d">'+c.d+'</div><div class="ai-msg-card-ft"><span class="ai-msg-card-tag '+c.tc+'">'+c.tag+'</span>'+(c.apply?'<button class="ai-msg-card-apply" onclick="applyAiSuggestion(\''+c.apply+'\')">应用到表格</button>':'')+'</div></div>';}).join('');}
-    if(m.actions){html+='<div class="ai-msg-actions">'+m.actions.map(function(a){return '<button class="ai-msg-btn'+(a.indexOf('确认')>=0||a.indexOf('应用')>=0?' primary':'')+'" onclick="handleAiAction(\''+a+'\')">'+a+'</button>';}).join('')+'</div>';}
-    if(m.time){html+='<div class="ai-msg-time">'+m.time+'</div>';}
-    html+='</div>';
-    return html;
-  }).join('');
-  bd.scrollTop=bd.scrollHeight;
-}
-
-// 文件处理
-function handleChatFileSelect(e){
-  var files=Array.from(e.target.files);
-  if(!files.length)return;
-  processFiles(files);
-  e.target.value='';
-}
-
-function handleFileSelect(e){
-  var files=Array.from(e.target.files);
-  if(!files.length)return;
-  processFiles(files);
-}
-
-function handleFileDrop(e){
-  var files=Array.from(e.dataTransfer.files);
-  if(!files.length)return;
-  processFiles(files);
-}
-
-function processFiles(files){
-  var fileList=files.map(function(f){
-    var size=f.size>1024*1024?(f.size/(1024*1024)).toFixed(1)+'MB':(f.size/1024).toFixed(0)+'KB';
-    return {name:f.name,size:size};
-  });
-  AI_MSGS.push({role:'user',text:'已上传 '+files.length+' 个文件：\n'+files.map(function(f){return '• '+f.name;}).join('\n')});
-  AI_MSGS.push({role:'bot',text:'正在解析文件内容，提取目标进度和完成情况…',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),files:fileList});
-  renderAiChat();
-
-  setTimeout(function(){
-    AI_MSGS.push({role:'bot',text:'文件解析完成！已从文档中提取以下信息：\n\n📄 周报_张明_Q2_W12.docx:\n• 资源利用率: 实际108%（Devops数据）\n• UAT通过率: 本迭代3个需求首次通过2个\n• 需求评审: 本周完成2次评审，均按时\n\n📊 绩效自评素材.xlsx:\n• 产品管理规范: 4项规范全部落地\n• 日常需求: 完成GOFO 6月迭代验收\n• 绩效重构: 3个里程碑按时交付\n• AI应用: 3个版本按时发布\n\n点击「应用到表格」一键填入。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
-      {t:'解析完成',d:'已提取 7 项目标的完成数据和进度信息',tag:'AI 解析',tc:'pr',apply:'batch'}
-    ]});
-    renderAiChat();
-  },1500);
-}
-
-function applyAiSuggestion(type){
-  if(type==='batch'){
-    var comments=[
-      {mi:0,gi:0,completed:'108'},
-      {mi:0,gi:1,completed:'97'},
-      {mi:0,gi:2,completed:'96'},
-      {mi:1,gi:3,completed:'4项规范全部符合，团队遵从度95%以上',stars:4},
-      {mi:1,gi:4,completed:'按时完成GOFO 6月迭代需求评审和验收',stars:4},
-      {mi:1,gi:5,completed:'3个里程碑按时交付，无延期',stars:5},
-      {mi:1,gi:6,completed:'3个版本按时发布，1个试点应用已落地',stars:5}
-    ];
-    comments.forEach(function(c){
-      MODULES[c.mi].goals[c.gi].completed=c.completed;
-      if(MODULES[c.mi].goals[c.gi].type==='qual' && c.stars){
-        MODULES[c.mi].goals[c.gi].stars=c.stars;
-      }
-      var comp=document.getElementById('completed_'+c.mi+'_'+c.gi);
-      if(comp){
-        if(MODULES[c.mi].goals[c.gi].type==='quant'){
-          comp.value=c.completed;
-          updateCompleted(c.mi,c.gi);
-        }else{
-          comp.value=c.completed;
-          if(c.stars){
-            var rating=document.getElementById('stars_'+c.mi+'_'+c.gi);
-            if(rating){
-              var starEl=rating.querySelector('.star[data-v="'+c.stars+'"]');
-              if(starEl){setStar(starEl,c.mi,c.gi,c.stars);}
-            }
-          }
-        }
-      }
-    });
-    overallComment='本季度整体工作完成情况良好。KPI方面，资源利用率达标，UAT通过率和需求评审及时率略低于目标，已制定改进措施。KPA方面，产品管理规范落地执行，日常需求响应及时，绩效重构和AI应用项目均按里程碑计划推进完成。下一季度将持续优化评审流程，提升指标达成率。';
-    var oc=document.getElementById('overallComment');
-    if(oc)oc.value=overallComment;
-    showToast('已为7项目标 + 总评语自动生成','success');
-  }
-}
-
-function sendAiMsg(){
-  var input=document.getElementById('chatInput');
-  var text=input.value.trim();
-  if(!text)return;
-  AI_MSGS.push({role:'user',text:text});
-  input.value='';
-  renderAiChat();
-  setTimeout(function(){
-    AI_MSGS.push({role:'bot',text:'收到，正在分析目标数据…\n\n已根据你的描述生成建议，请查看更新结果。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
-    renderAiChat();
-  },800);
-}
-
-function handleAiAction(action){
-  AI_MSGS.push({role:'user',text:action});
-  renderAiChat();
-
-  setTimeout(function(){
-    switch(action){
-      case '解析文件自动填写':
-        AI_MSGS.push({role:'bot',text:'请上传你的工作文档，AI 将自动解析并提取目标进度和完成情况。\n\n支持的文件类型：\n• 周报/日报/月报（Word、TXT）\n• 项目进度表（Excel）\n• 工作总结（PDF）',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),upload:true});
-        break;
-      case '批量填写完成情况':
-        AI_MSGS.push({role:'bot',text:'已根据目标制定表的 7 项目标 + 完成度数据自动填入：\n\nKPI（30%）:\n• 资源利用率 → 108%（得分100分）\n• UAT首次通过率 → 97%（得分80分）\n• 需求评审及时率 → 96%（得分80分）\n\nKPA（70%）:\n• 产品管理规范 → 符合预期\n• 日常需求响应 → 符合预期\n• 绩效重构推进 → 符合预期+\n• AI应用落地 → 符合预期+\n\n点击「应用到表格」一键填入。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
-          {t:'批量填写完成',d:'7 项已完成填入，基于目标制定数据 + 完成度自动生成',tag:'AI 生成',tc:'pr',apply:'batch'}
-        ]});
-        break;
-      case '查看完成度详情':
-        AI_MSGS.push({role:'bot',text:'各目标完成度详情：\n\nKPI:\n• 资源利用率: 108% (保底100/目标105/挑战110) → 100分\n• UAT通过率: 97% (保底95/目标98/挑战100) → 80分\n• 评审及时率: 96% (保底95/目标98/挑战100) → 80分\n\nKPA:\n• 产品管理规范 → 符合预期\n• 日常需求响应 → 符合预期\n• 绩效重构推进 → 符合预期+\n• AI应用落地 → 符合预期+',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
-          {t:'完成度分析',d:'1项100分，2项80分，4项符合预期',tag:'整体达标',tc:'em'}
-        ]});
-        break;
-      case '填写建议':
-        AI_MSGS.push({role:'bot',text:'填写建议：\n\n• 定量目标：输入实际完成值，系统自动计算得分\n• 定性目标：描述具体完成情况，选择对应评价等级\n• 总评语：总结本季度整体工作，80-150字为宜',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
-          {t:'填写建议',d:'定量输入数值 + 定性选评价 + 总评语总结',tag:'建议',tc:'ac'}
-        ]});
-        break;
-      default:
-        AI_MSGS.push({role:'bot',text:'收到，正在分析绩效数据…\n\n已根据你的描述生成建议，请查看更新结果。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
-    }
-    renderAiChat();
-  },800);
-}
-
-function toggleAiChat(){document.body.classList.toggle('chat-open');}
-
 function normalizeApprovalFlow(){
   var table=document.getElementById('selfApprovalFlow');
   if(!table)return;
-  table.querySelector('thead tr').innerHTML='<th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);letter-spacing:.5px">节点</th><th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);letter-spacing:.5px">处理人</th><th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);letter-spacing:.5px">原因</th><th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);letter-spacing:.5px">流入时间</th><th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);letter-spacing:.5px">流出时间</th>';
+  var head=table.querySelector('thead tr');
+  if(head) head.innerHTML='<th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);letter-spacing:.5px">节点</th><th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);letter-spacing:.5px">处理人</th><th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);letter-spacing:.5px">原因</th><th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);letter-spacing:.5px">流入时间</th><th style="padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);letter-spacing:.5px">流出时间</th>';
   table.querySelectorAll('tbody tr').forEach(function(row){
     var cells=Array.from(row.children);
-    row.replaceChildren(cells[0],cells[1],cells[5],cells[2],cells[3]);
+    if(cells.length>=6) row.replaceChildren(cells[0],cells[1],cells[5],cells[2],cells[3]);
   });
 }
 
 renderModuleContainer();
 normalizeApprovalFlow();
 
-document.body.insertAdjacentHTML('beforeend',
-'<div class="ai-chat" id="aiChat">'+
-  '<div class="ai-chat-hd">'+
-    '<div class="ai-chat-hd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg></div>'+
-    '<div><div class="ai-chat-hd-t">AI 绩效助手</div><div class="ai-chat-hd-s">自评评语 · 完成度分析 · 评语优化</div></div>'+
-    '<button class="ai-chat-close" onclick="toggleAiChat()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>'+
-  '</div>'+
-  '<div class="ai-chat-bd" id="chatBd"></div>'+
-  '<div class="ai-chat-ft">'+
-    '<label class="ai-chat-upload" title="上传文件"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg><input type="file" multiple accept=".doc,.docx,.xls,.xlsx,.pdf,.txt" onchange="handleChatFileSelect(event)"/></label>'+
-    '<input class="ai-chat-input" id="chatInput" placeholder="输入指令，如「批量评分」「查看偏差」…" onkeydown="if(event.key===\'Enter\')sendAiMsg()"/>'+
-    '<button class="ai-chat-send" onclick="sendAiMsg()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>'+
-  '</div>'+
-'</div>'+
-'<button class="ai-toggle" onclick="toggleAiChat()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg></button>');
-renderAiChat();
 </script>
+<script src="../shared/ai-scene-eval-self.js"></script>
 </body>
 </html>

@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HR ONE - 绩效评分·双线上级</title>
+<link rel="stylesheet" href="../shared/ai-form-assistant.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -361,6 +362,7 @@ body.chat-open .ai-toggle{display:none}
 <div class="validate-toast" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span id="toastMsg"></span></div>
 
 <script src="../navigation.js"></script>
+<script src="../shared/ai-form-assistant.js"></script>
 <script>
 GHR_NAV.init('perf', '绩效评分');
 
@@ -684,147 +686,9 @@ function showToast(msg,type){
 
 renderModuleContainer();
 
-// ═══ AI CHAT ═══
-var AI_SHORTCUTS=[
-  {icon:'📄',label:'解析文件辅助评分',desc:'上传员工工作文档，AI辅助分析完成情况'},
-  {icon:'📝',label:'批量填写评价',desc:'根据员工自评和完成情况，AI推荐评价等级'},
-  {icon:'📊',label:'查看评分建议',desc:'分析各目标完成情况，给出评分建议'}
-];
-var AI_MSGS=[
-  {role:'bot',text:'你好，我是 AI 评分助手 👋\n\n我可以帮你完成双线上级评分：\n• 上传文件，AI辅助分析完成情况\n• 基于员工自评推荐评价等级\n• 分析各目标完成情况',time:'09:30',shortcuts:true}
-];
-function renderAiChat(){
-  var bd=document.getElementById('chatBd');
-  if(!bd)return;
-  bd.innerHTML=AI_MSGS.map(function(m){
-    var html='<div class="ai-msg '+m.role+'"><div class="ai-msg-bd">'+m.text.replace(/\n/g,'<br/>')+'</div>';
-    if(m.shortcuts){html+='<div class="ai-shortcuts">'+AI_SHORTCUTS.map(function(s){return '<div class="ai-shortcut" onclick="handleAiAction(\''+s.label+'\')"><span class="ai-shortcut-icon">'+s.icon+'</span><div class="ai-shortcut-text"><div class="ai-shortcut-label">'+s.label+'</div><div class="ai-shortcut-desc">'+s.desc+'</div></div></div>';}).join('')+'</div>';}
-    if(m.upload){html+='<div class="ai-upload" id="aiUpload" onclick="document.getElementById(\'aiFileInput\').click()" ondragover="event.preventDefault();this.classList.add(\'dragover\')" ondragleave="this.classList.remove(\'dragover\')" ondrop="event.preventDefault();this.classList.remove(\'dragover\');handleFileDrop(event)"><div class="ai-upload-icon">📎</div><div class="ai-upload-text">点击或拖拽上传文件</div><div class="ai-upload-hint">支持 Word、Excel、PDF、TXT，可多选</div><input type="file" id="aiFileInput" class="ai-upload-input" multiple accept=".doc,.docx,.xls,.xlsx,.pdf,.txt" onchange="handleFileSelect(event)"></div>';}
-    if(m.files){html+='<div class="ai-file-list">'+m.files.map(function(f){return '<div class="ai-file"><span class="ai-file-icon">📄</span><span class="ai-file-name">'+f.name+'</span><span class="ai-file-size">'+f.size+'</span><span class="ai-file-status parsed">已解析</span></div>';}).join('')+'</div>';}
-    if(m.cards){html+=m.cards.map(function(c){return '<div class="ai-msg-card"><div class="ai-msg-card-t">'+c.t+'</div><div class="ai-msg-card-d">'+c.d+'</div><div class="ai-msg-card-ft"><span class="ai-msg-card-tag '+c.tc+'">'+c.tag+'</span>'+(c.apply?'<button class="ai-msg-card-apply" onclick="applyAiSuggestion(\''+c.apply+'\')">应用到表格</button>':'')+'</div></div>';}).join('');}
-    if(m.actions){html+='<div class="ai-msg-actions">'+m.actions.map(function(a){return '<button class="ai-msg-btn'+(a.indexOf('确认')>=0||a.indexOf('应用')>=0?' primary':'')+'" onclick="handleAiAction(\''+a+'\')">'+a+'</button>';}).join('')+'</div>';}
-    if(m.time){html+='<div class="ai-msg-time">'+m.time+'</div>';}
-    html+='</div>';
-    return html;
-  }).join('');
-  bd.scrollTop=bd.scrollHeight;
-}
-
-function handleChatFileSelect(e){
-  var files=Array.from(e.target.files);
-  if(!files.length)return;
-  processFiles(files);
-  e.target.value='';
-}
-
-function handleFileSelect(e){
-  var files=Array.from(e.target.files);
-  if(!files.length)return;
-  processFiles(files);
-}
-
-function handleFileDrop(e){
-  var files=Array.from(e.dataTransfer.files);
-  if(!files.length)return;
-  processFiles(files);
-}
-
-function processFiles(files){
-  var fileList=files.map(function(f){
-    var size=f.size>1024*1024?(f.size/(1024*1024)).toFixed(1)+'MB':(f.size/1024).toFixed(0)+'KB';
-    return {name:f.name,size:size};
-  });
-  AI_MSGS.push({role:'user',text:'已上传 '+files.length+' 个文件：\n'+files.map(function(f){return '• '+f.name;}).join('\n')});
-  AI_MSGS.push({role:'bot',text:'正在解析文件内容，分析员工工作完成情况…',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),files:fileList});
-  renderAiChat();
-
-  setTimeout(function(){
-    AI_MSGS.push({role:'bot',text:'文件解析完成！已从文档中提取以下信息：\n\n📄 张明_周报_Q2_W12.docx:\n• 人才培养: 完成2名下属IDP辅导\n• 技术认证: 已取得云原生认证\n\n📊 360评估汇总.xlsx:\n• 团队协作: 跨部门协作评分优秀\n\n建议评价：\n• 人才培养: 符合预期\n• 技术认证: 符合预期+\n• 团队协作: 符合预期+\n\n点击「应用到表格」一键填入。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
-      {t:'解析完成',d:'已提取 3 项目标的完成数据，建议评价已生成',tag:'AI 解析',tc:'pr',apply:'batch'}
-    ]});
-    renderAiChat();
-  },1500);
-}
-
-function applyAiSuggestion(type){
-  if(type==='batch'){
-    var grades=[
-      {mi:0,gi:0,grade:'符合预期'},
-      {mi:0,gi:1,grade:'符合预期+'},
-      {mi:1,gi:0,grade:'符合预期+'}
-    ];
-    grades.forEach(function(g){
-      var gradeStars={'低于预期':1,'符合预期-':2,'符合预期':3,'符合预期+':4,'超出预期':5};
-      var value=gradeStars[g.grade]||0;
-      var rating=document.getElementById('indirect_score_'+g.mi+'_'+g.gi);
-      var star=rating&&rating.querySelector('.star[data-v="'+value+'"]');
-      if(star)setIndirectStar(star,g.mi,g.gi,value);
-    });
-    indirectComment='张明在能力发展和价值观方面表现良好。人才培养工作扎实，技术认证按时完成，团队协作获得好评。建议继续保持跨部门协作优势。';
-    var ic=document.getElementById('indirectComment');
-    if(ic)ic.value=indirectComment;
-    showToast('已为3项目标 + 总评语自动生成','success');
-  }
-}
-
-function sendAiMsg(){
-  var input=document.getElementById('chatInput');
-  var text=input.value.trim();
-  if(!text)return;
-  AI_MSGS.push({role:'user',text:text});
-  input.value='';
-  renderAiChat();
-  setTimeout(function(){
-    AI_MSGS.push({role:'bot',text:'收到，正在分析评分数据…\n\n已根据你的描述生成建议，请查看更新结果。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
-    renderAiChat();
-  },800);
-}
-
-function handleAiAction(action){
-  AI_MSGS.push({role:'user',text:action});
-  renderAiChat();
-
-  setTimeout(function(){
-    switch(action){
-      case '解析文件辅助评分':
-        AI_MSGS.push({role:'bot',text:'请上传员工的工作文档，AI 将辅助分析完成情况。\n\n支持的文件类型：\n• 周报/日报/月报（Word、TXT）\n• 工作总结（PDF）\n• 360评估报告（Excel）',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),upload:true});
-        break;
-      case '批量填写评价':
-        AI_MSGS.push({role:'bot',text:'已根据员工自评和完成情况，为 3 项目标推荐评价：\n\n能力发展:\n• 人才培养 → 符合预期（2人完成IDP）\n• 技术认证 → 符合预期+（已取得认证）\n\n价值观:\n• 团队协作 → 符合预期+（协作评价优秀）\n\n点击「应用到表格」一键填入。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
-          {t:'批量评价完成',d:'3 项评价已就绪，基于员工自评和完成情况推荐',tag:'AI 推荐',tc:'pr',apply:'batch'}
-        ]});
-        break;
-      case '查看评分建议':
-        AI_MSGS.push({role:'bot',text:'评分建议分析：\n\n• 人才培养: IDP执行到位，1人绩效提升明显 → 符合预期\n• 技术认证: 按时取得认证，成绩85分 → 符合预期+\n• 团队协作: 跨部门协作获好评 → 符合预期+\n\n整体建议等级: 符合预期+',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),cards:[
-          {t:'评分建议',d:'3 项均达到预期，1项超出预期',tag:'整体良好',tc:'em'}
-        ]});
-        break;
-      default:
-        AI_MSGS.push({role:'bot',text:'收到，正在分析评分数据…\n\n已根据你的描述生成建议，请查看更新结果。',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
-    }
-    renderAiChat();
-  },800);
-}
-
-function toggleAiChat(){document.body.classList.toggle('chat-open');}
-
 </script>
 
-<!-- AI Chat Panel -->
-<div class="ai-chat" id="aiChat">
-  <div class="ai-chat-hd">
-    <div class="ai-chat-hd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg></div>
-    <div><div class="ai-chat-hd-t">AI 评分助手</div><div class="ai-chat-hd-s">分析完成情况 · 推荐评价等级</div></div>
-    <button class="ai-chat-close" onclick="toggleAiChat()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-  </div>
-  <div class="ai-chat-bd" id="chatBd"></div>
-  <div class="ai-chat-ft">
-    <label class="ai-chat-upload" title="上传文件"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg><input type="file" multiple accept=".doc,.docx,.xls,.xlsx,.pdf,.txt" onchange="handleChatFileSelect(event)"/></label>
-    <input class="ai-chat-input" id="chatInput" placeholder="输入指令，如「批量评分」「查看建议」…" onkeydown="if(event.key==='Enter')sendAiMsg()"/>
-    <button class="ai-chat-send" onclick="sendAiMsg()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
-  </div>
-</div>
-<button class="ai-toggle" onclick="toggleAiChat()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M18 14h.01"/><path d="M6 14h.01"/><path d="M12 14v4"/><path d="M8 18h8"/><path d="M6 22h12"/></svg></button>
 
+<script src="../shared/ai-scene-eval-manager.js"></script>
 </body>
 </html>
