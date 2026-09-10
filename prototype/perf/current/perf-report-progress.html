@@ -37,22 +37,6 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .fl-hint{font:400 12px/1 var(--f);color:var(--c5)}
 .fl-hint b{font-weight:600;color:var(--c9)}
 
-.st-row{display:flex;align-items:stretch;background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden}
-.st-item{flex:1;min-width:0;padding:16px 18px;pointer-events:none;position:relative}
-.st-item:not(:last-child)::after{content:'';position:absolute;top:16px;bottom:16px;right:0;width:1px;background:var(--c2)}
-.st-item-label{font:400 13px/1 var(--f);color:var(--c5);margin-bottom:8px}
-.st-item-value{font:700 22px/1 var(--m);color:var(--c9);margin-bottom:12px}
-.st-item-bar{height:3px;background:var(--c1);border-radius:2px;overflow:hidden}
-.st-item-fill{height:100%;border-radius:2px;background:var(--em);transition:width .6s ease}
-.st-item.is-zero .st-item-value{color:var(--c4)}
-.st-item.is-em .st-item-value{color:var(--em700)}
-.st-item.is-ac .st-item-value{color:var(--ac700)}
-.st-item.is-pr .st-item-value{color:var(--pr)}
-.st-item.is-zero .st-item-fill{background:var(--c4)}
-.st-item.is-em .st-item-fill{background:var(--em)}
-.st-item.is-ac .st-item-fill{background:var(--ac)}
-.st-item.is-pr .st-item-fill{background:var(--pr)}
-
 .org-pick{position:relative;min-width:180px;z-index:20}
 .org-trig{height:32px;width:100%;padding:0 28px 0 10px;border:1px solid var(--c2);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c7);background:var(--sf);display:flex;align-items:center;cursor:pointer;outline:none;text-align:left;position:relative}
 .org-trig:hover{border-color:var(--c3)}
@@ -153,10 +137,35 @@ tbody tr:last-child td{border-bottom:none}
 .modal-tools .fl-search{flex:1;min-width:0;margin-bottom:0}
 .modal-tbl-wrap{flex:1;min-height:0;overflow:auto}
 .modal-ft{padding:12px 20px;border-top:1px solid var(--dv);display:flex;align-items:center;justify-content:flex-start}
-.col-set-modal{width:min(400px,calc(100vw - 48px));max-height:70vh}
-.col-set-item{display:flex;align-items:center;gap:8px;min-height:36px;padding:0 8px;border-radius:var(--r1);font:400 13px/1.3 var(--f);color:var(--c7);cursor:pointer}
+.col-set-modal{width:min(520px,calc(100vw - 48px));max-height:80vh}
+.col-set-modal .modal-bd{overflow:auto;padding:0}
+.col-set-sec{padding:12px 16px}
+.col-set-sec+.col-set-sec{border-top:1px solid var(--dv)}
+.col-set-h{font:600 12px/1.3 var(--f);color:var(--c9);margin:0 0 8px}
+.col-set-row{display:flex;flex-wrap:wrap;gap:0 4px}
+.col-set-row .col-set-item{flex:0 0 auto;width:auto;padding-right:10px}
+.col-set-stage{margin-top:12px}
+.col-set-stage:first-child{margin-top:0}
+.col-set-stage-name{font:600 12px/1.3 var(--f);color:var(--c7);margin:0 0 6px}
+.col-set-proc{margin:8px 0 0}
+.col-set-proc:last-child{margin-bottom:0}
+.col-set-proc-name{font:500 12px/1.3 var(--f);color:var(--c6);margin:0 0 6px}
+.col-set-node-block{margin:6px 0 0;padding:8px 10px;background:var(--c0);border-radius:var(--r1)}
+.col-set-node-h{font:500 11px/1.3 var(--f);color:var(--c5);margin:0 0 6px}
+.col-set-item{display:flex;align-items:center;gap:8px;min-height:32px;padding:0 8px;border-radius:var(--r1);font:400 13px/1.3 var(--f);color:var(--c7);cursor:pointer}
+.col-set-item.sub{min-height:28px;font-size:12px;color:var(--c6)}
 .col-set-item:hover{background:var(--c0)}
-.col-set-item input{width:13px;height:13px;margin:0;accent-color:var(--pr);cursor:pointer}
+.col-set-item input{width:13px;height:13px;margin:0;accent-color:var(--pr);cursor:pointer;flex-shrink:0}
+.node-pick{position:relative;z-index:1}
+.node-pick.is-open{z-index:40}
+.node-trig{height:32px;width:100%;padding:0 28px 0 10px;border:1px solid var(--c2);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c7);background:var(--sf);display:flex;align-items:center;cursor:pointer;outline:none;text-align:left;position:relative}
+.node-trig:hover{border-color:var(--c3)}
+.node-trig.is-open,.node-trig:focus{border-color:var(--pr)}
+.node-trig-txt{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.node-trig.is-empty .node-trig-txt{color:var(--c4)}
+.node-trig .org-caret{position:absolute;right:10px;color:var(--c4);pointer-events:none}
+.node-pick-panel{position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:40;max-height:220px;overflow:auto;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r1);box-shadow:0 10px 40px -10px rgba(0,0,0,.12),0 2px 10px -2px rgba(0,0,0,.04);padding:4px}
+.node-pick-panel .col-set-item:hover{background:var(--c0)}
 .flow-tbl{width:100%;border-collapse:collapse;min-width:1080px}
 .flow-tbl th{padding:8px 12px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);background:var(--c0);white-space:nowrap;position:sticky;top:0;z-index:1}
 .flow-tbl td{padding:9px 12px;font:400 12px/1.4 var(--f);color:var(--c7);border-bottom:1px solid var(--dv)}
@@ -353,6 +362,47 @@ var viewMode='dept';
 var filterOpen=false;
 var collapsed={};
 var groupOn={count:true,goal:true,talk:true,eval:true,ratify:true,confirm:true};
+var FLOW_DEFS={
+  goal:[
+    {id:'goal-online',name:'线上制定目标通用流程',nodes:[
+      {id:'goal-fill',name:'员工制定'},
+      {id:'goal-ind-appr',name:'双线上级审批'},
+      {id:'goal-dir-appr',name:'直线上级审批'}
+    ]},
+    {id:'goal-import',name:'线上导入目标审批流程',nodes:[
+      {id:'goal-imp',name:'HRBP导入'},
+      {id:'goal-emp-ok',name:'员工确认'},
+      {id:'goal-imp-ind',name:'双线上级审批'},
+      {id:'goal-imp-dir',name:'直线上级审批'}
+    ]}
+  ],
+  talk:[{id:'talk-std',name:'绩效面谈通用流程',nodes:[]}],
+  eval:[
+    {id:'eval-online',name:'线上绩效考核通用流程',nodes:[
+      {id:'eval-self',name:'绩效自评'},
+      {id:'eval-ind',name:'双线上级评分'},
+      {id:'eval-dir',name:'直线上级评分'}
+    ]},
+    {id:'eval-import',name:'导入完成值绩效通用流程',nodes:[
+      {id:'eval-imp',name:'HRBP导入'},
+      {id:'eval-imp-ind',name:'双线上级评分'},
+      {id:'eval-imp-dir',name:'直线上级评分'}
+    ]}
+  ],
+  ratify:[
+    {id:'ratify-line',name:'结果审定-汇报线逐级审定',nodes:[]},
+    {id:'ratify-org',name:'结果审定-组织架构逐级审定',nodes:[]}
+  ],
+  confirm:[{id:'confirm-std',name:'结果确认',nodes:[]}]
+};
+var FLOW_NODE_COLS={
+  goal:[{id:'制定中',name:'制定中'},{id:'审批中',name:'审批中'}],
+  eval:[{id:'自评',name:'自评'},{id:'考核人评分',name:'考核人评分'}]
+};
+var flowProcOn={};
+var flowColNodeOn={};
+var nodePickOpen=null;
+var procPickOpen=null;
 var expanded={};
 var pickerExpanded={cn:1,rd:1,mkt:1,prod:1,tech:1,market:1,design:1,ops:1};
 var orgPanelOpen=false;
@@ -622,6 +672,8 @@ function closeModal(){
 }
 function closeColSet(){
   colSetOpen=false;
+  nodePickOpen=null;
+  procPickOpen=null;
   if(!modalState){
     var host=document.getElementById('modalRoot');
     if(host) host.innerHTML='';
@@ -772,20 +824,153 @@ function toggleGroupVis(id){
 function openColSet(){
   modalState=null;
   colSetOpen=true;
+  nodePickOpen=null;
+  procPickOpen=null;
   orgPanelOpen=false;
   filterOpen=false;
   exportOpen=false;
   render();
 }
+function isFlowProcOn(id){ return !!flowProcOn[id]; }
+function stageOfProc(procId){
+  var keys=Object.keys(FLOW_DEFS);
+  for(var i=0;i<keys.length;i++){
+    var list=FLOW_DEFS[keys[i]]||[];
+    for(var j=0;j<list.length;j++) if(list[j].id===procId) return keys[i];
+  }
+  return '';
+}
+function flowBindKey(procId,colId,nodeId){ return procId+'|'+colId+'|'+nodeId; }
+function nodePickKey(procId,colId){ return procId+'|'+colId; }
+function nodePickDomId(procId,colId){ return 'np-'+procId+'-'+colId; }
+function isNodePickOpen(procId,colId){ return nodePickOpen===nodePickKey(procId,colId); }
+function isFlowColNodeOn(procId,colId,nodeId){ return !!flowColNodeOn[flowBindKey(procId,colId,nodeId)]; }
+function selectedFlowNodes(procId,colId,nodes){
+  return (nodes||[]).filter(function(n){ return isFlowColNodeOn(procId,colId,n.id); });
+}
+function pickLabel(items, emptyText){
+  if(!items.length) return {empty:true,text:emptyText};
+  if(items.length>=3) return {empty:false,text:'已选 '+items.length+' 项'};
+  return {empty:false,text:items.map(function(n){ return n.name; }).join('、')};
+}
+function nodePickLabel(procId,colId,nodes){
+  return pickLabel(selectedFlowNodes(procId,colId,nodes),'请选择节点');
+}
+function procPickLabel(selected){
+  return pickLabel(selected,'请选择流程');
+}
+function colSetScrollTop(){
+  var bd=document.querySelector('.col-set-modal .modal-bd');
+  return bd?bd.scrollTop:0;
+}
+function restoreColSetScroll(top){
+  var bd=document.querySelector('.col-set-modal .modal-bd');
+  if(bd) bd.scrollTop=top;
+}
+function closeColPicks(){
+  nodePickOpen=null;
+  procPickOpen=null;
+}
+function toggleFlowProc(id){
+  var top=colSetScrollTop();
+  flowProcOn[id]=!isFlowProcOn(id);
+  if(!isFlowProcOn(id)&&nodePickOpen&&nodePickOpen.indexOf(id+'|')===0) nodePickOpen=null;
+  procPickOpen=stageOfProc(id);
+  renderColSet();
+  restoreColSetScroll(top);
+}
+function onColSetModalClick(ev){
+  ev.stopPropagation();
+  if(!nodePickOpen&&!procPickOpen) return;
+  var np=document.querySelector('.node-pick.is-open');
+  if(np&&np.contains(ev.target)) return;
+  var top=colSetScrollTop();
+  closeColPicks();
+  renderColSet();
+  restoreColSetScroll(top);
+}
+function toggleProcPick(stageId,ev){
+  if(ev) ev.stopPropagation();
+  var top=colSetScrollTop();
+  procPickOpen=procPickOpen===stageId?null:stageId;
+  nodePickOpen=null;
+  renderColSet();
+  restoreColSetScroll(top);
+}
+function toggleNodePick(procId,colId,ev){
+  if(ev) ev.stopPropagation();
+  var top=colSetScrollTop();
+  var k=nodePickKey(procId,colId);
+  nodePickOpen=nodePickOpen===k?null:k;
+  procPickOpen=null;
+  renderColSet();
+  restoreColSetScroll(top);
+}
+function toggleFlowColNode(procId,colId,nodeId){
+  var top=colSetScrollTop();
+  var k=flowBindKey(procId,colId,nodeId);
+  flowColNodeOn[k]=!flowColNodeOn[k];
+  nodePickOpen=nodePickKey(procId,colId);
+  procPickOpen=null;
+  renderColSet();
+  restoreColSetScroll(top);
+}
+function renderNodePick(p,col,nodes){
+  var open=isNodePickOpen(p.id,col.id);
+  var lab=nodePickLabel(p.id,col.id,nodes);
+  var html='<div class="col-set-node-block"><div class="col-set-node-h">'+col.name+'</div>';
+  html+='<div class="node-pick'+(open?' is-open':'')+'" id="'+nodePickDomId(p.id,col.id)+'">';
+  html+='<button type="button" class="node-trig'+(open?' is-open':'')+(lab.empty?' is-empty':'')+'" onclick="toggleNodePick(\''+p.id+'\',\''+qid(col.id)+'\',event)" aria-expanded="'+(open?'true':'false')+'">'+
+    '<span class="node-trig-txt">'+lab.text+'</span>'+I.caret+
+  '</button>';
+  if(open){
+    html+='<div class="node-pick-panel" onclick="event.stopPropagation()">';
+    nodes.forEach(function(n){
+      html+='<label class="col-set-item sub"><input type="checkbox"'+(isFlowColNodeOn(p.id,col.id,n.id)?' checked':'')+' onclick="event.preventDefault();event.stopPropagation();toggleFlowColNode(\''+p.id+'\',\''+qid(col.id)+'\',\''+n.id+'\')"> '+n.name+'</label>';
+    });
+    html+='</div>';
+  }
+  return html+'</div></div>';
+}
 function renderColSet(){
-  var html='<div class="modal-overlay" onclick="closeColSet()"><div class="modal col-set-modal" onclick="event.stopPropagation()">'+
-    '<div class="modal-hd"><div><div class="modal-hd-title">列设置</div></div>'+
+  var html='<div class="modal-overlay" onclick="closeColSet()"><div class="modal col-set-modal" onclick="onColSetModalClick(event)">'+
+    '<div class="modal-hd"><div><div class="modal-hd-title">看板设置</div></div>'+
     '<button class="modal-close" onclick="closeColSet()" aria-label="关闭">'+I.x+'</button></div>'+
-    '<div class="modal-bd" style="padding:12px 16px">';
+    '<div class="modal-bd">';
+  html+='<div class="col-set-sec"><div class="col-set-h">列显示设置</div><div class="col-set-row">';
   colBlocks().forEach(function(b){
     html+='<label class="col-set-item"><input type="checkbox"'+(isGroupOn(b.id)?' checked':'')+' onchange="toggleGroupVis(\''+b.id+'\')"> '+b.name+'</label>';
   });
-  html+='</div></div></div>';
+  html+='</div></div><div class="col-set-sec"><div class="col-set-h">绑定流程</div>';
+  GROUPS.forEach(function(g){
+    var procs=FLOW_DEFS[g.id]||[];
+    var cols=FLOW_NODE_COLS[g.id]||[];
+    var selected=procs.filter(function(p){ return isFlowProcOn(p.id); });
+    var open=procPickOpen===g.id;
+    var lab=procPickLabel(selected);
+    html+='<div class="col-set-stage"><div class="col-set-stage-name">'+g.name+'</div>';
+    html+='<div class="node-pick'+(open?' is-open':'')+'" id="pp-'+g.id+'">';
+    html+='<button type="button" class="node-trig'+(open?' is-open':'')+(lab.empty?' is-empty':'')+'" onclick="toggleProcPick(\''+g.id+'\',event)" aria-expanded="'+(open?'true':'false')+'">'+
+      '<span class="node-trig-txt">'+lab.text+'</span>'+I.caret+
+    '</button>';
+    if(open){
+      html+='<div class="node-pick-panel" onclick="event.stopPropagation()">';
+      procs.forEach(function(p){
+        html+='<label class="col-set-item sub"><input type="checkbox"'+(isFlowProcOn(p.id)?' checked':'')+' onclick="event.preventDefault();event.stopPropagation();toggleFlowProc(\''+p.id+'\')"> '+p.name+'</label>';
+      });
+      html+='</div>';
+    }
+    html+='</div>';
+    selected.forEach(function(p){
+      var nodes=p.nodes||[];
+      if(!cols.length||!nodes.length) return;
+      html+='<div class="col-set-proc"><div class="col-set-proc-name">'+p.name+'</div>';
+      cols.forEach(function(col){ html+=renderNodePick(p,col,nodes); });
+      html+='</div>';
+    });
+    html+='</div>';
+  });
+  html+='</div></div></div></div>';
   ensureModalHost().innerHTML=html;
 }
 function groupItems(g){
@@ -836,10 +1021,10 @@ function groupRates(row,g){
 }
 
 function pctTone(pct){
-  if(pct===null||pct===0) return {cls:'is-zero', fill:'var(--c4)', text:'rate-zero'};
-  if(pct===100) return {cls:'is-em', fill:'var(--em)', text:'num-em'};
-  if(pct<60) return {cls:'is-ac', fill:'var(--ac)', text:'rate-ac'};
-  return {cls:'is-pr', fill:'var(--pr)', text:'rate-pr'};
+  if(pct===null||pct===0) return {fill:'var(--c4)', text:'rate-zero'};
+  if(pct===100) return {fill:'var(--em)', text:'num-em'};
+  if(pct<60) return {fill:'var(--ac)', text:'rate-ac'};
+  return {fill:'var(--pr)', text:'rate-pr'};
 }
 
 function rateCell(pct){
@@ -847,28 +1032,6 @@ function rateCell(pct){
   var w=Math.max(0,Math.min(100,pct));
   var t=pctTone(pct);
   return '<div class="rate-cell"><div class="rate-bar"><div class="rate-fill" style="width:'+w+'%;background:'+t.fill+'"></div></div><span class="rate '+t.text+'">'+pct+'%</span></div>';
-}
-
-function cardPct(pct){ return pct===null?0:pct; }
-
-function renderStatCards(totals){
-  var goal=groupRates(totals, GROUPS.find(function(g){ return g.id==='goal'; }));
-  var ev=groupRates(totals, GROUPS.find(function(g){ return g.id==='eval'; }));
-  var rat=groupRates(totals, GROUPS.find(function(g){ return g.id==='ratify'; }));
-  var conf=groupRates(totals, GROUPS.find(function(g){ return g.id==='confirm'; }));
-  var cards=[
-    {label:'目标提交率',pct:cardPct(goal['目标提交率'])},
-    {label:'目标完成率',pct:cardPct(goal['完成率'])},
-    {label:'自评提交率',pct:cardPct(ev['自评完成率'])},
-    {label:'审定完成率',pct:cardPct(rat['完成率'])},
-    {label:'结果确认完成率',pct:cardPct(conf['完成率'])}
-  ];
-  var html='<div class="st-row">';
-  cards.forEach(function(c){
-    var t=pctTone(c.pct);
-    html+='<div class="st-item '+t.cls+'"><div class="st-item-label">'+c.label+'</div><div class="st-item-value">'+c.pct+'%</div><div class="st-item-bar"><div class="st-item-fill" style="width:'+c.pct+'%"></div></div></div>';
-  });
-  return html+'</div>';
 }
 
 function stagePartBtn(row,g){
@@ -914,7 +1077,7 @@ function dimHeader(){
   return viewMode==='area'?'划分区域':viewMode==='activity'?'活动名称':'部门名称';
 }
 function renderViewTabs(){
-  var tabs=[{id:'dept',name:'部门'},{id:'area',name:'划分区域'},{id:'activity',name:'绩效活动'}];
+  var tabs=[{id:'dept',name:'部门'},{id:'area',name:'划分区域'},{id:'activity',name:'活动'}];
   var html='<div class="view-tabs">';
   tabs.forEach(function(t){
     html+='<button type="button" class="view-tab'+(viewMode===t.id?' is-on':'')+'" onclick="setView(\''+t.id+'\')">'+t.name+'</button>';
@@ -1024,7 +1187,6 @@ function render(){
       renderFilter()+
       '<div class="fl-actions"><button class="btn btn-s" onclick="resetFilters()">'+I.x+' 重置</button></div>'+
     '</div>'+
-    renderStatCards(totals)+
     '<div class="tbl-card">'+renderViewTabs()+
     '<div class="tbl-wrap"><table style="min-width:'+(176+(isGroupOn('count')?68+56:0)+visGroups().reduce(function(n,g){ return n+groupSpan(g)*88; },0))+'px"><thead>'+
       '<tr><th class="dept-h" rowspan="2">'+dimHeader()+'</th>';
@@ -1182,7 +1344,11 @@ function exportPeople(){
 
 document.addEventListener('keydown',function(e){
   if(e.key!=='Escape') return;
-  if(modalState) closeModal();
+  if((nodePickOpen||procPickOpen)&&colSetOpen){
+    closeColPicks();
+    renderColSet();
+  }
+  else if(modalState) closeModal();
   else if(colSetOpen) closeColSet();
   else if(exportOpen){ exportOpen=false; render(); }
   else if(filterOpen){ filterOpen=false; render(); }
@@ -1201,6 +1367,13 @@ document.addEventListener('click',function(e){
   if(exportOpen){
     var ex=document.getElementById('exWrap');
     if(!(ex&&ex.contains(e.target))){ exportOpen=false; need=true; }
+  }
+  if((nodePickOpen||procPickOpen)&&colSetOpen){
+    var np=document.querySelector('.node-pick.is-open');
+    if(!(np&&np.contains(e.target))){
+      closeColPicks();
+      renderColSet();
+    }
   }
   if(need) render();
 });
