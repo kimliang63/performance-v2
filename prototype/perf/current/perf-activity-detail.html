@@ -311,6 +311,39 @@ tbody tr:last-child td{border-bottom:none}
 .stage-stat:hover .stage-tooltip{display:block}
 .stage-tooltip-row{display:flex;align-items:center;justify-content:space-between;gap:16px}
 .stage-tooltip-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.stage-current{
+  position:relative;display:flex;align-items:center;gap:8px;
+  padding:6px 12px;border:1px solid var(--c2);border-radius:var(--r2);
+  background:var(--sf);cursor:default;flex-shrink:0;
+}
+.stage-current-sep{width:1px;height:14px;background:var(--c2);flex-shrink:0}
+.stage-current-stats{display:flex;align-items:center;gap:12px;padding:2px 0}
+.stage-current-stats .stat-num{font:700 14px/1 var(--f)}
+.stage-current-stats .stat-label{font:400 12px/1 var(--f);color:var(--c6)}
+.stage-current-hint{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:18px;height:18px;border-radius:50%;background:var(--c1);color:var(--c5);
+  font:600 11px/1 var(--f);flex-shrink:0;
+}
+.stage-current:hover .stage-combined-tip{display:block}
+.stage-combined-tip{
+  display:none;position:absolute;top:calc(100% + 8px);left:0;z-index:200;
+  min-width:320px;padding:14px 16px;border-radius:var(--r2);
+  background:var(--sf);color:var(--c7);border:1px solid var(--c2);
+  box-shadow:0 10px 28px rgba(0,0,0,.12),0 2px 8px rgba(0,0,0,.04);
+  font:400 12px/1.6 var(--f);white-space:nowrap;
+}
+.stage-combined-tip::before{
+  content:'';position:absolute;top:-6px;left:24px;
+  width:10px;height:10px;background:var(--sf);border-left:1px solid var(--c2);border-top:1px solid var(--c2);
+  transform:rotate(45deg);
+}
+.stage-combined-sec + .stage-combined-sec{margin-top:12px;padding-top:12px;border-top:1px solid var(--dv)}
+.stage-combined-title{font:600 13px/1 var(--f);color:var(--c9);margin-bottom:8px}
+.stage-combined-note{font:400 11px/1.4 var(--f);color:var(--c5);margin-bottom:10px}
+.stage-people-tip-row{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:3px 0;color:var(--c6)}
+.stage-people-tip-row + .stage-people-tip-row{border-top:1px solid var(--dv)}
+.stage-people-tip-val{font:600 13px/1 var(--m);color:var(--c9)}
 
 /* ═══ OPLOG FILTER ═══ */
 .oplog-type-group{margin-bottom:2px}
@@ -695,9 +728,13 @@ function renderEmployeeList(){
   const canOperate=a.status==='active';
   const canUseToolbar=canOperate||a.status==='not_started';
   const canAddParticipant=a.status==='not_started'||(canOperate&&a.currentStage==='目标制定');
-  const exceptionCount=EMPLOYEE_LIST.filter(r=>r.exception!=='正常考核').length;
-  const normalInProgressCount=EMPLOYEE_LIST.filter(r=>r.exception==='正常考核'&&getParticipantStageStatus(r,a)==='进行中'&&!r.flowOpeningException).length;
+  const assessCount=EMPLOYEE_LIST.length;
+  const inProgressCount=EMPLOYEE_LIST.filter(r=>getParticipantStageStatus(r,a)==='进行中').length;
+  const completedCount=EMPLOYEE_LIST.filter(r=>getParticipantStageStatus(r,a)==='已完成').length;
   const flowExceptionCount=EMPLOYEE_LIST.filter(r=>r.flowOpeningException).length;
+  const notStartedCount=EMPLOYEE_LIST.filter(r=>getParticipantStageStatus(r,a)==='未开始').length;
+  const stageCompletionRate=assessCount?Math.round(completedCount/assessCount*100):0;
+  const exceptionCount=EMPLOYEE_LIST.filter(r=>r.exception!=='正常考核').length;
   const displayedEmployees=getDisplayedEmployees();
 
   // 业务环节是活动级唯一状态；个人差异只在当前环节流程节点内。
@@ -746,33 +783,36 @@ function renderEmployeeList(){
       <button style="font:500 13px/1 var(--f);color:var(--c6);cursor:pointer;background:none;border:none;font-family:var(--f);display:flex;align-items:center;gap:4px" onclick="resetEmpFilters()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>重置</button>
     </div>
     <div style="display:flex;align-items:center;gap:12px;padding:12px 0;flex-wrap:wrap">
-      <!-- 左：当前环节 + hover全部 -->
-      <div style="position:relative;display:flex;align-items:center;gap:8px;padding:6px 12px;border:1px solid var(--c2);border-radius:var(--r2);background:var(--sf);cursor:default;flex-shrink:0">
+      <!-- 左：当前环节 + 精简人数统计（整块 hover 一张卡） -->
+      <div class="stage-current" aria-label="当前环节与人员统计，悬停查看明细">
         <span style="font:500 12px/1 var(--f);color:var(--c5)">当前环节</span>
         <span style="font:600 14px/1 var(--f);color:${stageColors[currentStageIdx]}">${currentStageName}</span>
-        <span class="stage-info-icon" style="position:relative;display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:var(--c1);color:var(--c5);cursor:pointer;font:600 11px/1 var(--f)">
-          ?
-          <div class="stage-tooltip" style="display:none;position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);min-width:320px">
-            <div style="font:600 13px/1 var(--f);color:#FFF;margin-bottom:4px">全局业务环节进度</div>
-            <div style="font:400 11px/1.4 var(--f);color:rgba(255,255,255,.65);margin-bottom:10px">同一时刻只有一个环节进行中；人员差异见流程节点。</div>
-            ${stageStats.map((s,i)=>`<div class="stage-tooltip-row" style="padding:4px 0;${i<stageStats.length-1?'border-bottom:1px solid rgba(255,255,255,.1)':''}">
-              <span style="display:flex;align-items:center;gap:6px;min-width:80px"><span class="stage-tooltip-dot" style="background:${s.color}"></span>${s.name}</span>
-              <span style="font-family:var(--m);color:rgba(255,255,255,.7)">${s.done}/${s.total}</span>
-              <span style="flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.15);overflow:hidden;min-width:60px"><span style="display:block;height:100%;border-radius:2px;background:${s.color};width:${s.pct}%"></span></span>
-              <span style="font:500 11px/1 var(--f);padding:1px 6px;border-radius:3px;${s.active>0?'color:var(--pr);background:rgba(37,99,235,.2)':s.done===s.total?'color:var(--em);background:rgba(16,185,129,.2)':'color:rgba(255,255,255,.5);background:rgba(255,255,255,.1)'}">${s.active>0?'进行中':s.done===s.total?'已完成':'未开始'}</span>
+        <span class="stage-current-sep"></span>
+        <span class="stage-current-stats">
+          <span><span class="stat-num" style="color:var(--c9)">${assessCount}</span> <span class="stat-label">考核人数</span></span>
+          <span><span class="stat-num" style="color:var(--em700)">${stageCompletionRate}%</span> <span class="stat-label">完成率</span></span>
+        </span>
+        <span class="stage-current-hint" aria-hidden="true">?</span>
+        <div class="stage-combined-tip">
+          <div class="stage-combined-sec">
+            <div class="stage-combined-title">人员统计</div>
+            <div class="stage-people-tip-row"><span>考核人数</span><span class="stage-people-tip-val">${assessCount}</span></div>
+            <div class="stage-people-tip-row"><span>进行中</span><span class="stage-people-tip-val" style="color:var(--pr)">${inProgressCount}</span></div>
+            <div class="stage-people-tip-row"><span>已完成</span><span class="stage-people-tip-val" style="color:var(--em700)">${completedCount}</span></div>
+            <div class="stage-people-tip-row"><span>流程异常</span><span class="stage-people-tip-val" style="color:var(--ac700)">${flowExceptionCount}</span></div>
+            <div class="stage-people-tip-row"><span>未开始</span><span class="stage-people-tip-val" style="color:var(--c5)">${notStartedCount}</span></div>
+          </div>
+          <div class="stage-combined-sec">
+            <div class="stage-combined-title">全局业务环节进度</div>
+            <div class="stage-combined-note">同一时刻只有一个环节进行中；人员差异见流程节点。</div>
+            ${stageStats.map((s,i)=>`<div class="stage-tooltip-row" style="padding:4px 0;${i<stageStats.length-1?'border-bottom:1px solid var(--dv)':''}">
+              <span style="display:flex;align-items:center;gap:6px;min-width:80px;color:var(--c7)"><span class="stage-tooltip-dot" style="background:${s.color}"></span>${s.name}</span>
+              <span style="font-family:var(--m);color:var(--c5)">${s.done}/${s.total}</span>
+              <span style="flex:1;height:4px;border-radius:2px;background:var(--c1);overflow:hidden;min-width:60px"><span style="display:block;height:100%;border-radius:2px;background:${s.color};width:${s.pct}%"></span></span>
+              <span style="font:500 11px/1 var(--f);padding:1px 6px;border-radius:3px;${s.active>0?'color:var(--pr);background:var(--pr50)':s.done===s.total?'color:var(--em700);background:var(--em50)':'color:var(--c5);background:var(--c1)'}">${s.active>0?'进行中':s.done===s.total?'已完成':'未开始'}</span>
             </div>`).join('')}
           </div>
-        </span>
-        <style>.stage-info-icon:hover .stage-tooltip{display:block!important}</style>
-      </div>
-
-      <!-- 中：统计数字 -->
-      <div style="display:flex;align-items:center;gap:16px">
-        <span style="font:400 13px/1 var(--f);color:var(--c6)"><span style="font:700 20px/1 var(--f);color:var(--c9)">${EMPLOYEE_LIST.length}</span> 总人数</span>
-        <span style="font:400 13px/1 var(--f);color:var(--c6)"><span style="font:700 20px/1 var(--f);color:var(--pr)">${normalInProgressCount}</span> 正常进行人数</span>
-        <span style="font:400 13px/1 var(--f);color:var(--c6)"><span style="font:700 20px/1 var(--f);color:var(--em)">${EMPLOYEE_LIST.filter(r=>r.status==='已完成').length}</span> 完成</span>
-        <span style="font:400 13px/1 var(--f);color:var(--c6)"><span style="font:700 20px/1 var(--f);color:var(--ac)">${flowExceptionCount}</span> 流程异常人数</span>
-        <span style="font:400 13px/1 var(--f);color:var(--c6)"><span style="font:700 20px/1 var(--f);color:var(--ro)">${exceptionCount}</span> 异常</span>
+        </div>
       </div>
 
       <span style="flex:1"></span>
