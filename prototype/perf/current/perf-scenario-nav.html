@@ -13,7 +13,7 @@
   --ro:#F43F5E;--ro50:#FFF1F2;--ro100:#FFE4E6;
   --vi:#8B5CF6;--vi50:#F5F3FF;--vi100:#EDE9FE;
   --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
-  --sf:#FFF;--bg:#F5F5F4;--dv:#F4F4F5;
+  --sf:#FFF;--bg:#FAFAF9;--dv:#F4F4F5;
   --r1:6px;--r2:8px;--r3:10px;--r4:14px;
   --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
   --fm:'JetBrains Mono','SF Mono',monospace;
@@ -38,8 +38,8 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoo
 .hero-s{font:400 15px/1.5 var(--f);color:var(--c5);max-width:640px;margin:0 auto}
 
 /* Perspective Tabs */
-.perspective-tabs{display:flex;justify-content:center;gap:0;margin:32px 0 0}
-.perspective-tab{position:relative;padding:12px 32px;font:500 14px/1 var(--f);color:var(--c5);cursor:pointer;border:none;background:none;border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap}
+.perspective-tabs{display:flex;justify-content:center;flex-wrap:wrap;gap:0;margin:32px 0 0}
+.perspective-tab{position:relative;padding:12px 24px;font:500 14px/1 var(--f);color:var(--c5);cursor:pointer;border:none;background:none;border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap}
 .perspective-tab:hover{color:var(--c8);background:var(--c0)}
 .perspective-tab.active{color:var(--pr);border-bottom-color:var(--pr);font-weight:600}
 .perspective-tab .badge{display:inline-block;margin-left:6px;padding:2px 7px;border-radius:10px;font:500 10px/1 var(--f);background:var(--pr50);color:var(--pr);vertical-align:middle}
@@ -165,8 +165,11 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoo
   <button class="perspective-tab active" data-perspective="emp-monthly">
     🧑 员工视角<span class="badge">月度</span>
   </button>
+  <button class="perspective-tab" data-perspective="emp-semi">
+    🧑 员工视角<span class="badge">半年度</span>
+  </button>
   <button class="perspective-tab" data-perspective="emp-yearly">
-    🧑 员工视角<span class="badge">半年度/年度</span>
+    🧑 员工视角<span class="badge">年度</span>
   </button>
   <button class="perspective-tab" data-perspective="hr">
     ⚙️ HR 工作台
@@ -289,11 +292,12 @@ const EMP_YEARLY = [
   // Stage 4: 绩效面谈 (core for both semi-annual and annual)
   { stage:'interview', role:'employee', title:'填写面谈记录',      desc:'线下面谈后在线填写面谈结果',                      href:'employee/demo-interview-employee.html',     tags:['pc'] },
   { stage:'interview', role:'employee', title:'移动端填写面谈',    desc:'手机端填写面谈记录',                              href:'employee-mobile/mobile-interview.html',     tags:['mobile'] },
-  { stage:'interview', role:'manager',  title:'确认面谈结果',      desc:'直接上级确认面谈记录（半年度考核在此结束）',      href:'manager/demo-interview-direct.html',        tags:['pc'] },
+  { stage:'interview', role:'manager',  title:'确认面谈结果',      desc:'直接上级确认员工面谈记录',                        href:'manager/demo-interview-direct.html',        tags:['pc'] },
   { stage:'interview', role:'manager',  title:'移动端确认面谈',    desc:'手机端确认面谈结果',                              href:'manager-mobile/mobile-interview-direct.html',tags:['mobile'] },
 
   // Stage 5: 绩效审定 (annual only, manager/HR only)
-  { stage:'ratify', role:'manager',  title:'逐级上级审批',        desc:'按组织架构逐级审批审定结果',                       href:'manager/demo-ratify-hierarchy.html',        tags:['pc'] },
+  { stage:'ratify', role:'manager',  title:'导入测评结果',        desc:'批量导入年度盘点所需的360得分与测评得分',         href:'manager/demo-assess-batch-import.html', tags:['pc','batch'] },
+  { stage:'ratify', role:'manager',  title:'逐级上级审批',        desc:'年度盘点+绩效：先审定，再评能力，最后九宫格校准',                       href:'manager/demo-yearly-tr.html',        tags:['pc'] },
   { stage:'ratify', role:'hr',       title:'HRBP 审批',           desc:'A级人员HRBP审批',                                  href:'manager/demo-ratify-hrbp.html',             tags:['pc'] },
 
   // Stage 6: 结果确认 (annual only)
@@ -366,6 +370,22 @@ function tagLabel(t) {
   return t;
 }
 
+function stageSub(stage) {
+  if (stage.id === 'interview') {
+    if (currentPerspective === 'emp-semi') return '员工填写面谈记录 · 上级确认 · 半年度考核在此结束';
+    if (currentPerspective === 'emp-yearly') return '员工填写面谈记录 · 上级确认后进入审定';
+  }
+  if (stage.id === 'ratify' && currentPerspective === 'emp-yearly') {
+    return '逐级审定 · 能力盘点 · 九宫格校准 · HRBP审批(A级)';
+  }
+  return stage.sub;
+}
+
+function stageTitle(stage) {
+  if (stage.id === 'ratify' && currentPerspective === 'emp-yearly') return '绩效&盘点逐级审定';
+  return stage.title;
+}
+
 function makeCard(c) {
   const tags = (c.tags||[]).map(t => `<span class="card-tag ${t}">${tagLabel(t)}</span>`).join('');
   return `
@@ -388,8 +408,8 @@ function makeColumn(stage, cards) {
   // Header
   html += `<div class="col-hd">`;
   html += `<div class="col-num">${stage.num}</div>`;
-  html += `<div class="col-title">${stage.title}</div>`;
-  html += `<div class="col-sub">${stage.sub}</div>`;
+  html += `<div class="col-title">${stageTitle(stage)}</div>`;
+  html += `<div class="col-sub">${stageSub(stage)}</div>`;
   html += `</div>`;
 
   // Body
@@ -415,18 +435,14 @@ function makeColumn(stage, cards) {
 
 function getStages() {
   if (currentPerspective === 'emp-monthly') return STAGES.filter(s => s.monthly);
-  if (currentPerspective === 'emp-yearly') {
-    const yearlyIds = currentPeriod === 'semi-annual'
-      ? ['prep','interview']                                  // semi-annual: prep → interview → end
-      : ['prep','interview','ratify','confirm'];              // annual: prep → interview → ratify → confirm
-    return STAGES.filter(s => yearlyIds.includes(s.id));
-  }
+  if (currentPerspective === 'emp-semi') return STAGES.filter(s => ['prep','interview'].includes(s.id));
+  if (currentPerspective === 'emp-yearly') return STAGES.filter(s => ['prep','interview','ratify','confirm'].includes(s.id));
   return STAGES;
 }
 
 function getCards() {
   if (currentPerspective === 'emp-monthly') return EMP_MONTHLY;
-  if (currentPerspective === 'emp-yearly') return EMP_YEARLY;
+  if (currentPerspective === 'emp-semi' || currentPerspective === 'emp-yearly') return EMP_YEARLY;
   return [];
 }
 
@@ -442,14 +458,15 @@ function renderColumns() {
 
 function renderPeriodTabs() {
   const wrap = document.getElementById('periodTabsWrap');
-  if (currentPerspective === 'emp-monthly') {
+  const labels = {
+    'emp-monthly': '📅 月度考核流程（6阶段）',
+    'emp-semi': '📅 半年度（面谈即结束）',
+    'emp-yearly': '📅 年度（面谈→审定→确认）',
+  };
+  const label = labels[currentPerspective];
+  if (label) {
     wrap.classList.add('show');
-    wrap.innerHTML = `<button class="period-tab active" data-period="monthly">📅 月度考核流程（6阶段）</button>`;
-  } else if (currentPerspective === 'emp-yearly') {
-    wrap.classList.add('show');
-    wrap.innerHTML = `
-      <button class="period-tab ${currentPeriod==='semi-annual'?'active':''}" data-period="semi-annual">📅 半年度（面谈即结束）</button>
-      <button class="period-tab ${currentPeriod==='annual'?'active':''}" data-period="annual">📅 年度（面谈→审定→确认）</button>`;
+    wrap.innerHTML = `<button class="period-tab active" data-period="${currentPeriod}">${label}</button>`;
   } else {
     wrap.classList.remove('show');
     wrap.innerHTML = '';
@@ -494,6 +511,8 @@ document.getElementById('perspectiveTabs').addEventListener('click', function(e)
   const p = tab.dataset.perspective;
   if (p === currentPerspective) return;
   currentPerspective = p;
+  if (p === 'emp-monthly') currentPeriod = 'monthly';
+  if (p === 'emp-semi') currentPeriod = 'semi-annual';
   if (p === 'emp-yearly') currentPeriod = 'annual';
   document.querySelectorAll('.perspective-tab').forEach(t => t.classList.remove('active'));
   tab.classList.add('active');

@@ -1,5 +1,251 @@
 # 变更记录
 
+## 2026-09-18 九宫格真正撑满视口
+
+- `current/manager/demo-yearly-tr.html`：根因是 `#ct > .ct` 为 block，stepWork 的 flex:1 失效；改为 flex 列高度链 + `#boxGrid` `1fr 1fr 1fr`，底行贴齐右栏底；去掉写死 px 高度。
+- `current/manager/demo-assess-batch-import.html`：测评结果批量导入（360/测评字段）已就绪。
+
+## 2026-09-18 测评结果批量导入 + 九宫格撑满
+
+- `current/manager/demo-assess-batch-import.html`：新建测评结果批量导入页（360 0–5 / 测评 0–10，排名重算，门禁与提交校验）。
+- `current/perf-scenario-nav.html`、`current/demo-index.html`：在「逐级上级审批」上方增加「导入测评结果」入口。
+- `current/manager/demo-yearly-tr.html`：九宫格 `#boxGridView` 用 grid 行 `1fr` 撑满左栏剩余高度，底行贴底无大块留白。
+
+## 2026-09-18 审定「调整等级」列收窄
+
+- `current/manager/demo-yearly-tr.html`：绩效审定右冻结列由 22% 改为约 148px，贴合星级+等级文案。
+
+## 2026-09-18 统计切换互斥 + 柱行加高 + 右栏底色撑满
+
+- `current/manager/demo-yearly-tr.html`：表格/图表切换改为真正互斥；`.cap-bar-row` 加高左对齐；`.list-stats-col` 底色占满右列。
+
+## 2026-09-18 年度盘点页撑满内容区
+
+- `current/manager/demo-yearly-tr.html`：压缩 `.ct` 四周留白（约 8–10px），内容区高度吃满壳内主工作区；名单/九宫格高度跟视口收紧。
+
+## 2026-09-18 九宫格右栏双域切换 + 柱色 + 阶段更名
+
+- `current/perf-scenario-nav.html`：年度视角阶段 5 标题改为「绩效&盘点逐级审定」。
+- `current/manager/demo-yearly-tr.html`：九宫格右栏同时展示绩效+能力，表格/图表一键切换；7 档柱按符合/不符合绿红；高中低柱按是否落入标准区间绿红；盘点规则弹层保留。
+
+## 2026-09-18 盘点规则查阅弹层
+
+- `current/manager/demo-yearly-tr.html`：页头增加「盘点规则」按钮；弹层展示 `yearly-tr-rules-2026.jpg`（2026年度人才盘点说明），支持滚动/遮罩/Esc 关闭。
+
+## 2026-09-18 审定「被考核人」表头双轴固定
+
+- `current/manager/demo-yearly-tr.html`：`#evalScroll` 为唯一滚动容器；`th.col-freeze-l` sticky left+top、不透明底与更高 z-index，竖滚横滚标题均固定。
+
+## 2026-09-18 异常状态四枚举对齐
+
+- `current/manager/demo-yearly-tr.html`：异常状态仅保留「绩效跨2档调整 / 能力跨2档调整 / 校准次数≥2次 / 九宫格校准调整」。
+
+## 2026-09-18 审定改为多列逐级审定
+
+- `current/manager/demo-yearly-tr.html`：去掉「双线上级逐级调整等级」单列；改为动态「逐级审定1…N」（最多8，N=筛选集最大深度）；原双线意见并入第1级；「调整等级」星级列保留并维持约148px。
+
+## 2026-09-18 九宫格异常改用指定告警 SVG
+
+- `current/manager/demo-yearly-tr.html`：异常 chip 前置图标换成用户提供的橙色告警灯 SVG（#f5a623）；边框改为浅琥珀。
+
+## 2026-09-18 九宫格异常改用警告图标
+
+- `current/manager/demo-yearly-tr.html`：chip 前置「异」字改为红色警告三角 SVG；弹层同步；列表异常状态仍用文字类型。
+
+## 2026-09-18 九宫格 chip 异常前置、去掉头像
+
+- `current/manager/demo-yearly-tr.html`：异常「异」改为姓名前内联标记；九宫格 person-chip 去掉姓名字头像圆标。
+
+## 2026-09-18 九宫格异常人员标识
+
+- `current/manager/demo-yearly-tr.html`：mock 增加 `abnormalType`/`abnormalReason`；九宫格 chip 右上角「异」红标；列表在格子旁增加异常状态/异常原因列；悬停 tip 与点击弹层同步展示。
+
+## 2026-09-18 九宫格格子序号展示
+
+- `current/manager/demo-yearly-tr.html`：格子标题与列表「格子」列统一为「1️⃣ 领头羊」…「9️⃣ 寄居蟹」格式，右侧人数不变。
+
+## 2026-09-18 九宫格增加列表视图
+
+- `current/manager/demo-yearly-tr.html`：九宫格标题栏增加「九宫格 | 列表」切换；列表展示筛选范围内被考核人/绩效等级/能力/格子/调整历史/调整原因，人名 hover 同盘点；拖放仍仅九宫格视图。
+
+## 2026-09-18 内容卡标题栏高度统一
+
+- `current/manager/demo-yearly-tr.html`：`.eval-list-hd` 与 `.box9-hd` 统一为 44px 高、同内边距/字号/底边，三步标题栏一致。
+
+## 2026-09-18 能力图收紧高度
+
+- `current/manager/demo-yearly-tr.html`：3 档能力图按内容高度（不吃满剩余空白）；7 档等级图仍可撑满。等级表行距保持加大；折线随布局重测对齐。
+
+## 2026-09-18 等级表行距加大
+
+- `current/manager/demo-yearly-tr.html`：右栏 `dist-status-table` 行上下间距加大；分布图仍吃满剩余高度，折线随布局重测对齐。
+
+## 2026-09-18 右栏撑满高度并校正折线对齐
+
+- `current/manager/demo-yearly-tr.html`：右栏 `#capBars` / `.cap-bars-plot` 吃满剩余高度、无滚动；折线按条轨 DOM 重测（双 rAF + ResizeObserver），对齐各行中心。
+
+## 2026-09-18 审定星级请选择 / 右栏无滚动 / 九宫格调整弹窗
+
+- `current/manager/demo-yearly-tr.html`：未选调整等级显示「请选择」且星全灰；已选按星级点亮并显示对应等级色文案。右栏 `.list-stats-col` 压紧条/表/分布，默认无纵向滚动。九宫格拖放先弹窗必填调整原因；跨绩效档另必填调整后绩效等级，取消则不落格。
+
+## 2026-09-17 右栏统计浅底色
+
+- `current/manager/demo-yearly-tr.html`：三步右侧 `.list-stats-col` / `#distExpanded` 使用 `--pr50` 浅蓝底（非灰），与左侧白底列表轻微分隔，保留竖线。
+
+## 2026-09-17 九宫格轴标签高中低配色
+
+- `current/manager/demo-yearly-tr.html`：九宫格「能力 ·」「绩效 ·」前缀保持中性色；仅「高/中/低」分别用绿（`--em`）/橙（`--ac`）/红（`--ro`）。
+
+## 2026-09-17 远超/超出预期改为绿色
+
+- `current/manager/demo-yearly-tr.html`：「远超预期」「超出预期」配色改为 `--em` 绿系（与能力「高」一致），覆盖列表、星标、右栏标签与分布条。
+
+## 2026-09-17 审定名单精简与九宫格一屏铺满
+
+- `current/manager/demo-yearly-tr.html`：审定名单仅保留被考核人/状态/考核得分/初评等级/双线上级逐级调整等级/调整等级，其余信息进 hover；九宫格固定填满左栏一屏，人多显示前 6 人 +「+N」展开。
+
+## 2026-09-17 三步统一左右分栏布局
+
+- `current/manager/demo-yearly-tr.html`：审定 / 盘点 / 九宫格均为「左内容 | 右统计」同壳；右栏约 300px。审定右栏为等级分布（调整前/标准全局、当前随筛选）；九宫格右栏复用能力分布条与表。
+
+## 2026-09-17 三步筛选与内容卡布局统一
+
+- `current/manager/demo-yearly-tr.html`：审定 / 盘点 / 九宫格共用独立 `#distFilters` 白卡（在内容卡上方）；九宫格改为与名单一致的标题栏+内容区内边距；去掉嵌入式筛选样式。
+
+## 2026-09-17 盘点统计全局基准与未填写联动
+
+- `current/manager/demo-yearly-tr.html`：灰线「调整前」/蓝线「标准」与表「要求」按全量已到达固定；实心条「当前」与「实际/调整」随筛选变。「只看未填写」挪到筛选栏，筛无校准能力者；待提交拆未填写/已填写 mock；已提交锁定校准能力。
+
+## 2026-09-17 图例改圆点并加只看未填写
+
+- `current/manager/demo-yearly-tr.html`：能力图例改为灰/蓝圆点 + 三色小条；名单标题栏右侧增加「只看未填写」开关（默认关，开则筛「待提交」），mock 待提交增至 8 人便于演示。
+
+## 2026-09-17 能力图例改色标且虚线更疏
+
+- `current/manager/demo-yearly-tr.html`：灰/蓝虚线改为 `1 5`；图例改为灰虚线样/蓝虚线样/三色小条 +「调整前·标准·当前」，不再写「灰」「蓝」字。
+
+## 2026-09-17 能力虚线更疏
+
+- `current/manager/demo-yearly-tr.html`：右栏灰/蓝虚线改为更疏的 `1.5 4.5`（短划长大间隔）。
+
+## 2026-09-17 能力灰蓝曲线改为虚线
+
+- `current/manager/demo-yearly-tr.html`：右栏灰（调整前）/蓝（标准）平滑曲线改为虚线（`stroke-dasharray`）；圆点与实心条不变。
+
+## 2026-09-17 能力灰蓝线改为平滑曲线
+
+- `current/manager/demo-yearly-tr.html`：右栏灰（调整前）/蓝（标准）由折线改为 Catmull-Rom→三次贝塞尔平滑曲线，仍过高等级点；圆点与实心条不变。
+
+## 2026-09-17 能力条叠加灰/蓝折线
+
+- `current/manager/demo-yearly-tr.html`：右栏分布改为实心条=当前，SVG 灰折线串高→中→低「调整前」、蓝折线串「标准」（要求区间中点）；小圆点标注；图例「灰=调整前 · 蓝=标准 · 实心条=当前」；无 Chart.js。
+
+## 2026-09-17 能力条同时呈现要求与调整前
+
+- `current/manager/demo-yearly-tr.html`：右栏横向条增强——浅蓝要求区间（两端刻度）、空心条=调整前（`initCapability`）、实心色条=当前（`capability`）；右侧淡字/粗字对照人数；一行极简图例；无 Chart.js。
+
+## 2026-09-17 右栏加回简洁能力分布条
+
+- `current/manager/demo-yearly-tr.html`：表格下方恢复高/中/低横向条（实际人数着色 + 淡色要求区间），无 Chart.js、无图例，适配约 300px 右栏。
+
+## 2026-09-17 360与测评得分区间校正
+
+- `current/manager/demo-yearly-tr.html`：360 得分 mock 改为 0–5（一位小数），测评得分改为 0–10；排名仍按分值排序。考核组与调整列 +N/−N/— 保持。
+
+## 2026-09-17 考核组改为专员主管与基层干部
+
+- `current/manager/demo-yearly-tr.html`：考核组筛选仅保留「全部 / 专员/主管 / 基层干部」；名单 mock 的 `group` 同步；右栏「调整」列继续按要求显示 +N/−N/—。
+
+## 2026-09-17 能力表调整列改为调入调出差
+
+- `current/manager/demo-yearly-tr.html`：右栏「调整」列按要求区间显示 +N（调入）/ −N（调出）/ —（已符合），随筛选与校准实时更新。
+
+## 2026-09-17 修复盘点右栏宽度并去重
+
+- `current/manager/demo-yearly-tr.html`：右栏改为独立 `list-side-panel`（固定约 300px），避免 `dist-grid` 4fr/6fr 把内容压成约 128px；去掉与能力表重复的横向条，仅保留提交状态三格 + 能力表。
+
+## 2026-09-17 提交状态并入右栏统计
+
+- `current/manager/demo-yearly-tr.html`：去掉名单标题旁摘要；右栏自上而下为提交状态三格（可点筛选）→ 能力表 → 横向分布条，形成「人到哪了 → 能力怎么调 → 分布怎样」一条叙事。
+
+## 2026-09-17 盘点右栏改为横向能力条
+
+- `current/manager/demo-yearly-tr.html`：第二步去掉 Chart.js 混搭柱线图，改为高/中/低横向条（当前人数着色 + 要求文案 + 较初评差值），高度跟内容走，与上方能力表同源数据。
+
+## 2026-09-17 盘点名单列均分并与标题左对齐
+
+- `current/manager/demo-yearly-tr.html`：第二步 8 列按名单区宽度均分（去掉 88px 定宽）；「被考核人」文字与「团队成员盘点」同左缘；校准能力列够放下高/中/低，左右仍冻结。
+
+## 2026-09-17 盘点左右冻结列等宽
+
+- `current/manager/demo-yearly-tr.html`：第二步「被考核人 / 校准能力」冻结列统一 88px，收紧高/中/低分段按钮内边距，去掉右侧多余空白。
+
+## 2026-09-17 人才盘点提交状态文案对齐
+
+- `current/manager/demo-yearly-tr.html`：`#statusFilter` 改为由 `syncStatusFilter` 按步骤注入（第二步固定未到达/待提交/已提交，默认已提交）；名单摘要按提交状态计数；九宫格弹层「调整能力」改为「校准能力」。
+
+## 2026-09-17 人才盘点名单与右栏精简
+
+- `current/manager/demo-yearly-tr.html`：第二步去掉「列表统计 / 盘点分布」kicker、到达 pill 与较初评说明；右表保留能力|要求|实际|调整；`#chartCap` 柱更窄；名单仅保留被考核人（工号）/提交状态/360/测评/初评与校准能力，其余信息悬停卡片；筛选改为提交状态（未到达/待提交/已提交）；左右冻结与隐藏滚动条、单卡竖线布局保持。
+
+## 2026-09-17 盘点名单滚动条隐藏
+
+- `current/manager/demo-yearly-tr.html`：第二步名单区 `#evalScroll` 横竖滚动条不再显示，触控板/滚轮仍可滚动，左右冻结列保持。
+
+## 2026-09-17 修复列表统计被名单表宽撑破
+
+- `current/manager/demo-yearly-tr.html`：第二步右栏「列表统计」不再套用名单表 `min-width:1080px`。已到达/未到达并排小卡，调整能力初评/调整人数和「较初评」都收在约 320px 列内。
+
+## 2026-09-17 盘点名单与统计合成一张卡
+
+- `current/manager/demo-yearly-tr.html`：第二步「团队成员盘点」与盘点统计合成一张白卡片，中间只留 1px 竖线，只保留一个标题；右栏仍是上列表统计、下盘点分布。冻结列与名单撑满保持。
+
+## 2026-09-17 盘点右侧改为列表统计+分布图
+
+- `current/manager/demo-yearly-tr.html`：第二步右侧上方改为当前名单的列表统计（到达人数、能力初评/调整、较初评升降），下方保留盘点分布图；面板标题改为「盘点统计」。名单每页 20 人撑满高度，「被考核人」左冻、「调整能力」右冻。
+
+## 2026-09-17 盘点名单撑满并左右冻结列
+
+- `current/manager/demo-yearly-tr.html`：第二步名单每页 20 人，撑满列表高度。横向滚动时「被考核人」钉在左侧、「调整能力」钉在右侧，高/中/低仍可点。
+
+## 2026-09-17 系统底色改浅暖白
+
+- `memory/conventions.md`、`current/navigation.js`、`current/` 各页：页面底色 `--bg` 从 #F5F5F4 改为 #FAFAF9，卡片仍为白底，减少发灰感。
+
+## 2026-09-17 人才盘点改为左名单右图
+
+- `current/manager/demo-yearly-tr.html`：第二步「人才盘点」改为左右结构——左侧团队成员盘点名单（列不变，仅调整能力可改），右侧上下排列绩效分布、盘点分布两图；筛选仍在名单上方。第一步、第三步布局不变。
+
+## 2026-09-16 九宫格人员悬停看信息
+
+- `current/manager/demo-yearly-tr.html`：九宫格人名悬停即看姓名、工号、部门、职位、职级、司龄、考核组、绩效等级、能力、九宫格，卡片贴在人名旁不挡视口；不挡拖拽，点选仍改能力。已去掉格子图例，第三步筛选在「九宫格分布」标题下方。
+
+## 2026-09-16 去掉九宫格图例并把筛选放到标题下
+
+- `current/manager/demo-yearly-tr.html`：去掉「九宫格分布」下的格子图例。第三步把考核组/部门/划分区域/到达状态筛选挪到标题和九宫格之间；前两步筛选仍在名单上方。
+
+## 2026-09-16 寄居蟹格子改为红色
+
+- `current/manager/demo-yearly-tr.html`：九宫格「寄居蟹」（绩效低·能力低）与空心竹、老爷车同为红底红边。
+
+## 2026-09-16 第三步分布改为绩效+盘点两图
+
+- `current/manager/demo-yearly-tr.html`：九宫格步骤顶部「绩效与能力分布」改为并排两张图（绩效分布、盘点分布），不再做绩效×能力交叉图。其余九宫格命名/配色、盘点列、侧栏收起保持。
+
+## 2026-09-16 年度九宫格命名配色、盘点列与侧栏收起
+
+- `current/manager/demo-yearly-tr.html`：九宫格仍为 3×3。格名改为领头羊 / 穿山甲 / 老黄牛 / 白龙马 / 工蜜蜂 / 空心竹 / 水上漂 / 老爷车 / 寄居蟹。绿：领头羊、穿山甲、白龙马；蓝：工蜜蜂、老黄牛、水上漂；红：空心竹、老爷车。面板标题「九宫格分布」，去掉说明。能力图为当前柱（高绿中橙低红）+调整前折线+要求折线；左表为能力｜要求｜实际｜是否符合。人才盘点列为被考核人｜部门｜职位｜职级｜考核组｜到达状态｜360得分｜360排名｜测评得分｜测评排名｜初评能力｜调整能力，仅调整能力可改。
+- `current/navigation.js`：左侧栏增加收起/展开，收成图标轨，状态写入 localStorage。
+
+## 2026-09-16 年度盘点改为审定+能力+九宫格
+
+- `current/manager/demo-yearly-tr.html`：年度逐级审定改为独立三步页。第一步沿用原审定表单；第二步同样布局，评价改为能力高/中/低；第三步九宫格按绩效×能力校准，可拖动或点选改能力，分布默认收起。
+- `current/perf-scenario-nav.html`：年度视角「逐级上级审批」入口改指新页。
+
+## 2026-09-16 业务场景员工视角拆开半年度和年度
+
+- `current/perf-scenario-nav.html`：员工视角顶栏由「半年度/年度」拆成两个独立 tab。半年度只展示前置准备→面谈；年度展示面谈→审定→确认。下方周期条改为当前周期说明，不再互相切换。
+
 ## 2026-09-14 公式标题栏增加复制粘贴
 
 - `current/perf-base-calc.html`：公式编辑器标题右侧增加「复制」「粘贴」。复制整段当前公式；粘贴覆盖编辑区内容。无内容时给出提示。

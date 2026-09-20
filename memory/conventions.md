@@ -35,7 +35,7 @@
 | 变量 | 色值 | 用途 |
 |------|------|------|
 | sf | #FFF | 卡片、弹窗背景 |
-| bg | #F5F5F4 | 页面底色（暖白） |
+| bg | #FAFAF9 | 页面底色（浅暖白） |
 | dv | #F4F4F5 | 分割线、边框 |
 
 ## 字体规范
@@ -53,7 +53,7 @@
 |------|------|------|------|
 | Header | 52px 高 | #FFF | border-bottom: 1px solid dv |
 | Sidebar | 240px 宽 | #FFF | box-shadow: 1px 0 0 0 c2 |
-| 内容区 | flex:1 | #F5F5F4 | padding: 24px |
+| 内容区 | flex:1 | #FAFAF9 | padding: 24px |
 | 卡片 | border-radius: 10px | #FFF | box-shadow: shadow-card |
 
 ### 圆角规范

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 测评结果批量导入</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--em:#10B981;--em50:#ECFDF5;--em700:#047857;--ac:#F59E0B;--ac50:#FFFBEB;--ac700:#B45309;--ro:#F43F5E;--ro50:#FFF1F2;--vi:#8B5CF6;--vi50:#F5F3FF;--c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;--sf:#FFF;--bg:#FAFAF9;--dv:#F4F4F5;--shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);--r1:6px;--r2:8px;--r3:10px;--r4:14px;--f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;--m:'JetBrains Mono','SF Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
+.btn svg{width:13px;height:13px}
+.btn-p{background:var(--pr);color:#FFF}.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3);color:var(--c8)}
+.btn-o{background:var(--sf);color:var(--pr);border:1px solid var(--pr200)}.btn-o:hover{background:var(--pr50)}
+
+.eval-list{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden;margin-bottom:16px}
+.eval-list table{width:100%;border-collapse:collapse}
+.eval-list th{background:var(--c0);padding:10px 16px;font:600 11px/1 var(--f);color:var(--c5);text-align:left;border-bottom:1px solid var(--dv);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.eval-list td{padding:10px 16px;font:400 13px/1.4 var(--f);color:var(--c7);border-bottom:1px solid var(--dv);vertical-align:middle}
+.eval-list tr:last-child td{border-bottom:none}
+.eval-list tr:hover td{background:var(--c0)}
+.toast{position:fixed;top:64px;left:50%;transform:translateX(-50%);padding:10px 20px;border-radius:var(--r2);font:500 13px/1 var(--f);color:#FFF;z-index:3000;opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:center;gap:8px}
+.toast.show{opacity:1;pointer-events:all}
+.toast.success{background:var(--em);box-shadow:0 8px 24px rgba(16,185,129,.3)}
+.toast.warning{background:var(--ac700);box-shadow:0 8px 24px rgba(245,158,11,.3)}
+.btn-sm{height:28px;padding:0 10px;font-size:12px}
+.btn-s.btn-active{background:var(--pr50);color:var(--pr);border-color:var(--pr200)}
+.search-input{height:32px;border:1px solid var(--c2);border-radius:var(--r1);padding:0 10px 0 32px;font:400 13px/1 var(--f);color:var(--c8);outline:none;background:var(--sf);transition:border .15s;width:100%}
+.search-input:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
+.search-input::placeholder{color:var(--c4)}
+.pager{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-top:1px solid var(--dv);font:400 12px/1 var(--f);color:var(--c5)}
+.pager-info{display:flex;align-items:center;gap:4px}
+.pager-btns{display:flex;align-items:center;gap:4px}
+.pager-btn{width:28px;height:28px;border-radius:var(--r1);border:1px solid var(--c2);background:var(--sf);color:var(--c6);font:500 12px/1 var(--f);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.pager-btn:hover{border-color:var(--pr);color:var(--pr);background:var(--pr50)}
+.pager-btn.active{background:var(--pr);color:#FFF;border-color:var(--pr)}
+.pager-btn:disabled{opacity:.4;cursor:default}
+.pager-btn svg{width:14px;height:14px}
+.hint{font:400 11px/1.3 var(--f);color:var(--c5);margin-top:2px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .2s ease forwards}
+</style>
+</head>
+<body>
+<div class="ct fade-in">
+  <nav style="display:flex;align-items:center;gap:4px;font:500 12px/1 var(--f);color:var(--c5);margin-bottom:12px">
+    <a href="../perf-scenario-nav.html" style="color:var(--c5);text-decoration:none" onmouseover="this.style.color='var(--pr)'" onmouseout="this.style.color='var(--c5)'">业务场景</a>
+    <span style="color:var(--c3)">/</span>
+    <a href="demo-yearly-tr.html" style="color:var(--c5);text-decoration:none" onmouseover="this.style.color='var(--pr)'" onmouseout="this.style.color='var(--c5)'">年度盘点与绩效审定</a>
+    <span style="color:var(--c3)">/</span>
+    <span style="color:var(--c8);font-weight:600">测评结果批量导入</span>
+  </nav>
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+    <div>
+      <h1 style="font:700 20px/1.2 var(--f);color:var(--c9);margin:0">批量导入测评结果</h1>
+      <div id="activityContext" style="margin-top:8px;font:400 13px/1.4 var(--f);color:var(--c6)">为年度人才盘点导入 <b>360得分（0–5）</b> 与 <b>测评得分（0–10）</b>；用工号匹配；导入后进入「逐级上级审批」盘点步骤使用。</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-s" onclick="showToast('模板已下载（工号/姓名/360得分/测评得分）','success')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        下载模板
+      </button>
+      <button class="btn btn-o" onclick="document.getElementById('fileInput').click()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        导入Excel
+      </button>
+      <button class="btn btn-p" onclick="submitAssessImport()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>
+        提交
+      </button>
+    </div>
+  </div>
+
+  <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleImport(event)">
+
+  <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;padding:12px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+    <span style="font:500 13px/1 var(--f);color:var(--c6)">导入状态:</span>
+    <div id="statusFilter" style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-s btn-sm btn-active" onclick="filterStatus('全部',this)">全部</button>
+      <button class="btn btn-s btn-sm" onclick="filterStatus('待导入',this)">待导入</button>
+      <button class="btn btn-s btn-sm" onclick="filterStatus('已导入',this)">已导入</button>
+    </div>
+    <div style="width:1px;height:20px;background:var(--c2)"></div>
+    <div style="position:relative;flex:1;min-width:180px;max-width:280px">
+      <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);pointer-events:none" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--c4)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="search-input" placeholder="搜索姓名或工号" id="searchInput" oninput="handleSearch()">
+    </div>
+  </div>
+
+  <div class="eval-list">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between">
+      <span style="font:600 15px/1 var(--f);color:var(--c9)">测评结果列表</span>
+      <span id="listSummary" style="font:400 12px/1 var(--f);color:var(--c5)"></span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:120px">被考核人/工号</th>
+          <th style="width:90px">部门</th>
+          <th style="width:110px">职位</th>
+          <th style="width:90px">考核组</th>
+          <th style="width:88px">360得分<div class="hint">0–5</div></th>
+          <th style="width:72px">360排名</th>
+          <th style="width:88px">测评得分<div class="hint">0–10</div></th>
+          <th style="width:72px">测评排名</th>
+          <th style="width:80px">状态</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+    <div class="pager" id="pager"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="../navigation.js"></script>
+<script>
+GHR_NAV.init('perf', '测评结果批量导入');
+(function initActivityContext(){
+  var params=new URLSearchParams(location.search);
+  var id=params.get('activityId')||'1';
+  var name=params.get('activityName')||'2026年度盘点与绩效审定';
+  var ctx=document.getElementById('activityContext');
+  if(ctx){ctx.innerHTML='当前活动：<b style="color:var(--c8)">'+name+'</b>（ID '+id+'）。导入字段对齐盘点页：<b>360得分（0–5）</b>、<b>测评得分（0–10）</b>；用工号匹配；排名按得分自动重算。';}
+})();
+
+var FLOW_STATUS_STYLE={
+  '待导入':{bg:'var(--ac50)',color:'var(--ac700)'},
+  '已导入':{bg:'var(--em50)',color:'var(--em700)'}
+};
+function statusOf(emp){
+  if(emp.score360!=null&&emp.assessScore!=null)return '已导入';
+  return '待导入';
+}
+function statusBadge(emp){
+  var label=statusOf(emp);
+  var st=FLOW_STATUS_STYLE[label]||FLOW_STATUS_STYLE['待导入'];
+  return '<span style="font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px;background:'+st.bg+';color:'+st.color+'">'+label+'</span>';
+}
+function empCell(emp){
+  return '<div style="font-weight:500;color:var(--c8)">'+emp.name+'</div><div style="font:400 11px/1 var(--m);color:var(--c5);margin-top:3px">'+emp.employeeId+'</div>';
+}
+function scoreCell(v,empty){
+  if(v===null||v===undefined||v==='')return '<span style="color:var(--c4)">'+(empty||'—')+'</span>';
+  return '<span style="font-family:var(--m);font-weight:600;color:var(--c9)">'+v+'</span>';
+}
+
+var EMPLOYEES=[
+  {name:'谭刚伟',employeeId:'HR0001',dept:'产品部',role:'高级产品经理',group:'基层干部',score360:null,assessScore:null},
+  {name:'李洋杰',employeeId:'HR0002',dept:'运营部',role:'运营总监',group:'基层干部',score360:3.2,assessScore:6.5},
+  {name:'秦明涛',employeeId:'HR0003',dept:'运营部',role:'内容运营',group:'专员/主管',score360:null,assessScore:null},
+  {name:'孙军军',employeeId:'HR0004',dept:'产品部',role:'产品助理',group:'专员/主管',score360:4.1,assessScore:8.1},
+  {name:'姚辉静',employeeId:'HR0015',dept:'产品部',role:'高级产品经理',group:'基层干部',score360:4.8,assessScore:9.7},
+  {name:'萧玲刚',employeeId:'HR0038',dept:'产品部',role:'产品经理',group:'基层干部',score360:null,assessScore:null},
+  {name:'潘瑞龙',employeeId:'HR0048',dept:'运营部',role:'内容运营',group:'专员/主管',score360:4.7,assessScore:9.5},
+  {name:'魏宁鹏',employeeId:'HR0020',dept:'运营部',role:'高级运营',group:'专员/主管',score360:null,assessScore:null},
+  {name:'钟皓丽',employeeId:'HR0029',dept:'产品部',role:'产品助理',group:'专员/主管',score360:2.9,assessScore:5.8},
+  {name:'胡芳龙',employeeId:'HR0008',dept:'设计部',role:'设计总监',group:'基层干部',score360:null,assessScore:null},
+  {name:'周峰博',employeeId:'HR0012',dept:'设计部',role:'UI设计师',group:'专员/主管',score360:null,assessScore:null},
+  {name:'许恒勇',employeeId:'HR0005',dept:'产品部',role:'产品总监',group:'基层干部',score360:null,assessScore:null},
+  {name:'夏涛阳',employeeId:'HR0007',dept:'设计部',role:'设计总监',group:'基层干部',score360:4.3,assessScore:8.6},
+  {name:'阎瑞博',employeeId:'HR0016',dept:'技术部',role:'工程师',group:'专员/主管',score360:null,assessScore:null}
+];
+
+var MOCK_IMPORT_ROWS=[
+  {employeeId:'HR0001',score360:3.2,assessScore:6.5},
+  {employeeId:'HR0003',score360:4.2,assessScore:8.5},
+  {employeeId:'HR0038',score360:4.6,assessScore:9.2},
+  {employeeId:'HR0020',score360:2.8,assessScore:5.5},
+  {employeeId:'HR0008',score360:3.5,assessScore:7.0},
+  {employeeId:'HR9999',score360:4.0,assessScore:8.0},
+  {employeeId:'HR0005',score360:5.5,assessScore:8.0},
+  {employeeId:'HR0014',score360:4.0,assessScore:12}
+];
+
+var currentPage=1;var PAGE_SIZE=10;var currentStatus='全部';
+
+function recomputeRanks(){
+  var ranked360=EMPLOYEES.filter(function(e){return e.score360!=null;}).slice().sort(function(a,b){return b.score360-a.score360;});
+  ranked360.forEach(function(m,i){m.rank360=i+1;});
+  EMPLOYEES.forEach(function(e){if(e.score360==null)e.rank360=null;});
+  var rankedAssess=EMPLOYEES.filter(function(e){return e.assessScore!=null;}).slice().sort(function(a,b){return b.assessScore-a.assessScore;});
+  rankedAssess.forEach(function(m,i){m.rankAssess=i+1;});
+  EMPLOYEES.forEach(function(e){if(e.assessScore==null)e.rankAssess=null;});
+}
+
+function filterStatus(status,btn){
+  currentStatus=status;currentPage=1;
+  var container=document.getElementById('statusFilter');
+  container.querySelectorAll('.btn').forEach(function(b){b.classList.remove('btn-active');});
+  if(btn)btn.classList.add('btn-active');
+  render();
+}
+
+function getFiltered(){
+  var q=(document.getElementById('searchInput').value||'').trim().toLowerCase();
+  return EMPLOYEES.filter(function(e){
+    if(currentStatus!=='全部'&&statusOf(e)!==currentStatus)return false;
+    if(q&&e.name.toLowerCase().indexOf(q)<0&&String(e.employeeId).toLowerCase().indexOf(q)<0)return false;
+    return true;
+  });
+}
+
+function handleSearch(){currentPage=1;render();}
+
+function render(){
+  recomputeRanks();
+  var filtered=getFiltered();
+  var totalPages=Math.ceil(filtered.length/PAGE_SIZE)||1;
+  if(currentPage>totalPages)currentPage=totalPages;
+  var start=(currentPage-1)*PAGE_SIZE;
+  var pageData=filtered.slice(start,start+PAGE_SIZE);
+
+  var html='';
+  pageData.forEach(function(emp){
+    html+='<tr>'+
+      '<td>'+empCell(emp)+'</td>'+
+      '<td>'+emp.dept+'</td>'+
+      '<td>'+emp.role+'</td>'+
+      '<td>'+emp.group+'</td>'+
+      '<td>'+scoreCell(emp.score360)+'</td>'+
+      '<td style="font-family:var(--m);color:var(--c7)">'+(emp.rank360||'—')+'</td>'+
+      '<td>'+scoreCell(emp.assessScore)+'</td>'+
+      '<td style="font-family:var(--m);color:var(--c7)">'+(emp.rankAssess||'—')+'</td>'+
+      '<td>'+statusBadge(emp)+'</td>'+
+    '</tr>';
+  });
+  document.getElementById('tableBody').innerHTML=html;
+
+  var pending=EMPLOYEES.filter(function(e){return statusOf(e)==='待导入';}).length;
+  var done=EMPLOYEES.filter(function(e){return statusOf(e)==='已导入';}).length;
+  document.getElementById('listSummary').textContent='已导入 '+done+' 人 · 待导入 '+pending+' 人';
+
+  var ph='<span class="pager-info">共 <b style="color:var(--c8)">'+filtered.length+'</b> 人，第 '+Math.min(start+1,filtered.length)+'-'+Math.min(start+PAGE_SIZE,filtered.length)+' 条</span><div class="pager-btns">';
+  ph+='<button class="pager-btn" onclick="goPage('+(currentPage-1)+')"'+(currentPage<=1?' disabled':'')+'><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>';
+  for(var p=1;p<=totalPages;p++){
+    ph+='<button class="pager-btn'+(p===currentPage?' active':'')+'" onclick="goPage('+p+')">'+p+'</button>';
+  }
+  ph+='<button class="pager-btn" onclick="goPage('+(currentPage+1)+')"'+(currentPage>=totalPages?' disabled':'')+'><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>';
+  ph+='</div>';
+  document.getElementById('pager').innerHTML=ph;
+}
+
+function goPage(p){currentPage=p;render();}
+
+function validateScore360(v){
+  var n=Number(v);
+  if(isNaN(n))return '360得分非数字';
+  if(n<0||n>5)return '360得分需在 0–5';
+  return '';
+}
+function validateAssess(v){
+  var n=Number(v);
+  if(isNaN(n))return '测评得分非数字';
+  if(n<0||n>10)return '测评得分需在 0–10';
+  return '';
+}
+
+function handleImport(e){
+  var file=e.target.files[0];if(!file)return;
+  var success=[];var failed=[];
+  MOCK_IMPORT_ROWS.forEach(function(row,idx){
+    var lineNo=idx+2;
+    var emp=EMPLOYEES.find(function(x){return x.employeeId===row.employeeId;});
+    if(!emp){
+      failed.push({line:lineNo,employeeId:row.employeeId,reason:'工号不在当前活动'});
+      return;
+    }
+    var e360=validateScore360(row.score360);
+    if(e360){failed.push({line:lineNo,employeeId:row.employeeId,name:emp.name,reason:e360});return;}
+    var eAssess=validateAssess(row.assessScore);
+    if(eAssess){failed.push({line:lineNo,employeeId:row.employeeId,name:emp.name,reason:eAssess});return;}
+    emp.score360=Math.round(Number(row.score360)*10)/10;
+    emp.assessScore=Math.round(Number(row.assessScore)*10)/10;
+    success.push({line:lineNo,employeeId:row.employeeId,name:emp.name});
+  });
+  render();
+  var msg='导入完成：成功 '+success.length+' 行，失败 '+failed.length+' 行';
+  if(failed.length)msg+='；失败：'+failed.map(function(f){return f.employeeId+(f.name?'/'+f.name:'')+' '+f.reason;}).join('；');
+  showToast(msg,failed.length?'warning':'success');
+  console.info('测评导入结果',{success:success,failed:failed});
+  e.target.value='';
+}
+
+function submitAssessImport(){
+  var success=[];var failed=[];
+  EMPLOYEES.forEach(function(emp){
+    if(emp.score360==null||emp.assessScore==null){
+      failed.push(emp.employeeId+'/'+emp.name+'：360或测评得分未填');
+      return;
+    }
+    success.push(emp.employeeId+'/'+emp.name);
+  });
+  var msg='提交完成：'+success.length+' 人成功，'+failed.length+' 人失败';
+  if(failed.length)msg+='；失败：'+failed.slice(0,5).join('；')+(failed.length>5?'…':'');
+  showToast(msg,failed.length?'warning':'success');
+  console.info('测评正式提交校验结果',{success:success,failed:failed});
+}
+function showToast(msg,type){var t=document.getElementById('toast');t.textContent=msg;t.className='toast '+(type||'success')+' show';setTimeout(function(){t.classList.remove('show')},4000);}
+render();
+</script>
+</body>
+</html>

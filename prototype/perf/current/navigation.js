@@ -91,7 +91,9 @@ const GHR_NAV = {
     this.injectHTML();
     this.injectCSS();
     this.injectToastCSS();
+    this.ensureCollapseToggle();
     this.enter();
+    this.applyCollapse(this.readCollapsed());
   },
 
   // Inject toast CSS
@@ -136,7 +138,7 @@ const GHR_NAV = {
         --sb-bg:#FFF;--sb-hover:#F4F4F5;--sb-active-bg:#F0F5FF;--sb-active-l:#2563EB;
         --sb-text:#71717A;--sb-text-hv:#3F3F46;--sb-text-act:#2563EB;
         --sb-icon:#A1A1AA;--sb-icon-act:#2563EB;
-        --header-h:52px;--sidebar-w:240px;
+        --header-h:52px;--sidebar-w:240px;--sidebar-collapsed-w:56px;
         --shadow-dropdown:0 10px 40px -10px rgba(0,0,0,.12),0 2px 10px -2px rgba(0,0,0,.04);
       }
       .hdr{height:var(--header-h);background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:1100}
@@ -188,16 +190,32 @@ const GHR_NAV = {
       .mega-g-c{font:500 10px/1 var(--f);color:var(--c4);margin-left:auto;background:var(--c1);padding:2px 6px;border-radius:8px}
       .mega-g:hover .mega-g-n{color:var(--pr)}
       .mega-g:hover .mega-g-c{background:var(--pr100);color:var(--pr)}
-      .main{display:flex;height:calc(100vh - var(--header-h))}
-      .ct{flex:1;overflow-y:auto;padding:24px}
-      .sb{width:var(--sidebar-w);background:var(--sb-bg);display:flex;flex-direction:column;flex-shrink:0;box-shadow:1px 0 0 0 var(--c2)}
+      .main{display:flex;height:calc(100vh - var(--header-h));background:var(--bg,#FAFAF9)}
+      .ct{flex:1;overflow-y:auto;padding:24px;background:var(--bg,#FAFAF9)}
+      .sb{width:var(--sidebar-w);background:var(--sb-bg);display:flex;flex-direction:column;flex-shrink:0;box-shadow:1px 0 0 0 var(--c2);overflow:hidden;transition:width .2s ease}
+      .sb.collapsed{width:var(--sidebar-collapsed-w)}
       .sb-hd{padding:16px 16px 12px;border-bottom:1px solid var(--dv)}
       .sb-hd-in{display:flex;align-items:center;gap:10px}
-      .sb-ic{width:30px;height:30px;border-radius:var(--r1);background:var(--pr);display:flex;align-items:center;justify-content:center}
+      .sb-ic{width:30px;height:30px;border-radius:var(--r1);background:var(--pr);display:flex;align-items:center;justify-content:center;flex-shrink:0}
       .sb-ic svg{width:15px;height:15px;color:#FFF}
       .sb-n{font:600 14px/1.2 var(--f);color:var(--c9)}
       .sb-l{font:500 10px/1 var(--f);color:var(--c4);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
       .sb-bd{flex:1;overflow-y:auto;padding:6px 8px}
+      .sb-toggle{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;height:32px;padding:0 8px;border:1px solid var(--c2);border-radius:var(--r1);background:var(--sf);color:var(--c6);font:500 12px/1 var(--f);cursor:pointer}
+      .sb-toggle:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
+      .sb-toggle svg{width:14px;height:14px;flex-shrink:0;transition:transform .2s}
+      .sb.collapsed .sb-hd{padding:12px 8px}
+      .sb.collapsed .sb-hd-in{justify-content:center}
+      .sb.collapsed .sb-hd-in>div:last-child{display:none}
+      .sb.collapsed .sb-bd{padding:6px 6px;overflow-x:hidden}
+      .sb.collapsed .sb-g-hd,.sb.collapsed .sb-i{justify-content:center;padding:8px 0;gap:0;font-size:0;line-height:0}
+      .sb.collapsed .sb-g-hd svg,.sb.collapsed .sb-i svg{width:16px;height:16px}
+      .sb.collapsed .sb-i.has-children>svg:last-of-type{display:none}
+      .sb.collapsed .sb-children{margin-left:0}
+      .sb.collapsed .sb-i.on::before{display:none}
+      .sb.collapsed .sb-toggle span{display:none}
+      .sb.collapsed .sb-toggle svg{transform:rotate(180deg)}
+      .sb.collapsed .sb-ft{padding:8px}
       .sb-g{margin-bottom:1px}
       .sb-g.scenario .sb-g-hd{background:var(--pr50);color:var(--pr);font-weight:700}
       .sb-g.scenario .sb-g-hd svg{color:var(--pr)}
@@ -216,7 +234,7 @@ const GHR_NAV = {
       .sb-i svg{width:14px;height:14px;flex-shrink:0;color:var(--sb-icon);opacity:.6}
       .sb-i:hover svg{opacity:.9;color:var(--sb-text-hv)}
       .sb-i.on svg{color:var(--sb-icon-act);opacity:1}
-      .sb-ft{padding:10px 16px;border-top:1px solid var(--dv);font:500 10px/1 var(--f);color:var(--c4);text-align:center}
+      .sb-ft{padding:10px 12px;border-top:1px solid var(--dv);font:500 10px/1 var(--f);color:var(--c4);text-align:center}
       .sb-i.has-children{cursor:default;font-weight:600;color:var(--sb-text-hv)}
       .sb-i.has-children:hover{background:transparent}
       .sb-children{margin-left:40px;max-height:0;overflow:hidden;transition:max-height .25s ease}
@@ -294,7 +312,7 @@ const GHR_NAV = {
       sidebar.innerHTML = `
         <div class="sb-hd" id="sbHd"></div>
         <div class="sb-bd" id="sbBd"></div>
-        <div class="sb-ft">HR ONE v3.0</div>
+        <div class="sb-ft" id="sbFt"></div>
       `;
 
       const ct = document.createElement('div');
@@ -423,28 +441,60 @@ const GHR_NAV = {
     m.groups.forEach((g, gi) => {
       const isOpen = g.n === activeGroup;
       const extraClass = gi === 0 ? ' scenario' : '';
-      h += `<div class="sb-g${extraClass}"><div class="sb-g-hd${isOpen ? ' on' : ''}" onclick="GHR_NAV.toggleSb(this)">${this.I[g.ic]}${g.n}</div><div class="sb-g-bd${isOpen ? ' on' : ''}">`;
+      h += `<div class="sb-g${extraClass}"><div class="sb-g-hd${isOpen ? ' on' : ''}" title="${g.n}" onclick="GHR_NAV.toggleSb(this)">${this.I[g.ic]}${g.n}</div><div class="sb-g-bd${isOpen ? ' on' : ''}">`;
       g.items.forEach(item => {
         if (item.children) {
           // Parent item with children (like 绩效表单)
           const isParentActive = item.n === activeParent;
-          h += `<div class="sb-i has-children${isParentActive ? ' on' : ''}" onclick="GHR_NAV.toggleChildren(this)">
+          h += `<div class="sb-i has-children${isParentActive ? ' on' : ''}" title="${item.n}" onclick="GHR_NAV.toggleChildren(this)">
             <span style="display:flex;align-items:center;gap:8px;flex:1">${this.I[item.ic]}${item.n}</span>
             <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="transition:transform .2s;${isParentActive ? 'transform:rotate(90deg)' : ''}"><path d="M6 4l4 4-4 4"/></svg>
           </div>`;
           h += `<div class="sb-children${isParentActive ? ' on' : ''}">`;
           item.children.forEach(ch => {
-            h += `<div class="sb-i${ch.n === this.child ? ' on' : ''}" onclick="GHR_NAV.sel('${ch.n}', '${item.file || ''}', '${ch.file || ''}')">${this.I[ch.ic]}${ch.n}</div>`;
+            h += `<div class="sb-i${ch.n === this.child ? ' on' : ''}" title="${ch.n}" onclick="GHR_NAV.sel('${ch.n}', '${item.file || ''}', '${ch.file || ''}')">${this.I[ch.ic]}${ch.n}</div>`;
           });
           h += `</div>`;
         } else {
           const isActive = item.n === this.child && !activeParent;
-          h += `<div class="sb-i${isActive ? ' on' : ''}" onclick="GHR_NAV.sel('${item.n}', '${item.file || ''}')">${this.I[item.ic]}${item.n}</div>`;
+          h += `<div class="sb-i${isActive ? ' on' : ''}" title="${item.n}" onclick="GHR_NAV.sel('${item.n}', '${item.file || ''}')">${this.I[item.ic]}${item.n}</div>`;
         }
       });
       h += `</div></div>`;
     });
     sb.innerHTML = h;
+  },
+
+  readCollapsed() {
+    try { return localStorage.getItem('ghr-sb-collapsed') === '1'; } catch (e) { return false; }
+  },
+
+  ensureCollapseToggle() {
+    const ft = document.getElementById('sbFt') || document.querySelector('.sb-ft');
+    if (!ft) return;
+    ft.innerHTML = `<button type="button" class="sb-toggle" id="sbToggle" aria-expanded="true" aria-label="收起侧栏" title="收起侧栏" onclick="GHR_NAV.toggleCollapse()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg><span>收起</span></button>`;
+  },
+
+  toggleCollapse() {
+    const sb = document.querySelector('.sb');
+    if (!sb) return;
+    const next = !sb.classList.contains('collapsed');
+    this.applyCollapse(next);
+    try { localStorage.setItem('ghr-sb-collapsed', next ? '1' : '0'); } catch (e) {}
+  },
+
+  applyCollapse(on) {
+    const sb = document.querySelector('.sb');
+    const btn = document.getElementById('sbToggle');
+    if (!sb) return;
+    sb.classList.toggle('collapsed', !!on);
+    if (btn) {
+      btn.setAttribute('aria-expanded', on ? 'false' : 'true');
+      btn.setAttribute('aria-label', on ? '展开侧栏' : '收起侧栏');
+      btn.title = on ? '展开侧栏' : '收起侧栏';
+      const label = btn.querySelector('span');
+      if (label) label.textContent = on ? '展开' : '收起';
+    }
   },
 
   toggleSb(el) {
