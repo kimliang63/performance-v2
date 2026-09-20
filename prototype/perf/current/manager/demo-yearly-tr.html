@@ -337,12 +337,15 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .hd-unfilled.on{display:inline-flex}
 #onlyUnfilledDivider{display:none}
 #onlyUnfilledDivider.on{display:block}
+#onlyAbnDivider{display:none}
+#onlyAbnDivider.on{display:block}
 .hd-unfilled input{position:absolute;opacity:0;width:0;height:0;pointer-events:none}
 .hd-sw{position:relative;width:32px;height:18px;border-radius:999px;background:var(--c2);flex-shrink:0;transition:background .15s}
 .hd-sw::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.12);transition:transform .15s}
 .hd-unfilled input:checked+.hd-sw{background:var(--pr)}
 .hd-unfilled input:checked+.hd-sw::after{transform:translateX(14px)}
 .hd-unfilled:hover{color:var(--c7)}
+.hd-unfilled.abn-filter input:checked+.hd-sw{background:#F59E0B}
 .step-work{display:flex;flex-direction:column;gap:0;flex:1;min-height:0}
 .step-work>#distFilters{margin-bottom:8px;flex-shrink:0}
 .step-work #evalList .eval-list-hd,
@@ -585,9 +588,15 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .box9-cell[data-cell="低-中"],
 .box9-cell[data-cell="低-低"]{background:var(--ro50);border:1px solid #FECDD3}
 .box9-cell-hd{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-shrink:0}
+.box9-cell-hd-l{display:flex;align-items:center;gap:6px;min-width:0}
+.box9-cell-hd-r{display:flex;align-items:center;gap:4px;flex-shrink:0}
 .box9-cell-name{font:600 11px/1.2 var(--f);color:var(--c8)}
 .box9-cell-count{font:600 11px/1 var(--m);color:var(--c5)}
-.box9-people{display:flex;flex-wrap:wrap;gap:4px;align-content:flex-start;flex:1;min-height:0;overflow:auto}
+.box9-fs-btn{width:22px;height:22px;border:1px solid var(--c2);border-radius:var(--r1);background:var(--sf);color:var(--c5);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;flex-shrink:0}
+.box9-fs-btn:hover{border-color:var(--pr200);color:var(--pr);background:var(--pr50)}
+.box9-fs-btn svg{width:12px;height:12px;display:block}
+.box9-hd-actions{display:flex;align-items:center;gap:8px;margin-left:auto}
+.box9-people{display:flex;flex-wrap:wrap;gap:4px;align-content:flex-start;flex:1;min-height:0;overflow:hidden}
 .person-chip{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border:1px solid var(--c2);border-radius:12px;background:var(--sf);cursor:grab;font:500 11px/1.2 var(--f);color:var(--c8);max-width:100%;white-space:nowrap}
 .person-chip:active{cursor:grabbing}
 .person-chip.on{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
@@ -597,6 +606,19 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .person-chip-more{cursor:pointer;border-style:dashed;color:var(--pr);background:var(--pr50);border-color:var(--pr200);padding:3px 8px;font:600 11px/1.2 var(--f)}
 .person-chip-more:hover{background:var(--pr100)}
 .box9-more-list{display:flex;flex-wrap:wrap;gap:6px;max-height:220px;overflow:auto;margin-top:8px}
+.box9-fs-overlay{display:none;position:fixed;inset:0;z-index:2400;background:rgba(15,23,42,.45);backdrop-filter:blur(2px);align-items:stretch;justify-content:center;padding:16px;box-sizing:border-box}
+.box9-fs-overlay.open{display:flex}
+.box9-fs-panel{background:var(--sf);border-radius:var(--r3);box-shadow:0 24px 64px rgba(0,0,0,.2);width:100%;height:100%;max-width:1400px;margin:0 auto;display:flex;flex-direction:column;overflow:hidden}
+.box9-fs-hd{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--dv);flex-shrink:0}
+.box9-fs-title{font:600 15px/1.3 var(--f);color:var(--c9)}
+.box9-fs-sub{font:400 12px/1.3 var(--f);color:var(--c5);margin-top:4px}
+.box9-fs-bd{flex:1;min-height:0;overflow:auto;padding:12px 16px 16px;background:var(--c0)}
+.box9-fs-bd.mode-grid{display:flex;flex-direction:column;padding:10px 12px}
+.box9-fs-bd.mode-grid .box9-grid{flex:1;min-height:360px;height:100%;grid-template-rows:28px 1fr 1fr 1fr}
+.box9-fs-bd.mode-grid .box9-people{overflow:auto}
+.box9-fs-bd.mode-list{padding:0;background:var(--sf);overflow:auto}
+.box9-fs-bd.mode-list .box9-list-table{min-width:900px}
+.box9-fs-bd.mode-list .box9-list-table th{position:sticky;top:0;z-index:2}
 .step-work.split-lr .box9-main{display:flex;flex-direction:column;overflow:hidden;flex:1 1 0%;min-width:0;min-height:0;height:auto;align-self:stretch}
 .step-work.split-lr .box9-body{flex:1 1 0%;min-height:0;height:auto;padding:8px 10px;overflow:hidden;display:flex;flex-direction:column;gap:4px;align-self:stretch}
 .step-work.split-lr .box9-body > .box9-grid{flex:1 1 0%;min-height:0;width:100%;height:100%;grid-template-rows:22px 1fr 1fr 1fr;align-content:stretch}
@@ -621,26 +643,33 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .box9-list-table .col-abn{width:10%}
 .box9-list-table .col-abn-reason{width:16%}
 .box9-list-table .col-hist{width:16%}
-.box9-list-table .col-reason{width:18%}
+.box9-list-table .col-reason{width:14%}
+.box9-list-table .col-action{width:88px;text-align:center}
+.box9-list-table .col-action .btn{height:28px;padding:0 10px;font-size:12px}
 .box9-hist,.box9-reason,.box9-abn-reason{font:400 12px/1.35 var(--f);color:var(--c6);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-all}
 .box9-hist.empty,.box9-reason.empty,.box9-abn-reason.empty{color:var(--c4)}
 .box9-grade-txt{font:500 12px/1.2 var(--f)}
 .box9-abn-tag{display:inline-flex;align-items:center;height:20px;padding:0 6px;border-radius:4px;font:500 11px/1 var(--f);background:var(--ro50);color:var(--ro);white-space:nowrap}
 .box9-abn-ok{font:400 12px/1 var(--f);color:var(--c4)}
-.chip-pop{position:fixed;z-index:1200;width:280px;max-width:calc(100vw - 24px);background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);box-shadow:0 10px 40px -10px rgba(0,0,0,.14);padding:12px;display:none}
+.chip-pop{position:fixed;z-index:2500;width:280px;max-width:calc(100vw - 24px);background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);box-shadow:0 10px 40px -10px rgba(0,0,0,.14);padding:12px;display:none}
 .chip-pop.open{display:block}
 .chip-pop-name{font:600 13px/1.2 var(--f);color:var(--c9)}
 .chip-pop-meta{font:400 12px/1.4 var(--f);color:var(--c5);margin:4px 0 10px}
 .chip-pop-label{font:500 11px/1 var(--f);color:var(--c5);margin-bottom:6px}
-.chip-tip{position:fixed;z-index:1250;width:248px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);box-shadow:0 10px 40px -10px rgba(0,0,0,.14),0 2px 10px -2px rgba(0,0,0,.04);padding:10px 12px;display:block;visibility:hidden;pointer-events:none}
+.chip-tip{position:fixed;z-index:2550;width:260px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);box-shadow:0 10px 40px -10px rgba(0,0,0,.14),0 2px 10px -2px rgba(0,0,0,.04);padding:10px 12px;display:block;visibility:hidden;pointer-events:none}
 .chip-tip.open{visibility:visible}
+.chip-tip.interactive{pointer-events:auto}
 .chip-tip-row{display:flex;gap:10px;padding:3px 0;font:400 12px/1.4 var(--f)}
 .chip-tip-k{width:64px;flex-shrink:0;color:var(--c5)}
 .chip-tip-v{color:var(--c8);font-weight:500;min-width:0}
+.chip-tip-abn{margin-top:8px;padding:8px 10px;border-radius:var(--r1);background:var(--ro50);border:1px solid #FECDD3;font:400 12px/1.45 var(--f);color:var(--ro)}
+.chip-tip-abn b{font-weight:600}
+.chip-tip-act{margin-top:10px;padding-top:10px;border-top:1px solid var(--dv)}
+.chip-tip-act .btn{width:100%;justify-content:center}
 .unreached-note{font:400 12px/1.4 var(--f);color:var(--c5);padding:4px 2px 0}
 
 /* ═══ ADJUST MODAL ═══ */
-.adj-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:2100;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.adj-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:2600;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
 .adj-modal-overlay.open{opacity:1;pointer-events:all}
 .adj-modal{background:var(--sf);border-radius:var(--r3);box-shadow:0 20px 60px rgba(0,0,0,.15);width:420px;max-width:92vw;display:flex;flex-direction:column;overflow:hidden}
 .adj-modal-hd{padding:14px 18px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between;gap:12px}
@@ -805,6 +834,12 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
       <input type="checkbox" id="onlyUnfilledChk" onchange="toggleOnlyUnfilled(this.checked)">
       <span class="hd-sw" aria-hidden="true"></span>
     </label>
+    <div class="filter-divider" id="onlyAbnDivider"></div>
+    <label class="hd-unfilled abn-filter" id="onlyAbnWrap" for="onlyAbnChk">
+      <span>只看异常</span>
+      <input type="checkbox" id="onlyAbnChk" onchange="toggleOnlyAbnormal(this.checked)">
+      <span class="hd-sw" aria-hidden="true"></span>
+    </label>
   </div>
 
   <!-- 团队成员列表 -->
@@ -828,9 +863,14 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
   <div class="box9-wrap" id="boxPanel" style="display:none">
     <div class="box9-hd">
       <div class="box9-title">九宫格分布</div>
-      <div class="box-view-seg" role="group" aria-label="视图切换">
-        <button class="box-view-btn on" type="button" data-view="grid" onclick="setBoxView('grid')">九宫格</button>
-        <button class="box-view-btn" type="button" data-view="list" onclick="setBoxView('list')">列表</button>
+      <div class="box9-hd-actions">
+        <div class="box-view-seg" role="group" aria-label="视图切换">
+          <button class="box-view-btn on" type="button" data-view="grid" onclick="setBoxView('grid')">九宫格</button>
+          <button class="box-view-btn" type="button" data-view="list" onclick="setBoxView('list')">列表</button>
+        </div>
+        <button class="box9-fs-btn" type="button" title="九宫格全屏" aria-label="九宫格全屏" onclick="openBoxGridFullscreen()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+        </button>
       </div>
     </div>
     <div class="box9-split" id="boxSplit">
@@ -852,6 +892,7 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
                   <th class="col-abn-reason">异常原因</th>
                   <th class="col-hist">调整历史</th>
                   <th class="col-reason">调整原因</th>
+                  <th class="col-action">操作</th>
                 </tr>
               </thead>
               <tbody id="boxListBody"></tbody>
@@ -875,6 +916,11 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
     </div>
     <div class="adj-modal-bd">
       <div class="adj-modal-meta" id="adjModalMeta"></div>
+      <div class="adj-field" id="adjBoxField" style="display:none">
+        <label class="adj-field-label" for="adjBoxSelect">调整到格子<span class="req">*</span></label>
+        <select id="adjBoxSelect" onchange="onAdjBoxChange()"></select>
+        <div class="adj-field-err">请选择目标格子</div>
+      </div>
       <div class="adj-field" id="adjGradeField" style="display:none">
         <label class="adj-field-label" for="adjGradeSelect">调整后的绩效等级<span class="req">*</span></label>
         <select id="adjGradeSelect"></select>
@@ -902,6 +948,19 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
     <div class="rules-modal-bd">
       <img src="yearly-tr-rules-2026.jpg" alt="2026年度人才盘点说明：盘点对象、绩效评价、能力评价、九宫格定义与结果应用" width="1600" height="900" loading="lazy">
     </div>
+  </div>
+</div>
+
+<div class="box9-fs-overlay" id="boxFsOverlay" aria-hidden="true" onclick="closeBoxFullscreen()">
+  <div class="box9-fs-panel" role="dialog" aria-modal="true" aria-labelledby="boxFsTitle" onclick="event.stopPropagation()">
+    <div class="box9-fs-hd">
+      <div>
+        <div class="box9-fs-title" id="boxFsTitle">九宫格全屏</div>
+        <div class="box9-fs-sub" id="boxFsSub"></div>
+      </div>
+      <button class="adj-modal-close" type="button" aria-label="关闭全屏" onclick="closeBoxFullscreen()">×</button>
+    </div>
+    <div class="box9-fs-bd" id="boxFsBody"></div>
   </div>
 </div>
 
@@ -1053,6 +1112,7 @@ var PAGE_SIZE=20;
 var currentStep=1;
 var dragging=false;
 var onlyUnfilled=false;
+var onlyAbnormal=false;
 var statusBeforeUnfilled=null;
 var boxViewMode='grid';
 
@@ -1178,6 +1238,7 @@ function syncStatusFilter(){
       '<button class="btn btn-s btn-sm'+(currentStatus==='未到达'?' btn-active':'')+'" data-status="未到达" onclick="filterStatus(\'未到达\',this)">未到达</button>';
   }
   syncOnlyUnfilledUI();
+  syncOnlyAbnormalUI();
 }
 
 function getFilteredMembers(){
@@ -1190,6 +1251,7 @@ function getFilteredMembers(){
       if(currentStatus==='已到达'&&!m.reached)return false;
       if(currentStatus==='未到达'&&m.reached)return false;
     }
+    if(onlyAbnormal&&!m.abnormalType)return false;
     if(currentGrade){
       var gNow=currentStep===1?(m.ratifyGrade||m.grade):m.grade;
       if(gNow!==currentGrade)return false;
@@ -1809,6 +1871,7 @@ function renderHead(){
     head.innerHTML='<tr><th class="col-freeze-l">被考核人</th><th class="col-status">状态</th><th class="col-score">考核得分</th><th class="col-init">初评等级</th>'+levelTh+'<th class="col-freeze-r">调整等级</th></tr>';
   }
   syncOnlyUnfilledUI();
+  syncOnlyAbnormalUI();
 }
 
 function syncOnlyUnfilledUI(){
@@ -1822,6 +1885,18 @@ function syncOnlyUnfilledUI(){
   chk.checked=!!onlyUnfilled;
 }
 
+function syncOnlyAbnormalUI(){
+  var wrap=document.getElementById('onlyAbnWrap');
+  var chk=document.getElementById('onlyAbnChk');
+  var div=document.getElementById('onlyAbnDivider');
+  if(!wrap||!chk)return;
+  var show=currentStep===3;
+  wrap.classList.toggle('on',show);
+  if(div)div.classList.toggle('on',show);
+  if(!show)onlyAbnormal=false;
+  chk.checked=!!onlyAbnormal;
+}
+
 function toggleOnlyUnfilled(on){
   onlyUnfilled=!!on;
   if(onlyUnfilled){
@@ -1833,6 +1908,13 @@ function toggleOnlyUnfilled(on){
   }
   currentPage=1;
   syncOnlyUnfilledUI();
+  renderAll();
+}
+
+function toggleOnlyAbnormal(on){
+  onlyAbnormal=!!on;
+  currentPage=1;
+  syncOnlyAbnormalUI();
   renderAll();
 }
 
@@ -1866,6 +1948,19 @@ function setCapability(idx,value){
   m.capability=value;
   if(currentStep===3){renderBox();renderDist();updateStats(getFilteredMembers());}
   else renderMembers();
+}
+
+function pickChipCapability(idx,cap){
+  closeChipPop();
+  hideChipTip();
+  var m=MEMBERS[idx];
+  if(!m||!m.reached)return;
+  if(currentStep!==3){
+    if(m.submitted)return;
+    setCapability(idx,cap);
+    return;
+  }
+  openAdjModal(idx,perfBand(m),cap,false);
 }
 
 function renderMembers(){
@@ -2204,6 +2299,7 @@ function goStep(step){
     onlyUnfilled=false;
     statusBeforeUnfilled=null;
   }
+  if(step!==3)onlyAbnormal=false;
   closeChipPop();
   renderAll();
   applyDistCollapse();
@@ -2258,10 +2354,14 @@ function syncSplitPaneHeight(){
   /* 高度交给 #ct > .ct → #stepWork → #boxPanel 的 flex 链，不再写死 px，避免九宫格被压矮留白 */
   [list,box].forEach(function(el){if(el){el.style.height='';el.style.maxHeight='';}});
   refreshCapLineOverlay();
+  if(currentStep===3&&boxViewMode==='grid')requestAnimationFrame(fitAllBoxCells);
 }
 window.addEventListener('resize',function(){
   if(currentStep===1||currentStep===2||currentStep===3){
     syncSplitPaneHeight();
+  }
+  if(currentStep===3&&boxViewMode==='grid'){
+    requestAnimationFrame(fitAllBoxCells);
   }
 });
 
@@ -2292,6 +2392,7 @@ function renderAll(){
 }
 
 var BOX_CHIP_LIMIT=6;
+var FS_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>';
 
 function abnMarkHtml(m){
   if(!m||!m.abnormalType)return '';
@@ -2301,23 +2402,144 @@ function abnMarkHtml(m){
 function personChip(m){
   var idx=MEMBERS.indexOf(m);
   var abn=!!m.abnormalType;
-  return '<button class="person-chip cap-'+m.capability+(abn?' abn':'')+'" type="button" draggable="true" data-idx="'+idx+'" ondragstart="onChipDrag(event,'+idx+')" onmouseenter="onChipEnter(event,'+idx+')" onmouseleave="hideChipTip()" onclick="openChipPop(event,'+idx+')">'+abnMarkHtml(m)+m.name+'</button>';
+  return '<button class="person-chip cap-'+m.capability+(abn?' abn':'')+'" type="button" draggable="true" data-idx="'+idx+'" ondragstart="onChipDrag(event,'+idx+')" onmouseenter="onChipEnter(event,'+idx+')" onmouseleave="scheduleHideChipTip()">'+abnMarkHtml(m)+m.name+'</button>';
 }
 
-function cellPeopleHtml(people){
+function cellPeopleHtml(people,key){
   if(!people.length)return '';
-  var shown=people.slice(0,BOX_CHIP_LIMIT);
-  var html=shown.map(personChip).join('');
-  if(people.length>BOX_CHIP_LIMIT){
-    var rest=people.slice(BOX_CHIP_LIMIT);
-    var ids=rest.map(function(m){return MEMBERS.indexOf(m);}).join(',');
-    html+='<button class="person-chip person-chip-more" type="button" onclick="openBoxMore(event,\''+ids+'\')">+'+rest.length+'</button>';
-  }
-  return html;
+  return people.map(personChip).join('')+'<button class="person-chip person-chip-more" type="button" style="display:none" data-cell-key="'+key+'" onclick="openBoxCellFullscreen(\''+key+'\')">+0</button>';
 }
+
+function peopleOverflow(el){
+  return el.scrollHeight>el.clientHeight+1||el.scrollWidth>el.clientWidth+1;
+}
+
+function fitBoxCellPeople(cell){
+  var peopleEl=cell.querySelector('.box9-people');
+  if(!peopleEl)return;
+  var chips=Array.prototype.slice.call(peopleEl.querySelectorAll('.person-chip:not(.person-chip-more)'));
+  var moreBtn=peopleEl.querySelector('.person-chip-more');
+  chips.forEach(function(c){c.style.display='';});
+  if(moreBtn)moreBtn.style.display='none';
+  if(!chips.length)return;
+  if(!peopleOverflow(peopleEl))return;
+  var lo=0,hi=chips.length,best=0;
+  while(lo<=hi){
+    var mid=(lo+hi)>>1;
+    chips.forEach(function(c,i){c.style.display=i<mid?'':'none';});
+    if(moreBtn){
+      var rest=chips.length-mid;
+      if(rest>0){
+        moreBtn.style.display='';
+        moreBtn.textContent='+'+rest;
+      }else{
+        moreBtn.style.display='none';
+      }
+    }
+    if(!peopleOverflow(peopleEl)){best=mid;lo=mid+1;}
+    else hi=mid-1;
+  }
+  chips.forEach(function(c,i){c.style.display=i<best?'':'none';});
+  if(moreBtn){
+    var left=chips.length-best;
+    if(left>0){moreBtn.style.display='';moreBtn.textContent='+'+left;}
+    else moreBtn.style.display='none';
+  }
+  if(moreBtn&&moreBtn.style.display!=='none'&&peopleOverflow(peopleEl)&&best>0){
+    best-=1;
+    chips.forEach(function(c,i){c.style.display=i<best?'':'none';});
+    left=chips.length-best;
+    moreBtn.style.display='';
+    moreBtn.textContent='+'+left;
+  }
+}
+
+function fitAllBoxCells(){
+  document.querySelectorAll('#boxGrid .box9-cell').forEach(fitBoxCellPeople);
+}
+
+function getCellPeople(key){
+  var parts=String(key||'').split('-');
+  var p=parts[0],c=parts[1];
+  return getFilteredMembers().filter(function(m){return m.reached&&perfBand(m)===p&&m.capability===c;});
+}
+
+function openBoxGridFullscreen(){
+  hideChipTip();
+  var overlay=document.getElementById('boxFsOverlay');
+  var body=document.getElementById('boxFsBody');
+  var title=document.getElementById('boxFsTitle');
+  var sub=document.getElementById('boxFsSub');
+  if(!overlay||!body)return;
+  title.textContent='九宫格全屏';
+  sub.textContent='展示全部格子与人员，可拖拽校准';
+  var html='<div class="box9-grid">';
+  html+='<div class="box9-x"></div><div class="box9-x">能力 · '+boxLvlSpan('低')+'</div><div class="box9-x">能力 · '+boxLvlSpan('中')+'</div><div class="box9-x">能力 · '+boxLvlSpan('高')+'</div>';
+  PERF_ROWS.forEach(function(p){
+    html+='<div class="box9-y">绩效 · '+boxLvlSpan(p)+'</div>';
+    CAP_COLS.forEach(function(c){
+      var key=p+'-'+c;
+      var people=getCellPeople(key);
+      html+='<div class="box9-cell" data-cell="'+key+'" ondragover="onBoxOver(event)" ondragleave="this.classList.remove(\'drag-over\')" ondrop="onBoxDrop(event,\''+p+'\',\''+c+'\')">';
+      html+='<div class="box9-cell-hd"><div class="box9-cell-hd-l"><span class="box9-cell-name">'+boxLabel(key)+'</span></div><div class="box9-cell-hd-r"><span class="box9-cell-count">'+people.length+'</span><button class="box9-fs-btn" type="button" title="格子全屏" aria-label="格子全屏" onclick="event.stopPropagation();openBoxCellFullscreen(\''+key+'\')">'+FS_ICON+'</button></div></div>';
+      html+='<div class="box9-people">'+people.map(personChip).join('')+'</div></div>';
+    });
+  });
+  html+='</div>';
+  body.className='box9-fs-bd mode-grid';
+  body.innerHTML=html;
+  overlay.classList.add('open');
+  overlay.setAttribute('aria-hidden','false');
+}
+
+function openBoxCellFullscreen(key){
+  hideChipTip();
+  var overlay=document.getElementById('boxFsOverlay');
+  var body=document.getElementById('boxFsBody');
+  var title=document.getElementById('boxFsTitle');
+  var sub=document.getElementById('boxFsSub');
+  if(!overlay||!body)return;
+  var people=getCellPeople(key);
+  var parts=String(key).split('-');
+  title.textContent=boxLabel(key)||key;
+  sub.textContent='绩效 · '+(parts[0]||'—')+' · 能力 · '+(parts[1]||'—')+' · 共 '+people.length+' 人';
+  body.className='box9-fs-bd mode-list';
+  if(!people.length){
+    body.innerHTML='<div style="color:var(--c4);padding:40px;text-align:center">该格子暂无人员</div>';
+  }else{
+    body.innerHTML='<table class="box9-list-table"><thead><tr>'+
+      '<th class="col-name">被考核人</th><th class="col-grade">绩效等级</th><th class="col-cap">能力</th><th class="col-box">格子</th>'+
+      '<th class="col-abn">异常状态</th><th class="col-abn-reason">异常原因</th><th class="col-hist">调整历史</th><th class="col-reason">调整原因</th><th class="col-action">操作</th>'+
+      '</tr></thead><tbody>'+people.map(boxListRowHtml).join('')+'</tbody></table>';
+  }
+  overlay.classList.add('open');
+  overlay.setAttribute('aria-hidden','false');
+  openBoxFsCellKey=key;
+}
+
+function closeBoxFullscreen(){
+  var overlay=document.getElementById('boxFsOverlay');
+  if(!overlay)return;
+  overlay.classList.remove('open');
+  overlay.setAttribute('aria-hidden','true');
+  var body=document.getElementById('boxFsBody');
+  if(body)body.innerHTML='';
+  openBoxFsCellKey=null;
+  if(currentStep===3&&boxViewMode==='grid')requestAnimationFrame(fitAllBoxCells);
+}
+
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    var overlay=document.getElementById('boxFsOverlay');
+    if(overlay&&overlay.classList.contains('open'))closeBoxFullscreen();
+  }
+});
 
 function openBoxMore(event,idsCsv){
   event.stopPropagation();
+  var btn=event.currentTarget;
+  var key=btn&&btn.getAttribute('data-cell-key');
+  if(key){openBoxCellFullscreen(key);return;}
   hideChipTip();
   var ids=String(idsCsv||'').split(',').map(function(s){return parseInt(s,10);}).filter(function(n){return !isNaN(n);});
   var pop=document.getElementById('chipPop');
@@ -2370,16 +2592,48 @@ function renderBoxGrid(){
     html+='<div class="box9-y">绩效 · '+boxLvlSpan(p)+'</div>';
     CAP_COLS.forEach(function(c){
       var key=p+'-'+c;
-      var people=getFilteredMembers().filter(function(m){return m.reached&&perfBand(m)===p&&m.capability===c;});
+      var people=getCellPeople(key);
       html+='<div class="box9-cell" data-cell="'+key+'" ondragover="onBoxOver(event)" ondragleave="this.classList.remove(\'drag-over\')" ondrop="onBoxDrop(event,\''+p+'\',\''+c+'\')">';
-      html+='<div class="box9-cell-hd"><span class="box9-cell-name">'+boxLabel(key)+'</span><span class="box9-cell-count">'+people.length+'</span></div>';
-      html+='<div class="box9-people">'+cellPeopleHtml(people)+'</div></div>';
+      html+='<div class="box9-cell-hd"><div class="box9-cell-hd-l"><span class="box9-cell-name">'+boxLabel(key)+'</span></div><div class="box9-cell-hd-r"><span class="box9-cell-count">'+people.length+'</span><button class="box9-fs-btn" type="button" title="格子全屏" aria-label="格子全屏" onclick="event.stopPropagation();openBoxCellFullscreen(\''+key+'\')">'+FS_ICON+'</button></div></div>';
+      html+='<div class="box9-people">'+cellPeopleHtml(people,key)+'</div></div>';
     });
   });
   document.getElementById('boxGrid').innerHTML=html;
   var un=getFilteredMembers().filter(function(m){return !m.reached;});
   var note=document.getElementById('boxUnreached');
   if(note)note.textContent=un.length?('未到达 '+un.length+' 人，不进入九宫格'):'';
+  requestAnimationFrame(function(){requestAnimationFrame(fitAllBoxCells);});
+}
+
+function boxListRowHtml(m){
+  var idx=MEMBERS.indexOf(m);
+  var grade=m.ratifyGrade||m.grade||'';
+  var gradeHtml=grade
+    ?('<span class="box9-grade-txt" style="color:'+(GRADE_COLORS[grade]||'var(--c7)')+'">'+grade+'</span>')
+    :'<span style="color:var(--c4)">—</span>';
+  var box=memberBoxName(m);
+  var hist=formatAdjustHistory(m);
+  var reason=m.adjustReason||'';
+  var abnType=m.abnormalType||'';
+  var abnReason=m.abnormalReason||'';
+  var abnHtml=abnType
+    ?('<span class="box9-abn-tag">'+abnType+'</span>')
+    :'<span class="box9-abn-ok">正常</span>';
+  var canAdj=!!m.reached;
+  var action=canAdj
+    ?('<button class="btn btn-s btn-sm" type="button" onclick="openManualAdj('+idx+')">调整</button>')
+    :'<span style="color:var(--c4)">—</span>';
+  return '<tr>'+
+    '<td class="col-name"><span class="member-name" onmouseenter="onMemberEnter(event,'+idx+')" onmouseleave="hideChipTip()"><span style="font-weight:500;color:var(--c8)">'+m.name+'</span><div style="margin-top:3px;font:400 10px/1 var(--m);color:var(--c4)">'+m.employeeId+'</div></span></td>'+
+    '<td class="col-grade">'+gradeHtml+'</td>'+
+    '<td class="col-cap">'+(m.capability?capTagHtml(m.capability):'<span style="color:var(--c4)">—</span>')+'</td>'+
+    '<td class="col-box">'+(box||'<span style="color:var(--c4)">—</span>')+'</td>'+
+    '<td class="col-abn">'+abnHtml+'</td>'+
+    '<td class="col-abn-reason"><div class="box9-abn-reason'+(abnReason?'':' empty')+'" title="'+abnReason.replace(/"/g,'&quot;')+'">'+(abnReason||'—')+'</div></td>'+
+    '<td class="col-hist"><div class="box9-hist'+(hist?'':' empty')+'" title="'+hist.replace(/"/g,'&quot;')+'">'+(hist||'—')+'</div></td>'+
+    '<td class="col-reason"><div class="box9-reason'+(reason?'':' empty')+'" title="'+reason.replace(/"/g,'&quot;')+'">'+(reason||'—')+'</div></td>'+
+    '<td class="col-action">'+action+'</td>'+
+  '</tr>';
 }
 
 function renderBoxList(){
@@ -2387,34 +2641,10 @@ function renderBoxList(){
   if(!body)return;
   var rows=getFilteredMembers();
   if(!rows.length){
-    body.innerHTML='<tr><td colspan="8" style="color:var(--c4);text-align:center;padding:24px">暂无人员</td></tr>';
+    body.innerHTML='<tr><td colspan="9" style="color:var(--c4);text-align:center;padding:24px">暂无人员</td></tr>';
     return;
   }
-  body.innerHTML=rows.map(function(m){
-    var idx=MEMBERS.indexOf(m);
-    var grade=m.ratifyGrade||m.grade||'';
-    var gradeHtml=grade
-      ?('<span class="box9-grade-txt" style="color:'+(GRADE_COLORS[grade]||'var(--c7)')+'">'+grade+'</span>')
-      :'<span style="color:var(--c4)">—</span>';
-    var box=memberBoxName(m);
-    var hist=formatAdjustHistory(m);
-    var reason=m.adjustReason||'';
-    var abnType=m.abnormalType||'';
-    var abnReason=m.abnormalReason||'';
-    var abnHtml=abnType
-      ?('<span class="box9-abn-tag">'+abnType+'</span>')
-      :'<span class="box9-abn-ok">正常</span>';
-    return '<tr>'+
-      '<td class="col-name"><span class="member-name" onmouseenter="onMemberEnter(event,'+idx+')" onmouseleave="hideChipTip()"><span style="font-weight:500;color:var(--c8)">'+m.name+'</span><div style="margin-top:3px;font:400 10px/1 var(--m);color:var(--c4)">'+m.employeeId+'</div></span></td>'+
-      '<td class="col-grade">'+gradeHtml+'</td>'+
-      '<td class="col-cap">'+(m.capability?capTagHtml(m.capability):'<span style="color:var(--c4)">—</span>')+'</td>'+
-      '<td class="col-box">'+(box||'<span style="color:var(--c4)">—</span>')+'</td>'+
-      '<td class="col-abn">'+abnHtml+'</td>'+
-      '<td class="col-abn-reason"><div class="box9-abn-reason'+(abnReason?'':' empty')+'" title="'+abnReason.replace(/"/g,'&quot;')+'">'+(abnReason||'—')+'</div></td>'+
-      '<td class="col-hist"><div class="box9-hist'+(hist?'':' empty')+'" title="'+hist.replace(/"/g,'&quot;')+'">'+(hist||'—')+'</div></td>'+
-      '<td class="col-reason"><div class="box9-reason'+(reason?'':' empty')+'" title="'+reason.replace(/"/g,'&quot;')+'">'+(reason||'—')+'</div></td>'+
-    '</tr>';
-  }).join('');
+  body.innerHTML=rows.map(boxListRowHtml).join('');
 }
 
 function renderBox(){
@@ -2460,60 +2690,136 @@ function defaultGradeForBand(band,prefer){
 }
 
 var pendingAdj=null;
+var openBoxFsCellKey=null;
+var BOX_KEYS_ORDER=['高-高','高-中','中-高','高-低','中-中','低-高','中-低','低-中','低-低'];
+
 function closeAdjModal(){
   pendingAdj=null;
   var modal=document.getElementById('adjModal');
   if(!modal)return;
   modal.classList.remove('open');
   modal.setAttribute('aria-hidden','true');
-  ['adjReasonField','adjGradeField'].forEach(function(id){
+  ['adjReasonField','adjGradeField','adjBoxField'].forEach(function(id){
     var el=document.getElementById(id);
     if(el)el.classList.remove('invalid');
   });
 }
-function openAdjModal(idx,perf,cap){
+
+function fillAdjBoxSelect(selectedKey,excludeKey){
+  var sel=document.getElementById('adjBoxSelect');
+  if(!sel)return;
+  sel.innerHTML=BOX_KEYS_ORDER.map(function(k){
+    var dis=excludeKey&&k===excludeKey?' disabled':'';
+    return '<option value="'+k+'"'+(k===selectedKey?' selected':'')+dis+'>'+boxLabel(k)+'</option>';
+  }).join('');
+}
+
+function syncAdjGradeField(){
+  if(!pendingAdj)return;
+  var gradeField=document.getElementById('adjGradeField');
+  var gradeSelect=document.getElementById('adjGradeSelect');
+  var needGrade=pendingAdj.fromPerf!==pendingAdj.perf;
+  pendingAdj.needGrade=needGrade;
+  gradeField.classList.remove('invalid');
+  if(needGrade){
+    gradeField.style.display='';
+    var m=MEMBERS[pendingAdj.idx];
+    var prefer=(m&&(m.ratifyGrade||m.grade))||'';
+    var opts=gradesForBand(pendingAdj.perf);
+    gradeSelect.innerHTML=GRADE_OPTIONS.map(function(g){
+      var inBand=opts.indexOf(g)>=0;
+      return '<option value="'+g+'"'+(inBand?'':' disabled')+'>'+g+(inBand?'':'（不在'+pendingAdj.perf+'档）')+'</option>';
+    }).join('');
+    gradeSelect.value=defaultGradeForBand(pendingAdj.perf,prefer);
+  }else{
+    gradeField.style.display='none';
+    gradeSelect.innerHTML='';
+  }
+}
+
+function refreshAdjMeta(){
+  if(!pendingAdj)return;
+  var m=MEMBERS[pendingAdj.idx];
+  if(!m)return;
+  var meta=document.getElementById('adjModalMeta');
+  var targetName=BOX_NAMES[pendingAdj.perf+'-'+pendingAdj.cap]||(pendingAdj.perf+'·'+pendingAdj.cap);
+  var fromName=pendingAdj.fromCap?BOX_NAMES[pendingAdj.fromPerf+'-'+pendingAdj.fromCap]:(pendingAdj.fromPerf+'·未校准');
+  meta.innerHTML='将 <b>'+m.name+'</b> 从「'+fromName+'」调整到「'+targetName+'」'+
+    '<br>绩效 '+(pendingAdj.fromPerf===pendingAdj.perf?pendingAdj.fromPerf:(pendingAdj.fromPerf+' → '+pendingAdj.perf))+' · 能力 '+(pendingAdj.fromCap||'—')+' → '+pendingAdj.cap;
+}
+
+function onAdjBoxChange(){
+  if(!pendingAdj||!pendingAdj.manual)return;
+  var key=document.getElementById('adjBoxSelect').value;
+  var parts=String(key||'').split('-');
+  if(parts.length<2)return;
+  pendingAdj.perf=parts[0];
+  pendingAdj.cap=parts[1];
+  document.getElementById('adjBoxField').classList.remove('invalid');
+  refreshAdjMeta();
+  syncAdjGradeField();
+}
+
+function openAdjModal(idx,perf,cap,manual){
   var m=MEMBERS[idx];
   if(!m||!m.reached)return;
   var fromPerf=perfBand(m);
   var fromCap=m.capability||'';
-  if(fromPerf===perf&&fromCap===cap)return;
-  var needGrade=fromPerf!==perf;
-  pendingAdj={idx:idx,perf:perf,cap:cap,needGrade:needGrade,fromPerf:fromPerf,fromCap:fromCap};
+  if(!manual&&fromPerf===perf&&fromCap===cap)return;
+  pendingAdj={idx:idx,perf:perf,cap:cap,needGrade:fromPerf!==perf,fromPerf:fromPerf,fromCap:fromCap,manual:!!manual};
   hideChipTip();
   closeChipPop();
-  var meta=document.getElementById('adjModalMeta');
-  var targetName=BOX_NAMES[perf+'-'+cap]||(perf+'·'+cap);
-  meta.innerHTML='将 <b>'+m.name+'</b> 从「'+(fromCap?BOX_NAMES[fromPerf+'-'+fromCap]:fromPerf+'·未校准')+'」调整到「'+targetName+'」'+
-    '<br>绩效 '+(fromPerf===perf?fromPerf:(fromPerf+' → '+perf))+' · 能力 '+(fromCap||'—')+' → '+cap;
-  var gradeField=document.getElementById('adjGradeField');
-  var gradeSelect=document.getElementById('adjGradeSelect');
+  var boxField=document.getElementById('adjBoxField');
   var reasonField=document.getElementById('adjReasonField');
   var reasonInput=document.getElementById('adjReasonInput');
-  gradeField.classList.remove('invalid');
   reasonField.classList.remove('invalid');
-  if(needGrade){
-    gradeField.style.display='';
-    var prefer=m.ratifyGrade||m.grade||'';
-    var opts=gradesForBand(perf);
-    gradeSelect.innerHTML=GRADE_OPTIONS.map(function(g){
-      var inBand=opts.indexOf(g)>=0;
-      return '<option value="'+g+'"'+(inBand?'':' disabled')+'>'+g+(inBand?'':'（不在'+perf+'档）')+'</option>';
-    }).join('');
-    gradeSelect.value=defaultGradeForBand(perf,prefer);
+  boxField.classList.remove('invalid');
+  if(manual){
+    boxField.style.display='';
+    var curKey=fromCap?(fromPerf+'-'+fromCap):'';
+    fillAdjBoxSelect(perf&&cap?(perf+'-'+cap):(BOX_KEYS_ORDER[0]),null);
+    if(curKey)document.getElementById('adjBoxSelect').value=perf&&cap?(perf+'-'+cap):BOX_KEYS_ORDER.filter(function(k){return k!==curKey;})[0];
+    onAdjBoxChange();
   }else{
-    gradeField.style.display='none';
-    gradeSelect.innerHTML='';
+    boxField.style.display='none';
+    refreshAdjMeta();
+    syncAdjGradeField();
   }
   reasonInput.value=m.adjustReason||'';
   var modal=document.getElementById('adjModal');
   modal.classList.add('open');
   modal.setAttribute('aria-hidden','false');
-  setTimeout(function(){reasonInput.focus();},40);
+  setTimeout(function(){(manual?document.getElementById('adjBoxSelect'):reasonInput).focus();},40);
 }
+
+function openManualAdj(idx){
+  var m=MEMBERS[idx];
+  if(!m||!m.reached)return;
+  var fromPerf=perfBand(m);
+  var fromCap=m.capability||'中';
+  var cur=fromPerf+'-'+fromCap;
+  var next=BOX_KEYS_ORDER.filter(function(k){return k!==cur;})[0]||'中-中';
+  var parts=next.split('-');
+  openAdjModal(idx,parts[0],parts[1],true);
+}
+
 function confirmAdjModal(){
   if(!pendingAdj)return;
   var m=MEMBERS[pendingAdj.idx];
   if(!m){closeAdjModal();return;}
+  if(pendingAdj.manual){
+    var boxKey=document.getElementById('adjBoxSelect').value;
+    var parts=String(boxKey||'').split('-');
+    if(parts.length<2){document.getElementById('adjBoxField').classList.add('invalid');return;}
+    pendingAdj.perf=parts[0];
+    pendingAdj.cap=parts[1];
+    pendingAdj.needGrade=pendingAdj.fromPerf!==pendingAdj.perf;
+  }
+  if(pendingAdj.fromPerf===pendingAdj.perf&&pendingAdj.fromCap===pendingAdj.cap){
+    document.getElementById('adjBoxField').classList.add('invalid');
+    showToast('请选择与当前不同的格子');
+    return;
+  }
   var reasonField=document.getElementById('adjReasonField');
   var gradeField=document.getElementById('adjGradeField');
   var reason=(document.getElementById('adjReasonInput').value||'').trim();
@@ -2534,10 +2840,15 @@ function confirmAdjModal(){
   var targetName=BOX_NAMES[perfBand(m)+'-'+m.capability];
   if(!m.adjustHistory)m.adjustHistory=[];
   m.adjustHistory.push(fromBox+'→'+targetName);
+  var stayKey=openBoxFsCellKey;
   closeAdjModal();
   renderBox();
   renderDist();
   updateStats(getFilteredMembers());
+  if(stayKey){
+    var overlay=document.getElementById('boxFsOverlay');
+    if(overlay&&overlay.classList.contains('open'))openBoxCellFullscreen(stayKey);
+  }
   showToast('已调整'+m.name+'至「'+targetName+'」');
 }
 
@@ -2547,32 +2858,34 @@ function onBoxDrop(event,perf,cap){
   var idx=parseInt(event.dataTransfer.getData('text/plain'),10);
   var m=MEMBERS[idx];
   if(!m||!m.reached)return;
-  openAdjModal(idx,perf,cap);
+  openAdjModal(idx,perf,cap,false);
 }
 
 function closeChipPop(){
-  document.getElementById('chipPop').classList.remove('open');
-  hideChipTip();
+  var pop=document.getElementById('chipPop');
+  if(pop)pop.classList.remove('open');
 }
 
 var chipTipTimer=null;
-function chipTipRows(m){
-  var box=m.capability?BOX_NAMES[perfBand(m)+'-'+m.capability]:'—';
+function chipTipRows(m,idx){
+  var box=m.capability?boxLabel(perfBand(m)+'-'+m.capability):'—';
   var rows=[
     ['姓名',m.name],
     ['工号',m.employeeId],
     ['部门',m.dept],
     ['职位',m.role],
-    ['职级',m.level],
-    ['司龄',m.tenure],
-    ['考核组',m.group],
-    ['绩效等级',m.ratifyGrade||m.grade||'—'],
+    ['审定绩效',(m.ratifyGrade||m.grade||'—')+'（'+perfBand(m)+'）'],
     ['能力',m.capability||'—'],
-    ['九宫格',box],
-    ['异常状态',m.abnormalType||'正常'],
-    ['异常原因',m.abnormalReason||'—']
+    ['九宫格',box]
   ];
-  return rows.map(function(r){return '<div class="chip-tip-row"><span class="chip-tip-k">'+r[0]+'</span><span class="chip-tip-v">'+r[1]+'</span></div>';}).join('');
+  var html=rows.map(function(r){return '<div class="chip-tip-row"><span class="chip-tip-k">'+r[0]+'</span><span class="chip-tip-v">'+r[1]+'</span></div>';}).join('');
+  if(m.abnormalType){
+    html+='<div class="chip-tip-abn"><b>异常 · '+m.abnormalType+'</b>'+(m.abnormalReason?'<br>'+m.abnormalReason:'')+'</div>';
+  }
+  if(currentStep===3&&m.reached){
+    html+='<div class="chip-tip-act"><button class="btn btn-s btn-sm" type="button" onclick="event.stopPropagation();hideChipTip();openManualAdj('+idx+')">调整格子…</button></div>';
+  }
+  return html;
 }
 function memberTipRows(m){
   var rows=[
@@ -2607,6 +2920,7 @@ function onMemberEnter(event,idx){
     if(!m||!el)return;
     var tip=document.getElementById('chipTip');
     if(tip.parentNode!==document.body)document.body.appendChild(tip);
+    tip.classList.remove('interactive');
     tip.innerHTML=memberTipRows(m);
     tip.classList.add('open');
     placeNearChip(el,tip,8);
@@ -2615,44 +2929,38 @@ function onMemberEnter(event,idx){
 function onChipEnter(event,idx){
   if(dragging)return;
   clearTimeout(chipTipTimer);
+  var el=event.currentTarget;
   chipTipTimer=setTimeout(function(){
     if(dragging)return;
     var m=MEMBERS[idx];
-    var el=document.querySelector('.person-chip[data-idx="'+idx+'"]');
     if(!m||!el)return;
     var tip=document.getElementById('chipTip');
     if(tip.parentNode!==document.body)document.body.appendChild(tip);
-    tip.innerHTML=chipTipRows(m);
+    tip.classList.toggle('interactive',currentStep===3);
+    tip.innerHTML=chipTipRows(m,idx);
     tip.classList.add('open');
     placeNearChip(el,tip,8);
   },80);
 }
+function scheduleHideChipTip(){
+  clearTimeout(chipTipTimer);
+  chipTipTimer=setTimeout(hideChipTip,160);
+}
 function hideChipTip(){
   clearTimeout(chipTipTimer);
   var tip=document.getElementById('chipTip');
-  if(tip)tip.classList.remove('open');
+  if(tip){
+    tip.classList.remove('open');
+    tip.classList.remove('interactive');
+  }
 }
 
-function openChipPop(event,idx){
-  event.stopPropagation();
-  hideChipTip();
-  if(dragging){dragging=false;return;}
-  var m=MEMBERS[idx];
-  var pop=document.getElementById('chipPop');
-  var tiles=CAP_OPTIONS.map(function(v){
-    var tone=v==='高'?'high':v==='中'?'mid':'low';
-    return '<button class="cap-opt '+tone+(m.capability===v?' on':'')+'" type="button" onclick="setCapability('+idx+',\''+v+'\');closeChipPop();">'+v+'</button>';
-  }).join('');
-  var abnMark=abnMarkHtml(m);
-  var abnLine=m.abnormalType
-    ?('<br><span style="color:var(--ro)">异常 · '+m.abnormalType+(m.abnormalReason?'：'+m.abnormalReason:'')+'</span>')
-    :'';
-  pop.innerHTML='<div class="chip-pop-name" style="display:inline-flex;align-items:center;gap:6px">'+abnMark+m.name+'</div><div class="chip-pop-meta">'+m.dept+' · '+m.role+'<br>审定绩效 '+(m.ratifyGrade||m.grade)+'（'+perfBand(m)+'）'+abnLine+'</div><div class="chip-pop-label">校准能力</div><div class="cap-seg">'+tiles+'</div>';
-  pop.classList.add('open');
-  placeNearChip(event.currentTarget,pop,8);
-}
-
-document.getElementById('chipPop').addEventListener('click',function(event){event.stopPropagation();});
+(function bindChipTipHover(){
+  var tip=document.getElementById('chipTip');
+  if(!tip)return;
+  tip.addEventListener('mouseenter',function(){clearTimeout(chipTipTimer);});
+  tip.addEventListener('mouseleave',scheduleHideChipTip);
+})();
 
 renderAll();
 

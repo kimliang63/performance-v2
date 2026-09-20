@@ -284,6 +284,7 @@ const STAGES=[
   {id:'interview',name:'绩效面谈',desc:'上级与员工面谈',enabled:true,status:'warn',flow:'绩效面谈流程',autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14}},
   {id:'eval',name:'绩效考核',desc:'考核人评分',enabled:true,status:'active',flow:'通用绩效考核流程',autoStart:{enabled:true,direction:'后',days:3},autoEnd:{enabled:true,direction:'后',days:30},scoreCalculation:{enabled:false,mode:''}},
   {id:'ratify',name:'结果审定',desc:'审定人调整等级',enabled:true,status:'pending',flow:'汇报线逐级审定',autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14}},
+  {id:'inventory',name:'绩效盘点',desc:'能力评价与九宫格校准',enabled:true,status:'pending',flow:'年度绩效盘点流程',autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14},calcInitialGrade:false,calcInitialCapability:false},
   {id:'confirm',name:'结果确认',desc:'员工确认绩效结果',enabled:true,status:'pending',flow:'员工确认流程',autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14}},
 ];
 
@@ -297,6 +298,7 @@ const FLOW_MODELS={
   goal:['通用目标制定流程','简化目标制定流程'],
   eval:['通用绩效考核流程','简化绩效考核流程'],
   ratify:['汇报线逐级审定','组织架构逐级审定'],
+  inventory:['年度绩效盘点流程','绩效&盘点逐级审定流程'],
   confirm:['员工确认流程'],
   interview:['绩效面谈流程'],
 };
@@ -369,7 +371,7 @@ const RATIFY_SUBMIT_MODES=['全部提交','单个提交','按部门提交','按�
 const TEMPLATES={
   '月度':{label:'月度绩效',stages:['goal','eval','ratify','confirm']},
   '半年度':{label:'半年度绩效',stages:['interview']},
-  '年度':{label:'年度绩效',stages:['interview','ratify','confirm']},
+  '年度':{label:'年度绩效',stages:['interview','ratify','inventory','confirm']},
 };
 
 let curTemplate='年度';
@@ -705,6 +707,7 @@ function renderStageDetail(ct){
   if(s.id==='goal') cfg=renderGoalCfg(s);
   else if(s.id==='eval') cfg=renderEvalCfg(s);
   else if(s.id==='ratify') cfg=renderRatifyCfg(s);
+  else if(s.id==='inventory') cfg=renderInventoryCfg(s);
   else if(s.id==='confirm') cfg=renderConfirmCfg(s);
   else if(s.id==='interview') cfg=renderInterviewCfg(s);
   else cfg=`<div class="form-hint">该环节待业务方确认后配置。</div>`;
@@ -896,6 +899,61 @@ function renderRatifyCfg(s){
       })()}
     </div>
   </div>`;
+}
+
+function renderInventoryCfg(s){
+  const models=FLOW_MODELS[s.id]||[];
+  const a=ensureStageAuto(s,'start');
+  const e=ensureStageAuto(s,'end');
+  if(typeof s.calcInitialGrade!=='boolean') s.calcInitialGrade=false;
+  if(typeof s.calcInitialCapability!=='boolean') s.calcInitialCapability=false;
+  return `<div class="form-row">
+    <div class="form-grp"><label class="form-lb">绑定流程模型</label>
+      <select class="form-input" onchange="form.stages.find(x=>x.id==='inventory').flow=this.value;render()">
+        ${models.map(m=>`<option ${s.flow===m?'selected':''}>${m}</option>`).join('')}
+      </select>
+      <div class="form-hint">绑定后按该流程驱动能力评价与九宫格校准</div>
+    </div>
+    <div class="form-grp"><label class="form-lb">自动开始</label>
+      <select class="form-input" onchange="updateStageAuto('${s.id}','start',this.value==='自动');render()">
+        <option ${a.enabled?'':'selected'}>手动</option>
+        <option ${a.enabled?'selected':''}>自动</option>
+      </select>
+    </div>
+  </div>
+  ${a.enabled?`<div id="timeRulePanel-start-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderStageTimingPanel('start',s)}</div>`:''}
+  <div class="form-row">
+    <div class="form-grp"><label class="form-lb">结束规则</label>
+      <select class="form-input" onchange="updateStageAuto('${s.id}','end',this.value==='定时自动结束');render()">
+        <option ${e.enabled?'':'selected'}>手动结束</option>
+        <option ${e.enabled?'selected':''}>定时自动结束</option>
+      </select>
+    </div>
+  </div>
+  ${e.enabled?`<div id="timeRulePanel-end-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderStageTimingPanel('end',s)}</div>`:''}
+  <div style="margin-top:16px;display:flex;flex-direction:column;gap:10px">
+    <div style="padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2);display:flex;align-items:center;justify-content:space-between;gap:16px">
+      <div>
+        <div style="font:600 13px/1.3 var(--f);color:var(--c9)">是否系统计算初评等级</div>
+        <div style="font:400 11px/1.5 var(--f);color:var(--c4);margin-top:4px">开启后由系统根据绩效结果自动给出盘点初评等级</div>
+      </div>
+      <div class="tog ${s.calcInitialGrade?'on':''}" onclick="toggleInventoryCalc('calcInitialGrade')"><div class="tog-track"><div class="tog-knob"></div></div></div>
+    </div>
+    <div style="padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2);display:flex;align-items:center;justify-content:space-between;gap:16px">
+      <div>
+        <div style="font:600 13px/1.3 var(--f);color:var(--c9)">是否系统计算初评能力</div>
+        <div style="font:400 11px/1.5 var(--f);color:var(--c4);margin-top:4px">开启后由系统根据 360/测评等数据自动给出初评能力档</div>
+      </div>
+      <div class="tog ${s.calcInitialCapability?'on':''}" onclick="toggleInventoryCalc('calcInitialCapability')"><div class="tog-track"><div class="tog-knob"></div></div></div>
+    </div>
+  </div>`;
+}
+
+function toggleInventoryCalc(field){
+  const s=form.stages.find(x=>x.id==='inventory');
+  if(!s||(field!=='calcInitialGrade'&&field!=='calcInitialCapability'))return;
+  s[field]=!s[field];
+  render();
 }
 
 function renderConfirmCfg(s){
