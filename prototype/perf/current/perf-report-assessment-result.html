@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR ONE - 测评结果</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;
+  --em:#10B981;--em50:#ECFDF5;--em700:#047857;
+  --ac:#F59E0B;--ac50:#FFFBEB;--ac700:#B45309;
+  --ro:#F43F5E;--ro50:#FFF1F2;
+  --vi:#8B5CF6;--vi50:#F5F3FF;
+  --c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;
+  --sf:#FFF;--bg:#FAFAF9;--dv:#F4F4F5;
+  --shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --r1:6px;--r2:8px;--r3:10px;
+  --f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --m:'JetBrains Mono','SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;line-height:1.5;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
+.btn svg{width:13px;height:13px}
+.btn-p{background:var(--pr);color:#FFF}.btn-p:hover{background:var(--pr700)}
+.btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
+
+.fl-bar{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fl-search{display:flex;align-items:center;gap:6px;background:var(--c0);border:1px solid var(--c2);border-radius:var(--r1);padding:0 10px;height:32px;min-width:200px}
+.fl-search:focus-within{background:var(--sf);border-color:var(--pr)}
+.fl-search svg{color:var(--c4);flex-shrink:0;width:13px;height:13px}
+.fl-search input{border:none;background:transparent;outline:none;font:13px/1 var(--f);width:100%;color:var(--c9)}
+.fl-search input::placeholder{color:var(--c4)}
+.fl-sel{height:32px;padding:0 28px 0 10px;border:1px solid var(--c2);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c7);background:var(--sf) url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center;appearance:none;cursor:pointer;outline:none;-webkit-appearance:none}
+.fl-sel:focus{border-color:var(--pr)}
+.fl-actions{display:flex;gap:6px;margin-left:auto}
+
+.tbl-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden;margin-bottom:16px}
+.tbl-head{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid var(--dv)}
+.tbl-title{font:600 14px/1 var(--f);color:var(--c9)}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:1100px}
+thead th{background:var(--c0);font:600 12px/1 var(--f);color:var(--c5);text-align:left;padding:10px 14px;border-bottom:1px solid var(--dv);white-space:nowrap}
+tbody td{font:400 13px/1.4 var(--f);color:var(--c7);padding:12px 14px;border-bottom:1px solid var(--dv);vertical-align:middle;white-space:nowrap}
+tbody tr:hover{background:var(--c0)}
+tbody tr:nth-child(even){background:var(--c0)}
+tbody tr:nth-child(even):hover{background:var(--pr50)}
+tbody tr:last-child td{border-bottom:none}
+.mono{font-family:var(--m);font-size:12px}
+.name-cell{font-weight:500;color:var(--c9)}
+.hint{font:400 11px/1 var(--f);color:var(--c4);margin-left:4px}
+
+.pg-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-top:1px solid var(--dv);font:400 12px/1 var(--f);color:var(--c5)}
+.pg-nav{display:flex;align-items:center;gap:4px}
+.pg-btn{width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;border:1px solid var(--c2);background:var(--sf);cursor:pointer;color:var(--c5);font:500 12px/1 var(--f)}
+.pg-btn:hover{border-color:var(--pr);color:var(--pr)}
+.pg-btn.on{background:var(--pr);border-color:var(--pr);color:#FFF}
+
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);padding:10px 16px;background:var(--c9);color:#fff;border-radius:var(--r1);font-size:12px;z-index:1000}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fi{animation:fi .25s ease forwards}
+@media(max-width:900px){.fl-search{width:100%;min-width:0}.fl-actions{margin-left:0;width:100%}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toast"></div>
+<script src="navigation.js?v=20260920-inv-assess"></script>
+<script>
+GHR_NAV.init('perf', '测评结果');
+
+var I={
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
+  download:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+  x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+};
+
+var YEAR='2026';
+var CYCLE='年度';
+var ACTIVITY='2026年度人才盘点测评';
+
+/* 仅已导入样本：360/测评字段对齐 demo-assess-batch-import + demo-yearly-tr */
+var RAW=[
+  {name:'谭刚伟',empId:'HR0001',dept:'产品部',role:'高级产品经理',group:'基层干部',assessScore:6.5,updatedAt:'2026-09-12 10:18'},
+  {name:'李洋杰',empId:'HR0002',dept:'运营部',role:'运营总监',group:'基层干部',assessScore:6.5,updatedAt:'2026-09-12 10:18'},
+  {name:'秦明涛',empId:'HR0003',dept:'运营部',role:'内容运营',group:'专员/主管',assessScore:8.5,updatedAt:'2026-09-15 14:32'},
+  {name:'孙军军',empId:'HR0004',dept:'产品部',role:'产品助理',group:'专员/主管',assessScore:8.1,updatedAt:'2026-09-12 10:18'},
+  {name:'夏涛阳',empId:'HR0007',dept:'设计部',role:'设计总监',group:'基层干部',assessScore:8.6,updatedAt:'2026-09-12 10:18'},
+  {name:'胡芳龙',empId:'HR0008',dept:'设计部',role:'设计总监',group:'基层干部',assessScore:7.0,updatedAt:'2026-09-15 14:32'},
+  {name:'姚辉静',empId:'HR0015',dept:'产品部',role:'高级产品经理',group:'基层干部',assessScore:9.7,updatedAt:'2026-09-12 10:18'},
+  {name:'阎瑞博',empId:'HR0016',dept:'技术部',role:'工程师',group:'专员/主管',assessScore:9.1,updatedAt:'2026-09-18 09:05'},
+  {name:'魏宁鹏',empId:'HR0020',dept:'运营部',role:'高级运营',group:'专员/主管',assessScore:5.5,updatedAt:'2026-09-15 14:32'},
+  {name:'钟皓丽',empId:'HR0029',dept:'产品部',role:'产品助理',group:'专员/主管',assessScore:5.8,updatedAt:'2026-09-12 10:18'},
+  {name:'萧玲刚',empId:'HR0038',dept:'产品部',role:'产品经理',group:'基层干部',assessScore:9.2,updatedAt:'2026-09-15 14:32'},
+  {name:'潘瑞龙',empId:'HR0048',dept:'运营部',role:'内容运营',group:'专员/主管',assessScore:9.5,updatedAt:'2026-09-12 10:18'},
+  {name:'孙雪红',empId:'HR0013',dept:'技术部',role:'前端工程师',group:'专员/主管',assessScore:8.0,updatedAt:'2026-09-18 09:05'},
+  {name:'李磊勇',empId:'HR0014',dept:'设计部',role:'UX设计师',group:'专员/主管',assessScore:9.0,updatedAt:'2026-09-18 09:05'},
+  {name:'赵宇玲',empId:'HR0021',dept:'产品部',role:'高级产品经理',group:'基层干部',assessScore:8.8,updatedAt:'2026-09-18 09:05'},
+  {name:'胡敏红',empId:'HR0010',dept:'运营部',role:'运营专员',group:'专员/主管',assessScore:7.6,updatedAt:'2026-09-18 09:05'},
+  {name:'董瑞萍',empId:'HR0011',dept:'产品部',role:'产品助理',group:'专员/主管',assessScore:7.8,updatedAt:'2026-09-18 09:05'}
+];
+
+function recomputeRanks(list){
+  var ranked=list.slice().sort(function(a,b){return b.assessScore-a.assessScore;});
+  ranked.forEach(function(m,i){m.rankAssess=i+1;});
+}
+
+var DATA=RAW.map(function(r){
+  return {
+    name:r.name,
+    empId:r.empId,
+    dept:r.dept,
+    role:r.role,
+    year:YEAR,
+    cycle:CYCLE,
+    activity:ACTIVITY,
+    group:r.group,
+    assessScore:r.assessScore,
+    updatedAt:r.updatedAt
+  };
+});
+recomputeRanks(DATA);
+
+var DEPTS=['全部','产品部','技术部','市场部','设计部','运营部'];
+var filter={search:'',dept:''};
+var currentPage=1;
+var pageSize=10;
+var filterTimer;
+
+function getFiltered(){
+  return DATA.filter(function(d){
+    if(filter.search&&d.name.indexOf(filter.search)===-1&&d.empId.indexOf(filter.search)===-1)return false;
+    if(filter.dept&&filter.dept!=='全部'&&d.dept!==filter.dept)return false;
+    return true;
+  });
+}
+
+function scoreCell(v){
+  if(v==null)return '<span style="color:var(--c4)">—</span>';
+  return '<span class="mono" style="font-weight:600;color:var(--c9)">'+v+'</span>';
+}
+function rankCell(v){
+  if(v==null)return '<span style="color:var(--c4)">—</span>';
+  return '<span class="mono">'+v+'</span>';
+}
+
+function render(){
+  var data=getFiltered();
+  var total=data.length;
+  var totalPages=Math.ceil(total/pageSize)||1;
+  if(currentPage>totalPages)currentPage=totalPages;
+  var start=(currentPage-1)*pageSize;
+  var page=data.slice(start,start+pageSize);
+
+  var deptOpts=DEPTS.map(function(d){return '<option value="'+d+'"'+(filter.dept===d||(!filter.dept&&d==='全部')?' selected':'')+'>'+d+'</option>';}).join('');
+
+  var html='<div class="fi">'+
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap">'+
+      '<div><h1 style="font:700 20px/1.2 var(--f);color:var(--c9)">测评结果</h1></div>'+
+      '<div style="display:flex;gap:8px"><button class="btn btn-p" onclick="showToast(\'正在导出当前 '+total+' 条测评结果\')">'+I.download+' 导出</button></div>'+
+    '</div>'+
+    '<div class="fl-bar">'+
+      '<div class="fl-search">'+I.search+'<input aria-label="搜索" placeholder="姓名或工号" value="'+filter.search+'" oninput="onSearch(this.value)"></div>'+
+      '<span style="font:500 12px/1 var(--f);color:var(--c5)">部门</span><select class="fl-sel" aria-label="部门" onchange="onDept(this.value)">'+deptOpts+'</select>'+
+      '<div class="fl-actions"><button class="btn btn-s" onclick="resetFilters()">'+I.x+' 重置</button></div>'+
+    '</div>'+
+    '<div class="tbl-card"><div class="tbl-head"><span class="tbl-title">测评结果明细</span></div>'+
+    '<div class="tbl-wrap"><table><thead><tr>'+
+      '<th>被考核人</th><th>工号</th><th>部门</th><th>职位</th><th>年份</th><th>周期</th><th>活动名称</th><th>考核组</th>'+
+      '<th>测评得分</th><th>测评排名</th><th>更新时间</th>'+
+    '</tr></thead><tbody>';
+
+  if(!page.length){
+    html+='<tr><td colspan="11" style="text-align:center;padding:48px;color:var(--c5)">暂无匹配数据，请调整筛选条件</td></tr>';
+  }
+  for(var i=0;i<page.length;i++){
+    var d=page[i];
+    html+='<tr>'+
+      '<td class="name-cell">'+d.name+'</td>'+
+      '<td class="mono">'+d.empId+'</td>'+
+      '<td>'+d.dept+'</td><td>'+d.role+'</td>'+
+      '<td class="mono">'+d.year+'</td><td>'+d.cycle+'</td><td>'+d.activity+'</td><td>'+d.group+'</td>'+
+      '<td>'+scoreCell(d.assessScore)+'</td><td>'+rankCell(d.rankAssess)+'</td>'+
+      '<td class="mono">'+d.updatedAt+'</td>'+
+      '</tr>';
+  }
+
+  html+='</tbody></table></div><div class="pg-bar"><span>第 '+(total?start+1:0)+'-'+Math.min(start+pageSize,total)+' 条，共 '+total+' 条</span><div class="pg-nav">';
+  for(var p=1;p<=totalPages;p++)html+='<button class="pg-btn'+(p===currentPage?' on':'')+'" onclick="goPage('+p+')">'+p+'</button>';
+  html+='</div></div></div></div>';
+  document.getElementById('app').innerHTML=html;
+}
+
+function onSearch(v){filter.search=v;currentPage=1;clearTimeout(filterTimer);filterTimer=setTimeout(render,160);}
+function onDept(v){filter.dept=v==='全部'?'':v;currentPage=1;render();}
+function goPage(p){currentPage=p;render();}
+function resetFilters(){filter={search:'',dept:''};currentPage=1;render();showToast('筛选条件已重置');}
+var toastTimer;function showToast(msg){clearTimeout(toastTimer);document.getElementById('toast').innerHTML='<div class="toast" role="status">'+msg+'</div>';toastTimer=setTimeout(function(){document.getElementById('toast').innerHTML='';},2200);}
+
+render();
+</script>
+</body>
+</html>

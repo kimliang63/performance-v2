@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HR ONE - 测评结果导入</title>
+<title>HR ONE - 初评等级导入</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--pr:#2563EB;--pr50:#F0F5FF;--pr100:#E0EAFF;--pr200:#C7D7FE;--pr700:#1D4ED8;--em:#10B981;--em50:#ECFDF5;--em700:#047857;--ac:#F59E0B;--ac50:#FFFBEB;--ac700:#B45309;--ro:#F43F5E;--ro50:#FFF1F2;--vi:#8B5CF6;--vi50:#F5F3FF;--c9:#18181B;--c8:#27272A;--c7:#3F3F46;--c6:#52525B;--c5:#71717A;--c4:#A1A1AA;--c3:#D4D4D8;--c2:#E4E4E7;--c1:#F4F4F5;--c0:#FAFAFA;--sf:#FFF;--bg:#FAFAF9;--dv:#F4F4F5;--shadow-card:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);--r1:6px;--r2:8px;--r3:10px;--r4:14px;--f:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;--m:'JetBrains Mono','SF Mono',monospace}
@@ -67,21 +67,21 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
     <span style="color:var(--c3)">/</span>
     <a href="demo-yearly-tr.html" style="color:var(--c5);text-decoration:none" onmouseover="this.style.color='var(--pr)'" onmouseout="this.style.color='var(--c5)'">年度盘点与绩效审定</a>
     <span style="color:var(--c3)">/</span>
-    <span style="color:var(--c8);font-weight:600">测评结果导入</span>
+    <span style="color:var(--c8);font-weight:600">初评等级导入</span>
   </nav>
 
   <div class="pg-hd-top">
     <div class="pg-hd-main">
-      <div class="pg-hd-title">测评结果导入</div>
+      <div class="pg-hd-title">初评等级导入</div>
     </div>
     <div class="pg-hd-right">
       <div class="pg-hd-summary">
         <span class="sum-value" id="hdActivityName">2026年度盘点与绩效审定</span>
         <span class="sum-sep">|</span>
-        <span class="sum-value">测评结果导入</span>
+        <span class="sum-value">初评等级导入</span>
       </div>
       <div class="pg-hd-actions">
-        <button class="btn btn-s" onclick="showToast('模板已下载（工号/姓名/360得分/测评得分）','success')">
+        <button class="btn btn-s" onclick="showToast('模板已下载（工号/姓名/初评等级）','success')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           下载模板
         </button>
@@ -89,7 +89,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           导入Excel
         </button>
-        <button class="btn btn-p" onclick="submitAssessImport()">
+        <button class="btn btn-p" onclick="submitGradeImport()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>
           提交
         </button>
@@ -115,7 +115,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 
   <div class="eval-list">
     <div style="padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between">
-      <span style="font:600 15px/1 var(--f);color:var(--c9)">测评结果列表</span>
+      <span style="font:600 15px/1 var(--f);color:var(--c9)">初评等级列表</span>
       <span id="listSummary" style="font:400 12px/1 var(--f);color:var(--c5)"></span>
     </div>
     <table>
@@ -125,10 +125,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
           <th style="width:90px">部门</th>
           <th style="width:110px">职位</th>
           <th style="width:90px">考核组</th>
-          <th style="width:88px">360得分<div class="hint">0–5</div></th>
-          <th style="width:72px">360排名</th>
-          <th style="width:88px">测评得分<div class="hint">0–10</div></th>
-          <th style="width:72px">测评排名</th>
+          <th style="width:120px">初评等级<div class="hint">等级规则枚举</div></th>
           <th style="width:80px">状态</th>
         </tr>
       </thead>
@@ -141,19 +138,23 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 <div class="toast" id="toast"></div>
 <script src="../navigation.js"></script>
 <script>
-GHR_NAV.init('perf', '测评结果导入');
+GHR_NAV.init('perf', '初评等级导入');
 (function initHdSummary(){
   var name=new URLSearchParams(location.search).get('activityName');
   var el=document.getElementById('hdActivityName');
   if(el&&name)el.textContent=name;
 })();
 
+var GRADE_OPTIONS=['远超预期','超出预期','符合预期+','符合预期','符合预期-','低于预期','远低预期'];
+var GRADE_COLORS={'远低预期':'var(--ro)','低于预期':'var(--ro)','符合预期-':'var(--ro)','符合预期':'var(--ac)','符合预期+':'var(--ac)','超出预期':'var(--em)','远超预期':'var(--em700)'};
+var GRADE_BG={'远低预期':'var(--ro50)','低于预期':'var(--ro50)','符合预期-':'var(--ro50)','符合预期':'var(--ac50)','符合预期+':'var(--ac50)','超出预期':'var(--em50)','远超预期':'var(--em50)'};
+
 var FLOW_STATUS_STYLE={
   '待导入':{bg:'var(--ac50)',color:'var(--ac700)'},
   '已导入':{bg:'var(--em50)',color:'var(--em700)'}
 };
 function statusOf(emp){
-  if(emp.score360!=null&&emp.assessScore!=null)return '已导入';
+  if(emp.grade)return '已导入';
   return '待导入';
 }
 function statusBadge(emp){
@@ -164,49 +165,42 @@ function statusBadge(emp){
 function empCell(emp){
   return '<div style="font-weight:500;color:var(--c8)">'+emp.name+'</div><div style="font:400 11px/1 var(--m);color:var(--c5);margin-top:3px">'+emp.employeeId+'</div>';
 }
-function scoreCell(v,empty){
-  if(v===null||v===undefined||v==='')return '<span style="color:var(--c4)">'+(empty||'—')+'</span>';
-  return '<span style="font-family:var(--m);font-weight:600;color:var(--c9)">'+v+'</span>';
+function gradeCell(g){
+  if(!g)return '<span style="color:var(--c4)">—</span>';
+  var color=GRADE_COLORS[g]||'var(--c7)';
+  var bg=GRADE_BG[g]||'var(--c1)';
+  return '<span style="font:500 12px/1 var(--f);padding:3px 8px;border-radius:3px;background:'+bg+';color:'+color+'">'+g+'</span>';
 }
 
 var EMPLOYEES=[
-  {name:'谭刚伟',employeeId:'HR0001',dept:'产品部',role:'高级产品经理',group:'基层干部',score360:null,assessScore:null},
-  {name:'李洋杰',employeeId:'HR0002',dept:'运营部',role:'运营总监',group:'基层干部',score360:3.2,assessScore:6.5},
-  {name:'秦明涛',employeeId:'HR0003',dept:'运营部',role:'内容运营',group:'专员/主管',score360:null,assessScore:null},
-  {name:'孙军军',employeeId:'HR0004',dept:'产品部',role:'产品助理',group:'专员/主管',score360:4.1,assessScore:8.1},
-  {name:'姚辉静',employeeId:'HR0015',dept:'产品部',role:'高级产品经理',group:'基层干部',score360:4.8,assessScore:9.7},
-  {name:'萧玲刚',employeeId:'HR0038',dept:'产品部',role:'产品经理',group:'基层干部',score360:null,assessScore:null},
-  {name:'潘瑞龙',employeeId:'HR0048',dept:'运营部',role:'内容运营',group:'专员/主管',score360:4.7,assessScore:9.5},
-  {name:'魏宁鹏',employeeId:'HR0020',dept:'运营部',role:'高级运营',group:'专员/主管',score360:null,assessScore:null},
-  {name:'钟皓丽',employeeId:'HR0029',dept:'产品部',role:'产品助理',group:'专员/主管',score360:2.9,assessScore:5.8},
-  {name:'胡芳龙',employeeId:'HR0008',dept:'设计部',role:'设计总监',group:'基层干部',score360:null,assessScore:null},
-  {name:'周峰博',employeeId:'HR0012',dept:'设计部',role:'UI设计师',group:'专员/主管',score360:null,assessScore:null},
-  {name:'许恒勇',employeeId:'HR0005',dept:'产品部',role:'产品总监',group:'基层干部',score360:null,assessScore:null},
-  {name:'夏涛阳',employeeId:'HR0007',dept:'设计部',role:'设计总监',group:'基层干部',score360:4.3,assessScore:8.6},
-  {name:'阎瑞博',employeeId:'HR0016',dept:'技术部',role:'工程师',group:'专员/主管',score360:null,assessScore:null}
+  {name:'谭刚伟',employeeId:'HR0001',dept:'产品部',role:'高级产品经理',group:'基层干部',grade:null},
+  {name:'李洋杰',employeeId:'HR0002',dept:'运营部',role:'运营总监',group:'基层干部',grade:'符合预期-'},
+  {name:'秦明涛',employeeId:'HR0003',dept:'运营部',role:'内容运营',group:'专员/主管',grade:null},
+  {name:'孙军军',employeeId:'HR0004',dept:'产品部',role:'产品助理',group:'专员/主管',grade:'符合预期'},
+  {name:'姚辉静',employeeId:'HR0015',dept:'产品部',role:'高级产品经理',group:'基层干部',grade:'远超预期'},
+  {name:'萧玲刚',employeeId:'HR0038',dept:'产品部',role:'产品经理',group:'基层干部',grade:null},
+  {name:'潘瑞龙',employeeId:'HR0048',dept:'运营部',role:'内容运营',group:'专员/主管',grade:'超出预期'},
+  {name:'魏宁鹏',employeeId:'HR0020',dept:'运营部',role:'高级运营',group:'专员/主管',grade:null},
+  {name:'钟皓丽',employeeId:'HR0029',dept:'产品部',role:'产品助理',group:'专员/主管',grade:'低于预期'},
+  {name:'胡芳龙',employeeId:'HR0008',dept:'设计部',role:'设计总监',group:'基层干部',grade:null},
+  {name:'周峰博',employeeId:'HR0012',dept:'设计部',role:'UI设计师',group:'专员/主管',grade:null},
+  {name:'许恒勇',employeeId:'HR0005',dept:'产品部',role:'产品总监',group:'基层干部',grade:null},
+  {name:'夏涛阳',employeeId:'HR0007',dept:'设计部',role:'设计总监',group:'基层干部',grade:'符合预期+'},
+  {name:'阎瑞博',employeeId:'HR0016',dept:'技术部',role:'工程师',group:'专员/主管',grade:null}
 ];
 
 var MOCK_IMPORT_ROWS=[
-  {employeeId:'HR0001',score360:3.2,assessScore:6.5},
-  {employeeId:'HR0003',score360:4.2,assessScore:8.5},
-  {employeeId:'HR0038',score360:4.6,assessScore:9.2},
-  {employeeId:'HR0020',score360:2.8,assessScore:5.5},
-  {employeeId:'HR0008',score360:3.5,assessScore:7.0},
-  {employeeId:'HR9999',score360:4.0,assessScore:8.0},
-  {employeeId:'HR0005',score360:5.5,assessScore:8.0},
-  {employeeId:'HR0014',score360:4.0,assessScore:12}
+  {employeeId:'HR0001',grade:'符合预期-'},
+  {employeeId:'HR0003',grade:'符合预期'},
+  {employeeId:'HR0038',grade:'超出预期'},
+  {employeeId:'HR0020',grade:'低于预期'},
+  {employeeId:'HR0008',grade:'符合预期'},
+  {employeeId:'HR9999',grade:'符合预期'},
+  {employeeId:'HR0005',grade:'超级优秀'},
+  {employeeId:'HR0012',grade:'远超预期'}
 ];
 
 var currentPage=1;var PAGE_SIZE=10;var currentStatus='全部';
-
-function recomputeRanks(){
-  var ranked360=EMPLOYEES.filter(function(e){return e.score360!=null;}).slice().sort(function(a,b){return b.score360-a.score360;});
-  ranked360.forEach(function(m,i){m.rank360=i+1;});
-  EMPLOYEES.forEach(function(e){if(e.score360==null)e.rank360=null;});
-  var rankedAssess=EMPLOYEES.filter(function(e){return e.assessScore!=null;}).slice().sort(function(a,b){return b.assessScore-a.assessScore;});
-  rankedAssess.forEach(function(m,i){m.rankAssess=i+1;});
-  EMPLOYEES.forEach(function(e){if(e.assessScore==null)e.rankAssess=null;});
-}
 
 function filterStatus(status,btn){
   currentStatus=status;currentPage=1;
@@ -228,7 +222,6 @@ function getFiltered(){
 function handleSearch(){currentPage=1;render();}
 
 function render(){
-  recomputeRanks();
   var filtered=getFiltered();
   var totalPages=Math.ceil(filtered.length/PAGE_SIZE)||1;
   if(currentPage>totalPages)currentPage=totalPages;
@@ -242,10 +235,7 @@ function render(){
       '<td>'+emp.dept+'</td>'+
       '<td>'+emp.role+'</td>'+
       '<td>'+emp.group+'</td>'+
-      '<td>'+scoreCell(emp.score360)+'</td>'+
-      '<td style="font-family:var(--m);color:var(--c7)">'+(emp.rank360||'—')+'</td>'+
-      '<td>'+scoreCell(emp.assessScore)+'</td>'+
-      '<td style="font-family:var(--m);color:var(--c7)">'+(emp.rankAssess||'—')+'</td>'+
+      '<td>'+gradeCell(emp.grade)+'</td>'+
       '<td>'+statusBadge(emp)+'</td>'+
     '</tr>';
   });
@@ -267,16 +257,10 @@ function render(){
 
 function goPage(p){currentPage=p;render();}
 
-function validateScore360(v){
-  var n=Number(v);
-  if(isNaN(n))return '360得分非数字';
-  if(n<0||n>5)return '360得分需在 0–5';
-  return '';
-}
-function validateAssess(v){
-  var n=Number(v);
-  if(isNaN(n))return '测评得分非数字';
-  if(n<0||n>10)return '测评得分需在 0–10';
+function validateGrade(v){
+  if(!v||String(v).trim()==='')return '初评等级不能为空';
+  var g=String(v).trim();
+  if(GRADE_OPTIONS.indexOf(g)<0)return '初评等级不在等级规则枚举内';
   return '';
 }
 
@@ -290,35 +274,34 @@ function handleImport(e){
       failed.push({line:lineNo,employeeId:row.employeeId,reason:'工号不在当前活动'});
       return;
     }
-    var e360=validateScore360(row.score360);
-    if(e360){failed.push({line:lineNo,employeeId:row.employeeId,name:emp.name,reason:e360});return;}
-    var eAssess=validateAssess(row.assessScore);
-    if(eAssess){failed.push({line:lineNo,employeeId:row.employeeId,name:emp.name,reason:eAssess});return;}
-    emp.score360=Math.round(Number(row.score360)*10)/10;
-    emp.assessScore=Math.round(Number(row.assessScore)*10)/10;
+    var err=validateGrade(row.grade);
+    if(err){failed.push({line:lineNo,employeeId:row.employeeId,name:emp.name,reason:err});return;}
+    emp.grade=String(row.grade).trim();
     success.push({line:lineNo,employeeId:row.employeeId,name:emp.name});
   });
   render();
   var msg='导入完成：成功 '+success.length+' 行，失败 '+failed.length+' 行';
   if(failed.length)msg+='；失败：'+failed.map(function(f){return f.employeeId+(f.name?'/'+f.name:'')+' '+f.reason;}).join('；');
   showToast(msg,failed.length?'warning':'success');
-  console.info('测评导入结果',{success:success,failed:failed});
+  console.info('初评等级导入结果',{success:success,failed:failed});
   e.target.value='';
 }
 
-function submitAssessImport(){
+function submitGradeImport(){
   var success=[];var failed=[];
   EMPLOYEES.forEach(function(emp){
-    if(emp.score360==null||emp.assessScore==null){
-      failed.push(emp.employeeId+'/'+emp.name+'：360或测评得分未填');
+    if(!emp.grade){
+      failed.push(emp.employeeId+'/'+emp.name+'：初评等级未填');
       return;
     }
+    var err=validateGrade(emp.grade);
+    if(err){failed.push(emp.employeeId+'/'+emp.name+'：'+err);return;}
     success.push(emp.employeeId+'/'+emp.name);
   });
   var msg='提交完成：'+success.length+' 人成功，'+failed.length+' 人失败';
   if(failed.length)msg+='；失败：'+failed.slice(0,5).join('；')+(failed.length>5?'…':'');
   showToast(msg,failed.length?'warning':'success');
-  console.info('测评正式提交校验结果',{success:success,failed:failed});
+  console.info('初评等级正式提交校验结果',{success:success,failed:failed});
 }
 function showToast(msg,type){var t=document.getElementById('toast');t.textContent=msg;t.className='toast '+(type||'success')+' show';setTimeout(function(){t.classList.remove('show')},4000);}
 render();

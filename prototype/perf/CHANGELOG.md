@@ -1,5 +1,136 @@
 # 变更记录
 
+## 2026-09-20 九宫格列表增加「提交状态」列
+
+- `current/manager/demo-yearly-tr.html`：`#boxListView` / 全屏格子列表在「绩效等级」左侧增加「提交状态」列，复用 `submitTagHtml`（未到达/待提交/已提交）。
+
+## 2026-09-20 审定/盘点列表「调整记录」列拆分
+
+- `current/manager/demo-yearly-tr.html`：审定列表 `th.col-level`「最近审定」改为「调整记录」（单元格结构不变）。
+- 人才盘点列表：`th.col-init-cap`「初评能力」仅保留能力 chip；右侧新增「能力调整记录」列（节点｜姓名｜工号 + from→to，跨 2 档展示原因）。
+
+## 2026-09-20 最近审定展示跨两档调整原因
+
+- `current/manager/demo-yearly-tr.html`：「最近审定」`div.ratify-last` 在跨 2 档且有 `adjustReason` / `lastRatifyAdj.reason` 时增加第三行「原因：xxx」；跨档弹窗确认写入同源字段；Mock 若干人预置原因便于演示。
+
+## 2026-09-20 测评结果导入页头对齐初评等级导入
+
+- `current/manager/demo-assess-batch-import.html`：去掉 `#activityContext` 长说明；页头改为 `pg-hd-top`（标题 + 活动摘要 + 下载模板/导入Excel/提交）；标题 / document.title / 面包屑 / GHR_NAV 统一为「测评结果导入」。
+- `current/perf-scenario-nav.html`、`current/demo-index.html`：入口文案同步为「测评结果导入」。
+
+## 2026-09-20 初评等级导入页标题精简
+
+- `current/manager/demo-grade-batch-import.html`：页标题 / document.title / 面包屑 / GHR_NAV 统一为「初评等级导入」。
+- `current/perf-scenario-nav.html`、`current/demo-index.html`：入口卡片标题同步为「初评等级导入」。
+
+## 2026-09-20 初评等级批量导入页头对齐通用表头
+
+- `current/manager/demo-grade-batch-import.html`：去掉 `#activityContext` 长说明；页头改为与表单页一致的 `pg-hd-top`（标题 + 活动摘要 + 下载模板/导入Excel/提交）。
+
+## 2026-09-20 年度绩效面谈页头精简
+
+- `current/employee/demo-interview-employee.html`：标题改为「年度绩效面谈」（同步 document.title / 面包屑 / GHR_NAV）；去掉 `pg-hd-info`；去掉「•••」更多与保存草稿；摘要改为「周期｜被考核人姓名」；仅保留提交。
+
+## 2026-09-20 绩效面谈表页头对齐目标制定
+
+- `current/employee/demo-interview-employee.html`：页头改为与目标制定页一致的吸顶标题栏；周期/面谈类型/填写中并入摘要；提交主按钮 + 「•••」更多（保存草稿）；考核方案等 6 项信息栅格保留在标题栏下方、随滚动收起。
+
+## 2026-09-20 跨档调整必填原因 + 九宫格操作列横排
+
+- `current/manager/demo-yearly-tr.html`：调整等级 / 校准能力当 `|新档-旧档|>=2` 时复用校准 Modal 强制填写调整原因；确认后写入 `adjustReason` / `adjHist`，取消不落档。
+- 九宫格列表与全屏列表操作列：「调整」「调整记录」统一 `btn btn-s btn-sm`，`action-stack` 改为横向排列。
+
+## 2026-09-20 确认页面谈内容去掉月度结果展示
+
+- `current/employee/demo-confirm-employee.html`：只读「面谈内容」去掉「月度绩效结果展示」12 个月卡片；保留标题、飞书链接、飞书总结截图；员工填写页不动。
+
+## 2026-09-20 结果确认页：得分明细 → 面谈内容；清理面谈上级/移动确认入口
+
+- `current/employee/demo-confirm-employee.html`：去掉「得分明细」表，同位置改为只读「面谈内容」（飞书链接、飞书总结截图），对齐员工面谈页结构。
+- 删除「确认面谈结果」入口与 `manager/demo-interview-direct.html`（得分明细不在该页，按原计划删页）。
+- 删除「移动端确认结果」入口与 `employee-mobile/mobile-confirm.html`。
+- 同步清理 `perf-scenario-nav.html`、`demo-index.html`、`demo-feishu-notify.html` 残留链接。
+
+## 2026-09-20 申诉弹窗去掉指标勾选
+
+- `current/employee/demo-confirm-employee.html`：绩效结果申诉弹窗删除 `#appealItemList` KPI/KPA 勾选列表与「已选 N 项」；提交仅校验申诉原因（≥10 字）；异议按钮提示改为「请填写申诉原因」（不再提异议项）。
+- 不以移动端确认页同步（该页已按删除意图移除）。
+
+## 2026-09-20 员工面谈表字段调整（飞书纪要）
+
+- `current/employee/demo-interview-employee.html`：去掉面谈确认、点三个赞、拍三个转、下阶段规划、需要的支持、附件；保留月度绩效结果展示与审批流程；在月度结果下方新增必填「飞书链接」「飞书总结截图」（含 Mock 预览与提交校验）。
+
+## 2026-09-20 场景导航清理：面谈移动端 + HRBP + 逐级校准/COE审批
+
+- 删除「HRBP 审批」入口与 `manager/demo-ratify-hrbp.html`。
+- 年度「逐级上级审批」改名为「逐级校准」；其下新增「COE/CHO 审批」→ `manager/demo-yearly-tr-approve.html`（`demo-yearly-tr.html?mode=approve`，九宫格只读 + 通过/驳回）。
+- 删除「移动端确认面谈」与 `manager-mobile/mobile-interview-direct.html`。
+- 删除「移动端填写面谈」与 `employee-mobile/mobile-interview.html`。
+
+## 2026-09-20 九宫格列表「调整记录」
+
+- `current/manager/demo-yearly-tr.html`：操作列在「调整」下增加「调整记录」，弹窗展示该员工历次调整（时间/操作人/类型/从→到/原因）；无记录空态；全屏格子列表共用。
+
+## 2026-09-20 导入年度绩效初评等级
+
+- `current/manager/demo-grade-batch-import.html`：新建初评等级批量导入页（工号/姓名核对 + 初评等级枚举校验，结构对齐测评导入）。
+- `current/perf-scenario-nav.html`：年度视角「管理者/上级」列在「导入测评结果」上方增加「导入年度绩效初评等级」。
+- `current/demo-index.html`：补初评等级批量导入入口。
+
+## 2026-09-20 盘点结果报表精简
+
+- `current/perf-report-inventory-result.html`：去掉顶部统计卡片、页头说明、「只看异常」、tbl-head 右侧数据截止说明与提交状态筛选；考核组左侧加年份/周期/绩效活动；去掉提交状态、考核得分、初评等级、最近审定、本节点是否调整、异常类型、上年盘点结果列。
+
+## 2026-09-20 测评结果报表精简
+
+- `current/perf-report-assessment-result.html`：去掉顶部卡片统计、页头说明与「去导入」；考核组左侧加年份/周期/活动名称；去掉测评工具/批次/360得分排名/测评等级/导入状态列；导入时间改为更新时间；仅展示已导入数据；tbl-head 只留「测评结果明细」。
+
+## 2026-09-20 九宫格分布达标提示 + 列表列合并
+
+- `current/manager/demo-yearly-tr.html`：`box9-hd` 增加绩效/能力是否符合强制分布提示（按筛选人数对照 `FORCE_DIST`/`CAP_FORCE`，拖人后刷新）；列表「调整历史」「调整原因」合并为「调整历史/原因」。
+
+## 2026-09-20 侧栏「盘点/测评结果」可见性复核
+
+- 根因：截图来自旧版 `navigation.js`（GitHub Pages / 浏览器缓存仍是 4 项：目标中心→绩效报表）；工作区 `navigation.js` 早已含两项，但未部署时线上侧栏不会出现。
+- `current/navigation.js`：`绩效报表` 分组 children 在「绩效报表」下为「盘点结果」「测评结果」（`perf-report-inventory-result.html` / `perf-report-assessment-result.html`）。
+- `current/perf-report-*.html`：`navigation.js?v=20260920-inv-assess` 强制刷新侧栏脚本，避免缓存旧菜单。
+- 本地实测：等级分布 / 盘点结果 / 测评结果三页侧栏均渲染 6 项，当前页高亮正确。
+
+## 2026-09-20 报表导航补全场景导航与总览入口
+
+- `current/perf-scenario-nav.html`：绩效报表区增加「盘点结果」「测评结果」入口。
+- `current/index.html`：V5 区增加盘点结果 / 测评结果卡片。
+
+## 2026-09-20 侧栏新增盘点结果 / 测评结果报表
+
+- `current/navigation.js`：绩效报表组在「绩效报表」下增加「盘点结果」「测评结果」。
+- `current/perf-report-inventory-result.html`：盘点结果报表（审定/能力/九宫格闭环字段）。
+- `current/perf-report-assessment-result.html`：测评结果报表（360/测评导入字段）。
+
+## 2026-09-20 提交状态统一三档
+
+- `current/manager/demo-yearly-tr.html`：提交状态全步骤统一为「未到达 / 待提交 / 已提交」（去掉「已到达」）；`#statusFilter`、列表 chip、统计 strip/图例与 Mock `status` 字段对齐人才盘点写法；原已到达按 `PENDING_SUBMIT` 映射为待提交或已提交。
+
+## 2026-09-20 状态列改名「提交状态」
+
+- `current/manager/demo-yearly-tr.html`：列表 `th.col-status`、筛选 `#statusFilterLabel`、统计 strip `aria-label` 中「状态/到达状态」统一为「提交状态」；枚举值（已到达/未到达/已提交等）不变。
+
+## 2026-09-20 最近审定/初评能力调整历史
+
+- `current/manager/demo-yearly-tr.html`：「最近审定」改为两行（节点｜姓名｜工号 + 等级 from→to）；「初评能力」保留 chip，有调整时下方同结构展示能力调整历史。
+
+## 2026-09-20 chip tip 增加上年盘点结果
+
+- `current/manager/demo-yearly-tr.html`：九宫格人员芯片 hover 卡片增加「上年盘点结果」列（格子序号 1–9）；成员 Mock 增加 `prevBox`。
+
+## 2026-09-20 已调 icon + 能力选中分色 + 原格数字标
+
+- `current/manager/demo-yearly-tr.html`：姓名旁「已调」改为红色编辑 icon（title 保留）；校准能力选中高绿/中橙/低红；九宫格芯片「原N」改为灰底白字数字标（拖回原格仍隐藏）。
+
+## 2026-09-20 本节点已调标识 + 下一步确认 + 原格角标
+
+- `current/manager/demo-yearly-tr.html`：被考核人列「已调」pill；校准能力/等级/九宫格调整写入 `nodeAdjusted`；下一步二次确认列出已调人员；芯片显示「原N」（本节点进入时格子）；`.cap-opt.on` 红底白字；逐级审定合并为「最近审定」单列。
+
 ## 2026-09-20 九宫格全屏 + 按空间铺满
 
 - `current/manager/demo-yearly-tr.html`：九宫格标题栏增加整图全屏；每格标题旁可单格全屏；收起态按格子可放空间尽量展示人员，放不下才出 `+N`，点击进入该格全屏看完整名单；筛选栏增加「只看异常」开关（步骤3）；列表/单格全屏右侧「调整」与拖拽共用校准弹窗（目标格子+等级+原因）；去掉 chip 点击卡片，异常信息在 hover 展示，「调整格子…」在 hover 卡片触发。

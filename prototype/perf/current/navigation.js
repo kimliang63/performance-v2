@@ -62,6 +62,8 @@ const GHR_NAV = {
         {n:'绩效结果',ic:'chart',file:'perf-report-results.html'},
         {n:'考核进度',ic:'chart',file:'perf-report-progress.html'},
         {n:'绩效报表',ic:'chart',file:'perf-report-distribution.html'},
+        {n:'盘点结果',ic:'chart',file:'perf-report-inventory-result.html'},
+        {n:'测评结果',ic:'chart',file:'perf-report-assessment-result.html'},
       ]},
       {n:'绩效表单',ic:'file',items:[
         {n:'业务流程演示',ic:'eye',file:'demo-index.html'},
