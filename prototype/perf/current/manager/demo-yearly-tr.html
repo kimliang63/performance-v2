@@ -86,7 +86,6 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .btn-danger{background:var(--ro50);color:var(--ro);border:1px solid var(--ro100)}
 .btn-danger:hover{background:var(--ro100)}
 body.approve-mode #stepper,
-body.approve-mode #prevBtn,
 body.approve-mode #primaryBtn,
 body.approve-mode #ratifyMoreBtn,
 body.approve-mode #distOverview,
@@ -199,11 +198,12 @@ body.approve-mode .box9-cell.drag-over{border-color:inherit;background:inherit}
 .step-work.split-lr.step-ratify .eval-list-scroll th,
 .step-work.split-lr.step-ratify .eval-list-scroll td{width:auto;padding-left:10px;padding-right:10px}
 .step-work.split-lr.step-ratify .eval-list-scroll .col-freeze-l{width:148px}
+.step-work.split-lr.step-ratify .eval-list-scroll .col-dept{width:88px}
 .step-work.split-lr.step-ratify .eval-list-scroll .col-status{width:96px}
-.step-work.split-lr.step-ratify .eval-list-scroll .col-score{width:72px}
 .step-work.split-lr.step-ratify .eval-list-scroll .col-init{width:88px}
 .step-work.split-lr.step-ratify .eval-list-scroll .col-level{width:268px}
 /* 盘点：初评能力仅 chip；能力调整记录单独列 */
+.step-work.split-lr.step-cap .eval-list-scroll .col-dept{width:88px}
 .step-work.split-lr.step-cap .eval-list-scroll .col-init-cap{width:72px}
 .step-work.split-lr.step-cap .eval-list-scroll .col-cap-adj{width:220px}
 .ratify-last{display:flex;flex-direction:column;gap:2px;align-items:flex-start;min-width:0}
@@ -211,13 +211,13 @@ body.approve-mode .box9-cell.drag-over{border-color:inherit;background:inherit}
 .ratify-last .ratify-chg{font:500 12px/1.3 var(--f);color:var(--c8);word-break:break-all}
 .ratify-last .ratify-from,.ratify-last .ratify-to{font-weight:600}
 .ratify-last .ratify-reason{font:400 11px/1.35 var(--f);color:var(--c5);word-break:break-all}
-.step-work.split-lr.step-ratify .eval-list-scroll .col-freeze-r{width:148px;padding-left:8px;padding-right:8px}
+.step-work.split-lr.step-ratify .eval-list-scroll .col-freeze-r{width:180px;padding-left:8px;padding-right:8px}
 .step-work.split-lr .eval-list .col-freeze-l{padding-left:16px;padding-right:10px}
 .step-work.split-lr .eval-list .col-freeze-r{padding-left:10px;padding-right:10px}
 .step-work.split-lr .col-freeze-r .cap-seg{display:flex;width:100%;max-width:100%}
 .step-work.split-lr .col-freeze-r .cap-opt{flex:1;min-width:0;padding:0 6px}
 .step-work.split-lr.step-ratify .col-freeze-r .star-rating{align-items:flex-start;width:auto}
-.step-work.split-lr.step-ratify .col-freeze-r .star-desc{display:none}
+.step-work.split-lr.step-ratify .col-freeze-r .star-desc{display:block;max-width:100%;white-space:normal;word-break:break-word}
 .step-work.split-lr.step-ratify .eval-list-scroll{scrollbar-width:thin}
 .step-work.split-lr.step-ratify .eval-list-scroll::-webkit-scrollbar{height:6px;width:6px;display:block}
 .step-work.split-lr.step-ratify .eval-list-scroll::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
@@ -577,7 +577,7 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 }
 
 .stepper{display:flex;align-items:center;gap:0}
-.step-item{display:flex;align-items:center;gap:8px;padding:0;border:0;background:transparent;cursor:pointer;font:500 12px/1 var(--f);color:var(--c5)}
+.step-item{display:flex;align-items:center;gap:8px;padding:0;border:0;background:transparent;cursor:default;font:500 12px/1 var(--f);color:var(--c5);pointer-events:none}
 .step-item .n{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:700 11px/1 var(--f);background:var(--c1);color:var(--c5)}
 .step-item.done .n{background:var(--pr50);color:var(--pr)}
 .step-item.active{color:var(--pr)}
@@ -788,22 +788,21 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
       <div class="pg-hd-stack">
         <h1 class="pg-hd-title" id="pageTitle">年度盘点与绩效审定</h1>
         <div class="stepper" id="stepper" aria-label="办理步骤">
-          <button class="step-item active" type="button" data-step="1" onclick="goStep(1)"><span class="n">1</span>绩效审定</button>
+          <div class="step-item active" data-step="1"><span class="n">1</span>绩效审定</div>
           <span class="step-line"></span>
-          <button class="step-item" type="button" data-step="2" onclick="goStep(2)"><span class="n">2</span>人才盘点</button>
+          <div class="step-item" data-step="2"><span class="n">2</span>人才盘点</div>
           <span class="step-line"></span>
-          <button class="step-item" type="button" data-step="3" onclick="goStep(3)"><span class="n">3</span>九宫格校准</button>
+          <div class="step-item" data-step="3"><span class="n">3</span>九宫格校准</div>
         </div>
       </div>
     </div>
     <div class="pg-hd-right">
-      <div class="pg-hd-summary" aria-label="审定上下文"><span class="sum-value">2026年度</span><span class="sum-sep">|</span><span class="sum-value" id="stepSummary">逐级上级 · 绩效审定</span></div>
+      <div class="pg-hd-summary" aria-label="审定上下文"><span class="sum-value">2026年度</span></div>
       <div class="pg-hd-actions">
         <button class="btn btn-s" type="button" onclick="openRulesModal()" title="查看2026年度人才盘点说明">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
           盘点规则
         </button>
-        <button class="btn btn-s" id="prevBtn" type="button" onclick="goStep(currentStep-1)" style="display:none">上一步</button>
         <button class="btn btn-p" id="primaryBtn" type="button" onclick="requestPrimary()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>下一步</button>
         <button class="btn btn-danger btn-sm" id="approveRejectBtn" type="button" onclick="openApproveRejectModal()" style="display:none">驳回</button>
         <button class="btn btn-p" id="approvePassBtn" type="button" onclick="approvePass()" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>通过</button>
@@ -1535,6 +1534,15 @@ function markNodeAdjusted(m,hintSummary){
   ensureNodeOrig(m);
   syncNodeAdjusted(m,hintSummary);
 }
+/* mock：审定步仅留少数人未填等级，便于「下一步」必填校验演示；须在 nodeOrig 快照前写入 */
+var DEMO_UNFILLED_GRADE=['秦明涛','许恒勇','王波蝶'];
+(function seedDemoUnfilledGrade(){
+  MEMBERS.forEach(function(m){
+    if(!m.reached||m.ratifyGrade)return;
+    if(DEMO_UNFILLED_GRADE.indexOf(m.name)>=0)return;
+    m.ratifyGrade=m.grade||m.indirectGrade||'符合预期';
+  });
+})();
 (function seedNodeAdjusted(){
   MEMBERS.forEach(function(m){
     m.nodeAdjusted=false;
@@ -1697,6 +1705,7 @@ function ensureCapListLayout(){
         '<div class="stats-block" data-domain="cap">'+
           '<div class="stats-block-title">能力</div>'+
           '<div class="list-stats" id="listStatsCap"></div>'+
+          /* #capBars ECharts 映射见 manager/cap-bars-echarts-data.js */
           '<div class="cap-bars" id="capBars" aria-label="能力分布"></div>'+
         '</div>'+
       '</div>';
@@ -1705,6 +1714,7 @@ function ensureCapListLayout(){
     grid.innerHTML='<div class="list-stats-col">'+
       '<div class="submit-strip" id="submitStrip" role="group" aria-label="提交状态"></div>'+
       '<div class="list-stats" id="listStats"></div>'+
+      /* #capBars ECharts 映射见 manager/cap-bars-echarts-data.js */
       '<div class="cap-bars" id="capBars" aria-label="能力分布"></div>'+
     '</div>';
   }
@@ -1723,6 +1733,9 @@ function syncStatsViewUI(){
   col.querySelectorAll('.cap-bars').forEach(function(el){el.style.display=showTable?'none':'';});
 }
 
+/* 能力分布 ECharts 数据结构（不改本页自定义条形图）：
+ * manager/cap-bars-echarts-data.js → buildCapBarsEchartsOption(getCapDistData())
+ * series: current=after | beforeAdjust=before | standard=mid | 区间=min–max */
 function getCapDistData(){
   var capLabels=CAP_OPTIONS;
   var globalReached=MEMBERS.filter(function(m){return m.reached;});
@@ -2249,13 +2262,13 @@ function renderHead(){
   var distTitle=document.getElementById('distPanelTitle');
   if(currentStep===2){
     title.textContent='团队成员盘点';
-    head.innerHTML='<tr><th class="col-freeze-l">被考核人</th><th>提交状态</th><th>360得分</th><th>360排名</th><th>测评得分</th><th>测评排名</th><th class="col-init-cap">初评能力</th><th class="col-cap-adj">能力调整记录</th><th class="col-freeze-r">校准能力</th></tr>';
+    head.innerHTML='<tr><th class="col-freeze-l">被考核人</th><th class="col-dept">部门</th><th class="col-status">提交状态</th><th>360得分</th><th>360排名</th><th>测评得分</th><th>测评排名</th><th class="col-init-cap">初评能力</th><th class="col-cap-adj">能力调整记录</th><th class="col-freeze-r">校准能力</th></tr>';
   }else if(currentStep===3){
     distTitle.textContent='绩效与能力分布';
   }else{
     title.textContent='团队成员审定';
     distTitle.textContent='等级分布';
-    head.innerHTML='<tr><th class="col-freeze-l">被考核人</th><th class="col-status">提交状态</th><th class="col-score">考核得分</th><th class="col-init">初评等级</th><th class="col-level">调整记录</th><th class="col-freeze-r">调整等级</th></tr>';
+    head.innerHTML='<tr><th class="col-freeze-l">被考核人</th><th class="col-dept">部门</th><th class="col-status">提交状态</th><th class="col-init">初评等级</th><th class="col-level">调整记录</th><th class="col-freeze-r">调整等级</th></tr>';
   }
   syncOnlyUnfilledUI();
   syncOnlyAbnormalUI();
@@ -2384,7 +2397,8 @@ function renderMembers(){
     if(currentStep===2){
       html+='<tr>'+
         memberFreezeCellHtml(m,idx)+
-        '<td>'+submitTagHtml(m)+'</td>'+
+        '<td class="col-dept">'+m.dept+'</td>'+
+        '<td class="col-status">'+submitTagHtml(m)+'</td>'+
         '<td><span style="font-family:var(--m);font-weight:600;color:var(--c9)">'+(m.reached?m.score360:'—')+'</span></td>'+
         '<td style="font-family:var(--m);color:var(--c7)">'+(m.reached?m.rank360:'—')+'</td>'+
         '<td><span style="font-family:var(--m);font-weight:600;color:var(--c9)">'+(m.reached?m.assessScore:'—')+'</span></td>'+
@@ -2397,8 +2411,8 @@ function renderMembers(){
     }
     html+='<tr>'+
       memberFreezeCellHtml(m,idx)+
+      '<td class="col-dept">'+m.dept+'</td>'+
       '<td class="col-status">'+submitTagHtml(m)+'</td>'+
-      '<td class="col-score"><span style="font-family:var(--m);font-weight:600;color:var(--c9)">'+m.totalScore+'</span></td>'+
       '<td class="col-init">'+gradeTextHtml(m.grade)+'</td>'+
       '<td class="col-level">'+lastRatifyHtml(m)+'</td>';
     if(m.reached){
@@ -2774,14 +2788,12 @@ function updateStepUI(){
     btn.classList.toggle('active',n===currentStep);
     btn.classList.toggle('done',n<currentStep);
   });
-  document.getElementById('prevBtn').style.display=currentStep===1?'none':'';
   var primary=document.getElementById('primaryBtn');
   if(currentStep===3){
     primary.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>提交';
   }else{
     primary.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>下一步';
   }
-  document.getElementById('stepSummary').textContent=currentStep===1?'逐级上级 · 绩效审定':currentStep===2?'逐级上级 · 人才盘点':'逐级上级 · 九宫格校准';
 }
 
 function applyApproveMode(){
@@ -2792,8 +2804,6 @@ function applyApproveMode(){
   if(crumb)crumb.textContent='COE/CHO 审批';
   var title=document.getElementById('pageTitle');
   if(title)title.textContent='COE/CHO 审批';
-  var sum=document.getElementById('stepSummary');
-  if(sum)sum.textContent='COE/CHO · 九宫格审批';
   var passBtn=document.getElementById('approvePassBtn');
   var rejectBtn=document.getElementById('approveRejectBtn');
   if(passBtn)passBtn.style.display='';
@@ -2853,6 +2863,8 @@ function confirmApproveReject(){
 function goStep(step){
   if(APPROVE_MODE)step=3;
   if(step<1||step>3)return;
+  /* 三步不可回退：仅允许前进或停留，禁止回到更早步骤 */
+  if(step<currentStep)return;
   var prev=currentStep;
   currentStep=step;
   currentGrade=null;
@@ -2880,7 +2892,90 @@ function getNodeAdjustedMembers(){
   return MEMBERS.filter(function(m){return m.reached&&m.nodeAdjusted;});
 }
 
+function formatPersonNames(names){
+  if(!names||!names.length)return '';
+  if(names.length<=3)return names.join('、');
+  return names.slice(0,2).join('、')+'等'+names.length+'人';
+}
+
+function reachedMembers(){
+  return MEMBERS.filter(function(m){return m.reached;});
+}
+
+function getMissingRatifyGrade(){
+  return reachedMembers().filter(function(m){return !m.ratifyGrade;});
+}
+
+function getMissingCapability(){
+  return reachedMembers().filter(function(m){return !m.capability;});
+}
+
+function getMissingCrossGradeReason(){
+  return reachedMembers().filter(function(m){
+    if(!m.ratifyGrade||!m.grade)return false;
+    if(tierGap(gradeTierIndex(m.grade),gradeTierIndex(m.ratifyGrade))<2)return false;
+    var reason=(m.adjustReason||(m.lastRatifyAdj&&m.lastRatifyAdj.reason)||'').trim();
+    return !reason;
+  });
+}
+
+function getForceDistFailGrades(rules,countOf,total){
+  if(!total)return [];
+  var fails=[];
+  rules.forEach(function(r){
+    var count=countOf(r.grade);
+    var minCount=Math.ceil(total*r.min/100);
+    var maxCount=Math.floor(total*r.max/100);
+    if(count<minCount||count>maxCount)fails.push(r.grade);
+  });
+  return fails;
+}
+
+function getForceDistBlockMsg(){
+  var pool=getDistributionMembers();
+  var gradeTotal=pool.length;
+  var gradeFails=getForceDistFailGrades(FORCE_DIST,function(g){
+    return pool.filter(function(m){return(m.ratifyGrade||m.grade)===g;}).length;
+  },gradeTotal);
+  var reached=pool.filter(function(m){return m.reached&&m.capability;});
+  var capFails=getForceDistFailGrades(CAP_FORCE,function(g){
+    return reached.filter(function(m){return m.capability===g;}).length;
+  },reached.length);
+  var parts=[];
+  if(gradeFails.length)parts.push('绩效 '+(gradeFails.length<=3?gradeFails.join('、'):gradeFails.slice(0,2).join('、')+'等'));
+  if(capFails.length)parts.push('能力 '+(capFails.length<=3?capFails.join('、'):capFails.slice(0,2).join('、')+'等'));
+  if(!parts.length)return '';
+  return '强制分布未达标（'+parts.join('；')+'），无法提交';
+}
+
+/** 当前步必填 / 强控；未通过返回提示文案 */
+function getPrimaryBlockMsg(){
+  if(currentStep===1){
+    var noGrade=getMissingRatifyGrade();
+    if(noGrade.length)return '请先完成绩效等级：'+formatPersonNames(noGrade.map(function(m){return m.name;}))+'未填写';
+    var noReason=getMissingCrossGradeReason();
+    if(noReason.length)return '请先填写跨两档调整原因：'+formatPersonNames(noReason.map(function(m){return m.name;}));
+    return '';
+  }
+  if(currentStep===2){
+    var noCap=getMissingCapability();
+    if(noCap.length)return '请先完成能力校准：'+formatPersonNames(noCap.map(function(m){return m.name;}))+'未填写';
+    return '';
+  }
+  /* step 3 提交 */
+  var stillNoCap=getMissingCapability();
+  if(stillNoCap.length)return '请先完成能力校准：'+formatPersonNames(stillNoCap.map(function(m){return m.name;}))+'未填写';
+  var stillNoGrade=getMissingRatifyGrade();
+  if(stillNoGrade.length)return '请先完成绩效等级：'+formatPersonNames(stillNoGrade.map(function(m){return m.name;}))+'未填写';
+  return getForceDistBlockMsg();
+}
+
 function requestPrimary(){
+  var block=getPrimaryBlockMsg();
+  if(block){
+    showToast(block,'warn');
+    return;
+  }
   openNextConfirm();
 }
 
@@ -3697,7 +3792,7 @@ function memberTipRows(m){
     ['部门',m.dept],
     ['职位',m.role],
     ['职级',m.level],
-    ['司龄',m.tenure],
+    ['累计司龄(年)',m.tenure],
     ['考核组',m.group],
     ['划分区域',m.region]
   ];

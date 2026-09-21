@@ -1,5 +1,82 @@
 # 变更记录
 
+## 2026-09-21 九宫格绩效绑定改为多选
+
+- `current/perf-scheme-wizard.html`：九宫格格内「绩效」由单选下拉改为与同页假种一致的 **多选**（`leave-ms` 标签+勾选菜单）；`nineBox.perfGrade` 改为等级名数组（旧单值自动包成单元素数组）；能力侧仍单选高/中/低；同能力下等级互斥。
+
+## 2026-09-21 能力强制分布补「提交方式」（仅全部提交）
+
+- `current/perf-scheme-wizard.html`：绩效盘点能力侧强制分布由双列改为与绩效侧一致的 **三联**（关联规则 / 控制模式 / 提交方式）；提交方式固定「全部提交」（disabled 单选项），写入 stage `capForcedDistSubmit`。
+
+## 2026-09-21 盘点初评能力开关去卡片 + 去掉九宫格轴说明
+
+- `current/perf-scheme-wizard.html`：绩效盘点「是否系统计算初评能力」改为与同页「自动创建活动」一致的标签+开关行（去掉灰底边框大卡片与说明文案）；九宫格标题下删除 `form-hint`（「纵轴绩效…」）。
+
+## 2026-09-21 去掉盘点强制分布标题下说明文案
+
+- `current/perf-scheme-wizard.html`：绩效盘点「强制分布规则」标题下删除 `form-hint`（「绩效侧对齐结果审定…」）。
+
+## 2026-09-21 盘点强制分布对齐审定骨架（绩效+能力双套）
+
+- `current/perf-scheme-wizard.html`：绩效盘点「盘点强制分布规则绑定」双下拉改为对齐结果审定的 **强制分布规则** 骨架——**绩效侧**：关联强制分布规则 / 控制模式 / 提交方式 + 比例预览表；**能力侧**平行：关联规则 / 控制模式 + 区间预览表（口径沿用 `CAP_FORCE`，不演算）。
+- state：`perfForcedDistRule` → stage `forcedDistRule` + `forcedDistControl` + `inventorySubmitMode`；保留 `capForcedDistRule`，新增 `capForcedDistControl`；旧字段兼容迁移后删除。
+
+## 2026-09-21 年度模板：结果审定与绩效盘点互斥（不再隐藏审定）
+
+- `current/perf-scheme-wizard.html`：设置弹窗恢复展示「结果审定」；与「绩效盘点」互斥——开启其一则关闭另一项并 toast 提示；年度默认仍为面谈→盘点→确认（审定默认关）；侧栏/表单区随勾选显隐同步。
+
+## 2026-09-21 九宫格看板名称旁展示系统默认序号
+
+- `current/perf-scheme-wizard.html`：九宫格看板每格名称 input 旁增加只读 **系统默认序号 1–9**（与 `BOX_KEYS_ORDER` / `nineBox` 顺序一致，如「老黄牛」=4），不参与名称编辑。
+
+## 2026-09-21 方案向导九宫格改为 3×3 看板
+
+- `current/perf-scheme-wizard.html`：绩效盘点「九宫格格子命名与绑定」由表格改为可编辑 **3×3 看板**（色块/轴标签对齐 `demo-yearly-tr`：纵轴绩效上高→下低，横轴能力左低→右高）；格内改名与绑定绩效等级×能力，仍写入 `nineBox`；换绩效等级规则时选项同步。
+
+## 2026-09-21 九宫格绑定改为具体绩效等级名
+
+- `current/perf-scheme-wizard.html`：盘点九宫格表「绩效档」改为 **绩效等级** 下拉（选项=方案所选「绩效等级」规则的包含等级）；能力侧仍为高/中/低。state 字段 `perf` → `perfGrade`（`key`=`perfGrade-capability`）。默认九格按坐标轴映射：高→远超预期/超出预期、中→符合预期±、低→低于/远低预期（对齐 `demo-yearly-tr` `gradesForBand`）；切换绩效等级规则时重建默认九格。
+
+## 2026-09-21 方案向导：绩效/能力等级 + 盘点强制分布与九宫格
+
+- `current/perf-scheme-wizard.html`：基本信息区原「强制分布规则」区块标题改为 **绩效/能力等级**（其下仍为绩效等级 / 盘点能力规则）。
+- 绩效盘点环节配置新增 **盘点强制分布规则绑定**（绩效强制分布、能力强制分布下拉 + 说明，写入 stage `perfForcedDistRule` / `capForcedDistRule`）与 **九宫格**（九格命名 + 绩效等级×能力高/中/低绑定，默认格名复用 `demo-yearly-tr.html` 的 `BOX_NAMES`，写入 `nineBox`；绩效侧字段见同日「九宫格绑定改为具体绩效等级名」）。
+
+## 2026-09-21 方案向导去掉「系统计算初评等级」
+
+- `current/perf-scheme-wizard.html`：绩效盘点环节配置移除「是否系统计算初评等级」开关及 `calcInitialGrade` 默认值/归一化/`toggleInventoryCalc` 分支；保留「是否系统计算初评能力」。
+
+## 2026-09-21 方案向导：盘点能力规则 + 年度无审定
+
+- `current/perf-scheme-wizard.html`：年度绩效模板默认环节 **面谈 → 盘点 → 确认**（设置弹窗隐藏独立「结果审定」；月度仍保留审定）。
+- 基本信息「强制分布规则」区：标签「等级规则 *」改为「绩效等级 *」；开启「绩效盘点」时其下增加「盘点能力规则」下拉（mock「标准三档能力」）+「包含能力」高/中/低 chips；关闭盘点则隐藏（仅规则选择与档位展示，无强制分布比例算法）。
+
+## 2026-09-21 审定「调整等级」补回等级说明文案
+
+- `current/manager/demo-yearly-tr.html`：右冻结「调整等级」列取消隐藏 `.star-desc`；文案沿用月度逐级审定 `STAR_DESC_RATIFY`（同源 `demo-ratify-direct.html` / `demo-ratify-hierarchy.html`）；列宽 148→180px 以容纳说明换行。星级逻辑与等级枚举未改。
+
+## 2026-09-21 年度 TR：去掉上一步 + 下一步必填点名
+
+- `current/manager/demo-yearly-tr.html`：删除 `#prevBtn`「上一步」及显示逻辑；步骤条改为不可点击（三步不可回退，仅经主按钮前进）。
+- 同页 `#primaryBtn`/`requestPrimary`：切步/提交前必填校验并 toast 点名未填人（审定=`ratifyGrade`+跨两档原因；盘点/九宫格=`capability`；提交另加强制分布强控）；Mock 审定仅留秦明涛/许恒勇/王波蝶未填等级便于演示。
+
+## 2026-09-21 页头摘要去掉环节文案
+
+- `current/manager/demo-yearly-tr.html`：`pg-hd-summary` 移除 `#stepSummary`（「逐级上级 · 绩效审定」等）及分隔符 `|`；同步删除切步/审批模式中对 `stepSummary` 的赋值；保留「2026年度」。
+
+## 2026-09-21 审定/盘点列表增加「部门」列
+
+- `current/manager/demo-yearly-tr.html`：`#memberHead` 在 `th.col-status`「提交状态」左侧增加「部门」；`#memberBody` 展示 `MEMBERS.dept`；不冻结，随滚动区与 status 同区；`renderHead` / `renderMembers` 审定与盘点同源同步。
+
+## 2026-09-21 能力分布图补充 ECharts 数据结构
+
+- 新增 `current/manager/cap-bars-echarts-data.js`：`buildCapBarsEchartsOption(stats)` 从 `getCapDistData()` 组装 bar+调整前/标准折线（区间用 min–max markArea，标准点用 mid）；不改现有 `#capBars` 自定义渲染。
+
+## 2026-09-21 审定列表去掉「考核得分」；司龄改名
+
+- `current/manager/demo-yearly-tr.html`：团队成员审定列表删除 `th.col-score`「考核得分」及对应单元格；清理仅服务该列的宽度 CSS。盘点列表 / 九宫格未改。
+- 同表被考核人 hover 标签「司龄」改为「累计司龄(年)」（仅展示文案，字段与取值不变）。
+
 ## 2026-09-20 九宫格列表增加「提交状态」列
 
 - `current/manager/demo-yearly-tr.html`：`#boxListView` / 全屏格子列表在「绩效等级」左侧增加「提交状态」列，复用 `submitTagHtml`（未到达/待提交/已提交）。

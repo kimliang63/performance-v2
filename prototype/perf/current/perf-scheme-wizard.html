@@ -130,6 +130,46 @@ textarea.form-input{height:auto;padding:8px 10px;resize:vertical;min-height:60px
 .tbl .act button.del:hover{background:var(--ro50);color:var(--ro)}
 .tbl .act button svg{width:14px;height:14px}
 
+/* ═══ 九宫格看板（对齐 demo-yearly-tr：绩效纵×能力横） ═══ */
+.wiz-box9-board{padding:14px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)}
+.wiz-box9-grid{display:grid;grid-template-columns:44px repeat(3,minmax(0,1fr));grid-template-rows:22px repeat(3,minmax(128px,1fr));gap:6px;min-height:420px}
+.wiz-box9-x,.wiz-box9-y{font:600 11px/1 var(--f);color:var(--c6);display:flex;align-items:center;justify-content:center;gap:2px}
+.wiz-box9-y{writing-mode:vertical-rl;text-orientation:upright;letter-spacing:.08em}
+.wiz-box9-lvl.high{color:var(--em)}
+.wiz-box9-lvl.mid{color:var(--ac)}
+.wiz-box9-lvl.low{color:var(--ro)}
+.wiz-box9-cell{border-radius:var(--r2);padding:8px;min-height:0;display:flex;flex-direction:column;gap:6px;box-sizing:border-box;overflow:visible}
+.wiz-box9-cell[data-cell="高-高"],
+.wiz-box9-cell[data-cell="高-中"],
+.wiz-box9-cell[data-cell="中-高"]{background:var(--em50);border:1px solid #A7F3D0}
+.wiz-box9-cell[data-cell="中-中"],
+.wiz-box9-cell[data-cell="高-低"],
+.wiz-box9-cell[data-cell="低-高"]{background:var(--pr50);border:1px solid var(--pr200)}
+.wiz-box9-cell[data-cell="中-低"],
+.wiz-box9-cell[data-cell="低-中"],
+.wiz-box9-cell[data-cell="低-低"]{background:var(--ro50);border:1px solid #FECDD3}
+.wiz-box9-name-row{display:flex;align-items:center;gap:6px;min-width:0}
+.wiz-box9-seq{flex:0 0 auto;width:20px;height:20px;border-radius:var(--r1);display:inline-flex;align-items:center;justify-content:center;font:600 11px/1 var(--f);color:var(--c6);background:rgba(255,255,255,.9);border:1px solid rgba(0,0,0,.06);user-select:none;pointer-events:none}
+.wiz-box9-name{height:30px;padding:0 8px;border:1px solid rgba(255,255,255,.7);border-radius:var(--r1);font:600 13px/1 var(--f);color:var(--c8);background:rgba(255,255,255,.85);outline:none;width:100%;min-width:0;flex:1}
+.wiz-box9-name:focus{border-color:var(--pr);background:#FFF}
+.wiz-box9-binds{display:flex;flex-direction:column;gap:4px;margin-top:auto}
+.wiz-box9-bind{display:grid;grid-template-columns:36px 1fr;align-items:start;gap:4px}
+.wiz-box9-bind-lb{font:500 10px/1 var(--f);color:var(--c5);padding-top:9px}
+.wiz-box9-bind select{height:28px;padding:0 22px 0 6px;border:1px solid rgba(255,255,255,.7);border-radius:var(--r1);font:400 12px/1 var(--f);color:var(--c8);background:rgba(255,255,255,.85);outline:none;width:100%;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 6px center;background-color:rgba(255,255,255,.85)}
+.wiz-box9-bind select:focus{border-color:var(--pr);background-color:#FFF}
+.wiz-box9-bind .leave-ms{min-width:0;width:100%;flex:none}
+.wiz-box9-bind .leave-ms-trigger{min-height:28px;padding:3px 22px 3px 6px;border-color:rgba(255,255,255,.7);background:rgba(255,255,255,.85);font-size:11px;gap:3px}
+.wiz-box9-bind .leave-ms.open .leave-ms-trigger{border-color:var(--pr);background:#FFF}
+.wiz-box9-bind .leave-ms-tag{height:18px;padding:0 5px;font:500 10px/18px var(--f);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wiz-box9-bind .leave-ms-menu{z-index:40;max-height:180px}
+.wiz-box9-bind .leave-ms-opt{font-size:11px;padding:5px 8px}
+@media (max-width:640px){
+  .wiz-box9-grid{grid-template-columns:1fr;grid-template-rows:none;min-height:0}
+  .wiz-box9-y{writing-mode:horizontal-tb;letter-spacing:0;justify-content:flex-start;padding:4px 0 0}
+  .wiz-box9-x{display:none}
+  .wiz-box9-x.corner{display:none}
+}
+
 /* ═══ TOGGLE ═══ */
 .tog{display:flex;align-items:center;gap:8px;cursor:pointer}
 .tog-track{width:36px;height:20px;background:var(--c3);border-radius:10px;position:relative;transition:background .15s}
@@ -284,7 +324,7 @@ const STAGES=[
   {id:'interview',name:'绩效面谈',desc:'上级与员工面谈',enabled:true,status:'warn',flow:'绩效面谈流程',autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14}},
   {id:'eval',name:'绩效考核',desc:'考核人评分',enabled:true,status:'active',flow:'通用绩效考核流程',autoStart:{enabled:true,direction:'后',days:3},autoEnd:{enabled:true,direction:'后',days:30},scoreCalculation:{enabled:false,mode:''}},
   {id:'ratify',name:'结果审定',desc:'审定人调整等级',enabled:true,status:'pending',flow:'汇报线逐级审定',autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14}},
-  {id:'inventory',name:'绩效盘点',desc:'能力评价与九宫格校准',enabled:true,status:'pending',flow:'年度绩效盘点流程',autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14},calcInitialGrade:false,calcInitialCapability:false},
+  {id:'inventory',name:'绩效盘点',desc:'能力评价与九宫格校准',enabled:true,status:'pending',flow:'年度绩效盘点流程',autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14},calcInitialCapability:false,forcedDistRule:'标准七级强制分布',forcedDistControl:'强控',inventorySubmitMode:'',capForcedDistRule:'标准三档能力强制分布',capForcedDistControl:'强控',capForcedDistSubmit:'全部提交',nineBox:null},
   {id:'confirm',name:'结果确认',desc:'员工确认绩效结果',enabled:true,status:'pending',flow:'员工确认流程',autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14}},
 ];
 
@@ -322,6 +362,7 @@ let form={
   dept:'',
   cycleType:'月度',
   gradeRule:'标准七级',
+  capabilityRule:'标准三档能力',
   version:1,
   forcedDistRule:'标准七级强制分布',
   ratifySubmitMode:'',
@@ -358,6 +399,15 @@ const GRADE_RULES=[
   ]},
 ];
 
+// 盘点能力规则库（仅规则选择 + 档位展示，不含强制分布比例）
+const CAPABILITY_RULES=[
+  {name:'标准三档能力',levels:[
+    {name:'高',code:'H',color:'#059669',bg:'#ECFDF5'},
+    {name:'中',code:'M',color:'#D97706',bg:'#FFFBEB'},
+    {name:'低',code:'L',color:'#DC2626',bg:'#FEF2F2'},
+  ]},
+];
+
 const FORCED_DIST_RULES=[
   {name:'标准七级强制分布',desc:'A 5% / A- 10% / B+ 15% / B 40% / B- 15% / C 10% / D 5%',
    grades:[{code:'A',name:'远超预期',op:'不超过',pct:5},{code:'A-',name:'超出预期',op:'不超过',pct:10},{code:'B+',name:'符合预期+',op:'不超过',pct:15},{code:'B',name:'符合预期',op:'不低于',pct:40},{code:'B-',name:'符合预期-',op:'不超过',pct:15},{code:'C',name:'低于预期',op:'不超过',pct:10},{code:'D',name:'远低预期',op:'不超过',pct:5}]},
@@ -365,13 +415,30 @@ const FORCED_DIST_RULES=[
    grades:[{code:'A',name:'远超预期',op:'不超过',pct:8},{code:'A-',name:'超出预期',op:'不超过',pct:12},{code:'B+',name:'符合预期+',op:'不超过',pct:18},{code:'B',name:'符合预期',op:'不低于',pct:35},{code:'B-',name:'符合预期-',op:'不超过',pct:15},{code:'C',name:'低于预期',op:'不超过',pct:8},{code:'D',name:'远低预期',op:'不超过',pct:4}]},
 ];
 
+// 盘点能力强制分布（比例口径对齐 demo-yearly-tr CAP_FORCE，展示用区间，不演算）
+const CAP_FORCED_DIST_RULES=[
+  {name:'标准三档能力强制分布',desc:'高 15–25% / 中 50–70% / 低 15–25%',
+   levels:[{code:'H',name:'高',op:'介于',min:15,max:25},{code:'M',name:'中',op:'介于',min:50,max:70},{code:'L',name:'低',op:'介于',min:15,max:25}]},
+  {name:'宽松三档能力强制分布',desc:'高 10–30% / 中 40–70% / 低 10–30%',
+   levels:[{code:'H',name:'高',op:'介于',min:10,max:30},{code:'M',name:'中',op:'介于',min:40,max:70},{code:'L',name:'低',op:'介于',min:10,max:30}]},
+];
+
+// 九宫格默认命名：与 demo-yearly-tr.html BOX_NAMES 保持一致（bandKey=绩效轴高/中/低-能力）
+const BOX_NAMES={'高-低':'老黄牛','高-中':'穿山甲','高-高':'领头羊','中-低':'空心竹','中-中':'工蜜蜂','中-高':'白龙马','低-低':'寄居蟹','低-中':'老爷车','低-高':'水上漂'};
+const BOX_KEYS_ORDER=['高-高','高-中','中-高','高-低','中-中','低-高','中-低','低-中','低-低'];
+const CAP_AXIS=['高','中','低']; // 能力侧仍为高/中/低
+// 看板轴：对齐 demo-yearly-tr（纵=绩效上高→下低；横=能力左低→右高）
+const PERF_ROWS=['高','中','低'];
+const CAP_COLS=['低','中','高'];
+
 const RATIFY_SUBMIT_MODES=['全部提交','单个提交','按部门提交','按层级提交','按区域提交'];
 
 // 模板预设：每个模板定义启用的阶段
 const TEMPLATES={
   '月度':{label:'月度绩效',stages:['goal','eval','ratify','confirm']},
   '半年度':{label:'半年度绩效',stages:['interview']},
-  '年度':{label:'年度绩效',stages:['interview','ratify','inventory','confirm']},
+  // 年度默认：面谈 → 盘点 → 确认（审定默认关；审定与盘点互斥，可单独开启审定）
+  '年度':{label:'年度绩效',stages:['interview','inventory','confirm']},
 };
 
 let curTemplate='年度';
@@ -383,16 +450,44 @@ function applyTemplate(tplKey){
   form.stages.forEach(s=>{
     s.enabled=tpl.stages.includes(s.id);
   });
+  // 若当前停留在已关闭的环节，退回环节总览
+  const cur=form.stages.find(s=>s.id===activeSection);
+  if(cur&&!cur.enabled) activeSection='stages';
   renderSettingsModal();
 }
 
+/** 结果审定 ↔ 绩效盘点：不可同时启用 */
+function enforceRatifyInventoryMutex(turnedOnId){
+  if(turnedOnId!=='ratify'&&turnedOnId!=='inventory') return;
+  const otherId=turnedOnId==='ratify'?'inventory':'ratify';
+  const other=form.stages.find(s=>s.id===otherId);
+  if(!other||!other.enabled) return;
+  other.enabled=false;
+  if(activeSection===otherId) activeSection='stages';
+  const tip=turnedOnId==='inventory'
+    ?'已开启绩效盘点，结果审定已关闭（二者不可同时启用）'
+    :'已开启结果审定，绩效盘点已关闭（二者不可同时启用）';
+  if(typeof GHR_NAV!=='undefined'&&GHR_NAV.showToast) GHR_NAV.showToast(tip);
+}
+
 function toggleStage(i){
-  form.stages[i].enabled=!form.stages[i].enabled;
+  const stage=form.stages[i];
+  const turningOn=!stage.enabled;
+  stage.enabled=turningOn;
+  if(turningOn) enforceRatifyInventoryMutex(stage.id);
+  if(!stage.enabled&&activeSection===stage.id) activeSection='stages';
   renderSettingsModal();
 }
 
 function getSelectedRule(){
   return GRADE_RULES.find(r=>r.name===form.gradeRule)||GRADE_RULES[0];
+}
+function getSelectedCapabilityRule(){
+  return CAPABILITY_RULES.find(r=>r.name===form.capabilityRule)||CAPABILITY_RULES[0];
+}
+function isInventoryEnabled(){
+  const s=form.stages.find(x=>x.id==='inventory');
+  return !!(s&&s.enabled);
 }
 
 function openSettings(){
@@ -602,11 +697,11 @@ function renderBasicInfo(ct){
           </div>
         </div>
         <div style="margin-top:8px;padding-top:16px;border-top:1px solid var(--dv)">
-          <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制分布规则</div>
+          <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">绩效/能力等级</div>
           <div class="form-row">
             <div class="form-grp">
-              <label class="form-lb">等级规则 <span class="req">*</span></label>
-              <select class="form-input" onchange="form.gradeRule=this.value;render()">
+              <label class="form-lb">绩效等级 <span class="req">*</span></label>
+              <select class="form-input" onchange="onGradeRuleChange(this.value)">
                 ${GRADE_RULES.map(r=>`<option ${form.gradeRule===r.name?'selected':''}>${r.name}</option>`).join('')}
               </select>
             </div>
@@ -621,6 +716,26 @@ function renderBasicInfo(ct){
               `).join('')}
             </div>
           </div>
+          ${isInventoryEnabled()?`
+          <div class="form-row" style="margin-top:16px">
+            <div class="form-grp">
+              <label class="form-lb">盘点能力规则 <span class="req">*</span></label>
+              <select class="form-input" onchange="form.capabilityRule=this.value;render()">
+                ${CAPABILITY_RULES.map(r=>`<option ${form.capabilityRule===r.name?'selected':''}>${r.name}</option>`).join('')}
+              </select>
+            </div>
+          </div>
+          <div style="margin-top:4px">
+            <label class="form-lb" style="margin-bottom:8px;display:block">包含能力</label>
+            <div style="display:flex;flex-wrap:wrap;gap:8px">
+              ${getSelectedCapabilityRule().levels.map(lv=>`
+                <div style="display:flex;align-items:center;gap:5px;padding:6px 12px;border:1px solid ${lv.color}30;border-radius:var(--r1);background:${lv.bg}">
+                  <span style="font:500 12px/1 var(--f);color:${lv.color}">${lv.name}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+          `:''}
         </div>
       </div>
     </div>
@@ -901,12 +1016,299 @@ function renderRatifyCfg(s){
   </div>`;
 }
 
+/** 绩效轴高/中/低 → 当前等级规则下的具体等级名组（对齐 demo-yearly-tr gradesForBand） */
+function gradesForPerfBand(band, gradeNames){
+  const n=gradeNames.length;
+  if(!n) return [];
+  if(n===1) return gradeNames.slice();
+  const highCount=Math.max(1, Math.floor(n/3));
+  const lowCount=Math.max(1, Math.floor(n/3));
+  if(band==='高') return gradeNames.slice(0, highCount);
+  if(band==='低') return gradeNames.slice(n-lowCount);
+  return gradeNames.slice(highCount, n-lowCount);
+}
+
+/** 按格子坐标（绩效轴×能力）挑默认具体等级：同轴内能力高取更好档、低取更差档 */
+function defaultPerfGradeForCell(band, capability, gradeNames){
+  const opts=gradesForPerfBand(band, gradeNames);
+  if(!opts.length) return '';
+  if(opts.length===1) return opts[0];
+  if(capability==='高') return opts[0];
+  if(capability==='低') return opts[opts.length-1];
+  return opts[Math.floor(opts.length/2)]||opts[0];
+}
+
+function bandOfPerfGrade(perfGrade, gradeNames){
+  const g=Array.isArray(perfGrade)?perfGrade[0]:perfGrade;
+  if(gradesForPerfBand('高', gradeNames).includes(g)) return '高';
+  if(gradesForPerfBand('低', gradeNames).includes(g)) return '低';
+  return '中';
+}
+
+function nineBoxNameFor(perfGrade, capability, gradeNames){
+  const band=bandOfPerfGrade(perfGrade, gradeNames);
+  return BOX_NAMES[band+'-'+capability]||'';
+}
+
+/** 绩效绑定归一为等级名数组；兼容旧单值 string */
+function normalizePerfGradeList(raw, gradeNames, fallbackSingle){
+  let list;
+  if(Array.isArray(raw)) list=raw.slice();
+  else if(typeof raw==='string'&&raw) list=[raw];
+  else list=[];
+  const seen={};
+  list=list.filter(g=>{
+    if(!gradeNames.includes(g)||seen[g]) return false;
+    seen[g]=true;
+    return true;
+  });
+  if(!list.length&&fallbackSingle&&gradeNames.includes(fallbackSingle)) list=[fallbackSingle];
+  return list;
+}
+
+function nineBoxCellKey(perfGrades, capability){
+  return [...perfGrades].slice().sort().join('|')+'-'+capability;
+}
+
+function getGradeNames(){
+  return getSelectedRule().grades.map(g=>g.name);
+}
+
+function defaultNineBoxCells(){
+  const gradeNames=getGradeNames();
+  return BOX_KEYS_ORDER.map(bandKey=>{
+    const [band,capability]=bandKey.split('-');
+    const perfGrade=defaultPerfGradeForCell(band, capability, gradeNames);
+    const perfGrades=perfGrade?[perfGrade]:[];
+    return {
+      key:nineBoxCellKey(perfGrades, capability),
+      name:BOX_NAMES[bandKey],
+      perfGrade:perfGrades,
+      capability,
+      bandKey
+    };
+  });
+}
+
+function onGradeRuleChange(value){
+  form.gradeRule=value;
+  const s=form.stages.find(x=>x.id==='inventory');
+  if(s) s.nineBox=defaultNineBoxCells(); // 等级规则切换后按新包含等级重建默认九格
+  render();
+}
+
+function ensureInventoryCfg(s){
+  if(typeof s.calcInitialCapability!=='boolean') s.calcInitialCapability=false;
+  // 兼容旧双下拉字段 → 审定同款骨架字段
+  if(!s.forcedDistRule&&(s.perfForcedDistRule||s.forcedDistPerfRule)){
+    s.forcedDistRule=s.perfForcedDistRule||s.forcedDistPerfRule;
+  }
+  if(!s.capForcedDistRule&&s.forcedDistCapRule) s.capForcedDistRule=s.forcedDistCapRule;
+  if(!s.nineBox&&s.box9) s.nineBox=s.box9;
+  delete s.perfForcedDistRule;
+  delete s.forcedDistPerfRule;
+  delete s.forcedDistCapRule;
+  if(!s.forcedDistRule||!FORCED_DIST_RULES.some(r=>r.name===s.forcedDistRule)){
+    s.forcedDistRule=FORCED_DIST_RULES[0].name;
+  }
+  if(s.forcedDistControl!=='强控'&&s.forcedDistControl!=='弱控') s.forcedDistControl='强控';
+  if(typeof s.inventorySubmitMode!=='string') s.inventorySubmitMode='';
+  if(!s.capForcedDistRule||!CAP_FORCED_DIST_RULES.some(r=>r.name===s.capForcedDistRule)){
+    s.capForcedDistRule=CAP_FORCED_DIST_RULES[0].name;
+  }
+  if(s.capForcedDistControl!=='强控'&&s.capForcedDistControl!=='弱控') s.capForcedDistControl='强控';
+  s.capForcedDistSubmit='全部提交';
+  const gradeNames=getGradeNames();
+  if(!Array.isArray(s.nineBox)||s.nineBox.length!==9){
+    s.nineBox=defaultNineBoxCells();
+  }else{
+    s.nineBox=s.nineBox.map((cell,i)=>{
+      const fallback=defaultNineBoxCells()[i];
+      // 兼容旧字段 perf（高/中/低档）→ perfGrade；单值 string → 数组
+      let raw=cell.perfGrade;
+      if((raw==null||raw==='')&&cell.perf){
+        if(gradeNames.includes(cell.perf)) raw=cell.perf;
+        else if(CAP_AXIS.includes(cell.perf)) raw=defaultPerfGradeForCell(cell.perf, cell.capability||fallback.capability, gradeNames);
+      }
+      const perfGrade=normalizePerfGradeList(raw, gradeNames, fallback.perfGrade[0]);
+      const capability=CAP_AXIS.includes(cell.capability)?cell.capability:fallback.capability;
+      const key=nineBoxCellKey(perfGrade, capability);
+      const bandKey=fallback.bandKey;
+      const defaultName=nineBoxNameFor(perfGrade, capability, gradeNames)||BOX_NAMES[bandKey]||fallback.name;
+      const name=(typeof cell.name==='string'&&cell.name.trim())?cell.name.trim():defaultName;
+      return {key,name,perfGrade,capability,bandKey};
+    });
+  }
+  return s;
+}
+
+function setInventoryDistField(field,value){
+  const s=form.stages.find(x=>x.id==='inventory');
+  if(!s)return;
+  ensureInventoryCfg(s);
+  if(field==='forcedDistRule'||field==='forcedDistControl'||field==='inventorySubmitMode'||field==='capForcedDistRule'||field==='capForcedDistControl'||field==='capForcedDistSubmit'){
+    s[field]=field==='capForcedDistSubmit'?'全部提交':value;
+  }
+  render();
+}
+
+/** 审定同款：绩效强制分布规则预览表 */
+function renderPerfForcedDistTable(ruleName){
+  const rule=FORCED_DIST_RULES.find(r=>r.name===ruleName);
+  if(!rule||!rule.grades) return '';
+  return `<div style="margin-top:16px;padding:14px 16px;background:var(--c0);border-radius:var(--r2);border:1px solid var(--dv)">
+    <div style="font:600 12px/1 var(--f);color:var(--c8);margin-bottom:10px">当前规则：${rule.name}</div>
+    <table class="tbl" style="margin:0"><thead><tr><th>等级</th><th>等级名称</th><th>计算规则</th><th>比例上限(%)</th></tr></thead><tbody>${rule.grades.map(g=>`<tr>
+      <td><span style="font:500 11px/1 var(--f);padding:2px 8px;border-radius:3px;background:var(--pr50);color:var(--pr)">${g.code}</span></td>
+      <td style="font:500 13px/1 var(--f);color:var(--c9)">${g.name}</td>
+      <td style="font:400 13px/1 var(--f);color:var(--c6)">${g.op}</td>
+      <td style="font-family:var(--m);font-size:13px;font-weight:600;color:var(--c9)">${g.pct}%</td>
+    </tr>`).join('')}</tbody></table>
+  </div>`;
+}
+
+/** 能力侧强制分布预览表（区间口径，与 CAP_FORCE 一致，不演算） */
+function renderCapForcedDistTable(ruleName){
+  const rule=CAP_FORCED_DIST_RULES.find(r=>r.name===ruleName);
+  if(!rule||!rule.levels) return '';
+  return `<div style="margin-top:16px;padding:14px 16px;background:var(--c0);border-radius:var(--r2);border:1px solid var(--dv)">
+    <div style="font:600 12px/1 var(--f);color:var(--c8);margin-bottom:10px">当前规则：${rule.name}</div>
+    <table class="tbl" style="margin:0"><thead><tr><th>档位</th><th>档位名称</th><th>计算规则</th><th>比例区间(%)</th></tr></thead><tbody>${rule.levels.map(lv=>`<tr>
+      <td><span style="font:500 11px/1 var(--f);padding:2px 8px;border-radius:3px;background:var(--pr50);color:var(--pr)">${lv.code}</span></td>
+      <td style="font:500 13px/1 var(--f);color:var(--c9)">${lv.name}</td>
+      <td style="font:400 13px/1 var(--f);color:var(--c6)">${lv.op}</td>
+      <td style="font-family:var(--m);font-size:13px;font-weight:600;color:var(--c9)">${lv.min}%–${lv.max}%</td>
+    </tr>`).join('')}</tbody></table>
+  </div>`;
+}
+
+function setNineBoxCell(i,field,value){
+  const s=form.stages.find(x=>x.id==='inventory');
+  if(!s)return;
+  ensureInventoryCfg(s);
+  const cell=s.nineBox[i];
+  if(!cell)return;
+  if(field==='name'){
+    cell.name=value;
+    return; // 输入中不重绘，避免失焦
+  }
+  const gradeNames=getGradeNames();
+  if(field==='capability'&&CAP_AXIS.includes(value)){
+    cell.capability=value;
+    // 同能力下等级不可重复：从其他格剥走冲突等级
+    cell.perfGrade.forEach(g=>{
+      s.nineBox.forEach((other,j)=>{
+        if(j===i||other.capability!==value) return;
+        if(other.perfGrade.includes(g)){
+          other.perfGrade=other.perfGrade.filter(x=>x!==g);
+          if(!other.perfGrade.length){
+            const [band]=other.bandKey.split('-');
+            const fb=defaultPerfGradeForCell(band, other.capability, gradeNames);
+            other.perfGrade=fb?[fb]:[];
+          }
+          other.key=nineBoxCellKey(other.perfGrade, other.capability);
+          if(!other.name||Object.values(BOX_NAMES).includes(other.name)){
+            other.name=nineBoxNameFor(other.perfGrade, other.capability, gradeNames)||BOX_NAMES[other.bandKey]||other.name;
+          }
+        }
+      });
+    });
+    cell.key=nineBoxCellKey(cell.perfGrade, cell.capability);
+    if(!cell.name||Object.values(BOX_NAMES).includes(cell.name)){
+      cell.name=nineBoxNameFor(cell.perfGrade, cell.capability, gradeNames)||BOX_NAMES[cell.bandKey]||cell.name;
+    }
+    render();
+    return;
+  }
+}
+
+function renderNineBoxPerfMsTriggerInner(grades){
+  if(!grades||!grades.length) return '<span class="leave-ms-ph">请选择等级</span>';
+  return grades.map(function(g){return '<span class="leave-ms-tag" title="'+escHtml(g)+'">'+escHtml(g)+'</span>';}).join('');
+}
+
+function renderNineBoxPerfMs(i,grades,gradeOpts){
+  return '<div class="leave-ms" data-ninebox-i="'+i+'">'+
+    '<button type="button" class="leave-ms-trigger" title="绑定绩效等级" onclick="event.stopPropagation();toggleNineBoxPerfMs(event,'+i+')">'+renderNineBoxPerfMsTriggerInner(grades)+'</button>'+
+    '<div class="leave-ms-menu" id="nineBoxPerfMs-'+i+'">'+
+      gradeOpts.map(function(g){
+        var on=grades.indexOf(g)>=0;
+        return '<label class="leave-ms-opt" onclick="event.stopPropagation()"><input type="checkbox" '+(on?'checked':'')+' onchange="toggleNineBoxPerfGrade('+i+',\''+g.replace(/'/g,"\\'")+'\',this.checked)">'+escHtml(g)+'</label>';
+      }).join('')+
+    '</div></div>';
+}
+
+function toggleNineBoxPerfMs(ev,i){
+  if(ev) ev.stopPropagation();
+  var wrap=document.querySelector('.leave-ms[data-ninebox-i="'+i+'"]');
+  var wasOpen=wrap&&wrap.classList.contains('open');
+  closeAllLeaveMs();
+  if(wrap&&!wasOpen) wrap.classList.add('open');
+}
+
+function toggleNineBoxPerfGrade(i,grade,checked){
+  const s=form.stages.find(x=>x.id==='inventory');
+  if(!s)return;
+  ensureInventoryCfg(s);
+  const cell=s.nineBox[i];
+  if(!cell)return;
+  const gradeNames=getGradeNames();
+  if(!gradeNames.includes(grade)) return;
+  let list=cell.perfGrade.slice();
+  if(checked){
+    if(list.indexOf(grade)<0) list.push(grade);
+    // 同能力下其他格若已绑该等级则移除
+    s.nineBox.forEach((other,j)=>{
+      if(j===i||other.capability!==cell.capability) return;
+      if(other.perfGrade.includes(grade)){
+        other.perfGrade=other.perfGrade.filter(x=>x!==grade);
+        if(!other.perfGrade.length){
+          const [band]=other.bandKey.split('-');
+          const fb=defaultPerfGradeForCell(band, other.capability, gradeNames);
+          other.perfGrade=fb?[fb]:[];
+        }
+        other.key=nineBoxCellKey(other.perfGrade, other.capability);
+        if(!other.name||Object.values(BOX_NAMES).includes(other.name)){
+          other.name=nineBoxNameFor(other.perfGrade, other.capability, gradeNames)||BOX_NAMES[other.bandKey]||other.name;
+        }
+      }
+    });
+  }else{
+    list=list.filter(x=>x!==grade);
+    if(!list.length){
+      // 至少保留一个：回滚勾选状态
+      document.querySelectorAll('#nineBoxPerfMs-'+i+' .leave-ms-opt').forEach(function(lb){
+        var c=lb.querySelector('input');
+        if(c&&lb.textContent.trim()===grade) c.checked=true;
+      });
+      return;
+    }
+  }
+  cell.perfGrade=normalizePerfGradeList(list, gradeNames, list[0]);
+  cell.key=nineBoxCellKey(cell.perfGrade, cell.capability);
+  if(!cell.name||Object.values(BOX_NAMES).includes(cell.name)){
+    cell.name=nineBoxNameFor(cell.perfGrade, cell.capability, gradeNames)||BOX_NAMES[cell.bandKey]||cell.name;
+  }
+  // 勾选时只刷新 trigger，避免菜单关闭；取消勾选同理；冲突清理后需整板重绘
+  const needFull=checked; // 可能改了其他格
+  if(needFull){
+    render();
+    // 重绘后保持本格菜单打开
+    requestAnimationFrame(function(){
+      var wrap=document.querySelector('.leave-ms[data-ninebox-i="'+i+'"]');
+      if(wrap) wrap.classList.add('open');
+    });
+  }else{
+    var trigger=document.querySelector('.leave-ms[data-ninebox-i="'+i+'"] .leave-ms-trigger');
+    if(trigger) trigger.innerHTML=renderNineBoxPerfMsTriggerInner(cell.perfGrade);
+  }
+}
+
 function renderInventoryCfg(s){
   const models=FLOW_MODELS[s.id]||[];
   const a=ensureStageAuto(s,'start');
   const e=ensureStageAuto(s,'end');
-  if(typeof s.calcInitialGrade!=='boolean') s.calcInitialGrade=false;
-  if(typeof s.calcInitialCapability!=='boolean') s.calcInitialCapability=false;
+  ensureInventoryCfg(s);
   return `<div class="form-row">
     <div class="form-grp"><label class="form-lb">绑定流程模型</label>
       <select class="form-input" onchange="form.stages.find(x=>x.id==='inventory').flow=this.value;render()">
@@ -931,27 +1333,113 @@ function renderInventoryCfg(s){
     </div>
   </div>
   ${e.enabled?`<div id="timeRulePanel-end-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderStageTimingPanel('end',s)}</div>`:''}
-  <div style="margin-top:16px;display:flex;flex-direction:column;gap:10px">
-    <div style="padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2);display:flex;align-items:center;justify-content:space-between;gap:16px">
-      <div>
-        <div style="font:600 13px/1.3 var(--f);color:var(--c9)">是否系统计算初评等级</div>
-        <div style="font:400 11px/1.5 var(--f);color:var(--c4);margin-top:4px">开启后由系统根据绩效结果自动给出盘点初评等级</div>
+  <div style="margin-top:16px;display:flex;align-items:center;gap:10px">
+    <span style="font:600 13px/1 var(--f);color:var(--c9)">是否系统计算初评能力</span>
+    <div class="tog ${s.calcInitialCapability?'on':''}" onclick="toggleInventoryCalc('calcInitialCapability')"><div class="tog-track"><div class="tog-knob"></div></div></div>
+  </div>
+  <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
+    <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制分布规则</div>
+
+    <div style="font:600 12px/1 var(--f);color:var(--c8);margin-bottom:10px">绩效</div>
+    <div class="form-row tri">
+      <div class="form-grp">
+        <label class="form-lb">关联强制分布规则 <span class="req">*</span></label>
+        <select class="form-input" onchange="setInventoryDistField('forcedDistRule',this.value)">
+          ${FORCED_DIST_RULES.map(r=>`<option ${s.forcedDistRule===r.name?'selected':''}>${r.name}</option>`).join('')}
+        </select>
       </div>
-      <div class="tog ${s.calcInitialGrade?'on':''}" onclick="toggleInventoryCalc('calcInitialGrade')"><div class="tog-track"><div class="tog-knob"></div></div></div>
-    </div>
-    <div style="padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2);display:flex;align-items:center;justify-content:space-between;gap:16px">
-      <div>
-        <div style="font:600 13px/1.3 var(--f);color:var(--c9)">是否系统计算初评能力</div>
-        <div style="font:400 11px/1.5 var(--f);color:var(--c4);margin-top:4px">开启后由系统根据 360/测评等数据自动给出初评能力档</div>
+      <div class="form-grp">
+        <label class="form-lb">控制模式 <span class="req">*</span></label>
+        <select class="form-input" onchange="setInventoryDistField('forcedDistControl',this.value)">
+          <option ${s.forcedDistControl==='强控'?'selected':''}>强控</option>
+          <option ${s.forcedDistControl==='弱控'?'selected':''}>弱控</option>
+        </select>
       </div>
-      <div class="tog ${s.calcInitialCapability?'on':''}" onclick="toggleInventoryCalc('calcInitialCapability')"><div class="tog-track"><div class="tog-knob"></div></div></div>
+      <div class="form-grp">
+        <label class="form-lb" for="inventorySubmitMode">提交方式 <span class="req">*</span></label>
+        <select class="form-input" id="inventorySubmitMode" required onchange="setInventoryDistField('inventorySubmitMode',this.value)">
+          <option value="" ${s.inventorySubmitMode?'':'selected'} disabled>请选择</option>
+          ${RATIFY_SUBMIT_MODES.map(mode=>`<option value="${mode}" ${s.inventorySubmitMode===mode?'selected':''}>${mode}</option>`).join('')}
+        </select>
+      </div>
     </div>
+    <div style="margin-top:4px"><a href="perf-forced-distribution.html" target="_blank" style="font:500 12px/1 var(--f);color:var(--pr);text-decoration:none">查看分布规则 →</a></div>
+    ${renderPerfForcedDistTable(s.forcedDistRule)}
+
+    <div style="margin-top:20px;font:600 12px/1 var(--f);color:var(--c8);margin-bottom:10px">能力</div>
+    <div class="form-row tri">
+      <div class="form-grp">
+        <label class="form-lb">关联强制分布规则 <span class="req">*</span></label>
+        <select class="form-input" onchange="setInventoryDistField('capForcedDistRule',this.value)">
+          ${CAP_FORCED_DIST_RULES.map(r=>`<option ${s.capForcedDistRule===r.name?'selected':''}>${r.name}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-grp">
+        <label class="form-lb">控制模式 <span class="req">*</span></label>
+        <select class="form-input" onchange="setInventoryDistField('capForcedDistControl',this.value)">
+          <option ${s.capForcedDistControl==='强控'?'selected':''}>强控</option>
+          <option ${s.capForcedDistControl==='弱控'?'selected':''}>弱控</option>
+        </select>
+      </div>
+      <div class="form-grp">
+        <label class="form-lb" for="capForcedDistSubmit">提交方式 <span class="req">*</span></label>
+        <select class="form-input" id="capForcedDistSubmit" required disabled onchange="setInventoryDistField('capForcedDistSubmit',this.value)">
+          <option value="全部提交" selected>全部提交</option>
+        </select>
+      </div>
+    </div>
+    ${renderCapForcedDistTable(s.capForcedDistRule)}
+  </div>
+  <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
+    <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">九宫格格子命名与绑定</div>
+    ${renderNineBoxBoard(s)}
   </div>`;
+}
+
+function box9LvlHtml(v){
+  const tone=v==='高'?'high':v==='中'?'mid':'low';
+  return `<span class="wiz-box9-lvl ${tone}">${v}</span>`;
+}
+
+function renderNineBoxBoard(s){
+  const gradeOpts=getGradeNames();
+  let html='<div class="wiz-box9-board"><div class="wiz-box9-grid" role="grid" aria-label="九宫格格子命名与绑定">';
+  html+='<div class="wiz-box9-x corner"></div>';
+  CAP_COLS.forEach(c=>{html+=`<div class="wiz-box9-x">能力 · ${box9LvlHtml(c)}</div>`;});
+  PERF_ROWS.forEach(p=>{
+    html+=`<div class="wiz-box9-y">绩效 · ${box9LvlHtml(p)}</div>`;
+    CAP_COLS.forEach(c=>{
+      const bandKey=p+'-'+c;
+      const i=s.nineBox.findIndex(cell=>cell.bandKey===bandKey);
+      const cell=i>=0?s.nineBox[i]:null;
+      if(!cell){
+        html+=`<div class="wiz-box9-cell" data-cell="${bandKey}"></div>`;
+        return;
+      }
+      const seq=BOX_KEYS_ORDER.indexOf(bandKey)+1;
+      html+=`<div class="wiz-box9-cell" data-cell="${bandKey}" role="gridcell">
+        <div class="wiz-box9-name-row">
+          <span class="wiz-box9-seq" title="系统默认序号 ${seq}" aria-label="系统默认序号 ${seq}">${seq}</span>
+          <input class="wiz-box9-name" value="${cell.name.replace(/"/g,'&quot;')}" oninput="setNineBoxCell(${i},'name',this.value)" placeholder="格子名称" title="格子名称">
+        </div>
+        <div class="wiz-box9-binds">
+          <div class="wiz-box9-bind"><span class="wiz-box9-bind-lb">绩效</span>
+            ${renderNineBoxPerfMs(i, cell.perfGrade, gradeOpts)}
+          </div>
+          <div class="wiz-box9-bind"><span class="wiz-box9-bind-lb">能力</span>
+            <select onchange="setNineBoxCell(${i},'capability',this.value)" title="绑定能力">${CAP_AXIS.map(v=>`<option ${cell.capability===v?'selected':''}>${v}</option>`).join('')}</select>
+          </div>
+        </div>
+      </div>`;
+    });
+  });
+  html+='</div></div>';
+  return html;
 }
 
 function toggleInventoryCalc(field){
   const s=form.stages.find(x=>x.id==='inventory');
-  if(!s||(field!=='calcInitialGrade'&&field!=='calcInitialCapability'))return;
+  if(!s||field!=='calcInitialCapability')return;
   s[field]=!s[field];
   render();
 }
@@ -1465,13 +1953,28 @@ function validateRatifySubmitMode(){
   }
   return true;
 }
+function validateInventorySubmitMode(){
+  const inv=form.stages.find(s=>s.id==='inventory');
+  if(inv&&inv.enabled){
+    ensureInventoryCfg(inv);
+    if(!inv.inventorySubmitMode){
+      alert('请选择提交方式');
+      activeSection='inventory';
+      render();
+      return false;
+    }
+  }
+  return true;
+}
 function goNextSection(id){
   if(activeSection==='ratify'&&!validateRatifySubmitMode())return;
+  if(activeSection==='inventory'&&!validateInventorySubmitMode())return;
   selSection(id);
 }
 function validateScheme(){
   if(!form.name){alert('请填写方案名称');activeSection='basic';render();return false}
-  return validateRatifySubmitMode();
+  if(!validateRatifySubmitMode())return false;
+  return validateInventorySubmitMode();
 }
 function toggleSec(el){el.closest('.form-sec').classList.toggle('open')}
 function submit(){if(!validateScheme())return;alert('方案已提交：'+form.name)}
@@ -1496,6 +1999,7 @@ document.addEventListener('click',function(e){
 
 // Initialize navigation first to create the content container
 GHR_NAV.init('perf', '绩效方案');
+applyTemplate(curTemplate); // 默认年度：面谈→盘点→确认（审定默认关，列表可见可单独开启）
 render();
 </script>
 </body>
