@@ -119,7 +119,6 @@ textarea.form-input{height:auto;padding:8px 10px;resize:vertical;min-height:60px
 .fd-side{margin-bottom:16px}
 .fd-side:last-child{margin-bottom:0}
 .fd-side-lb{font:600 12px/1 var(--f);color:var(--c8);margin-bottom:8px}
-.fd-side .form-row.fd-main{margin-bottom:0}
 .fd-rule-pick{display:inline-block;min-width:0}
 .fd-rule-sel{
   width:132px;min-width:132px;max-width:132px;
@@ -350,7 +349,7 @@ const STAGES=[
   {id:'interview',name:'绩效面谈',desc:'上级与员工面谈',enabled:true,status:'warn',flow:'绩效面谈流程',autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14}},
   {id:'eval',name:'绩效考核',desc:'考核人评分',enabled:true,status:'active',flow:'通用绩效考核流程',autoStart:{enabled:true,direction:'后',days:3},autoEnd:{enabled:true,direction:'后',days:30},scoreCalculation:{enabled:false,mode:''}},
   {id:'ratify',name:'结果审定',desc:'审定人调整等级',enabled:true,status:'pending',flow:'汇报线逐级审定',autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14}},
-  {id:'inventory',name:'绩效盘点',desc:'能力评价与九宫格校准',enabled:true,status:'pending',flow:'年度绩效盘点流程',autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14},calcInitialCapability:false,forcedDistRule:'标准七级强制分布',forcedDistControl:'强控',inventorySubmitMode:'',inventoryCtrlScope:'考核组',forcedDistGroups:[{groupId:'g1',ruleId:'标准七级强制分布'},{groupId:'g2',ruleId:'宽松七级强制分布'}],capForcedDistRule:'标准三档能力强制分布',capForcedDistControl:'强控',capForcedDistSubmit:'全部提交',capCtrlScope:'考核组',capForcedDistGroups:[{groupId:'g1',ruleId:'标准三档能力强制分布'},{groupId:'g2',ruleId:'宽松三档能力强制分布'}],nineBox:null},
+  {id:'inventory',name:'绩效盘点',desc:'能力评价与九宫格校准',enabled:true,status:'pending',flow:'年度绩效盘点流程',autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14},calcInitialCapability:false,forcedDistRule:'标准七级强制分布',forcedDistGroups:[{groupId:'g1',ruleId:'标准七级强制分布',controlMode:'强控'},{groupId:'g2',ruleId:'宽松七级强制分布',controlMode:'弱控'}],capForcedDistRule:'标准三档能力强制分布',capForcedDistGroups:[{groupId:'g1',ruleId:'标准三档能力强制分布',controlMode:'强控'},{groupId:'g2',ruleId:'宽松三档能力强制分布',controlMode:'弱控'}],nineBox:null},
   {id:'confirm',name:'结果确认',desc:'员工确认绩效结果',enabled:true,status:'pending',flow:'员工确认流程',autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14}},
 ];
 
@@ -381,8 +380,6 @@ const ADMIN_LIST=[
 
 // ═══ 状态 ═══
 let activeSection='basic', activeGroup='g1';
-let stageConfigMode='merged'; // merged | perGroup
-let activeGroupTab={};
 
 /** 方案未配考核组时的演示用示意组 */
 const DEMO_DIST_GROUPS=[
@@ -752,7 +749,7 @@ function renderBasicInfo(ct){
           ${isInventoryEnabled()?`
           <div class="form-row" style="margin-top:16px">
             <div class="form-grp">
-              <label class="form-lb">盘点能力规则 <span class="req">*</span></label>
+              <label class="form-lb">能力等级 <span class="req">*</span></label>
               <select class="form-input" onchange="form.capabilityRule=this.value;render()">
                 ${CAPABILITY_RULES.map(r=>`<option ${form.capabilityRule===r.name?'selected':''}>${r.name}</option>`).join('')}
               </select>
@@ -860,31 +857,10 @@ function renderStageDetail(ct){
   else if(s.id==='interview') cfg=renderInterviewCfg(s);
   else cfg=`<div class="form-hint">该环节待业务方确认后配置。</div>`;
 
-  const modeToggle=`
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:12px 16px;background:var(--c0);border-radius:var(--r1)">
-      <span style="font:500 12px/1 var(--f);color:var(--c6)">配置模式</span>
-      <div style="display:flex;background:var(--sf);border-radius:var(--r1);padding:2px;border:1px solid var(--c2)">
-        <button style="padding:5px 14px;border-radius:4px;font:500 12px/1 var(--f);cursor:pointer;border:none;transition:all .12s;font-family:inherit;${stageConfigMode==='merged'?'background:var(--sf);color:var(--pr);box-shadow:0 1px 3px rgba(0,0,0,.08)':'background:transparent;color:var(--c5)'}" onclick="stageConfigMode='merged';render()">合并配置</button>
-        <button style="padding:5px 14px;border-radius:4px;font:500 12px/1 var(--f);cursor:pointer;border:none;transition:all .12s;font-family:inherit;${stageConfigMode==='perGroup'?'background:var(--sf);color:var(--pr);box-shadow:0 1px 3px rgba(0,0,0,.08)':'background:transparent;color:var(--c5)'}" onclick="stageConfigMode='perGroup';render()">按考核组配置</button>
-      </div>
-      <span style="font:400 11px/1 var(--f);color:var(--c4)">${stageConfigMode==='merged'?'一套流程/参数适用于所有考核组':'每个考核组独立配置流程/参数'}</span>
-    </div>`;
-
-  let groupTabs='';
-  let groupContent='';
-  if(stageConfigMode==='perGroup'&&form.groups.length>0){
-    if(!activeGroupTab[s.id]) activeGroupTab[s.id]=form.groups[0].id;
-    const curTab=activeGroupTab[s.id];
-    groupTabs=`<div style="display:flex;gap:4px;margin-bottom:12px;border-bottom:1px solid var(--dv);padding-bottom:8px">${form.groups.map(g=>`
-      <button style="padding:5px 12px;border-radius:var(--r1) var(--r1) 0 0;font:500 12px/1 var(--f);cursor:pointer;border:none;border-bottom:2px solid ${g.id===curTab?'var(--pr)':'transparent'};${g.id===curTab?'color:var(--pr);background:var(--pr50)':'color:var(--c5);background:transparent'};transition:all .12s;font-family:inherit" onclick="activeGroupTab['${s.id}']='${g.id}';render()">${g.name}</button>`).join('')}</div>`;
-    groupContent=`<div style="padding:4px 0;font:400 11px/1 var(--f);color:var(--c4);margin-bottom:8px">当前配置：${form.groups.find(g=>g.id===curTab)?.name||''}</div>`;
-  }
-
   ct.innerHTML=`<div class="fi">
-    ${modeToggle}
     <div class="form-sec open">
       <div class="form-sec-hd"><div class="form-sec-hd-l"><span class="form-sec-t">${s.name}</span><span style="font:400 12px/1 var(--f);color:var(--c5);margin-left:8px">${s.desc}</span></div></div>
-      <div class="form-sec-bd">${groupTabs}${groupContent}${cfg}</div>
+      <div class="form-sec-bd">${cfg}</div>
     </div>
     ${renderNavButtons()}
   </div>`;
@@ -994,7 +970,6 @@ function renderRatifyCfg(s){
   const grades=getSelectedRule().grades;
   const a=ensureStageAuto(s,'start');
   const e=ensureStageAuto(s,'end');
-  const showGroups=stageConfigMode==='merged'?form.groups:[form.groups.find(g=>g.id===(activeGroupTab[s.id]||form.groups[0]?.id))].filter(Boolean);
   return `<div class="form-row">
     <div class="form-grp"><label class="form-lb">流程模型</label><select class="form-input">${models.map(m=>`<option ${s.flow===m?'selected':''}>${m}</option>`).join('')}</select></div>
     <div class="form-grp"><label class="form-lb">开启方式</label><select class="form-input" onchange="updateStageAuto('${s.id}','start',this.value==='自动');render()"><option ${a.enabled?'':'selected'}>手动</option><option ${a.enabled?'selected':''}>自动</option></select></div>
@@ -1136,19 +1111,21 @@ function getDistSchemeGroups(){
   return DEMO_DIST_GROUPS.slice();
 }
 
-/** 按当前考核组 normalize 各组规则绑定 */
+/** 按当前考核组 normalize 各组规则绑定（含控制模式） */
 function normalizeForcedDistGroups(list,ruleNames,fallbackRuleId){
   const groups=getDistSchemeGroups();
   const prev=Array.isArray(list)?list:[];
   const byId={};
   prev.forEach(row=>{
-    if(row&&row.groupId) byId[row.groupId]=row.ruleId;
+    if(row&&row.groupId) byId[row.groupId]=row;
   });
   const def=ruleNames.includes(fallbackRuleId)?fallbackRuleId:(ruleNames[0]||'');
   return groups.map(g=>{
-    let ruleId=byId[g.id];
+    const old=byId[g.id]||{};
+    let ruleId=old.ruleId;
     if(!ruleNames.includes(ruleId)) ruleId=def;
-    return {groupId:g.id,ruleId};
+    const controlMode=(old.controlMode==='弱控'||old.controlMode==='weak')?'弱控':'强控';
+    return {groupId:g.id,ruleId,controlMode};
   });
 }
 
@@ -1163,18 +1140,27 @@ function ensureInventoryCfg(s){
   delete s.perfForcedDistRule;
   delete s.forcedDistPerfRule;
   delete s.forcedDistCapRule;
+  // 旧顶层控制模式 → 写入各组（仅当组项尚无 controlMode）
+  const legacyPerfMode=(s.forcedDistControl==='弱控')?'弱控':'强控';
+  const legacyCapMode=(s.capForcedDistControl==='弱控')?'弱控':'强控';
+  if(Array.isArray(s.forcedDistGroups)){
+    s.forcedDistGroups.forEach(r=>{if(r&&!r.controlMode) r.controlMode=legacyPerfMode;});
+  }
+  if(Array.isArray(s.capForcedDistGroups)){
+    s.capForcedDistGroups.forEach(r=>{if(r&&!r.controlMode) r.controlMode=legacyCapMode;});
+  }
+  delete s.inventoryCtrlScope;
+  delete s.capCtrlScope;
+  delete s.inventorySubmitMode;
+  delete s.capForcedDistSubmit;
+  delete s.forcedDistControl;
+  delete s.capForcedDistControl;
   if(!s.forcedDistRule||!FORCED_DIST_RULES.some(r=>r.name===s.forcedDistRule)){
     s.forcedDistRule=FORCED_DIST_RULES[0].name;
   }
-  if(s.forcedDistControl!=='强控'&&s.forcedDistControl!=='弱控') s.forcedDistControl='强控';
-  if(typeof s.inventorySubmitMode!=='string') s.inventorySubmitMode='';
-  if(s.inventoryCtrlScope!=='全部'&&s.inventoryCtrlScope!=='考核组') s.inventoryCtrlScope='考核组';
   if(!s.capForcedDistRule||!CAP_FORCED_DIST_RULES.some(r=>r.name===s.capForcedDistRule)){
     s.capForcedDistRule=CAP_FORCED_DIST_RULES[0].name;
   }
-  if(s.capForcedDistControl!=='强控'&&s.capForcedDistControl!=='弱控') s.capForcedDistControl='强控';
-  s.capForcedDistSubmit='全部提交';
-  if(s.capCtrlScope!=='全部'&&s.capCtrlScope!=='考核组') s.capCtrlScope='考核组';
   const perfRuleNames=FORCED_DIST_RULES.map(r=>r.name);
   const capRuleNames=CAP_FORCED_DIST_RULES.map(r=>r.name);
   s.forcedDistGroups=normalizeForcedDistGroups(s.forcedDistGroups,perfRuleNames,s.forcedDistRule);
@@ -1203,20 +1189,6 @@ function ensureInventoryCfg(s){
   return s;
 }
 
-function setInventoryDistField(field,value){
-  const s=form.stages.find(x=>x.id==='inventory');
-  if(!s)return;
-  ensureInventoryCfg(s);
-  if(field==='forcedDistRule'||field==='forcedDistControl'||field==='inventorySubmitMode'||field==='inventoryCtrlScope'||field==='capForcedDistRule'||field==='capForcedDistControl'||field==='capForcedDistSubmit'||field==='capCtrlScope'){
-    s[field]=field==='capForcedDistSubmit'?'全部提交':value;
-  }
-  // 切换控制范围时重新 normalize 按组绑定
-  if(field==='inventoryCtrlScope'||field==='capCtrlScope'){
-    ensureInventoryCfg(s);
-  }
-  render();
-}
-
 function setInvGroupDistRule(side,groupId,ruleId){
   const s=form.stages.find(x=>x.id==='inventory');
   if(!s)return;
@@ -1224,7 +1196,19 @@ function setInvGroupDistRule(side,groupId,ruleId){
   const list=side==='cap'?s.capForcedDistGroups:s.forcedDistGroups;
   const row=list.find(r=>r.groupId===groupId);
   if(row) row.ruleId=ruleId;
-  else list.push({groupId,ruleId});
+  else list.push({groupId,ruleId,controlMode:'强控'});
+  render();
+}
+
+function setInvGroupDistControl(side,groupId,controlMode){
+  const s=form.stages.find(x=>x.id==='inventory');
+  if(!s)return;
+  ensureInventoryCfg(s);
+  const mode=controlMode==='弱控'?'弱控':'强控';
+  const list=side==='cap'?s.capForcedDistGroups:s.forcedDistGroups;
+  const row=list.find(r=>r.groupId===groupId);
+  if(row) row.controlMode=mode;
+  else list.push({groupId,ruleId:(side==='cap'?CAP_FORCED_DIST_RULES:FORCED_DIST_RULES)[0].name,controlMode:mode});
   render();
 }
 
@@ -1234,7 +1218,7 @@ function fdRuleShortLabel(name){
   return n.replace(/强制分布$/,'')||n;
 }
 
-/** 窄 select（绩效/能力：全部单行表与按组表共用；详情见右侧列） */
+/** 窄 select（绩效/能力按组表共用；详情见右侧列） */
 function renderFdRulePick(rules,selectedName,onchangeAttr){
   const cur=(rules.find(r=>r.name===selectedName)||rules[0]||{name:''}).name;
   const opts=rules.map(r=>`<option value="${escHtml(r.name)}" ${r.name===cur?'selected':''}>${escHtml(fdRuleShortLabel(r.name))}</option>`).join('');
@@ -1254,41 +1238,34 @@ function renderFdRuleDetail(rule,isCap){
   return `<div class="fd-rule-detail">${lines.join('\n')}</div>`;
 }
 
-/** 紧贴主行的规则表（左线浅底）：全部=单行「全部」；考核组=多行真实组名 */
+/** 强制分布：始终平铺考核组（考核组 | 强制分布规则 | 控制模式 | 规则详情） */
 function renderGroupForcedDistPanel(side,s){
   const isCap=side==='cap';
   const rules=isCap?CAP_FORCED_DIST_RULES:FORCED_DIST_RULES;
-  const scope=isCap?s.capCtrlScope:s.inventoryCtrlScope;
-  let rows='';
-  let usingDemo=false;
-  if(scope==='全部'){
-    const ruleField=isCap?'capForcedDistRule':'forcedDistRule';
-    const ruleId=s[ruleField]||(rules[0]&&rules[0].name)||'';
+  const bindings=isCap?s.capForcedDistGroups:s.forcedDistGroups;
+  const groups=getDistSchemeGroups();
+  const usingDemo=!form.groups||!form.groups.length;
+  const rows=groups.map(g=>{
+    const bind=bindings.find(b=>b.groupId===g.id)||{};
+    const ruleId=bind.ruleId||(rules[0]&&rules[0].name)||'';
     const rule=rules.find(r=>r.name===ruleId)||rules[0];
-    rows=`<tr>
-      <td style="font:500 13px/1 var(--f);color:var(--c9);width:18%">全部</td>
-      <td style="width:160px">${renderFdRulePick(rules,ruleId,`setInventoryDistField('${ruleField}',this.value)`)}</td>
+    const mode=bind.controlMode==='弱控'?'弱控':'强控';
+    const gidEsc=String(g.id).replace(/'/g,"\\'");
+    return `<tr>
+      <td style="font:500 13px/1 var(--f);color:var(--c9);width:16%">${escHtml(g.name)}</td>
+      <td style="width:148px">${renderFdRulePick(rules,ruleId,`setInvGroupDistRule('${side}','${gidEsc}',this.value)`)}</td>
+      <td style="width:100px">
+        <select class="form-input" style="min-width:0" onchange="setInvGroupDistControl('${side}','${gidEsc}',this.value)">
+          <option value="强控" ${mode==='强控'?'selected':''}>强控</option>
+          <option value="弱控" ${mode==='弱控'?'selected':''}>弱控</option>
+        </select>
+      </td>
       <td>${renderFdRuleDetail(rule,isCap)}</td>
     </tr>`;
-  }else{
-    const bindings=isCap?s.capForcedDistGroups:s.forcedDistGroups;
-    const groups=getDistSchemeGroups();
-    usingDemo=!form.groups||!form.groups.length;
-    rows=groups.map(g=>{
-      const bind=bindings.find(b=>b.groupId===g.id);
-      const ruleId=(bind&&bind.ruleId)||(rules[0]&&rules[0].name)||'';
-      const rule=rules.find(r=>r.name===ruleId)||rules[0];
-      const gidEsc=String(g.id).replace(/'/g,"\\'");
-      return `<tr>
-        <td style="font:500 13px/1 var(--f);color:var(--c9);width:18%">${escHtml(g.name)}</td>
-        <td style="width:160px">${renderFdRulePick(rules,ruleId,`setInvGroupDistRule('${side}','${gidEsc}',this.value)`)}</td>
-        <td>${renderFdRuleDetail(rule,isCap)}</td>
-      </tr>`;
-    }).join('');
-  }
+  }).join('');
   return `<div class="fd-group-panel">
     ${usingDemo?'<div class="form-hint" style="margin-bottom:6px">暂无考核组，以下为示意</div>':''}
-    <table class="tbl" style="margin:0"><thead><tr><th style="width:18%">考核组</th><th style="width:160px">强制分布规则</th><th>规则详情</th></tr></thead><tbody>${rows}</tbody></table>
+    <table class="tbl" style="margin:0"><thead><tr><th style="width:16%">考核组</th><th style="width:148px">强制分布规则</th><th style="width:100px">控制模式</th><th>规则详情</th></tr></thead><tbody>${rows}</tbody></table>
   </div>`;
 }
 
@@ -1453,56 +1430,11 @@ function renderInventoryCfg(s){
 
     <div class="fd-side">
       <div class="fd-side-lb">绩效</div>
-      <div class="form-row fd-main tri">
-        <div class="form-grp">
-          <label class="form-lb" for="inventoryCtrlScope">控制范围 <span class="req">*</span></label>
-          <select class="form-input" id="inventoryCtrlScope" required onchange="setInventoryDistField('inventoryCtrlScope',this.value)">
-            <option value="全部" ${s.inventoryCtrlScope==='全部'?'selected':''}>全部</option>
-            <option value="考核组" ${s.inventoryCtrlScope==='考核组'?'selected':''}>考核组</option>
-          </select>
-        </div>
-        <div class="form-grp">
-          <label class="form-lb">控制模式 <span class="req">*</span></label>
-          <select class="form-input" onchange="setInventoryDistField('forcedDistControl',this.value)">
-            <option ${s.forcedDistControl==='强控'?'selected':''}>强控</option>
-            <option ${s.forcedDistControl==='弱控'?'selected':''}>弱控</option>
-          </select>
-        </div>
-        <div class="form-grp">
-          <label class="form-lb" for="inventorySubmitMode">提交方式 <span class="req">*</span></label>
-          <select class="form-input" id="inventorySubmitMode" required onchange="setInventoryDistField('inventorySubmitMode',this.value)">
-            <option value="" ${s.inventorySubmitMode?'':'selected'} disabled>请选择</option>
-            ${RATIFY_SUBMIT_MODES.map(mode=>`<option value="${mode}" ${s.inventorySubmitMode===mode?'selected':''}>${mode}</option>`).join('')}
-          </select>
-        </div>
-      </div>
       ${renderGroupForcedDistPanel('perf',s)}
     </div>
 
     <div class="fd-side">
       <div class="fd-side-lb">能力</div>
-      <div class="form-row fd-main tri">
-        <div class="form-grp">
-          <label class="form-lb" for="capCtrlScope">控制范围 <span class="req">*</span></label>
-          <select class="form-input" id="capCtrlScope" required onchange="setInventoryDistField('capCtrlScope',this.value)">
-            <option value="全部" ${s.capCtrlScope==='全部'?'selected':''}>全部</option>
-            <option value="考核组" ${s.capCtrlScope==='考核组'?'selected':''}>考核组</option>
-          </select>
-        </div>
-        <div class="form-grp">
-          <label class="form-lb">控制模式 <span class="req">*</span></label>
-          <select class="form-input" onchange="setInventoryDistField('capForcedDistControl',this.value)">
-            <option ${s.capForcedDistControl==='强控'?'selected':''}>强控</option>
-            <option ${s.capForcedDistControl==='弱控'?'selected':''}>弱控</option>
-          </select>
-        </div>
-        <div class="form-grp">
-          <label class="form-lb" for="capForcedDistSubmit">提交方式 <span class="req">*</span></label>
-          <select class="form-input" id="capForcedDistSubmit" required disabled onchange="setInventoryDistField('capForcedDistSubmit',this.value)">
-            <option value="全部提交" selected>全部提交</option>
-          </select>
-        </div>
-      </div>
       ${renderGroupForcedDistPanel('cap',s)}
     </div>
   </div>
@@ -2069,28 +2001,13 @@ function validateRatifySubmitMode(){
   }
   return true;
 }
-function validateInventorySubmitMode(){
-  const inv=form.stages.find(s=>s.id==='inventory');
-  if(inv&&inv.enabled){
-    ensureInventoryCfg(inv);
-    if(!inv.inventorySubmitMode){
-      alert('请选择提交方式');
-      activeSection='inventory';
-      render();
-      return false;
-    }
-  }
-  return true;
-}
 function goNextSection(id){
   if(activeSection==='ratify'&&!validateRatifySubmitMode())return;
-  if(activeSection==='inventory'&&!validateInventorySubmitMode())return;
   selSection(id);
 }
 function validateScheme(){
   if(!form.name){alert('请填写方案名称');activeSection='basic';render();return false}
-  if(!validateRatifySubmitMode())return false;
-  return validateInventorySubmitMode();
+  return validateRatifySubmitMode();
 }
 function toggleSec(el){el.closest('.form-sec').classList.toggle('open')}
 function submit(){if(!validateScheme())return;alert('方案已提交：'+form.name)}

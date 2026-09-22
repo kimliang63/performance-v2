@@ -90,23 +90,26 @@ body.approve-mode #primaryBtn,
 body.approve-mode #ratifyMoreBtn,
 body.approve-mode #distOverview,
 body.approve-mode #evalList,
-body.approve-mode #onlyUnfilledDivider,
-body.approve-mode #onlyUnfilledWrap{display:none !important}
+body.approve-mode #fillFilterDivider,
+body.approve-mode #fillFilterLabel,
+body.approve-mode #fillFilter{display:none !important}
 body.approve-mode #boxPanel{display:flex !important;flex:1 1 0%;min-height:0}
 body.approve-mode .person-chip{cursor:default}
 body.approve-mode .box9-cell.drag-over{border-color:inherit;background:inherit}
 
-.dist-filters{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:8px;padding:6px 12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;min-height:40px;box-sizing:border-box;flex-shrink:0}
-.filter-label{font:500 12px/1 var(--f);color:var(--c6);flex-shrink:0}
-.filter-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.filter-divider{width:1px;height:20px;background:var(--c2);flex-shrink:0}
-.filter-search{position:relative;width:220px;flex-shrink:0}
-.filter-search svg{position:absolute;left:10px;top:50%;width:14px;height:14px;transform:translateY(-50%);color:var(--c4);pointer-events:none}
-.filter-search input{width:100%;height:30px;padding:0 30px;border:1px solid var(--c2);border-radius:var(--r1);background:var(--sf);color:var(--c8);font:400 12px/1 var(--f);outline:none;transition:all .12s}
+.dist-filters{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;min-width:0;flex:1 1 auto;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;box-sizing:border-box;height:100%;padding:0;margin:0;background:transparent;border-radius:0;box-shadow:none}
+.filter-label{font:500 12px/1 var(--f);color:var(--c6);flex-shrink:0;white-space:nowrap}
+.filter-actions{display:flex;gap:6px;flex-wrap:nowrap;align-items:center;flex-shrink:0}
+select.status-filter-select{appearance:none;height:28px;min-width:88px;padding:0 26px 0 8px;border:1px solid var(--c2);border-radius:var(--r1);font:500 12px/1 var(--f);color:var(--c8);background-color:var(--sf);background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;cursor:pointer;outline:none;font-family:inherit;transition:border-color .12s,box-shadow .12s}
+select.status-filter-select:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
+.filter-divider{width:1px;height:18px;background:var(--c2);flex-shrink:0}
+.filter-search{position:relative;width:160px;flex-shrink:0}
+.filter-search svg{position:absolute;left:8px;top:50%;width:14px;height:14px;transform:translateY(-50%);color:var(--c4);pointer-events:none}
+.filter-search input{width:100%;height:28px;padding:0 28px;border:1px solid var(--c2);border-radius:var(--r1);background:var(--sf);color:var(--c8);font:400 12px/1 var(--f);outline:none;transition:all .12s}
 .filter-search input::placeholder{color:var(--c4)}
 .filter-search input:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
-.tree-filter{position:relative}
-.tree-filter-btn{height:30px;padding:0 10px;border:1px solid var(--c2);border-radius:var(--r1);background:var(--sf);color:var(--c6);font:500 12px/1 var(--f);cursor:pointer;display:flex;align-items:center;gap:6px}
+.tree-filter{position:relative;flex-shrink:0}
+.tree-filter-btn{height:28px;padding:0 8px;border:1px solid var(--c2);border-radius:var(--r1);background:var(--sf);color:var(--c6);font:500 12px/1 var(--f);cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap}
 .tree-filter-btn:hover,.tree-filter-btn[aria-expanded="true"]{border-color:var(--pr200);background:var(--pr50);color:var(--pr)}
 .tree-filter-btn svg{width:12px;height:12px;transition:transform .15s}.tree-filter-btn[aria-expanded="true"] svg{transform:rotate(180deg)}
 .tree-filter-count{color:var(--pr);font-weight:600}
@@ -138,8 +141,83 @@ body.approve-mode .box9-cell.drag-over{border-color:inherit;background:inherit}
   flex-shrink:0;
   margin:0;
 }
-.eval-list-hd .panel-hd-title,
-.box9-title{font:600 14px/1 var(--f);color:var(--c9)}
+.box9-title{font:600 14px/1 var(--f);color:var(--c9);flex-shrink:0;white-space:nowrap}
+.eval-list-hd .dist-filters,
+.box9-hd .dist-filters{flex:1 1 auto;min-width:0}
+.group-panels-rail{display:none;flex:1 1 0%;min-width:0;min-height:0;align-self:stretch;overflow:hidden;border-left:0;background:var(--c0)}
+/* 展开=按组 2×2 卡片；收起=右侧仍显示，改为一列合并统计 */
+.eval-list.view-switchable .group-panels-rail{display:flex;flex-direction:column}
+.eval-list.view-by-group .eval-list-main{flex:0 0 300px;max-width:320px;min-width:260px;border-right:0}
+/* 覆盖 split-lr 下 .eval-list-main{flex:1}，避免按组视图左侧名单被挤没 */
+.step-work.split-lr .eval-list.view-by-group .eval-list-main{flex:0 0 300px;max-width:320px;min-width:260px}
+.eval-list.view-merged .eval-list-main{flex:1 1 0%;min-width:0;border-right:0}
+.eval-list.view-merged .group-panels-rail{flex:0 0 340px;width:340px;min-width:300px;max-width:380px}
+.eval-list.view-by-group #distExpanded,
+.eval-list.view-merged #distExpanded{display:none !important}
+.eval-split-gutter{display:none;flex:0 0 18px;width:18px;align-self:stretch;align-items:center;justify-content:center;border-left:1px solid var(--c2);border-right:1px solid var(--c2);background:var(--c0);z-index:2}
+.eval-list.view-switchable .eval-split-gutter{display:flex}
+.eval-split-toggle{width:16px;height:40px;padding:0;border:0;border-radius:var(--r1);background:transparent;color:var(--c5);display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.eval-split-toggle:hover{background:var(--pr50);color:var(--pr)}
+.eval-split-toggle svg{width:12px;height:12px;display:block;transition:transform .15s}
+.eval-split-toggle[aria-expanded="false"] svg{transform:scaleX(-1)}
+.group-panels-scroll{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:minmax(0,1fr);gap:12px;padding:12px;overflow:auto;flex:1 1 0%;min-height:0;scrollbar-width:thin;background:var(--c0);align-content:stretch}
+.group-panels-scroll::-webkit-scrollbar{width:6px;height:6px}
+.group-panels-scroll::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
+.group-panels-rail.panels-single .group-panels-scroll{display:flex;flex-direction:column;grid-template-columns:none;gap:0;padding:12px}
+.group-panel{display:flex;flex-direction:column;gap:0;min-width:0;min-height:0;padding:0;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);box-shadow:none;overflow:hidden;transition:border-color .15s,box-shadow .15s}
+.group-panels-rail.panels-single .group-panel{flex:1 1 0%;width:auto;max-width:none}
+.group-panel:hover{border-color:var(--c3)}
+.group-panel.is-active{border-color:var(--pr200);box-shadow:0 0 0 1px var(--pr100)}
+.group-panel-hd{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-shrink:0;box-sizing:border-box;min-height:40px;margin:0;padding:8px 12px;border-bottom:1px solid var(--dv);cursor:pointer}
+.group-panel-hd:hover .group-panel-name{color:var(--pr)}
+.group-panel-title{display:inline-flex;align-items:baseline;gap:6px;min-width:0}
+.group-panel-name{font:600 13px/1.2 var(--f);color:var(--c9)}
+.group-panel-count{font:500 12px/1 var(--f);color:var(--c5);white-space:nowrap}
+.group-panel-legend{display:inline-flex;align-items:center;gap:10px;flex-shrink:0;font:400 11px/1 var(--f);color:var(--c5);white-space:nowrap}
+.group-panel-legend .cap-leg-item{gap:4px}
+.group-panel-body{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(120px,1fr);align-items:stretch;gap:8px;flex:1 1 0%;min-width:0;min-height:0;padding:8px 10px 10px;overflow:hidden}
+/* 收起「合并统计」：上表下图（非左右分栏） */
+.group-panel[data-group="__merged__"] .group-panel-body{display:flex;flex-direction:column;grid-template-columns:none;gap:10px;overflow:visible}
+.group-panel[data-group="__merged__"] .group-panel-table{flex:0 0 auto;max-height:none;overflow:visible}
+.group-panel[data-group="__merged__"] .group-panel-chart{flex:0 0 auto;min-height:220px;overflow:visible}
+.group-panel-table{min-width:0;min-height:0;overflow:auto}
+.group-panel-chart{min-width:0;display:flex;flex-direction:column;min-height:0;overflow:hidden;cursor:default}
+.group-chart-axis{display:flex;justify-content:space-between;align-items:flex-end;height:18px;margin:0 0 2px;font:400 10px/1 var(--m);color:var(--c4);flex-shrink:0;user-select:none;box-sizing:border-box}
+.group-panel .cap-bars{padding:0;margin:0;border:0;gap:0;flex:1 1 0%;min-height:0;overflow:hidden;display:flex;flex-direction:column}
+.group-panel .cap-bars .cap-bars-plot{gap:0;flex:1 1 0%;justify-content:flex-start;overflow:visible}
+.group-panel .cap-bars .cap-bar-row{min-height:26px;height:26px;padding:0;gap:4px;margin:0;cursor:inherit}
+.group-panel .cap-bars .cap-bar-line{gap:4px;min-width:0}
+.group-panel .cap-bars .cap-bar-track{height:10px;overflow:hidden;background:transparent !important}
+.group-panel .cap-bars .cap-bar-row:hover .cap-bar-track{background:transparent !important}
+.group-panel .cap-bars .cap-bar-range{display:none}
+.group-panel .cap-bars .cap-bar-count{font-size:11px;min-width:14px;color:var(--c8)}
+.group-panel .cap-bar-legend{display:none}
+.group-panel .cap-bar-fill{display:block;min-height:100%}
+/* 展开考核组卡片：左表已有等级名，右图仅刻度+轨+人数 */
+.group-panel:not([data-group="__merged__"]) .group-chart-axis{padding:0 18px 0 0}
+.group-panel:not([data-group="__merged__"]) .cap-bars.cap-bars-card .cap-bar-row{gap:6px}
+.group-panel:not([data-group="__merged__"]) .cap-bars.cap-bars-card .cap-bar-track{min-width:24px}
+/* 收起合并统计：上表下图，行内自带等级名 */
+.group-panel[data-group="__merged__"] .group-chart-axis{padding:0 22px 0 88px}
+.group-panel[data-group="__merged__"] .cap-bars.cap-bars-merged .cap-bar-row > .cap-tag{flex:0 0 84px;min-width:84px;max-width:84px;height:20px;padding:0 6px;font-size:11px;justify-content:flex-start;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;box-sizing:border-box}
+.group-panel .list-stats{min-height:0;overflow:visible;padding:0}
+.group-panel .dist-status-table{width:100%;table-layout:fixed;border-collapse:collapse;font-size:11px}
+.group-panel .dist-status-table th,.group-panel .dist-status-table td{padding:0 4px;height:26px;text-align:left;border-bottom:1px solid var(--dv);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:middle}
+.group-panel .dist-status-table thead th{height:18px;padding-bottom:2px;font:600 10px/1 var(--f);color:var(--c5);background:transparent;border-bottom:1px solid var(--dv)}
+.group-panel .dist-status-table tbody tr:last-child td{border-bottom:0}
+.group-panel .dist-status-table .col-req{width:26%}
+.group-panel .dist-grade-pill{display:inline-flex;align-items:center;max-width:100%;height:20px;padding:0 6px;border-radius:4px;font:600 11px/1 var(--f);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.group-panel .cap-tag{height:20px;min-width:0;padding:0 6px;font-size:11px}
+.group-panel .adj-delta{font-size:12px}
+/* 按考核组：左表头行高与右组标题对齐，首行数据与右侧内容起始线齐平 */
+.eval-list.view-by-group .eval-list-scroll #memberHead th{box-sizing:border-box;height:44px;padding-top:0;padding-bottom:0;vertical-align:middle}
+.eval-list.view-by-group .eval-list-scroll table{min-width:0;width:100%;table-layout:fixed}
+.eval-list.view-by-group .eval-list-scroll .col-freeze-l{width:46%;position:static;box-shadow:none}
+.eval-list.view-by-group .eval-list-scroll .col-freeze-r{width:54%;position:static;box-shadow:none}
+.eval-list.view-by-group .member-compact-meta{margin-top:3px;font:400 10px/1.2 var(--f);color:var(--c4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px}
+.eval-list.view-by-group .col-freeze-r .star-rating{align-items:flex-start}
+.eval-list.view-by-group .col-freeze-r .star-desc{display:none}
+.eval-list.view-by-group .col-freeze-r .star{font-size:15px}
 .eval-list-scroll{overflow:auto;min-height:0;flex:1;scrollbar-width:none;-ms-overflow-style:none}
 .eval-list-scroll::-webkit-scrollbar{width:0;height:0;display:none}
 .eval-list-split{display:flex;flex-direction:column;flex:1;min-height:0}
@@ -355,8 +433,10 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .cap-bars.grade-bars .cap-leg-bar{background:linear-gradient(90deg,var(--em) 0 50%,var(--ro) 50% 100%)}
 .hd-unfilled{display:none;align-items:center;gap:8px;font:400 12px/1 var(--f);color:var(--c6);cursor:pointer;user-select:none;flex-shrink:0}
 .hd-unfilled.on{display:inline-flex}
-#onlyUnfilledDivider{display:none}
-#onlyUnfilledDivider.on{display:block}
+#fillFilterDivider,#fillFilterLabel,#fillFilter{display:none}
+#fillFilterDivider.on{display:block}
+#fillFilterLabel.on{display:inline}
+#fillFilter.on{display:flex}
 #onlyAbnDivider{display:none}
 #onlyAbnDivider.on{display:block}
 .hd-unfilled input{position:absolute;opacity:0;width:0;height:0;pointer-events:none}
@@ -367,7 +447,6 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .hd-unfilled:hover{color:var(--c7)}
 .hd-unfilled.abn-filter input:checked+.hd-sw{background:#F59E0B}
 .step-work{display:flex;flex-direction:column;gap:0;flex:1;min-height:0}
-.step-work>#distFilters{margin-bottom:8px;flex-shrink:0}
 .step-work #evalList .eval-list-hd,
 .step-work #boxPanel .box9-hd{position:relative;z-index:3}
 .step-work #pager{position:relative;z-index:3;background:var(--sf);flex-shrink:0;padding-left:16px;padding-right:16px}
@@ -440,10 +519,6 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 }
 .step-work.split-lr #listStats .dist-status-table th{font-size:10px;color:var(--c6);padding:8px 6px}
 .step-work.split-lr #listStats .adj-delta{font-size:12px}
-.step-work.split-lr .submit-strip{flex-shrink:0}
-.step-work.split-lr .submit-metric{gap:2px;padding:5px 2px}
-.step-work.split-lr .submit-metric .n{font-size:14px}
-.step-work.split-lr .submit-metric .l{font-size:10px}
 .step-work.split-lr #capBars.cap-bars{
   gap:6px;
   padding-top:8px;
@@ -487,15 +562,6 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .adj-delta.in{color:var(--em700)}
 .adj-delta.out{color:var(--ro)}
 .adj-delta.ok{color:var(--c4);font-weight:500}
-.submit-strip{display:grid;grid-template-columns:1fr 1fr 1fr;border:1px solid var(--c2);border-radius:var(--r2);overflow:hidden;background:var(--sf);flex-shrink:0}
-.submit-metric{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:0;padding:8px 4px;border:0;background:transparent;cursor:pointer;font-family:inherit;transition:background .12s}
-.submit-metric+.submit-metric{border-left:1px solid var(--c2)}
-.submit-metric .n{font:700 16px/1.1 var(--m);color:var(--c9)}
-.submit-metric .l{font:400 11px/1.2 var(--f);color:var(--c5)}
-.submit-metric:hover{background:var(--c0)}
-.submit-metric.active{background:var(--pr50)}
-.submit-metric.active .n{color:var(--pr)}
-.submit-metric.active .l{color:var(--pr)}
 .step-work.split-lr .eval-list-scroll thead .col-freeze-l,.step-work.split-lr .eval-list-scroll thead .col-freeze-r{z-index:6}
 .step-work.split-lr .eval-list-scroll table{min-width:0;table-layout:fixed;width:100%}
 .step-work.split-lr.step-ratify .eval-list-scroll table{width:max-content;min-width:100%;table-layout:fixed}
@@ -536,7 +602,10 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .dist-status-table td{padding:8px 10px;border-bottom:1px solid var(--dv);font:400 12px/1.35 var(--f);color:var(--c6)}
 .dist-status-table tbody tr:last-child td{border-bottom:none}
 .dist-status-table tbody tr{cursor:pointer;transition:background .12s}
-.dist-status-table tbody tr:hover,.dist-status-table tbody tr.active{background:var(--pr50)}
+.dist-status-table tbody tr:hover{background:var(--pr50)}
+.dist-status-table tbody tr.active{background:color-mix(in srgb,var(--pr) 12%,#fff)}
+.dist-status-table tbody tr.active td{font-weight:600;color:var(--c8)}
+.dist-status-table tbody tr.active td:first-child{box-shadow:inset 3px 0 0 var(--pr)}
 .dist-grade-name{font-weight:600;color:var(--c8)}
 .dist-status{display:inline-flex;align-items:center;padding:3px 8px;border-radius:var(--r1);font:500 11px/1 var(--f);white-space:nowrap}
 .dist-status.ok{color:var(--em700);background:var(--em50)}
@@ -558,9 +627,8 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 @media (max-width:980px){
   .pg-hd-top{align-items:flex-start;gap:12px;flex-wrap:wrap;top:-12px}
   .pg-hd-right{width:100%;justify-content:space-between;flex-wrap:wrap}
-  .dist-filters{align-items:flex-start;flex-wrap:wrap}
-  .filter-divider{display:none}
-  .filter-search{order:-1;width:100%}
+  .dist-filters{align-items:center;flex-wrap:nowrap}
+  .filter-search{width:140px}
   .dist-grid,.dist-grid.dist-grid-dual{grid-template-columns:1fr}
   .step-work.split-lr .eval-list-split,
   .step-work.split-lr .box9-split{flex-direction:column}
@@ -764,13 +832,25 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .notice-overlay{position:fixed;inset:0;z-index:3000;display:flex;align-items:flex-start;justify-content:center;padding:12vh 16px 24px;background:rgba(0,0,0,.28);opacity:0;pointer-events:none;transition:opacity .2s}
 .notice-overlay.open{opacity:1;pointer-events:all}
 .notice-card{background:var(--sf);border-radius:var(--r3);box-shadow:0 20px 60px rgba(0,0,0,.16);width:420px;max-width:92vw;display:flex;flex-direction:column;overflow:hidden;transform:translateY(-8px);transition:transform .2s}
+.notice-card.wide{width:560px}
 .notice-overlay.open .notice-card{transform:translateY(0)}
 .notice-hd{padding:14px 18px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between;gap:12px}
 .notice-title{font:600 15px/1.2 var(--f);color:var(--c9)}
 .notice-bd{padding:16px 18px;font:400 13px/1.6 var(--f);color:var(--c7);white-space:pre-wrap;word-break:break-word}
+.notice-bd.has-html{white-space:normal}
 .notice-ft{padding:12px 18px;border-top:1px solid var(--dv);display:flex;justify-content:flex-end;gap:8px}
 .notice-overlay.warn .notice-title{color:var(--ac700)}
 .notice-overlay:not(.warn) .notice-title{color:var(--em700)}
+.fd-fail-lead{margin:0 0 10px;font:400 13px/1.5 var(--f);color:var(--c7)}
+.fd-fail-foot{margin:12px 0 0;font:500 13px/1.5 var(--f);color:var(--ac700)}
+.fd-fail-table{width:100%;border-collapse:collapse;font:400 12px/1.5 var(--f);background:var(--c0);border:1px solid var(--c2);border-radius:var(--r2);overflow:hidden}
+.fd-fail-table th,.fd-fail-table td{padding:8px 10px;border-bottom:1px solid var(--dv);text-align:left;vertical-align:top}
+.fd-fail-table th{font-weight:600;color:var(--c8);background:var(--sf);white-space:nowrap}
+.fd-fail-table td{color:var(--c7)}
+.fd-fail-table tr:last-child td{border-bottom:none}
+.fd-fail-table .fd-col-group{width:28%;white-space:nowrap}
+.fd-fail-table .fd-col-grade{width:22%;white-space:nowrap}
+.fd-fail-table .fd-col-advice{width:50%}
 
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .fade-in{animation:fadeIn .2s ease forwards}
@@ -817,8 +897,6 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
         <div class="action-more">
           <button class="btn btn-s action-more-trigger" id="ratifyMoreBtn" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="ratifyMoreMenu" onclick="toggleActionMenu(event)">更多<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
           <div class="action-more-menu" id="ratifyMoreMenu" role="menu" aria-labelledby="ratifyMoreBtn">
-            <button class="action-more-item" type="button" role="menuitem" onclick="closeActionMenu();toggleDemoCtrlScope()">切换控制范围</button>
-            <button class="action-more-item" type="button" role="menuitem" onclick="closeActionMenu();toggleDemoControlMode()">切换控制模式</button>
             <button class="action-more-item" type="button" role="menuitem" onclick="closeActionMenu();showToast('导出成功','success')">导出</button>
             <button class="action-more-item danger" type="button" role="menuitem" onclick="closeActionMenu();rejectRatify()">驳回</button>
           </div>
@@ -852,66 +930,46 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
     </div>
   </section>
 
-  <!-- 列表筛选：固定放在图表下方，收起图表时仍保留 -->
-  <div class="dist-filters" id="distFilters">
-    <label class="filter-search" aria-label="搜索员工姓名或工号">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input id="memberSearch" type="search" placeholder="搜索员工姓名/工号" autocomplete="off" oninput="filterKeyword(this.value)">
-    </label>
-    <div class="filter-divider"></div>
-    <span class="filter-label">考核组</span>
-    <div class="filter-actions" id="groupFilter"></div>
-    <div class="filter-divider"></div>
-    <div class="tree-filter">
-      <button class="tree-filter-btn" id="departmentFilterBtn" type="button" aria-expanded="false" onclick="toggleTreeFilter(event,'department')">部门 <span class="tree-filter-count" id="departmentFilterCount">全部</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
-      <div class="tree-popover" id="departmentTree">
-        <div class="tree-popover-hd">选择部门（可多选）</div>
-        <div class="tree-body">
-          <div class="tree-node branch">▾ HR ONE</div>
-          <div class="tree-node branch level-1">▾ 中国区</div>
-          <label class="tree-node level-2"><input type="checkbox" value="产品部" onchange="toggleTreeSelection('department',this)">产品部</label>
-          <label class="tree-node level-2"><input type="checkbox" value="技术部" onchange="toggleTreeSelection('department',this)">技术部</label>
-          <label class="tree-node level-2"><input type="checkbox" value="设计部" onchange="toggleTreeSelection('department',this)">设计部</label>
-          <label class="tree-node level-2"><input type="checkbox" value="运营部" onchange="toggleTreeSelection('department',this)">运营部</label>
-        </div>
-        <div class="tree-popover-ft"><button class="tree-clear" type="button" onclick="clearTreeFilter('department')">清空</button><button class="btn btn-p btn-sm" type="button" onclick="closeTreeFilters()">完成</button></div>
-      </div>
-    </div>
-    <div class="tree-filter">
-      <button class="tree-filter-btn" id="regionFilterBtn" type="button" aria-expanded="false" onclick="toggleTreeFilter(event,'region')">划分区域 <span class="tree-filter-count" id="regionFilterCount">全部</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
-      <div class="tree-popover" id="regionTree">
-        <div class="tree-popover-hd">选择划分区域（可多选）</div>
-        <div class="tree-body">
-          <div class="tree-node branch">▾ 全球</div>
-          <div class="tree-node branch level-1">▾ 亚太区 / 中国</div>
-          <label class="tree-node level-2"><input type="checkbox" value="华东区域" onchange="toggleTreeSelection('region',this)">华东区域</label>
-          <label class="tree-node level-2"><input type="checkbox" value="华南区域" onchange="toggleTreeSelection('region',this)">华南区域</label>
-          <label class="tree-node level-2"><input type="checkbox" value="华北区域" onchange="toggleTreeSelection('region',this)">华北区域</label>
-        </div>
-        <div class="tree-popover-ft"><button class="tree-clear" type="button" onclick="clearTreeFilter('region')">清空</button><button class="btn btn-p btn-sm" type="button" onclick="closeTreeFilters()">完成</button></div>
-      </div>
-    </div>
-    <div class="filter-divider"></div>
-    <span class="filter-label" id="statusFilterLabel">提交状态</span>
-    <div class="filter-actions" id="statusFilter"></div>
-    <div class="filter-divider" id="onlyUnfilledDivider"></div>
-    <label class="hd-unfilled" id="onlyUnfilledWrap" for="onlyUnfilledChk">
-      <span>只看未填写</span>
-      <input type="checkbox" id="onlyUnfilledChk" onchange="toggleOnlyUnfilled(this.checked)">
-      <span class="hd-sw" aria-hidden="true"></span>
-    </label>
-    <div class="filter-divider" id="onlyAbnDivider"></div>
-    <label class="hd-unfilled abn-filter" id="onlyAbnWrap" for="onlyAbnChk">
-      <span>只看异常</span>
-      <input type="checkbox" id="onlyAbnChk" onchange="toggleOnlyAbnormal(this.checked)">
-      <span class="hd-sw" aria-hidden="true"></span>
-    </label>
-  </div>
-
-  <!-- 团队成员列表 -->
+  <!-- 团队成员列表：筛选并入标题行 -->
   <div class="eval-list" id="evalList">
     <div class="eval-list-hd">
-      <span class="panel-hd-title" id="listTitle">团队成员审定</span>
+      <div class="dist-filters" id="distFilters">
+        <label class="filter-search" aria-label="搜索员工姓名或工号">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input id="memberSearch" type="search" placeholder="搜索员工姓名/工号" autocomplete="off" oninput="filterKeyword(this.value)">
+        </label>
+        <div class="filter-divider"></div>
+        <span class="filter-label">考核组</span>
+        <div class="filter-actions" id="groupFilter"></div>
+        <div class="filter-divider"></div>
+        <div class="tree-filter">
+          <button class="tree-filter-btn" id="departmentFilterBtn" type="button" aria-expanded="false" onclick="toggleTreeFilter(event,'department')">部门 <span class="tree-filter-count" id="departmentFilterCount">全部</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+          <div class="tree-popover" id="departmentTree">
+            <div class="tree-popover-hd">选择部门（可多选）</div>
+            <div class="tree-body">
+              <div class="tree-node branch">▾ HR ONE</div>
+              <div class="tree-node branch level-1">▾ 中国区</div>
+              <label class="tree-node level-2"><input type="checkbox" value="产品部" onchange="toggleTreeSelection('department',this)">产品部</label>
+              <label class="tree-node level-2"><input type="checkbox" value="技术部" onchange="toggleTreeSelection('department',this)">技术部</label>
+              <label class="tree-node level-2"><input type="checkbox" value="设计部" onchange="toggleTreeSelection('department',this)">设计部</label>
+              <label class="tree-node level-2"><input type="checkbox" value="运营部" onchange="toggleTreeSelection('department',this)">运营部</label>
+            </div>
+            <div class="tree-popover-ft"><button class="tree-clear" type="button" onclick="clearTreeFilter('department')">清空</button><button class="btn btn-p btn-sm" type="button" onclick="closeTreeFilters()">完成</button></div>
+          </div>
+        </div>
+        <div class="filter-divider"></div>
+        <span class="filter-label" id="statusFilterLabel">提交状态</span>
+        <div class="filter-actions" id="statusFilter"></div>
+        <div class="filter-divider" id="fillFilterDivider"></div>
+        <span class="filter-label" id="fillFilterLabel">填写状态</span>
+        <div class="filter-actions" id="fillFilter"></div>
+        <div class="filter-divider" id="onlyAbnDivider"></div>
+        <label class="hd-unfilled abn-filter" id="onlyAbnWrap" for="onlyAbnChk">
+          <span>只看异常</span>
+          <input type="checkbox" id="onlyAbnChk" onchange="toggleOnlyAbnormal(this.checked)">
+          <span class="hd-sw" aria-hidden="true"></span>
+        </label>
+      </div>
     </div>
     <div class="eval-list-split" id="evalSplit">
       <div class="eval-list-main">
@@ -923,12 +981,19 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
         </div>
         <div class="pager" id="pager"></div>
       </div>
+      <div class="eval-split-gutter" id="evalSplitGutter">
+        <button class="eval-split-toggle" id="evalSplitToggle" type="button" aria-expanded="true" aria-controls="groupPanelsRail" title="收起为合并统计" aria-label="收起为合并统计" onclick="toggleGroupPanels()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+      <div class="group-panels-rail" id="groupPanelsRail" aria-label="按考核组分布">
+        <div class="group-panels-scroll" id="groupPanelsScroll"></div>
+      </div>
     </div>
   </div>
 
   <div class="box9-wrap" id="boxPanel" style="display:none">
     <div class="box9-hd">
-      <div class="box9-title">九宫格分布</div>
       <div class="box9-dist-hint" id="box9DistHint" aria-live="polite"></div>
       <div class="box9-hd-actions">
         <div class="box-view-seg" role="group" aria-label="视图切换">
@@ -1021,7 +1086,7 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 </div>
 
 <div class="adj-modal-overlay" id="forceDistWarnModal" aria-hidden="true" onclick="closeForceDistWarn()">
-  <div class="adj-modal" role="dialog" aria-modal="true" aria-labelledby="forceDistWarnTitle" onclick="event.stopPropagation()" style="width:480px">
+  <div class="adj-modal" role="dialog" aria-modal="true" aria-labelledby="forceDistWarnTitle" onclick="event.stopPropagation()" style="width:560px">
     <div class="adj-modal-hd">
       <div class="adj-modal-title" id="forceDistWarnTitle">强制分布未达标</div>
       <button class="adj-modal-close" type="button" aria-label="关闭" onclick="closeForceDistWarn()">×</button>
@@ -1115,8 +1180,9 @@ var APPROVE_MODE=(function(){
 var approveDone=false;
 
 var GRADE_OPTIONS=['远超预期','超出预期','符合预期+','符合预期','符合预期-','低于预期','远低预期'];
-var GRADE_COLORS={'远低预期':'var(--ro)','低于预期':'var(--ro)','符合预期-':'var(--ro)','符合预期':'var(--ac)','符合预期+':'var(--ac)','超出预期':'var(--em)','远超预期':'var(--em700)'};
-var GRADE_BG={'远低预期':'var(--ro50)','低于预期':'var(--ro50)','符合预期-':'var(--ro50)','符合预期':'var(--ac50)','符合预期+':'var(--ac50)','超出预期':'var(--em50)','远超预期':'var(--em50)'};
+/* 等级色：绿 / 绿 / 黄 / 橙 / 粉 / 红 / 红 —— pill 与条形填充同源 */
+var GRADE_COLORS={'远低预期':'#E11D48','低于预期':'#F43F5E','符合预期-':'#FB7185','符合预期':'#F59E0B','符合预期+':'#EAB308','超出预期':'#10B981','远超预期':'#047857'};
+var GRADE_BG={'远低预期':'#FFF1F2','低于预期':'#FFF1F2','符合预期-':'#FFF1F2','符合预期':'#FFFBEB','符合预期+':'#FEFCE8','超出预期':'#ECFDF5','远超预期':'#ECFDF5'};
 var STAR_DESC_RATIFY={1:'业绩大幅超越目标，具备标杆价值',2:'整体优于目标，常有亮点产出',3:'全面完成目标，局部表现突出',4:'完成全部目标，满足岗位要求',5:'基本达成目标，尚有提升空间',6:'多项未达目标，需针对性改进',7:'核心任务落空，整体差距显著'};
 var CAP_OPTIONS=['高','中','低'];
 var BOX_NAMES={'高-低':'老黄牛','高-中':'穿山甲','高-高':'领头羊','中-低':'空心竹','中-中':'工蜜蜂','中-高':'白龙马','低-低':'寄居蟹','低-中':'老爷车','低-高':'水上漂'};
@@ -1138,38 +1204,29 @@ function boxNumOf(key){
 var PERF_ROWS=['高','中','低'];
 var CAP_COLS=['低','中','高'];
 
-var ASSESS_GROUPS=['专员/主管','基层干部'];
+var ASSESS_GROUPS=['专员/主管','基层干部','中层','高层'];
 
-/* 方案快照 mock：对齐 wizard inventoryCtrlScope / forcedDistGroups / forcedDistControl */
+/* 方案快照 mock：固定按考核组拆分 + 强控（无演示切换） */
 var SCHEME_CFG={
-  ctrlScope:'group',          /* group | all —— 演示默认考核组 */
-  controlMode:'strong',       /* strong | weak */
+  ctrlScope:'group',
+  controlMode:'strong',
   forcedDistRule:'标准七级强制分布',
   forcedDistGroups:{
     '专员/主管':'标准七级强制分布',
-    '基层干部':'宽松七级强制分布'
+    '基层干部':'宽松七级强制分布',
+    '中层':'标准七级强制分布',
+    '高层':'宽松七级强制分布'
   },
   capCtrlScope:'group',
   capControlMode:'strong',
   capForcedDistRule:'标准三档能力强制分布',
   capForcedDistGroups:{
     '专员/主管':'标准三档能力强制分布',
-    '基层干部':'宽松三档能力强制分布'
+    '基层干部':'宽松三档能力强制分布',
+    '中层':'标准三档能力强制分布',
+    '高层':'宽松三档能力强制分布'
   }
 };
-(function applySchemeQuery(){
-  try{
-    var q=new URLSearchParams(location.search);
-    if(q.get('ctrlScope')==='all'||q.get('ctrlScope')==='全部')SCHEME_CFG.ctrlScope='all';
-    if(q.get('ctrlScope')==='group'||q.get('ctrlScope')==='考核组')SCHEME_CFG.ctrlScope='group';
-    if(q.get('controlMode')==='weak'||q.get('controlMode')==='弱控'){
-      SCHEME_CFG.controlMode='weak';SCHEME_CFG.capControlMode='weak';
-    }
-    if(q.get('controlMode')==='strong'||q.get('controlMode')==='强控'){
-      SCHEME_CFG.controlMode='strong';SCHEME_CFG.capControlMode='strong';
-    }
-  }catch(e){}
-})();
 
 var FORCE_DIST_RULES={
   '标准七级强制分布':[
@@ -1235,55 +1292,59 @@ function syncActiveForceAliases(){
   FORCE_DIST=getActiveForceDist();
   CAP_FORCE=getActiveCapForce();
 }
-var CAP_BAR_COLORS={'高':'#10B981','中':'#F59E0B','低':'#F43F5E'};
-var GRADE_BAR_COLORS={
-  '远超预期':'#10B981','超出预期':'#10B981','符合预期+':'#10B981','符合预期':'#10B981',
-  '符合预期-':'#F43F5E','低于预期':'#F43F5E','远低预期':'#F43F5E'
-};
 var statsViewMode='table';
+var listViewMode='byGroup'; /* detail | byGroup —— 审定/盘点列表视图 */
 var BAR_OK='#10B981';
 var BAR_BAD='#F43F5E';
+/** 柱色：当前人数 vs 目标区间（与左表「目标」min–max 一致；调整列正负不单独判定） */
 function barFillByRange(actual,min,max){
   return (actual>=min&&actual<=max)?BAR_OK:BAR_BAD;
 }
-function gradeBarFill(g){
-  return GRADE_BAR_COLORS[g]||BAR_BAD;
-}
-var PENDING_SUBMIT=['秦明涛','许恒勇','孙秀刚','夏涛阳','沈宁龙','胡洁颖','陈峰伟','夏龙萍'];
-var UNFILLED_CAP=['秦明涛','许恒勇','孙秀刚','夏涛阳','沈宁龙'];
+/* 待提交：四组各覆盖 7 档当前≥1（调整前尽量≥1）；部分已填调整等级、部分空（可演示「只看未填写」） */
+var PENDING_SUBMIT=[
+  '秦明涛','沈宁龙','胡洁颖','陈峰伟','夏龙萍','王波蝶','陆景行','程安然','江晚晴','莫北辰',
+  '纪云深','温书衡','裴南星','方予安',
+  '孙秀刚','余芳勇','萧玲刚','谭刚伟','萧磊皓','祁明轩','苏语桐','贺子墨','唐知夏',
+  '楚怀瑾','晏清禾','穆知秋','阮望舒',
+  '许恒勇','夏涛阳','叶伟刚','周娜洁','廖伟雪','邹景深','梁清荷',
+  '卫承泽','蓝砚秋','侯景川','岑若薇',
+  '黄启明','白若琳','顾星辰','宋清岚','韩泽宇','尹书瑶',
+  '狄明远','封雪晴','卓澜溪'
+];
+var UNFILLED_CAP=['秦明涛','许恒勇','孙秀刚','夏涛阳','沈宁龙','黄启明','白若琳','陆景行','程安然','苏语桐','梁清荷'];
 
 var MEMBERS=[
   {name:'谭刚伟', dept:'产品部', role:'高级产品经理', group:'基层干部', totalScore:64.6, grade:'符合预期-', indirectGrade:'符合预期', ratifyGrade:'低于预期', reached:true},
-  {name:'李洋杰', dept:'运营部', role:'运营总监', group:'基层干部', totalScore:65.0, grade:'符合预期-', indirectGrade:'符合预期-', ratifyGrade:'低于预期', reached:true},
+  {name:'李洋杰', dept:'运营部', role:'运营总监', group:'中层', totalScore:65.0, grade:'符合预期-', indirectGrade:'符合预期-', ratifyGrade:'低于预期', reached:true},
   {name:'秦明涛', dept:'运营部', role:'内容运营', group:'专员/主管', totalScore:85.0, grade:'符合预期+', indirectGrade:'符合预期+', ratifyGrade:'', reached:true},
   {name:'孙军军', dept:'产品部', role:'产品助理', group:'专员/主管', totalScore:81.0, grade:'符合预期+', indirectGrade:'符合预期', ratifyGrade:'符合预期', reached:true},
-  {name:'许恒勇', dept:'产品部', role:'产品总监', group:'基层干部', totalScore:79.8, grade:'符合预期', indirectGrade:'符合预期-', ratifyGrade:'', reached:true},
+  {name:'许恒勇', dept:'产品部', role:'产品总监', group:'中层', totalScore:79.8, grade:'符合预期', indirectGrade:'符合预期-', ratifyGrade:'', reached:true},
   {name:'孙秀刚', dept:'产品部', role:'产品经理', group:'基层干部', totalScore:74.5, grade:'符合预期', indirectGrade:'符合预期', ratifyGrade:'', reached:true},
-  {name:'夏涛阳', dept:'设计部', role:'设计总监', group:'基层干部', totalScore:86.4, grade:'符合预期+', indirectGrade:'符合预期+', ratifyGrade:'', reached:true},
-  {name:'胡芳龙', dept:'设计部', role:'设计总监', group:'基层干部', totalScore:72.3, grade:'符合预期', indirectGrade:'符合预期-', ratifyGrade:'', reached:false},
-  {name:'萧萍超', dept:'技术部', role:'架构师', group:'基层干部', totalScore:66.4, grade:'符合预期-', indirectGrade:'低于预期', ratifyGrade:'符合预期-', reached:true},
+  {name:'夏涛阳', dept:'设计部', role:'设计总监', group:'中层', totalScore:86.4, grade:'符合预期+', indirectGrade:'符合预期+', ratifyGrade:'', reached:true},
+  {name:'胡芳龙', dept:'设计部', role:'设计总监', group:'中层', totalScore:72.3, grade:'符合预期', indirectGrade:'符合预期-', ratifyGrade:'', reached:false},
+  {name:'萧萍超', dept:'技术部', role:'架构师', group:'中层', totalScore:66.4, grade:'符合预期-', indirectGrade:'低于预期', ratifyGrade:'符合预期-', reached:true},
   {name:'胡敏红', dept:'运营部', role:'运营专员', group:'专员/主管', totalScore:76.2, grade:'符合预期', indirectGrade:'符合预期-', ratifyGrade:'符合预期', reached:true},
   {name:'董瑞萍', dept:'产品部', role:'产品助理', group:'专员/主管', totalScore:77.8, grade:'符合预期', indirectGrade:'符合预期+', ratifyGrade:'符合预期+', reached:true},
   {name:'周峰博', dept:'设计部', role:'UI设计师', group:'专员/主管', totalScore:61.8, grade:'低于预期', indirectGrade:'符合预期-', ratifyGrade:'', reached:false},
   {name:'孙雪红', dept:'技术部', role:'前端工程师', group:'专员/主管', totalScore:81.2, grade:'符合预期+', indirectGrade:'符合预期+', ratifyGrade:'符合预期', reached:true},
   {name:'李磊勇', dept:'设计部', role:'UX设计师', group:'专员/主管', totalScore:92.8, grade:'超出预期', indirectGrade:'超出预期', ratifyGrade:'', reached:true},
-  {name:'姚辉静', dept:'产品部', role:'高级产品经理', group:'基层干部', totalScore:97.1, grade:'远超预期', indirectGrade:'远超预期', ratifyGrade:'', reached:true},
+  {name:'姚辉静', dept:'产品部', role:'高级产品经理', group:'中层', totalScore:97.1, grade:'远超预期', indirectGrade:'远超预期', ratifyGrade:'', reached:true},
   {name:'阎瑞博', dept:'技术部', role:'工程师', group:'专员/主管', totalScore:96.5, grade:'远超预期', indirectGrade:'超出预期', ratifyGrade:'远超预期', reached:true},
   {name:'阎欣磊', dept:'设计部', role:'UX设计师', group:'专员/主管', totalScore:65.7, grade:'符合预期-', indirectGrade:'符合预期', ratifyGrade:'', reached:false},
   {name:'胡明静', dept:'技术部', role:'前端工程师', group:'专员/主管', totalScore:85.4, grade:'符合预期+', indirectGrade:'符合预期+', ratifyGrade:'', reached:false},
-  {name:'叶伟刚', dept:'设计部', role:'设计总监', group:'基层干部', totalScore:83.8, grade:'符合预期+', indirectGrade:'超出预期', ratifyGrade:'', reached:true},
+  {name:'叶伟刚', dept:'设计部', role:'设计总监', group:'中层', totalScore:83.8, grade:'符合预期+', indirectGrade:'超出预期', ratifyGrade:'', reached:true},
   {name:'魏宁鹏', dept:'运营部', role:'高级运营', group:'专员/主管', totalScore:59.1, grade:'低于预期', indirectGrade:'远低预期', ratifyGrade:'', reached:true},
-  {name:'赵宇玲', dept:'产品部', role:'高级产品经理', group:'基层干部', totalScore:89.4, grade:'超出预期', indirectGrade:'符合预期+', ratifyGrade:'', reached:true},
-  {name:'郑刚萍', dept:'技术部', role:'架构师', group:'基层干部', totalScore:65.7, grade:'符合预期-', indirectGrade:'符合预期-', ratifyGrade:'低于预期', reached:true},
+  {name:'赵宇玲', dept:'产品部', role:'高级产品经理', group:'中层', totalScore:89.4, grade:'超出预期', indirectGrade:'符合预期+', ratifyGrade:'', reached:true},
+  {name:'郑刚萍', dept:'技术部', role:'架构师', group:'中层', totalScore:65.7, grade:'符合预期-', indirectGrade:'符合预期-', ratifyGrade:'低于预期', reached:true},
   {name:'廖伟涛', dept:'产品部', role:'高级产品经理', group:'基层干部', totalScore:72.5, grade:'符合预期', indirectGrade:'符合预期-', ratifyGrade:'符合预期+', reached:true},
   {name:'朱萍峰', dept:'产品部', role:'产品助理', group:'专员/主管', totalScore:73.2, grade:'符合预期', indirectGrade:'符合预期', ratifyGrade:'符合预期-', reached:true},
   {name:'何强萱', dept:'技术部', role:'工程师', group:'专员/主管', totalScore:86.6, grade:'符合预期+', indirectGrade:'符合预期+', ratifyGrade:'', reached:false},
-  {name:'魏红颖', dept:'产品部', role:'产品总监', group:'基层干部', totalScore:61.8, grade:'低于预期', indirectGrade:'低于预期', ratifyGrade:'', reached:true},
+  {name:'魏红颖', dept:'产品部', role:'产品总监', group:'中层', totalScore:61.8, grade:'低于预期', indirectGrade:'低于预期', ratifyGrade:'', reached:true},
   {name:'萧磊皓', dept:'产品部', role:'产品经理', group:'基层干部', totalScore:65.6, grade:'符合预期-', indirectGrade:'符合预期', ratifyGrade:'低于预期', reached:true},
   {name:'何龙伟', dept:'设计部', role:'UI设计师', group:'专员/主管', totalScore:66.4, grade:'符合预期-', indirectGrade:'符合预期-', ratifyGrade:'低于预期', reached:true},
   {name:'钟皓丽', dept:'产品部', role:'产品助理', group:'专员/主管', totalScore:58.2, grade:'低于预期', indirectGrade:'低于预期', ratifyGrade:'', reached:true},
   {name:'许涛欣', dept:'技术部', role:'工程师', group:'专员/主管', totalScore:90.9, grade:'超出预期', indirectGrade:'远超预期', ratifyGrade:'符合预期+', reached:true},
-  {name:'林娜磊', dept:'设计部', role:'设计总监', group:'基层干部', totalScore:93.3, grade:'超出预期', indirectGrade:'远超预期', ratifyGrade:'', reached:true},
+  {name:'林娜磊', dept:'设计部', role:'设计总监', group:'中层', totalScore:93.3, grade:'超出预期', indirectGrade:'远超预期', ratifyGrade:'', reached:true},
   {name:'何娜红', dept:'技术部', role:'工程师', group:'专员/主管', totalScore:76.0, grade:'符合预期', indirectGrade:'符合预期-', ratifyGrade:'符合预期+', reached:true},
   {name:'冯敏娜', dept:'产品部', role:'高级产品经理', group:'基层干部', totalScore:61.9, grade:'低于预期', indirectGrade:'低于预期', ratifyGrade:'远低预期', reached:true},
   {name:'余芳勇', dept:'产品部', role:'产品经理', group:'基层干部', totalScore:80.0, grade:'符合预期+', indirectGrade:'符合预期', ratifyGrade:'', reached:true},
@@ -1291,38 +1352,76 @@ var MEMBERS=[
   {name:'潘华洁', dept:'技术部', role:'高级工程师', group:'专员/主管', totalScore:86.7, grade:'符合预期+', indirectGrade:'符合预期+', ratifyGrade:'符合预期+', reached:true},
   {name:'王波蝶', dept:'产品部', role:'产品助理', group:'专员/主管', totalScore:63.6, grade:'符合预期-', indirectGrade:'符合预期-', ratifyGrade:'', reached:true},
   {name:'萧玲刚', dept:'产品部', role:'产品经理', group:'基层干部', totalScore:92.2, grade:'超出预期', indirectGrade:'符合预期+', ratifyGrade:'', reached:true},
-  {name:'周娜洁', dept:'设计部', role:'设计总监', group:'基层干部', totalScore:80.0, grade:'符合预期+', indirectGrade:'符合预期', ratifyGrade:'', reached:true},
+  {name:'周娜洁', dept:'设计部', role:'设计总监', group:'中层', totalScore:80.0, grade:'符合预期+', indirectGrade:'符合预期', ratifyGrade:'', reached:true},
   {name:'田瑞红', dept:'设计部', role:'UI设计师', group:'专员/主管', totalScore:60.0, grade:'低于预期', indirectGrade:'远低预期', ratifyGrade:'', reached:true},
-  {name:'余鹏勇', dept:'产品部', role:'产品总监', group:'基层干部', totalScore:73.5, grade:'符合预期', indirectGrade:'符合预期', ratifyGrade:'符合预期-', reached:true},
+  {name:'余鹏勇', dept:'产品部', role:'产品总监', group:'中层', totalScore:73.5, grade:'符合预期', indirectGrade:'符合预期', ratifyGrade:'符合预期-', reached:true},
   {name:'沈宁龙', dept:'设计部', role:'视觉设计师', group:'专员/主管', totalScore:72.3, grade:'符合预期', indirectGrade:'符合预期-', ratifyGrade:'', reached:true},
   {name:'杜雪宇', dept:'技术部', role:'前端工程师', group:'专员/主管', totalScore:78.6, grade:'符合预期', indirectGrade:'符合预期', ratifyGrade:'', reached:false},
   {name:'夏龙萍', dept:'运营部', role:'内容运营', group:'专员/主管', totalScore:74.0, grade:'符合预期', indirectGrade:'符合预期-', ratifyGrade:'符合预期', reached:true},
-  {name:'廖伟雪', dept:'设计部', role:'设计总监', group:'基层干部', totalScore:64.7, grade:'符合预期-', indirectGrade:'低于预期', ratifyGrade:'', reached:true},
+  {name:'廖伟雪', dept:'设计部', role:'设计总监', group:'中层', totalScore:64.7, grade:'符合预期-', indirectGrade:'低于预期', ratifyGrade:'', reached:true},
   {name:'潘皓鹏', dept:'产品部', role:'产品助理', group:'专员/主管', totalScore:85.9, grade:'符合预期+', indirectGrade:'符合预期+', ratifyGrade:'', reached:true},
   {name:'胡洁颖', dept:'产品部', role:'产品助理', group:'专员/主管', totalScore:75.0, grade:'符合预期', indirectGrade:'符合预期', ratifyGrade:'符合预期+', reached:true},
   {name:'潘瑞龙', dept:'运营部', role:'内容运营', group:'专员/主管', totalScore:95.9, grade:'远超预期', indirectGrade:'远超预期', ratifyGrade:'超出预期', reached:true},
   {name:'谭波欣', dept:'运营部', role:'高级运营', group:'专员/主管', totalScore:66.1, grade:'符合预期-', indirectGrade:'符合预期-', ratifyGrade:'低于预期', reached:true},
-  {name:'陈峰伟', dept:'设计部', role:'UX设计师', group:'专员/主管', totalScore:66.7, grade:'符合预期-', indirectGrade:'符合预期-', ratifyGrade:'符合预期-', reached:true}
+  {name:'陈峰伟', dept:'设计部', role:'UX设计师', group:'专员/主管', totalScore:66.7, grade:'符合预期-', indirectGrade:'符合预期-', ratifyGrade:'符合预期-', reached:true},
+  {name:'张国强', dept:'产品部', role:'VP产品', group:'高层', totalScore:91.2, grade:'超出预期', indirectGrade:'超出预期', ratifyGrade:'超出预期', reached:true},
+  {name:'刘美华', dept:'技术部', role:'CTO', group:'高层', totalScore:88.5, grade:'符合预期+', indirectGrade:'超出预期', ratifyGrade:'符合预期+', reached:true},
+  {name:'王志远', dept:'运营部', role:'VP运营', group:'高层', totalScore:82.0, grade:'符合预期+', indirectGrade:'符合预期', ratifyGrade:'符合预期', reached:true},
+  {name:'陈立新', dept:'设计部', role:'设计VP', group:'高层', totalScore:76.4, grade:'符合预期', indirectGrade:'符合预期+', ratifyGrade:'符合预期-', reached:true},
+  {name:'赵思远', dept:'产品部', role:'事业部总经理', group:'高层', totalScore:94.1, grade:'远超预期', indirectGrade:'远超预期', ratifyGrade:'超出预期', reached:true},
+  {name:'孙启航', dept:'技术部', role:'研发副总裁', group:'高层', totalScore:69.8, grade:'符合预期-', indirectGrade:'符合预期', ratifyGrade:'低于预期', reached:true},
+  /* 待提交补员：部门/姓名不与上表重复 */
+  {name:'陆景行', dept:'数据部', role:'数据分析师', group:'专员/主管', totalScore:78.4, grade:'符合预期', indirectGrade:'符合预期-', ratifyGrade:'', reached:true},
+  {name:'程安然', dept:'质量部', role:'QA专员', group:'专员/主管', totalScore:71.2, grade:'符合预期', indirectGrade:'符合预期', ratifyGrade:'符合预期+', reached:true},
+  {name:'江晚晴', dept:'客服部', role:'客户成功', group:'专员/主管', totalScore:68.5, grade:'符合预期-', indirectGrade:'符合预期', ratifyGrade:'', reached:true},
+  {name:'莫北辰', dept:'法务部', role:'法务专员', group:'专员/主管', totalScore:82.1, grade:'符合预期+', indirectGrade:'符合预期+', ratifyGrade:'符合预期', reached:true},
+  {name:'祁明轩', dept:'供应链', role:'采购主管', group:'基层干部', totalScore:76.8, grade:'符合预期', indirectGrade:'符合预期-', ratifyGrade:'符合预期-', reached:true},
+  {name:'苏语桐', dept:'市场部', role:'市场经理', group:'基层干部', totalScore:84.3, grade:'符合预期+', indirectGrade:'超出预期', ratifyGrade:'', reached:true},
+  {name:'贺子墨', dept:'销售部', role:'销售经理', group:'基层干部', totalScore:69.1, grade:'符合预期-', indirectGrade:'符合预期-', ratifyGrade:'低于预期', reached:true},
+  {name:'唐知夏', dept:'品牌部', role:'品牌经理', group:'基层干部', totalScore:88.6, grade:'超出预期', indirectGrade:'符合预期+', ratifyGrade:'', reached:true},
+  {name:'邹景深', dept:'人力部', role:'HRBP经理', group:'中层', totalScore:81.5, grade:'符合预期+', indirectGrade:'符合预期', ratifyGrade:'符合预期', reached:true},
+  {name:'梁清荷', dept:'公关部', role:'公关总监', group:'中层', totalScore:73.9, grade:'符合预期', indirectGrade:'符合预期-', ratifyGrade:'', reached:true},
+  {name:'黄启明', dept:'战略部', role:'战略副总裁', group:'高层', totalScore:90.4, grade:'超出预期', indirectGrade:'超出预期', ratifyGrade:'符合预期+', reached:true},
+  {name:'白若琳', dept:'财务部', role:'CFO', group:'高层', totalScore:86.2, grade:'符合预期+', indirectGrade:'符合预期+', ratifyGrade:'', reached:true},
+  {name:'顾星辰', dept:'法务部', role:'总法律顾问', group:'高层', totalScore:79.7, grade:'符合预期', indirectGrade:'符合预期', ratifyGrade:'符合预期-', reached:true},
+  {name:'宋清岚', dept:'市场部', role:'CMO', group:'高层', totalScore:92.8, grade:'远超预期', indirectGrade:'超出预期', ratifyGrade:'', reached:true},
+  {name:'韩泽宇', dept:'销售部', role:'销售副总裁', group:'高层', totalScore:74.3, grade:'符合预期', indirectGrade:'符合预期+', ratifyGrade:'符合预期', reached:true},
+  {name:'尹书瑶', dept:'人力部', role:'CHO', group:'高层', totalScore:67.5, grade:'符合预期-', indirectGrade:'符合预期', ratifyGrade:'', reached:true},
+  /* 待提交补档：每组 7 档当前≥1；初评差 1 档，调整列有正有负；高分补能力「高」 */
+  {name:'纪云深', dept:'审计部', role:'审计专员', group:'专员/主管', totalScore:91.2, grade:'超出预期', indirectGrade:'超出预期', ratifyGrade:'远超预期', reached:true},
+  {name:'温书衡', dept:'合规部', role:'合规专员', group:'专员/主管', totalScore:96.0, grade:'远超预期', indirectGrade:'远超预期', ratifyGrade:'超出预期', reached:true},
+  {name:'裴南星', dept:'培训部', role:'培训专员', group:'专员/主管', totalScore:52.4, grade:'远低预期', indirectGrade:'远低预期', ratifyGrade:'低于预期', reached:true},
+  {name:'方予安', dept:'行政部', role:'行政主管', group:'专员/主管', totalScore:59.1, grade:'低于预期', indirectGrade:'低于预期', ratifyGrade:'远低预期', reached:true},
+  {name:'楚怀瑾', dept:'审计部', role:'审计经理', group:'基层干部', totalScore:90.5, grade:'超出预期', indirectGrade:'符合预期+', ratifyGrade:'远超预期', reached:true},
+  {name:'晏清禾', dept:'合规部', role:'合规经理', group:'基层干部', totalScore:95.2, grade:'远超预期', indirectGrade:'远超预期', ratifyGrade:'超出预期', reached:true},
+  {name:'穆知秋', dept:'培训部', role:'培训经理', group:'基层干部', totalScore:60.3, grade:'低于预期', indirectGrade:'符合预期-', ratifyGrade:'远低预期', reached:true},
+  {name:'阮望舒', dept:'行政部', role:'行政经理', group:'基层干部', totalScore:53.8, grade:'远低预期', indirectGrade:'远低预期', ratifyGrade:'低于预期', reached:true},
+  {name:'卫承泽', dept:'审计部', role:'审计总监', group:'中层', totalScore:91.8, grade:'超出预期', indirectGrade:'超出预期', ratifyGrade:'远超预期', reached:true},
+  {name:'蓝砚秋', dept:'合规部', role:'合规总监', group:'中层', totalScore:97.1, grade:'远超预期', indirectGrade:'远超预期', ratifyGrade:'超出预期', reached:true},
+  {name:'侯景川', dept:'培训部', role:'培训总监', group:'中层', totalScore:54.6, grade:'远低预期', indirectGrade:'低于预期', ratifyGrade:'低于预期', reached:true},
+  {name:'岑若薇', dept:'行政部', role:'行政总监', group:'中层', totalScore:61.2, grade:'低于预期', indirectGrade:'低于预期', ratifyGrade:'远低预期', reached:true},
+  {name:'狄明远', dept:'数字化中心', role:'数字化副总裁', group:'高层', totalScore:96.4, grade:'远超预期', indirectGrade:'超出预期', ratifyGrade:'超出预期', reached:true},
+  {name:'封雪晴', dept:'风控中心', role:'风控副总裁', group:'高层', totalScore:55.0, grade:'远低预期', indirectGrade:'远低预期', ratifyGrade:'低于预期', reached:true},
+  {name:'卓澜溪', dept:'创新中心', role:'创新副总裁', group:'高层', totalScore:62.1, grade:'低于预期', indirectGrade:'符合预期-', ratifyGrade:'远低预期', reached:true}
 ];
 
-var currentGroup=SCHEME_CFG.ctrlScope==='group'?ASSESS_GROUPS[0]:'全部';
-var currentStatus='已提交';
+var currentGroup='全部'; /* 列表筛选；右侧按组列始终全部展示 */
+var currentStatus=''; /* ''=全部：首屏可见全量；与统计卡 listPool 同源 */
 var currentGrade=null;
 var currentCap=null;
 var currentKeyword='';
 var currentDepartments=[];
-var currentRegions=[];
 var currentPage=1;
 var PAGE_SIZE=20;
 var currentStep=1;
 var dragging=false;
-var onlyUnfilled=false;
+var fillFilter=''; /* ''=全部 | 未填写 | 已调整 */
 var onlyAbnormal=false;
-var statusBeforeUnfilled=null;
 var boxViewMode='grid';
 
 var REGION_OPTIONS=['华东区域','华南区域','华北区域'];
 function mockLevel(role){
+  if(role.indexOf('VP')>=0||role.indexOf('CTO')>=0||role.indexOf('总裁')>=0||role.indexOf('总经理')>=0)return 'M6';
   if(role.indexOf('总监')>=0)return 'M4';
   if(role.indexOf('架构')>=0)return 'P8';
   if(role.indexOf('高级')>=0)return 'P7';
@@ -1360,7 +1459,7 @@ var RATIFY_NODES=['直接上级审定','间接上级审定','逐级上级审定'
 var RATIFY_JOBNOS=['MG1001','MG1002','MG1003','HR2001','MG1004','VP3001','CX4001','BD5001'];
 (function seedRatifyLevels(){
   MEMBERS.forEach(function(m,index){
-    var depth=m.group==='基层干部'?(2+(index%5)):(1+(index%4));
+    var depth=(m.group==='基层干部'||m.group==='中层'||m.group==='高层')?(2+(index%5)):(1+(index%4));
     if(index%13===0)depth=8;
     if(index%17===3)depth=Math.min(8,depth+2);
     depth=Math.min(8,Math.max(1,depth));
@@ -1681,6 +1780,24 @@ function isCapUnfilled(m){
   return !!m.reached && !m.capability;
 }
 
+/** 与 getPrimaryBlockMsg「未填写」同一判定：步骤1=调整等级；步骤2=能力 */
+function isPrimaryUnfilled(m){
+  if(currentStep===2)return isCapUnfilled(m);
+  return !!m.reached && !m.ratifyGrade;
+}
+
+/** 「已调整」：当前步骤已填写调整等级/能力（与未填写相反，且须已到达） */
+function isPrimaryAdjusted(m){
+  if(currentStep===2)return !!m.reached && !!m.capability;
+  return !!m.reached && !!m.ratifyGrade;
+}
+
+function matchFillFilter(m){
+  if(fillFilter==='未填写')return isPrimaryUnfilled(m);
+  if(fillFilter==='已调整')return isPrimaryAdjusted(m);
+  return true;
+}
+
 function submitTagHtml(m){
   var s=submitStatusOf(m);
   var cls=s==='已提交'?'done':s==='待提交'?'wait':'none';
@@ -1692,19 +1809,19 @@ function syncStatusFilter(){
   var box=document.getElementById('statusFilter');
   if(!label||!box)return;
   label.textContent='提交状态';
-  if(['未到达','待提交','已提交'].indexOf(currentStatus)===-1)currentStatus='已提交';
-  box.innerHTML=
-    '<button class="btn btn-s btn-sm'+(currentStatus==='未到达'?' btn-active':'')+'" data-status="未到达" onclick="filterStatus(\'未到达\',this)">未到达</button>'+
-    '<button class="btn btn-s btn-sm'+(currentStatus==='待提交'?' btn-active':'')+'" data-status="待提交" onclick="filterStatus(\'待提交\',this)">待提交</button>'+
-    '<button class="btn btn-s btn-sm'+(currentStatus==='已提交'?' btn-active':'')+'" data-status="已提交" onclick="filterStatus(\'已提交\',this)">已提交</button>';
-  syncOnlyUnfilledUI();
+  if(['','未到达','待提交','已提交'].indexOf(currentStatus)===-1)currentStatus='';
+  var opts=[{v:'',t:'全部'},{v:'未到达',t:'未到达'},{v:'待提交',t:'待提交'},{v:'已提交',t:'已提交'}];
+  box.innerHTML='<select class="status-filter-select" id="statusFilterSelect" aria-labelledby="statusFilterLabel" onchange="filterStatus(this.value)">'+
+    opts.map(function(o){return '<option value="'+o.v+'"'+(currentStatus===o.v?' selected':'')+'>'+o.t+'</option>';}).join('')+
+    '</select>';
+  syncFillFilterUI();
   syncOnlyAbnormalUI();
 }
 
 function getFilteredMembers(){
   return MEMBERS.filter(function(m){
     if(currentGroup!=='全部'&&m.group!==currentGroup)return false;
-    if(currentStep===2&&onlyUnfilled&&!isCapUnfilled(m))return false;
+    if(!matchFillFilter(m))return false;
     if(currentStatus&&submitStatusOf(m)!==currentStatus)return false;
     if(onlyAbnormal&&!m.abnormalType)return false;
     if(currentGrade){
@@ -1714,7 +1831,19 @@ function getFilteredMembers(){
     if(currentCap&&m.capability!==currentCap)return false;
     if(currentKeyword&&m.name.indexOf(currentKeyword)===-1&&m.employeeId.toLowerCase().indexOf(currentKeyword.toLowerCase())===-1)return false;
     if(currentDepartments.length&&currentDepartments.indexOf(m.dept)===-1)return false;
-    if(currentRegions.length&&currentRegions.indexOf(m.region)===-1)return false;
+    return true;
+  });
+}
+
+/** 右侧分布「当前」跟列表一致（不含等级/能力钻取，避免环依赖） */
+function getListScopedMembers(){
+  return MEMBERS.filter(function(m){
+    if(currentGroup!=='全部'&&m.group!==currentGroup)return false;
+    if(!matchFillFilter(m))return false;
+    if(currentStatus&&submitStatusOf(m)!==currentStatus)return false;
+    if(onlyAbnormal&&!m.abnormalType)return false;
+    if(currentKeyword&&m.name.indexOf(currentKeyword)===-1&&m.employeeId.toLowerCase().indexOf(currentKeyword.toLowerCase())===-1)return false;
+    if(currentDepartments.length&&currentDepartments.indexOf(m.dept)===-1)return false;
     return true;
   });
 }
@@ -1776,7 +1905,6 @@ function ensureCapListLayout(){
   if(needDual){
     if(!hasDual){
       grid.innerHTML='<div class="list-stats-col is-dual">'+
-        '<div class="submit-strip" id="submitStrip" role="group" aria-label="提交状态"></div>'+
         '<div class="stats-view-seg" id="statsViewSeg" role="group" aria-label="视图切换">'+
           '<button class="stats-view-btn" type="button" data-view="table" onclick="setStatsViewMode(\'table\')">表格</button>'+
           '<button class="stats-view-btn" type="button" data-view="chart" onclick="setStatsViewMode(\'chart\')">图表</button>'+
@@ -1794,9 +1922,8 @@ function ensureCapListLayout(){
         '</div>'+
       '</div>';
     }
-  }else if(hasDual||!document.getElementById('submitStrip')||!document.getElementById('listStats')||!document.getElementById('capBars')){
+  }else if(hasDual||!document.getElementById('listStats')||!document.getElementById('capBars')){
     grid.innerHTML='<div class="list-stats-col">'+
-      '<div class="submit-strip" id="submitStrip" role="group" aria-label="提交状态"></div>'+
       '<div class="list-stats" id="listStats"></div>'+
       /* #capBars ECharts 映射见 manager/cap-bars-echarts-data.js */
       '<div class="cap-bars" id="capBars" aria-label="能力分布"></div>'+
@@ -1824,13 +1951,14 @@ function getCapDistData(){
   syncActiveForceAliases();
   var capLabels=CAP_OPTIONS;
   var pool=getDistributionMembers().filter(function(m){return m.reached;});
+  var listPool=getListScopedMembers().filter(function(m){return m.reached;});
   var total=pool.length;
   var rules=getActiveCapForce();
   var before=capLabels.map(function(g){return pool.filter(function(m){return m.initCapability===g;}).length;});
   var min=rules.map(function(r){return Math.ceil(total*r.min/100);});
   var max=rules.map(function(r){return Math.floor(total*r.max/100);});
   var mid=min.map(function(lo,i){return Math.round((lo+max[i])/2);});
-  var after=capLabels.map(function(g){return pool.filter(function(m){return m.capability===g;}).length;});
+  var after=capLabels.map(function(g){return listPool.filter(function(m){return m.capability===g;}).length;});
   return {labels:capLabels,before:before,min:min,max:max,mid:mid,after:after};
 }
 
@@ -1838,46 +1966,268 @@ function getGradeDistData(){
   syncActiveForceAliases();
   var labels=GRADE_OPTIONS;
   var pool=getDistributionMembers().filter(function(m){return m.reached;});
+  var listPool=getListScopedMembers().filter(function(m){return m.reached;});
   var total=pool.length;
   var rules=getActiveForceDist();
   var before=labels.map(function(g){return pool.filter(function(m){return m.grade===g;}).length;});
   var min=rules.map(function(r){return Math.ceil(total*r.min/100);});
   var max=rules.map(function(r){return Math.floor(total*r.max/100);});
   var mid=min.map(function(lo,i){return Math.round((lo+max[i])/2);});
-  var after=labels.map(function(g){return pool.filter(function(m){return(m.ratifyGrade||m.grade)===g;}).length;});
+  var after=labels.map(function(g){return listPool.filter(function(m){return(m.ratifyGrade||m.grade)===g;}).length;});
   return {labels:labels,before:before,min:min,max:max,mid:mid,after:after};
 }
 
-function renderCapTableHtml(data){
-  var html='<table class="dist-status-table"><colgroup><col style="width:18%"><col style="width:34%"><col style="width:24%"><col style="width:24%"></colgroup><thead><tr><th>能力</th><th>要求</th><th>实际</th><th>调整</th></tr></thead><tbody>';
+/** 指定考核组的等级分布（面板用；卡头人数=列表同筛口径；目标分母仍用组内已到达） */
+function getGradeDistDataForGroup(groupName){
+  var labels=GRADE_OPTIONS;
+  var forcePool=MEMBERS.filter(function(m){return m.group===groupName&&m.reached;});
+  var listPool=getListScopedMembers().filter(function(m){return m.group===groupName;});
+  var distPool=listPool.filter(function(m){return m.reached;});
+  var forceTotal=forcePool.length;
+  var rules=getForceDistRulesForGroup(groupName);
+  var before=labels.map(function(g){return distPool.filter(function(m){return m.grade===g;}).length;});
+  var min=rules.map(function(r){return Math.ceil(forceTotal*r.min/100);});
+  var max=rules.map(function(r){return Math.floor(forceTotal*r.max/100);});
+  var mid=min.map(function(lo,i){return Math.round((lo+max[i])/2);});
+  var after=labels.map(function(g){return distPool.filter(function(m){return(m.ratifyGrade||m.grade)===g;}).length;});
+  return {labels:labels,before:before,min:min,max:max,mid:mid,after:after,total:listPool.length};
+}
+
+function getCapDistDataForGroup(groupName){
+  var labels=CAP_OPTIONS;
+  var forcePool=MEMBERS.filter(function(m){return m.group===groupName&&m.reached;});
+  var listPool=getListScopedMembers().filter(function(m){return m.group===groupName;});
+  var distPool=listPool.filter(function(m){return m.reached;});
+  var forceTotal=forcePool.length;
+  var rules=getCapForceRulesForGroup(groupName);
+  var before=labels.map(function(g){return distPool.filter(function(m){return m.initCapability===g;}).length;});
+  var min=rules.map(function(r){return Math.ceil(forceTotal*r.min/100);});
+  var max=rules.map(function(r){return Math.floor(forceTotal*r.max/100);});
+  var mid=min.map(function(lo,i){return Math.round((lo+max[i])/2);});
+  var after=labels.map(function(g){return distPool.filter(function(m){return m.capability===g;}).length;});
+  return {labels:labels,before:before,min:min,max:max,mid:mid,after:after,total:listPool.length};
+}
+
+/** 合并统计：组内全量（不受填写状态缩小），提交状态筛选可跟随；实际=各组人数相加 */
+function mergedScopeGroups(){
+  return currentGroup==='全部'?ASSESS_GROUPS.slice():[currentGroup];
+}
+function matchMergedPoolMember(m,groupName){
+  if(m.group!==groupName||!m.reached)return false;
+  if(currentStatus&&submitStatusOf(m)!==currentStatus)return false;
+  return true;
+}
+function getMergedGradeDistData(){
+  var labels=GRADE_OPTIONS;
+  var before=labels.map(function(){return 0;});
+  var after=labels.map(function(){return 0;});
+  var min=labels.map(function(){return 0;});
+  var max=labels.map(function(){return 0;});
+  var total=0;
+  mergedScopeGroups().forEach(function(g){
+    var pool=MEMBERS.filter(function(m){return matchMergedPoolMember(m,g);});
+    var n=pool.length;
+    total+=n;
+    var rules=getForceDistRulesForGroup(g);
+    labels.forEach(function(lab,i){
+      before[i]+=pool.filter(function(m){return m.grade===lab;}).length;
+      after[i]+=pool.filter(function(m){return(m.ratifyGrade||m.grade)===lab;}).length;
+      min[i]+=Math.ceil(n*rules[i].min/100);
+      max[i]+=Math.floor(n*rules[i].max/100);
+    });
+  });
+  var mid=min.map(function(lo,i){return Math.round((lo+max[i])/2);});
+  return {labels:labels,before:before,min:min,max:max,mid:mid,after:after,total:total};
+}
+function getMergedCapDistData(){
+  var labels=CAP_OPTIONS;
+  var before=labels.map(function(){return 0;});
+  var after=labels.map(function(){return 0;});
+  var min=labels.map(function(){return 0;});
+  var max=labels.map(function(){return 0;});
+  var total=0;
+  mergedScopeGroups().forEach(function(g){
+    var pool=MEMBERS.filter(function(m){return matchMergedPoolMember(m,g);});
+    var n=pool.length;
+    total+=n;
+    var rules=getCapForceRulesForGroup(g);
+    labels.forEach(function(lab,i){
+      before[i]+=pool.filter(function(m){return m.initCapability===lab;}).length;
+      after[i]+=pool.filter(function(m){return m.capability===lab;}).length;
+      min[i]+=Math.ceil(n*rules[i].min/100);
+      max[i]+=Math.floor(n*rules[i].max/100);
+    });
+  });
+  var mid=min.map(function(lo,i){return Math.round((lo+max[i])/2);});
+  return {labels:labels,before:before,min:min,max:max,mid:mid,after:after,total:total};
+}
+
+/* 展开多组卡片展示「目标」；收起合并统计 / 单列不展示 */
+function visibleGroupPanelNames(){
+  return ASSESS_GROUPS.slice();
+}
+function shouldShowDistReqCol(){
+  if(isByGroupView())return visibleGroupPanelNames().length>1;
+  return false;
+}
+
+function formatAdjDeltaHtml(before,after){
+  var d=(after||0)-(before||0);
+  if(d>0)return '<span class="adj-delta in">+'+d+'</span>';
+  if(d<0)return '<span class="adj-delta out">'+d+'</span>';
+  return '<span class="adj-delta ok">–</span>';
+}
+function formatAdjGapHtml(actual,min,max){
+  if(actual<min)return '<span class="adj-delta in">+'+(min-actual)+'</span>';
+  if(actual>max)return '<span class="adj-delta out">-'+(actual-max)+'</span>';
+  return '<span class="adj-delta ok">–</span>';
+}
+function niceBarScale(vals){
+  var max=Math.max.apply(null,(vals||[]).concat([1]));
+  var scale=Math.max(15,Math.ceil(max/5)*5);
+  var ticks=[];
+  for(var t=0;t<=scale;t+=5)ticks.push(t);
+  return {scale:scale,ticks:ticks};
+}
+function groupPanelLegendHtml(){
+  return '<div class="group-panel-legend" aria-hidden="true">'+
+    '<span class="cap-leg-item"><i class="cap-leg-dot"></i>调整前</span>'+
+    '<span class="cap-leg-item"><i class="cap-leg-dot std"></i>当前</span>'+
+    '<span class="cap-leg-item"><i class="cap-leg-bar"></i>符合/不符</span>'+
+  '</div>';
+}
+
+function renderCapTableHtml(data,showReq,opts){
+  opts=opts||{};
+  var groupName=opts.groupName||null;
+  var rowClick=opts.rowClick||null;
+  var adjMode=opts.adjMode||'gap';
+  if(showReq==null)showReq=shouldShowDistReqCol();
+  var colgroup=showReq
+    ?'<colgroup><col style="width:18%"><col class="col-req" style="width:34%"><col style="width:24%"><col style="width:24%"></colgroup>'
+    :'<colgroup><col style="width:28%"><col style="width:36%"><col style="width:36%"></colgroup>';
+  var head=showReq
+    ?'<thead><tr><th>能力</th><th class="col-req">目标</th><th>当前</th><th>调整</th></tr></thead>'
+    :'<thead><tr><th>能力</th><th>当前</th><th>调整</th></tr></thead>';
+  var html='<table class="dist-status-table">'+colgroup+head+'<tbody>';
   data.labels.forEach(function(g,i){
     var tone=g==='高'?'high':g==='中'?'mid':'low';
     var required=data.min[i]===data.max[i]?data.min[i]+'人':data.min[i]+'–'+data.max[i]+'人';
     var actual=data.after[i];
-    var adjHtml;
-    if(actual<data.min[i])adjHtml='<span class="adj-delta in">+'+(data.min[i]-actual)+'</span>';
-    else if(actual>data.max[i])adjHtml='<span class="adj-delta out">-'+(actual-data.max[i])+'</span>';
-    else adjHtml='<span class="adj-delta ok">—</span>';
-    html+='<tr class="'+(currentCap===g?'active':'')+'" onclick="filterByCap(\''+g+'\')"><td><span class="cap-tag '+tone+'">'+g+'</span></td><td>'+required+'</td><td>'+actual+'人</td><td>'+adjHtml+'</td></tr>';
+    var adjHtml=adjMode==='delta'?formatAdjDeltaHtml(data.before[i],actual):formatAdjGapHtml(actual,data.min[i],data.max[i]);
+    var isActive=currentCap===g&&(!groupName||currentGroup===groupName);
+    var click=rowClick?rowClick(g):('filterByCap(\''+g+'\')');
+    html+='<tr class="'+(isActive?'active':'')+'" onclick="'+click+'"><td><span class="cap-tag '+tone+'">'+g+'</span></td>'+(showReq?'<td class="col-req">'+required+'</td>':'')+'<td>'+actual+'人</td><td>'+adjHtml+'</td></tr>';
   });
   return html+'</tbody></table>';
 }
 
-function renderGradeTableHtml(data){
-  var html='<table class="dist-status-table"><colgroup><col style="width:28%"><col style="width:28%"><col style="width:22%"><col style="width:22%"></colgroup><thead><tr><th>等级</th><th>要求</th><th>实际</th><th>调整</th></tr></thead><tbody>';
+function renderGradeTableHtml(data,showReq,opts){
+  opts=opts||{};
+  var groupName=opts.groupName||null;
+  var rowClick=opts.rowClick||null;
+  var adjMode=opts.adjMode||'gap';
+  var forPanel=!!opts.panel;
+  if(showReq==null)showReq=shouldShowDistReqCol();
+  var colgroup=showReq
+    ?'<colgroup><col style="width:34%"><col class="col-req" style="width:24%"><col style="width:20%"><col style="width:22%"></colgroup>'
+    :'<colgroup><col style="width:40%"><col style="width:30%"><col style="width:30%"></colgroup>';
+  var head=showReq
+    ?'<thead><tr><th>等级</th><th class="col-req">目标</th><th>当前</th><th>调整</th></tr></thead>'
+    :'<thead><tr><th>等级</th><th>当前</th><th>调整</th></tr></thead>';
+  var html='<table class="dist-status-table">'+colgroup+head+'<tbody>';
   data.labels.forEach(function(g,i){
     var required=data.min[i]===data.max[i]?data.min[i]+'人':data.min[i]+'–'+data.max[i]+'人';
     var actual=data.after[i];
-    var adjHtml;
-    if(actual<data.min[i])adjHtml='<span class="adj-delta in">+'+(data.min[i]-actual)+'</span>';
-    else if(actual>data.max[i])adjHtml='<span class="adj-delta out">-'+(actual-data.max[i])+'</span>';
-    else adjHtml='<span class="adj-delta ok">—</span>';
-    html+='<tr class="'+(currentGrade===g?'active':'')+'" onclick="filterByGrade(\''+g+'\')"><td><span class="dist-grade-name" style="color:'+(GRADE_COLORS[g]||'var(--c8)')+'">'+g+'</span></td><td>'+required+'</td><td>'+actual+'人</td><td>'+adjHtml+'</td></tr>';
+    var adjHtml=adjMode==='delta'?formatAdjDeltaHtml(data.before[i],actual):formatAdjGapHtml(actual,data.min[i],data.max[i]);
+    var isActive=currentGrade===g&&(!groupName||currentGroup===groupName);
+    var click=rowClick?rowClick(g):('filterByGrade(\''+g+'\')');
+    var gradeCell=forPanel
+      ?'<span class="dist-grade-pill" style="background:'+(GRADE_BG[g]||'var(--c1)')+';color:'+(GRADE_COLORS[g]||'var(--c8)')+'">'+g+'</span>'
+      :'<span class="dist-grade-name" style="color:'+(GRADE_COLORS[g]||'var(--c8)')+'">'+g+'</span>';
+    html+='<tr class="'+(isActive?'active':'')+'" onclick="'+click+'"><td>'+gradeCell+'</td>'+(showReq?'<td class="col-req">'+required+'</td>':'')+'<td>'+actual+'人</td><td>'+adjHtml+'</td></tr>';
   });
   return html+'</tbody></table>';
 }
 
-function renderCapBarsHtml(data){
+/** 条宽 %：按人数/刻度；非 0 至少可见一截，0 仍 width:0（由灰轨+点表达） */
+function panelBarWidthPct(count,scale){
+  var n=count||0;
+  var pct=Math.min(100,Math.round(n/Math.max(1,scale)*100));
+  if(n>0&&pct<4)pct=4;
+  return pct;
+}
+function panelRowActive(g,isCap,groupName){
+  return isCap
+    ?(currentCap===g&&(!groupName||currentGroup===groupName))
+    :(currentGrade===g&&(!groupName||currentGroup===groupName));
+}
+function panelRowClick(g,isCap,rowClick){
+  return rowClick?rowClick(g):(isCap?('filterByCap(\''+g+'\')'):('filterByGrade(\''+g+'\')'));
+}
+
+/** 展开·考核组卡片右侧图：无等级名（左表已有），仅刻度 + 柱/曲线 + 人数 */
+function renderGroupCardBarsHtml(data,opts){
+  opts=opts||{};
+  var groupName=opts.groupName||null;
+  var rowClick=opts.rowClick||null;
+  var isCap=!!opts.cap;
+  var nice=niceBarScale(data.before.concat(data.after).concat(data.max||[]));
+  var scale=nice.scale;
+  var axisHtml='<div class="group-chart-axis">'+nice.ticks.map(function(t){return '<span>'+t+'</span>';}).join('')+'</div>';
+  var barsHtml='<div class="cap-bars-plot"><svg class="cap-line-svg" aria-hidden="true"></svg>';
+  data.labels.forEach(function(g,i){
+    var n=data.after[i]||0;
+    var pctNow=panelBarWidthPct(n,scale);
+    var fill=barFillByRange(n,data.min[i],data.max[i]);
+    barsHtml+='<div class="cap-bar-row'+(panelRowActive(g,isCap,groupName)?' active':'')+'" onclick="'+panelRowClick(g,isCap,rowClick)+'" title="'+g+' 当前 '+n+'（目标 '+data.min[i]+'–'+data.max[i]+'）">'+
+      '<div class="cap-bar-line">'+
+        '<div class="cap-bar-track" data-i="'+i+'">'+
+          '<div class="cap-bar-fill" style="width:'+pctNow+'%;background:'+fill+'" title="当前 '+n+'"></div>'+
+        '</div>'+
+        '<span class="cap-bar-count" title="当前 '+n+'">'+n+'</span>'+
+      '</div>'+
+    '</div>';
+  });
+  barsHtml+='</div>';
+  return {html:axisHtml+'<div class="cap-bars cap-bars-card'+(isCap?'':' grade-bars')+'" data-panel-bars="1">'+barsHtml+'</div>',scale:scale,before:data.before,after:data.after};
+}
+
+/** 收起·合并统计图：行左侧等级名 + 柱/曲线 + 人数（独立 DOM，不与展开卡共用开关） */
+function renderMergedBarsHtml(data,opts){
+  opts=opts||{};
+  var rowClick=opts.rowClick||null;
+  var isCap=!!opts.cap;
+  var nice=niceBarScale(data.before.concat(data.after).concat(data.max||[]));
+  var scale=nice.scale;
+  var axisHtml='<div class="group-chart-axis">'+nice.ticks.map(function(t){return '<span>'+t+'</span>';}).join('')+'</div>';
+  var barsHtml='<div class="cap-bars-plot"><svg class="cap-line-svg" aria-hidden="true"></svg>';
+  data.labels.forEach(function(g,i){
+    var n=data.after[i]||0;
+    var pctNow=panelBarWidthPct(n,scale);
+    /* 合并：合计当前 vs 各组目标人数相加后的区间（data.min/max 已在 getMerged* 里累加） */
+    var fill=barFillByRange(n,data.min[i],data.max[i]);
+    var labelHtml=isCap
+      ?'<span class="cap-tag '+(g==='高'?'high':g==='中'?'mid':'low')+'" title="'+g+'">'+g+'</span>'
+      :'<span class="cap-tag" style="background:'+(GRADE_BG[g]||'var(--c1)')+';color:'+(GRADE_COLORS[g]||'var(--c7)')+'" title="'+g+'">'+g+'</span>';
+    barsHtml+='<div class="cap-bar-row'+(panelRowActive(g,isCap,null)?' active':'')+'" onclick="'+panelRowClick(g,isCap,rowClick)+'">'+
+      labelHtml+
+      '<div class="cap-bar-line">'+
+        '<div class="cap-bar-track" data-i="'+i+'">'+
+          '<div class="cap-bar-fill" style="width:'+pctNow+'%;background:'+fill+'" title="当前 '+n+'"></div>'+
+        '</div>'+
+        '<span class="cap-bar-count" title="当前 '+n+'">'+n+'</span>'+
+      '</div>'+
+    '</div>';
+  });
+  barsHtml+='</div>';
+  return {html:axisHtml+'<div class="cap-bars cap-bars-merged'+(isCap?'':' grade-bars')+'" data-panel-bars="1">'+barsHtml+'</div>',scale:scale,before:data.before,after:data.after};
+}
+
+function renderCapBarsHtml(data,opts){
+  opts=opts||{};
+  var groupName=opts.groupName||null;
+  var rowClick=opts.rowClick||null;
   var scale=Math.max.apply(null,data.before.concat(data.max).concat(data.mid).concat(data.after).concat([1]));
   var barsHtml='<div class="cap-bars-plot"><svg class="cap-line-svg" aria-hidden="true"></svg>';
   data.labels.forEach(function(g,i){
@@ -1886,7 +2236,9 @@ function renderCapBarsHtml(data){
     var rangeL=Math.min(100,Math.round(data.min[i]/scale*100));
     var rangeW=Math.max(0,Math.min(100-rangeL,Math.round((data.max[i]-data.min[i])/scale*100)));
     var fill=barFillByRange(data.after[i],data.min[i],data.max[i]);
-    barsHtml+='<div class="cap-bar-row'+(currentCap===g?' active':'')+'" onclick="filterByCap(\''+g+'\')">'+
+    var isActive=currentCap===g&&(!groupName||currentGroup===groupName);
+    var click=rowClick?rowClick(g):('filterByCap(\''+g+'\')');
+    barsHtml+='<div class="cap-bar-row'+(isActive?' active':'')+'" onclick="'+click+'">'+
       '<span class="cap-tag '+tone+'">'+g+'</span>'+
       '<div class="cap-bar-line">'+
         '<div class="cap-bar-track" data-i="'+i+'">'+
@@ -1905,15 +2257,20 @@ function renderCapBarsHtml(data){
   return {html:barsHtml,scale:scale,before:data.before,mid:data.mid};
 }
 
-function renderGradeBarsHtml(data){
+function renderGradeBarsHtml(data,opts){
+  opts=opts||{};
+  var groupName=opts.groupName||null;
+  var rowClick=opts.rowClick||null;
   var scale=Math.max.apply(null,data.before.concat(data.max).concat(data.mid).concat(data.after).concat([1]));
   var barsHtml='<div class="cap-bars-plot"><svg class="cap-line-svg" aria-hidden="true"></svg>';
   data.labels.forEach(function(g,i){
     var pctNow=Math.min(100,Math.round(data.after[i]/scale*100));
     var rangeL=Math.min(100,Math.round(data.min[i]/scale*100));
     var rangeW=Math.max(0,Math.min(100-rangeL,Math.round((data.max[i]-data.min[i])/scale*100)));
-    var fill=gradeBarFill(g);
-    barsHtml+='<div class="cap-bar-row'+(currentGrade===g?' active':'')+'" onclick="filterByGrade(\''+g+'\')">'+
+    var fill=barFillByRange(data.after[i],data.min[i],data.max[i]);
+    var isActive=currentGrade===g&&(!groupName||currentGroup===groupName);
+    var click=rowClick?rowClick(g):('filterByGrade(\''+g+'\')');
+    barsHtml+='<div class="cap-bar-row'+(isActive?' active':'')+'" onclick="'+click+'">'+
       '<span class="cap-tag" style="background:'+(GRADE_BG[g]||'var(--c1)')+';color:'+(GRADE_COLORS[g]||'var(--c7)')+'">'+g.replace('符合预期','符合').replace('预期','')+'</span>'+
       '<div class="cap-bar-line">'+
         '<div class="cap-bar-track" data-i="'+i+'">'+
@@ -1932,25 +2289,11 @@ function renderGradeBarsHtml(data){
   return {html:barsHtml,scale:scale,before:data.before,mid:data.mid};
 }
 
-function fillArriveStrip(){
-  var strip=document.getElementById('submitStrip');
-  if(!strip)return;
-  var base=submitBaseMembers();
-  strip.style.gridTemplateColumns='1fr 1fr 1fr';
-  var counts={'未到达':0,'待提交':0,'已提交':0};
-  base.forEach(function(m){counts[submitStatusOf(m)]++;});
-  strip.innerHTML=['未到达','待提交','已提交'].map(function(s){
-    return '<button class="submit-metric'+(currentStatus===s?' active':'')+'" type="button" onclick="filterStatus(\''+s+'\')">'+
-      '<span class="n">'+counts[s]+'</span><span class="l">'+s+'</span></button>';
-  }).join('');
-}
-
 function renderCapListDist(){
   ensureCapListLayout();
-  fillArriveStrip();
   var data=getCapDistData();
   var stats=document.getElementById('listStats');
-  if(stats)stats.innerHTML=renderCapTableHtml(data);
+  if(stats)stats.innerHTML=renderCapTableHtml(data,false);
   var bars=document.getElementById('capBars');
   if(!bars)return;
   var painted=renderCapBarsHtml(data);
@@ -1961,10 +2304,9 @@ function renderCapListDist(){
 
 function renderGradeListDist(){
   ensureCapListLayout();
-  fillArriveStrip();
   var data=getGradeDistData();
   var stats=document.getElementById('listStats');
-  if(stats)stats.innerHTML=renderGradeTableHtml(data);
+  if(stats)stats.innerHTML=renderGradeTableHtml(data,false);
   var bars=document.getElementById('capBars');
   if(!bars)return;
   var painted=renderGradeBarsHtml(data);
@@ -1975,7 +2317,6 @@ function renderGradeListDist(){
 
 function renderBoxDualDist(){
   ensureCapListLayout();
-  fillArriveStrip();
   syncStatsViewUI();
   var gradeData=getGradeDistData();
   var capData=getCapDistData();
@@ -1983,8 +2324,8 @@ function renderBoxDualDist(){
   var capStats=document.getElementById('listStatsCap');
   var gradeBars=document.getElementById('gradeBars');
   var capBars=document.getElementById('capBars');
-  if(gradeStats)gradeStats.innerHTML=renderGradeTableHtml(gradeData);
-  if(capStats)capStats.innerHTML=renderCapTableHtml(capData);
+  if(gradeStats)gradeStats.innerHTML=renderGradeTableHtml(gradeData,false);
+  if(capStats)capStats.innerHTML=renderCapTableHtml(capData,false);
   if(gradeBars){
     var gp=renderGradeBarsHtml(gradeData);
     gradeBars.className='cap-bars grade-bars';
@@ -1999,15 +2340,181 @@ function renderBoxDualDist(){
   }
 }
 
-function submitBaseMembers(){
-  return MEMBERS.filter(function(m){
-    if(currentGroup!=='全部'&&m.group!==currentGroup)return false;
-    if(currentCap&&m.capability!==currentCap)return false;
-    if(currentKeyword&&m.name.indexOf(currentKeyword)===-1&&m.employeeId.toLowerCase().indexOf(currentKeyword.toLowerCase())===-1)return false;
-    if(currentDepartments.length&&currentDepartments.indexOf(m.dept)===-1)return false;
-    if(currentRegions.length&&currentRegions.indexOf(m.region)===-1)return false;
-    return true;
+function isByGroupView(){
+  return listViewMode==='byGroup'&&(currentStep===1||currentStep===2);
+}
+
+function setListViewMode(mode){
+  listViewMode=mode==='detail'?'detail':'byGroup';
+  currentPage=1;
+  syncListViewUI();
+  applyStepLayout();
+  renderMembers();
+  if(isByGroupView()){
+    requestAnimationFrame(function(){scrollGroupPanelIntoView(currentGroup);});
+  }
+}
+
+function toggleGroupPanels(){
+  setListViewMode(listViewMode==='byGroup'?'detail':'byGroup');
+}
+
+function syncListViewUI(){
+  var list=document.getElementById('evalList');
+  var rail=document.getElementById('groupPanelsRail');
+  var toggle=document.getElementById('evalSplitToggle');
+  var switchable=currentStep===1||currentStep===2;
+  var expanded=switchable&&listViewMode==='byGroup';
+  var merged=switchable&&!expanded;
+  if(list){
+    list.classList.toggle('view-switchable',switchable);
+    list.classList.toggle('view-by-group',expanded);
+    list.classList.toggle('view-merged',merged);
+  }
+  if(toggle){
+    toggle.setAttribute('aria-expanded',expanded?'true':'false');
+    toggle.title=expanded?'收起为合并统计':'展开按考核组';
+    toggle.setAttribute('aria-label',toggle.title);
+  }
+  if(rail)rail.classList.toggle('panels-single',merged||(isByGroupView()&&visibleGroupPanelNames().length<=1));
+}
+
+function scrollGroupPanelIntoView(groupName){
+  if(!groupName||groupName==='全部')return;
+  var el=document.querySelector('.group-panel[data-group="'+groupName+'"]');
+  if(el&&el.scrollIntoView)el.scrollIntoView({behavior:'smooth',inline:'nearest',block:'nearest'});
+}
+
+/** 切换考核组时：同名等级/能力保留高亮，否则清除（不高亮） */
+function syncPanelBandForGroup(groupName){
+  if(!groupName||groupName==='全部')return;
+  if(currentStep===2){
+    if(!currentCap)return;
+    var capData=getCapDistDataForGroup(groupName);
+    if(!capData||capData.labels.indexOf(currentCap)<0)currentCap=null;
+  }else{
+    if(!currentGrade)return;
+    var gradeData=getGradeDistDataForGroup(groupName);
+    if(!gradeData||gradeData.labels.indexOf(currentGrade)<0)currentGrade=null;
+  }
+}
+
+function selectGroupPanel(groupName){
+  if(!groupName)return;
+  currentGroup=groupName;
+  currentPage=1;
+  syncPanelBandForGroup(groupName);
+  syncActiveForceAliases();
+  renderGroupFilter();
+  renderAll();
+  requestAnimationFrame(function(){scrollGroupPanelIntoView(groupName);});
+}
+
+/** 按考核组列：点等级行 → 选中该组 + 该等级（仅该列高亮） */
+function selectGroupGradeRow(groupName,grade){
+  if(!groupName||!grade)return;
+  var same=currentGroup===groupName&&currentGrade===grade;
+  currentGroup=groupName;
+  currentGrade=same?null:grade;
+  currentPage=1;
+  syncActiveForceAliases();
+  renderGroupFilter();
+  renderAll();
+  requestAnimationFrame(function(){scrollGroupPanelIntoView(groupName);});
+}
+
+function selectGroupCapRow(groupName,cap){
+  if(!groupName||!cap)return;
+  var same=currentGroup===groupName&&currentCap===cap;
+  currentGroup=groupName;
+  currentCap=same?null:cap;
+  currentPage=1;
+  syncActiveForceAliases();
+  renderGroupFilter();
+  renderAll();
+  requestAnimationFrame(function(){scrollGroupPanelIntoView(groupName);});
+}
+
+function renderGroupPanels(){
+  var scroll=document.getElementById('groupPanelsScroll');
+  var rail=document.getElementById('groupPanelsRail');
+  if(!scroll)return;
+  if(!(currentStep===1||currentStep===2)){scroll.innerHTML='';if(rail)rail.classList.remove('panels-single');return;}
+  function paintPanelDots(root){
+    if(!root)return;
+    root.querySelectorAll('[data-panel-bars="1"]').forEach(function(barsEl){
+      var plot=barsEl.querySelector('.cap-bars-plot');
+      if(!plot||!plot._panelDotData)return;
+      var d=plot._panelDotData;
+      paintCapLineOverlay(plot,d.before,d.after,d.scale,{mode:'beforeAfter',connect:true});
+    });
+  }
+  function bindPanelDotData(root,painted){
+    var barsEl=root&&root.querySelector('[data-panel-bars="1"]');
+    if(!barsEl||!painted)return;
+    var plot=barsEl.querySelector('.cap-bars-plot');
+    if(plot)plot._panelDotData={before:painted.before,after:painted.after,scale:painted.scale};
+  }
+  function panelCardHtml(title,count,tableHtml,chartHtml,dataGroup,active,clickable){
+    var hdAttrs=clickable
+      ?' role="button" tabindex="0" onclick="selectGroupPanel(\''+dataGroup+'\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();selectGroupPanel(\''+dataGroup+'\');}"'
+      :' style="cursor:default"';
+    return '<div class="group-panel'+(active?' is-active':'')+'" data-group="'+dataGroup+'" id="groupPanel-'+encodeURIComponent(dataGroup)+'">'+
+      '<div class="group-panel-hd"'+hdAttrs+'>'+
+        '<div class="group-panel-title"><span class="group-panel-name">'+title+'</span><span class="group-panel-count">'+(count||0)+'人</span></div>'+
+        groupPanelLegendHtml()+
+      '</div>'+
+      '<div class="group-panel-body">'+
+        '<div class="group-panel-table list-stats">'+tableHtml+'</div>'+
+        '<div class="group-panel-chart">'+chartHtml+'</div>'+
+      '</div>'+
+    '</div>';
+  }
+  /* 收起：一列合并统计（无目标列、上表下图）；展开：2×2 考核组卡片（左表右图） */
+  if(!isByGroupView()){
+    var merged=currentStep===2?getMergedCapDistData():getMergedGradeDistData();
+    var mergedTitle=currentGroup==='全部'?'合并统计':currentGroup;
+    var mergedOpts={
+      panel:true,
+      adjMode:'delta',
+      rowClick:currentStep===2
+        ?function(v){return 'filterByCap(\''+v+'\')';}
+        :function(v){return 'filterByGrade(\''+v+'\')';}
+    };
+    var mergedBars=renderMergedBarsHtml(merged,{cap:currentStep===2,rowClick:mergedOpts.rowClick});
+    var mergedTable=currentStep===2?renderCapTableHtml(merged,false,mergedOpts):renderGradeTableHtml(merged,false,mergedOpts);
+    if(rail)rail.classList.add('panels-single');
+    scroll.innerHTML=panelCardHtml(mergedTitle,merged.total||0,mergedTable,mergedBars.html,'__merged__',true,false);
+    bindPanelDotData(scroll,mergedBars);
+    paintPanelDots(scroll);
+    return;
+  }
+  var groups=visibleGroupPanelNames();
+  var showReq=groups.length>1;
+  if(rail)rail.classList.toggle('panels-single',!showReq);
+  var html='';
+  var paintedList=[];
+  groups.forEach(function(g){
+    var data=currentStep===2?getCapDistDataForGroup(g):getGradeDistDataForGroup(g);
+    var active=currentGroup===g;
+    var panelOpts={
+      panel:true,
+      adjMode:'delta',
+      groupName:g,
+      rowClick:currentStep===2
+        ?function(v){return 'selectGroupCapRow(\''+g+'\',\''+v+'\')';}
+        :function(v){return 'selectGroupGradeRow(\''+g+'\',\''+v+'\')';}
+    };
+    var bars=renderGroupCardBarsHtml(data,{cap:currentStep===2,groupName:g,rowClick:panelOpts.rowClick});
+    var table=currentStep===2?renderCapTableHtml(data,showReq,panelOpts):renderGradeTableHtml(data,showReq,panelOpts);
+    paintedList.push(bars);
+    html+=panelCardHtml(g,data.total||0,table,bars.html,g,active,true);
   });
+  scroll.innerHTML=html;
+  scroll.querySelectorAll('.group-panel').forEach(function(panel,i){
+    bindPanelDotData(panel,paintedList[i]);
+  });
+  paintPanelDots(scroll);
 }
 
 function ensureDualCharts(stack){
@@ -2030,9 +2537,10 @@ function capRank(v){
   return -1;
 }
 
-function paintCapLineOverlay(plot,beforeVals,midVals,scale){
+function paintCapLineOverlay(plot,beforeVals,midVals,scale,opts){
   if(!plot)return;
-  plot._capLineData={beforeVals:beforeVals,midVals:midVals,scale:scale};
+  opts=opts||{};
+  plot._capLineData={beforeVals:beforeVals,midVals:midVals,scale:scale,mode:opts.mode||'std',connect:!!opts.connect};
   ensureCapLineObserver(plot);
   scheduleCapLinePaint(plot);
 }
@@ -2054,6 +2562,14 @@ function scheduleCapLinePaint(plot){
   });
 }
 
+/** 将人数映射到轨道内 x：两端内缩，保证 0 人点仍完整可见 */
+function capTrackX(x0,tw,val,scale,pad){
+  pad=pad==null?4:pad;
+  var usable=Math.max(1,tw-2*pad);
+  var t=Math.max(0,Math.min(1,(val||0)/(scale||1)));
+  return x0+pad+usable*t;
+}
+
 function drawCapLineOverlay(plot){
   var data=plot&&plot._capLineData;
   if(!data)return;
@@ -2070,14 +2586,38 @@ function drawCapLineOverlay(plot){
   var scale=data.scale||1;
   var beforeVals=data.beforeVals||[];
   var midVals=data.midVals||[];
+  var mode=data.mode||'std';
+  if(mode==='beforeAfter'){
+    var ptsB=[],ptsA=[],dots='';
+    tracks.forEach(function(track,i){
+      var tr=track.getBoundingClientRect();
+      var x0=tr.left-pr.left;
+      var y=tr.top-pr.top+tr.height/2;
+      var tw=Math.max(1,tr.width);
+      var xb=capTrackX(x0,tw,beforeVals[i],scale);
+      var xa=capTrackX(x0,tw,midVals[i],scale);
+      ptsB.push({x:xb,y:y});
+      ptsA.push({x:xa,y:y});
+      dots+='<circle cx="'+xb.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="3.5" fill="#A1A1AA" stroke="#fff" stroke-width="1.5"><title>调整前 '+(beforeVals[i]||0)+'</title></circle>';
+      dots+='<circle cx="'+xa.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="3.5" fill="#2563EB" stroke="#fff" stroke-width="1.5"><title>当前 '+(midVals[i]||0)+'</title></circle>';
+    });
+    var paths='';
+    if(data.connect){
+      paths=
+        '<path fill="none" stroke="#A1A1AA" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" d="'+smoothCapCurve(ptsB)+'"></path>'+
+        '<path fill="none" stroke="#2563EB" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4 3" d="'+smoothCapCurve(ptsA)+'"></path>';
+    }
+    svg.innerHTML=paths+dots;
+    return;
+  }
   var ptsB=[],ptsM=[],dotsB='',dotsM='';
   tracks.forEach(function(track,i){
     var tr=track.getBoundingClientRect();
     var x0=tr.left-pr.left;
     var y=tr.top-pr.top+tr.height/2;
     var tw=Math.max(1,tr.width);
-    var xb=x0+tw*((beforeVals[i]||0)/scale);
-    var xm=x0+tw*((midVals[i]||0)/scale);
+    var xb=capTrackX(x0,tw,beforeVals[i],scale);
+    var xm=capTrackX(x0,tw,midVals[i],scale);
     ptsB.push({x:xb,y:y});
     ptsM.push({x:xm,y:y});
     dotsB+='<circle cx="'+xb.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="3" fill="#A1A1AA" stroke="#fff" stroke-width="1.5"><title>调整前 '+(beforeVals[i]||0)+'</title></circle>';
@@ -2136,7 +2676,7 @@ function renderCapDist(){
     data:{
       labels:labels,
       datasets:[
-        {label:'当前',data:afterData,backgroundColor:labels.map(function(g){return CAP_BAR_COLORS[g];}),order:2},
+        {label:'当前',data:afterData,backgroundColor:afterData.map(function(v,i){return barFillByRange(v,forceMin[i],forceMax[i]);}),order:2},
         {label:'调整前',data:beforeData,type:'line',borderColor:'#D4D4D8',backgroundColor:'transparent',borderWidth:2,pointRadius:3,pointBackgroundColor:'#D4D4D8',tension:0.2,order:1},
         {label:'要求',data:forceMid,type:'line',borderColor:'#F59E0B',borderWidth:2,borderDash:[4,3],pointRadius:3,pointBackgroundColor:'#F59E0B',tension:0.2,order:1}
       ]
@@ -2208,7 +2748,7 @@ function renderBoxDist(stack){
     data:{
       labels:gradeLabels,
       datasets:[
-        {label:'当前',data:gradeAfter,backgroundColor:gradeAfter.map(function(v,i){if(v>gradeMax[i])return'#F43F5E';if(v<gradeMin[i])return'#2563EB';return'#10B981';}),order:2},
+        {label:'当前',data:gradeAfter,backgroundColor:gradeAfter.map(function(v,i){return barFillByRange(v,gradeMin[i],gradeMax[i]);}),order:2},
         {label:'调整前',data:gradeBefore,type:'line',borderColor:'#D4D4D8',backgroundColor:'transparent',borderWidth:2,pointRadius:3,pointBackgroundColor:'#D4D4D8',tension:0.2,order:1},
         {label:'标准',data:gradeMin.map(function(min,i){return Math.round((min+gradeMax[i])/2);}),type:'line',borderColor:'#F59E0B',borderWidth:2,borderDash:[4,3],pointRadius:3,pointBackgroundColor:'#F59E0B',tension:0.2,order:1}
       ]
@@ -2224,7 +2764,7 @@ function renderBoxDist(stack){
     data:{
       labels:capLabels,
       datasets:[
-        {label:'当前',data:capAfter,backgroundColor:capLabels.map(function(g){return CAP_BAR_COLORS[g];}),barPercentage:0.4,categoryPercentage:0.45,order:2},
+        {label:'当前',data:capAfter,backgroundColor:capAfter.map(function(v,i){return barFillByRange(v,capMin[i],capMax[i]);}),barPercentage:0.4,categoryPercentage:0.45,order:2},
         {label:'调整前',data:capBefore,type:'line',borderColor:'#D4D4D8',backgroundColor:'transparent',borderWidth:2,pointRadius:3,pointBackgroundColor:'#D4D4D8',tension:0.2,order:1},
         {label:'要求',data:capMid,type:'line',borderColor:'#F59E0B',borderWidth:2,borderDash:[4,3],pointRadius:3,pointBackgroundColor:'#F59E0B',tension:0.2,order:1}
       ]
@@ -2308,7 +2848,7 @@ function adjMetaLine(adj){
   var node=adj.node||'审定节点';
   var who=adj.who||'上级';
   var job=adj.jobNo||adj.empNo||'—';
-  return node+'｜'+who+'｜（'+job+'）';
+  return node+'｜'+who+'('+job+')';
 }
 function lastRatifyHtml(m){
   var adj=m&&m.lastRatifyAdj;
@@ -2351,31 +2891,51 @@ function lastCapAdjHtml(m){
 
 function renderHead(){
   var head=document.getElementById('memberHead');
-  var title=document.getElementById('listTitle');
   var distTitle=document.getElementById('distPanelTitle');
+  var compact=isByGroupView();
   if(currentStep===2){
-    title.textContent='团队成员盘点';
-    head.innerHTML='<tr><th class="col-freeze-l">被考核人</th><th class="col-dept">部门</th><th class="col-status">提交状态</th><th>360得分</th><th>360排名</th><th>测评得分</th><th>测评排名</th><th class="col-init-cap">初评能力</th><th class="col-cap-adj">能力调整记录</th><th class="col-freeze-r">校准能力</th></tr>';
+    if(compact){
+      head.innerHTML='<tr><th class="col-freeze-l">被考核人</th><th class="col-freeze-r">校准能力</th></tr>';
+    }else{
+      head.innerHTML='<tr><th class="col-freeze-l">被考核人</th><th class="col-dept">部门</th><th class="col-status">提交状态</th><th>360得分</th><th>360排名</th><th>测评得分</th><th>测评排名</th><th class="col-init-cap">初评能力</th><th class="col-cap-adj">能力调整记录</th><th class="col-freeze-r">校准能力</th></tr>';
+    }
   }else if(currentStep===3){
     distTitle.textContent='绩效与能力分布';
   }else{
-    title.textContent='团队成员审定';
     distTitle.textContent='等级分布';
-    head.innerHTML='<tr><th class="col-freeze-l">被考核人</th><th class="col-dept">部门</th><th class="col-status">提交状态</th><th class="col-init">初评等级</th><th class="col-level">调整记录</th><th class="col-freeze-r">调整等级</th></tr>';
+    if(compact){
+      head.innerHTML='<tr><th class="col-freeze-l">被考核人</th><th class="col-freeze-r">调整等级</th></tr>';
+    }else{
+      head.innerHTML='<tr><th class="col-freeze-l">被考核人</th><th class="col-dept">部门</th><th class="col-status">提交状态</th><th class="col-init">初评等级</th><th class="col-level">调整记录</th><th class="col-freeze-r">调整等级</th></tr>';
+    }
   }
-  syncOnlyUnfilledUI();
+  syncFillFilterUI();
   syncOnlyAbnormalUI();
+  syncListViewUI();
 }
 
-function syncOnlyUnfilledUI(){
-  var wrap=document.getElementById('onlyUnfilledWrap');
-  var chk=document.getElementById('onlyUnfilledChk');
-  var div=document.getElementById('onlyUnfilledDivider');
-  if(!wrap||!chk)return;
-  var show=currentStep===2;
-  wrap.classList.toggle('on',show);
+function syncFillFilterUI(){
+  var box=document.getElementById('fillFilter');
+  var div=document.getElementById('fillFilterDivider');
+  var label=document.getElementById('fillFilterLabel');
+  if(!box)return;
+  var show=currentStep===1||currentStep===2;
+  box.classList.toggle('on',show);
   if(div)div.classList.toggle('on',show);
-  chk.checked=!!onlyUnfilled;
+  if(label)label.classList.toggle('on',show);
+  if(!show)fillFilter='';
+  if(['','未填写','已调整'].indexOf(fillFilter)===-1)fillFilter='';
+  var opts=[{v:'',t:'全部'},{v:'未填写',t:'未填写'},{v:'已调整',t:'已调整'}];
+  box.innerHTML=opts.map(function(o){
+    return '<button class="btn btn-s btn-sm'+(fillFilter===o.v?' btn-active':'')+'" type="button" onclick="filterFill(\''+o.v+'\')">'+o.t+'</button>';
+  }).join('');
+}
+
+function filterFill(mode){
+  fillFilter=mode||'';
+  currentPage=1;
+  syncFillFilterUI();
+  renderAll();
 }
 
 function syncOnlyAbnormalUI(){
@@ -2388,20 +2948,6 @@ function syncOnlyAbnormalUI(){
   if(div)div.classList.toggle('on',show);
   if(!show)onlyAbnormal=false;
   chk.checked=!!onlyAbnormal;
-}
-
-function toggleOnlyUnfilled(on){
-  onlyUnfilled=!!on;
-  if(onlyUnfilled){
-    statusBeforeUnfilled=currentStatus;
-    currentStatus='待提交';
-  }else if(statusBeforeUnfilled!=null){
-    currentStatus=statusBeforeUnfilled;
-    statusBeforeUnfilled=null;
-  }
-  currentPage=1;
-  syncOnlyUnfilledUI();
-  renderAll();
 }
 
 function toggleOnlyAbnormal(on){
@@ -2438,7 +2984,10 @@ function capSegHtml(idx,m,cls){
 function memberFreezeCellHtml(m,idx){
   var tip='本节点已调整'+(m.nodeAdjSummary?('：'+m.nodeAdjSummary):'');
   var tag=m.nodeAdjusted?'<span class="node-adj-tag" title="'+tip+'" aria-label="'+tip+'"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M11.5 2.5l2 2L5.5 12.5H3.5v-2L11.5 2.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M10 4l2 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>':'';
-  return '<td class="col-freeze-l"><span class="member-name" onmouseenter="onMemberEnter(event,'+idx+')" onmouseleave="hideChipTip()"><span class="member-name-row"><span style="font-weight:500;color:var(--c8)">'+m.name+'</span>'+tag+'</span><div style="margin-top:3px;font:400 10px/1 var(--m);color:var(--c4)">'+m.employeeId+'</div></span></td>';
+  var meta=isByGroupView()
+    ?('<div class="member-compact-meta">'+m.employeeId+' · '+m.dept+'</div>')
+    :('<div style="margin-top:3px;font:400 10px/1 var(--m);color:var(--c4)">'+m.employeeId+'</div>');
+  return '<td class="col-freeze-l"><span class="member-name" onmouseenter="onMemberEnter(event,'+idx+')" onmouseleave="hideChipTip()"><span class="member-name-row"><span style="font-weight:500;color:var(--c8)">'+m.name+'</span>'+tag+'</span>'+meta+'</span></td>';
 }
 
 function setCapability(idx,value){
@@ -2485,21 +3034,47 @@ function renderMembers(){
   var start=(currentPage-1)*PAGE_SIZE;
   var pageData=filtered.slice(start,start+PAGE_SIZE);
   var html='';
+  var compact=isByGroupView();
   pageData.forEach(function(m){
     var idx=MEMBERS.indexOf(m);
     if(currentStep===2){
-      html+='<tr>'+
-        memberFreezeCellHtml(m,idx)+
-        '<td class="col-dept">'+m.dept+'</td>'+
-        '<td class="col-status">'+submitTagHtml(m)+'</td>'+
-        '<td><span style="font-family:var(--m);font-weight:600;color:var(--c9)">'+(m.reached?m.score360:'—')+'</span></td>'+
-        '<td style="font-family:var(--m);color:var(--c7)">'+(m.reached?m.rank360:'—')+'</td>'+
-        '<td><span style="font-family:var(--m);font-weight:600;color:var(--c9)">'+(m.reached?m.assessScore:'—')+'</span></td>'+
-        '<td style="font-family:var(--m);color:var(--c7)">'+(m.reached?m.rankAssess:'—')+'</td>'+
-        '<td class="col-init-cap">'+initCapCellHtml(m)+'</td>'+
-        '<td class="col-cap-adj">'+lastCapAdjHtml(m)+'</td>'+
-        capSegHtml(idx,m,'col-freeze-r')+
-      '</tr>';
+      if(compact){
+        html+='<tr>'+memberFreezeCellHtml(m,idx)+capSegHtml(idx,m,'col-freeze-r')+'</tr>';
+      }else{
+        html+='<tr>'+
+          memberFreezeCellHtml(m,idx)+
+          '<td class="col-dept">'+m.dept+'</td>'+
+          '<td class="col-status">'+submitTagHtml(m)+'</td>'+
+          '<td><span style="font-family:var(--m);font-weight:600;color:var(--c9)">'+(m.reached?m.score360:'—')+'</span></td>'+
+          '<td style="font-family:var(--m);color:var(--c7)">'+(m.reached?m.rank360:'—')+'</td>'+
+          '<td><span style="font-family:var(--m);font-weight:600;color:var(--c9)">'+(m.reached?m.assessScore:'—')+'</span></td>'+
+          '<td style="font-family:var(--m);color:var(--c7)">'+(m.reached?m.rankAssess:'—')+'</td>'+
+          '<td class="col-init-cap">'+initCapCellHtml(m)+'</td>'+
+          '<td class="col-cap-adj">'+lastCapAdjHtml(m)+'</td>'+
+          capSegHtml(idx,m,'col-freeze-r')+
+        '</tr>';
+      }
+      return;
+    }
+    if(compact){
+      html+='<tr>'+memberFreezeCellHtml(m,idx);
+      if(m.reached){
+        var starValC=ratifyStarValue(m.ratifyGrade);
+        var starColorC=m.ratifyGrade?(GRADE_COLORS[m.ratifyGrade]||'var(--c8)'):'';
+        html+='<td class="col-freeze-r"><div class="star-rating" data-value="'+starValC+'">'+
+          '<div class="star-row">';
+        for(var vc=1;vc<=7;vc++){
+          var onC=starValC>0&&vc<=starValC;
+          html+='<span class="star'+(onC?' sel':'')+'" data-v="'+vc+'" style="'+(onC?'color:'+starColorC:'')+'" onclick="setRatifyStar(this,'+idx+','+vc+')" onmouseenter="starHover(this,1)" onmouseleave="starHover(this,0)">★</span>';
+        }
+        html+='</div>'+
+          '<span class="star-label'+(m.ratifyGrade?'':' placeholder')+'" style="color:'+(m.ratifyGrade?(GRADE_COLORS[m.ratifyGrade]||'var(--c8)'):'var(--c4)')+'">'+(m.ratifyGrade||'请选择')+'</span>'+
+          '<div class="star-desc">'+(m.ratifyGrade?STAR_DESC_RATIFY[GRADE_OPTIONS.indexOf(m.ratifyGrade)+1]:'')+'</div>'+
+        '</div></td>';
+      }else{
+        html+='<td class="col-freeze-r"><span style="font:400 12px/1 var(--f);color:var(--c4)">未到达</span></td>';
+      }
+      html+='</tr>';
       return;
     }
     html+='<tr>'+
@@ -2528,7 +3103,8 @@ function renderMembers(){
   });
   document.getElementById('memberBody').innerHTML=html;
   renderPager(filtered.length,totalPages);
-  renderDist();
+  if(currentStep===1||currentStep===2)renderGroupPanels();
+  else renderDist();
   updateStats(filtered);
 }
 
@@ -2583,23 +3159,19 @@ function setActiveBtn(containerId,btn){
 }
 
 function filterGroup(group,btn){
-  if(SCHEME_CFG.ctrlScope==='group'&&group==='全部')return;
   currentGroup=group;currentPage=1;
+  syncPanelBandForGroup(group);
   syncActiveForceAliases();
   setActiveBtn('groupFilter',btn);
   renderAll();
+  if(isByGroupView()&&group!=='全部')requestAnimationFrame(function(){scrollGroupPanelIntoView(group);});
 }
 
 function renderGroupFilter(){
   var box=document.getElementById('groupFilter');
   if(!box)return;
-  if(SCHEME_CFG.ctrlScope==='group'){
-    if(currentGroup==='全部'||ASSESS_GROUPS.indexOf(currentGroup)<0)currentGroup=ASSESS_GROUPS[0];
-  }
-  var html='';
-  if(SCHEME_CFG.ctrlScope!=='group'){
-    html+='<button class="btn btn-s btn-sm'+(currentGroup==='全部'?' btn-active':'')+'" type="button" onclick="filterGroup(\'全部\',this)">全部</button>';
-  }
+  if(currentGroup!=='全部'&&ASSESS_GROUPS.indexOf(currentGroup)<0)currentGroup='全部';
+  var html='<button class="btn btn-s btn-sm'+(currentGroup==='全部'?' btn-active':'')+'" type="button" onclick="filterGroup(\'全部\',this)">全部</button>';
   ASSESS_GROUPS.forEach(function(g){
     html+='<button class="btn btn-s btn-sm'+(currentGroup===g?' btn-active':'')+'" type="button" onclick="filterGroup(\''+g+'\',this)">'+g+'</button>';
   });
@@ -2607,31 +3179,9 @@ function renderGroupFilter(){
   syncActiveForceAliases();
 }
 
-function toggleDemoCtrlScope(){
-  SCHEME_CFG.ctrlScope=SCHEME_CFG.ctrlScope==='group'?'all':'group';
-  SCHEME_CFG.capCtrlScope=SCHEME_CFG.ctrlScope;
-  if(SCHEME_CFG.ctrlScope==='group')currentGroup=ASSESS_GROUPS[0];
-  else currentGroup='全部';
+function filterStatus(status){
+  currentStatus=status||'';
   currentPage=1;
-  renderGroupFilter();
-  renderAll();
-  showToast('控制范围已切换为「'+(SCHEME_CFG.ctrlScope==='group'?'考核组':'全部')+'」','success');
-}
-
-function toggleDemoControlMode(){
-  var next=SCHEME_CFG.controlMode==='strong'?'weak':'strong';
-  SCHEME_CFG.controlMode=next;
-  SCHEME_CFG.capControlMode=next;
-  showToast('控制模式已切换为「'+(next==='strong'?'强控':'弱控')+'」','success');
-}
-function filterStatus(status,btn){
-  currentStatus=status;currentPage=1;
-  if(onlyUnfilled&&status!=='待提交'){
-    onlyUnfilled=false;
-    statusBeforeUnfilled=null;
-    syncOnlyUnfilledUI();
-  }
-  if(btn)setActiveBtn('statusFilter',btn);
   renderAll();
 }
 function filterKeyword(keyword){
@@ -2651,7 +3201,8 @@ function toggleTreeFilter(event,type){
   if(shouldOpen){target.classList.add('open');button.setAttribute('aria-expanded','true');}
 }
 function toggleTreeSelection(type,checkbox){
-  var target=type==='department'?currentDepartments:currentRegions;
+  if(type!=='department')return;
+  var target=currentDepartments;
   var index=target.indexOf(checkbox.value);
   if(checkbox.checked&&index===-1)target.push(checkbox.value);
   if(!checkbox.checked&&index>=0)target.splice(index,1);
@@ -2659,15 +3210,16 @@ function toggleTreeSelection(type,checkbox){
   currentPage=1;renderAll();
 }
 function clearTreeFilter(type){
-  var target=type==='department'?currentDepartments:currentRegions;
-  target.splice(0,target.length);
+  if(type!=='department')return;
+  currentDepartments.splice(0,currentDepartments.length);
   document.querySelectorAll('#'+type+'Tree input[type="checkbox"]').forEach(function(input){input.checked=false;});
   updateTreeFilterCount(type);
   currentPage=1;renderAll();
 }
 function updateTreeFilterCount(type){
-  var target=type==='department'?currentDepartments:currentRegions;
-  document.getElementById(type+'FilterCount').textContent=target.length?'已选'+target.length+'项':'全部';
+  if(type!=='department')return;
+  var el=document.getElementById(type+'FilterCount');
+  if(el)el.textContent=currentDepartments.length?'已选'+currentDepartments.length+'项':'全部';
 }
 function filterByGrade(grade){
   if(currentGrade===grade){currentGrade=null;}else{currentGrade=grade;}
@@ -2797,7 +3349,6 @@ function setRatifyStar(el,idx,v){
     return;
   }
   applyGradeChange(m,grade,'');
-  renderDist();
   updateStats(getFilteredMembers());
   renderMembers();
 }
@@ -2913,14 +3464,27 @@ function closeToast(){
   if(_toastTimer){clearTimeout(_toastTimer);_toastTimer=null;}
   t.classList.remove('open');
   t.setAttribute('aria-hidden','true');
+  var card=t.querySelector('.notice-card');
+  var msgEl=document.getElementById('toastMsg');
+  if(card)card.classList.remove('wide');
+  if(msgEl)msgEl.classList.remove('has-html');
 }
-function showToast(msg,type){
+function showToast(msg,type,opts){
+  opts=opts||{};
   var t=document.getElementById('toast');
   var titleEl=document.getElementById('toastTitle');
   var msgEl=document.getElementById('toastMsg');
+  var card=t&&t.querySelector('.notice-card');
   if(!t||!msgEl)return;
   if(_toastTimer){clearTimeout(_toastTimer);_toastTimer=null;}
-  msgEl.textContent=msg||'';
+  if(opts.html){
+    msgEl.innerHTML=msg||'';
+    msgEl.classList.add('has-html');
+  }else{
+    msgEl.textContent=msg||'';
+    msgEl.classList.remove('has-html');
+  }
+  if(card)card.classList.toggle('wide',!!opts.wide);
   if(titleEl)titleEl.textContent=type==='warn'?'提示':'操作成功';
   t.className='notice-overlay open'+(type==='warn'?' warn':'');
   t.setAttribute('aria-hidden','false');
@@ -3024,11 +3588,8 @@ function goStep(step){
   currentPage=1;
   isDistCollapsed=false;
   if(prev!==2&&step===2)currentStatus='已提交';
-  if(prev===2&&step!==2){
-    currentStatus='已提交';
-    onlyUnfilled=false;
-    statusBeforeUnfilled=null;
-  }
+  if(prev===2&&step!==2)currentStatus='已提交';
+  if(step===3)fillFilter='';
   if(step!==3)onlyAbnormal=false;
   closeChipPop();
   renderAll();
@@ -3071,16 +3632,42 @@ function getMissingCrossGradeReason(){
   });
 }
 
-function getForceDistFailGrades(rules,countOf,total){
+function getForceDistFailRows(rules,countOf,total,meta){
   if(!total)return [];
-  var fails=[];
+  var rows=[];
   rules.forEach(function(r){
     var count=countOf(r.grade);
     var minCount=Math.ceil(total*r.min/100);
     var maxCount=Math.floor(total*r.max/100);
-    if(count<minCount||count>maxCount)fails.push(r.grade);
+    if(count>maxCount){
+      rows.push({
+        group:meta.group,
+        side:meta.side,
+        grade:r.grade,
+        actual:count,
+        limit:maxCount,
+        direction:'over',
+        delta:count-maxCount,
+        minPct:r.min,
+        maxPct:r.max,
+        total:total
+      });
+    }else if(count<minCount){
+      rows.push({
+        group:meta.group,
+        side:meta.side,
+        grade:r.grade,
+        actual:count,
+        limit:minCount,
+        direction:'under',
+        delta:minCount-count,
+        minPct:r.min,
+        maxPct:r.max,
+        total:total
+      });
+    }
   });
-  return fails;
+  return rows;
 }
 
 function membersForDistScope(groupName){
@@ -3094,56 +3681,66 @@ function distScopeLabels(side){
   return ['全部'];
 }
 
-function formatFailGrades(grades){
-  if(!grades||!grades.length)return '';
-  if(grades.length<=3)return grades.join('、');
-  return grades.slice(0,2).join('、')+'等';
+function formatForceDistAdvice(row){
+  if(row.direction==='over'){
+    return '实际 '+row.actual+' 人 / 上限 '+row.limit+' 人，需减少 '+row.delta+' 人';
+  }
+  return '不低于 '+row.minPct+'%，实际 '+row.actual+' 人，需增加 '+row.delta+' 人';
 }
 
-/** 按控制范围逐组校验；返回 {items:[{group,side,fails}], msg, isStrong} 或 null */
+function escapeHtmlText(s){
+  return String(s==null?'':s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+function forceDistGroupLabel(row){
+  var g=row.group==='全部'?'全部':row.group;
+  return g+(row.side?'（'+row.side+'）':'');
+}
+
+/** 强制分布未达标表：考核组 | 等级 | 调整建议 */
+function renderForceDistFailTable(rows){
+  var body=(rows||[]).map(function(row){
+    return '<tr>'+
+      '<td class="fd-col-group">'+escapeHtmlText(forceDistGroupLabel(row))+'</td>'+
+      '<td class="fd-col-grade">'+escapeHtmlText(row.grade)+'</td>'+
+      '<td class="fd-col-advice">'+escapeHtmlText(formatForceDistAdvice(row))+'</td>'+
+    '</tr>';
+  }).join('');
+  return '<table class="fd-fail-table">'+
+    '<thead><tr><th class="fd-col-group">考核组</th><th class="fd-col-grade">等级</th><th class="fd-col-advice">调整建议</th></tr></thead>'+
+    '<tbody>'+body+'</tbody></table>';
+}
+
+/** 按控制范围逐组校验；返回 {rows:[{group,grade,actual,limit,direction,delta,...}], isStrong} 或 null */
 function collectForceDistFails(opts){
   opts=opts||{};
   var checkGrade=opts.grade!==false;
   var checkCap=opts.cap!==false;
-  var items=[];
+  var rows=[];
   if(checkGrade){
     distScopeLabels('grade').forEach(function(gName){
       var pool=membersForDistScope(gName).filter(function(m){return m.reached;});
       var rules=getForceDistRulesForGroup(gName==='全部'?null:gName);
-      var fails=getForceDistFailGrades(rules,function(g){
+      rows=rows.concat(getForceDistFailRows(rules,function(g){
         return pool.filter(function(m){return(m.ratifyGrade||m.grade)===g;}).length;
-      },pool.length);
-      if(fails.length)items.push({group:gName,side:'绩效',fails:fails});
+      },pool.length,{group:gName,side:'绩效'}));
     });
   }
   if(checkCap){
     distScopeLabels('cap').forEach(function(gName){
       var pool=membersForDistScope(gName).filter(function(m){return m.reached&&m.capability;});
       var rules=getCapForceRulesForGroup(gName==='全部'?null:gName);
-      var fails=getForceDistFailGrades(rules,function(g){
+      rows=rows.concat(getForceDistFailRows(rules,function(g){
         return pool.filter(function(m){return m.capability===g;}).length;
-      },pool.length);
-      if(fails.length)items.push({group:gName,side:'能力',fails:fails});
+      },pool.length,{group:gName,side:'能力'}));
     });
   }
-  if(!items.length)return null;
-  var parts=items.map(function(it){
-    var scopeLabel=it.group==='全部'?'全部':it.group;
-    return scopeLabel+'（'+it.side+'：'+formatFailGrades(it.fails)+'）';
-  });
-  var needStrong=false;
-  items.forEach(function(it){
-    var mode=it.side==='能力'?SCHEME_CFG.capControlMode:SCHEME_CFG.controlMode;
-    if(mode!=='weak')needStrong=true;
-  });
-  var actionTip=currentStep>=3?'无法提交':'无法继续';
-  return {
-    items:items,
-    isStrong:needStrong,
-    msg:needStrong
-      ?('强制分布未达标：'+parts.join('；')+'，'+actionTip)
-      :('强制分布未达标：'+parts.join('；')+'。弱控模式下可确认后继续')
-  };
+  if(!rows.length)return null;
+  return {rows:rows,isStrong:true};
 }
 
 function forceDistCheckOptsForStep(){
@@ -3152,17 +3749,24 @@ function forceDistCheckOptsForStep(){
   return {grade:true,cap:true};
 }
 
-function getForceDistBlockMsg(){
+function getForceDistBlockInfo(){
   var info=collectForceDistFails(forceDistCheckOptsForStep());
-  if(!info)return '';
-  if(info.isStrong)return info.msg;
-  return '';
+  if(!info||!info.isStrong)return null;
+  return info;
 }
 
 function getForceDistWarnInfo(){
   var info=collectForceDistFails(forceDistCheckOptsForStep());
   if(!info||info.isStrong)return null;
   return info;
+}
+
+function showForceDistBlockToast(info){
+  var actionTip=currentStep>=3?'无法提交':'无法继续';
+  var html='<p class="fd-fail-lead">强制分布未达标：</p>'+
+    renderForceDistFailTable(info.rows)+
+    '<p class="fd-fail-foot">'+actionTip+'</p>';
+  showToast(html,'warn',{html:true,wide:true});
 }
 
 /** 当前步必填；未通过返回提示文案（强制分布另走强控/弱控） */
@@ -3195,10 +3799,8 @@ function openForceDistWarn(info){
   if(!modal||!body)return;
   if(title)title.textContent='强制分布未达标（弱控）';
   if(ok)ok.textContent=currentStep>=3?'仍要提交':'仍要继续';
-  var lis=(info.items||[]).map(function(it){
-    return '<li>'+(it.group==='全部'?'全部':it.group)+' · '+it.side+'：'+formatFailGrades(it.fails)+'</li>';
-  }).join('');
-  body.innerHTML='<p class="next-confirm-hint">以下范围未满足强制分布规则，弱控模式下可继续：</p><ul class="next-confirm-list" style="padding-left:18px;margin:8px 0 0">'+lis+'</ul>';
+  body.innerHTML='<p class="fd-fail-lead">以下范围未满足强制分布规则，弱控模式下可继续：</p>'+
+    renderForceDistFailTable(info.rows||[]);
   modal.classList.add('open');
   modal.setAttribute('aria-hidden','false');
 }
@@ -3221,14 +3823,9 @@ function requestPrimary(){
     showToast(block,'warn');
     return;
   }
-  var strongMsg=getForceDistBlockMsg();
-  if(strongMsg){
-    showToast(strongMsg,'warn');
-    return;
-  }
-  var weakInfo=getForceDistWarnInfo();
-  if(weakInfo){
-    openForceDistWarn(weakInfo);
+  var strongInfo=getForceDistBlockInfo();
+  if(strongInfo){
+    showForceDistBlockToast(strongInfo);
     return;
   }
   openNextConfirm();
@@ -3271,13 +3868,13 @@ function confirmNextStep(){
 function placeFilters(){
   var filters=document.getElementById('distFilters');
   if(!filters)return;
-  // 三步统一：筛选卡独立于内容卡上方，不嵌入九宫格/名单内部
+  // 三步统一：筛选并入内容卡标题行（名单 / 九宫格）
   if(currentStep===3){
-    var box=document.getElementById('boxPanel');
-    if(box)box.before(filters);
+    var boxHd=document.querySelector('#boxPanel .box9-hd');
+    if(boxHd)boxHd.insertBefore(filters,boxHd.firstChild);
   }else{
-    var list=document.getElementById('evalList');
-    if(list)list.before(filters);
+    var listHd=document.querySelector('#evalList .eval-list-hd');
+    if(listHd)listHd.appendChild(filters);
   }
 }
 
@@ -3294,11 +3891,15 @@ function applyStepLayout(){
     work.classList.toggle('step-ratify',currentStep===1);
     work.classList.toggle('step-cap',currentStep===2);
   }
+  syncListViewUI();
   if(!expanded)return;
-  if((currentStep===1||currentStep===2)&&split){
-    split.appendChild(expanded);
+  if(currentStep===1||currentStep===2){
+    /* 展开=按组多列；收起=完整明细+右侧一列合并统计（走 groupPanelsRail） */
+    if(dist&&hd)hd.after(expanded);
+    expanded.style.display='none';
   }else if(currentStep===3&&boxSplit){
     boxSplit.appendChild(expanded);
+    expanded.style.display='';
   }else if(dist&&hd){
     hd.after(expanded);
     expanded.style.display='';
