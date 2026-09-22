@@ -1,5 +1,11 @@
 # 变更记录
 
+## 2026-09-22 修复 GitHub Pages 旧跳转目标 404
+
+- 根目录 `index.html`：改用站点绝对路径 `/performance-v2/prototype/perf/current/index.html` + JS `location.replace`，避免缓存旧相对跳转。
+- 补回 `perf-index.html` 与 `prototype/perf/current/perf-index.html` 兼容桩页，把旧书签/CDN 缓存跳转落到现存总览。
+- 新增根目录 `.nojekyll`，避免 Jekyll 误处理静态资源。
+
 ## 2026-09-22 修复 GitHub Pages 根入口 404
 
 - 根目录 `index.html`：跳转目标从已删除的 `perf-index.html` 改为 `prototype/perf/current/index.html`，并补充方案向导、年度 TR、演示索引等直达链接。
