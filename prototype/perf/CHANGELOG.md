@@ -1,5 +1,13 @@
 # 变更记录
 
+## 2026-09-22 年度 TR：顶部轻 toast 改为居中提示卡片
+
+- `current/manager/demo-yearly-tr.html`：`#toast` / `showToast` 由扁长条改为居中偏上 notice card（白底圆角阴影 + 标题/正文/「知道了」）；校验类（warn）需点确认，成功类可自动关闭；调用点不变。
+
+## 2026-09-22 年度 TR：控制范围=考核组时按组分布与提交校验
+
+- `current/manager/demo-yearly-tr.html`：方案 mock `SCHEME_CFG.ctrlScope='group'`（默认可演示）；无「全部」考核组 chip，默认首组；右侧统计/图表按当前组人数 + 该组绑定规则（标准/宽松）重算；下一步/提交逐组校验强制分布——强控 toast 阻断，弱控弹窗可继续。更多菜单可切换控制范围/控制模式；`?ctrlScope=all` / `?controlMode=weak` 可直达。
+
 ## 2026-09-22 强制分布规则列精简：窄下拉 + 多行文本详情
 
 - `current/perf-scheme-wizard.html`：`.fd-rule-pick` 去掉 select 旁完整规则名 span，只保留窄下拉（option 用缩略名）；「规则详情」列由 chip 网格改为紧凑多行纯文本（`名称 · 规则 上限%`）；绩效/能力、「全部」/「考核组」共用。
