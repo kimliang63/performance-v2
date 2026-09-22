@@ -103,6 +103,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoo
 .form-sec-bd{display:none}
 .form-row{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:16px}
 .form-row.tri{grid-template-columns:repeat(3,1fr)}
+.form-row.quad{grid-template-columns:repeat(4,1fr)}
 .form-grp{display:flex;flex-direction:column;gap:5px}
 .form-lb{font:500 12px/1 var(--f);color:var(--c6)}
 .form-lb .req{color:var(--ro);margin-left:2px}
@@ -111,6 +112,33 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoo
 select.form-input{cursor:pointer;padding-right:24px;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
 textarea.form-input{height:auto;padding:8px 10px;resize:vertical;min-height:60px}
 .form-hint{font:400 11px/1 var(--f);color:var(--c4)}
+
+/* ═══ 盘点强制分布（主行三列 + 下方规则表） ═══ */
+.fd-block{margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)}
+.fd-block-t{font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px}
+.fd-side{margin-bottom:16px}
+.fd-side:last-child{margin-bottom:0}
+.fd-side-lb{font:600 12px/1 var(--f);color:var(--c8);margin-bottom:8px}
+.fd-side .form-row.fd-main{margin-bottom:0}
+.fd-rule-pick{display:flex;align-items:center;gap:8px;min-width:0;width:100%}
+.fd-rule-sel{
+  width:132px;min-width:132px;max-width:132px;flex:0 0 132px;
+  text-overflow:ellipsis;overflow:hidden;white-space:nowrap;
+}
+.fd-rule-label{
+  flex:1;min-width:0;
+  font:400 13px/1.35 var(--f);color:var(--c7);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.fd-group-panel{
+  margin-top:8px;padding:8px 12px 10px;background:var(--c0);
+  border-left:3px solid var(--pr);border-radius:0 var(--r1) var(--r1) 0;
+  animation:fdFadeIn .16s ease;
+}
+.fd-group-panel .tbl th,.fd-group-panel .tbl td{padding:6px 8px}
+.fd-group-panel .tbl th{background:transparent}
+.fd-group-panel .fd-rule-label{font-size:12px;color:var(--c6)}
+@keyframes fdFadeIn{from{opacity:0;transform:translateY(-2px)}to{opacity:1;transform:none}}
 
 /* ═══ RADIO ═══ */
 .radio-group{display:flex;gap:16px}
@@ -324,7 +352,7 @@ const STAGES=[
   {id:'interview',name:'绩效面谈',desc:'上级与员工面谈',enabled:true,status:'warn',flow:'绩效面谈流程',autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14}},
   {id:'eval',name:'绩效考核',desc:'考核人评分',enabled:true,status:'active',flow:'通用绩效考核流程',autoStart:{enabled:true,direction:'后',days:3},autoEnd:{enabled:true,direction:'后',days:30},scoreCalculation:{enabled:false,mode:''}},
   {id:'ratify',name:'结果审定',desc:'审定人调整等级',enabled:true,status:'pending',flow:'汇报线逐级审定',autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14}},
-  {id:'inventory',name:'绩效盘点',desc:'能力评价与九宫格校准',enabled:true,status:'pending',flow:'年度绩效盘点流程',autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14},calcInitialCapability:false,forcedDistRule:'标准七级强制分布',forcedDistControl:'强控',inventorySubmitMode:'',capForcedDistRule:'标准三档能力强制分布',capForcedDistControl:'强控',capForcedDistSubmit:'全部提交',nineBox:null},
+  {id:'inventory',name:'绩效盘点',desc:'能力评价与九宫格校准',enabled:true,status:'pending',flow:'年度绩效盘点流程',autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14},calcInitialCapability:false,forcedDistRule:'标准七级强制分布',forcedDistControl:'强控',inventorySubmitMode:'',inventoryCtrlScope:'考核组',forcedDistGroups:[{groupId:'g1',ruleId:'标准七级强制分布'},{groupId:'g2',ruleId:'宽松七级强制分布'}],capForcedDistRule:'标准三档能力强制分布',capForcedDistControl:'强控',capForcedDistSubmit:'全部提交',capCtrlScope:'考核组',capForcedDistGroups:[{groupId:'g1',ruleId:'标准三档能力强制分布'},{groupId:'g2',ruleId:'宽松三档能力强制分布'}],nineBox:null},
   {id:'confirm',name:'结果确认',desc:'员工确认绩效结果',enabled:true,status:'pending',flow:'员工确认流程',autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14}},
 ];
 
@@ -357,6 +385,13 @@ const ADMIN_LIST=[
 let activeSection='basic', activeGroup='g1';
 let stageConfigMode='merged'; // merged | perGroup
 let activeGroupTab={};
+
+/** 方案未配考核组时的演示用示意组 */
+const DEMO_DIST_GROUPS=[
+  {id:'demo-g1',name:'默认考核组'},
+  {id:'demo-g2',name:'仓储特殊组'},
+  {id:'demo-g3',name:'销售考核组'},
+];
 let form={
   name:'',code:'PERF-2026-'+String(Math.floor(Math.random()*900)+100),enabled:true,downward:true,desc:'',
   dept:'',
@@ -999,14 +1034,12 @@ function renderRatifyCfg(s){
         </select>
       </div>
     </div>
-    <div style="margin-top:4px"><a href="perf-forced-distribution.html" target="_blank" style="font:500 12px/1 var(--f);color:var(--pr);text-decoration:none">查看分布规则 →</a></div>
     <div style="margin-top:16px;padding:14px 16px;background:var(--c0);border-radius:var(--r2);border:1px solid var(--dv)">
       <div style="font:600 12px/1 var(--f);color:var(--c8);margin-bottom:10px">当前规则：${form.forcedDistRule}</div>
       ${(()=>{
         const rule=FORCED_DIST_RULES.find(r=>r.name===form.forcedDistRule);
         if(!rule||!rule.grades) return '';
-        return `<table class="tbl" style="margin:0"><thead><tr><th>等级</th><th>等级名称</th><th>计算规则</th><th>比例上限(%)</th></tr></thead><tbody>${rule.grades.map(g=>`<tr>
-          <td><span style="font:500 11px/1 var(--f);padding:2px 8px;border-radius:3px;background:var(--pr50);color:var(--pr)">${g.code}</span></td>
+        return `<table class="tbl" style="margin:0"><thead><tr><th>等级名称</th><th>计算规则</th><th>比例上限(%)</th></tr></thead><tbody>${rule.grades.map(g=>`<tr>
           <td style="font:500 13px/1 var(--f);color:var(--c9)">${g.name}</td>
           <td style="font:400 13px/1 var(--f);color:var(--c6)">${g.op}</td>
           <td style="font-family:var(--m);font-size:13px;font-weight:600;color:var(--c9)">${g.pct}%</td>
@@ -1097,6 +1130,30 @@ function onGradeRuleChange(value){
   render();
 }
 
+/** 盘点强制分布用的考核组列表（方案为空时用示意组） */
+function getDistSchemeGroups(){
+  if(Array.isArray(form.groups)&&form.groups.length){
+    return form.groups.map(g=>({id:g.id,name:g.name||g.id}));
+  }
+  return DEMO_DIST_GROUPS.slice();
+}
+
+/** 按当前考核组 normalize 各组规则绑定 */
+function normalizeForcedDistGroups(list,ruleNames,fallbackRuleId){
+  const groups=getDistSchemeGroups();
+  const prev=Array.isArray(list)?list:[];
+  const byId={};
+  prev.forEach(row=>{
+    if(row&&row.groupId) byId[row.groupId]=row.ruleId;
+  });
+  const def=ruleNames.includes(fallbackRuleId)?fallbackRuleId:(ruleNames[0]||'');
+  return groups.map(g=>{
+    let ruleId=byId[g.id];
+    if(!ruleNames.includes(ruleId)) ruleId=def;
+    return {groupId:g.id,ruleId};
+  });
+}
+
 function ensureInventoryCfg(s){
   if(typeof s.calcInitialCapability!=='boolean') s.calcInitialCapability=false;
   // 兼容旧双下拉字段 → 审定同款骨架字段
@@ -1113,11 +1170,17 @@ function ensureInventoryCfg(s){
   }
   if(s.forcedDistControl!=='强控'&&s.forcedDistControl!=='弱控') s.forcedDistControl='强控';
   if(typeof s.inventorySubmitMode!=='string') s.inventorySubmitMode='';
+  if(s.inventoryCtrlScope!=='全部'&&s.inventoryCtrlScope!=='考核组') s.inventoryCtrlScope='考核组';
   if(!s.capForcedDistRule||!CAP_FORCED_DIST_RULES.some(r=>r.name===s.capForcedDistRule)){
     s.capForcedDistRule=CAP_FORCED_DIST_RULES[0].name;
   }
   if(s.capForcedDistControl!=='强控'&&s.capForcedDistControl!=='弱控') s.capForcedDistControl='强控';
   s.capForcedDistSubmit='全部提交';
+  if(s.capCtrlScope!=='全部'&&s.capCtrlScope!=='考核组') s.capCtrlScope='考核组';
+  const perfRuleNames=FORCED_DIST_RULES.map(r=>r.name);
+  const capRuleNames=CAP_FORCED_DIST_RULES.map(r=>r.name);
+  s.forcedDistGroups=normalizeForcedDistGroups(s.forcedDistGroups,perfRuleNames,s.forcedDistRule);
+  s.capForcedDistGroups=normalizeForcedDistGroups(s.capForcedDistGroups,capRuleNames,s.capForcedDistRule);
   const gradeNames=getGradeNames();
   if(!Array.isArray(s.nineBox)||s.nineBox.length!==9){
     s.nineBox=defaultNineBoxCells();
@@ -1146,39 +1209,74 @@ function setInventoryDistField(field,value){
   const s=form.stages.find(x=>x.id==='inventory');
   if(!s)return;
   ensureInventoryCfg(s);
-  if(field==='forcedDistRule'||field==='forcedDistControl'||field==='inventorySubmitMode'||field==='capForcedDistRule'||field==='capForcedDistControl'||field==='capForcedDistSubmit'){
+  if(field==='forcedDistRule'||field==='forcedDistControl'||field==='inventorySubmitMode'||field==='inventoryCtrlScope'||field==='capForcedDistRule'||field==='capForcedDistControl'||field==='capForcedDistSubmit'||field==='capCtrlScope'){
     s[field]=field==='capForcedDistSubmit'?'全部提交':value;
+  }
+  // 切换控制范围时重新 normalize 按组绑定
+  if(field==='inventoryCtrlScope'||field==='capCtrlScope'){
+    ensureInventoryCfg(s);
   }
   render();
 }
 
-/** 审定同款：绩效强制分布规则预览表 */
-function renderPerfForcedDistTable(ruleName){
-  const rule=FORCED_DIST_RULES.find(r=>r.name===ruleName);
-  if(!rule||!rule.grades) return '';
-  return `<div style="margin-top:16px;padding:14px 16px;background:var(--c0);border-radius:var(--r2);border:1px solid var(--dv)">
-    <div style="font:600 12px/1 var(--f);color:var(--c8);margin-bottom:10px">当前规则：${rule.name}</div>
-    <table class="tbl" style="margin:0"><thead><tr><th>等级</th><th>等级名称</th><th>计算规则</th><th>比例上限(%)</th></tr></thead><tbody>${rule.grades.map(g=>`<tr>
-      <td><span style="font:500 11px/1 var(--f);padding:2px 8px;border-radius:3px;background:var(--pr50);color:var(--pr)">${g.code}</span></td>
-      <td style="font:500 13px/1 var(--f);color:var(--c9)">${g.name}</td>
-      <td style="font:400 13px/1 var(--f);color:var(--c6)">${g.op}</td>
-      <td style="font-family:var(--m);font-size:13px;font-weight:600;color:var(--c9)">${g.pct}%</td>
-    </tr>`).join('')}</tbody></table>
+function setInvGroupDistRule(side,groupId,ruleId){
+  const s=form.stages.find(x=>x.id==='inventory');
+  if(!s)return;
+  ensureInventoryCfg(s);
+  const list=side==='cap'?s.capForcedDistGroups:s.forcedDistGroups;
+  const row=list.find(r=>r.groupId===groupId);
+  if(row) row.ruleId=ruleId;
+  else list.push({groupId,ruleId});
+  render();
+}
+
+/** 规则名缩略（下拉内展示）；完整名由后方 span 展示 */
+function fdRuleShortLabel(name){
+  const n=String(name||'');
+  return n.replace(/强制分布$/,'')||n;
+}
+
+/** 窄 select + 后方完整规则名（绩效/能力：全部单行表与按组表共用） */
+function renderFdRulePick(rules,selectedName,onchangeAttr){
+  const cur=(rules.find(r=>r.name===selectedName)||rules[0]||{name:''}).name;
+  const opts=rules.map(r=>`<option value="${escHtml(r.name)}" ${r.name===cur?'selected':''}>${escHtml(fdRuleShortLabel(r.name))}</option>`).join('');
+  return `<div class="fd-rule-pick">
+    <select class="form-input fd-rule-sel" title="${escHtml(cur)}" onchange="${onchangeAttr}">${opts}</select>
+    <span class="fd-rule-label">${escHtml(cur)}</span>
   </div>`;
 }
 
-/** 能力侧强制分布预览表（区间口径，与 CAP_FORCE 一致，不演算） */
-function renderCapForcedDistTable(ruleName){
-  const rule=CAP_FORCED_DIST_RULES.find(r=>r.name===ruleName);
-  if(!rule||!rule.levels) return '';
-  return `<div style="margin-top:16px;padding:14px 16px;background:var(--c0);border-radius:var(--r2);border:1px solid var(--dv)">
-    <div style="font:600 12px/1 var(--f);color:var(--c8);margin-bottom:10px">当前规则：${rule.name}</div>
-    <table class="tbl" style="margin:0"><thead><tr><th>档位</th><th>档位名称</th><th>计算规则</th><th>比例区间(%)</th></tr></thead><tbody>${rule.levels.map(lv=>`<tr>
-      <td><span style="font:500 11px/1 var(--f);padding:2px 8px;border-radius:3px;background:var(--pr50);color:var(--pr)">${lv.code}</span></td>
-      <td style="font:500 13px/1 var(--f);color:var(--c9)">${lv.name}</td>
-      <td style="font:400 13px/1 var(--f);color:var(--c6)">${lv.op}</td>
-      <td style="font-family:var(--m);font-size:13px;font-weight:600;color:var(--c9)">${lv.min}%–${lv.max}%</td>
-    </tr>`).join('')}</tbody></table>
+/** 紧贴主行的规则表（左线浅底）：全部=单行「全部」；考核组=多行真实组名 */
+function renderGroupForcedDistPanel(side,s){
+  const isCap=side==='cap';
+  const rules=isCap?CAP_FORCED_DIST_RULES:FORCED_DIST_RULES;
+  const scope=isCap?s.capCtrlScope:s.inventoryCtrlScope;
+  let rows='';
+  let usingDemo=false;
+  if(scope==='全部'){
+    const ruleField=isCap?'capForcedDistRule':'forcedDistRule';
+    const ruleId=s[ruleField]||(rules[0]&&rules[0].name)||'';
+    rows=`<tr>
+      <td style="font:500 13px/1 var(--f);color:var(--c9);width:32%">全部</td>
+      <td>${renderFdRulePick(rules,ruleId,`setInventoryDistField('${ruleField}',this.value)`)}</td>
+    </tr>`;
+  }else{
+    const bindings=isCap?s.capForcedDistGroups:s.forcedDistGroups;
+    const groups=getDistSchemeGroups();
+    usingDemo=!form.groups||!form.groups.length;
+    rows=groups.map(g=>{
+      const bind=bindings.find(b=>b.groupId===g.id);
+      const ruleId=(bind&&bind.ruleId)||(rules[0]&&rules[0].name)||'';
+      const gidEsc=String(g.id).replace(/'/g,"\\'");
+      return `<tr>
+        <td style="font:500 13px/1 var(--f);color:var(--c9);width:32%">${escHtml(g.name)}</td>
+        <td>${renderFdRulePick(rules,ruleId,`setInvGroupDistRule('${side}','${gidEsc}',this.value)`)}</td>
+      </tr>`;
+    }).join('');
+  }
+  return `<div class="fd-group-panel">
+    ${usingDemo?'<div class="form-hint" style="margin-bottom:6px">暂无考核组，以下为示意</div>':''}
+    <table class="tbl" style="margin:0"><thead><tr><th style="width:32%">考核组</th><th>强制分布规则</th></tr></thead><tbody>${rows}</tbody></table>
   </div>`;
 }
 
@@ -1333,65 +1431,71 @@ function renderInventoryCfg(s){
     </div>
   </div>
   ${e.enabled?`<div id="timeRulePanel-end-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderStageTimingPanel('end',s)}</div>`:''}
-  <div style="margin-top:16px;display:flex;align-items:center;gap:10px">
+  <div style="margin-top:16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
     <span style="font:600 13px/1 var(--f);color:var(--c9)">是否系统计算初评能力</span>
     <div class="tog ${s.calcInitialCapability?'on':''}" onclick="toggleInventoryCalc('calcInitialCapability')"><div class="tog-track"><div class="tog-knob"></div></div></div>
+    <span class="form-hint" style="line-height:1.4">按照考核组计算360/测评排名后加权换算当前强制分布比例归属等级</span>
+  </div>
+  <div class="fd-block">
+    <div class="fd-block-t">强制分布规则</div>
+
+    <div class="fd-side">
+      <div class="fd-side-lb">绩效</div>
+      <div class="form-row fd-main tri">
+        <div class="form-grp">
+          <label class="form-lb" for="inventoryCtrlScope">控制范围 <span class="req">*</span></label>
+          <select class="form-input" id="inventoryCtrlScope" required onchange="setInventoryDistField('inventoryCtrlScope',this.value)">
+            <option value="全部" ${s.inventoryCtrlScope==='全部'?'selected':''}>全部</option>
+            <option value="考核组" ${s.inventoryCtrlScope==='考核组'?'selected':''}>考核组</option>
+          </select>
+        </div>
+        <div class="form-grp">
+          <label class="form-lb">控制模式 <span class="req">*</span></label>
+          <select class="form-input" onchange="setInventoryDistField('forcedDistControl',this.value)">
+            <option ${s.forcedDistControl==='强控'?'selected':''}>强控</option>
+            <option ${s.forcedDistControl==='弱控'?'selected':''}>弱控</option>
+          </select>
+        </div>
+        <div class="form-grp">
+          <label class="form-lb" for="inventorySubmitMode">提交方式 <span class="req">*</span></label>
+          <select class="form-input" id="inventorySubmitMode" required onchange="setInventoryDistField('inventorySubmitMode',this.value)">
+            <option value="" ${s.inventorySubmitMode?'':'selected'} disabled>请选择</option>
+            ${RATIFY_SUBMIT_MODES.map(mode=>`<option value="${mode}" ${s.inventorySubmitMode===mode?'selected':''}>${mode}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      ${renderGroupForcedDistPanel('perf',s)}
+    </div>
+
+    <div class="fd-side">
+      <div class="fd-side-lb">能力</div>
+      <div class="form-row fd-main tri">
+        <div class="form-grp">
+          <label class="form-lb" for="capCtrlScope">控制范围 <span class="req">*</span></label>
+          <select class="form-input" id="capCtrlScope" required onchange="setInventoryDistField('capCtrlScope',this.value)">
+            <option value="全部" ${s.capCtrlScope==='全部'?'selected':''}>全部</option>
+            <option value="考核组" ${s.capCtrlScope==='考核组'?'selected':''}>考核组</option>
+          </select>
+        </div>
+        <div class="form-grp">
+          <label class="form-lb">控制模式 <span class="req">*</span></label>
+          <select class="form-input" onchange="setInventoryDistField('capForcedDistControl',this.value)">
+            <option ${s.capForcedDistControl==='强控'?'selected':''}>强控</option>
+            <option ${s.capForcedDistControl==='弱控'?'selected':''}>弱控</option>
+          </select>
+        </div>
+        <div class="form-grp">
+          <label class="form-lb" for="capForcedDistSubmit">提交方式 <span class="req">*</span></label>
+          <select class="form-input" id="capForcedDistSubmit" required disabled onchange="setInventoryDistField('capForcedDistSubmit',this.value)">
+            <option value="全部提交" selected>全部提交</option>
+          </select>
+        </div>
+      </div>
+      ${renderGroupForcedDistPanel('cap',s)}
+    </div>
   </div>
   <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
-    <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制分布规则</div>
-
-    <div style="font:600 12px/1 var(--f);color:var(--c8);margin-bottom:10px">绩效</div>
-    <div class="form-row tri">
-      <div class="form-grp">
-        <label class="form-lb">关联强制分布规则 <span class="req">*</span></label>
-        <select class="form-input" onchange="setInventoryDistField('forcedDistRule',this.value)">
-          ${FORCED_DIST_RULES.map(r=>`<option ${s.forcedDistRule===r.name?'selected':''}>${r.name}</option>`).join('')}
-        </select>
-      </div>
-      <div class="form-grp">
-        <label class="form-lb">控制模式 <span class="req">*</span></label>
-        <select class="form-input" onchange="setInventoryDistField('forcedDistControl',this.value)">
-          <option ${s.forcedDistControl==='强控'?'selected':''}>强控</option>
-          <option ${s.forcedDistControl==='弱控'?'selected':''}>弱控</option>
-        </select>
-      </div>
-      <div class="form-grp">
-        <label class="form-lb" for="inventorySubmitMode">提交方式 <span class="req">*</span></label>
-        <select class="form-input" id="inventorySubmitMode" required onchange="setInventoryDistField('inventorySubmitMode',this.value)">
-          <option value="" ${s.inventorySubmitMode?'':'selected'} disabled>请选择</option>
-          ${RATIFY_SUBMIT_MODES.map(mode=>`<option value="${mode}" ${s.inventorySubmitMode===mode?'selected':''}>${mode}</option>`).join('')}
-        </select>
-      </div>
-    </div>
-    <div style="margin-top:4px"><a href="perf-forced-distribution.html" target="_blank" style="font:500 12px/1 var(--f);color:var(--pr);text-decoration:none">查看分布规则 →</a></div>
-    ${renderPerfForcedDistTable(s.forcedDistRule)}
-
-    <div style="margin-top:20px;font:600 12px/1 var(--f);color:var(--c8);margin-bottom:10px">能力</div>
-    <div class="form-row tri">
-      <div class="form-grp">
-        <label class="form-lb">关联强制分布规则 <span class="req">*</span></label>
-        <select class="form-input" onchange="setInventoryDistField('capForcedDistRule',this.value)">
-          ${CAP_FORCED_DIST_RULES.map(r=>`<option ${s.capForcedDistRule===r.name?'selected':''}>${r.name}</option>`).join('')}
-        </select>
-      </div>
-      <div class="form-grp">
-        <label class="form-lb">控制模式 <span class="req">*</span></label>
-        <select class="form-input" onchange="setInventoryDistField('capForcedDistControl',this.value)">
-          <option ${s.capForcedDistControl==='强控'?'selected':''}>强控</option>
-          <option ${s.capForcedDistControl==='弱控'?'selected':''}>弱控</option>
-        </select>
-      </div>
-      <div class="form-grp">
-        <label class="form-lb" for="capForcedDistSubmit">提交方式 <span class="req">*</span></label>
-        <select class="form-input" id="capForcedDistSubmit" required disabled onchange="setInventoryDistField('capForcedDistSubmit',this.value)">
-          <option value="全部提交" selected>全部提交</option>
-        </select>
-      </div>
-    </div>
-    ${renderCapForcedDistTable(s.capForcedDistRule)}
-  </div>
-  <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
-    <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">九宫格格子命名与绑定</div>
+    <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">九宫格规则</div>
     ${renderNineBoxBoard(s)}
   </div>`;
 }
@@ -1403,7 +1507,7 @@ function box9LvlHtml(v){
 
 function renderNineBoxBoard(s){
   const gradeOpts=getGradeNames();
-  let html='<div class="wiz-box9-board"><div class="wiz-box9-grid" role="grid" aria-label="九宫格格子命名与绑定">';
+  let html='<div class="wiz-box9-board"><div class="wiz-box9-grid" role="grid" aria-label="九宫格规则">';
   html+='<div class="wiz-box9-x corner"></div>';
   CAP_COLS.forEach(c=>{html+=`<div class="wiz-box9-x">能力 · ${box9LvlHtml(c)}</div>`;});
   PERF_ROWS.forEach(p=>{

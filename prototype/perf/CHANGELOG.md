@@ -1,5 +1,61 @@
 # 变更记录
 
+## 2026-09-22 九宫格区块标题改名
+
+- `current/perf-scheme-wizard.html`：盘点配置区块标题「九宫格格子命名与绑定」改为「九宫格规则」。
+
+## 2026-09-22 初评能力开关旁增加说明文案
+
+- `current/perf-scheme-wizard.html`：「是否系统计算初评能力」开关右侧增加次要说明「按照考核组计算360/测评排名后加权换算当前强制分布比例归属等级」。
+
+## 2026-09-22 控制范围=全部也走考核组规则表
+
+- `current/perf-scheme-wizard.html`：绩效/能力主行固定三列（控制范围 | 控制模式 | 提交方式），不再插「关联强制分布规则」；其下始终 `.fd-group-panel`——全部=单行「全部」+规则选择（写 `forcedDistRule`/`capForcedDistRule`）；考核组=多行组名（写 `forcedDistGroups`）。
+
+## 2026-09-22 强制分布规则改为窄下拉+后方完整名
+
+- `current/perf-scheme-wizard.html`：绩效/能力按考核组表、以及控制范围=「全部」的「关联强制分布规则」，统一为窄 select（约 132px，选项缩略）+ 右侧只读完整规则名；去掉全部模式规则下方比例摘要行。
+
+## 2026-09-22 盘点强制分布「提交方式」移至主行末列
+
+- `current/perf-scheme-wizard.html`：`.fd-block` 绩效/能力主配置行字段顺序改为末列「提交方式」——考核组三列：控制范围 | 控制模式 | 提交方式；全部四列：控制范围 | 关联强制分布规则 | 控制模式 | 提交方式。
+
+## 2026-09-22 盘点强制分布主行+按组区重排
+
+- `current/perf-scheme-wizard.html`：绩效/能力改为「主配置行 + 条件展开按组区」；=全部仅下拉+一行规则摘要（去掉大预览表）；=考核组紧贴主行左线浅底两列表；去掉重复说明文案；保留状态字段与 ensure*/set* 逻辑。
+
+## 2026-09-22 强制分布去掉外链与按组「查看明细」
+
+- `current/perf-scheme-wizard.html`：去掉「查看分布规则 →」及空占位；按考核组配置表（绩效/能力）删除「操作」列与「查看明细」展开逻辑，仅保留考核组 | 强制分布规则。
+
+## 2026-09-22 控制范围=考核组时隐藏「关联强制分布规则」格
+
+- `current/perf-scheme-wizard.html`：绩效/能力侧控制范围=「考核组」时整格隐藏「关联强制分布规则」（含 label），行布局 quad→tri；表上方用次要说明「为每个考核组选择强制分布规则」；=「全部」恢复四列与全局下拉。
+
+## 2026-09-22 盘点强制分布支持按考核组分别配置
+
+- `current/perf-scheme-wizard.html`：控制范围=「考核组」时，绩效/能力预览区改为「考核组 × 强制分布规则」配置表（每组独立下拉 + 查看明细）；=「全部」仍为全局关联规则 + 单表预览。状态写入 `forcedDistGroups` / `capForcedDistGroups`。
+
+## 2026-09-22 强制分布预览去代码列 + 控制范围
+
+- `current/perf-scheme-wizard.html`：绩效/能力预览表去掉「等级」「档位」代码列；能力「比例区间」改为「比例上限」仅显示上限；盘点绩效侧与能力侧强制分布行改为四列（提交方式 | 控制范围 | 关联规则 | 控制模式），默认「考核组」。
+
+## 2026-09-22 盘点强制分布「提交方式」移至三联最左
+
+- `current/perf-scheme-wizard.html`：绩效盘点强制分布绩效侧 / 能力侧 `form-row.tri` 字段顺序改为 **提交方式 → 关联强制分布规则 → 控制模式**（`#inventorySubmitMode`、`#capForcedDistSubmit` 居左）。
+
+## 2026-09-21 年度 TR 步骤条演示用可点击切步
+
+- `current/manager/demo-yearly-tr.html`：`#stepper` 三步（绩效审定 / 人才盘点 / 九宫格校准）改为可点击切换（含回退），调用 `demoGoStep` → `goStep`，**不跑**主按钮必填校验；去掉此前「不可回退」禁点/`goStep` 禁回退；主按钮仍无「上一步」。可点态 cursor/hover，当前步高亮保持。
+
+## 2026-09-21 初评等级导入表头去掉「等级规则枚举」hint
+
+- `current/manager/demo-grade-batch-import.html`：初评等级列 `th` 下删除 `div.hint`「等级规则枚举」；校验文案未改。
+
+## 2026-09-21 批量导入页头摘要只保留活动名
+
+- `current/manager/demo-grade-batch-import.html`、`demo-assess-batch-import.html`：`pg-hd-summary` 去掉「| 页面名」后缀，仅保留活动名（如「2026年度盘点与绩效审定」）。
+
 ## 2026-09-21 九宫格绩效绑定改为多选
 
 - `current/perf-scheme-wizard.html`：九宫格格内「绩效」由单选下拉改为与同页假种一致的 **多选**（`leave-ms` 标签+勾选菜单）；`nineBox.perfGrade` 改为等级名数组（旧单值自动包成单元素数组）；能力侧仍单选高/中/低；同能力下等级互斥。

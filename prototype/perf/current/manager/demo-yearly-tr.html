@@ -577,11 +577,13 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 }
 
 .stepper{display:flex;align-items:center;gap:0}
-.step-item{display:flex;align-items:center;gap:8px;padding:0;border:0;background:transparent;cursor:default;font:500 12px/1 var(--f);color:var(--c5);pointer-events:none}
-.step-item .n{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:700 11px/1 var(--f);background:var(--c1);color:var(--c5)}
+.step-item{display:flex;align-items:center;gap:8px;padding:0;border:0;background:transparent;cursor:pointer;font:500 12px/1 var(--f);color:var(--c5);transition:color .12s}
+.step-item:hover{color:var(--pr)}
+.step-item .n{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:700 11px/1 var(--f);background:var(--c1);color:var(--c5);transition:background .12s,color .12s}
+.step-item:hover .n{background:var(--pr50);color:var(--pr)}
 .step-item.done .n{background:var(--pr50);color:var(--pr)}
 .step-item.active{color:var(--pr)}
-.step-item.active .n{background:var(--pr);color:#FFF}
+.step-item.active .n,.step-item.active:hover .n{background:var(--pr);color:#FFF}
 .step-line{width:28px;height:1px;background:var(--c2);margin:0 8px}
 .cap-seg{display:inline-flex;border:1px solid var(--c2);border-radius:var(--r1);overflow:hidden}
 .cap-opt{height:28px;padding:0 12px;border:0;background:var(--sf);color:var(--c6);font:500 12px/1 var(--f);cursor:pointer}
@@ -788,11 +790,11 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
       <div class="pg-hd-stack">
         <h1 class="pg-hd-title" id="pageTitle">年度盘点与绩效审定</h1>
         <div class="stepper" id="stepper" aria-label="办理步骤">
-          <div class="step-item active" data-step="1"><span class="n">1</span>绩效审定</div>
+          <button type="button" class="step-item active" data-step="1" onclick="demoGoStep(1)"><span class="n">1</span>绩效审定</button>
           <span class="step-line"></span>
-          <div class="step-item" data-step="2"><span class="n">2</span>人才盘点</div>
+          <button type="button" class="step-item" data-step="2" onclick="demoGoStep(2)"><span class="n">2</span>人才盘点</button>
           <span class="step-line"></span>
-          <div class="step-item" data-step="3"><span class="n">3</span>九宫格校准</div>
+          <button type="button" class="step-item" data-step="3" onclick="demoGoStep(3)"><span class="n">3</span>九宫格校准</button>
         </div>
       </div>
     </div>
@@ -2860,11 +2862,15 @@ function confirmApproveReject(){
   showToast('已驳回：'+reason,'warn');
 }
 
+/** 演示用：步骤条点击直达，不跑 requestPrimary 必填校验，允许回退 */
+function demoGoStep(step){
+  goStep(step);
+}
+
 function goStep(step){
   if(APPROVE_MODE)step=3;
   if(step<1||step>3)return;
-  /* 三步不可回退：仅允许前进或停留，禁止回到更早步骤 */
-  if(step<currentStep)return;
+  if(step===currentStep)return;
   var prev=currentStep;
   currentStep=step;
   currentGrade=null;
