@@ -1,5 +1,9 @@
 # 变更记录
 
+## 2026-09-22 强制分布规则列精简：窄下拉 + 多行文本详情
+
+- `current/perf-scheme-wizard.html`：`.fd-rule-pick` 去掉 select 旁完整规则名 span，只保留窄下拉（option 用缩略名）；「规则详情」列由 chip 网格改为紧凑多行纯文本（`名称 · 规则 上限%`）；绩效/能力、「全部」/「考核组」共用。
+
 ## 2026-09-22 修复 GitHub Pages 旧跳转目标 404
 
 - 根目录 `index.html`：改用站点绝对路径 `/performance-v2/prototype/perf/current/index.html` + JS `location.replace`，避免缓存旧相对跳转。

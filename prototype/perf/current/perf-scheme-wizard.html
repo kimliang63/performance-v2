@@ -120,24 +120,22 @@ textarea.form-input{height:auto;padding:8px 10px;resize:vertical;min-height:60px
 .fd-side:last-child{margin-bottom:0}
 .fd-side-lb{font:600 12px/1 var(--f);color:var(--c8);margin-bottom:8px}
 .fd-side .form-row.fd-main{margin-bottom:0}
-.fd-rule-pick{display:flex;align-items:center;gap:8px;min-width:0;width:100%}
+.fd-rule-pick{display:inline-block;min-width:0}
 .fd-rule-sel{
-  width:132px;min-width:132px;max-width:132px;flex:0 0 132px;
+  width:132px;min-width:132px;max-width:132px;
   text-overflow:ellipsis;overflow:hidden;white-space:nowrap;
 }
-.fd-rule-label{
-  flex:1;min-width:0;
-  font:400 13px/1.35 var(--f);color:var(--c7);
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+.fd-rule-detail{
+  font:400 12px/1.45 var(--f);color:var(--c7);
+  white-space:pre-line;min-width:0;
 }
 .fd-group-panel{
   margin-top:8px;padding:8px 12px 10px;background:var(--c0);
   border-left:3px solid var(--pr);border-radius:0 var(--r1) var(--r1) 0;
   animation:fdFadeIn .16s ease;
 }
-.fd-group-panel .tbl th,.fd-group-panel .tbl td{padding:6px 8px}
+.fd-group-panel .tbl th,.fd-group-panel .tbl td{padding:6px 8px;vertical-align:middle}
 .fd-group-panel .tbl th{background:transparent}
-.fd-group-panel .fd-rule-label{font-size:12px;color:var(--c6)}
 @keyframes fdFadeIn{from{opacity:0;transform:translateY(-2px)}to{opacity:1;transform:none}}
 
 /* ═══ RADIO ═══ */
@@ -1230,20 +1228,30 @@ function setInvGroupDistRule(side,groupId,ruleId){
   render();
 }
 
-/** 规则名缩略（下拉内展示）；完整名由后方 span 展示 */
+/** 规则名缩略（下拉 option 展示） */
 function fdRuleShortLabel(name){
   const n=String(name||'');
   return n.replace(/强制分布$/,'')||n;
 }
 
-/** 窄 select + 后方完整规则名（绩效/能力：全部单行表与按组表共用） */
+/** 窄 select（绩效/能力：全部单行表与按组表共用；详情见右侧列） */
 function renderFdRulePick(rules,selectedName,onchangeAttr){
   const cur=(rules.find(r=>r.name===selectedName)||rules[0]||{name:''}).name;
   const opts=rules.map(r=>`<option value="${escHtml(r.name)}" ${r.name===cur?'selected':''}>${escHtml(fdRuleShortLabel(r.name))}</option>`).join('');
   return `<div class="fd-rule-pick">
     <select class="form-input fd-rule-sel" title="${escHtml(cur)}" onchange="${onchangeAttr}">${opts}</select>
-    <span class="fd-rule-label">${escHtml(cur)}</span>
   </div>`;
+}
+
+/** 规则详情：紧凑多行纯文本（等级：名称 · 规则 上限%；能力：名称 · 介于 min–max%） */
+function renderFdRuleDetail(rule,isCap){
+  if(!rule) return '<span class="form-hint">—</span>';
+  const lines=(isCap?(rule.levels||[]):(rule.grades||[])).map(it=>{
+    if(isCap) return `${escHtml(it.name)} · ${escHtml(it.op)} ${it.min}–${it.max}%`;
+    return `${escHtml(it.name)} · ${escHtml(it.op)} ${it.pct}%`;
+  });
+  if(!lines.length) return '<span class="form-hint">—</span>';
+  return `<div class="fd-rule-detail">${lines.join('\n')}</div>`;
 }
 
 /** 紧贴主行的规则表（左线浅底）：全部=单行「全部」；考核组=多行真实组名 */
@@ -1256,9 +1264,11 @@ function renderGroupForcedDistPanel(side,s){
   if(scope==='全部'){
     const ruleField=isCap?'capForcedDistRule':'forcedDistRule';
     const ruleId=s[ruleField]||(rules[0]&&rules[0].name)||'';
+    const rule=rules.find(r=>r.name===ruleId)||rules[0];
     rows=`<tr>
-      <td style="font:500 13px/1 var(--f);color:var(--c9);width:32%">全部</td>
-      <td>${renderFdRulePick(rules,ruleId,`setInventoryDistField('${ruleField}',this.value)`)}</td>
+      <td style="font:500 13px/1 var(--f);color:var(--c9);width:18%">全部</td>
+      <td style="width:160px">${renderFdRulePick(rules,ruleId,`setInventoryDistField('${ruleField}',this.value)`)}</td>
+      <td>${renderFdRuleDetail(rule,isCap)}</td>
     </tr>`;
   }else{
     const bindings=isCap?s.capForcedDistGroups:s.forcedDistGroups;
@@ -1267,16 +1277,18 @@ function renderGroupForcedDistPanel(side,s){
     rows=groups.map(g=>{
       const bind=bindings.find(b=>b.groupId===g.id);
       const ruleId=(bind&&bind.ruleId)||(rules[0]&&rules[0].name)||'';
+      const rule=rules.find(r=>r.name===ruleId)||rules[0];
       const gidEsc=String(g.id).replace(/'/g,"\\'");
       return `<tr>
-        <td style="font:500 13px/1 var(--f);color:var(--c9);width:32%">${escHtml(g.name)}</td>
-        <td>${renderFdRulePick(rules,ruleId,`setInvGroupDistRule('${side}','${gidEsc}',this.value)`)}</td>
+        <td style="font:500 13px/1 var(--f);color:var(--c9);width:18%">${escHtml(g.name)}</td>
+        <td style="width:160px">${renderFdRulePick(rules,ruleId,`setInvGroupDistRule('${side}','${gidEsc}',this.value)`)}</td>
+        <td>${renderFdRuleDetail(rule,isCap)}</td>
       </tr>`;
     }).join('');
   }
   return `<div class="fd-group-panel">
     ${usingDemo?'<div class="form-hint" style="margin-bottom:6px">暂无考核组，以下为示意</div>':''}
-    <table class="tbl" style="margin:0"><thead><tr><th style="width:32%">考核组</th><th>强制分布规则</th></tr></thead><tbody>${rows}</tbody></table>
+    <table class="tbl" style="margin:0"><thead><tr><th style="width:18%">考核组</th><th style="width:160px">强制分布规则</th><th>规则详情</th></tr></thead><tbody>${rows}</tbody></table>
   </div>`;
 }
 
