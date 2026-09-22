@@ -1,5 +1,9 @@
 # 变更记录
 
+## 2026-09-22 修复 GitHub Pages 根入口 404
+
+- 根目录 `index.html`：跳转目标从已删除的 `perf-index.html` 改为 `prototype/perf/current/index.html`，并补充方案向导、年度 TR、演示索引等直达链接。
+
 ## 2026-09-22 九宫格区块标题改名
 
 - `current/perf-scheme-wizard.html`：盘点配置区块标题「九宫格格子命名与绑定」改为「九宫格规则」。
