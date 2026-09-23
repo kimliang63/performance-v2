@@ -1,5 +1,33 @@
 # 变更记录
 
+## 2026-09-23 年度 TR：操作统一 icon + 组卡图表铺满宽度
+
+- `current/manager/demo-yearly-tr.html`：九宫格列表操作列收起/展开均用 icon（title 保留「调整/调整记录」）；修收起态 `align-items:start` 继承导致 `.group-panel-chart` 宽塌窄，图表/横轴/`cap-bar-track` 铺满卡片可用宽度；卡内仍不滚动。
+
+## 2026-09-23 年度 TR：考核组看板去掉卡片内滚动
+
+- `current/manager/demo-yearly-tr.html`：第1/3步右侧组卡取消卡内 `overflow:auto`（`.stats-group-charts` / `.group-panel-body` / `.group-panel-table` 等），卡片随内容撑开；滚动仅留在 `#groupPanelsScroll` / `#boxGroupPanelsScroll`。
+
+## 2026-09-23 年度 TR：九宫格列表收起全列 / 展开三列
+
+- `current/manager/demo-yearly-tr.html`：右侧看板收起时名单恢复完整列+文字操作；展开 2×2 时才 compact 为「被考核人/格子/操作」+ icon。九宫格仍隐藏右栏；审定看板样式与折线无圆点、表行高保持。
+
+## 2026-09-23 年度 TR：九宫格列表看板对齐审定 + 折线去圆点
+
+- `current/manager/demo-yearly-tr.html`：第3步九宫格视图隐藏右侧统计（`#boxGroupPanelsRail`）；列表视图右侧改为审定同款看板（左收起/展开、右「图表|列表」，展开 2×2 组卡）；列表仅「被考核人/格子/操作」且操作为 icon；展开表行高够显示「符合预期」等；审定与九宫格柱折线去掉坐标圆点，只留线。
+
+## 2026-09-23 年度 TR：收起纵向组卡 · 全局图表/列表 · 灰线
+
+- `current/manager/demo-yearly-tr.html`：收起去掉「合并统计」，四组纵向；卡头去掉独立切换，上方全局「图表|列表」（默认图表，四组同步）；列表=统计表（等级|要求|当前|实际）非名单；图表蓝线标准+灰线调整前+红绿柱；组名+人数单行 nowrap；去掉 `#box9DistHint`。
+
+## 2026-09-22 年度 TR：筛选只控列表、统计按全量
+
+- `current/manager/demo-yearly-tr.html`：右侧考核组卡/合并统计/柱折线/达标与强制分布校验一律按组内未筛选全量；列表仍吃考核组·部门·提交·填写·搜索。
+
+## 2026-09-22 年度 TR：强制分布提示卡限高可滚
+
+- `current/manager/demo-yearly-tr.html`：宽 notice card `max-height:80vh`，头/「知道了」固定，`#toastMsg` 中间区可滚，强制分布表头 sticky。
+
 ## 2026-09-22 年度 TR：柱色按达标绿红 + 柱折线同显
 
 - `current/manager/demo-yearly-tr.html`：考核组卡/合并统计柱色按「当前 vs 目标区间」绿/红；去掉曲线/条形互斥，默认柱+灰/蓝折线同显。

@@ -144,8 +144,8 @@ select.status-filter-select:focus{border-color:var(--pr);box-shadow:0 0 0 2px va
 .box9-title{font:600 14px/1 var(--f);color:var(--c9);flex-shrink:0;white-space:nowrap}
 .eval-list-hd .dist-filters,
 .box9-hd .dist-filters{flex:1 1 auto;min-width:0}
-.group-panels-rail{display:none;flex:1 1 0%;min-width:0;min-height:0;align-self:stretch;overflow:hidden;border-left:0;background:var(--c0)}
-/* 展开=按组 2×2 卡片；收起=右侧仍显示，改为一列合并统计 */
+.group-panels-rail{display:none;flex:1 1 0%;min-width:0;min-height:0;align-self:stretch;overflow:hidden;border-left:1px solid var(--c2);background:var(--c0)}
+/* 展开=按组 2×2 卡片；收起=右侧仍显示，四组纵向一列 */
 .eval-list.view-switchable .group-panels-rail{display:flex;flex-direction:column}
 .eval-list.view-by-group .eval-list-main{flex:0 0 300px;max-width:320px;min-width:260px;border-right:0}
 /* 覆盖 split-lr 下 .eval-list-main{flex:1}，避免按组视图左侧名单被挤没 */
@@ -154,53 +154,65 @@ select.status-filter-select:focus{border-color:var(--pr);box-shadow:0 0 0 2px va
 .eval-list.view-merged .group-panels-rail{flex:0 0 340px;width:340px;min-width:300px;max-width:380px}
 .eval-list.view-by-group #distExpanded,
 .eval-list.view-merged #distExpanded{display:none !important}
-.eval-split-gutter{display:none;flex:0 0 18px;width:18px;align-self:stretch;align-items:center;justify-content:center;border-left:1px solid var(--c2);border-right:1px solid var(--c2);background:var(--c0);z-index:2}
-.eval-list.view-switchable .eval-split-gutter{display:flex}
-.eval-split-toggle{width:16px;height:40px;padding:0;border:0;border-radius:var(--r1);background:transparent;color:var(--c5);display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.eval-split-toggle{width:24px;height:24px;padding:0;border:0;border-radius:var(--r1);background:transparent;color:var(--c5);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
 .eval-split-toggle:hover{background:var(--pr50);color:var(--pr)}
-.eval-split-toggle svg{width:12px;height:12px;display:block;transition:transform .15s}
+.eval-split-toggle svg{width:14px;height:14px;display:block;transition:transform .15s}
 .eval-split-toggle[aria-expanded="false"] svg{transform:scaleX(-1)}
-.group-panels-scroll{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:minmax(0,1fr);gap:12px;padding:12px;overflow:auto;flex:1 1 0%;min-height:0;scrollbar-width:thin;background:var(--c0);align-content:stretch}
+.group-panels-scroll{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:auto;gap:12px;padding:12px;overflow:auto;flex:1 1 0%;min-height:0;scrollbar-width:thin;background:var(--c0);align-content:start}
 .group-panels-scroll::-webkit-scrollbar{width:6px;height:6px}
 .group-panels-scroll::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
-.group-panels-rail.panels-single .group-panels-scroll{display:flex;flex-direction:column;grid-template-columns:none;gap:0;padding:12px}
-.group-panel{display:flex;flex-direction:column;gap:0;min-width:0;min-height:0;padding:0;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);box-shadow:none;overflow:hidden;transition:border-color .15s,box-shadow .15s}
-.group-panels-rail.panels-single .group-panel{flex:1 1 0%;width:auto;max-width:none}
+.group-panels-rail.panels-single .group-panels-scroll{display:flex;flex-direction:column;grid-template-columns:none;gap:12px;padding:12px;align-content:flex-start}
+/* 卡片随内容撑开，不在卡内滚动；滚动只在 .group-panels-scroll */
+.group-panel{display:flex;flex-direction:column;gap:0;min-width:0;min-height:auto;height:auto;padding:0;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);box-shadow:none;overflow:visible;transition:border-color .15s,box-shadow .15s}
+.group-panels-rail.panels-single .group-panel{flex:0 0 auto;width:auto;max-width:none}
 .group-panel:hover{border-color:var(--c3)}
 .group-panel.is-active{border-color:var(--pr200);box-shadow:0 0 0 1px var(--pr100)}
 .group-panel-hd{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-shrink:0;box-sizing:border-box;min-height:40px;margin:0;padding:8px 12px;border-bottom:1px solid var(--dv);cursor:pointer}
 .group-panel-hd:hover .group-panel-name{color:var(--pr)}
-.group-panel-title{display:inline-flex;align-items:baseline;gap:6px;min-width:0}
-.group-panel-name{font:600 13px/1.2 var(--f);color:var(--c9)}
-.group-panel-count{font:500 12px/1 var(--f);color:var(--c5);white-space:nowrap}
+.group-panel-title{display:inline-flex;align-items:baseline;gap:6px;flex:1 1 auto;min-width:0;white-space:nowrap}
+.group-panel-name{font:600 13px/1.2 var(--f);color:var(--c9);white-space:nowrap}
+.group-panel-count{font:500 12px/1 var(--f);color:var(--c5);white-space:nowrap;flex-shrink:0}
+.group-panel-tools{display:inline-flex;align-items:center;gap:10px;flex-shrink:0;margin-left:auto}
 .group-panel-legend{display:inline-flex;align-items:center;gap:10px;flex-shrink:0;font:400 11px/1 var(--f);color:var(--c5);white-space:nowrap}
 .group-panel-legend .cap-leg-item{gap:4px}
-.group-panel-body{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(120px,1fr);align-items:stretch;gap:8px;flex:1 1 0%;min-width:0;min-height:0;padding:8px 10px 10px;overflow:hidden}
-/* 收起「合并统计」：上表下图（非左右分栏） */
-.group-panel[data-group="__merged__"] .group-panel-body{display:flex;flex-direction:column;grid-template-columns:none;gap:10px;overflow:visible}
-.group-panel[data-group="__merged__"] .group-panel-table{flex:0 0 auto;max-height:none;overflow:visible}
-.group-panel[data-group="__merged__"] .group-panel-chart{flex:0 0 auto;min-height:220px;overflow:visible}
-.group-panel-table{min-width:0;min-height:0;overflow:auto}
-.group-panel-chart{min-width:0;display:flex;flex-direction:column;min-height:0;overflow:hidden;cursor:default}
-.group-chart-axis{display:flex;justify-content:space-between;align-items:flex-end;height:18px;margin:0 0 2px;font:400 10px/1 var(--m);color:var(--c4);flex-shrink:0;user-select:none;box-sizing:border-box}
-.group-panel .cap-bars{padding:0;margin:0;border:0;gap:0;flex:1 1 0%;min-height:0;overflow:hidden;display:flex;flex-direction:column}
-.group-panel .cap-bars .cap-bars-plot{gap:0;flex:1 1 0%;justify-content:flex-start;overflow:visible}
-.group-panel .cap-bars .cap-bar-row{min-height:26px;height:26px;padding:0;gap:4px;margin:0;cursor:inherit}
-.group-panel .cap-bars .cap-bar-line{gap:4px;min-width:0}
-.group-panel .cap-bars .cap-bar-track{height:10px;overflow:hidden;background:transparent !important}
+.group-panels-toolbar{display:none;flex-shrink:0;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px 0;box-sizing:border-box}
+.eval-list.view-switchable .group-panels-toolbar{display:flex}
+.group-panel-mode-seg{display:none;align-items:center;padding:2px;border:1px solid var(--c2);border-radius:var(--r1);background:var(--c0);gap:0}
+.group-panels-rail.panels-single .group-panel-mode-seg{display:inline-flex}
+.group-panel-mode-btn{height:22px;padding:0 8px;border:0;border-radius:3px;background:transparent;font:500 11px/1 var(--f);color:var(--c5);cursor:pointer}
+.group-panel-mode-btn.on{background:var(--sf);color:var(--pr);box-shadow:0 0 0 1px var(--pr100)}
+.group-panel-mode-btn:hover{color:var(--pr)}
+.group-panel-body{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(120px,1fr);align-items:start;gap:8px;flex:0 0 auto;min-width:0;min-height:auto;padding:8px 10px 10px;overflow:visible;width:100%;box-sizing:border-box}
+/* 收起：单卡全宽，图表或统计表二选一（全局开关）；必须 stretch，否则图按内容宽塌成窄条 */
+.group-panels-rail.panels-single .group-panel-body{display:flex;flex-direction:column;grid-template-columns:none;align-items:stretch;gap:8px;overflow:visible;width:100%}
+.group-panels-rail.panels-single .group-panel.mode-chart .group-panel-body{min-height:210px}
+.group-panels-rail.panels-single .group-panel.mode-list .group-panel-body{min-height:0;overflow:visible}
+.group-panels-rail.panels-single .group-panel-chart{flex:0 0 auto;min-height:180px;width:100%;align-self:stretch}
+.group-panel-table{min-width:0;min-height:auto;overflow:visible;width:100%}
+.group-panels-rail.panels-single .group-panel.mode-list .group-panel-table{overflow:visible}
+.group-panel-chart{min-width:0;width:100%;display:flex;flex-direction:column;min-height:auto;overflow:visible;cursor:default;flex:0 0 auto;box-sizing:border-box}
+.group-chart-axis{display:flex;justify-content:space-between;align-items:flex-end;height:18px;margin:0 0 2px;font:400 10px/1 var(--m);color:var(--c4);flex-shrink:0;user-select:none;box-sizing:border-box;width:100%}
+.group-panel .cap-bars{padding:0;margin:0;border:0;gap:0;flex:0 0 auto;min-height:auto;overflow:visible;display:flex;flex-direction:column;width:100%;box-sizing:border-box}
+.group-panel .cap-bars .cap-bars-plot{gap:0;flex:0 0 auto;justify-content:flex-start;overflow:visible;width:100%;min-width:0;box-sizing:border-box}
+.group-panel .cap-bars .cap-bar-row{min-height:26px;height:26px;padding:0;gap:4px;margin:0;cursor:inherit;width:100%;box-sizing:border-box}
+.group-panel .cap-bars .cap-bar-line{gap:4px;min-width:0;flex:1 1 0%}
+.group-panel .cap-bars .cap-bar-track{height:10px;overflow:hidden;background:transparent !important;flex:1 1 0%;min-width:0}
 .group-panel .cap-bars .cap-bar-row:hover .cap-bar-track{background:transparent !important}
 .group-panel .cap-bars .cap-bar-range{display:none}
 .group-panel .cap-bars .cap-bar-count{font-size:11px;min-width:14px;color:var(--c8)}
 .group-panel .cap-bar-legend{display:none}
 .group-panel .cap-bar-fill{display:block;min-height:100%}
 /* 展开考核组卡片：左表已有等级名，右图仅刻度+轨+人数 */
-.group-panel:not([data-group="__merged__"]) .group-chart-axis{padding:0 18px 0 0}
-.group-panel:not([data-group="__merged__"]) .cap-bars.cap-bars-card .cap-bar-row{gap:6px}
-.group-panel:not([data-group="__merged__"]) .cap-bars.cap-bars-card .cap-bar-track{min-width:24px}
-/* 收起合并统计：上表下图，行内自带等级名 */
-.group-panel[data-group="__merged__"] .group-chart-axis{padding:0 22px 0 88px}
-.group-panel[data-group="__merged__"] .cap-bars.cap-bars-merged .cap-bar-row > .cap-tag{flex:0 0 84px;min-width:84px;max-width:84px;height:20px;padding:0 6px;font-size:11px;justify-content:flex-start;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;box-sizing:border-box}
+.group-panels-rail:not(.panels-single) .group-chart-axis{padding:0 18px 0 0}
+.group-panels-rail:not(.panels-single) .cap-bars.cap-bars-card .cap-bar-row{gap:6px}
+.group-panels-rail:not(.panels-single) .cap-bars.cap-bars-card .cap-bar-track{min-width:24px}
+/* 收起纵向卡：行内自带等级名 */
+.group-panels-rail.panels-single .group-chart-axis{padding:0 22px 0 88px}
+.group-panels-rail.panels-single .cap-bars.cap-bars-merged .cap-bar-row > .cap-tag{flex:0 0 84px;min-width:84px;max-width:84px;height:20px;padding:0 6px;font-size:11px;justify-content:flex-start;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;box-sizing:border-box}
 .group-panel .list-stats{min-height:0;overflow:visible;padding:0}
+.group-panels-rail.panels-single .group-panel.mode-list .dist-status-table .col-req{width:28%}
+.group-panels-rail.panels-single .group-panel.mode-list .dist-status-table .col-before{width:18%}
+.group-panels-rail.panels-single .group-panel.mode-list .dist-status-table .col-after{width:18%}
 .group-panel .dist-status-table{width:100%;table-layout:fixed;border-collapse:collapse;font-size:11px}
 .group-panel .dist-status-table th,.group-panel .dist-status-table td{padding:0 4px;height:26px;text-align:left;border-bottom:1px solid var(--dv);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:middle}
 .group-panel .dist-status-table thead th{height:18px;padding-bottom:2px;font:600 10px/1 var(--f);color:var(--c5);background:transparent;border-bottom:1px solid var(--dv)}
@@ -402,33 +414,40 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .cap-leg-bar{display:block;width:12px;height:6px;border-radius:999px;background:linear-gradient(90deg,var(--em) 0 50%,var(--ro) 50% 100%);flex-shrink:0}
 .cap-bar-fill.ok{background:var(--em)}
 .cap-bar-fill.bad{background:var(--ro)}
-.stats-view-seg{display:inline-flex;border:1px solid var(--c2);border-radius:var(--r1);overflow:hidden;flex-shrink:0;align-self:flex-start;background:var(--sf)}
-.stats-view-btn{height:26px;padding:0 10px;border:0;background:transparent;color:var(--c6);font:500 11px/1 var(--f);cursor:pointer;font-family:inherit}
-.stats-view-btn+.stats-view-btn{border-left:1px solid var(--c2)}
-.stats-view-btn.on{background:var(--pr50);color:var(--pr);font-weight:600}
-.stats-block{display:flex;flex-direction:column;gap:6px;min-height:0;min-width:0}
+.stats-block{display:flex;flex-direction:column;gap:6px;min-width:0}
 .stats-block-title{font:600 11px/1 var(--f);color:var(--c6);letter-spacing:.02em}
-.step-work.split-lr .list-stats-col.is-dual{gap:8px}
-.step-work.split-lr .list-stats-col.is-dual .stats-block{flex:1 1 0%;overflow:hidden;min-height:0}
-.step-work.split-lr .list-stats-col.is-dual .stats-block .dist-status-table{font-size:10px}
-.step-work.split-lr .list-stats-col.is-dual #gradeBars.cap-bars,
-.step-work.split-lr .list-stats-col.is-dual #capBars.cap-bars{flex:1 1 0%;min-height:0;padding-top:4px}
-.step-work.split-lr .list-stats-col.is-dual #gradeBars .cap-bars-plot{gap:6px;flex:1 1 0%;justify-content:flex-start}
-.step-work.split-lr .list-stats-col.is-dual #capBars .cap-bars-plot{gap:8px;flex:1 1 0%;justify-content:flex-start}
-/* 表格/图表互斥：mode-* 在 list-stats-col 自身上 */
-.step-work.split-lr .list-stats-col.is-dual.mode-table .cap-bars{display:none !important}
-.step-work.split-lr .list-stats-col.is-dual.mode-chart .list-stats{display:none !important}
-.step-work.split-lr .list-stats-col.is-dual.mode-chart .stats-block .list-stats{display:none !important}
-.step-work.split-lr #listStatsGrade .dist-status-table,
-.step-work.split-lr #listStatsCap .dist-status-table{min-width:0;width:100%;table-layout:fixed}
-.step-work.split-lr #listStatsGrade .dist-status-table th,
-.step-work.split-lr #listStatsGrade .dist-status-table td,
-.step-work.split-lr #listStatsCap .dist-status-table th,
-.step-work.split-lr #listStatsCap .dist-status-table td{
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:5px 4px;text-transform:none;letter-spacing:0;font-size:10px;line-height:1.3
+/* 九宫格列表右侧：复用审定 group-panels-rail（白底卡 / 收起纵向 / 展开 2×2） */
+#boxGroupPanelsRail{display:none;flex-direction:column;flex:0 0 340px;width:340px;min-width:300px;max-width:380px;align-self:stretch;overflow:hidden;border-left:1px solid var(--c2);background:var(--c0)}
+.box9-split.is-list-stats #boxGroupPanelsRail{display:flex}
+#boxGroupPanelsRail .group-panels-toolbar{display:flex}
+#boxGroupPanelsRail.panels-single .group-panel-mode-seg{display:inline-flex}
+#boxGroupPanelsRail:not(.panels-single) .group-panel-mode-seg{display:none}
+.box9-split.box-stats-expanded .box9-main{flex:0 0 300px;max-width:320px;min-width:260px}
+.box9-split.box-stats-expanded #boxGroupPanelsRail{flex:1 1 0%;width:auto;min-width:0;max-width:none}
+/* 展开组卡：绩效/能力上下排；卡片撑开，滚动只在 #boxGroupPanelsScroll */
+#boxGroupPanelsScroll .stats-group-block.group-panel{min-width:0;min-height:auto;height:auto;display:flex;flex-direction:column;overflow:visible;flex:0 0 auto}
+#boxGroupPanelsScroll .stats-group-block .group-panel-hd{cursor:default;flex-shrink:0}
+#boxGroupPanelsScroll .stats-group-charts{display:flex;flex-direction:column;gap:10px;padding:8px 10px 10px;min-width:0;min-height:auto;flex:0 0 auto;overflow:visible}
+#boxGroupPanelsScroll .stats-group-charts .stats-block{gap:6px;flex:0 0 auto;min-height:auto;overflow:visible}
+#boxGroupPanelsScroll .stats-group-domain{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(120px,1fr);align-items:start;gap:8px;min-width:0;overflow:visible}
+#boxGroupPanelsScroll .stats-group-domain .group-panel-chart{min-width:0;min-height:auto;overflow:visible;display:flex;flex-direction:column;flex:0 0 auto;width:100%}
+#boxGroupPanelsScroll .stats-group-domain .group-panel-table{min-width:0;overflow:visible;width:100%}
+#boxGroupPanelsScroll .cap-bars,
+#boxGroupPanelsScroll .cap-bars-plot,
+#boxGroupPanelsScroll .group-chart-axis{width:100%;box-sizing:border-box}
+#boxGroupPanelsScroll .group-panel-table .dist-status-table th,
+#boxGroupPanelsScroll .group-panel-table .dist-status-table td{
+  height:auto;min-height:28px;padding:6px 4px;font-size:11px;line-height:1.35;white-space:nowrap;overflow:visible;text-overflow:clip;vertical-align:middle
 }
-.step-work.split-lr #listStatsGrade .dist-status-table th,
-.step-work.split-lr #listStatsCap .dist-status-table th{font-size:9px;color:var(--c6);padding:6px 4px}
+#boxGroupPanelsScroll .group-panel-table .dist-status-table thead th{height:auto;min-height:20px;padding:4px;font-size:10px}
+#boxGroupPanelsScroll .group-panel-table .dist-grade-pill,
+#boxGroupPanelsScroll .group-panel-table .cap-tag{height:22px;font-size:12px;line-height:22px}
+#boxGroupPanelsRail.panels-single .group-panel.mode-list .group-panel-body{overflow:visible}
+#boxGroupPanelsRail.panels-single .group-panel-table{overflow:visible}
+#boxGroupPanelsRail.panels-single .dist-status-table th,
+#boxGroupPanelsRail.panels-single .dist-status-table td{
+  height:auto;min-height:28px;padding:6px 4px;font-size:11px;line-height:1.35;overflow:visible
+}
 
 .cap-bars.grade-bars .cap-leg-bar{background:linear-gradient(90deg,var(--em) 0 50%,var(--ro) 50% 100%)}
 .hd-unfilled{display:none;align-items:center;gap:8px;font:400 12px/1 var(--f);color:var(--c6);cursor:pointer;user-select:none;flex-shrink:0}
@@ -696,12 +715,6 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .box9-fs-btn:hover{border-color:var(--pr200);color:var(--pr);background:var(--pr50)}
 .box9-fs-btn svg{width:12px;height:12px;display:block}
 .box9-hd-actions{display:flex;align-items:center;gap:8px;margin-left:auto}
-.box9-dist-hint{display:flex;align-items:center;justify-content:center;gap:14px;flex:1;min-width:0;font:500 12px/1.2 var(--f);color:var(--c6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.box9-dist-hint .hint-item{display:inline-flex;align-items:center;gap:4px}
-.box9-dist-hint .hint-label{color:var(--c5)}
-.box9-dist-hint .hint-val.ok{color:var(--em700)}
-.box9-dist-hint .hint-val.bad{color:var(--ro)}
-.box9-dist-hint .hint-val.na{color:var(--c4)}
 .box9-people{display:flex;flex-wrap:wrap;gap:4px;align-content:flex-start;flex:1;min-height:0;overflow:hidden}
 .person-chip{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border:1px solid var(--c2);border-radius:12px;background:var(--sf);cursor:grab;font:500 11px/1.2 var(--f);color:var(--c8);max-width:100%;white-space:nowrap}
 .person-chip:active{cursor:grabbing}
@@ -753,6 +766,14 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .box9-list-table .col-action{width:168px;text-align:center}
 .box9-list-table .col-action .btn{height:28px;padding:0 10px;font-size:12px}
 .box9-list-table .col-action .action-stack{display:inline-flex;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px}
+/* 九宫格列表：仅被考核人 / 格子 / 操作（图标） */
+.box9-list-table.box9-list-compact .col-name{width:46%}
+.box9-list-table.box9-list-compact .col-box{width:34%}
+.box9-list-table.box9-list-compact .col-action{width:20%;min-width:72px}
+.box9-list-table .action-icon-btn{width:28px;height:28px;padding:0;border:1px solid var(--c2);border-radius:var(--r1);background:var(--sf);color:var(--c5);display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.box9-list-table .action-icon-btn:hover{border-color:var(--pr200);color:var(--pr);background:var(--pr50)}
+.box9-list-table .action-icon-btn svg{width:14px;height:14px;display:block}
+.box9-list-table .action-stack.icon-only{gap:4px;flex-wrap:nowrap}
 .box9-hist,.box9-abn-reason{font:400 12px/1.35 var(--f);color:var(--c6);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-all}
 .box9-hist.empty,.box9-abn-reason.empty{color:var(--c4)}
 .box9-hist-combo{font:400 12px/1.35 var(--f);color:var(--c6);display:flex;flex-direction:column;gap:2px;min-width:0}
@@ -831,21 +852,21 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 /* ═══ NOTICE CARD（原顶部轻 toast，改为居中偏上卡片提示）═══ */
 .notice-overlay{position:fixed;inset:0;z-index:3000;display:flex;align-items:flex-start;justify-content:center;padding:12vh 16px 24px;background:rgba(0,0,0,.28);opacity:0;pointer-events:none;transition:opacity .2s}
 .notice-overlay.open{opacity:1;pointer-events:all}
-.notice-card{background:var(--sf);border-radius:var(--r3);box-shadow:0 20px 60px rgba(0,0,0,.16);width:420px;max-width:92vw;display:flex;flex-direction:column;overflow:hidden;transform:translateY(-8px);transition:transform .2s}
+.notice-card{background:var(--sf);border-radius:var(--r3);box-shadow:0 20px 60px rgba(0,0,0,.16);width:420px;max-width:92vw;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;transform:translateY(-8px);transition:transform .2s}
 .notice-card.wide{width:560px}
 .notice-overlay.open .notice-card{transform:translateY(0)}
-.notice-hd{padding:14px 18px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.notice-hd{padding:14px 18px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0}
 .notice-title{font:600 15px/1.2 var(--f);color:var(--c9)}
-.notice-bd{padding:16px 18px;font:400 13px/1.6 var(--f);color:var(--c7);white-space:pre-wrap;word-break:break-word}
+.notice-bd{padding:16px 18px;font:400 13px/1.6 var(--f);color:var(--c7);white-space:pre-wrap;word-break:break-word;flex:1;min-height:0;overflow-y:auto;scrollbar-width:thin}
 .notice-bd.has-html{white-space:normal}
-.notice-ft{padding:12px 18px;border-top:1px solid var(--dv);display:flex;justify-content:flex-end;gap:8px}
+.notice-ft{padding:12px 18px;border-top:1px solid var(--dv);display:flex;justify-content:flex-end;gap:8px;flex-shrink:0}
 .notice-overlay.warn .notice-title{color:var(--ac700)}
 .notice-overlay:not(.warn) .notice-title{color:var(--em700)}
 .fd-fail-lead{margin:0 0 10px;font:400 13px/1.5 var(--f);color:var(--c7)}
 .fd-fail-foot{margin:12px 0 0;font:500 13px/1.5 var(--f);color:var(--ac700)}
-.fd-fail-table{width:100%;border-collapse:collapse;font:400 12px/1.5 var(--f);background:var(--c0);border:1px solid var(--c2);border-radius:var(--r2);overflow:hidden}
+.fd-fail-table{width:100%;border-collapse:collapse;font:400 12px/1.5 var(--f);background:var(--c0);border:1px solid var(--c2);border-radius:var(--r2)}
 .fd-fail-table th,.fd-fail-table td{padding:8px 10px;border-bottom:1px solid var(--dv);text-align:left;vertical-align:top}
-.fd-fail-table th{font-weight:600;color:var(--c8);background:var(--sf);white-space:nowrap}
+.fd-fail-table th{font-weight:600;color:var(--c8);background:var(--sf);white-space:nowrap;position:sticky;top:0;z-index:1}
 .fd-fail-table td{color:var(--c7)}
 .fd-fail-table tr:last-child td{border-bottom:none}
 .fd-fail-table .fd-col-group{width:28%;white-space:nowrap}
@@ -981,12 +1002,16 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
         </div>
         <div class="pager" id="pager"></div>
       </div>
-      <div class="eval-split-gutter" id="evalSplitGutter">
-        <button class="eval-split-toggle" id="evalSplitToggle" type="button" aria-expanded="true" aria-controls="groupPanelsRail" title="收起为合并统计" aria-label="收起为合并统计" onclick="toggleGroupPanels()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
-        </button>
-      </div>
       <div class="group-panels-rail" id="groupPanelsRail" aria-label="按考核组分布">
+        <div class="group-panels-toolbar" id="groupPanelsToolbar" aria-label="考核组区工具条">
+          <button class="eval-split-toggle" id="evalSplitToggle" type="button" aria-expanded="true" aria-controls="groupPanelsRail" title="收起为纵向组卡" aria-label="收起为纵向组卡" onclick="toggleGroupPanels()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <span class="group-panel-mode-seg" role="group" aria-label="图表或统计表">
+            <button type="button" class="group-panel-mode-btn on" id="panelModeChartBtn" onclick="setPanelBodyMode('chart')">图表</button>
+            <button type="button" class="group-panel-mode-btn" id="panelModeListBtn" onclick="setPanelBodyMode('list')">列表</button>
+          </span>
+        </div>
         <div class="group-panels-scroll" id="groupPanelsScroll"></div>
       </div>
     </div>
@@ -994,7 +1019,6 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 
   <div class="box9-wrap" id="boxPanel" style="display:none">
     <div class="box9-hd">
-      <div class="box9-dist-hint" id="box9DistHint" aria-live="polite"></div>
       <div class="box9-hd-actions">
         <div class="box-view-seg" role="group" aria-label="视图切换">
           <button class="box-view-btn on" type="button" data-view="grid" onclick="setBoxView('grid')">九宫格</button>
@@ -1013,24 +1037,24 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
         </div>
         <div class="box9-list-wrap" id="boxListView" style="display:none" aria-hidden="true">
           <div class="box9-list-scroll">
-            <table class="box9-list-table">
-              <thead>
-                <tr>
-                  <th class="col-name">被考核人</th>
-                  <th class="col-status">提交状态</th>
-                  <th class="col-grade">绩效等级</th>
-                  <th class="col-cap">能力</th>
-                  <th class="col-box">格子</th>
-                  <th class="col-abn">异常状态</th>
-                  <th class="col-abn-reason">异常原因</th>
-                  <th class="col-hist">调整历史/原因</th>
-                  <th class="col-action">操作</th>
-                </tr>
-              </thead>
+            <table class="box9-list-table" id="boxListTable">
+              <thead id="boxListHead"></thead>
               <tbody id="boxListBody"></tbody>
             </table>
           </div>
         </div>
+      </div>
+      <div class="group-panels-rail" id="boxGroupPanelsRail" aria-label="绩效与能力分布" hidden>
+        <div class="group-panels-toolbar" id="boxGroupPanelsToolbar" aria-label="考核组区工具条">
+          <button class="eval-split-toggle" id="boxSplitToggle" type="button" aria-expanded="false" aria-controls="boxGroupPanelsScroll" title="展开按考核组" aria-label="展开按考核组" onclick="toggleStatsGroupsExpand()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <span class="group-panel-mode-seg" id="boxPanelModeSeg" role="group" aria-label="图表或统计表">
+            <button type="button" class="group-panel-mode-btn on" id="boxModeChartBtn" data-view="chart" onclick="setStatsViewMode('chart')">图表</button>
+            <button type="button" class="group-panel-mode-btn" id="boxModeListBtn" data-view="list" onclick="setStatsViewMode('list')">列表</button>
+          </span>
+        </div>
+        <div class="group-panels-scroll" id="boxGroupPanelsScroll"></div>
       </div>
     </div>
   </div>
@@ -1292,13 +1316,25 @@ function syncActiveForceAliases(){
   FORCE_DIST=getActiveForceDist();
   CAP_FORCE=getActiveCapForce();
 }
-var statsViewMode='table';
+var statsViewMode='chart'; /* chart | list —— 与审定「图表|列表」一致 */
+var statsGroupsExpanded=false; /* 九宫格右侧：默认收起汇总；展开=按考核组 */
 var listViewMode='byGroup'; /* detail | byGroup —— 审定/盘点列表视图 */
+var panelBodyMode='chart'; /* 收起态全局：chart | list（四组同步） */
 var BAR_OK='#10B981';
 var BAR_BAD='#F43F5E';
 /** 柱色：当前人数 vs 目标区间（与左表「目标」min–max 一致；调整列正负不单独判定） */
 function barFillByRange(actual,min,max){
   return (actual>=min&&actual<=max)?BAR_OK:BAR_BAD;
+}
+/**
+ * 标准线单点：与左表「目标」同一套 min/max。
+ * 不超过 / 区间 A–B → 上限 max；不低于（有下限且上限盖满总人数）→ 下限 min。
+ */
+function standardLinePoint(min,max,total){
+  var lo=+min||0;
+  var hi=max==null?lo:+max;
+  if(lo>0&&total!=null&&hi>=total)return lo;
+  return hi;
 }
 /* 待提交：四组各覆盖 7 档当前≥1（调整前尽量≥1）；部分已填调整等级、部分空（可演示「只看未填写」） */
 var PENDING_SUBMIT=[
@@ -1835,17 +1871,10 @@ function getFilteredMembers(){
   });
 }
 
-/** 右侧分布「当前」跟列表一致（不含等级/能力钻取，避免环依赖） */
-function getListScopedMembers(){
-  return MEMBERS.filter(function(m){
-    if(currentGroup!=='全部'&&m.group!==currentGroup)return false;
-    if(!matchFillFilter(m))return false;
-    if(currentStatus&&submitStatusOf(m)!==currentStatus)return false;
-    if(onlyAbnormal&&!m.abnormalType)return false;
-    if(currentKeyword&&m.name.indexOf(currentKeyword)===-1&&m.employeeId.toLowerCase().indexOf(currentKeyword.toLowerCase())===-1)return false;
-    if(currentDepartments.length&&currentDepartments.indexOf(m.dept)===-1)return false;
-    return true;
-  });
+/** 右侧统计口径：未筛选全量（仅按考核组切分；不吃提交/填写/部门/搜索/组 chip） */
+function getStatsMembers(groupName){
+  if(groupName&&groupName!=='全部')return MEMBERS.filter(function(m){return m.group===groupName;});
+  return MEMBERS.slice();
 }
 
 function getDistributionMembers(){
@@ -1888,60 +1917,87 @@ function ensureChartCanvas(){
 }
 
 function setStatsViewMode(mode){
-  statsViewMode=mode==='chart'?'chart':'table';
-  renderDist();
+  statsViewMode=(mode==='chart'||mode==='list'||mode==='table')
+    ?(mode==='chart'?'chart':'list')
+    :'list';
+  if(currentStep===3)renderBoxDualDist();
+  else renderDist();
 }
 
 function ensureCapListLayout(){
   destroyChart('_distChart');
   destroyChart('_perfChart');
   destroyChart('_capChart');
+  /* 第3步改走 #boxGroupPanelsRail，不再往 #distExpanded 塞旧 list-stats-col */
+  if(currentStep===3)return;
   var grid=document.getElementById('distExpanded');
   if(!grid)return;
   grid.classList.remove('dist-grid','dist-grid-dual','dist-grid-stack','dist-grid-stats');
   grid.classList.add('list-side-panel');
-  var needDual=currentStep===3;
-  var hasDual=!!document.getElementById('statsViewSeg');
-  if(needDual){
-    if(!hasDual){
-      grid.innerHTML='<div class="list-stats-col is-dual">'+
-        '<div class="stats-view-seg" id="statsViewSeg" role="group" aria-label="视图切换">'+
-          '<button class="stats-view-btn" type="button" data-view="table" onclick="setStatsViewMode(\'table\')">表格</button>'+
-          '<button class="stats-view-btn" type="button" data-view="chart" onclick="setStatsViewMode(\'chart\')">图表</button>'+
-        '</div>'+
-        '<div class="stats-block" data-domain="grade">'+
-          '<div class="stats-block-title">绩效</div>'+
-          '<div class="list-stats" id="listStatsGrade"></div>'+
-          '<div class="cap-bars grade-bars" id="gradeBars" aria-label="绩效分布"></div>'+
-        '</div>'+
-        '<div class="stats-block" data-domain="cap">'+
-          '<div class="stats-block-title">能力</div>'+
-          '<div class="list-stats" id="listStatsCap"></div>'+
-          /* #capBars ECharts 映射见 manager/cap-bars-echarts-data.js */
-          '<div class="cap-bars" id="capBars" aria-label="能力分布"></div>'+
-        '</div>'+
-      '</div>';
-    }
-  }else if(hasDual||!document.getElementById('listStats')||!document.getElementById('capBars')){
+  if(!document.getElementById('listStats')||!document.getElementById('capBars')||document.getElementById('statsGroupsHost')){
     grid.innerHTML='<div class="list-stats-col">'+
       '<div class="list-stats" id="listStats"></div>'+
-      /* #capBars ECharts 映射见 manager/cap-bars-echarts-data.js */
       '<div class="cap-bars" id="capBars" aria-label="能力分布"></div>'+
     '</div>';
   }
 }
 
 function syncStatsViewUI(){
-  var col=document.querySelector('.list-stats-col.is-dual');
-  if(!col)return;
-  col.classList.toggle('mode-table',statsViewMode==='table');
-  col.classList.toggle('mode-chart',statsViewMode==='chart');
-  document.querySelectorAll('#statsViewSeg .stats-view-btn').forEach(function(btn){
-    btn.classList.toggle('on',btn.getAttribute('data-view')===statsViewMode);
+  syncBoxStatsPane();
+  var mode=statsViewMode==='chart'?'chart':'list';
+  var chartBtn=document.getElementById('boxModeChartBtn');
+  var listBtn=document.getElementById('boxModeListBtn');
+  if(chartBtn)chartBtn.classList.toggle('on',mode==='chart');
+  if(listBtn)listBtn.classList.toggle('on',mode==='list');
+  var toggle=document.getElementById('boxSplitToggle');
+  if(toggle){
+    toggle.setAttribute('aria-expanded',statsGroupsExpanded?'true':'false');
+    toggle.title=statsGroupsExpanded?'收起为纵向组卡':'展开按考核组';
+    toggle.setAttribute('aria-label',toggle.title);
+  }
+  var scroll=document.getElementById('boxGroupPanelsScroll');
+  if(!scroll||statsGroupsExpanded)return;
+  scroll.querySelectorAll('.group-panel').forEach(function(panel){
+    panel.classList.toggle('mode-chart',mode==='chart');
+    panel.classList.toggle('mode-list',mode==='list');
   });
-  var showTable=statsViewMode==='table';
-  col.querySelectorAll('.list-stats').forEach(function(el){el.style.display=showTable?'':'none';});
-  col.querySelectorAll('.cap-bars').forEach(function(el){el.style.display=showTable?'none':'';});
+}
+
+/** 九宫格：仅列表视图显示右侧看板；九宫格视图彻底隐藏，不留空白列 */
+function syncBoxStatsPane(){
+  var rail=document.getElementById('boxGroupPanelsRail');
+  var split=document.getElementById('boxSplit');
+  var expanded=document.getElementById('distExpanded');
+  if(expanded&&currentStep===3){
+    expanded.style.display='none';
+    expanded.setAttribute('hidden','');
+  }
+  if(currentStep!==3){
+    if(split){
+      split.classList.remove('box-stats-expanded','is-list-stats');
+    }
+    if(rail){
+      rail.hidden=true;
+      rail.style.display='none';
+    }
+    return;
+  }
+  var showListStats=boxViewMode==='list';
+  if(split){
+    split.classList.toggle('is-list-stats',showListStats);
+    split.classList.toggle('box-stats-expanded',showListStats&&!!statsGroupsExpanded);
+  }
+  if(rail){
+    rail.hidden=!showListStats;
+    rail.style.display=showListStats?'flex':'none';
+    rail.classList.toggle('panels-single',showListStats&&!statsGroupsExpanded);
+  }
+}
+
+function toggleStatsGroupsExpand(){
+  statsGroupsExpanded=!statsGroupsExpanded;
+  renderBoxDualDist();
+  if(boxViewMode==='list')renderBoxList();
 }
 
 /* 能力分布 ECharts 数据结构（不改本页自定义条形图）：
@@ -1950,72 +2006,61 @@ function syncStatsViewUI(){
 function getCapDistData(){
   syncActiveForceAliases();
   var capLabels=CAP_OPTIONS;
-  var pool=getDistributionMembers().filter(function(m){return m.reached;});
-  var listPool=getListScopedMembers().filter(function(m){return m.reached;});
+  var pool=getStatsMembers('全部').filter(function(m){return m.reached;});
   var total=pool.length;
-  var rules=getActiveCapForce();
+  var rules=getCapForceRulesForGroup(null);
   var before=capLabels.map(function(g){return pool.filter(function(m){return m.initCapability===g;}).length;});
   var min=rules.map(function(r){return Math.ceil(total*r.min/100);});
   var max=rules.map(function(r){return Math.floor(total*r.max/100);});
   var mid=min.map(function(lo,i){return Math.round((lo+max[i])/2);});
-  var after=capLabels.map(function(g){return listPool.filter(function(m){return m.capability===g;}).length;});
+  var after=capLabels.map(function(g){return pool.filter(function(m){return m.capability===g;}).length;});
   return {labels:capLabels,before:before,min:min,max:max,mid:mid,after:after};
 }
 
 function getGradeDistData(){
   syncActiveForceAliases();
   var labels=GRADE_OPTIONS;
-  var pool=getDistributionMembers().filter(function(m){return m.reached;});
-  var listPool=getListScopedMembers().filter(function(m){return m.reached;});
+  var pool=getStatsMembers('全部').filter(function(m){return m.reached;});
   var total=pool.length;
-  var rules=getActiveForceDist();
+  var rules=getForceDistRulesForGroup(null);
   var before=labels.map(function(g){return pool.filter(function(m){return m.grade===g;}).length;});
   var min=rules.map(function(r){return Math.ceil(total*r.min/100);});
   var max=rules.map(function(r){return Math.floor(total*r.max/100);});
   var mid=min.map(function(lo,i){return Math.round((lo+max[i])/2);});
-  var after=labels.map(function(g){return listPool.filter(function(m){return(m.ratifyGrade||m.grade)===g;}).length;});
+  var after=labels.map(function(g){return pool.filter(function(m){return(m.ratifyGrade||m.grade)===g;}).length;});
   return {labels:labels,before:before,min:min,max:max,mid:mid,after:after};
 }
 
-/** 指定考核组的等级分布（面板用；卡头人数=列表同筛口径；目标分母仍用组内已到达） */
+/** 指定考核组的等级分布（面板用；卡头/当前/目标一律组内全量已到达） */
 function getGradeDistDataForGroup(groupName){
   var labels=GRADE_OPTIONS;
-  var forcePool=MEMBERS.filter(function(m){return m.group===groupName&&m.reached;});
-  var listPool=getListScopedMembers().filter(function(m){return m.group===groupName;});
-  var distPool=listPool.filter(function(m){return m.reached;});
-  var forceTotal=forcePool.length;
+  var pool=getStatsMembers(groupName).filter(function(m){return m.reached;});
+  var total=pool.length;
   var rules=getForceDistRulesForGroup(groupName);
-  var before=labels.map(function(g){return distPool.filter(function(m){return m.grade===g;}).length;});
-  var min=rules.map(function(r){return Math.ceil(forceTotal*r.min/100);});
-  var max=rules.map(function(r){return Math.floor(forceTotal*r.max/100);});
-  var mid=min.map(function(lo,i){return Math.round((lo+max[i])/2);});
-  var after=labels.map(function(g){return distPool.filter(function(m){return(m.ratifyGrade||m.grade)===g;}).length;});
-  return {labels:labels,before:before,min:min,max:max,mid:mid,after:after,total:listPool.length};
+  var before=labels.map(function(g){return pool.filter(function(m){return m.grade===g;}).length;});
+  var min=rules.map(function(r){return Math.ceil(total*r.min/100);});
+  var max=rules.map(function(r){return Math.floor(total*r.max/100);});
+  var mid=min.map(function(lo,i){return standardLinePoint(lo,max[i],total);});
+  var after=labels.map(function(g){return pool.filter(function(m){return(m.ratifyGrade||m.grade)===g;}).length;});
+  return {labels:labels,before:before,min:min,max:max,mid:mid,after:after,total:total};
 }
 
 function getCapDistDataForGroup(groupName){
   var labels=CAP_OPTIONS;
-  var forcePool=MEMBERS.filter(function(m){return m.group===groupName&&m.reached;});
-  var listPool=getListScopedMembers().filter(function(m){return m.group===groupName;});
-  var distPool=listPool.filter(function(m){return m.reached;});
-  var forceTotal=forcePool.length;
+  var pool=getStatsMembers(groupName).filter(function(m){return m.reached;});
+  var total=pool.length;
   var rules=getCapForceRulesForGroup(groupName);
-  var before=labels.map(function(g){return distPool.filter(function(m){return m.initCapability===g;}).length;});
-  var min=rules.map(function(r){return Math.ceil(forceTotal*r.min/100);});
-  var max=rules.map(function(r){return Math.floor(forceTotal*r.max/100);});
-  var mid=min.map(function(lo,i){return Math.round((lo+max[i])/2);});
-  var after=labels.map(function(g){return distPool.filter(function(m){return m.capability===g;}).length;});
-  return {labels:labels,before:before,min:min,max:max,mid:mid,after:after,total:listPool.length};
+  var before=labels.map(function(g){return pool.filter(function(m){return m.initCapability===g;}).length;});
+  var min=rules.map(function(r){return Math.ceil(total*r.min/100);});
+  var max=rules.map(function(r){return Math.floor(total*r.max/100);});
+  var mid=min.map(function(lo,i){return standardLinePoint(lo,max[i],total);});
+  var after=labels.map(function(g){return pool.filter(function(m){return m.capability===g;}).length;});
+  return {labels:labels,before:before,min:min,max:max,mid:mid,after:after,total:total};
 }
 
-/** 合并统计：组内全量（不受填写状态缩小），提交状态筛选可跟随；实际=各组人数相加 */
+/** 合并统计：各组全量已到达相加（不吃任何列表筛选 / 组 chip） */
 function mergedScopeGroups(){
-  return currentGroup==='全部'?ASSESS_GROUPS.slice():[currentGroup];
-}
-function matchMergedPoolMember(m,groupName){
-  if(m.group!==groupName||!m.reached)return false;
-  if(currentStatus&&submitStatusOf(m)!==currentStatus)return false;
-  return true;
+  return ASSESS_GROUPS.slice();
 }
 function getMergedGradeDistData(){
   var labels=GRADE_OPTIONS;
@@ -2023,20 +2068,24 @@ function getMergedGradeDistData(){
   var after=labels.map(function(){return 0;});
   var min=labels.map(function(){return 0;});
   var max=labels.map(function(){return 0;});
+  var mid=labels.map(function(){return 0;});
   var total=0;
   mergedScopeGroups().forEach(function(g){
-    var pool=MEMBERS.filter(function(m){return matchMergedPoolMember(m,g);});
+    var pool=getStatsMembers(g).filter(function(m){return m.reached;});
     var n=pool.length;
     total+=n;
     var rules=getForceDistRulesForGroup(g);
     labels.forEach(function(lab,i){
       before[i]+=pool.filter(function(m){return m.grade===lab;}).length;
       after[i]+=pool.filter(function(m){return(m.ratifyGrade||m.grade)===lab;}).length;
-      min[i]+=Math.ceil(n*rules[i].min/100);
-      max[i]+=Math.floor(n*rules[i].max/100);
+      var lo=Math.ceil(n*rules[i].min/100);
+      var hi=Math.floor(n*rules[i].max/100);
+      min[i]+=lo;
+      max[i]+=hi;
+      /* 合并标准 = 各组该等级目标上限（或不低于时的下限）相加 */
+      mid[i]+=standardLinePoint(lo,hi,n);
     });
   });
-  var mid=min.map(function(lo,i){return Math.round((lo+max[i])/2);});
   return {labels:labels,before:before,min:min,max:max,mid:mid,after:after,total:total};
 }
 function getMergedCapDistData(){
@@ -2045,30 +2094,85 @@ function getMergedCapDistData(){
   var after=labels.map(function(){return 0;});
   var min=labels.map(function(){return 0;});
   var max=labels.map(function(){return 0;});
+  var mid=labels.map(function(){return 0;});
   var total=0;
   mergedScopeGroups().forEach(function(g){
-    var pool=MEMBERS.filter(function(m){return matchMergedPoolMember(m,g);});
+    var pool=getStatsMembers(g).filter(function(m){return m.reached;});
     var n=pool.length;
     total+=n;
     var rules=getCapForceRulesForGroup(g);
     labels.forEach(function(lab,i){
       before[i]+=pool.filter(function(m){return m.initCapability===lab;}).length;
       after[i]+=pool.filter(function(m){return m.capability===lab;}).length;
-      min[i]+=Math.ceil(n*rules[i].min/100);
-      max[i]+=Math.floor(n*rules[i].max/100);
+      var lo=Math.ceil(n*rules[i].min/100);
+      var hi=Math.floor(n*rules[i].max/100);
+      min[i]+=lo;
+      max[i]+=hi;
+      mid[i]+=standardLinePoint(lo,hi,n);
     });
   });
-  var mid=min.map(function(lo,i){return Math.round((lo+max[i])/2);});
   return {labels:labels,before:before,min:min,max:max,mid:mid,after:after,total:total};
 }
 
-/* 展开多组卡片展示「目标」；收起合并统计 / 单列不展示 */
+/* 展开多组卡片展示「目标」；收起纵向单列不展示 */
 function visibleGroupPanelNames(){
   return ASSESS_GROUPS.slice();
 }
 function shouldShowDistReqCol(){
   if(isByGroupView())return visibleGroupPanelNames().length>1;
   return false;
+}
+function getPanelBodyMode(){
+  return panelBodyMode==='list'?'list':'chart';
+}
+function setPanelBodyMode(mode){
+  panelBodyMode=mode==='list'?'list':'chart';
+  syncPanelBodyModeUI();
+  renderGroupPanels();
+}
+function syncPanelBodyModeUI(){
+  var mode=getPanelBodyMode();
+  var chartBtn=document.getElementById('panelModeChartBtn');
+  var listBtn=document.getElementById('panelModeListBtn');
+  if(chartBtn)chartBtn.classList.toggle('on',mode==='chart');
+  if(listBtn)listBtn.classList.toggle('on',mode==='list');
+}
+/** 要求文案：区间 / 单值 / 不低于（上限盖满分母时） */
+function formatDistReqText(min,max,total){
+  var lo=+min||0;
+  var hi=max==null?lo:+max;
+  if(lo>0&&total!=null&&hi>=total)return '不低于'+lo+'人';
+  if(lo===hi)return lo+'人';
+  return lo+'–'+hi+'人';
+}
+/** 收起态「列表」：统计表 等级|要求|当前(调整前)|调整(实际−当前)，非人员名单 */
+function renderCollapsedStatsTableHtml(data,opts){
+  opts=opts||{};
+  var isCap=!!opts.cap;
+  var groupName=opts.groupName||null;
+  var rowClick=opts.rowClick||null;
+  var labelHead=isCap?'能力':'等级';
+  var html='<table class="dist-status-table">'+
+    '<colgroup><col style="width:36%"><col class="col-req" style="width:28%"><col class="col-before" style="width:18%"><col class="col-after" style="width:18%"></colgroup>'+
+    '<thead><tr><th>'+labelHead+'</th><th class="col-req">要求</th><th class="col-before">当前</th><th class="col-after">调整</th></tr></thead><tbody>';
+  data.labels.forEach(function(g,i){
+    var required=formatDistReqText(data.min[i],data.max[i],data.total);
+    var before=data.before[i]||0;
+    var actual=data.after[i]||0;
+    var isActive=isCap
+      ?(currentCap===g&&(!groupName||currentGroup===groupName))
+      :(currentGrade===g&&(!groupName||currentGroup===groupName));
+    var click=rowClick?rowClick(g):(isCap?('filterByCap(\''+g+'\')'):('filterByGrade(\''+g+'\')'));
+    var labelCell;
+    if(isCap){
+      var tone=g==='高'?'high':g==='中'?'mid':'low';
+      labelCell='<span class="cap-tag '+tone+'">'+g+'</span>';
+    }else{
+      labelCell='<span class="dist-grade-pill" style="background:'+(GRADE_BG[g]||'var(--c1)')+';color:'+(GRADE_COLORS[g]||'var(--c8)')+'">'+g+'</span>';
+    }
+    html+='<tr class="'+(isActive?'active':'')+'" onclick="'+click+'"><td>'+labelCell+'</td><td class="col-req">'+required+'</td><td class="col-before">'+before+'人</td><td class="col-after">'+formatAdjDeltaHtml(before,actual)+'</td></tr>';
+  });
+  return html+'</tbody></table>';
 }
 
 function formatAdjDeltaHtml(before,after){
@@ -2091,9 +2195,9 @@ function niceBarScale(vals){
 }
 function groupPanelLegendHtml(){
   return '<div class="group-panel-legend" aria-hidden="true">'+
+    '<span class="cap-leg-item"><i class="cap-leg-dot std"></i>标准</span>'+
     '<span class="cap-leg-item"><i class="cap-leg-dot"></i>调整前</span>'+
-    '<span class="cap-leg-item"><i class="cap-leg-dot std"></i>当前</span>'+
-    '<span class="cap-leg-item"><i class="cap-leg-bar"></i>符合/不符</span>'+
+    '<span class="cap-leg-item"><i class="cap-leg-bar"></i>当前</span>'+
   '</div>';
 }
 
@@ -2166,13 +2270,15 @@ function panelRowClick(g,isCap,rowClick){
   return rowClick?rowClick(g):(isCap?('filterByCap(\''+g+'\')'):('filterByGrade(\''+g+'\')'));
 }
 
-/** 展开·考核组卡片右侧图：无等级名（左表已有），仅刻度 + 柱/曲线 + 人数 */
+/** 展开·考核组卡片右侧图：无等级名（左表已有），仅刻度 + 柱/灰线(调整前)/蓝线(标准) + 人数 */
 function renderGroupCardBarsHtml(data,opts){
   opts=opts||{};
   var groupName=opts.groupName||null;
   var rowClick=opts.rowClick||null;
   var isCap=!!opts.cap;
-  var nice=niceBarScale(data.before.concat(data.after).concat(data.max||[]));
+  var before=data.before||data.labels.map(function(){return 0;});
+  var std=data.mid||data.labels.map(function(_,i){return standardLinePoint(data.min[i],data.max[i],data.total);});
+  var nice=niceBarScale(data.after.concat(data.max||[]).concat(before).concat(std));
   var scale=nice.scale;
   var axisHtml='<div class="group-chart-axis">'+nice.ticks.map(function(t){return '<span>'+t+'</span>';}).join('')+'</div>';
   var barsHtml='<div class="cap-bars-plot"><svg class="cap-line-svg" aria-hidden="true"></svg>';
@@ -2190,15 +2296,17 @@ function renderGroupCardBarsHtml(data,opts){
     '</div>';
   });
   barsHtml+='</div>';
-  return {html:axisHtml+'<div class="cap-bars cap-bars-card'+(isCap?'':' grade-bars')+'" data-panel-bars="1">'+barsHtml+'</div>',scale:scale,before:data.before,after:data.after};
+  return {html:axisHtml+'<div class="cap-bars cap-bars-card'+(isCap?'':' grade-bars')+'" data-panel-bars="1">'+barsHtml+'</div>',scale:scale,before:before,mid:std,after:data.after};
 }
 
-/** 收起·合并统计图：行左侧等级名 + 柱/曲线 + 人数（独立 DOM，不与展开卡共用开关） */
+/** 收起·纵向组卡图：行左侧等级名 + 柱/灰线(调整前)/蓝线(标准) + 人数 */
 function renderMergedBarsHtml(data,opts){
   opts=opts||{};
   var rowClick=opts.rowClick||null;
   var isCap=!!opts.cap;
-  var nice=niceBarScale(data.before.concat(data.after).concat(data.max||[]));
+  var before=data.before||data.labels.map(function(){return 0;});
+  var std=data.mid||data.labels.map(function(_,i){return standardLinePoint(data.min[i],data.max[i],data.total);});
+  var nice=niceBarScale(data.after.concat(data.max||[]).concat(before).concat(std));
   var scale=nice.scale;
   var axisHtml='<div class="group-chart-axis">'+nice.ticks.map(function(t){return '<span>'+t+'</span>';}).join('')+'</div>';
   var barsHtml='<div class="cap-bars-plot"><svg class="cap-line-svg" aria-hidden="true"></svg>';
@@ -2221,7 +2329,7 @@ function renderMergedBarsHtml(data,opts){
     '</div>';
   });
   barsHtml+='</div>';
-  return {html:axisHtml+'<div class="cap-bars cap-bars-merged'+(isCap?'':' grade-bars')+'" data-panel-bars="1">'+barsHtml+'</div>',scale:scale,before:data.before,after:data.after};
+  return {html:axisHtml+'<div class="cap-bars cap-bars-merged'+(isCap?'':' grade-bars')+'" data-panel-bars="1">'+barsHtml+'</div>',scale:scale,before:before,mid:std,after:data.after};
 }
 
 function renderCapBarsHtml(data,opts){
@@ -2315,29 +2423,134 @@ function renderGradeListDist(){
   paintCapLineOverlay(bars.querySelector('.cap-bars-plot'),painted.before,painted.mid,painted.scale);
 }
 
-function renderBoxDualDist(){
-  ensureCapListLayout();
-  syncStatsViewUI();
+function paintDualDomain(statsEl,barsEl,data,isCap){
+  if(statsEl)statsEl.innerHTML=isCap?renderCapTableHtml(data,false):renderGradeTableHtml(data,false);
+  if(!barsEl)return;
+  var painted=isCap?renderCapBarsHtml(data):renderGradeBarsHtml(data);
+  barsEl.className=isCap?'cap-bars':'cap-bars grade-bars';
+  barsEl.innerHTML=painted.html;
+  if(statsViewMode==='chart')paintCapLineOverlay(barsEl.querySelector('.cap-bars-plot'),painted.before,painted.mid,painted.scale);
+}
+
+function renderBoxDualGroups(){
+  var host=document.getElementById('boxGroupPanelsScroll');
+  if(!host)return;
+  /* 与绩效审定展开卡同款：2×2 组卡，每组绩效+能力上下排 */
+  var html='';
+  var paintedList=[];
+  ASSESS_GROUPS.forEach(function(g){
+    var gradeData=getGradeDistDataForGroup(g);
+    var capData=getCapDistDataForGroup(g);
+    var total=gradeData.total||0;
+    var panelOpts={panel:true,adjMode:'delta',groupName:g,rowClick:null};
+    var gradeBars=renderGroupCardBarsHtml(gradeData,{
+      groupName:g,
+      rowClick:function(v){return 'filterByGrade(\''+v+'\')';}
+    });
+    var capBars=renderGroupCardBarsHtml(capData,{
+      cap:true,
+      groupName:g,
+      rowClick:function(v){return 'filterByCap(\''+v+'\')';}
+    });
+    var gradeTable=renderGradeTableHtml(gradeData,true,Object.assign({},panelOpts,{
+      rowClick:function(v){return 'filterByGrade(\''+v+'\')';}
+    }));
+    var capTable=renderCapTableHtml(capData,true,Object.assign({},panelOpts,{
+      rowClick:function(v){return 'filterByCap(\''+v+'\')';}
+    }));
+    paintedList.push({grade:gradeBars,cap:capBars});
+    html+='<div class="stats-group-block group-panel" data-group="'+g+'">'+
+      '<div class="group-panel-hd">'+
+        '<div class="group-panel-title"><span class="group-panel-name">'+g+'</span><span class="group-panel-count">'+total+'人</span></div>'+
+        '<div class="group-panel-tools">'+groupPanelLegendHtml()+'</div>'+
+      '</div>'+
+      '<div class="stats-group-charts">'+
+        '<div class="stats-block" data-domain="grade">'+
+          '<div class="stats-block-title">绩效</div>'+
+          '<div class="stats-group-domain">'+
+            '<div class="group-panel-table list-stats">'+gradeTable+'</div>'+
+            '<div class="group-panel-chart">'+gradeBars.html+'</div>'+
+          '</div>'+
+        '</div>'+
+        '<div class="stats-block" data-domain="cap">'+
+          '<div class="stats-block-title">能力</div>'+
+          '<div class="stats-group-domain">'+
+            '<div class="group-panel-table list-stats">'+capTable+'</div>'+
+            '<div class="group-panel-chart">'+capBars.html+'</div>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  });
+  host.innerHTML=html;
+  host.querySelectorAll('.stats-group-block').forEach(function(block,i){
+    var painted=paintedList[i];
+    if(!painted)return;
+    var charts=block.querySelectorAll('.group-panel-chart');
+    [painted.grade,painted.cap].forEach(function(bars,j){
+      var barsEl=charts[j]&&charts[j].querySelector('[data-panel-bars="1"]');
+      if(!barsEl||!bars)return;
+      var plot=barsEl.querySelector('.cap-bars-plot');
+      if(!plot)return;
+      plot._panelDotData={before:bars.before,mid:bars.mid,after:bars.after,scale:bars.scale};
+      paintCapLineOverlay(plot,bars.before,bars.mid,bars.scale,{mode:'stdOnly',connect:true});
+    });
+  });
+}
+
+function renderBoxDualCollapsed(){
+  var host=document.getElementById('boxGroupPanelsScroll');
+  if(!host)return;
+  var mode=statsViewMode==='chart'?'chart':'list';
   var gradeData=getGradeDistData();
   var capData=getCapDistData();
-  var gradeStats=document.getElementById('listStatsGrade');
-  var capStats=document.getElementById('listStatsCap');
-  var gradeBars=document.getElementById('gradeBars');
-  var capBars=document.getElementById('capBars');
-  if(gradeStats)gradeStats.innerHTML=renderGradeTableHtml(gradeData,false);
-  if(capStats)capStats.innerHTML=renderCapTableHtml(capData,false);
-  if(gradeBars){
-    var gp=renderGradeBarsHtml(gradeData);
-    gradeBars.className='cap-bars grade-bars';
-    gradeBars.innerHTML=gp.html;
-    if(statsViewMode==='chart')paintCapLineOverlay(gradeBars.querySelector('.cap-bars-plot'),gp.before,gp.mid,gp.scale);
+  var gradeTotal=(gradeData.after||[]).reduce(function(s,n){return s+(+n||0);},0);
+  var capTotal=(capData.after||[]).reduce(function(s,n){return s+(+n||0);},0);
+  var domains=[
+    {key:'grade',title:'绩效',data:gradeData,total:gradeTotal,cap:false},
+    {key:'cap',title:'能力',data:capData,total:capTotal,cap:true}
+  ];
+  var paintedList=[];
+  var html='';
+  domains.forEach(function(d){
+    var bodyHtml,painted=null;
+    if(mode==='list'){
+      bodyHtml='<div class="group-panel-table list-stats">'+renderCollapsedStatsTableHtml(d.data,{cap:d.cap})+'</div>';
+    }else{
+      painted=renderMergedBarsHtml(d.data,{cap:d.cap});
+      bodyHtml='<div class="group-panel-chart">'+painted.html+'</div>';
+    }
+    paintedList.push(painted);
+    html+='<div class="group-panel mode-'+mode+'" data-domain="'+d.key+'">'+
+      '<div class="group-panel-hd">'+
+        '<div class="group-panel-title"><span class="group-panel-name">'+d.title+'</span><span class="group-panel-count">'+d.total+'人</span></div>'+
+        (mode==='chart'?'<div class="group-panel-tools">'+groupPanelLegendHtml()+'</div>':'')+
+      '</div>'+
+      '<div class="group-panel-body">'+bodyHtml+'</div>'+
+    '</div>';
+  });
+  host.innerHTML=html;
+  host.querySelectorAll('.group-panel').forEach(function(panel,i){
+    var painted=paintedList[i];
+    if(!painted)return;
+    var barsEl=panel.querySelector('[data-panel-bars="1"]');
+    var plot=barsEl&&barsEl.querySelector('.cap-bars-plot');
+    if(!plot)return;
+    plot._panelDotData={before:painted.before,mid:painted.mid,after:painted.after,scale:painted.scale};
+    paintCapLineOverlay(plot,painted.before,painted.mid,painted.scale,{mode:'stdOnly',connect:true});
+  });
+}
+
+function renderBoxDualDist(){
+  syncBoxStatsPane();
+  if(currentStep===3&&boxViewMode!=='list')return;
+  syncStatsViewUI();
+  if(statsGroupsExpanded){
+    renderBoxDualGroups();
+  }else{
+    renderBoxDualCollapsed();
   }
-  if(capBars){
-    var cp=renderCapBarsHtml(capData);
-    capBars.className='cap-bars';
-    capBars.innerHTML=cp.html;
-    if(statsViewMode==='chart')paintCapLineOverlay(capBars.querySelector('.cap-bars-plot'),cp.before,cp.mid,cp.scale);
-  }
+  syncStatsViewUI();
 }
 
 function isByGroupView(){
@@ -2373,7 +2586,7 @@ function syncListViewUI(){
   }
   if(toggle){
     toggle.setAttribute('aria-expanded',expanded?'true':'false');
-    toggle.title=expanded?'收起为合并统计':'展开按考核组';
+    toggle.title=expanded?'收起为纵向组卡':'展开按考核组';
     toggle.setAttribute('aria-label',toggle.title);
   }
   if(rail)rail.classList.toggle('panels-single',merged||(isByGroupView()&&visibleGroupPanelNames().length<=1));
@@ -2446,57 +2659,26 @@ function renderGroupPanels(){
       var plot=barsEl.querySelector('.cap-bars-plot');
       if(!plot||!plot._panelDotData)return;
       var d=plot._panelDotData;
-      paintCapLineOverlay(plot,d.before,d.after,d.scale,{mode:'beforeAfter',connect:true});
+      /* 灰线=调整前 · 蓝线=标准 · 柱=当前（绿/红） */
+      paintCapLineOverlay(plot,d.before,d.mid,d.scale,{mode:'stdOnly',connect:true});
     });
   }
   function bindPanelDotData(root,painted){
     var barsEl=root&&root.querySelector('[data-panel-bars="1"]');
     if(!barsEl||!painted)return;
     var plot=barsEl.querySelector('.cap-bars-plot');
-    if(plot)plot._panelDotData={before:painted.before,after:painted.after,scale:painted.scale};
+    if(plot)plot._panelDotData={before:painted.before,mid:painted.mid,after:painted.after,scale:painted.scale};
   }
-  function panelCardHtml(title,count,tableHtml,chartHtml,dataGroup,active,clickable){
-    var hdAttrs=clickable
-      ?' role="button" tabindex="0" onclick="selectGroupPanel(\''+dataGroup+'\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();selectGroupPanel(\''+dataGroup+'\');}"'
-      :' style="cursor:default"';
-    return '<div class="group-panel'+(active?' is-active':'')+'" data-group="'+dataGroup+'" id="groupPanel-'+encodeURIComponent(dataGroup)+'">'+
-      '<div class="group-panel-hd"'+hdAttrs+'>'+
-        '<div class="group-panel-title"><span class="group-panel-name">'+title+'</span><span class="group-panel-count">'+(count||0)+'人</span></div>'+
-        groupPanelLegendHtml()+
-      '</div>'+
-      '<div class="group-panel-body">'+
-        '<div class="group-panel-table list-stats">'+tableHtml+'</div>'+
-        '<div class="group-panel-chart">'+chartHtml+'</div>'+
-      '</div>'+
-    '</div>';
-  }
-  /* 收起：一列合并统计（无目标列、上表下图）；展开：2×2 考核组卡片（左表右图） */
-  if(!isByGroupView()){
-    var merged=currentStep===2?getMergedCapDistData():getMergedGradeDistData();
-    var mergedTitle=currentGroup==='全部'?'合并统计':currentGroup;
-    var mergedOpts={
-      panel:true,
-      adjMode:'delta',
-      rowClick:currentStep===2
-        ?function(v){return 'filterByCap(\''+v+'\')';}
-        :function(v){return 'filterByGrade(\''+v+'\')';}
-    };
-    var mergedBars=renderMergedBarsHtml(merged,{cap:currentStep===2,rowClick:mergedOpts.rowClick});
-    var mergedTable=currentStep===2?renderCapTableHtml(merged,false,mergedOpts):renderGradeTableHtml(merged,false,mergedOpts);
-    if(rail)rail.classList.add('panels-single');
-    scroll.innerHTML=panelCardHtml(mergedTitle,merged.total||0,mergedTable,mergedBars.html,'__merged__',true,false);
-    bindPanelDotData(scroll,mergedBars);
-    paintPanelDots(scroll);
-    return;
-  }
+  var collapsed=!isByGroupView();
   var groups=visibleGroupPanelNames();
-  var showReq=groups.length>1;
-  if(rail)rail.classList.toggle('panels-single',!showReq);
+  var showReq=!collapsed&&groups.length>1;
+  if(rail)rail.classList.toggle('panels-single',collapsed||groups.length<=1);
   var html='';
   var paintedList=[];
   groups.forEach(function(g){
     var data=currentStep===2?getCapDistDataForGroup(g):getGradeDistDataForGroup(g);
     var active=currentGroup===g;
+    var mode=collapsed?getPanelBodyMode():'chart';
     var panelOpts={
       panel:true,
       adjMode:'delta',
@@ -2505,14 +2687,40 @@ function renderGroupPanels(){
         ?function(v){return 'selectGroupCapRow(\''+g+'\',\''+v+'\')';}
         :function(v){return 'selectGroupGradeRow(\''+g+'\',\''+v+'\')';}
     };
-    var bars=renderGroupCardBarsHtml(data,{cap:currentStep===2,groupName:g,rowClick:panelOpts.rowClick});
-    var table=currentStep===2?renderCapTableHtml(data,showReq,panelOpts):renderGradeTableHtml(data,showReq,panelOpts);
-    paintedList.push(bars);
-    html+=panelCardHtml(g,data.total||0,table,bars.html,g,active,true);
+    var gEsc=String(g).replace(/'/g,"\\'");
+    var toolsHtml,bodyHtml,hdAttrs,modeClass='';
+    if(collapsed){
+      modeClass=' mode-'+mode;
+      toolsHtml=mode==='chart'?groupPanelLegendHtml():'';
+      hdAttrs=' role="button" tabindex="0" onclick="selectGroupPanel(\''+gEsc+'\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();selectGroupPanel(\''+gEsc+'\');}"';
+      if(mode==='list'){
+        bodyHtml='<div class="group-panel-table list-stats">'+renderCollapsedStatsTableHtml(data,{cap:currentStep===2,groupName:g,rowClick:panelOpts.rowClick})+'</div>';
+        paintedList.push(null);
+      }else{
+        var mergedBars=renderMergedBarsHtml(data,{cap:currentStep===2,rowClick:panelOpts.rowClick});
+        bodyHtml='<div class="group-panel-chart">'+mergedBars.html+'</div>';
+        paintedList.push(mergedBars);
+      }
+    }else{
+      var bars=renderGroupCardBarsHtml(data,{cap:currentStep===2,groupName:g,rowClick:panelOpts.rowClick});
+      var table=currentStep===2?renderCapTableHtml(data,showReq,panelOpts):renderGradeTableHtml(data,showReq,panelOpts);
+      toolsHtml=groupPanelLegendHtml();
+      hdAttrs=' role="button" tabindex="0" onclick="selectGroupPanel(\''+gEsc+'\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();selectGroupPanel(\''+gEsc+'\');}"';
+      bodyHtml='<div class="group-panel-table list-stats">'+table+'</div><div class="group-panel-chart">'+bars.html+'</div>';
+      paintedList.push(bars);
+    }
+    html+='<div class="group-panel'+(active?' is-active':'')+modeClass+'" data-group="'+g+'" id="groupPanel-'+encodeURIComponent(g)+'">'+
+      '<div class="group-panel-hd"'+hdAttrs+'>'+
+        '<div class="group-panel-title"><span class="group-panel-name">'+g+'</span><span class="group-panel-count">'+(data.total||0)+'人</span></div>'+
+        (toolsHtml?'<div class="group-panel-tools">'+toolsHtml+'</div>':'')+
+      '</div>'+
+      '<div class="group-panel-body">'+bodyHtml+'</div>'+
+    '</div>';
   });
   scroll.innerHTML=html;
+  syncPanelBodyModeUI();
   scroll.querySelectorAll('.group-panel').forEach(function(panel,i){
-    bindPanelDotData(panel,paintedList[i]);
+    if(paintedList[i])bindPanelDotData(panel,paintedList[i]);
   });
   paintPanelDots(scroll);
 }
@@ -2587,46 +2795,58 @@ function drawCapLineOverlay(plot){
   var beforeVals=data.beforeVals||[];
   var midVals=data.midVals||[];
   var mode=data.mode||'std';
-  if(mode==='beforeAfter'){
-    var ptsB=[],ptsA=[],dots='';
+  /* 折线只留路径，不画坐标圆点（第1步审定 / 第3步列表共用） */
+  if(mode==='stdOnly'){
+    var ptsB=[],ptsS=[];
+    var hasBefore=beforeVals.length>0;
     tracks.forEach(function(track,i){
       var tr=track.getBoundingClientRect();
       var x0=tr.left-pr.left;
       var y=tr.top-pr.top+tr.height/2;
       var tw=Math.max(1,tr.width);
-      var xb=capTrackX(x0,tw,beforeVals[i],scale);
-      var xa=capTrackX(x0,tw,midVals[i],scale);
-      ptsB.push({x:xb,y:y});
-      ptsA.push({x:xa,y:y});
-      dots+='<circle cx="'+xb.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="3.5" fill="#A1A1AA" stroke="#fff" stroke-width="1.5"><title>调整前 '+(beforeVals[i]||0)+'</title></circle>';
-      dots+='<circle cx="'+xa.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="3.5" fill="#2563EB" stroke="#fff" stroke-width="1.5"><title>当前 '+(midVals[i]||0)+'</title></circle>';
+      if(hasBefore)ptsB.push({x:capTrackX(x0,tw,beforeVals[i],scale),y:y});
+      ptsS.push({x:capTrackX(x0,tw,midVals[i],scale),y:y});
+    });
+    var pathB=hasBefore&&data.connect
+      ?'<path fill="none" stroke="#A1A1AA" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" d="'+smoothCapCurve(ptsB)+'"><title>调整前</title></path>'
+      :'';
+    var pathS=data.connect
+      ?'<path fill="none" stroke="#2563EB" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" d="'+smoothCapCurve(ptsS)+'"><title>标准</title></path>'
+      :'';
+    svg.innerHTML=pathB+pathS;
+    return;
+  }
+  if(mode==='beforeAfter'){
+    var ptsB=[],ptsA=[];
+    tracks.forEach(function(track,i){
+      var tr=track.getBoundingClientRect();
+      var x0=tr.left-pr.left;
+      var y=tr.top-pr.top+tr.height/2;
+      var tw=Math.max(1,tr.width);
+      ptsB.push({x:capTrackX(x0,tw,beforeVals[i],scale),y:y});
+      ptsA.push({x:capTrackX(x0,tw,midVals[i],scale),y:y});
     });
     var paths='';
     if(data.connect){
       paths=
-        '<path fill="none" stroke="#A1A1AA" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" d="'+smoothCapCurve(ptsB)+'"></path>'+
-        '<path fill="none" stroke="#2563EB" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4 3" d="'+smoothCapCurve(ptsA)+'"></path>';
+        '<path fill="none" stroke="#A1A1AA" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" d="'+smoothCapCurve(ptsB)+'"><title>调整前</title></path>'+
+        '<path fill="none" stroke="#2563EB" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4 3" d="'+smoothCapCurve(ptsA)+'"><title>当前</title></path>';
     }
-    svg.innerHTML=paths+dots;
+    svg.innerHTML=paths;
     return;
   }
-  var ptsB=[],ptsM=[],dotsB='',dotsM='';
+  var ptsB2=[],ptsM=[];
   tracks.forEach(function(track,i){
     var tr=track.getBoundingClientRect();
     var x0=tr.left-pr.left;
     var y=tr.top-pr.top+tr.height/2;
     var tw=Math.max(1,tr.width);
-    var xb=capTrackX(x0,tw,beforeVals[i],scale);
-    var xm=capTrackX(x0,tw,midVals[i],scale);
-    ptsB.push({x:xb,y:y});
-    ptsM.push({x:xm,y:y});
-    dotsB+='<circle cx="'+xb.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="3" fill="#A1A1AA" stroke="#fff" stroke-width="1.5"><title>调整前 '+(beforeVals[i]||0)+'</title></circle>';
-    dotsM+='<circle cx="'+xm.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="3" fill="#2563EB" stroke="#fff" stroke-width="1.5"><title>标准 '+(midVals[i]||0)+'</title></circle>';
+    ptsB2.push({x:capTrackX(x0,tw,beforeVals[i],scale),y:y});
+    ptsM.push({x:capTrackX(x0,tw,midVals[i],scale),y:y});
   });
   svg.innerHTML=
-    '<path fill="none" stroke="#A1A1AA" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1 5" d="'+smoothCapCurve(ptsB)+'"></path>'+
-    '<path fill="none" stroke="#2563EB" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1 5" d="'+smoothCapCurve(ptsM)+'"></path>'+
-    dotsB+dotsM;
+    '<path fill="none" stroke="#A1A1AA" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1 5" d="'+smoothCapCurve(ptsB2)+'"><title>调整前</title></path>'+
+    '<path fill="none" stroke="#2563EB" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1 5" d="'+smoothCapCurve(ptsM)+'"><title>标准</title></path>';
 }
 
 function refreshCapLineOverlay(){
@@ -3894,15 +4114,20 @@ function applyStepLayout(){
   syncListViewUI();
   if(!expanded)return;
   if(currentStep===1||currentStep===2){
-    /* 展开=按组多列；收起=完整明细+右侧一列合并统计（走 groupPanelsRail） */
+    /* 展开=按组 2×2；收起=完整明细+右侧纵向组卡（走 groupPanelsRail） */
     if(dist&&hd)hd.after(expanded);
     expanded.style.display='none';
-  }else if(currentStep===3&&boxSplit){
-    boxSplit.appendChild(expanded);
-    expanded.style.display='';
+    expanded.removeAttribute('hidden');
+  }else if(currentStep===3){
+    /* 第3步右侧走 #boxGroupPanelsRail，#distExpanded 不进 boxSplit */
+    if(dist&&hd)hd.after(expanded);
+    expanded.style.display='none';
+    expanded.setAttribute('hidden','');
+    syncBoxStatsPane();
   }else if(dist&&hd){
     hd.after(expanded);
     expanded.style.display='';
+    expanded.removeAttribute('hidden');
   }
   syncSplitPaneHeight();
 }
@@ -4080,8 +4305,9 @@ function openBoxCellFullscreen(key){
   }else{
     body.innerHTML='<table class="box9-list-table"><thead><tr>'+
       '<th class="col-name">被考核人</th><th class="col-status">提交状态</th><th class="col-grade">绩效等级</th><th class="col-cap">能力</th><th class="col-box">格子</th>'+
-      '<th class="col-abn">异常状态</th><th class="col-abn-reason">异常原因</th><th class="col-hist">调整历史/原因</th><th class="col-action">操作</th>'+
-      '</tr></thead><tbody>'+people.map(boxListRowHtml).join('')+'</tbody></table>';
+      '<th class="col-abn">异常状态</th><th class="col-abn-reason">异常原因</th><th class="col-hist">调整历史/原因</th>'+
+      (APPROVE_MODE?'':'<th class="col-action">操作</th>')+
+      '</tr></thead><tbody>'+people.map(function(m){return boxListRowHtml(m,false);}).join('')+'</tbody></table>';
   }
   overlay.classList.add('open');
   overlay.setAttribute('aria-hidden','false');
@@ -4141,41 +4367,6 @@ function formatAdjustHistory(m){
   return '';
 }
 
-function forceRangeOk(rules,countOf,total){
-  if(!total)return null;
-  for(var i=0;i<rules.length;i++){
-    var r=rules[i];
-    var count=countOf(r.grade);
-    var minCount=Math.ceil(total*r.min/100);
-    var maxCount=Math.floor(total*r.max/100);
-    if(count<minCount||count>maxCount)return false;
-  }
-  return true;
-}
-
-function updateBox9DistHint(){
-  var el=document.getElementById('box9DistHint');
-  if(!el)return;
-  syncActiveForceAliases();
-  var filtered=getDistributionMembers();
-  var gradeTotal=filtered.length;
-  var reached=filtered.filter(function(m){return m.reached&&m.capability;});
-  var capTotal=reached.length;
-  var gradeRules=getActiveForceDist();
-  var capRules=getActiveCapForce();
-  var perfOk=forceRangeOk(gradeRules,function(g){
-    return filtered.filter(function(m){return(m.ratifyGrade||m.grade)===g;}).length;
-  },gradeTotal);
-  var capOk=forceRangeOk(capRules,function(g){
-    return reached.filter(function(m){return m.capability===g;}).length;
-  },capTotal);
-  function piece(label,ok){
-    if(ok===null)return '<span class="hint-item"><span class="hint-label">'+label+'</span><span class="hint-val na">—</span></span>';
-    return '<span class="hint-item"><span class="hint-label">'+label+'</span><span class="hint-val '+(ok?'ok':'bad')+'">'+(ok?'✓ 符合分布':'✗ 未达分布')+'</span></span>';
-  }
-  el.innerHTML=piece('绩效',perfOk)+piece('能力',capOk);
-}
-
 function setBoxView(mode){
   boxViewMode=mode==='list'?'list':'grid';
   var gridView=document.getElementById('boxGridView');
@@ -4188,7 +4379,9 @@ function setBoxView(mode){
   document.querySelectorAll('.box-view-btn').forEach(function(btn){
     btn.classList.toggle('on',btn.getAttribute('data-view')===boxViewMode);
   });
+  syncBoxStatsPane();
   renderBox();
+  if(boxViewMode==='list')renderDist();
   syncSplitPaneHeight();
 }
 
@@ -4211,7 +4404,7 @@ function renderBoxGrid(){
   requestAnimationFrame(function(){requestAnimationFrame(fitAllBoxCells);});
 }
 
-function boxListRowHtml(m){
+function boxListRowHtml(m,compact){
   var idx=MEMBERS.indexOf(m);
   var grade=m.ratifyGrade||m.grade||'';
   var gradeHtml=grade
@@ -4233,37 +4426,77 @@ function boxListRowHtml(m){
     ?('<span class="box9-abn-tag">'+abnType+'</span>')
     :'<span class="box9-abn-ok">正常</span>';
   var canAdj=!APPROVE_MODE&&!!m.reached;
-  var action=APPROVE_MODE
-    ?''
-    :(canAdj
-      ?('<div class="action-stack">'+
-          '<button class="btn btn-s btn-sm" type="button" onclick="openManualAdj('+idx+')">调整</button>'+
-          '<button class="btn btn-s btn-sm" type="button" onclick="openAdjHistModal('+idx+')">调整记录</button>'+
-        '</div>')
-      :'<span style="color:var(--c4)">—</span>');
+  var ICO_ADJ='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>';
+  var ICO_HIST='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 16 14"/></svg>';
+  var action='';
+  if(!APPROVE_MODE){
+    if(!canAdj)action='<span style="color:var(--c4)">—</span>';
+    else{
+      /* 收起/展开统一 icon，title 保留原文字 */
+      action='<div class="action-stack icon-only">'+
+        '<button class="action-icon-btn" type="button" title="调整" aria-label="调整" onclick="openManualAdj('+idx+')">'+ICO_ADJ+'</button>'+
+        '<button class="action-icon-btn" type="button" title="调整记录" aria-label="调整记录" onclick="openAdjHistModal('+idx+')">'+ICO_HIST+'</button>'+
+      '</div>';
+    }
+  }
+  var nameTd='<td class="col-name"><span class="member-name" onmouseenter="onMemberEnter(event,'+idx+')" onmouseleave="hideChipTip()"><span style="font-weight:500;color:var(--c8)">'+m.name+'</span><div style="margin-top:3px;font:400 10px/1 var(--m);color:var(--c4)">'+m.employeeId+'</div></span></td>';
+  var boxTd='<td class="col-box">'+(box||'<span style="color:var(--c4)">—</span>')+'</td>';
+  var actTd=APPROVE_MODE?'':('<td class="col-action">'+action+'</td>');
+  if(compact){
+    return '<tr>'+nameTd+boxTd+actTd+'</tr>';
+  }
   return '<tr>'+
-    '<td class="col-name"><span class="member-name" onmouseenter="onMemberEnter(event,'+idx+')" onmouseleave="hideChipTip()"><span style="font-weight:500;color:var(--c8)">'+m.name+'</span><div style="margin-top:3px;font:400 10px/1 var(--m);color:var(--c4)">'+m.employeeId+'</div></span></td>'+
+    nameTd+
     '<td class="col-status">'+submitTagHtml(m)+'</td>'+
     '<td class="col-grade">'+gradeHtml+'</td>'+
     '<td class="col-cap">'+(m.capability?capTagHtml(m.capability):'<span style="color:var(--c4)">—</span>')+'</td>'+
-    '<td class="col-box">'+(box||'<span style="color:var(--c4)">—</span>')+'</td>'+
+    boxTd+
     '<td class="col-abn">'+abnHtml+'</td>'+
     '<td class="col-abn-reason"><div class="box9-abn-reason'+(abnReason?'':' empty')+'" title="'+abnReason.replace(/"/g,'&quot;')+'">'+(abnReason||'—')+'</div></td>'+
     '<td class="col-hist">'+histHtml+'</td>'+
-    (APPROVE_MODE?'':('<td class="col-action">'+action+'</td>'))+
+    actTd+
+  '</tr>';
+}
+
+function isBoxListCompact(){
+  return currentStep===3&&boxViewMode==='list'&&!!statsGroupsExpanded;
+}
+
+function renderBoxListHead(compact){
+  var head=document.getElementById('boxListHead');
+  if(!head)return;
+  if(compact){
+    head.innerHTML='<tr><th class="col-name">被考核人</th><th class="col-box">格子</th>'+
+      (APPROVE_MODE?'':'<th class="col-action">操作</th>')+'</tr>';
+    return;
+  }
+  head.innerHTML='<tr>'+
+    '<th class="col-name">被考核人</th>'+
+    '<th class="col-status">提交状态</th>'+
+    '<th class="col-grade">绩效等级</th>'+
+    '<th class="col-cap">能力</th>'+
+    '<th class="col-box">格子</th>'+
+    '<th class="col-abn">异常状态</th>'+
+    '<th class="col-abn-reason">异常原因</th>'+
+    '<th class="col-hist">调整历史/原因</th>'+
+    (APPROVE_MODE?'':'<th class="col-action">操作</th>')+
   '</tr>';
 }
 
 function renderBoxList(){
   var body=document.getElementById('boxListBody');
+  var table=document.getElementById('boxListTable')||document.querySelector('#boxListView .box9-list-table');
   if(!body)return;
+  var compact=isBoxListCompact();
+  if(table)table.classList.toggle('box9-list-compact',compact);
+  renderBoxListHead(compact);
   var rows=getFilteredMembers();
-  var cols=APPROVE_MODE?8:9;
+  var cols=compact?(APPROVE_MODE?2:3):(APPROVE_MODE?8:9);
   if(!rows.length){
     body.innerHTML='<tr><td colspan="'+cols+'" style="color:var(--c4);text-align:center;padding:24px">暂无人员</td></tr>';
     return;
   }
-  body.innerHTML=rows.map(boxListRowHtml).join('');
+  body.innerHTML=rows.map(function(m){return boxListRowHtml(m,compact);}).join('');
 }
 
 function renderBox(){
@@ -4281,7 +4514,6 @@ function renderBox(){
   document.querySelectorAll('.box-view-btn').forEach(function(btn){
     btn.classList.toggle('on',btn.getAttribute('data-view')===boxViewMode);
   });
-  updateBox9DistHint();
 }
 
 function onChipDrag(event,idx){
