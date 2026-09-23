@@ -1,5 +1,25 @@
 # 变更记录
 
+## 2026-09-23 年度 TR：九宫格格名恢复普通数字序号
+
+- `current/manager/demo-yearly-tr.html`：格子标题前加回 1–9 普通数字（非 emoji），与格名同行 14px/600、间距 6px，序号色 `--c5`；映射仍用原 `BOX_NUM`。
+
+## 2026-09-23 年度 TR：九宫格格名标题加大
+
+- `current/manager/demo-yearly-tr.html`：九宫格格子去掉 emoji 序号；格名 14px/600/`--c9` 单行标题，标题行左名右人数，与人名区间距 8px；人名 chip 可换行 gap 6px。
+
+## 2026-09-23 年度 TR：步骤条作标题 + 异常标识 + 只看异常 + 默认收起列表 + 默认待提交
+
+- `current/manager/demo-yearly-tr.html`：页头去掉「年度盘点…」标题，`#stepper` 占标题位；第2步「人才盘点」→「能力审定」。柱左人数右加减、折线无圆点。调整记录仅「从→到」+「异常标识」chips；「只看异常」chip 只筛名单。右侧看板默认收起（`listViewMode=detail` / `statsGroupsExpanded=false`）；「图表|列表」默认列表。提交状态默认「待提交」（只筛名单，统计全量；第2步仍切已提交）。
+
+## 2026-09-23 年度 TR：组卡图高自适应 + 校准能力分段加宽
+
+- `current/manager/demo-yearly-tr.html`：去掉 `.group-panel-chart` / 收起 body 的偏高 min-height，图高按行数撑开无底留白；`.cap-opt` 最小宽 36px、校准能力列 132px，高/中/低不再裁字。
+
+## 2026-09-23 年度 TR：统计表列头「目标」改为「要求」
+
+- `current/manager/demo-yearly-tr.html`：考核组统计表 `th.col-req` 文案「目标」→「要求」（绩效 `renderGradeTableHtml`、能力 `renderCapTableHtml` 各 1 处；第1/3步共用）。
+
 ## 2026-09-23 年度 TR：操作统一 icon + 组卡图表铺满宽度
 
 - `current/manager/demo-yearly-tr.html`：九宫格列表操作列收起/展开均用 icon（title 保留「调整/调整记录」）；修收起态 `align-items:start` 继承导致 `.group-panel-chart` 宽塌窄，图表/横轴/`cap-bar-track` 铺满卡片可用宽度；卡内仍不滚动。

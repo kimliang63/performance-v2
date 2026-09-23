@@ -62,10 +62,10 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 
 /* ═══ PAGE HEADER ═══ */
 .pg-hd-top{position:sticky;top:0;z-index:900;display:flex;align-items:center;justify-content:space-between;min-height:56px;padding:12px 20px;margin-bottom:12px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);box-shadow:var(--shadow-card)}
-.pg-hd-main{display:flex;align-items:center;min-width:0}
-.pg-hd-title{font:700 20px/1.2 var(--f);color:var(--c9);letter-spacing:-.3px}
+.pg-hd-main{display:flex;align-items:center;min-width:0;flex:1 1 auto}
+.pg-hd-title{display:none}
 .pg-hd-stack{display:flex;flex-direction:column;gap:10px;min-width:0}
-.pg-hd-right{display:flex;align-items:center;gap:16px;margin-left:auto}
+.pg-hd-right{display:flex;align-items:center;gap:16px;margin-left:auto;flex-shrink:0}
 .pg-hd-summary{display:flex;align-items:center;gap:12px;padding-right:16px;border-right:1px solid var(--c2);white-space:nowrap}
 .pg-hd-summary .sum-value{font:600 12px/1 var(--f);color:var(--c8)}
 .pg-hd-summary .sum-sep{font:400 12px/1 var(--f);color:var(--c3)}
@@ -185,12 +185,11 @@ select.status-filter-select:focus{border-color:var(--pr);box-shadow:0 0 0 2px va
 .group-panel-body{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(120px,1fr);align-items:start;gap:8px;flex:0 0 auto;min-width:0;min-height:auto;padding:8px 10px 10px;overflow:visible;width:100%;box-sizing:border-box}
 /* 收起：单卡全宽，图表或统计表二选一（全局开关）；必须 stretch，否则图按内容宽塌成窄条 */
 .group-panels-rail.panels-single .group-panel-body{display:flex;flex-direction:column;grid-template-columns:none;align-items:stretch;gap:8px;overflow:visible;width:100%}
-.group-panels-rail.panels-single .group-panel.mode-chart .group-panel-body{min-height:210px}
 .group-panels-rail.panels-single .group-panel.mode-list .group-panel-body{min-height:0;overflow:visible}
-.group-panels-rail.panels-single .group-panel-chart{flex:0 0 auto;min-height:180px;width:100%;align-self:stretch}
+.group-panels-rail.panels-single .group-panel-chart{flex:0 0 auto;min-height:0;width:100%;align-self:stretch}
 .group-panel-table{min-width:0;min-height:auto;overflow:visible;width:100%}
 .group-panels-rail.panels-single .group-panel.mode-list .group-panel-table{overflow:visible}
-.group-panel-chart{min-width:0;width:100%;display:flex;flex-direction:column;min-height:auto;overflow:visible;cursor:default;flex:0 0 auto;box-sizing:border-box}
+.group-panel-chart{min-width:0;width:100%;display:flex;flex-direction:column;min-height:0;overflow:visible;cursor:default;flex:0 0 auto;box-sizing:border-box}
 .group-chart-axis{display:flex;justify-content:space-between;align-items:flex-end;height:18px;margin:0 0 2px;font:400 10px/1 var(--m);color:var(--c4);flex-shrink:0;user-select:none;box-sizing:border-box;width:100%}
 .group-panel .cap-bars{padding:0;margin:0;border:0;gap:0;flex:0 0 auto;min-height:auto;overflow:visible;display:flex;flex-direction:column;width:100%;box-sizing:border-box}
 .group-panel .cap-bars .cap-bars-plot{gap:0;flex:0 0 auto;justify-content:flex-start;overflow:visible;width:100%;min-width:0;box-sizing:border-box}
@@ -199,15 +198,16 @@ select.status-filter-select:focus{border-color:var(--pr);box-shadow:0 0 0 2px va
 .group-panel .cap-bars .cap-bar-track{height:10px;overflow:hidden;background:transparent !important;flex:1 1 0%;min-width:0}
 .group-panel .cap-bars .cap-bar-row:hover .cap-bar-track{background:transparent !important}
 .group-panel .cap-bars .cap-bar-range{display:none}
-.group-panel .cap-bars .cap-bar-count{font-size:11px;min-width:14px;color:var(--c8)}
+.group-panel .cap-bars .cap-bar-count{font-size:11px;min-width:16px;color:var(--c8);text-align:right}
+.group-panel .cap-bars .cap-bar-adj{font-size:11px;min-width:26px}
 .group-panel .cap-bar-legend{display:none}
 .group-panel .cap-bar-fill{display:block;min-height:100%}
 /* 展开考核组卡片：左表已有等级名，右图仅刻度+轨+人数 */
-.group-panels-rail:not(.panels-single) .group-chart-axis{padding:0 18px 0 0}
+.group-panels-rail:not(.panels-single) .group-chart-axis{padding:0 32px 0 22px}
 .group-panels-rail:not(.panels-single) .cap-bars.cap-bars-card .cap-bar-row{gap:6px}
 .group-panels-rail:not(.panels-single) .cap-bars.cap-bars-card .cap-bar-track{min-width:24px}
-/* 收起纵向卡：行内自带等级名 */
-.group-panels-rail.panels-single .group-chart-axis{padding:0 22px 0 88px}
+/* 收起纵向卡：行内自带等级名；刻度对齐「标签+人数」之后、「调整」之前 */
+.group-panels-rail.panels-single .group-chart-axis{padding:0 34px 0 112px}
 .group-panels-rail.panels-single .cap-bars.cap-bars-merged .cap-bar-row > .cap-tag{flex:0 0 84px;min-width:84px;max-width:84px;height:20px;padding:0 6px;font-size:11px;justify-content:flex-start;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;box-sizing:border-box}
 .group-panel .list-stats{min-height:0;overflow:visible;padding:0}
 .group-panels-rail.panels-single .group-panel.mode-list .dist-status-table .col-req{width:28%}
@@ -291,11 +291,30 @@ select.status-filter-select:focus{border-color:var(--pr);box-shadow:0 0 0 2px va
 .step-work.split-lr.step-ratify .eval-list-scroll .col-dept{width:88px}
 .step-work.split-lr.step-ratify .eval-list-scroll .col-status{width:96px}
 .step-work.split-lr.step-ratify .eval-list-scroll .col-init{width:88px}
-.step-work.split-lr.step-ratify .eval-list-scroll .col-level{width:268px}
+.step-work.split-lr.step-ratify .eval-list-scroll .col-level{width:148px}
+.step-work.split-lr.step-ratify .eval-list-scroll .col-abn-flag{width:132px}
+.step-work.split-lr.step-cap .eval-list-scroll .col-cap-adj{width:120px}
+.step-work.split-lr.step-cap .eval-list-scroll .col-abn-flag{width:132px}
+.abn-flag-list{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:0}
+.abn-flag-chip{display:inline-flex;align-items:center;gap:4px;height:20px;padding:0 6px;border-radius:4px;background:var(--c0);border:1px solid var(--c2);font:500 11px/1 var(--f);color:var(--c7);white-space:nowrap;max-width:100%}
+.abn-flag-chip svg{width:12px;height:12px;flex-shrink:0}
+.abn-flag-chip.flag-break{border-color:#FCD34D;background:#FFFBEB;color:#B45309}
+.abn-flag-chip.flag-break svg{color:#B45309}
+.abn-flag-chip.flag-grade{border-color:#FECACA;background:var(--ro50);color:var(--ro)}
+.abn-flag-chip.flag-grade svg{color:var(--ro)}
+.abn-flag-chip.flag-cap{border-color:#A7F3D0;background:var(--em50);color:var(--em700)}
+.abn-flag-chip.flag-cap svg{color:var(--em700)}
+.abn-flag-chip.flag-times{border-color:var(--pr200);background:var(--pr50);color:var(--pr)}
+.abn-flag-chip.flag-times svg{color:var(--pr)}
+.box9-list-table .col-abn-flag{width:14%}
+.box9-list-table .col-hist{width:14%}
+.ratify-chg{font:500 12px/1.3 var(--f);color:var(--c8);word-break:break-all}
+.ratify-chg .ratify-from,.ratify-chg .ratify-to{font-weight:600}
 /* 盘点：初评能力仅 chip；能力调整记录单独列 */
 .step-work.split-lr.step-cap .eval-list-scroll .col-dept{width:88px}
 .step-work.split-lr.step-cap .eval-list-scroll .col-init-cap{width:72px}
-.step-work.split-lr.step-cap .eval-list-scroll .col-cap-adj{width:220px}
+.step-work.split-lr.step-cap .eval-list-scroll .col-cap-adj{width:120px}
+.step-work.split-lr.step-cap .eval-list-scroll .col-freeze-r{width:132px;min-width:132px;padding-left:8px;padding-right:8px}
 .ratify-last{display:flex;flex-direction:column;gap:2px;align-items:flex-start;min-width:0}
 .ratify-last .ratify-who{font:500 11px/1.35 var(--f);color:var(--c5);word-break:break-all}
 .ratify-last .ratify-chg{font:500 12px/1.3 var(--f);color:var(--c8);word-break:break-all}
@@ -304,8 +323,9 @@ select.status-filter-select:focus{border-color:var(--pr);box-shadow:0 0 0 2px va
 .step-work.split-lr.step-ratify .eval-list-scroll .col-freeze-r{width:180px;padding-left:8px;padding-right:8px}
 .step-work.split-lr .eval-list .col-freeze-l{padding-left:16px;padding-right:10px}
 .step-work.split-lr .eval-list .col-freeze-r{padding-left:10px;padding-right:10px}
-.step-work.split-lr .col-freeze-r .cap-seg{display:flex;width:100%;max-width:100%}
-.step-work.split-lr .col-freeze-r .cap-opt{flex:1;min-width:0;padding:0 6px}
+/* 校准能力分段：禁止压到字宽以下 */
+.step-work.split-lr .col-freeze-r .cap-seg{display:inline-flex;width:auto;min-width:114px;max-width:100%}
+.step-work.split-lr .col-freeze-r .cap-opt{flex:1 1 0;min-width:36px;padding:0 8px;box-sizing:border-box;overflow:visible}
 .step-work.split-lr.step-ratify .col-freeze-r .star-rating{align-items:flex-start;width:auto}
 .step-work.split-lr.step-ratify .col-freeze-r .star-desc{display:block;max-width:100%;white-space:normal;word-break:break-word}
 .step-work.split-lr.step-ratify .eval-list-scroll{scrollbar-width:thin}
@@ -406,7 +426,9 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .cap-bar-fill.high{background:var(--em)}
 .cap-bar-fill.mid{background:var(--ac)}
 .cap-bar-fill.low{background:var(--ro)}
-.cap-bar-count{font:600 12px/1 var(--m);color:var(--c8);min-width:22px;text-align:right;flex-shrink:0}
+.cap-bar-count{font:600 12px/1 var(--m);color:var(--c8);min-width:18px;text-align:right;flex-shrink:0}
+.cap-bar-adj{font:600 11px/1 var(--m);min-width:28px;text-align:left;flex-shrink:0;color:var(--c7)}
+.cap-bar-adj .adj-delta{font-size:11px}
 .cap-bar-legend{display:flex;align-items:center;gap:10px;padding-top:4px;font:400 11px/1 var(--f);color:var(--c5);white-space:nowrap;overflow:hidden}
 .cap-leg-item{display:inline-flex;align-items:center;gap:4px;flex-shrink:0}
 .cap-leg-dot{display:block;width:8px;height:8px;border-radius:50%;background:#A1A1AA;flex-shrink:0}
@@ -456,8 +478,9 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 #fillFilterDivider.on{display:block}
 #fillFilterLabel.on{display:inline}
 #fillFilter.on{display:flex}
-#onlyAbnDivider{display:none}
+#onlyAbnDivider,#onlyAbnFilter{display:none}
 #onlyAbnDivider.on{display:block}
+#onlyAbnFilter.on{display:flex}
 .hd-unfilled input{position:absolute;opacity:0;width:0;height:0;pointer-events:none}
 .hd-sw{position:relative;width:32px;height:18px;border-radius:999px;background:var(--c2);flex-shrink:0;transition:background .15s}
 .hd-sw::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.12);transition:transform .15s}
@@ -663,17 +686,18 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
   .box9-y{writing-mode:horizontal-tb;transform:none;justify-content:flex-start}
 }
 
-.stepper{display:flex;align-items:center;gap:0}
-.step-item{display:flex;align-items:center;gap:8px;padding:0;border:0;background:transparent;cursor:pointer;font:500 12px/1 var(--f);color:var(--c5);transition:color .12s}
+.stepper{display:flex;align-items:center;gap:0;min-width:0;flex-wrap:wrap}
+.step-item{display:flex;align-items:center;gap:8px;padding:0;border:0;background:transparent;cursor:pointer;font:500 15px/1.2 var(--f);color:var(--c5);letter-spacing:-.2px;transition:color .12s}
 .step-item:hover{color:var(--pr)}
-.step-item .n{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:700 11px/1 var(--f);background:var(--c1);color:var(--c5);transition:background .12s,color .12s}
+.step-item .n{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:700 12px/1 var(--f);background:var(--c1);color:var(--c5);transition:background .12s,color .12s;flex-shrink:0}
 .step-item:hover .n{background:var(--pr50);color:var(--pr)}
+.step-item.done{color:var(--c7);font-weight:600}
 .step-item.done .n{background:var(--pr50);color:var(--pr)}
-.step-item.active{color:var(--pr)}
-.step-item.active .n,.step-item.active:hover .n{background:var(--pr);color:#FFF}
-.step-line{width:28px;height:1px;background:var(--c2);margin:0 8px}
-.cap-seg{display:inline-flex;border:1px solid var(--c2);border-radius:var(--r1);overflow:hidden}
-.cap-opt{height:28px;padding:0 12px;border:0;background:var(--sf);color:var(--c6);font:500 12px/1 var(--f);cursor:pointer}
+.step-item.active{color:var(--c9);font:700 20px/1.2 var(--f);letter-spacing:-.3px}
+.step-item.active .n,.step-item.active:hover .n{background:var(--pr);color:#FFF;width:26px;height:26px;font-size:13px}
+.step-line{width:28px;height:1px;background:var(--c2);margin:0 10px;flex-shrink:0}
+.cap-seg{display:inline-flex;border:1px solid var(--c2);border-radius:var(--r1);overflow:hidden;min-width:114px}
+.cap-opt{height:28px;min-width:36px;padding:0 10px;border:0;background:var(--sf);color:var(--c6);font:500 12px/1 var(--f);cursor:pointer;box-sizing:border-box;white-space:nowrap}
 .cap-opt+.cap-opt{border-left:1px solid var(--c2)}
 .cap-opt:hover{background:var(--c0)}
 .cap-opt:disabled{cursor:not-allowed;opacity:.9}
@@ -695,7 +719,7 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .box9-lvl.high{color:var(--em)}
 .box9-lvl.mid{color:var(--ac)}
 .box9-lvl.low{color:var(--ro)}
-.box9-cell{border:1px dashed var(--c2);border-radius:var(--r2);padding:6px;min-height:0;height:100%;background:var(--c0);display:flex;flex-direction:column;gap:4px;transition:border-color .12s,background .12s;overflow:hidden;box-sizing:border-box}
+.box9-cell{border:1px dashed var(--c2);border-radius:var(--r2);padding:8px;min-height:0;height:100%;background:var(--c0);display:flex;flex-direction:column;gap:8px;transition:border-color .12s,background .12s;overflow:hidden;box-sizing:border-box}
 .box9-cell.drag-over{border-color:var(--pr);background:var(--pr50)}
 .box9-cell[data-cell="高-高"],
 .box9-cell[data-cell="高-中"],
@@ -706,17 +730,18 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .box9-cell[data-cell="中-低"],
 .box9-cell[data-cell="低-中"],
 .box9-cell[data-cell="低-低"]{background:var(--ro50);border:1px solid #FECDD3}
-.box9-cell-hd{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-shrink:0}
-.box9-cell-hd-l{display:flex;align-items:center;gap:6px;min-width:0}
-.box9-cell-hd-r{display:flex;align-items:center;gap:4px;flex-shrink:0}
-.box9-cell-name{font:600 11px/1.2 var(--f);color:var(--c8)}
-.box9-cell-count{font:600 11px/1 var(--m);color:var(--c5)}
+.box9-cell-hd{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-shrink:0;min-height:22px}
+.box9-cell-hd-l{display:flex;align-items:center;gap:6px;min-width:0;flex:1 1 auto}
+.box9-cell-hd-r{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.box9-cell-num{font:600 14px/1.3 var(--f);color:var(--c5);flex-shrink:0}
+.box9-cell-name{font:600 14px/1.3 var(--f);color:var(--c9);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.box9-cell-count{font:600 12px/1.3 var(--m);color:var(--c5);flex-shrink:0}
 .box9-fs-btn{width:22px;height:22px;border:1px solid var(--c2);border-radius:var(--r1);background:var(--sf);color:var(--c5);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;flex-shrink:0}
 .box9-fs-btn:hover{border-color:var(--pr200);color:var(--pr);background:var(--pr50)}
 .box9-fs-btn svg{width:12px;height:12px;display:block}
 .box9-hd-actions{display:flex;align-items:center;gap:8px;margin-left:auto}
-.box9-people{display:flex;flex-wrap:wrap;gap:4px;align-content:flex-start;flex:1;min-height:0;overflow:hidden}
-.person-chip{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border:1px solid var(--c2);border-radius:12px;background:var(--sf);cursor:grab;font:500 11px/1.2 var(--f);color:var(--c8);max-width:100%;white-space:nowrap}
+.box9-people{display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;align-items:flex-start;flex:1;min-height:0;overflow:hidden}
+.person-chip{display:inline-flex;align-items:center;gap:3px;padding:4px 8px;border:1px solid var(--c2);border-radius:12px;background:var(--sf);cursor:grab;font:500 12px/1.2 var(--f);color:var(--c8);max-width:100%;white-space:nowrap}
 .person-chip:active{cursor:grabbing}
 .person-chip.on{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .person-chip.abn{border-color:#FCD34D}
@@ -894,15 +919,12 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
   <!-- Page header -->
   <div class="pg-hd-top">
     <div class="pg-hd-main">
-      <div class="pg-hd-stack">
-        <h1 class="pg-hd-title" id="pageTitle">年度盘点与绩效审定</h1>
-        <div class="stepper" id="stepper" aria-label="办理步骤">
-          <button type="button" class="step-item active" data-step="1" onclick="demoGoStep(1)"><span class="n">1</span>绩效审定</button>
-          <span class="step-line"></span>
-          <button type="button" class="step-item" data-step="2" onclick="demoGoStep(2)"><span class="n">2</span>人才盘点</button>
-          <span class="step-line"></span>
-          <button type="button" class="step-item" data-step="3" onclick="demoGoStep(3)"><span class="n">3</span>九宫格校准</button>
-        </div>
+      <div class="stepper" id="stepper" role="navigation" aria-label="办理步骤">
+        <button type="button" class="step-item active" data-step="1" onclick="demoGoStep(1)"><span class="n">1</span>绩效审定</button>
+        <span class="step-line"></span>
+        <button type="button" class="step-item" data-step="2" onclick="demoGoStep(2)"><span class="n">2</span>能力审定</button>
+        <span class="step-line"></span>
+        <button type="button" class="step-item" data-step="3" onclick="demoGoStep(3)"><span class="n">3</span>九宫格校准</button>
       </div>
     </div>
     <div class="pg-hd-right">
@@ -985,11 +1007,7 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
         <span class="filter-label" id="fillFilterLabel">填写状态</span>
         <div class="filter-actions" id="fillFilter"></div>
         <div class="filter-divider" id="onlyAbnDivider"></div>
-        <label class="hd-unfilled abn-filter" id="onlyAbnWrap" for="onlyAbnChk">
-          <span>只看异常</span>
-          <input type="checkbox" id="onlyAbnChk" onchange="toggleOnlyAbnormal(this.checked)">
-          <span class="hd-sw" aria-hidden="true"></span>
-        </label>
+        <div class="filter-actions" id="onlyAbnFilter"></div>
       </div>
     </div>
     <div class="eval-list-split" id="evalSplit">
@@ -1004,12 +1022,12 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
       </div>
       <div class="group-panels-rail" id="groupPanelsRail" aria-label="按考核组分布">
         <div class="group-panels-toolbar" id="groupPanelsToolbar" aria-label="考核组区工具条">
-          <button class="eval-split-toggle" id="evalSplitToggle" type="button" aria-expanded="true" aria-controls="groupPanelsRail" title="收起为纵向组卡" aria-label="收起为纵向组卡" onclick="toggleGroupPanels()">
+          <button class="eval-split-toggle" id="evalSplitToggle" type="button" aria-expanded="false" aria-controls="groupPanelsRail" title="展开按考核组" aria-label="展开按考核组" onclick="toggleGroupPanels()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
           </button>
           <span class="group-panel-mode-seg" role="group" aria-label="图表或统计表">
-            <button type="button" class="group-panel-mode-btn on" id="panelModeChartBtn" onclick="setPanelBodyMode('chart')">图表</button>
-            <button type="button" class="group-panel-mode-btn" id="panelModeListBtn" onclick="setPanelBodyMode('list')">列表</button>
+            <button type="button" class="group-panel-mode-btn" id="panelModeChartBtn" onclick="setPanelBodyMode('chart')">图表</button>
+            <button type="button" class="group-panel-mode-btn on" id="panelModeListBtn" onclick="setPanelBodyMode('list')">列表</button>
           </span>
         </div>
         <div class="group-panels-scroll" id="groupPanelsScroll"></div>
@@ -1050,8 +1068,8 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
           </button>
           <span class="group-panel-mode-seg" id="boxPanelModeSeg" role="group" aria-label="图表或统计表">
-            <button type="button" class="group-panel-mode-btn on" id="boxModeChartBtn" data-view="chart" onclick="setStatsViewMode('chart')">图表</button>
-            <button type="button" class="group-panel-mode-btn" id="boxModeListBtn" data-view="list" onclick="setStatsViewMode('list')">列表</button>
+            <button type="button" class="group-panel-mode-btn" id="boxModeChartBtn" data-view="chart" onclick="setStatsViewMode('chart')">图表</button>
+            <button type="button" class="group-panel-mode-btn on" id="boxModeListBtn" data-view="list" onclick="setStatsViewMode('list')">列表</button>
           </span>
         </div>
         <div class="group-panels-scroll" id="boxGroupPanelsScroll"></div>
@@ -1211,12 +1229,8 @@ var STAR_DESC_RATIFY={1:'业绩大幅超越目标，具备标杆价值',2:'整�
 var CAP_OPTIONS=['高','中','低'];
 var BOX_NAMES={'高-低':'老黄牛','高-中':'穿山甲','高-高':'领头羊','中-低':'空心竹','中-中':'工蜜蜂','中-高':'白龙马','低-低':'寄居蟹','低-中':'老爷车','低-高':'水上漂'};
 var BOX_NUM={'高-高':1,'高-中':2,'中-高':3,'高-低':4,'中-中':5,'低-高':6,'中-低':7,'低-中':8,'低-低':9};
-var BOX_NUM_EMOJI={'高-高':'1️⃣','高-中':'2️⃣','中-高':'3️⃣','高-低':'4️⃣','中-中':'5️⃣','低-高':'6️⃣','中-低':'7️⃣','低-中':'8️⃣','低-低':'9️⃣'};
 function boxLabel(key){
-  var name=BOX_NAMES[key];
-  if(!name)return '';
-  var n=BOX_NUM_EMOJI[key]||'';
-  return n?(n+' '+name):name;
+  return BOX_NAMES[key]||'';
 }
 function boxKeyOf(m){
   if(!m||!m.capability)return '';
@@ -1224,6 +1238,13 @@ function boxKeyOf(m){
 }
 function boxNumOf(key){
   return BOX_NUM[key]||0;
+}
+/** 格子标题：普通数字序号 + 格名（非 emoji） */
+function boxCellTitleHtml(key){
+  var name=boxLabel(key);
+  if(!name)return '';
+  var n=boxNumOf(key);
+  return (n?'<span class="box9-cell-num">'+n+'</span>':'')+'<span class="box9-cell-name">'+name+'</span>';
 }
 var PERF_ROWS=['高','中','低'];
 var CAP_COLS=['低','中','高'];
@@ -1316,10 +1337,10 @@ function syncActiveForceAliases(){
   FORCE_DIST=getActiveForceDist();
   CAP_FORCE=getActiveCapForce();
 }
-var statsViewMode='chart'; /* chart | list —— 与审定「图表|列表」一致 */
-var statsGroupsExpanded=false; /* 九宫格右侧：默认收起汇总；展开=按考核组 */
-var listViewMode='byGroup'; /* detail | byGroup —— 审定/盘点列表视图 */
-var panelBodyMode='chart'; /* 收起态全局：chart | list（四组同步） */
+var statsViewMode='list'; /* chart | list —— 默认列表 */
+var statsGroupsExpanded=false; /* 九宫格右侧：默认收起；展开=按考核组 2×2 */
+var listViewMode='detail'; /* detail=收起纵向组卡 | byGroup=展开 2×2；默认收起 */
+var panelBodyMode='list'; /* 收起态全局：默认 list */
 var BAR_OK='#10B981';
 var BAR_BAD='#F43F5E';
 /** 柱色：当前人数 vs 目标区间（与左表「目标」min–max 一致；调整列正负不单独判定） */
@@ -1442,7 +1463,7 @@ var MEMBERS=[
 ];
 
 var currentGroup='全部'; /* 列表筛选；右侧按组列始终全部展示 */
-var currentStatus=''; /* ''=全部：首屏可见全量；与统计卡 listPool 同源 */
+var currentStatus='待提交'; /* 默认待提交：只筛左侧名单；右侧统计仍全量 */
 var currentGrade=null;
 var currentCap=null;
 var currentKeyword='';
@@ -1560,18 +1581,29 @@ MEMBERS.slice().sort(function(a,b){return b.assessScore-a.assessScore;}).forEach
 /* mock：异常类型人员（跨格子，演示标识） */
 (function seedAbnormal(){
   var map={
-    '姚辉静':{type:'绩效跨2档调整',reason:'由符合预期+跨档调至远超预期，需复核依据'},
-    '谭刚伟':{type:'绩效跨2档调整',reason:'审定从符合预期-跨两档调至远低预期'},
-    '魏宁鹏':{type:'能力跨2档调整',reason:'能力由高跨档调至低，与测评结果偏差大'},
-    '钟皓丽':{type:'能力跨2档调整',reason:'能力由低跨档调至高，待上级确认'},
-    '潘瑞龙':{type:'校准次数≥2次',reason:'本周期已校准 2 次（领头羊↔穿山甲）'},
-    '萧玲刚':{type:'九宫格校准调整',reason:'拖拽调整至领头羊，已记录调整原因'}
+    '姚辉静':{type:'绩效跨两档',reason:'由符合预期+跨档调至远超预期，需复核依据'},
+    '谭刚伟':{type:'绩效跨两档',reason:'审定从符合预期-跨两档调至远低预期'},
+    '魏宁鹏':{type:'能力跨两档',reason:'能力由高跨档调至低，与测评结果偏差大'},
+    '钟皓丽':{type:'能力跨两档',reason:'能力由低跨档调至高，待上级确认'},
+    '潘瑞龙':{type:'校准≥2次',reason:'本周期已校准 2 次（领头羊↔穿山甲）'},
+    '萧玲刚':{type:'九宫格校准调整',reason:'拖拽调整至领头羊，已记录调整原因'},
+    '董瑞萍':{type:'申请突破',reason:'强制分布申请突破，待 HRBP 复核'}
   };
   MEMBERS.forEach(function(m){
     var a=map[m.name];
     if(!a)return;
     m.abnormalType=a.type;
     m.abnormalReason=a.reason;
+    if(a.type==='申请突破')m.breakthroughApply=true;
+  });
+})();
+/* mock：申请突破标记（与异常标识「申请突破」同源） */
+(function seedBreakthroughApply(){
+  ['董瑞萍','阎瑞博'].forEach(function(name){
+    var m=MEMBERS.filter(function(x){return x.name===name;})[0];
+    if(!m||!m.reached)return;
+    m.breakthroughApply=true;
+    if(!m.abnormalType)m.abnormalType='申请突破';
   });
 })();
 /* mock：上年盘点格子（box key，tip 展示格子序号 1–9） */
@@ -1859,7 +1891,7 @@ function getFilteredMembers(){
     if(currentGroup!=='全部'&&m.group!==currentGroup)return false;
     if(!matchFillFilter(m))return false;
     if(currentStatus&&submitStatusOf(m)!==currentStatus)return false;
-    if(onlyAbnormal&&!m.abnormalType)return false;
+    if(onlyAbnormal&&!memberHasExceptionFlag(m))return false;
     if(currentGrade){
       var gNow=currentStep===1?(m.ratifyGrade||m.grade):m.grade;
       if(gNow!==currentGrade)return false;
@@ -2211,7 +2243,7 @@ function renderCapTableHtml(data,showReq,opts){
     ?'<colgroup><col style="width:18%"><col class="col-req" style="width:34%"><col style="width:24%"><col style="width:24%"></colgroup>'
     :'<colgroup><col style="width:28%"><col style="width:36%"><col style="width:36%"></colgroup>';
   var head=showReq
-    ?'<thead><tr><th>能力</th><th class="col-req">目标</th><th>当前</th><th>调整</th></tr></thead>'
+    ?'<thead><tr><th>能力</th><th class="col-req">要求</th><th>当前</th><th>调整</th></tr></thead>'
     :'<thead><tr><th>能力</th><th>当前</th><th>调整</th></tr></thead>';
   var html='<table class="dist-status-table">'+colgroup+head+'<tbody>';
   data.labels.forEach(function(g,i){
@@ -2237,7 +2269,7 @@ function renderGradeTableHtml(data,showReq,opts){
     ?'<colgroup><col style="width:34%"><col class="col-req" style="width:24%"><col style="width:20%"><col style="width:22%"></colgroup>'
     :'<colgroup><col style="width:40%"><col style="width:30%"><col style="width:30%"></colgroup>';
   var head=showReq
-    ?'<thead><tr><th>等级</th><th class="col-req">目标</th><th>当前</th><th>调整</th></tr></thead>'
+    ?'<thead><tr><th>等级</th><th class="col-req">要求</th><th>当前</th><th>调整</th></tr></thead>'
     :'<thead><tr><th>等级</th><th>当前</th><th>调整</th></tr></thead>';
   var html='<table class="dist-status-table">'+colgroup+head+'<tbody>';
   data.labels.forEach(function(g,i){
@@ -2270,7 +2302,16 @@ function panelRowClick(g,isCap,rowClick){
   return rowClick?rowClick(g):(isCap?('filterByCap(\''+g+'\')'):('filterByGrade(\''+g+'\')'));
 }
 
-/** 展开·考核组卡片右侧图：无等级名（左表已有），仅刻度 + 柱/灰线(调整前)/蓝线(标准) + 人数 */
+function panelBarLineHtml(n,before,fill,pctNow){
+  var adjHtml=formatAdjDeltaHtml(before||0,n||0);
+  return '<span class="cap-bar-count" title="当前 '+n+'">'+n+'</span>'+
+    '<div class="cap-bar-track">'+
+      '<div class="cap-bar-fill" style="width:'+pctNow+'%;background:'+fill+'" title="当前 '+n+'"></div>'+
+    '</div>'+
+    '<span class="cap-bar-adj" title="调整">'+adjHtml+'</span>';
+}
+
+/** 展开·考核组卡片右侧图：无等级名（左表已有），仅刻度 + 柱/灰线(调整前)/蓝线(标准)；左人数、右加减 */
 function renderGroupCardBarsHtml(data,opts){
   opts=opts||{};
   var groupName=opts.groupName||null;
@@ -2286,20 +2327,15 @@ function renderGroupCardBarsHtml(data,opts){
     var n=data.after[i]||0;
     var pctNow=panelBarWidthPct(n,scale);
     var fill=barFillByRange(n,data.min[i],data.max[i]);
-    barsHtml+='<div class="cap-bar-row'+(panelRowActive(g,isCap,groupName)?' active':'')+'" onclick="'+panelRowClick(g,isCap,rowClick)+'" title="'+g+' 当前 '+n+'（目标 '+data.min[i]+'–'+data.max[i]+'）">'+
-      '<div class="cap-bar-line">'+
-        '<div class="cap-bar-track" data-i="'+i+'">'+
-          '<div class="cap-bar-fill" style="width:'+pctNow+'%;background:'+fill+'" title="当前 '+n+'"></div>'+
-        '</div>'+
-        '<span class="cap-bar-count" title="当前 '+n+'">'+n+'</span>'+
-      '</div>'+
+    barsHtml+='<div class="cap-bar-row'+(panelRowActive(g,isCap,groupName)?' active':'')+'" onclick="'+panelRowClick(g,isCap,rowClick)+'" title="'+g+' 当前 '+n+'（要求 '+data.min[i]+'–'+data.max[i]+'）">'+
+      '<div class="cap-bar-line">'+panelBarLineHtml(n,before[i],fill,pctNow)+'</div>'+
     '</div>';
   });
   barsHtml+='</div>';
   return {html:axisHtml+'<div class="cap-bars cap-bars-card'+(isCap?'':' grade-bars')+'" data-panel-bars="1">'+barsHtml+'</div>',scale:scale,before:before,mid:std,after:data.after};
 }
 
-/** 收起·纵向组卡图：行左侧等级名 + 柱/灰线(调整前)/蓝线(标准) + 人数 */
+/** 收起·纵向组卡图：行左侧等级名 + 柱/灰线(调整前)/蓝线(标准)；左人数、右加减 */
 function renderMergedBarsHtml(data,opts){
   opts=opts||{};
   var rowClick=opts.rowClick||null;
@@ -2313,19 +2349,13 @@ function renderMergedBarsHtml(data,opts){
   data.labels.forEach(function(g,i){
     var n=data.after[i]||0;
     var pctNow=panelBarWidthPct(n,scale);
-    /* 合并：合计当前 vs 各组目标人数相加后的区间（data.min/max 已在 getMerged* 里累加） */
     var fill=barFillByRange(n,data.min[i],data.max[i]);
     var labelHtml=isCap
       ?'<span class="cap-tag '+(g==='高'?'high':g==='中'?'mid':'low')+'" title="'+g+'">'+g+'</span>'
       :'<span class="cap-tag" style="background:'+(GRADE_BG[g]||'var(--c1)')+';color:'+(GRADE_COLORS[g]||'var(--c7)')+'" title="'+g+'">'+g+'</span>';
     barsHtml+='<div class="cap-bar-row'+(panelRowActive(g,isCap,null)?' active':'')+'" onclick="'+panelRowClick(g,isCap,rowClick)+'">'+
       labelHtml+
-      '<div class="cap-bar-line">'+
-        '<div class="cap-bar-track" data-i="'+i+'">'+
-          '<div class="cap-bar-fill" style="width:'+pctNow+'%;background:'+fill+'" title="当前 '+n+'"></div>'+
-        '</div>'+
-        '<span class="cap-bar-count" title="当前 '+n+'">'+n+'</span>'+
-      '</div>'+
+      '<div class="cap-bar-line">'+panelBarLineHtml(n,before[i],fill,pctNow)+'</div>'+
     '</div>';
   });
   barsHtml+='</div>';
@@ -2340,20 +2370,22 @@ function renderCapBarsHtml(data,opts){
   var barsHtml='<div class="cap-bars-plot"><svg class="cap-line-svg" aria-hidden="true"></svg>';
   data.labels.forEach(function(g,i){
     var tone=g==='高'?'high':g==='中'?'mid':'low';
-    var pctNow=Math.min(100,Math.round(data.after[i]/scale*100));
+    var n=data.after[i]||0;
+    var pctNow=Math.min(100,Math.round(n/scale*100));
     var rangeL=Math.min(100,Math.round(data.min[i]/scale*100));
     var rangeW=Math.max(0,Math.min(100-rangeL,Math.round((data.max[i]-data.min[i])/scale*100)));
-    var fill=barFillByRange(data.after[i],data.min[i],data.max[i]);
+    var fill=barFillByRange(n,data.min[i],data.max[i]);
     var isActive=currentCap===g&&(!groupName||currentGroup===groupName);
     var click=rowClick?rowClick(g):('filterByCap(\''+g+'\')');
     barsHtml+='<div class="cap-bar-row'+(isActive?' active':'')+'" onclick="'+click+'">'+
       '<span class="cap-tag '+tone+'">'+g+'</span>'+
       '<div class="cap-bar-line">'+
+        '<span class="cap-bar-count" title="当前 '+n+'">'+n+'</span>'+
         '<div class="cap-bar-track" data-i="'+i+'">'+
           '<div class="cap-bar-range" style="left:'+rangeL+'%;width:'+Math.max(rangeW,2)+'%" title="要求 '+data.min[i]+'–'+data.max[i]+'"></div>'+
-          '<div class="cap-bar-fill" style="width:'+Math.max(pctNow,data.after[i]?3:0)+'%;background:'+fill+'" title="当前 '+data.after[i]+'"></div>'+
+          '<div class="cap-bar-fill" style="width:'+Math.max(pctNow,n?3:0)+'%;background:'+fill+'" title="当前 '+n+'"></div>'+
         '</div>'+
-        '<span class="cap-bar-count" title="当前 '+data.after[i]+'">'+data.after[i]+'</span>'+
+        '<span class="cap-bar-adj" title="调整">'+formatAdjDeltaHtml(data.before[i]||0,n)+'</span>'+
       '</div>'+
     '</div>';
   });
@@ -2372,20 +2404,22 @@ function renderGradeBarsHtml(data,opts){
   var scale=Math.max.apply(null,data.before.concat(data.max).concat(data.mid).concat(data.after).concat([1]));
   var barsHtml='<div class="cap-bars-plot"><svg class="cap-line-svg" aria-hidden="true"></svg>';
   data.labels.forEach(function(g,i){
-    var pctNow=Math.min(100,Math.round(data.after[i]/scale*100));
+    var n=data.after[i]||0;
+    var pctNow=Math.min(100,Math.round(n/scale*100));
     var rangeL=Math.min(100,Math.round(data.min[i]/scale*100));
     var rangeW=Math.max(0,Math.min(100-rangeL,Math.round((data.max[i]-data.min[i])/scale*100)));
-    var fill=barFillByRange(data.after[i],data.min[i],data.max[i]);
+    var fill=barFillByRange(n,data.min[i],data.max[i]);
     var isActive=currentGrade===g&&(!groupName||currentGroup===groupName);
     var click=rowClick?rowClick(g):('filterByGrade(\''+g+'\')');
     barsHtml+='<div class="cap-bar-row'+(isActive?' active':'')+'" onclick="'+click+'">'+
       '<span class="cap-tag" style="background:'+(GRADE_BG[g]||'var(--c1)')+';color:'+(GRADE_COLORS[g]||'var(--c7)')+'">'+g.replace('符合预期','符合').replace('预期','')+'</span>'+
       '<div class="cap-bar-line">'+
+        '<span class="cap-bar-count" title="当前 '+n+'">'+n+'</span>'+
         '<div class="cap-bar-track" data-i="'+i+'">'+
           '<div class="cap-bar-range" style="left:'+rangeL+'%;width:'+Math.max(rangeW,2)+'%" title="要求 '+data.min[i]+'–'+data.max[i]+'"></div>'+
-          '<div class="cap-bar-fill" style="width:'+Math.max(pctNow,data.after[i]?3:0)+'%;background:'+fill+'" title="当前 '+data.after[i]+'"></div>'+
+          '<div class="cap-bar-fill" style="width:'+Math.max(pctNow,n?3:0)+'%;background:'+fill+'" title="当前 '+n+'"></div>'+
         '</div>'+
-        '<span class="cap-bar-count">'+data.after[i]+'</span>'+
+        '<span class="cap-bar-adj" title="调整">'+formatAdjDeltaHtml(data.before[i]||0,n)+'</span>'+
       '</div>'+
     '</div>';
   });
@@ -3075,15 +3109,7 @@ function lastRatifyHtml(m){
   if(!adj||!adj.to)return '<span style="color:var(--c4)">—</span>';
   var fromC=GRADE_COLORS[adj.from]||'var(--c6)';
   var toC=GRADE_COLORS[adj.to]||'var(--c8)';
-  var html='<div class="ratify-last">'+
-    '<span class="ratify-who">'+adjMetaLine(adj)+'</span>'+
-    '<span class="ratify-chg"><span class="ratify-from" style="color:'+fromC+'">'+(adj.from||'—')+'</span> → <span class="ratify-to" style="color:'+toC+'">'+adj.to+'</span></span>';
-  // 跨 2 档且有原因时第三行展示（与弹窗写入的 lastRatifyAdj.reason 同源）
-  var reason=(adj.reason||'').trim();
-  if(reason&&tierGap(gradeTierIndex(adj.from),gradeTierIndex(adj.to))>=2){
-    html+='<span class="ratify-reason">原因：'+reason+'</span>';
-  }
-  return html+'</div>';
+  return '<span class="ratify-chg"><span class="ratify-from" style="color:'+fromC+'">'+(adj.from||'—')+'</span> → <span class="ratify-to" style="color:'+toC+'">'+adj.to+'</span></span>';
 }
 function capAdjColor(v){
   if(v==='高')return 'var(--em700)';
@@ -3099,14 +3125,52 @@ function lastCapAdjHtml(m){
   if(!adj||!adj.to)return '<span style="color:var(--c4)">—</span>';
   var fromC=capAdjColor(adj.from);
   var toC=capAdjColor(adj.to);
-  var html='<div class="ratify-last">'+
-    '<span class="ratify-who">'+adjMetaLine(adj)+'</span>'+
-    '<span class="ratify-chg"><span class="ratify-from" style="color:'+fromC+'">'+(adj.from||'—')+'</span> → <span class="ratify-to" style="color:'+toC+'">'+adj.to+'</span></span>';
-  var reason=(adj.reason||'').trim();
-  if(reason&&tierGap(capTierIndex(adj.from),capTierIndex(adj.to))>=2){
-    html+='<span class="ratify-reason">原因：'+reason+'</span>';
+  return '<span class="ratify-chg"><span class="ratify-from" style="color:'+fromC+'">'+(adj.from||'—')+'</span> → <span class="ratify-to" style="color:'+toC+'">'+adj.to+'</span></span>';
+}
+
+var ABN_FLAG_ICO='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+function memberAdjustCount(m){
+  if(!m)return 0;
+  var n=0;
+  if(m.adjustHistory&&m.adjustHistory.length)n=Math.max(n,m.adjustHistory.length);
+  if(m.adjHist&&m.adjHist.length)n=Math.max(n,m.adjHist.length);
+  return n;
+}
+/** 异常标识：申请突破 / 绩效跨两档 / 能力跨两档 / 校准≥2次 */
+function memberExceptionFlags(m){
+  var flags=[];
+  if(!m)return flags;
+  if(m.breakthroughApply||m.abnormalType==='申请突破'||(m.abnormalType&&String(m.abnormalType).indexOf('突破')>=0)){
+    flags.push({key:'break',label:'申请突破'});
   }
-  return html+'</div>';
+  var gFrom=m.lastRatifyAdj&&m.lastRatifyAdj.from;
+  var gTo=(m.lastRatifyAdj&&m.lastRatifyAdj.to)||m.ratifyGrade;
+  if(gFrom&&gTo&&tierGap(gradeTierIndex(gFrom),gradeTierIndex(gTo))>=2){
+    flags.push({key:'grade',label:'绩效跨两档'});
+  }else if(m.grade&&m.ratifyGrade&&tierGap(gradeTierIndex(m.grade),gradeTierIndex(m.ratifyGrade))>=2){
+    flags.push({key:'grade',label:'绩效跨两档'});
+  }else if(m.abnormalType&&String(m.abnormalType).indexOf('绩效跨')>=0){
+    flags.push({key:'grade',label:'绩效跨两档'});
+  }
+  var cFrom=(m.initCapAdj&&m.initCapAdj.from)||m.initCapability;
+  var cTo=(m.initCapAdj&&m.initCapAdj.to)||m.capability;
+  if(cFrom&&cTo&&((cFrom==='高'&&cTo==='低')||(cFrom==='低'&&cTo==='高')||tierGap(capTierIndex(cFrom),capTierIndex(cTo))>=2)){
+    flags.push({key:'cap',label:'能力跨两档'});
+  }else if(m.abnormalType&&String(m.abnormalType).indexOf('能力跨')>=0){
+    flags.push({key:'cap',label:'能力跨两档'});
+  }
+  if(memberAdjustCount(m)>=2||m.abnormalType==='校准次数≥2次'||m.abnormalType==='校准≥2次'){
+    flags.push({key:'times',label:'校准≥2次'});
+  }
+  var seen={};
+  return flags.filter(function(f){if(seen[f.label])return false;seen[f.label]=1;return true;});
+}
+function exceptionFlagsHtml(m){
+  var flags=memberExceptionFlags(m);
+  if(!flags.length)return '';
+  return '<div class="abn-flag-list">'+flags.map(function(f){
+    return '<span class="abn-flag-chip flag-'+f.key+'">'+ABN_FLAG_ICO+f.label+'</span>';
+  }).join('')+'</div>';
 }
 
 function renderHead(){
@@ -3117,7 +3181,7 @@ function renderHead(){
     if(compact){
       head.innerHTML='<tr><th class="col-freeze-l">被考核人</th><th class="col-freeze-r">校准能力</th></tr>';
     }else{
-      head.innerHTML='<tr><th class="col-freeze-l">被考核人</th><th class="col-dept">部门</th><th class="col-status">提交状态</th><th>360得分</th><th>360排名</th><th>测评得分</th><th>测评排名</th><th class="col-init-cap">初评能力</th><th class="col-cap-adj">能力调整记录</th><th class="col-freeze-r">校准能力</th></tr>';
+      head.innerHTML='<tr><th class="col-freeze-l">被考核人</th><th class="col-dept">部门</th><th class="col-status">提交状态</th><th>360得分</th><th>360排名</th><th>测评得分</th><th>测评排名</th><th class="col-init-cap">初评能力</th><th class="col-cap-adj">能力调整记录</th><th class="col-abn-flag">异常标识</th><th class="col-freeze-r">校准能力</th></tr>';
     }
   }else if(currentStep===3){
     distTitle.textContent='绩效与能力分布';
@@ -3126,7 +3190,7 @@ function renderHead(){
     if(compact){
       head.innerHTML='<tr><th class="col-freeze-l">被考核人</th><th class="col-freeze-r">调整等级</th></tr>';
     }else{
-      head.innerHTML='<tr><th class="col-freeze-l">被考核人</th><th class="col-dept">部门</th><th class="col-status">提交状态</th><th class="col-init">初评等级</th><th class="col-level">调整记录</th><th class="col-freeze-r">调整等级</th></tr>';
+      head.innerHTML='<tr><th class="col-freeze-l">被考核人</th><th class="col-dept">部门</th><th class="col-status">提交状态</th><th class="col-init">初评等级</th><th class="col-level">调整记录</th><th class="col-abn-flag">异常标识</th><th class="col-freeze-r">调整等级</th></tr>';
     }
   }
   syncFillFilterUI();
@@ -3159,15 +3223,13 @@ function filterFill(mode){
 }
 
 function syncOnlyAbnormalUI(){
-  var wrap=document.getElementById('onlyAbnWrap');
-  var chk=document.getElementById('onlyAbnChk');
+  var box=document.getElementById('onlyAbnFilter');
   var div=document.getElementById('onlyAbnDivider');
-  if(!wrap||!chk)return;
-  var show=currentStep===3;
-  wrap.classList.toggle('on',show);
+  if(!box)return;
+  var show=currentStep===1||currentStep===2||currentStep===3;
+  box.classList.toggle('on',show);
   if(div)div.classList.toggle('on',show);
-  if(!show)onlyAbnormal=false;
-  chk.checked=!!onlyAbnormal;
+  box.innerHTML='<button class="btn btn-s btn-sm'+(onlyAbnormal?' btn-active':'')+'" type="button" onclick="toggleOnlyAbnormal(!onlyAbnormal)">只看异常</button>';
 }
 
 function toggleOnlyAbnormal(on){
@@ -3175,6 +3237,10 @@ function toggleOnlyAbnormal(on){
   currentPage=1;
   syncOnlyAbnormalUI();
   renderAll();
+}
+
+function memberHasExceptionFlag(m){
+  return memberExceptionFlags(m).length>0;
 }
 
 function capTagHtml(v){
@@ -3271,6 +3337,7 @@ function renderMembers(){
           '<td style="font-family:var(--m);color:var(--c7)">'+(m.reached?m.rankAssess:'—')+'</td>'+
           '<td class="col-init-cap">'+initCapCellHtml(m)+'</td>'+
           '<td class="col-cap-adj">'+lastCapAdjHtml(m)+'</td>'+
+          '<td class="col-abn-flag">'+exceptionFlagsHtml(m)+'</td>'+
           capSegHtml(idx,m,'col-freeze-r')+
         '</tr>';
       }
@@ -3302,7 +3369,8 @@ function renderMembers(){
       '<td class="col-dept">'+m.dept+'</td>'+
       '<td class="col-status">'+submitTagHtml(m)+'</td>'+
       '<td class="col-init">'+gradeTextHtml(m.grade)+'</td>'+
-      '<td class="col-level">'+lastRatifyHtml(m)+'</td>';
+      '<td class="col-level">'+lastRatifyHtml(m)+'</td>'+
+      '<td class="col-abn-flag">'+exceptionFlagsHtml(m)+'</td>';
     if(m.reached){
       var starVal=ratifyStarValue(m.ratifyGrade);
       var starColor=m.ratifyGrade?(GRADE_COLORS[m.ratifyGrade]||'var(--c8)'):'';
@@ -3734,8 +3802,6 @@ function applyApproveMode(){
   document.title='HR ONE - COE/CHO 审批';
   var crumb=document.getElementById('crumbCurrent');
   if(crumb)crumb.textContent='COE/CHO 审批';
-  var title=document.getElementById('pageTitle');
-  if(title)title.textContent='COE/CHO 审批';
   var passBtn=document.getElementById('approvePassBtn');
   var rejectBtn=document.getElementById('approveRejectBtn');
   if(passBtn)passBtn.style.display='';
@@ -3807,10 +3873,9 @@ function goStep(step){
   currentCap=null;
   currentPage=1;
   isDistCollapsed=false;
-  if(prev!==2&&step===2)currentStatus='已提交';
-  if(prev===2&&step!==2)currentStatus='已提交';
+  if(step===2)currentStatus='已提交';
+  else currentStatus='待提交';
   if(step===3)fillFilter='';
-  if(step!==3)onlyAbnormal=false;
   closeChipPop();
   renderAll();
   applyDistCollapse();
@@ -4277,7 +4342,7 @@ function openBoxGridFullscreen(){
       var key=p+'-'+c;
       var people=getCellPeople(key);
       html+='<div class="box9-cell" data-cell="'+key+'" ondragover="onBoxOver(event)" ondragleave="this.classList.remove(\'drag-over\')" ondrop="onBoxDrop(event,\''+p+'\',\''+c+'\')">';
-      html+='<div class="box9-cell-hd"><div class="box9-cell-hd-l"><span class="box9-cell-name">'+boxLabel(key)+'</span></div><div class="box9-cell-hd-r"><span class="box9-cell-count">'+people.length+'</span><button class="box9-fs-btn" type="button" title="格子全屏" aria-label="格子全屏" onclick="event.stopPropagation();openBoxCellFullscreen(\''+key+'\')">'+FS_ICON+'</button></div></div>';
+      html+='<div class="box9-cell-hd"><div class="box9-cell-hd-l">'+boxCellTitleHtml(key)+'</div><div class="box9-cell-hd-r"><span class="box9-cell-count">'+people.length+'</span><button class="box9-fs-btn" type="button" title="格子全屏" aria-label="格子全屏" onclick="event.stopPropagation();openBoxCellFullscreen(\''+key+'\')">'+FS_ICON+'</button></div></div>';
       html+='<div class="box9-people">'+people.map(personChip).join('')+'</div></div>';
     });
   });
@@ -4358,11 +4423,15 @@ function memberBoxName(m){
 }
 
 function formatAdjustHistory(m){
-  if(m.adjustHistory&&m.adjustHistory.length)return m.adjustHistory.join(' · ');
+  if(m.adjustHistory&&m.adjustHistory.length){
+    return m.adjustHistory[m.adjustHistory.length-1];
+  }
+  if(m.adjHist&&m.adjHist.length){
+    var last=m.adjHist[m.adjHist.length-1];
+    return (last.from||'—')+'→'+(last.to||'—');
+  }
   if(m.reached&&m.initCapability&&m.capability&&m.initCapability!==m.capability){
-    var from=BOX_NAMES[perfBand(m)+'-'+m.initCapability];
-    var to=BOX_NAMES[perfBand(m)+'-'+m.capability];
-    if(from&&to)return from+'→'+to;
+    return m.initCapability+'→'+m.capability;
   }
   return '';
 }
@@ -4393,7 +4462,7 @@ function renderBoxGrid(){
       var key=p+'-'+c;
       var people=getCellPeople(key);
       html+='<div class="box9-cell" data-cell="'+key+'" ondragover="onBoxOver(event)" ondragleave="this.classList.remove(\'drag-over\')" ondrop="onBoxDrop(event,\''+p+'\',\''+c+'\')">';
-      html+='<div class="box9-cell-hd"><div class="box9-cell-hd-l"><span class="box9-cell-name">'+boxLabel(key)+'</span></div><div class="box9-cell-hd-r"><span class="box9-cell-count">'+people.length+'</span><button class="box9-fs-btn" type="button" title="格子全屏" aria-label="格子全屏" onclick="event.stopPropagation();openBoxCellFullscreen(\''+key+'\')">'+FS_ICON+'</button></div></div>';
+      html+='<div class="box9-cell-hd"><div class="box9-cell-hd-l">'+boxCellTitleHtml(key)+'</div><div class="box9-cell-hd-r"><span class="box9-cell-count">'+people.length+'</span><button class="box9-fs-btn" type="button" title="格子全屏" aria-label="格子全屏" onclick="event.stopPropagation();openBoxCellFullscreen(\''+key+'\')">'+FS_ICON+'</button></div></div>';
       html+='<div class="box9-people">'+cellPeopleHtml(people,key)+'</div></div>';
     });
   });
@@ -4412,19 +4481,10 @@ function boxListRowHtml(m,compact){
     :'<span style="color:var(--c4)">—</span>';
   var box=memberBoxName(m);
   var hist=formatAdjustHistory(m);
-  var reason=m.adjustReason||'';
-  var histTitle=[hist,reason].filter(Boolean).join('｜');
-  var histHtml=(!hist&&!reason)
-    ?'<div class="box9-hist-combo empty">—</div>'
-    :('<div class="box9-hist-combo" title="'+histTitle.replace(/"/g,'&quot;')+'">'+
-        (hist?'<div class="hist-line">'+hist+'</div>':'')+
-        (reason?'<div class="reason-line">'+reason+'</div>':'')+
-      '</div>');
-  var abnType=m.abnormalType||'';
-  var abnReason=m.abnormalReason||'';
-  var abnHtml=abnType
-    ?('<span class="box9-abn-tag">'+abnType+'</span>')
-    :'<span class="box9-abn-ok">正常</span>';
+  var histHtml=!hist
+    ?'<div class="box9-hist-combo empty"></div>'
+    :('<div class="box9-hist-combo" title="'+String(hist).replace(/"/g,'&quot;')+'"><div class="hist-line">'+hist+'</div></div>');
+  var abnHtml=exceptionFlagsHtml(m);
   var canAdj=!APPROVE_MODE&&!!m.reached;
   var ICO_ADJ='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>';
   var ICO_HIST='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 16 14"/></svg>';
@@ -4451,9 +4511,8 @@ function boxListRowHtml(m,compact){
     '<td class="col-grade">'+gradeHtml+'</td>'+
     '<td class="col-cap">'+(m.capability?capTagHtml(m.capability):'<span style="color:var(--c4)">—</span>')+'</td>'+
     boxTd+
-    '<td class="col-abn">'+abnHtml+'</td>'+
-    '<td class="col-abn-reason"><div class="box9-abn-reason'+(abnReason?'':' empty')+'" title="'+abnReason.replace(/"/g,'&quot;')+'">'+(abnReason||'—')+'</div></td>'+
     '<td class="col-hist">'+histHtml+'</td>'+
+    '<td class="col-abn-flag">'+abnHtml+'</td>'+
     actTd+
   '</tr>';
 }
@@ -4476,9 +4535,8 @@ function renderBoxListHead(compact){
     '<th class="col-grade">绩效等级</th>'+
     '<th class="col-cap">能力</th>'+
     '<th class="col-box">格子</th>'+
-    '<th class="col-abn">异常状态</th>'+
-    '<th class="col-abn-reason">异常原因</th>'+
-    '<th class="col-hist">调整历史/原因</th>'+
+    '<th class="col-hist">调整记录</th>'+
+    '<th class="col-abn-flag">异常标识</th>'+
     (APPROVE_MODE?'':'<th class="col-action">操作</th>')+
   '</tr>';
 }
@@ -4491,7 +4549,7 @@ function renderBoxList(){
   if(table)table.classList.toggle('box9-list-compact',compact);
   renderBoxListHead(compact);
   var rows=getFilteredMembers();
-  var cols=compact?(APPROVE_MODE?2:3):(APPROVE_MODE?8:9);
+  var cols=compact?(APPROVE_MODE?2:3):(APPROVE_MODE?7:8);
   if(!rows.length){
     body.innerHTML='<tr><td colspan="'+cols+'" style="color:var(--c4);text-align:center;padding:24px">暂无人员</td></tr>';
     return;
