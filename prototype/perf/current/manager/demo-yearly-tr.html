@@ -878,7 +878,7 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .notice-overlay{position:fixed;inset:0;z-index:3000;display:flex;align-items:flex-start;justify-content:center;padding:12vh 16px 24px;background:rgba(0,0,0,.28);opacity:0;pointer-events:none;transition:opacity .2s}
 .notice-overlay.open{opacity:1;pointer-events:all}
 .notice-card{background:var(--sf);border-radius:var(--r3);box-shadow:0 20px 60px rgba(0,0,0,.16);width:420px;max-width:92vw;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;transform:translateY(-8px);transition:transform .2s}
-.notice-card.wide{width:560px}
+.notice-card.wide{width:640px}
 .notice-overlay.open .notice-card{transform:translateY(0)}
 .notice-hd{padding:14px 18px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0}
 .notice-title{font:600 15px/1.2 var(--f);color:var(--c9)}
@@ -889,14 +889,25 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .notice-overlay:not(.warn) .notice-title{color:var(--em700)}
 .fd-fail-lead{margin:0 0 10px;font:400 13px/1.5 var(--f);color:var(--c7)}
 .fd-fail-foot{margin:12px 0 0;font:500 13px/1.5 var(--f);color:var(--ac700)}
-.fd-fail-table{width:100%;border-collapse:collapse;font:400 12px/1.5 var(--f);background:var(--c0);border:1px solid var(--c2);border-radius:var(--r2)}
+.fd-fail-table{width:100%;border-collapse:collapse;font:400 12px/1.5 var(--f);background:var(--c0);border:1px solid var(--c2);border-radius:var(--r2);overflow:hidden}
 .fd-fail-table th,.fd-fail-table td{padding:8px 10px;border-bottom:1px solid var(--dv);text-align:left;vertical-align:top}
 .fd-fail-table th{font-weight:600;color:var(--c8);background:var(--sf);white-space:nowrap;position:sticky;top:0;z-index:1}
 .fd-fail-table td{color:var(--c7)}
 .fd-fail-table tr:last-child td{border-bottom:none}
-.fd-fail-table .fd-col-group{width:28%;white-space:nowrap}
-.fd-fail-table .fd-col-grade{width:22%;white-space:nowrap}
-.fd-fail-table .fd-col-advice{width:50%}
+.fd-fail-table .fd-col-group{width:24%;white-space:nowrap}
+.fd-fail-table .fd-col-grade{width:18%;white-space:nowrap}
+.fd-fail-table .fd-col-advice{width:40%}
+.fd-fail-table .fd-col-action{width:18%;white-space:nowrap;text-align:right}
+.fd-break-btn{height:28px;padding:0 10px;font-size:12px}
+.fd-break-btn:disabled{opacity:.45;cursor:not-allowed}
+.fd-break-form{margin-top:12px;padding:12px;border:1px solid var(--pr200);border-radius:var(--r2);background:var(--pr50);display:flex;flex-direction:column;gap:10px}
+.fd-break-form-title{font:600 13px/1.3 var(--f);color:var(--c9)}
+.fd-break-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;font:400 12px/1.4 var(--f);color:var(--c6)}
+.fd-break-meta b{font-weight:600;color:var(--c8)}
+.fd-break-form .adj-field{gap:6px}
+.fd-break-form-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:2px}
+.fd-break-form.is-readonly .adj-field select,
+.fd-break-form.is-readonly .adj-field textarea{background:var(--c1);color:var(--c7);pointer-events:none}
 
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .fade-in{animation:fadeIn .2s ease forwards}
@@ -3986,18 +3997,214 @@ function forceDistGroupLabel(row){
   return g+(row.side?'（'+row.side+'）':'');
 }
 
-/** 强制分布未达标表：考核组 | 等级 | 调整建议 */
+/** 强制分布突破申请（弹窗内嵌表单，不另开层） */
+var _fdBreakCtx={rows:[],applies:{},formIdx:-1,formReadonly:false};
+
+function fdBreakRowKey(row){
+  return String(row.group||'')+'|'+String(row.side||'')+'|'+String(row.grade||'');
+}
+function fdBreakCurrentOf(m,side){
+  if(!m)return '—';
+  if(side==='能力')return m.capability||'—';
+  return m.ratifyGrade||m.grade||'—';
+}
+function fdBreakCandidates(row){
+  if(!row)return [];
+  var pool=membersForDistScope(row.group).filter(function(m){return m.reached;});
+  if(row.side==='能力'){
+    return pool.filter(function(m){return !!m.capability&&m.capability!==row.grade;});
+  }
+  return pool.filter(function(m){
+    var g=m.ratifyGrade||m.grade||'';
+    return !!g&&g!==row.grade;
+  });
+}
+
+/** 强制分布未达标表：考核组 | 等级 | 调整建议 | 操作 */
 function renderForceDistFailTable(rows){
-  var body=(rows||[]).map(function(row){
+  _fdBreakCtx.rows=rows||[];
+  var body=_fdBreakCtx.rows.map(function(row,i){
+    var key=fdBreakRowKey(row);
+    var applied=_fdBreakCtx.applies[key];
+    var cands=fdBreakCandidates(row);
+    var btn;
+    if(applied){
+      btn='<button type="button" class="btn btn-s btn-sm fd-break-btn" onclick="openFdBreakForm('+i+',true)">已申请</button>';
+    }else if(!cands.length){
+      btn='<button type="button" class="btn btn-s btn-sm fd-break-btn" disabled title="没有可调入的人">申请突破</button>';
+    }else{
+      btn='<button type="button" class="btn btn-s btn-sm fd-break-btn" onclick="openFdBreakForm('+i+',false)">申请突破</button>';
+    }
     return '<tr>'+
       '<td class="fd-col-group">'+escapeHtmlText(forceDistGroupLabel(row))+'</td>'+
       '<td class="fd-col-grade">'+escapeHtmlText(row.grade)+'</td>'+
       '<td class="fd-col-advice">'+escapeHtmlText(formatForceDistAdvice(row))+'</td>'+
+      '<td class="fd-col-action">'+btn+'</td>'+
     '</tr>';
   }).join('');
   return '<table class="fd-fail-table">'+
-    '<thead><tr><th class="fd-col-group">考核组</th><th class="fd-col-grade">等级</th><th class="fd-col-advice">调整建议</th></tr></thead>'+
+    '<thead><tr><th class="fd-col-group">考核组</th><th class="fd-col-grade">等级</th><th class="fd-col-advice">调整建议</th><th class="fd-col-action">操作</th></tr></thead>'+
     '<tbody>'+body+'</tbody></table>';
+}
+
+function buildFdBreakToastHtml(rows){
+  var actionTip=currentStep>=3?'无法提交':'无法继续';
+  return '<p class="fd-fail-lead">强制分布未达标：</p>'+
+    renderForceDistFailTable(rows)+
+    '<div id="fdBreakFormHost"></div>'+
+    '<p class="fd-fail-foot">'+actionTip+'</p>';
+}
+
+function refreshFdBreakToastBody(){
+  var msgEl=document.getElementById('toastMsg');
+  if(!msgEl||!_fdBreakCtx.rows||!_fdBreakCtx.rows.length)return;
+  msgEl.innerHTML=buildFdBreakToastHtml(_fdBreakCtx.rows);
+  msgEl.classList.add('has-html');
+  if(_fdBreakCtx.formIdx>=0){
+    renderFdBreakFormIntoHost(_fdBreakCtx.formIdx,_fdBreakCtx.formReadonly);
+  }
+}
+
+function openFdBreakForm(idx,readonly){
+  var row=_fdBreakCtx.rows[idx];
+  if(!row)return;
+  var key=fdBreakRowKey(row);
+  var applied=_fdBreakCtx.applies[key];
+  if(!readonly&&applied)readonly=true;
+  if(!readonly&&!fdBreakCandidates(row).length)return;
+  _fdBreakCtx.formIdx=idx;
+  _fdBreakCtx.formReadonly=!!readonly;
+  renderFdBreakFormIntoHost(idx,!!readonly);
+  var host=document.getElementById('fdBreakFormHost');
+  if(host&&host.scrollIntoView)host.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function cancelFdBreakForm(){
+  _fdBreakCtx.formIdx=-1;
+  _fdBreakCtx.formReadonly=false;
+  var host=document.getElementById('fdBreakFormHost');
+  if(host)host.innerHTML='';
+}
+
+function renderFdBreakFormIntoHost(idx,readonly){
+  var host=document.getElementById('fdBreakFormHost');
+  var row=_fdBreakCtx.rows[idx];
+  if(!host||!row)return;
+  var key=fdBreakRowKey(row);
+  var applied=_fdBreakCtx.applies[key];
+  var cands=fdBreakCandidates(row);
+  var opts='<option value="">请选择人员</option>'+cands.map(function(m){
+    var i=MEMBERS.indexOf(m);
+    var sel=applied&&applied.memberIdx===i?' selected':'';
+    return '<option value="'+i+'"'+sel+'>'+escapeHtmlText(m.name+'('+m.employeeId+')')+'</option>';
+  }).join('');
+  if(readonly&&applied&&cands.every(function(m){return MEMBERS.indexOf(m)!==applied.memberIdx;})){
+    opts='<option value="'+applied.memberIdx+'" selected>'+escapeHtmlText(applied.name+'('+applied.empId+')')+'</option>';
+  }
+  var reasonVal=applied?escapeHtmlText(applied.reason||''):'';
+  var actions=readonly
+    ?'<button type="button" class="btn btn-s" onclick="cancelFdBreakForm()">关闭</button>'
+    :'<button type="button" class="btn btn-s" onclick="cancelFdBreakForm()">取消</button>'+
+     '<button type="button" class="btn btn-p" onclick="submitFdBreakApply()">提交申请</button>';
+  host.innerHTML=
+    '<div class="fd-break-form'+(readonly?' is-readonly':'')+'" id="fdBreakForm">'+
+      '<div class="fd-break-form-title">'+(readonly?'已申请突破':'申请突破')+'</div>'+
+      '<div class="fd-break-meta">'+
+        '<div>考核组：<b>'+escapeHtmlText(forceDistGroupLabel(row))+'</b></div>'+
+        '<div>目标等级：<b>'+escapeHtmlText(row.grade)+'</b></div>'+
+      '</div>'+
+      '<div class="adj-field" id="fdBreakPersonField">'+
+        '<label class="adj-field-label" for="fdBreakPerson">人员<span class="req">*</span></label>'+
+        '<select id="fdBreakPerson"'+(readonly?' disabled':'')+'>'+opts+'</select>'+
+        '<div class="adj-field-err">请选择人员</div>'+
+      '</div>'+
+      '<div class="adj-field" id="fdBreakReasonField">'+
+        '<label class="adj-field-label" for="fdBreakReason">申请原因<span class="req">*</span></label>'+
+        '<textarea id="fdBreakReason" rows="3" placeholder="请填写申请突破的原因"'+(readonly?' disabled':'')+'>'+reasonVal+'</textarea>'+
+        '<div class="adj-field-err">请填写申请原因</div>'+
+      '</div>'+
+      '<div class="fd-break-form-actions">'+actions+'</div>'+
+    '</div>';
+}
+
+function submitFdBreakApply(){
+  var idx=_fdBreakCtx.formIdx;
+  var row=_fdBreakCtx.rows[idx];
+  if(!row||_fdBreakCtx.formReadonly)return;
+  var personField=document.getElementById('fdBreakPersonField');
+  var reasonField=document.getElementById('fdBreakReasonField');
+  var personSel=document.getElementById('fdBreakPerson');
+  var reasonEl=document.getElementById('fdBreakReason');
+  if(personField)personField.classList.remove('invalid');
+  if(reasonField)reasonField.classList.remove('invalid');
+  var mi=personSel?parseInt(personSel.value,10):-1;
+  var reason=(reasonEl&&reasonEl.value||'').trim();
+  var ok=true;
+  if(!(mi>=0)||!MEMBERS[mi]){if(personField)personField.classList.add('invalid');ok=false;}
+  if(!reason){if(reasonField)reasonField.classList.add('invalid');ok=false;}
+  if(!ok)return;
+  var m=MEMBERS[mi];
+  var from=fdBreakCurrentOf(m,row.side);
+  var to=row.grade;
+  m.breakthroughApply=true;
+  if(!m.abnormalType)m.abnormalType='申请突破';
+  m.breakthroughApplyDetail={
+    group:row.group,
+    side:row.side,
+    target:to,
+    from:from,
+    reason:reason,
+    time:adjTimestamp()
+  };
+  if(row.side==='能力'){
+    m.initCapAdj={
+      node:'强制分布突破申请',
+      who:'当前用户',
+      jobNo:m.employeeId||'—',
+      from:from,
+      to:to,
+      reason:reason
+    };
+  }else{
+    m.lastRatifyAdj={
+      node:'强制分布突破申请',
+      who:'当前用户',
+      jobNo:m.employeeId||'—',
+      from:from,
+      to:to,
+      reason:reason
+    };
+  }
+  pushMemberAdjHist(m,{
+    time:adjTimestamp(),
+    who:'当前用户',
+    type:row.side==='能力'?'能力':'等级',
+    from:from,
+    to:to,
+    reason:reason
+  });
+  _fdBreakCtx.applies[fdBreakRowKey(row)]={
+    memberIdx:mi,
+    name:m.name,
+    empId:m.employeeId||'',
+    reason:reason,
+    from:from,
+    to:to
+  };
+  _fdBreakCtx.formIdx=-1;
+  _fdBreakCtx.formReadonly=false;
+  refreshFdBreakToastBody();
+  if(currentStep===3){
+    if(typeof renderBox==='function')renderBox();
+  }else if(typeof renderMembers==='function'){
+    renderMembers();
+  }
+}
+
+function showForceDistBlockToast(info){
+  _fdBreakCtx.formIdx=-1;
+  _fdBreakCtx.formReadonly=false;
+  showToast(buildFdBreakToastHtml(info.rows||[]),'warn',{html:true,wide:true});
 }
 
 /** 按控制范围逐组校验；返回 {rows:[{group,grade,actual,limit,direction,delta,...}], isStrong} 或 null */
@@ -4044,14 +4251,6 @@ function getForceDistWarnInfo(){
   var info=collectForceDistFails(forceDistCheckOptsForStep());
   if(!info||info.isStrong)return null;
   return info;
-}
-
-function showForceDistBlockToast(info){
-  var actionTip=currentStep>=3?'无法提交':'无法继续';
-  var html='<p class="fd-fail-lead">强制分布未达标：</p>'+
-    renderForceDistFailTable(info.rows)+
-    '<p class="fd-fail-foot">'+actionTip+'</p>';
-  showToast(html,'warn',{html:true,wide:true});
 }
 
 /** 当前步必填；未通过返回提示文案（强制分布另走强控/弱控） */
