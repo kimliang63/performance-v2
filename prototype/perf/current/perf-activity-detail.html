@@ -313,9 +313,10 @@ tbody tr:last-child td{border-bottom:none}
 .stage-tooltip-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 .stage-current{
   position:relative;display:flex;align-items:center;gap:8px;
-  padding:6px 12px;border:1px solid var(--c2);border-radius:var(--r2);
-  background:var(--sf);cursor:default;flex-shrink:0;
+  padding:4px 4px 4px 12px;border:1px solid var(--c2);border-radius:var(--r2);
+  background:var(--sf);cursor:default;flex-shrink:0;white-space:nowrap;
 }
+.stage-current-info{display:flex;align-items:center;gap:8px;position:relative;min-width:0}
 .stage-current-sep{width:1px;height:14px;background:var(--c2);flex-shrink:0}
 .stage-current-stats{display:flex;align-items:center;gap:12px;padding:2px 0}
 .stage-current-stats .stat-num{font:700 14px/1 var(--f)}
@@ -325,7 +326,15 @@ tbody tr:last-child td{border-bottom:none}
   width:18px;height:18px;border-radius:50%;background:var(--c1);color:var(--c5);
   font:600 11px/1 var(--f);flex-shrink:0;
 }
-.stage-current:hover .stage-combined-tip{display:block}
+.stage-current-info:hover .stage-combined-tip{display:block}
+.stage-mgmt{position:relative;display:inline-flex;align-items:center;flex-shrink:0}
+.stage-mgmt-btn{
+  display:inline-flex;align-items:center;gap:4px;height:26px;padding:0 10px;
+  border:none;border-radius:var(--r1);background:transparent;color:var(--c6);
+  font:500 12px/1 var(--f);cursor:pointer;font-family:inherit;transition:background .12s,color .12s;
+}
+.stage-mgmt-btn:hover{background:var(--c1);color:var(--c8)}
+.stage-mgmt-btn svg{flex-shrink:0}
 .stage-combined-tip{
   display:none;position:absolute;top:calc(100% + 8px);left:0;z-index:200;
   min-width:320px;padding:14px 16px;border-radius:var(--r2);
@@ -783,50 +792,46 @@ function renderEmployeeList(){
       <button style="font:500 13px/1 var(--f);color:var(--c6);cursor:pointer;background:none;border:none;font-family:var(--f);display:flex;align-items:center;gap:4px" onclick="resetEmpFilters()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>重置</button>
     </div>
     <div style="display:flex;align-items:center;gap:12px;padding:12px 0;flex-wrap:wrap">
-      <!-- 左：当前环节 + 精简人数统计（整块 hover 一张卡） -->
+      <!-- 左：当前环节统计 + 环节管理（同一卡片） -->
       <div class="stage-current" aria-label="当前环节与人员统计，悬停查看明细">
-        <span style="font:500 12px/1 var(--f);color:var(--c5)">当前环节</span>
-        <span style="font:600 14px/1 var(--f);color:${stageColors[currentStageIdx]}">${currentStageName}</span>
-        <span class="stage-current-sep"></span>
-        <span class="stage-current-stats">
-          <span><span class="stat-num" style="color:var(--c9)">${assessCount}</span> <span class="stat-label">考核人数</span></span>
-          <span><span class="stat-num" style="color:var(--em700)">${stageCompletionRate}%</span> <span class="stat-label">完成率</span></span>
-        </span>
-        <span class="stage-current-hint" aria-hidden="true">?</span>
-        <div class="stage-combined-tip">
-          <div class="stage-combined-sec">
-            <div class="stage-combined-title">人员统计</div>
-            <div class="stage-people-tip-row"><span>考核人数</span><span class="stage-people-tip-val">${assessCount}</span></div>
-            <div class="stage-people-tip-row"><span>进行中</span><span class="stage-people-tip-val" style="color:var(--pr)">${inProgressCount}</span></div>
-            <div class="stage-people-tip-row"><span>已完成</span><span class="stage-people-tip-val" style="color:var(--em700)">${completedCount}</span></div>
-            <div class="stage-people-tip-row"><span>流程异常</span><span class="stage-people-tip-val" style="color:var(--ac700)">${flowExceptionCount}</span></div>
-            <div class="stage-people-tip-row"><span>未开始</span><span class="stage-people-tip-val" style="color:var(--c5)">${notStartedCount}</span></div>
-          </div>
-          <div class="stage-combined-sec">
-            <div class="stage-combined-title">全局业务环节进度</div>
-            <div class="stage-combined-note">同一时刻只有一个环节进行中；人员差异见流程节点。</div>
-            ${stageStats.map((s,i)=>`<div class="stage-tooltip-row" style="padding:4px 0;${i<stageStats.length-1?'border-bottom:1px solid var(--dv)':''}">
-              <span style="display:flex;align-items:center;gap:6px;min-width:80px;color:var(--c7)"><span class="stage-tooltip-dot" style="background:${s.color}"></span>${s.name}</span>
-              <span style="font-family:var(--m);color:var(--c5)">${s.done}/${s.total}</span>
-              <span style="flex:1;height:4px;border-radius:2px;background:var(--c1);overflow:hidden;min-width:60px"><span style="display:block;height:100%;border-radius:2px;background:${s.color};width:${s.pct}%"></span></span>
-              <span style="font:500 11px/1 var(--f);padding:1px 6px;border-radius:3px;${s.active>0?'color:var(--pr);background:var(--pr50)':s.done===s.total?'color:var(--em700);background:var(--em50)':'color:var(--c5);background:var(--c1)'}">${s.active>0?'进行中':s.done===s.total?'已完成':'未开始'}</span>
-            </div>`).join('')}
+        <div class="stage-current-info">
+          <span style="font:500 12px/1 var(--f);color:var(--c5)">当前环节</span>
+          <span style="font:600 14px/1 var(--f);color:${stageColors[currentStageIdx]}">${currentStageName}</span>
+          <span class="stage-current-sep"></span>
+          <span class="stage-current-stats">
+            <span><span class="stat-num" style="color:var(--c9)">${assessCount}</span> <span class="stat-label">考核人数</span></span>
+            <span><span class="stat-num" style="color:var(--em700)">${stageCompletionRate}%</span> <span class="stat-label">完成率</span></span>
+          </span>
+          <span class="stage-current-hint" aria-hidden="true">?</span>
+          <div class="stage-combined-tip">
+            <div class="stage-combined-sec">
+              <div class="stage-combined-title">人员统计</div>
+              <div class="stage-people-tip-row"><span>考核人数</span><span class="stage-people-tip-val">${assessCount}</span></div>
+              <div class="stage-people-tip-row"><span>进行中</span><span class="stage-people-tip-val" style="color:var(--pr)">${inProgressCount}</span></div>
+              <div class="stage-people-tip-row"><span>已完成</span><span class="stage-people-tip-val" style="color:var(--em700)">${completedCount}</span></div>
+              <div class="stage-people-tip-row"><span>流程异常</span><span class="stage-people-tip-val" style="color:var(--ac700)">${flowExceptionCount}</span></div>
+              <div class="stage-people-tip-row"><span>未开始</span><span class="stage-people-tip-val" style="color:var(--c5)">${notStartedCount}</span></div>
+            </div>
+            <div class="stage-combined-sec">
+              <div class="stage-combined-title">全局业务环节进度</div>
+              <div class="stage-combined-note">同一时刻只有一个环节进行中；人员差异见流程节点。</div>
+              ${stageStats.map((s,i)=>`<div class="stage-tooltip-row" style="padding:4px 0;${i<stageStats.length-1?'border-bottom:1px solid var(--dv)':''}">
+                <span style="display:flex;align-items:center;gap:6px;min-width:80px;color:var(--c7)"><span class="stage-tooltip-dot" style="background:${s.color}"></span>${s.name}</span>
+                <span style="font-family:var(--m);color:var(--c5)">${s.done}/${s.total}</span>
+                <span style="flex:1;height:4px;border-radius:2px;background:var(--c1);overflow:hidden;min-width:60px"><span style="display:block;height:100%;border-radius:2px;background:${s.color};width:${s.pct}%"></span></span>
+                <span style="font:500 11px/1 var(--f);padding:1px 6px;border-radius:3px;${s.active>0?'color:var(--pr);background:var(--pr50)':s.done===s.total?'color:var(--em700);background:var(--em50)':'color:var(--c5);background:var(--c1)'}">${s.active>0?'进行中':s.done===s.total?'已完成':'未开始'}</span>
+              </div>`).join('')}
+            </div>
           </div>
         </div>
-      </div>
-
-      <span style="flex:1"></span>
-
-      <!-- 右：功能栏 -->
-      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
         ${canUseToolbar?`
-        <!-- 环节管理 -->
-        <div style="position:relative;display:inline-flex">
-          <button class="btn btn-s" onclick="toggleEmpDropdown('empStageDd')" style="gap:6px">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>
-            环节管理 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        <span class="stage-current-sep"></span>
+        <div class="stage-mgmt">
+          <button type="button" class="stage-mgmt-btn" onclick="toggleEmpDropdown('empStageDd')" aria-haspopup="true">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>
+            环节管理 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
-          <div id="empStageDd" style="display:none;position:absolute;top:calc(100% + 4px);right:0;background:var(--sf);border:1px solid var(--c3);border-radius:var(--r1);box-shadow:0 6px 16px rgba(0,0,0,.08);min-width:160px;z-index:100;padding:4px 0">
+          <div id="empStageDd" style="display:none;position:absolute;top:calc(100% + 4px);right:0;background:var(--sf);border:1px solid var(--c3);border-radius:var(--r1);box-shadow:0 6px 16px rgba(0,0,0,.08);min-width:160px;z-index:220;padding:4px 0">
             ${nextStageName?`<div style="display:flex;align-items:center;gap:8px;padding:8px 14px;font:400 13px/1 var(--f);color:var(--pr);cursor:pointer;font-weight:500" onclick="openNextStage('${nextStageName}');toggleEmpDropdown('empStageDd')">
               <span style="width:16px;text-align:center;font-size:12px">▶</span><span>${openStageLabel}</span>
             </div>`:`<div style="display:flex;align-items:center;gap:8px;padding:8px 14px;font:400 13px/1 var(--f);color:var(--c4);cursor:not-allowed">
@@ -843,8 +848,14 @@ function renderEmployeeList(){
               <span style="width:16px;text-align:center;font-size:12px">▶</span><span>继续环节</span>
             </div>
           </div>
-        </div>
+        </div>`:''}
+      </div>
 
+      <span style="flex:1"></span>
+
+      <!-- 右：功能栏 -->
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        ${canUseToolbar?`
         <!-- 添加人员 -->
         <div style="position:relative;display:inline-flex">
           <button class="btn btn-s" onclick="${canAddParticipant?"toggleEmpDropdown('empAddDd')":"GHR_NAV.showToast('首个环节已结束，参与人已冻结；请新建同方案同周期的关联补充活动')"}" style="gap:6px;${canAddParticipant?'':'opacity:.55'}" title="${canAddParticipant?'仅在首个环节未开始或处理中，且未暂停、未过原截止时间时可补加':'首个环节结束后禁止补加'}">
@@ -855,21 +866,6 @@ function renderEmployeeList(){
             <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="GHR_NAV.showToast('校验唯一考核组后，补加人员从首环节首节点启动并继承原截止时间');toggleEmpDropdown('empAddDd')">按考核组规则补加</div>
             <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="openManualAddParticipantModal();toggleEmpDropdown('empAddDd')">手动添加</div>
             <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="GHR_NAV.showToast('导入仅产生暂存结果，正式提交时逐人校验');toggleEmpDropdown('empAddDd')">导入补加</div>
-          </div>
-        </div>
-
-        <!-- 导入 -->
-        <div style="position:relative;display:inline-flex">
-          <button class="btn btn-s" onclick="toggleEmpDropdown('empImportDd')" style="gap:6px">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            导入 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-          </button>
-          <div id="empImportDd" style="display:none;position:absolute;top:calc(100% + 4px);right:0;background:var(--sf);border:1px solid var(--c3);border-radius:var(--r1);box-shadow:0 6px 16px rgba(0,0,0,.08);min-width:200px;z-index:100;padding:4px 0">
-            <div style="padding:8px 14px;font:400 11px/1.5 var(--f);color:var(--c5);border-bottom:1px solid var(--dv);max-width:260px">仅可导入当前环节数据，仅可导入状态为未开始/已终止的被考核人</div>
-            <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="openActivityImport('goal');toggleEmpDropdown('empImportDd')">导入目标数据</div>
-            <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="openActivityImport('eval');toggleEmpDropdown('empImportDd')">导入考核结果</div>
-            ${a.schemeType!=='月度'?`<div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="openActivityImport('interview');toggleEmpDropdown('empImportDd')">导入面谈结果</div>`:''}
-            <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="GHR_NAV.showToast('审定导入：仅处理结果审定个人流程未开始的人员');toggleEmpDropdown('empImportDd')">导入审定结果</div>
           </div>
         </div>
 
@@ -888,7 +884,7 @@ function renderEmployeeList(){
           </div>
         </div>
 
-        <!-- 批量操作 -->
+        <!-- 批量操作（含按当前环节导入） -->
         <div style="position:relative;display:inline-flex">
           <button class="btn btn-s" onclick="toggleEmpDropdown('empBatchDd')" style="gap:6px">
             批量操作 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
@@ -899,6 +895,7 @@ function renderEmployeeList(){
             <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="GHR_NAV.showToast('批量转交已提交');toggleEmpDropdown('empBatchDd')">转交</div>
             <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="GHR_NAV.showToast('批量暂停已执行');toggleEmpDropdown('empBatchDd')">暂停</div>
             <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="GHR_NAV.showToast('批量继续已执行');toggleEmpDropdown('empBatchDd')">继续</div>
+            <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" title="仅导入当前环节" onclick="toggleEmpDropdown('empBatchDd');openStageImportModal()">导入</div>
             <div style="height:1px;background:var(--dv);margin:4px 0"></div>
             <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--ro);cursor:pointer" onclick="GHR_NAV.showToast('批量终止已执行');toggleEmpDropdown('empBatchDd')">终止</div>
             <div style="padding:8px 14px;font:400 13px/1 var(--f);color:var(--ro);cursor:pointer" onclick="GHR_NAV.showToast('仅首个环节未开始或进行中且未过截止时间可移除');toggleEmpDropdown('empBatchDd')">移除</div>
@@ -1616,20 +1613,108 @@ function showArchiveDlg(){
   document.body.appendChild(ov);
 }
 
-function openActivityImport(kind){
+var STAGE_IMPORT_LABELS={
+  '目标制定':'导入目标数据',
+  '绩效考核':'导入考核结果',
+  '结果审定':'导入审定结果',
+  '绩效面谈':'导入面谈结果'
+};
+var stageImportState={type:null,stage:''};
+
+function getStageImportLabel(stage){
+  return STAGE_IMPORT_LABELS[stage]||'';
+}
+
+function closeStageImportModal(){
+  var ov=document.getElementById('stageImportModal');
+  if(ov)ov.remove();
+  stageImportState={type:null,stage:''};
+}
+
+function openStageImportModal(){
   var a=ACTIVITIES.find(function(x){return x.id===currentDetailId;});
-  var name=a?a.name:'当前活动';
-  if(kind==='goal'){
-    location.href='manager/demo-goal-batch-import.html?activityId='+encodeURIComponent(currentDetailId)+'&activityName='+encodeURIComponent(name);
+  if(!a){GHR_NAV.showToast('未找到当前活动');return;}
+  var stage=getCurrentStageName(a);
+  var title=getStageImportLabel(stage);
+  if(!title){
+    GHR_NAV.showToast((stage||'当前')+'环节不支持导入');
     return;
   }
-  if(kind==='eval'){
-    location.href='manager/demo-eval-batch-import.html?activityId='+encodeURIComponent(currentDetailId)+'&activityName='+encodeURIComponent(name);
+  closeStageImportModal();
+  stageImportState={type:null,stage:stage};
+  var ov=document.createElement('div');
+  ov.id='stageImportModal';
+  ov.className='modal-ov on';
+  ov.innerHTML='<div class="modal" role="dialog" aria-modal="true" aria-labelledby="stageImportTitle" style="width:440px">'
+    +'<div class="modal-hd"><div id="stageImportTitle" class="modal-hd-t">'+title+'</div>'
+    +'<button class="modal-close" aria-label="关闭" onclick="closeStageImportModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>'
+    +'<div class="modal-bd">'
+    +'<div style="font:400 12px/1.5 var(--f);color:var(--c5);margin-bottom:14px">当前环节：'+stage+'。仅可导入本环节数据，仅可导入状态为未开始/已终止的被考核人。</div>'
+    +'<div class="modal-label">导入类型<span class="req">*</span></div>'
+    +'<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">'
+    +'<label id="stageImportOptResult" onclick="selectStageImportType(\'result\')" style="display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--c2);border-radius:var(--r1);cursor:pointer;background:var(--sf)">'
+    +'<input type="radio" name="stageImportType" value="result" style="accent-color:var(--pr)" />'
+    +'<span style="font:500 13px/1.3 var(--f);color:var(--c8)">导入结果数据</span></label>'
+    +'<label id="stageImportOptForm" onclick="selectStageImportType(\'form\')" style="display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--c2);border-radius:var(--r1);cursor:pointer;background:var(--sf)">'
+    +'<input type="radio" name="stageImportType" value="form" style="accent-color:var(--pr)" />'
+    +'<span style="font:500 13px/1.3 var(--f);color:var(--c8)">导入当前表单</span></label>'
+    +'</div>'
+    +'<div class="modal-label">上传文件<span class="req">*</span></div>'
+    +'<div style="display:flex;align-items:center;gap:10px">'
+    +'<button type="button" id="stageImportPickBtn" class="btn btn-s" onclick="pickStageImportFile()" disabled style="opacity:.45;cursor:not-allowed">选择文件</button>'
+    +'<span id="stageImportFileName" style="font:400 12px/1.4 var(--f);color:var(--c5)">请先选择导入类型</span>'
+    +'<input type="file" id="stageImportFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="onStageImportFileChange(event)" />'
+    +'</div></div>'
+    +'<div class="modal-ft">'
+    +'<button class="btn btn-s" onclick="closeStageImportModal()">取消</button>'
+    +'</div></div>';
+  ov.addEventListener('click',function(e){if(e.target===ov)closeStageImportModal();});
+  document.body.appendChild(ov);
+}
+
+function selectStageImportType(type){
+  stageImportState.type=type;
+  var resultEl=document.getElementById('stageImportOptResult');
+  var formEl=document.getElementById('stageImportOptForm');
+  var pickBtn=document.getElementById('stageImportPickBtn');
+  var nameEl=document.getElementById('stageImportFileName');
+  var resultOn=type==='result';
+  if(resultEl){
+    resultEl.style.borderColor=resultOn?'var(--pr)':'var(--c2)';
+    resultEl.style.background=resultOn?'var(--pr50)':'var(--sf)';
+    var r=resultEl.querySelector('input');if(r)r.checked=resultOn;
+  }
+  if(formEl){
+    formEl.style.borderColor=!resultOn?'var(--pr)':'var(--c2)';
+    formEl.style.background=!resultOn?'var(--pr50)':'var(--sf)';
+    var f=formEl.querySelector('input');if(f)f.checked=!resultOn;
+  }
+  if(pickBtn){
+    pickBtn.disabled=false;
+    pickBtn.style.opacity='1';
+    pickBtn.style.cursor='pointer';
+    pickBtn.className='btn btn-p';
+  }
+  if(nameEl)nameEl.textContent='未选择文件';
+}
+
+function pickStageImportFile(){
+  if(!stageImportState.type){
+    GHR_NAV.showToast('请先选择导入类型');
     return;
   }
-  if(kind==='interview'){
-    GHR_NAV.showToast('面谈导入：仅处理绩效面谈个人流程未开始的人员');
+  var input=document.getElementById('stageImportFile');
+  if(input)input.click();
+}
+
+function onStageImportFileChange(e){
+  var file=e&&e.target&&e.target.files&&e.target.files[0];
+  if(!stageImportState.type||!file){
+    if(e&&e.target)e.target.value='';
+    return;
   }
+  closeStageImportModal();
+  GHR_NAV.showToast('文件已上传，后台处理中');
 }
 
 // 个人流程开启成功后，按当前全局业务环节同步对应阶段展示字段为「进行中」；终态不覆盖。

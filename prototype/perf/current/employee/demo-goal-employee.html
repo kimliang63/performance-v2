@@ -54,6 +54,8 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .detail-status .dot{width:7px;height:7px;border-radius:50%}
 .detail-status.submitted{background:var(--pr50);color:var(--pr);border-color:var(--pr200)}
 .detail-status.submitted .dot{background:var(--pr);animation:pulse 2s ease-in-out infinite}
+.detail-status.effective{background:var(--em50);color:var(--em700);border-color:var(--em100)}
+.detail-status.effective .dot{background:var(--em700)}
 .detail-title-actions{margin-left:auto;display:flex;align-items:center;gap:0;flex-shrink:0;white-space:nowrap}
 .detail-title-actions .autosave-hint,
 .detail-title-actions .sum-item{font:500 13px/1 var(--f);color:var(--c6)}
@@ -75,9 +77,9 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .page-crumb .sep{color:var(--c3)}
 .page-crumb .cur{color:var(--c8);font-weight:600}
 
-/* People split — left panel + viewing-bar collapse（对齐我的目标） */
-.goal-split{display:flex;align-items:flex-start;gap:16px}
-.people-panel{width:220px;flex-shrink:0;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:12px 0;position:sticky;top:72px;max-height:calc(100vh - 96px);overflow:auto}
+/* People split — 一张大卡片，中间竖线隔开人员栏与目标区 */
+.goal-split{display:flex;align-items:stretch;gap:0;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);box-shadow:var(--shadow-card)}
+.people-panel{width:220px;flex-shrink:0;align-self:flex-start;background:transparent;border:0;border-right:1px solid var(--dv);border-radius:0;box-shadow:none;padding:12px 0;position:sticky;top:72px;max-height:calc(100vh - 96px);overflow:auto}
 .people-group{padding:4px 0 10px}
 .people-group+.people-group{border-top:1px solid var(--dv);padding-top:10px}
 .people-group-title{font:600 11px/1 var(--f);color:var(--c5);letter-spacing:.4px;text-transform:uppercase;padding:4px 14px 8px}
@@ -87,33 +89,34 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .people-item .p-name{font:600 13px/1.2 var(--f);color:var(--c9)}
 .people-item.active .p-name{color:var(--pr)}
 .people-item .p-meta{font:400 12px/1.3 var(--f);color:var(--c5)}
-.goal-main{flex:1;min-width:0}
+.goal-main{flex:1;min-width:0;padding:12px 16px 16px}
 .goal-split.panel-collapsed{gap:0}
-.goal-split.panel-collapsed .people-panel{display:none}
-.viewing-bar{display:flex;align-items:center;gap:8px;padding:8px 12px;margin-bottom:12px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);font:500 13px/1.3 var(--f);color:var(--c8)}
+.goal-split.panel-collapsed .people-panel{display:none;border-right:0}
+.viewing-bar{display:flex;align-items:center;gap:8px;padding:4px 4px 12px;margin-bottom:0;background:transparent;border:0;border-radius:0;font:500 13px/1.3 var(--f);color:var(--c8)}
 .viewing-bar .vb-text{font:500 13px/1.3 var(--f);color:var(--c8);min-width:0}
 .vb-toggle{width:24px;height:24px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:var(--r1);background:transparent;color:var(--c5);cursor:pointer;padding:0;transition:all .12s}
 .vb-toggle:hover{background:var(--c1);color:var(--pr)}
 .vb-toggle svg{width:14px;height:14px;display:block}
-#moduleContainer > .mod-empty{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:48px 20px}
+#moduleContainer > .mod-empty{background:transparent;border-radius:0;box-shadow:none;padding:48px 20px}
 .ge-unit{font:400 11px/1 var(--f);color:var(--c5);flex-shrink:0;margin-left:2px}
 .ge-desc{white-space:pre-wrap;line-height:1.4}
 .ge-fi.inline .ge-desc{padding-top:0}
 .ge-fi.inline .ge-fi-val{padding:0;line-height:1.4}
 
 /* ═══ MODULE SECTION ═══ */
-/* overflow:clip 裁切分区内目标行，且不建滚动容器，保证 .mod-hd 仍可相对 #ct sticky */
-.mod-section{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:clip;border:1px solid var(--c2);isolation:isolate}
+/* 外层已是大卡片：模块不再套圆角边框，板块间用浅分隔线区分 */
+.mod-section{background:transparent;border-radius:0;box-shadow:none;margin-bottom:0;overflow:visible;border:0}
+.mod-section+.mod-section{border-top:1px solid var(--dv);margin-top:12px;padding-top:4px}
 .mod-section.em{}
 .mod-section.ac{}
 .mod-section.vi{}
 .mod-section.ro{}
 
-.mod-hd{position:sticky;top:calc(var(--page-action-h,56px) - 16px);z-index:2;display:flex;align-items:center;padding:14px 20px;cursor:default;user-select:none;transition:box-shadow .12s;gap:12px;background:var(--sf);border-radius:var(--r3) var(--r3) 0 0}
+.mod-hd{position:sticky;top:calc(var(--page-action-h,56px) - 16px);z-index:2;display:flex;align-items:center;padding:14px 4px;cursor:default;user-select:none;transition:box-shadow .12s;gap:12px;background:var(--c0);border-radius:0}
 .mod-hd.is-stuck{box-shadow:0 4px 12px rgba(0,0,0,.08);border-bottom:1px solid var(--c2)}
-.mod-hd-icon{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#FFF}
-.mod-hd-icon svg{width:13px;height:13px;color:#FFF}
-.mod-hd-title{font:500 12px/1 var(--f);color:var(--c5);flex:1;text-transform:uppercase;letter-spacing:.5px}
+.mod-hd-icon{width:3px;height:14px;border-radius:2px;flex-shrink:0;display:block;padding:0}
+.mod-hd-icon svg{display:none}
+.mod-hd-title{font:600 16px/1.3 var(--f);color:var(--c5);flex:1;text-transform:uppercase;letter-spacing:.5px}
 .mod-hd-stats{display:flex;align-items:center;gap:14px;color:var(--c6)}
 .mod-hd-stat{font:600 14px/1 var(--f);color:var(--c8)}
 .mod-hd-stat:first-child{font-family:var(--m)}
@@ -132,7 +135,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .goal-row:hover{background:var(--c0)}
 .goal-row:last-child{border-bottom:none}
 
-.goal-summary{position:relative;z-index:0;display:flex;align-items:center;padding:14px 20px;gap:10px;cursor:default}
+.goal-summary{position:relative;z-index:0;display:flex;align-items:center;padding:14px 4px;gap:10px;cursor:default}
 .goal-drag{color:var(--c3);cursor:grab;flex-shrink:0;display:flex;align-items:center;user-select:none}
 .goal-drag:active{cursor:grabbing;color:var(--pr)}
 .goal-drag svg{width:14px;height:14px}
@@ -144,7 +147,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .goal-icon.ac{background:var(--ac50);color:var(--ac)}
 .goal-icon.filled{background:var(--em50);color:var(--em)}
 .goal-icon.pending{background:var(--ac50);color:var(--ac)}
-.goal-name{flex:1;font:600 14px/1.3 var(--f);color:var(--c9)}
+.goal-name{flex:1;font:600 16px/1.3 var(--f);color:var(--c9)}
 .goal-name-input{flex:1;padding:6px 10px;border:1px solid var(--pr);border-radius:var(--r1);font:600 16px/1.4 var(--f);color:var(--c9);background:var(--sf);outline:none;box-shadow:0 0 0 2px var(--pr50)}
 .goal-name-input[readonly]{border-color:var(--c2);background:var(--c0);box-shadow:none;color:var(--c7);cursor:not-allowed}
 .goal-name-input.inp-err{border-color:var(--ro);box-shadow:0 0 0 2px var(--ro50)}
@@ -301,7 +304,7 @@ textarea.inp{min-height:60px;resize:vertical;font-family:var(--f);line-height:1.
   .detail-title-row{flex-wrap:wrap}
   .detail-title-actions{margin-left:0;width:100%;justify-content:flex-end}
   .goal-split{flex-direction:column}
-  .people-panel{width:100%;position:static;max-height:none;display:flex;gap:8px;overflow:auto;padding:8px}
+  .people-panel{width:100%;position:static;max-height:none;display:flex;gap:8px;overflow:auto;padding:8px;border-right:0;border-bottom:1px solid var(--dv);align-self:stretch}
   .people-group{flex:1;border:0;padding:0}
   .people-group+.people-group{border-top:0;border-left:1px solid var(--dv);padding-left:8px}
   .mod-hd{flex-wrap:wrap}
@@ -472,8 +475,8 @@ body.chat-open .ai-toggle{display:none}
   <div class="detail-card" id="pageHeaderCard">
     <div class="detail-top">
       <div class="detail-title-row">
-        <span class="detail-title">目标制定</span>
-        <span class="detail-status submitted"><span class="dot"></span>填写中</span>
+        <span class="detail-title" id="detailTitle">我的目标</span>
+        <span class="detail-status submitted" id="detailStatus"><span class="dot"></span>目标制定</span>
         <div class="detail-title-actions">
           <span class="sum-val ok" id="sumWeight">100%</span>
           <span class="act-sep" aria-hidden="true"></span>
@@ -482,6 +485,9 @@ body.chat-open .ai-toggle{display:none}
           <span class="autosave-hint self-only">已实时保存</span>
           <span class="act-sep self-only" aria-hidden="true"></span>
           <button type="button" class="btn btn-p self-only" onclick="validateAndSubmit()">提交</button>
+          <span class="act-sep approve-only" aria-hidden="true" style="display:none"></span>
+          <button type="button" class="btn btn-s approve-only" style="display:none" onclick="rejectOthersGoals()">驳回</button>
+          <button type="button" class="btn btn-p approve-only" style="display:none" onclick="approveOthersGoals()">通过</button>
         </div>
       </div>
     </div>
@@ -733,6 +739,58 @@ const PEOPLE={
     {id:'sub3',name:'周杰',dept:'研发部',title:'高级工程师'},
   ]
 };
+function cloneGoal(g,status,prefix){
+  const c=JSON.parse(JSON.stringify(g));
+  c.id=prefix+g.id;
+  c.status=status;
+  return c;
+}
+function cloneModShell(m){return {name:m.name,weight:m.weight,icon:m.icon,color:m.color,accent:m.accent,goals:[]}}
+/* TA人目标 mock：仅 effective / pending_my_approval 对当前用户可见 */
+const PERSON_MODULES={
+  /* 张明：已生效 + 待我审批；另有草稿/填写中不展示 */
+  sub1:[
+    Object.assign(cloneModShell(MODULES[0]),{goals:[
+      cloneGoal(MODULES[0].goals[0],'effective','zm_'),
+      cloneGoal(MODULES[0].goals[1],'pending_my_approval','zm_'),
+      cloneGoal(MODULES[0].goals[2],'draft','zm_'),
+    ]}),
+    Object.assign(cloneModShell(MODULES[1]),{goals:[
+      cloneGoal(MODULES[1].goals[0],'effective','zm_'),
+      cloneGoal(MODULES[1].goals[1],'pending_my_approval','zm_'),
+      cloneGoal(MODULES[1].goals[2],'filling','zm_'),
+      cloneGoal(MODULES[1].goals[3],'draft','zm_'),
+    ]}),
+  ],
+  /* 李华：仅已生效 */
+  sub2:[
+    Object.assign(cloneModShell(MODULES[0]),{goals:[
+      cloneGoal(MODULES[0].goals[0],'effective','lh_'),
+      cloneGoal(MODULES[0].goals[1],'effective','lh_'),
+    ]}),
+    Object.assign(cloneModShell(MODULES[1]),{goals:[
+      cloneGoal(MODULES[1].goals[0],'effective','lh_'),
+      cloneGoal(MODULES[1].goals[3],'effective','lh_'),
+    ]}),
+  ],
+  /* 周杰：全是未生效或不归我审 → 过滤后空 */
+  sub3:[
+    Object.assign(cloneModShell(MODULES[0]),{goals:[
+      cloneGoal(MODULES[0].goals[0],'draft','zj_'),
+      cloneGoal(MODULES[0].goals[1],'filling','zj_'),
+      cloneGoal(MODULES[0].goals[2],'pending_other','zj_'),
+    ]}),
+    Object.assign(cloneModShell(MODULES[1]),{goals:[
+      cloneGoal(MODULES[1].goals[0],'draft','zj_'),
+      cloneGoal(MODULES[1].goals[1],'pending_other','zj_'),
+    ]}),
+  ],
+  /* 刘VP：无可查看目标 */
+  sup1:[
+    Object.assign(cloneModShell(MODULES[0]),{goals:[]}),
+    Object.assign(cloneModShell(MODULES[1]),{goals:[]}),
+  ],
+};
 let currentPersonId='self';
 let peoplePanelOpen=true;
 function findPerson(id){
@@ -744,7 +802,19 @@ function findPerson(id){
   return null;
 }
 function isSelfView(){return currentPersonId==='self'}
-function isEmptyView(){const hit=findPerson(currentPersonId);return !!(hit&&hit.group==='superior')}
+function isViewableOtherGoal(g){return g.status==='effective'||g.status==='pending_my_approval'}
+function getPersonModulesRaw(){
+  if(isSelfView())return MODULES;
+  return PERSON_MODULES[currentPersonId]||[];
+}
+function getVisibleModules(){
+  const raw=getPersonModulesRaw();
+  if(isSelfView())return raw;
+  return raw.map(m=>({...m,goals:m.goals.filter(isViewableOtherGoal)}));
+}
+function hasPendingMyApproval(mods){
+  return (mods||[]).some(m=>m.goals.some(g=>g.status==='pending_my_approval'));
+}
 function personLine(p){return p.name+'｜'+p.dept+'｜'+p.title}
 function personMeta(p){return p.dept+'｜'+p.title}
 function renderPeople(){
@@ -769,13 +839,60 @@ function updateViewingBar(){
 }
 function updateHeaderEditMode(){
   const self=isSelfView();
+  const titleEl=document.getElementById('detailTitle');
+  if(titleEl)titleEl.textContent=self?'我的目标':'TA人目标';
   document.querySelectorAll('.self-only').forEach(el=>{el.style.display=self?'':'none'});
+  const mods=getVisibleModules();
+  const showApprove=!self&&hasPendingMyApproval(mods);
+  document.querySelectorAll('.approve-only').forEach(el=>{el.style.display=showApprove?'':'none'});
+  const statusEl=document.getElementById('detailStatus');
+  if(statusEl){
+    let label='目标制定';
+    let tone='submitted';
+    let show=true;
+    if(!self){
+      const n=mods.reduce((s,m)=>s+m.goals.length,0);
+      if(!n){
+        show=false;
+      }else if(hasPendingMyApproval(mods)){
+        label='直线上级审批';
+        tone='submitted';
+      }else{
+        label='已生效';
+        tone='effective';
+      }
+    }
+    if(show){
+      statusEl.className='detail-status '+tone;
+      statusEl.innerHTML='<span class="dot"></span>'+label;
+      statusEl.style.display='';
+    }else{
+      statusEl.style.display='none';
+      statusEl.innerHTML='';
+    }
+  }
 }
 function selectPerson(id){
   if(!findPerson(id))return;
   currentPersonId=id;
   renderPeople();
   updateViewingBar();
+  render();
+}
+function approveOthersGoals(){
+  if(isSelfView())return;
+  const raw=PERSON_MODULES[currentPersonId];
+  if(!raw)return;
+  raw.forEach(m=>{m.goals.forEach(g=>{if(g.status==='pending_my_approval')g.status='effective'})});
+  showToast('已通过','success');
+  render();
+}
+function rejectOthersGoals(){
+  if(isSelfView())return;
+  const raw=PERSON_MODULES[currentPersonId];
+  if(!raw)return;
+  raw.forEach(m=>{m.goals.forEach(g=>{if(g.status==='pending_my_approval')g.status='rejected'})});
+  showToast('已驳回','success');
   render();
 }
 function togglePeoplePanel(){
@@ -828,7 +945,7 @@ function showConfirm({title='确认操作', desc='确定要执行此操作吗？
 }
 
 // ═══ RENDER MODULES ═══
-function renderEmptyPerson(){
+function renderEmptyPerson(msg){
   const c=document.getElementById('moduleContainer');
   c.innerHTML=`<div class="mod-empty">
     <svg viewBox="0 0 72 72" fill="none" aria-hidden="true">
@@ -838,19 +955,20 @@ function renderEmptyPerson(){
       <circle cx="48" cy="50" r="7" stroke="currentColor" stroke-width="1.5"/>
       <circle cx="48" cy="50" r="2.5" fill="currentColor"/>
     </svg>
-    <div class="mod-empty-text">暂无目标</div>
+    <div class="mod-empty-text">${msg||'暂无可以查看的目标'}</div>
   </div>`;
   setTotals(0,0);
 }
 
-function renderReadonly(){
+function renderReadonly(mods){
   const c=document.getElementById('moduleContainer');
+  const list=mods||getVisibleModules();
   let h='';
-  MODULES.forEach((m,mi)=>{
+  list.forEach((m,mi)=>{
     const tw=m.goals.reduce((s,g)=>s+g.weight,0);
     h+=`<div class="mod-section ${m.accent}">
       <div class="mod-hd">
-        <div class="mod-hd-icon" style="background:${m.color}">${I[m.icon]||I.target}</div>
+        <div class="mod-hd-icon" style="background:${m.color}" aria-hidden="true"></div>
         <div class="mod-hd-title">${m.name}</div>
         <div class="mod-hd-stats">
           <span class="mod-hd-stat">${tw}%</span>
@@ -872,13 +990,14 @@ function renderReadonly(){
     }else{
       m.goals.forEach((g,gi)=>{
         const isQ=g.type==='quant';
+        const stLabel=g.status==='pending_my_approval'?'待我审批':(g.status==='effective'?'已生效':'');
+        const stCls=g.status==='pending_my_approval'?'quant':'qual';
         h+=`<div class="goal-row">
           <div class="goal-summary">
             <div class="goal-icon" style="background:var(--pr50);color:var(--pr);font:700 12px/1 var(--m)">${gi+1}</div>
             <span class="goal-name">${g.name}</span>
-            ${goalDirIcon(g)}
             <span class="goal-weight">${g.weight}%</span>
-            <span class="goal-type ${isQ?'quant':'qual'}">${isQ?'定量':'定性'}</span>
+            ${stLabel?`<span class="goal-type ${stCls}">${stLabel}</span>`:''}
           </div>
           <div class="goal-edit open" style="padding-left:58px">
             <div class="ge-form">
@@ -907,7 +1026,7 @@ function renderReadonly(){
     h+=`</div></div>`;
   });
   c.innerHTML=h;
-  updateTotals();
+  updateTotals(list);
 }
 
 function renderEditable(){
@@ -918,7 +1037,7 @@ function renderEditable(){
     const tw=m.goals.reduce((s,g)=>s+g.weight,0);
     h+=`<div class="mod-section ${m.accent}">
       <div class="mod-hd">
-        <div class="mod-hd-icon" style="background:${m.color}">${I[m.icon]||I.target}</div>
+        <div class="mod-hd-icon" style="background:${m.color}" aria-hidden="true"></div>
         <div class="mod-hd-title">${m.name}</div>
         <div class="mod-hd-stats">
           <span class="mod-hd-stat">${tw}%</span>
@@ -957,7 +1076,7 @@ function renderEditable(){
             <div class="goal-drag" onclick="event.stopPropagation()" title="拖拽排序"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/></svg></div>
             <div class="goal-icon" style="background:var(--pr50);color:var(--pr);font:700 12px/1 var(--m)">${gi+1}</div>
             ${isOpen?`<input class="goal-name-input" id="ge_name_${g.id}" value="${g.name}" placeholder="${g.type==='quant'?'定量指标名称由指标库或历史目标带入':'请输入定性目标名称'}" ${g.type==='quant'?'readonly aria-readonly="true" title="定量指标名称由指标库或历史目标带入，不可编辑"':''} onclick="event.stopPropagation()" oninput="syncGoalFromForm('${g.id}')" />`:`<span class="goal-name">${g.name}${g.aiFilled?aiTag():''}</span>`}
-            ${goalDirIcon(g)}${isOpen?`<input type="number" min="0" max="100" value="${g.weight}" onclick="event.stopPropagation()" oninput="syncGoalFromForm('${g.id}')" id="ge_weight_${g.id}" style="width:50px;font:700 13px/1 var(--m);color:var(--pr);border:1px solid var(--pr200);border-radius:var(--r1);padding:2px 4px;text-align:center;background:var(--pr50);outline:none;flex-shrink:0"  /><span style="font:700 13px/1 var(--m);color:var(--pr);margin-left:2px">%</span>`:`<span class="goal-weight" onclick="event.stopPropagation();editWeightInline('${g.id}')" style="cursor:pointer" title="点击编辑权重">${g.weight}%</span>`}
+            ${isOpen?`<input type="number" min="0" max="100" value="${g.weight}" onclick="event.stopPropagation()" oninput="syncGoalFromForm('${g.id}')" id="ge_weight_${g.id}" style="width:50px;font:700 13px/1 var(--m);color:var(--pr);border:1px solid var(--pr200);border-radius:var(--r1);padding:2px 4px;text-align:center;background:var(--pr50);outline:none;flex-shrink:0"  /><span style="font:700 13px/1 var(--m);color:var(--pr);margin-left:2px">%</span>`:`<span class="goal-weight" onclick="event.stopPropagation();editWeightInline('${g.id}')" style="cursor:pointer" title="点击编辑权重">${g.weight}%</span>`}
             <div class="goal-meta">
               <div class="goal-actions">
                 <button class="goal-act del" title="删除" onclick="event.stopPropagation();deleteGoal('${g.id}',${mi})">${I.trash}</button>
@@ -995,12 +1114,17 @@ function renderEditable(){
 function render(){
   updateHeaderEditMode();
   updateViewingBar();
-  if(isEmptyView()){
-    renderEmptyPerson();
+  if(isSelfView()){
+    renderEditable();
     return;
   }
-  if(isSelfView())renderEditable();
-  else renderReadonly();
+  const mods=getVisibleModules();
+  const n=mods.reduce((s,m)=>s+m.goals.length,0);
+  if(!n){
+    renderEmptyPerson('暂无可以查看的目标');
+    return;
+  }
+  renderReadonly(mods);
 }
 
 function setTotals(tw,n){
@@ -1107,9 +1231,10 @@ function deleteGoal(id,mi){
   });
 }
 
-function updateTotals(){
-  const tw=MODULES.reduce((s,m)=>s+m.goals.reduce((gs,g)=>gs+g.weight,0),0);
-  const n=document.querySelectorAll('#moduleContainer .goal-row').length;
+function updateTotals(mods){
+  const list=mods||(isSelfView()?MODULES:getVisibleModules());
+  const tw=list.reduce((s,m)=>s+m.goals.reduce((gs,g)=>gs+g.weight,0),0);
+  const n=list.reduce((s,m)=>s+m.goals.length,0);
   setTotals(tw,n);
 }
 
@@ -1133,16 +1258,7 @@ function aiTag(){
   return `<span class="ai-tag">${I.ai} AI</span>`;
 }
 
-function goalDirIcon(g){
-  if(g.type==='qual'){
-    return `<span class="goal-dir-icon qual" title="定性" aria-label="定性">${I.list}</span>`;
-  }
-  const neg=g.direction==='negative'||g.direction==='负向';
-  if(neg){
-    return `<span class="goal-dir-icon neg" title="定量负向" aria-label="定量负向">${I.arrowDown}</span>`;
-  }
-  return `<span class="goal-dir-icon pos" title="定量正向" aria-label="定量正向">${I.arrowUp}</span>`;
-}
+function goalDirIcon(g){return ''}
 
 function directionFromNature(nature,isQuant){
   if(!isQuant)return undefined;

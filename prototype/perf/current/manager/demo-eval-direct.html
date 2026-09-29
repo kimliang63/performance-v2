@@ -27,9 +27,14 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 
 /* ═══ PAGE HEADER ═══ */
 .pg-hd-top{position:sticky;top:-24px;z-index:900;display:flex;align-items:center;justify-content:space-between;min-height:56px;padding:12px 20px;margin-bottom:16px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);box-shadow:var(--shadow-card)}
-.pg-hd-main{display:flex;align-items:center;min-width:0}
+.pg-hd-main{display:flex;align-items:center;gap:10px;min-width:0}
 .pg-hd-right{display:flex;align-items:center;gap:16px;margin-left:auto}
 .pg-hd-title{font:700 20px/1.2 var(--f);color:var(--c9);letter-spacing:-.3px}
+.detail-status{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:var(--r1);font:500 12px/1 var(--f);border:1px solid transparent;flex-shrink:0;white-space:nowrap}
+.detail-status .dot{width:7px;height:7px;border-radius:50%}
+.detail-status.submitted{background:var(--pr50);color:var(--pr);border-color:var(--pr200)}
+.detail-status.submitted .dot{background:var(--pr);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .pg-hd-actions{display:flex;align-items:center;gap:8px}
 .pg-hd-summary{display:flex;align-items:center;gap:12px;padding-right:16px;border-right:1px solid var(--c2);white-space:nowrap}
 .pg-hd-summary .sum-value{font:600 12px/1 var(--f);color:var(--c8)}
@@ -68,9 +73,10 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .eval-mod-weight{font-family:var(--m);font-weight:500;font-size:12px;color:var(--c5);background:var(--c1);padding:2px 8px;border-radius:4px}
 
 /* ═══ SELF-EVAL ALIGNED MODULES ═══ */
-.eval-modules{display:flex;flex-direction:column;gap:16px}
-.eval-module-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);overflow:hidden}
-.eval-module-hd{display:flex;align-items:center;gap:12px;min-height:54px;padding:13px 20px;border-bottom:1px solid var(--dv)}
+.eval-modules{display:flex;flex-direction:column;gap:0}
+.eval-module-card{background:transparent;border-radius:0;box-shadow:none;overflow:visible}
+.eval-module-card+.eval-module-card{border-top:1px solid var(--dv);margin-top:12px;padding-top:4px}
+.eval-module-hd{display:flex;align-items:center;gap:12px;min-height:50px;padding:13px 4px;border-bottom:0;background:var(--c0)}
 .eval-module-main{display:flex;align-items:center;gap:12px;min-width:0;flex:1}
 .eval-mod-icon{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#FFF}
 .eval-mod-icon svg{width:13px;height:13px}
@@ -145,9 +151,9 @@ textarea.edit-cell::placeholder{color:var(--c4)}
 .star-desc{font:400 11px/1.3 var(--f);color:var(--c5)}
 .score-cell{min-width:0;padding-right:8px!important}
 
-/* ═══ PEOPLE SPLIT ═══ */
-.goal-split{display:flex;align-items:flex-start;gap:16px}
-.people-panel{width:220px;flex-shrink:0;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:12px 0;position:sticky;top:100px;max-height:calc(100vh - 120px);overflow:auto}
+/* ═══ PEOPLE SPLIT — 与目标页同一张大卡片，中间竖线隔开 ═══ */
+.goal-split{display:flex;align-items:stretch;gap:0;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);box-shadow:var(--shadow-card)}
+.people-panel{width:220px;flex-shrink:0;align-self:flex-start;background:transparent;border:0;border-right:1px solid var(--dv);border-radius:0;box-shadow:none;padding:12px 0;position:sticky;top:100px;max-height:calc(100vh - 120px);overflow:auto}
 .people-group{padding:4px 0 10px}
 .people-group+.people-group{border-top:1px solid var(--dv);padding-top:10px}
 .people-group-title{font:600 11px/1 var(--f);color:var(--c5);letter-spacing:.4px;text-transform:uppercase;padding:4px 14px 8px}
@@ -157,23 +163,23 @@ textarea.edit-cell::placeholder{color:var(--c4)}
 .people-item .p-name{font:600 13px/1.2 var(--f);color:var(--c9)}
 .people-item.active .p-name{color:var(--pr)}
 .people-item .p-meta{font:400 12px/1.3 var(--f);color:var(--c5)}
-.goal-main{flex:1;min-width:0}
+.goal-main{flex:1;min-width:0;padding:12px 16px 16px}
 .goal-split.panel-collapsed{gap:0}
-.goal-split.panel-collapsed .people-panel{display:none}
-.viewing-bar{display:flex;align-items:center;gap:8px;padding:8px 12px;margin-bottom:12px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);font:500 13px/1.3 var(--f);color:var(--c8)}
+.goal-split.panel-collapsed .people-panel{display:none;border-right:0}
+.viewing-bar{display:flex;align-items:center;gap:8px;padding:4px 4px 12px;margin-bottom:0;background:transparent;border:0;border-radius:0;font:500 13px/1.3 var(--f);color:var(--c8)}
 .viewing-bar .vb-text{font:500 13px/1.3 var(--f);color:var(--c8);min-width:0}
 .vb-toggle{width:24px;height:24px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:var(--r1);background:transparent;color:var(--c5);cursor:pointer;padding:0;transition:all .12s}
 .vb-toggle:hover{background:var(--c1);color:var(--pr)}
 .vb-toggle svg{width:14px;height:14px;display:block}
 @media (max-width:900px){
   .goal-split{flex-direction:column}
-  .people-panel{width:100%;position:static;max-height:none;display:flex;gap:8px;overflow:auto;padding:8px}
+  .people-panel{width:100%;position:static;max-height:none;display:flex;gap:8px;overflow:auto;padding:8px;border-right:0;border-bottom:1px solid var(--dv);align-self:stretch}
   .people-group{flex:1;border:0;padding:0}
   .people-group+.people-group{border-top:0;border-left:1px solid var(--dv);padding-left:8px}
 }
 
-/* ═══ HISTORY CARD ═══ */
-.hist-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:16px}
+/* ═══ HISTORY CARD（大卡片内不再套一层阴影卡） ═══ */
+.hist-card{background:transparent;border-radius:0;box-shadow:none;padding:8px 0 16px;margin-bottom:12px;border-bottom:1px solid var(--dv)}
 .hist-hd{font:600 14px/1 var(--f);color:var(--c9);margin-bottom:16px;display:flex;align-items:center;gap:8px}
 .hist-hd svg{width:16px;height:16px;color:var(--pr)}
 .hist-body{display:flex;gap:16px;align-items:stretch}
@@ -309,7 +315,10 @@ body.chat-open .ai-toggle{display:none}
 
   <!-- Page header -->
   <div class="pg-hd-top">
-    <div class="pg-hd-main"><div class="pg-hd-title">直线上级评分</div></div>
+    <div class="pg-hd-main">
+      <div class="pg-hd-title">考核评分</div>
+      <span class="detail-status submitted"><span class="dot"></span>直线上级评分</span>
+    </div>
     <div class="pg-hd-right">
       <div class="pg-hd-summary" aria-label="评分上下文">
         <span class="sum-value">2026年4-6月</span>
@@ -344,8 +353,8 @@ body.chat-open .ai-toggle{display:none}
   <div id="moduleContainer"></div>
 
   <!-- Approval flow -->
-  <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:16px;overflow:hidden">
-    <div style="padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between">
+  <div style="background:transparent;border-radius:0;box-shadow:none;margin:12px 0 0;overflow:hidden;border-top:1px solid var(--dv);padding-top:4px">
+    <div style="padding:16px 4px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between">
       <span style="font:600 15px/1 var(--f);color:var(--c9)">审批流程</span>
     </div>
     <div style="padding:0">
@@ -578,7 +587,7 @@ function renderModuleContainer(){
   html+='</div>';
 
   // 初评等级 - 评星
-  html+='<div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-top:16px;padding:20px 24px">'+
+  html+='<div style="background:transparent;border-radius:0;box-shadow:none;margin-top:16px;padding:16px 4px;border-top:1px solid var(--dv)">'+
     '<div style="font:600 14px/1 var(--f);color:var(--c9);margin-bottom:6px">初评等级</div>'+
     '<div style="font:400 12px/1 var(--f);color:var(--c5);margin-bottom:12px">请根据被考核人表现选择初评等级</div>'+
     '<div class="star-rating" id="initGradeStars" data-value="0"><div class="star-row">';
@@ -590,23 +599,23 @@ function renderModuleContainer(){
   '</div>';
 
   // 总评语区域
-  html+='<div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-top:16px;overflow:hidden">'+
-    '<div style="padding:16px 20px;border-bottom:1px solid var(--dv)"><span style="font:600 15px/1 var(--f);color:var(--c9)">总评语</span></div>'+
-    '<div style="padding:16px 20px;border-bottom:1px solid var(--dv)">'+
+  html+='<div style="background:transparent;border-radius:0;box-shadow:none;margin-top:16px;overflow:hidden;border-top:1px solid var(--dv)">'+
+    '<div style="padding:16px 4px;border-bottom:1px solid var(--dv)"><span style="font:600 15px/1 var(--f);color:var(--c9)">总评语</span></div>'+
+    '<div style="padding:16px 4px;border-bottom:1px solid var(--dv)">'+
       '<div style="font:500 13px/1 var(--f);color:var(--c8);margin-bottom:8px;display:flex;align-items:center;gap:6px">'+
         '<span style="width:22px;height:22px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">'+personAv+'</span>'+
         '员工评语（'+personName+'）'+
       '</div>'+
       '<div style="font:400 13px/1.6 var(--f);color:var(--c7);padding-left:28px">'+employeeComment+'</div>'+
     '</div>'+
-    '<div style="padding:16px 20px;border-bottom:1px solid var(--dv)">'+
+    '<div style="padding:16px 4px;border-bottom:1px solid var(--dv)">'+
       '<div style="font:500 13px/1 var(--f);color:var(--c8);margin-bottom:8px;display:flex;align-items:center;gap:6px">'+
         '<span style="width:22px;height:22px;border-radius:50%;background:var(--vi);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">刘</span>'+
         '双线上级评语'+
       '</div>'+
       '<div style="font:400 13px/1.6 var(--f);color:var(--c7);padding-left:28px">'+indirectComment+'</div>'+
     '</div>'+
-    '<div style="padding:16px 20px">'+
+    '<div style="padding:16px 4px">'+
       '<div style="font:500 13px/1 var(--f);color:var(--c8);margin-bottom:8px;display:flex;align-items:center;gap:6px">'+
         '<span style="width:22px;height:22px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">王</span>'+
         '直线上级评语'+
