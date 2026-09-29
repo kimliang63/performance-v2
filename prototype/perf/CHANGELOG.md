@@ -1,5 +1,114 @@
 # 变更记录
 
+## 2026-09-28 结束环节弹层去掉强制结束确认问句
+
+- `perf-activity-detail.html`：`force-end-stage-ov` 提示块删除「若继续…是否确认终止？」；保留标题、未完成名单、短说明与「确认终止」按钮。
+
+## 2026-09-28 结束环节弹层标题改为是否结束xx环节
+
+- `perf-activity-detail.html`：`force-end-stage-ov` 标题改为「是否结束{当前环节}环节？」（本页为结果确认）；说明保持「将跳过后续环节，强制等级为 B。」；提示名单与主按钮「确认终止」不变。
+
+## 2026-09-28 结束全局环节弹层说明改短
+
+- `perf-activity-detail.html`：`force-end-stage-ov` 说明改为「将跳过后续环节，强制等级为 B。」；提示块仍列未完成人员并问是否确认终止，主按钮「确认终止」。
+
+## 2026-09-28 结束全局环节弹层列出未完成人并确认终止
+
+- `perf-activity-detail.html`：`force-end-stage-ov` 提示块列出未完成人员姓名，询问「是否确认终止」；主按钮改为「确认终止」；提示块可滚动，强制结束规则说明保留。
+
+## 2026-09-28 直线上级评分人员栏按提交状态分组
+
+- `manager/demo-eval-direct.html`：左侧「下属员工」改为「未到达 / 待提交 / 已提交」三组（周杰 / 张明 / 李华），默认仍选待提交的张明；切人、viewing-bar、行格式不变。
+
+## 2026-09-28 得分改正文黑；主按钮改「提交」
+
+- `manager/demo-eval-direct.html`：`.computed-score`（5 / 4.9）改为 13px + `var(--c9)`，去掉蓝色大字；页头主按钮「提交评分」→「提交」。未改完成值与「更多」。
+
+## 2026-09-28 目标制定页增加左侧选人
+
+- `employee/demo-goal-employee.html`：对齐「我的目标」，增加左侧常驻人员栏（我的目标 / 我的上级刘VP / 我的团队张明李华周杰）+ viewing-bar 箭头收起展开（默认展开）；看自己可编辑；看上级空态「暂无目标」；看团队只读，无指标库/复制/新增/拖拽/提交。
+
+## 2026-09-28 目标审批人员栏去掉上级
+
+- `manager/demo-goal-direct.html` / `manager/demo-goal-indirect.html`：左侧人员栏移除「上级」分组（刘VP/赵总/陈副总等），仅保留「下属员工」，默认仍选张明；切人、viewing-bar、收起展开不变。
+
+## 2026-09-28 页头评分上下文只留周期
+
+- `manager/demo-eval-direct.html`：`.pg-hd-summary` 仅保留「2026年4-6月」；去掉「直线上级评分」、被考核人姓名及分隔符；切人不再写回页头姓名。评价列右侧 sticky 仍保留。
+
+## 2026-09-28 直线上级评价列右侧固定
+
+- `manager/demo-eval-direct.html`：含「直线上级评价」的模块表（KPA）最后一列 `position:sticky;right:0`，白底 + 左侧分隔线；表容器 `overflow-x:auto` 且表 `min-width` 保证可横滚。列宽/文案/星级交互未改。
+
+## 2026-09-28 直线上级评分：统计字号缩小；审批流行白底
+
+- `manager/demo-eval-direct.html`：`.eval-mod-stats`（权重%、目标数）改为 12px / `--c6`，模块标题不动。
+- 同页审批流程表三行节点汇总格（被考核人自评分 / 双线上级评分 / 直接上级评分）及同行单元格改为白底 `#fff`，字色字号内边距边框不变；状态胶囊底色保留。
+
+## 2026-09-28 直线上级评分人员栏去掉上级
+
+- `manager/demo-eval-direct.html`：左侧人员栏移除「上级」分组与刘VP，仅保留「下属员工」（张明 / 李华 / 周杰），默认仍选张明。
+
+## 2026-09-26 直线上级评分增加左侧选人
+
+- `manager/demo-eval-direct.html`：对齐目标审批，增加左侧常驻人员栏（上级 / 下属员工）+ viewing-bar 箭头收起展开；默认选中张明；切人时同步页头被考核人、审批流自评人与评语署名。历史绩效格子样式未改。
+
+## 2026-09-26 考核表衡量标准顺序；完成情况列加宽加高
+
+- `employee/demo-eval-self.html`：定量 `.measure-cell` 改为「挑战值/目标值/保底值」在上、指标说明在下（有值才显示该档）；定性行仍只显示说明。
+- 同页「完成情况」列 min-width 320px；`textarea.edit-cell-sm` min-height 88px，输入框铺满该列。
+
+## 2026-09-26 选人回退；我的目标文案/空态；制定页名称字号与类型图标
+
+- `demo-workbench-my-goal.html` / `demo-goal-direct.html` / `demo-goal-indirect.html`：选人改回左侧常驻栏 + viewing-bar 箭头收起/展开。
+- `demo-workbench-my-goal.html`：分组「我的上级」「我的团队」；上级仅刘VP，点入空状态「暂无目标」；指标描述 `.ge-fi.inline` 顶对齐。
+- `demo-goal-employee.html`：`.goal-name-input` 16px/600/`--c9`；权重左侧增加 16px 类型图标（定性灰列表 / 定量正向绿上箭头 / 定量负向红下箭头）；g3 设为定量负向以便三种可见。
+
+## 2026-09-25 查看页去拖拽；我的目标默认选自己
+
+- `current/manager/demo-goal-direct.html`、`demo-goal-indirect.html`、`employee/demo-workbench-my-goal.html`：查看态目标行删除 `.goal-drag`（DOM 移除、无占位）；目标制定填写页拖拽保留。
+- `demo-workbench-my-goal.html`：人员栏最上方增加「我的目标」并默认选中；viewing-bar 为「林晓｜产品部｜产品经理」；点上级/下属仍可切换。审批页人员栏不加此项。
+
+## 2026-09-25 目标审批/我的目标：人员栏与查看条
+
+- `current/manager/demo-goal-direct.html`、`demo-goal-indirect.html`：左右分栏选人（姓名 / 部门｜职位）；`.viewing-bar` 为箭头 +「姓名｜部门｜职位」，可收起/展开左栏；页头去掉「正在查看 xx」。
+- `current/employee/demo-workbench-my-goal.html`：同步同款左侧选人 + viewing-bar 收起展开；默认选中张明；页头撤回/变更目标与「审批中」不变。
+
+## 2026-09-25 查看态衡量标准去掉底框
+
+- `current/manager/demo-goal-direct.html`、`demo-goal-indirect.html`：`.measure-box` 去掉背景/边框/圆角/大 padding/`min-height`，只留文字、行距随内容。定量查看态本就无底框，未动。员工目标制定页可编辑区未改。`demo-workbench-my-goal.html` 查看态本就无 measure-box 底框。
+
+## 2026-09-25 目标审批/我的目标页头对齐；状态「审批中」
+
+- `current/manager/demo-goal-direct.html`：页头改为目标制定同款两行卡片——①目标审批+直线上级审批 / `100%`｜总目标数: 7｜驳回（次）｜通过（主，`approveGoal`）；②年份|月份|Q2 Q1 H1 全年。驳回从 ••• 取出并去掉空菜单；删掉 `.pg-hd-info` 人员信息条。
+- `current/employee/demo-workbench-my-goal.html`：页头同结构——①我的目标+审批中 / `100%`｜总目标数｜撤回｜变更目标；②周期行；删掉下方统计行与横线。状态 pill 文案改为「审批中」。
+
+## 2026-09-25 目标制定页头顺序调整；我的目标展开区只读对齐
+
+- `current/employee/demo-goal-employee.html`：标题行右侧改为「100%｜总目标数: N｜已实时保存｜提交」（百分比仍按 100%绿/0%灰/其余红）。
+- `current/employee/demo-workbench-my-goal.html`：展开区对齐目标制定字段布局，定量为挑战值/目标值/保底值/指标描述只读横排；定性为评价档位+指标描述只读；7 条默认展开、无收起。
+
+## 2026-09-25 目标制定：权重只显示百分比并按数值上色
+
+- `current/employee/demo-goal-employee.html`：标题行去掉「总权重:」，只留百分比；100% 绿（`--em700`）、0% 灰（`--c5`）、其余红（`--ro`），随 `updateTotals` 更新。
+
+## 2026-09-25 我的目标：全部展开不可收起；目标制定统计并入标题行
+
+- `current/employee/demo-workbench-my-goal.html`：去掉分区/目标折叠（`toggleMod`/`toggleGoal`、chevron）；KPI/KPA 与全部目标行默认展开明细。
+- `current/employee/demo-goal-employee.html`：本就无折叠交互；标题行右侧为「已实时保存｜总权重｜总目标数｜提交」，无周期下独立统计行。
+
+## 2026-09-25 目标制定：总权重/总目标数并入标题行
+
+- `current/employee/demo-goal-employee.html`：删掉周期下 `#summary` 行；标题行右侧顺序为「已实时保存｜总权重｜总目标数｜提交」实心主按钮；竖线次要色、左右 8px。
+
+## 2026-09-25 目标制定：页头对齐「我的目标」三行结构
+
+- `current/employee/demo-goal-employee.html`：页头改为与 `demo-workbench-my-goal.html` 同款 `detail-card`——①目标制定+填写中 / 已实时保存+实心主按钮「提交」；②年份下拉|月份 pill（6→1月）|Q2 Q1 H1 全年。面包屑不再放月份。
+
+## 2026-09-25 目标制定：实时保存、空状态简图、页头目标数、分区裁切
+
+- `current/employee/demo-goal-employee.html`：去掉「审批流程」整块；更多菜单删除「保存草稿」「导出」后菜单为空，一并去掉 `•••`；提交左侧加「已实时保存」。页头摘要去掉「目标填写」，改为「2026年6月 | 当前目标 N | 100%」（N=`#moduleContainer .goal-row` 数，增减目标随 `updateTotals` 更新）。0 个目标分区展示内联 SVG 空状态简图 +「暂无目标，点击新增添加」。各 `.mod-section` 用 `overflow:clip` 裁切，`.mod-hd` 分区内 sticky，目标行上滚收进分区标题、不穿透页头或其它分区。
+
 ## 2026-09-23 年度 TR：强制分布未达标弹窗支持申请突破
 
 - `current/manager/demo-yearly-tr.html`：未达标表增加「操作」列；行内「申请突破」在卡片内展开表单（人员下拉+原因），提交后名单异常标识出现「申请突破」、调整记录追加从→到；已申请可只读回看。

@@ -80,7 +80,7 @@ input.edit-cell{border:1px solid var(--c2);border-radius:var(--r1);padding:5px 8
 input.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 input.edit-cell::placeholder{color:var(--c4)}
 input.edit-cell[type="number"]{font-family:var(--m);text-align:right;width:72px}
-textarea.edit-cell-sm{width:100%;border:1px solid var(--c2);border-radius:var(--r1);padding:6px 8px;font:400 13px/1.4 var(--f);color:var(--c9);background:var(--sf);transition:all .12s;font-family:var(--f);resize:vertical;min-height:48px;outline:none}
+textarea.edit-cell-sm{width:100%;border:1px solid var(--c2);border-radius:var(--r1);padding:6px 8px;font:400 13px/1.4 var(--f);color:var(--c9);background:var(--sf);transition:all .12s;font-family:var(--f);resize:vertical;min-height:88px;outline:none}
 textarea.edit-cell-sm:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 textarea.edit-cell-sm::placeholder{color:var(--c4)}
 select.edit-cell{appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:22px;cursor:pointer;font-family:var(--f);border:1px solid var(--c2);border-radius:var(--r1);padding:6px 28px 6px 10px;font:500 12px/1 var(--f);color:var(--c8);background-color:var(--sf);transition:all .12s;width:100%;outline:none}
@@ -104,7 +104,9 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .star:hover{color:#F59E0B}
 .star-label{font:500 12px/1 var(--f);white-space:nowrap}
 .star-desc{font:400 11px/1.3 var(--f);color:var(--c5)}
-.measure-cell,.completion-cell{width:30%}
+.measure-cell{width:30%}
+.completion-cell{width:30%}
+.eval-module-table:not(.quant-table) .completion-cell{min-width:320px;width:320px}
 .score-cell{min-width:0;padding-right:8px!important}
 
 /* ═══ HISTORY CARD ═══ */
@@ -381,7 +383,7 @@ function renderModuleContainer(){
       '<span class="eval-mod-name" id="eval_module_'+mi+'">'+mod.name+'</span></div>'+
       '<div class="eval-mod-stats"><span class="eval-mod-weight">'+mod.weight+'%</span><span class="eval-mod-count">'+mod.goals.length+' 个目标</span></div>'+
       '</div>'+
-      '<div class="eval-module-table'+(isQuantModule?' quant-table':'')+'"><table><colgroup>'+(isQuantModule?'<col style="width:20%"><col style="width:8%"><col><col style="width:104px"><col style="width:64px">':'<col style="width:20%"><col style="width:8%"><col><col style="width:22%"><col style="width:150px">')+'</colgroup>'+
+      '<div class="eval-module-table'+(isQuantModule?' quant-table':'')+'"><table><colgroup>'+(isQuantModule?'<col style="width:20%"><col style="width:8%"><col><col style="width:104px"><col style="width:64px">':'<col style="width:18%"><col style="width:7%"><col><col style="min-width:320px;width:320px"><col style="width:150px">')+'</colgroup>'+
       '<thead><tr><th>指标名称</th><th>权重</th><th>衡量标准</th><th>'+(isQuantModule?'完成值':'完成情况')+'</th><th>'+(isQuantModule?'得分':'自评结果')+'</th></tr></thead><tbody>';
     mod.goals.forEach(function(g,gi){
       var isQuant=g.type==='quant';
@@ -389,7 +391,11 @@ function renderModuleContainer(){
         '<td><span style="font-weight:500;color:var(--c8)">'+g.name+'</span></td>'+
         '<td><span class="eval-weight">'+g.weight+'%</span></td>';
       if(isQuant){
-        html+='<td class="measure-cell" style="font:400 12px/1.6 var(--f);color:var(--c6)">'+g.desc+'<br>挑战值: <span style="font-family:var(--m);color:var(--c7)">'+g.challenge+g.unit+'</span> / 目标值: <span style="font-family:var(--m);color:var(--c7)">'+g.target+g.unit+'</span></td>';
+        var thr=[];
+        if(g.challenge!=null&&g.challenge!=='')thr.push('挑战值: <span style="font-family:var(--m);color:var(--c7)">'+g.challenge+g.unit+'</span>');
+        if(g.target!=null&&g.target!=='')thr.push('目标值: <span style="font-family:var(--m);color:var(--c7)">'+g.target+g.unit+'</span>');
+        if(g.baseline!=null&&g.baseline!=='')thr.push('保底值: <span style="font-family:var(--m);color:var(--c7)">'+g.baseline+g.unit+'</span>');
+        html+='<td class="measure-cell" style="font:400 12px/1.6 var(--f);color:var(--c6)">'+(thr.length?thr.join(' / ')+'<br>':'')+g.desc+'</td>';
         html+='<td class="completion-cell quant-completion"><div class="quant-input-wrap"><input class="edit-cell" type="number" id="completed_'+mi+'_'+gi+'" aria-label="'+g.name+'完成值" placeholder="输入完成值" oninput="updateCompleted('+mi+','+gi+')"><span class="quant-unit">'+g.unit+'</span></div></td>';
         html+='<td id="score_'+mi+'_'+gi+'" class="eval-score score-cell quant-score-cell">—</td>';
       }else{

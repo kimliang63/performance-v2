@@ -48,7 +48,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .breadcrumb .sep{color:var(--c3)}
 .breadcrumb .cur{color:var(--c8);font-weight:600}
 
-.ct{padding:24px}
+.ct{padding:24px;max-width:1200px;margin:0 auto}
 
 /* Page header */
 .pg-hd{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:16px}
@@ -62,6 +62,33 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .pg-hd-summary{display:flex;align-items:center;gap:24px;padding-top:12px;border-top:1px solid var(--dv)}
 .pg-hd-summary .sum-item{font:500 13px/1 var(--f);color:var(--c6)}
 .pg-hd-summary .sum-val{font-family:var(--m);font-weight:700;color:var(--pr)}
+
+/* People split — left panel + viewing-bar collapse */
+.goal-split{display:flex;align-items:flex-start;gap:16px}
+.people-panel{width:220px;flex-shrink:0;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:12px 0;position:sticky;top:100px;max-height:calc(100vh - 120px);overflow:auto}
+.people-group{padding:4px 0 10px}
+.people-group+.people-group{border-top:1px solid var(--dv);padding-top:10px}
+.people-group-title{font:600 11px/1 var(--f);color:var(--c5);letter-spacing:.4px;text-transform:uppercase;padding:4px 14px 8px}
+.people-item{display:flex;flex-direction:column;gap:3px;padding:8px 14px;cursor:pointer;transition:background .12s;border:0;background:transparent;width:100%;text-align:left;font-family:inherit}
+.people-item:hover{background:var(--c0)}
+.people-item.active{background:var(--pr50)}
+.people-item .p-name{font:600 13px/1.2 var(--f);color:var(--c9)}
+.people-item.active .p-name{color:var(--pr)}
+.people-item .p-meta{font:400 12px/1.3 var(--f);color:var(--c5)}
+.goal-main{flex:1;min-width:0}
+.goal-split.panel-collapsed{gap:0}
+.goal-split.panel-collapsed .people-panel{display:none}
+.viewing-bar{display:flex;align-items:center;gap:8px;padding:8px 12px;margin-bottom:12px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);font:500 13px/1.3 var(--f);color:var(--c8)}
+.viewing-bar .vb-text{font:500 13px/1.3 var(--f);color:var(--c8);min-width:0}
+.vb-toggle{width:24px;height:24px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:var(--r1);background:transparent;color:var(--c5);cursor:pointer;padding:0;transition:all .12s}
+.vb-toggle:hover{background:var(--c1);color:var(--pr)}
+.vb-toggle svg{width:14px;height:14px;display:block}
+@media (max-width:900px){
+  .goal-split{flex-direction:column}
+  .people-panel{width:100%;position:static;max-height:none;display:flex;gap:8px;overflow:auto;padding:8px}
+  .people-group{flex:1;border:0;padding:0}
+  .people-group+.people-group{border-top:0;border-left:1px solid var(--dv);padding-left:8px}
+}
 
 /* Buttons */
 .btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:32px;border-radius:var(--r1);font:500 13px/1 var(--f);cursor:pointer;transition:all .12s;border:none;font-family:inherit}
@@ -101,8 +128,6 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .goal-row:hover{background:var(--c0)}
 .goal-row:last-child{border-bottom:none}
 .goal-summary{display:flex;align-items:center;padding:14px 20px;gap:10px;cursor:pointer}
-.goal-drag{color:var(--c3);cursor:grab;flex-shrink:0;display:flex;align-items:center;user-select:none}
-.goal-drag svg{width:14px;height:14px}
 .goal-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .goal-icon.pr{background:var(--pr50);color:var(--pr)}
 .goal-icon.em{background:var(--em50);color:var(--em)}
@@ -114,7 +139,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .goal-actions{display:flex;align-items:center;gap:4px}
 
 /* Goal edit detail */
-.goal-edit{padding:0 20px 16px 82px;display:none}
+.goal-edit{padding:0 20px 16px 58px;display:none}
 .goal-edit.open{display:block;animation:fadeIn .2s ease}
 .ge-form{padding:12px 0}
 .ge-sec{margin-bottom:14px}
@@ -130,11 +155,11 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .ge-linked{display:flex;align-items:center;gap:4px;padding:5px 8px;background:var(--pr50);border:1px solid var(--pr200);border-radius:var(--r1);font:500 12px/1 var(--f);color:var(--pr)}
 .ge-linked svg{width:12px;height:12px;flex-shrink:0}
 .ge-quant-grid{display:grid;grid-template-columns:repeat(3,max-content) minmax(280px,1fr);gap:10px 28px;align-items:start}
-.ge-inline-pair{display:flex;align-items:baseline;gap:4px;min-height:30px;color:var(--c8);font:400 13px/1.5 var(--f)}
-.ge-inline-pair .label{color:var(--c5);font-size:12px;white-space:nowrap}
+.ge-inline-pair{display:flex;align-items:flex-start;gap:4px;min-height:30px;color:var(--c8);font:400 13px/1.5 var(--f)}
+.ge-inline-pair .label{color:var(--c5);font-size:12px;line-height:1.5;white-space:nowrap}
 .ge-inline-pair .value{font-weight:500;color:var(--c8)}
 .ge-inline-pair .mono{font-family:var(--m)}
-.measure-box{min-height:88px;padding:10px 12px;border:1px solid var(--c2);border-radius:var(--r1);background:var(--c0);font:400 13px/1.65 var(--f);color:var(--c8);white-space:pre-wrap}
+.measure-box{font:400 13px/1.65 var(--f);color:var(--c8);white-space:pre-wrap}
 .flow-table{width:100%;border-collapse:collapse}
 .flow-table th{padding:10px 16px;background:var(--c0);border-bottom:1px solid var(--dv);font:600 11px/1 var(--f);color:var(--c5);text-align:left;letter-spacing:.5px}
 .flow-table td{padding:12px 16px;border-bottom:1px solid var(--dv);font:400 13px/1.4 var(--f);color:var(--c6);vertical-align:middle}
@@ -210,7 +235,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
     <div class="pg-hd-info">
       <div class="pg-hd-info-item"><span class="pg-hd-info-label">考核方案</span><span class="pg-hd-info-value">产品部2026年6月绩效考核</span></div>
       <div class="pg-hd-info-item"><span class="pg-hd-info-label">考核周期</span><span class="pg-hd-info-value">2026年6月</span></div>
-      <div class="pg-hd-info-item"><span class="pg-hd-info-label">被评人</span><span class="pg-hd-info-value">张明</span></div>
+      <div class="pg-hd-info-item"><span class="pg-hd-info-label">被评人</span><span class="pg-hd-info-value" id="headerPersonName">张明</span></div>
     </div>
     <div class="pg-hd-summary">
       <span class="sum-item">总权重: <span class="sum-val">100%</span></span>
@@ -218,21 +243,32 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
     </div>
   </div>
 
-  <div id="moduleContainer"></div>
+  <div class="goal-split">
+    <aside class="people-panel" id="peoplePanel" aria-label="人员切换"></aside>
+    <div class="goal-main">
+      <div class="viewing-bar">
+        <button type="button" class="vb-toggle" id="panelToggle" title="收起" aria-label="收起人员栏" onclick="togglePeoplePanel()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <span class="vb-text" id="viewingText">张明｜产品部｜高级产品经理</span>
+      </div>
+      <div id="moduleContainer"></div>
 
-  <!-- 审批流程 -->
-  <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-top:16px;overflow:hidden">
-    <div style="padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between">
-      <span style="font:600 15px/1 var(--f);color:var(--c9)">审批流程</span>
+      <!-- 审批流程 -->
+      <div style="background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-top:16px;overflow:hidden">
+        <div style="padding:16px 20px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between">
+          <span style="font:600 15px/1 var(--f);color:var(--c9)">审批流程</span>
+        </div>
+        <table class="flow-table">
+          <thead><tr><th>节点</th><th>处理人</th><th>状态</th><th>原因/备注</th><th>流入时间</th><th>流出时间</th></tr></thead>
+          <tbody>
+            <tr><td><div class="flow-node"><span class="flow-dot done"></span>目标填写</div></td><td><div class="flow-person"><span class="flow-avatar done">张</span>张明</div></td><td><span class="flow-status done">已完成</span></td><td>目标已提交</td><td>2026-06-01 09:00</td><td>2026-06-01 11:30</td></tr>
+            <tr style="background:var(--pr50)"><td><div class="flow-node"><span class="flow-dot current"></span>双线上级审批</div></td><td><div class="flow-person"><span class="flow-avatar current">刘</span>刘VP</div></td><td><span class="flow-status current">处理中</span></td><td>当前节点</td><td>2026-06-01 11:30</td><td>—</td></tr>
+            <tr><td><div class="flow-node"><span class="flow-dot"></span>直线上级审批</div></td><td><div class="flow-person"><span class="flow-avatar">王</span>王总监</div></td><td><span class="flow-status wait">待处理</span></td><td>—</td><td>—</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
-    <table class="flow-table">
-      <thead><tr><th>节点</th><th>处理人</th><th>状态</th><th>原因/备注</th><th>流入时间</th><th>流出时间</th></tr></thead>
-      <tbody>
-        <tr><td><div class="flow-node"><span class="flow-dot done"></span>目标填写</div></td><td><div class="flow-person"><span class="flow-avatar done">张</span>张明</div></td><td><span class="flow-status done">已完成</span></td><td>目标已提交</td><td>2026-06-01 09:00</td><td>2026-06-01 11:30</td></tr>
-        <tr style="background:var(--pr50)"><td><div class="flow-node"><span class="flow-dot current"></span>双线上级审批</div></td><td><div class="flow-person"><span class="flow-avatar current">刘</span>刘VP</div></td><td><span class="flow-status current">处理中</span></td><td>当前节点</td><td>2026-06-01 11:30</td><td>—</td></tr>
-        <tr><td><div class="flow-node"><span class="flow-dot"></span>直线上级审批</div></td><td><div class="flow-person"><span class="flow-avatar">王</span>王总监</div></td><td><span class="flow-status wait">待处理</span></td><td>—</td><td>—</td><td>—</td></tr>
-      </tbody>
-    </table>
   </div>
 </div>
 
@@ -317,7 +353,6 @@ function render(){
       const isQ=g.type==='quant';
       h+=`<div class="goal-row">
         <div class="goal-summary" onclick="toggleGoal('${g.id}')">
-          <div class="goal-drag" onclick="event.stopPropagation()">${I.drag}</div>
           <div class="goal-icon ${isQ?'pr':'em'}" style="font:700 12px/1 var(--m)">${gi+1}</div>
           <span class="goal-name">${g.name}</span>
           <span class="goal-weight">${g.weight}%</span>
@@ -373,6 +408,70 @@ function confirmReject(){
   showToast('已退回，申请人将收到通知','success');
 }
 
+const PEOPLE={
+  subordinate:[
+    {id:'sub1',name:'张明',dept:'产品部',title:'高级产品经理'},
+    {id:'sub2',name:'李华',dept:'产品部',title:'产品经理'},
+    {id:'sub3',name:'周杰',dept:'研发部',title:'高级工程师'},
+  ]
+};
+let currentPersonId='sub1';
+let peoplePanelOpen=true;
+function findPerson(id){
+  for(const g of ['subordinate']){
+    const p=PEOPLE[g].find(x=>x.id===id);
+    if(p)return {group:g,person:p};
+  }
+  return null;
+}
+function personLine(p){return p.name+'｜'+p.dept+'｜'+p.title}
+function personMeta(p){return p.dept+'｜'+p.title}
+function renderPeople(){
+  const el=document.getElementById('peoplePanel');
+  if(!el)return;
+  const groups=[{key:'subordinate',title:'下属员工'}];
+  let h='';
+  groups.forEach(g=>{
+    h+='<div class="people-group"><div class="people-group-title">'+g.title+'</div>';
+    PEOPLE[g.key].forEach(p=>{
+      const on=p.id===currentPersonId?' active':'';
+      h+='<button type="button" class="people-item'+on+'" data-id="'+p.id+'" onclick="selectPerson(\''+p.id+'\')"><span class="p-name">'+p.name+'</span><span class="p-meta">'+personMeta(p)+'</span></button>';
+    });
+    h+='</div>';
+  });
+  el.innerHTML=h;
+}
+function updateViewingBar(){
+  const hit=findPerson(currentPersonId);
+  if(!hit)return;
+  const p=hit.person;
+  const vt=document.getElementById('viewingText');
+  if(vt)vt.textContent=personLine(p);
+  const hn=document.getElementById('headerPersonName');
+  if(hn)hn.textContent=p.name;
+}
+function selectPerson(id){
+  const hit=findPerson(id);
+  if(!hit)return;
+  currentPersonId=id;
+  renderPeople();
+  updateViewingBar();
+  render();
+}
+function togglePeoplePanel(){
+  peoplePanelOpen=!peoplePanelOpen;
+  const split=document.querySelector('.goal-split');
+  const btn=document.getElementById('panelToggle');
+  if(split)split.classList.toggle('panel-collapsed',!peoplePanelOpen);
+  if(btn){
+    btn.title=peoplePanelOpen?'收起':'展开';
+    btn.setAttribute('aria-label',peoplePanelOpen?'收起人员栏':'展开人员栏');
+    btn.innerHTML=peoplePanelOpen
+      ?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>'
+      :'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+  }
+}
+
 function showToast(msg,type){
   const t=document.getElementById('toast');
   t.textContent=msg;
@@ -380,6 +479,8 @@ function showToast(msg,type){
   setTimeout(()=>t.classList.remove('show'),2500);
 }
 
+renderPeople();
+updateViewingBar();
 render();
 </script>
 </body>

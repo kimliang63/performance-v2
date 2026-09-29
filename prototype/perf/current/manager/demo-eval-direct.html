@@ -76,17 +76,28 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .eval-mod-icon svg{width:13px;height:13px}
 .eval-module-hd .eval-mod-name{font:600 13px/1 var(--f);color:var(--c7);text-transform:uppercase;letter-spacing:.4px}
 .eval-mod-stats{display:flex;align-items:center;gap:14px}
-.eval-mod-stats .eval-mod-weight,.eval-mod-count{padding:0;background:transparent;border-radius:0;font:600 14px/1 var(--f);color:var(--c8)}
+.eval-mod-stats .eval-mod-weight,.eval-mod-count{padding:0;background:transparent;border-radius:0;font:500 12px/1 var(--f);color:var(--c6)}
 .eval-mod-stats .eval-mod-weight{font-family:var(--m)}
-.eval-module-table{overflow-x:auto}
-.eval-module-table table{width:100%;border-collapse:collapse;table-layout:fixed}
+.eval-module-table{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.eval-module-table table{width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed}
 .eval-module-table th{padding:9px 12px;background:var(--c0);border-bottom:1px solid var(--dv);font:600 11px/1.2 var(--f);color:var(--c6);text-align:left;white-space:nowrap}
-.eval-module-table td{padding:10px 12px;font:400 13px/1.4 var(--f);color:var(--c7);border-bottom:1px solid var(--dv);vertical-align:top}
+.eval-module-table td{padding:10px 12px;font:400 13px/1.4 var(--f);color:var(--c7);border-bottom:1px solid var(--dv);vertical-align:top;background:#fff}
 .eval-module-table tbody tr:last-child td{border-bottom:none}
 .eval-module-table tbody tr:hover td{background:var(--c0)}
+.eval-module-table.has-sticky-direct table{min-width:980px}
+.eval-module-table.has-sticky-direct th.sticky-col-direct,
+.eval-module-table.has-sticky-direct td.sticky-col-direct{
+  position:sticky;right:0;z-index:2;background:#fff;
+  box-shadow:-1px 0 0 var(--dv);
+}
+.eval-module-table.has-sticky-direct th.sticky-col-direct{background:var(--c0);z-index:3}
+.eval-module-table.has-sticky-direct tbody tr:hover td.sticky-col-direct{background:var(--c0)}
 .result-badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--c1);color:var(--c6);white-space:nowrap}
-.completion-readonly{font:400 12px/1.6 var(--f);color:var(--c6)}
-.computed-score{display:inline-flex;align-items:baseline;font:700 16px/1 var(--m);color:var(--pr)}
+.completion-readonly{font:400 13px/1.4 var(--f);color:var(--c6)}
+.eval-module-table td.completion-readonly{font:400 13px/1.4 var(--f);color:var(--c6)}
+.eval-module-table td.completion-readonly span{font-size:13px;line-height:1.4}
+.computed-score{display:inline-flex;align-items:baseline;font:500 13px/1.4 var(--m);color:var(--c9)}
+.eval-module-table td.computed-score-cell .computed-score{font:500 13px/1.4 var(--m);color:var(--c9)}
 .computed-score-cell{padding-left:8px!important;padding-right:8px!important}
 
 /* ═══ INPUT ═══ */
@@ -133,6 +144,33 @@ textarea.edit-cell::placeholder{color:var(--c4)}
 .star-label{font:500 12px/1 var(--f);white-space:nowrap}
 .star-desc{font:400 11px/1.3 var(--f);color:var(--c5)}
 .score-cell{min-width:0;padding-right:8px!important}
+
+/* ═══ PEOPLE SPLIT ═══ */
+.goal-split{display:flex;align-items:flex-start;gap:16px}
+.people-panel{width:220px;flex-shrink:0;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:12px 0;position:sticky;top:100px;max-height:calc(100vh - 120px);overflow:auto}
+.people-group{padding:4px 0 10px}
+.people-group+.people-group{border-top:1px solid var(--dv);padding-top:10px}
+.people-group-title{font:600 11px/1 var(--f);color:var(--c5);letter-spacing:.4px;text-transform:uppercase;padding:4px 14px 8px}
+.people-item{display:flex;flex-direction:column;gap:3px;padding:8px 14px;cursor:pointer;transition:background .12s;border:0;background:transparent;width:100%;text-align:left;font-family:inherit}
+.people-item:hover{background:var(--c0)}
+.people-item.active{background:var(--pr50)}
+.people-item .p-name{font:600 13px/1.2 var(--f);color:var(--c9)}
+.people-item.active .p-name{color:var(--pr)}
+.people-item .p-meta{font:400 12px/1.3 var(--f);color:var(--c5)}
+.goal-main{flex:1;min-width:0}
+.goal-split.panel-collapsed{gap:0}
+.goal-split.panel-collapsed .people-panel{display:none}
+.viewing-bar{display:flex;align-items:center;gap:8px;padding:8px 12px;margin-bottom:12px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);font:500 13px/1.3 var(--f);color:var(--c8)}
+.viewing-bar .vb-text{font:500 13px/1.3 var(--f);color:var(--c8);min-width:0}
+.vb-toggle{width:24px;height:24px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:var(--r1);background:transparent;color:var(--c5);cursor:pointer;padding:0;transition:all .12s}
+.vb-toggle:hover{background:var(--c1);color:var(--pr)}
+.vb-toggle svg{width:14px;height:14px;display:block}
+@media (max-width:900px){
+  .goal-split{flex-direction:column}
+  .people-panel{width:100%;position:static;max-height:none;display:flex;gap:8px;overflow:auto;padding:8px}
+  .people-group{flex:1;border:0;padding:0}
+  .people-group+.people-group{border-top:0;border-left:1px solid var(--dv);padding-left:8px}
+}
 
 /* ═══ HISTORY CARD ═══ */
 .hist-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:16px}
@@ -274,12 +312,10 @@ body.chat-open .ai-toggle{display:none}
     <div class="pg-hd-main"><div class="pg-hd-title">直线上级评分</div></div>
     <div class="pg-hd-right">
       <div class="pg-hd-summary" aria-label="评分上下文">
-        <span class="sum-value">2026年4-6月</span><span class="sum-sep">|</span>
-        <span class="sum-value">直线上级评分</span><span class="sum-sep">|</span>
-        <span class="sum-value">张明</span>
+        <span class="sum-value">2026年4-6月</span>
       </div>
       <div class="pg-hd-actions">
-        <button class="btn btn-p" onclick="submitEval()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>提交评分</button>
+        <button class="btn btn-p" onclick="submitEval()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>提交</button>
         <div class="action-more">
           <button class="btn btn-s action-more-trigger" id="directMoreBtn" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="directMoreMenu" onclick="toggleActionMenu(event,'directMoreBtn','directMoreMenu')">更多<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
           <div class="action-more-menu" id="directMoreMenu" role="menu" aria-labelledby="directMoreBtn">
@@ -290,6 +326,16 @@ body.chat-open .ai-toggle{display:none}
       </div>
     </div>
   </div>
+
+  <div class="goal-split">
+    <aside class="people-panel" id="peoplePanel" aria-label="人员切换"></aside>
+    <div class="goal-main">
+      <div class="viewing-bar">
+        <button type="button" class="vb-toggle" id="panelToggle" title="收起" aria-label="收起人员栏" onclick="togglePeoplePanel()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <span class="vb-text" id="viewingText">张明｜产品部｜高级产品经理</span>
+      </div>
 
   <!-- 历史绩效统计 -->
   <div id="histContainer"></div>
@@ -315,32 +361,34 @@ body.chat-open .ai-toggle{display:none}
           </tr>
         </thead>
         <tbody>
-          <tr style="background:var(--em50)">
-            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c8);border-bottom:1px solid var(--dv)"><div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--em);flex-shrink:0"></span>被考核人自评分</div></td>
-            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><div style="display:flex;align-items:center;gap:6px"><span style="width:22px;height:22px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">张</span><span style="font:400 13px/1 var(--f);color:var(--c8)">张明</span></div></td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c7);border-bottom:1px solid var(--dv)">2026-06-15 09:00</td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--em700);border-bottom:1px solid var(--dv)">2026-06-15 14:30</td>
-            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">✓ 已完成</span></td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c5);border-bottom:1px solid var(--dv)">自评已提交</td>
+          <tr style="background:#fff">
+            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c8);border-bottom:1px solid var(--dv);background:#fff"><div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--em);flex-shrink:0"></span>被考核人自评分</div></td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv);background:#fff"><div style="display:flex;align-items:center;gap:6px"><span id="flowSelfAvatar" style="width:22px;height:22px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">张</span><span id="flowSelfName" style="font:400 13px/1 var(--f);color:var(--c8)">张明</span></div></td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c7);border-bottom:1px solid var(--dv);background:#fff">2026-06-15 09:00</td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--em700);border-bottom:1px solid var(--dv);background:#fff">2026-06-15 14:30</td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv);background:#fff"><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">✓ 已完成</span></td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c5);border-bottom:1px solid var(--dv);background:#fff">自评已提交</td>
           </tr>
-          <tr style="background:var(--em50)">
-            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c8);border-bottom:1px solid var(--dv)"><div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--em);flex-shrink:0"></span>双线上级评分</div></td>
-            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><div style="display:flex;align-items:center;gap:6px"><span style="width:22px;height:22px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">刘</span><span style="font:400 13px/1 var(--f);color:var(--c8)">刘VP</span></div></td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c7);border-bottom:1px solid var(--dv)">2026-06-15 14:30</td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--em700);border-bottom:1px solid var(--dv)">2026-06-16 10:00</td>
-            <td style="padding:12px 16px;border-bottom:1px solid var(--dv)"><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">✓ 已完成</span></td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c5);border-bottom:1px solid var(--dv)">评分86.5分</td>
+          <tr style="background:#fff">
+            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c8);border-bottom:1px solid var(--dv);background:#fff"><div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--em);flex-shrink:0"></span>双线上级评分</div></td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv);background:#fff"><div style="display:flex;align-items:center;gap:6px"><span style="width:22px;height:22px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">刘</span><span style="font:400 13px/1 var(--f);color:var(--c8)">刘VP</span></div></td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c7);border-bottom:1px solid var(--dv);background:#fff">2026-06-15 14:30</td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--em700);border-bottom:1px solid var(--dv);background:#fff">2026-06-16 10:00</td>
+            <td style="padding:12px 16px;border-bottom:1px solid var(--dv);background:#fff"><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--em50);color:var(--em700)">✓ 已完成</span></td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c5);border-bottom:1px solid var(--dv);background:#fff">评分86.5分</td>
           </tr>
-          <tr style="background:var(--pr50)">
-            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c8)"><div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--pr);flex-shrink:0"></span>直接上级评分</div></td>
-            <td style="padding:12px 16px"><div style="display:flex;align-items:center;gap:6px"><span style="width:22px;height:22px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">王</span><span style="font:400 13px/1 var(--f);color:var(--c8)">王总监</span></div></td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c7)">2026-06-16 10:00</td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4)">—</td>
-            <td style="padding:12px 16px"><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)"><span style="width:6px;height:6px;border-radius:50%;background:var(--pr);animation:pulse 2s ease-in-out infinite"></span>处理中</span></td>
-            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c5)">当前节点</td>
+          <tr style="background:#fff">
+            <td style="padding:12px 16px;font:500 13px/1.4 var(--f);color:var(--c8);background:#fff"><div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--pr);flex-shrink:0"></span>直接上级评分</div></td>
+            <td style="padding:12px 16px;background:#fff"><div style="display:flex;align-items:center;gap:6px"><span style="width:22px;height:22px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">王</span><span style="font:400 13px/1 var(--f);color:var(--c8)">王总监</span></div></td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c7);background:#fff">2026-06-16 10:00</td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c4);background:#fff">—</td>
+            <td style="padding:12px 16px;background:#fff"><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r1);font:500 11px/1 var(--f);background:var(--pr50);color:var(--pr)"><span style="width:6px;height:6px;border-radius:50%;background:var(--pr);animation:pulse 2s ease-in-out infinite"></span>处理中</span></td>
+            <td style="padding:12px 16px;font:400 13px/1 var(--f);color:var(--c5);background:#fff">当前节点</td>
           </tr>
         </tbody>
       </table>
+    </div>
+  </div>
     </div>
   </div>
 </div>
@@ -351,6 +399,86 @@ body.chat-open .ai-toggle{display:none}
 <script src="../shared/ai-form-assistant.js"></script>
 <script>
 GHR_NAV.init('perf', '绩效评分');
+
+var PEOPLE={
+  notArrived:[{id:'sub3',name:'周杰',dept:'研发部',title:'高级工程师'}],
+  pending:[{id:'sub1',name:'张明',dept:'产品部',title:'高级产品经理'}],
+  submitted:[{id:'sub2',name:'李华',dept:'产品部',title:'产品经理'}]
+};
+var PEOPLE_GROUPS=[
+  {key:'notArrived',title:'未到达'},
+  {key:'pending',title:'待提交'},
+  {key:'submitted',title:'已提交'}
+];
+var currentPersonId='sub1';
+var peoplePanelOpen=true;
+
+function findPerson(id){
+  for(var g=0;g<PEOPLE_GROUPS.length;g++){
+    var key=PEOPLE_GROUPS[g].key;
+    var list=PEOPLE[key]||[];
+    for(var i=0;i<list.length;i++){
+      if(list[i].id===id)return {group:key,person:list[i]};
+    }
+  }
+  return null;
+}
+function personLine(p){return p.name+'｜'+p.dept+'｜'+p.title}
+function personMeta(p){return p.dept+'｜'+p.title}
+function personInitial(p){return (p.name||'?').charAt(0)}
+function currentPerson(){var h=findPerson(currentPersonId);return h?h.person:{name:'张明',dept:'产品部',title:'高级产品经理'}}
+
+function renderPeople(){
+  var el=document.getElementById('peoplePanel');
+  if(!el)return;
+  var h='';
+  for(var g=0;g<PEOPLE_GROUPS.length;g++){
+    var group=PEOPLE_GROUPS[g];
+    var list=PEOPLE[group.key]||[];
+    h+='<div class="people-group"><div class="people-group-title">'+group.title+'</div>';
+    for(var i=0;i<list.length;i++){
+      var p=list[i];
+      h+='<button type="button" class="people-item'+(p.id===currentPersonId?' active':'')+'" data-id="'+p.id+'" onclick="selectPerson(\''+p.id+'\')"><span class="p-name">'+p.name+'</span><span class="p-meta">'+personMeta(p)+'</span></button>';
+    }
+    h+='</div>';
+  }
+  el.innerHTML=h;
+}
+
+function updatePersonChrome(){
+  var p=currentPerson();
+  var vt=document.getElementById('viewingText');
+  if(vt)vt.textContent=personLine(p);
+  var av=document.getElementById('flowSelfAvatar');
+  if(av)av.textContent=personInitial(p);
+  var fn=document.getElementById('flowSelfName');
+  if(fn)fn.textContent=p.name;
+}
+
+function selectPerson(id){
+  if(!findPerson(id))return;
+  currentPersonId=id;
+  initGradeManualOverride=false;
+  directComment='';
+  renderPeople();
+  updatePersonChrome();
+  renderHistory();
+  renderModuleContainer();
+}
+
+function togglePeoplePanel(){
+  peoplePanelOpen=!peoplePanelOpen;
+  var split=document.querySelector('.goal-split');
+  var btn=document.getElementById('panelToggle');
+  if(split)split.classList.toggle('panel-collapsed',!peoplePanelOpen);
+  if(btn){
+    btn.title=peoplePanelOpen?'收起':'展开';
+    btn.setAttribute('aria-label',peoplePanelOpen?'收起人员栏':'展开人员栏');
+    btn.innerHTML=peoplePanelOpen
+      ?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>'
+      :'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+  }
+}
 
 // ═══ HISTORY MOCK DATA ═══
 var GRADE_S={'远超预期':'s5','超出预期':'s5','符合预期+':'s4','符合预期':'s3','符合预期-':'s2','低于预期':'s1','远低预期':'s1'};
@@ -387,7 +515,6 @@ function renderHistory(){
   html+='</div></div></div>';
   document.getElementById('histContainer').innerHTML=html;
 }
-renderHistory();
 
 // ═══ MOCK DATA — 直线上级评分范围：全部模块 ═══
 var MODULES=[
@@ -404,10 +531,14 @@ var MODULES=[
   ]}
 ];
 var employeeComment='本季度整体工作完成情况良好。KPI方面，资源利用率达标，UAT通过率和需求评审及时率略低于目标，已制定改进措施。KPA方面，产品管理规范落地执行，日常需求响应及时，绩效重构和AI应用项目均按里程碑计划推进完成。';
-var indirectComment='张明在产品规划和执行方面展现了较强的能力，跨部门协作表现突出。建议进一步提升战略思维，关注行业趋势。认可其在团队建设和人才培养方面的努力。';
+var indirectCommentBase='在产品规划和执行方面展现了较强的能力，跨部门协作表现突出。建议进一步提升战略思维，关注行业趋势。认可其在团队建设和人才培养方面的努力。';
 var directComment='';
 
 function renderModuleContainer(){
+  var person=currentPerson();
+  var personName=person.name;
+  var personAv=personInitial(person);
+  var indirectComment=personName+indirectCommentBase;
   var html='<div class="eval-modules">';
   MODULES.forEach(function(mod,mi){
     var isQuantModule=mod.name==='KPI';
@@ -415,8 +546,8 @@ function renderModuleContainer(){
     html+='<section class="eval-module-card" aria-labelledby="direct_module_'+mi+'">'+
       '<div class="eval-module-hd"><div class="eval-module-main"><div class="eval-mod-icon" style="background:'+mod.color+'">'+modIcon+'</div><span class="eval-mod-name" id="direct_module_'+mi+'">'+mod.name+'</span></div>'+
       '<div class="eval-mod-stats"><span class="eval-mod-weight">'+mod.weight+'%</span><span class="eval-mod-count">'+mod.goals.length+' 个目标</span></div></div>'+
-      '<div class="eval-module-table"><table><colgroup>'+(isQuantModule?'<col style="width:20%"><col style="width:8%"><col><col style="width:104px"><col style="width:64px">':'<col style="width:18%"><col style="width:7%"><col><col style="width:20%"><col style="width:112px"><col style="width:112px"><col style="width:150px">')+'</colgroup>'+
-      (isQuantModule?'<thead><tr><th>指标名称</th><th>权重</th><th>衡量标准</th><th>完成值</th><th>得分</th></tr></thead>':'<thead><tr><th>指标名称</th><th>权重</th><th>衡量标准</th><th>完成情况</th><th>员工自评</th><th>双线上级评价</th><th>直线上级评价</th></tr></thead>')+'<tbody>';
+      '<div class="eval-module-table'+(isQuantModule?'':' has-sticky-direct')+'"><table><colgroup>'+(isQuantModule?'<col style="width:20%"><col style="width:8%"><col><col style="width:104px"><col style="width:64px">':'<col style="width:18%"><col style="width:7%"><col><col style="width:20%"><col style="width:112px"><col style="width:112px"><col style="width:150px">')+'</colgroup>'+
+      (isQuantModule?'<thead><tr><th>指标名称</th><th>权重</th><th>衡量标准</th><th>完成值</th><th>得分</th></tr></thead>':'<thead><tr><th>指标名称</th><th>权重</th><th>衡量标准</th><th>完成情况</th><th>员工自评</th><th>双线上级评价</th><th class="sticky-col-direct">直线上级评价</th></tr></thead>')+'<tbody>';
     mod.goals.forEach(function(g,gi){
       var isQuant=g.type==='quant';
       html+='<tr>'+
@@ -434,7 +565,7 @@ function renderModuleContainer(){
         html+='<td class="computed-score-cell"><span class="computed-score">'+formatCalculatedScore(getCalculatedScore(g))+'</span></td>';
       }else{
         html+='<td><span class="result-badge">'+(g.employeeGrade||'—')+'</span></td><td><span class="result-badge">'+(g.indirectGrade||'—')+'</span></td>'+
-          '<td class="score-cell"><div class="star-rating" id="direct_score_'+mi+'_'+gi+'" data-value="'+(g.directStar||0)+'"><div class="star-row">';
+          '<td class="score-cell sticky-col-direct"><div class="star-rating" id="direct_score_'+mi+'_'+gi+'" data-value="'+(g.directStar||0)+'"><div class="star-row">';
         for(var si=1;si<=5;si++){
           html+='<span class="star'+(si<=(g.directStar||0)?' active':'')+'" data-v="'+si+'" onclick="setDirectStar(this,'+mi+','+gi+','+si+')" onmouseenter="starHover(this,1)" onmouseleave="starHover(this,0)">★</span>';
         }
@@ -463,8 +594,8 @@ function renderModuleContainer(){
     '<div style="padding:16px 20px;border-bottom:1px solid var(--dv)"><span style="font:600 15px/1 var(--f);color:var(--c9)">总评语</span></div>'+
     '<div style="padding:16px 20px;border-bottom:1px solid var(--dv)">'+
       '<div style="font:500 13px/1 var(--f);color:var(--c8);margin-bottom:8px;display:flex;align-items:center;gap:6px">'+
-        '<span style="width:22px;height:22px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">张</span>'+
-        '员工评语'+
+        '<span style="width:22px;height:22px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">'+personAv+'</span>'+
+        '员工评语（'+personName+'）'+
       '</div>'+
       '<div style="font:400 13px/1.6 var(--f);color:var(--c7);padding-left:28px">'+employeeComment+'</div>'+
     '</div>'+
@@ -658,6 +789,9 @@ function showToast(msg,type){
   setTimeout(function(){t.classList.remove('show')},3000);
 }
 
+renderPeople();
+updatePersonChrome();
+renderHistory();
 renderModuleContainer();
 
 </script>
