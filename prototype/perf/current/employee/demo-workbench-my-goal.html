@@ -54,6 +54,14 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .detail-top{margin-bottom:14px}
 .detail-title-row{display:flex;align-items:center;gap:10px}
 .detail-title{font:700 20px/1.2 var(--f);color:var(--c9);letter-spacing:-.3px}
+.detail-status{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:var(--r1);font:500 12px/1 var(--f);border:1px solid transparent;flex-shrink:0;white-space:nowrap}
+.detail-status .dot{width:7px;height:7px;border-radius:50%}
+.detail-status.submitted{background:var(--pr50);color:var(--pr);border-color:var(--pr200)}
+.detail-status.submitted .dot{background:var(--pr);animation:pulse 2s ease-in-out infinite}
+.detail-status.approved,.detail-status.effective{background:var(--em50);color:var(--em700);border-color:var(--em100)}
+.detail-status.approved .dot,.detail-status.effective .dot{background:var(--em700)}
+.detail-status.rejected{background:var(--ro50);color:var(--ro);border-color:var(--ro100)}
+.detail-status.rejected .dot{background:var(--ro)}
 .detail-title-actions{margin-left:auto;display:flex;align-items:center;gap:0;flex-shrink:0;white-space:nowrap}
 .detail-title-actions .sum-item{font:500 13px/1 var(--f);color:var(--c6)}
 .detail-title-actions .sum-val{font-family:var(--m);font-weight:700}
@@ -111,18 +119,6 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .btn-o:hover{background:var(--pr50);border-color:var(--pr)}
 .btn-sm{height:28px;padding:0 10px;font-size:12px}
 .btn-sm svg{width:12px;height:12px}
-
-/* FORM STATUS */
-.detail-status{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:var(--r1);font:500 12px/1 var(--f);border:1px solid transparent}
-.detail-status .dot{width:7px;height:7px;border-radius:50%}
-.detail-status.active{background:var(--em50);color:var(--em700);border-color:var(--em100)}
-.detail-status.active .dot{background:var(--em);animation:pulse 2s ease-in-out infinite}
-.detail-status.submitted{background:var(--pr50);color:var(--pr);border-color:var(--pr200)}
-.detail-status.submitted .dot{background:var(--pr);animation:pulse 2s ease-in-out infinite}
-.detail-status.approved{background:var(--em50);color:var(--em700);border-color:var(--em100)}
-.detail-status.approved .dot{background:var(--em)}
-.detail-status.rejected{background:var(--ro50);color:var(--ro);border-color:var(--ro100)}
-.detail-status.rejected .dot{background:var(--ro)}
 
 /* MODULE SECTION — 外层已是大卡片：模块不再套圆角边框，板块间用浅分隔线 */
 .mod-section{background:transparent;border-radius:0;box-shadow:none;margin-bottom:0;overflow:visible;border:0}
@@ -209,8 +205,8 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
   <div class="detail-card">
     <div class="detail-top">
       <div class="detail-title-row">
-        <span class="detail-title">我的目标</span>
-        <span class="detail-status submitted" id="formStatus"><span class="dot"></span>审批中</span>
+        <span class="detail-title" id="detailTitle">我的目标</span>
+        <span class="detail-status submitted" id="detailStatus"><span class="dot"></span>审批中</span>
         <div class="detail-title-actions">
           <span class="sum-val ok" id="sumWeight">100%</span>
           <span class="act-sep" aria-hidden="true"></span>
@@ -272,6 +268,13 @@ const MODULES=[
 
 const STATUS_CFG={active:{label:'审批中',cls:'submitted'},completed:{label:'已完成',cls:'approved'},rejected:{label:'已驳回',cls:'rejected'}};
 const CURRENT_STATUS={status:'active',statusLabel:'审批中'};
+/* 有目标可看时才有状态；上级刘VP 空态不塞「暂无」 */
+const PERSON_STATUS={
+  self:{status:'active'},
+  sub1:{status:'active'},
+  sub2:{status:'completed'},
+  sub3:{status:'active'}
+};
 
 const APPROVAL_FLOW=[
   {node:'目标填写',handler:'张明',inTime:'2026-06-15 09:00',outTime:'2026-06-15 09:00',status:'completed',remark:'—'},
@@ -293,6 +296,7 @@ const PEOPLE={
 };
 let currentPersonId='self';
 let peoplePanelOpen=true;
+function isSelfView(){return currentPersonId==='self'}
 function findPerson(id){
   if(id==='self')return {group:'self',person:SELF};
   for(const g of ['superior','subordinate']){
@@ -323,6 +327,25 @@ function updateViewingBar(){
   const vt=document.getElementById('viewingText');
   if(vt)vt.textContent=personLine(hit.person);
 }
+function updateHeaderTitleStatus(){
+  const self=isSelfView();
+  const titleEl=document.getElementById('detailTitle');
+  if(titleEl)titleEl.textContent=self?'我的目标':'TA人目标';
+  const statusEl=document.getElementById('detailStatus');
+  if(!statusEl)return;
+  const hit=findPerson(currentPersonId);
+  const empty=hit&&hit.group==='superior';
+  const stKey=(PERSON_STATUS[currentPersonId]||(self?CURRENT_STATUS:null)||{}).status;
+  const st=stKey?STATUS_CFG[stKey]:null;
+  if(!empty&&st){
+    statusEl.className='detail-status '+st.cls;
+    statusEl.innerHTML='<span class="dot"></span>'+st.label;
+    statusEl.style.display='';
+  }else{
+    statusEl.style.display='none';
+    statusEl.innerHTML='';
+  }
+}
 function selectPerson(id){
   if(!findPerson(id))return;
   currentPersonId=id;
@@ -345,9 +368,7 @@ function togglePeoplePanel(){
 }
 
 function render(){
-  const st=STATUS_CFG[CURRENT_STATUS.status];
-  document.getElementById('formStatus').innerHTML=`<span class="dot"></span>${st.label}`;
-  document.getElementById('formStatus').className='detail-status '+st.cls;
+  updateHeaderTitleStatus();
 
   const hit=findPerson(currentPersonId);
   const isEmptyView=hit&&hit.group==='superior';

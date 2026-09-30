@@ -156,7 +156,11 @@ textarea.edit-cell::placeholder{color:var(--c4)}
 .people-panel{width:220px;flex-shrink:0;align-self:flex-start;background:transparent;border:0;border-right:1px solid var(--dv);border-radius:0;box-shadow:none;padding:12px 0;position:sticky;top:100px;max-height:calc(100vh - 120px);overflow:auto}
 .people-group{padding:4px 0 10px}
 .people-group+.people-group{border-top:1px solid var(--dv);padding-top:10px}
-.people-group-title{font:600 11px/1 var(--f);color:var(--c5);letter-spacing:.4px;text-transform:uppercase;padding:4px 14px 8px}
+.people-group-title{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;border:0;background:transparent;font:600 11px/1 var(--f);color:var(--c5);letter-spacing:.4px;text-transform:uppercase;padding:4px 14px 8px;cursor:pointer;text-align:left;font-family:inherit}
+.people-group-title:hover{color:var(--c7)}
+.people-group-chevron{width:12px;height:12px;flex-shrink:0;color:var(--c5);transition:transform .15s;display:block}
+.people-group.collapsed .people-group-chevron{transform:rotate(-90deg)}
+.people-group.collapsed .people-group-body{display:none}
 .people-item{display:flex;flex-direction:column;gap:3px;padding:8px 14px;cursor:pointer;transition:background .12s;border:0;background:transparent;width:100%;text-align:left;font-family:inherit}
 .people-item:hover{background:var(--c0)}
 .people-item.active{background:var(--pr50)}
@@ -415,12 +419,14 @@ var PEOPLE={
   submitted:[{id:'sub2',name:'李华',dept:'产品部',title:'产品经理'}]
 };
 var PEOPLE_GROUPS=[
-  {key:'notArrived',title:'未到达'},
   {key:'pending',title:'待提交'},
+  {key:'notArrived',title:'未到达'},
   {key:'submitted',title:'已提交'}
 ];
+var groupCollapsed={pending:false,notArrived:false,submitted:false};
 var currentPersonId='sub1';
 var peoplePanelOpen=true;
+var PEOPLE_CHEVRON='<svg class="people-group-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
 
 function findPerson(id){
   for(var g=0;g<PEOPLE_GROUPS.length;g++){
@@ -437,6 +443,11 @@ function personMeta(p){return p.dept+'｜'+p.title}
 function personInitial(p){return (p.name||'?').charAt(0)}
 function currentPerson(){var h=findPerson(currentPersonId);return h?h.person:{name:'张明',dept:'产品部',title:'高级产品经理'}}
 
+function togglePeopleGroup(key){
+  groupCollapsed[key]=!groupCollapsed[key];
+  renderPeople();
+}
+
 function renderPeople(){
   var el=document.getElementById('peoplePanel');
   if(!el)return;
@@ -444,12 +455,15 @@ function renderPeople(){
   for(var g=0;g<PEOPLE_GROUPS.length;g++){
     var group=PEOPLE_GROUPS[g];
     var list=PEOPLE[group.key]||[];
-    h+='<div class="people-group"><div class="people-group-title">'+group.title+'</div>';
+    var collapsed=!!groupCollapsed[group.key];
+    h+='<div class="people-group'+(collapsed?' collapsed':'')+'">';
+    h+='<button type="button" class="people-group-title" onclick="togglePeopleGroup(\''+group.key+'\')" aria-expanded="'+(collapsed?'false':'true')+'"><span>'+group.title+'</span>'+PEOPLE_CHEVRON+'</button>';
+    h+='<div class="people-group-body">';
     for(var i=0;i<list.length;i++){
       var p=list[i];
       h+='<button type="button" class="people-item'+(p.id===currentPersonId?' active':'')+'" data-id="'+p.id+'" onclick="selectPerson(\''+p.id+'\')"><span class="p-name">'+p.name+'</span><span class="p-meta">'+personMeta(p)+'</span></button>';
     }
-    h+='</div>';
+    h+='</div></div>';
   }
   el.innerHTML=h;
 }
