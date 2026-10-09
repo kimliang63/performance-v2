@@ -737,6 +737,10 @@ const PEOPLE={
     {id:'sub1',name:'张明',dept:'产品部',title:'高级产品经理'},
     {id:'sub2',name:'李华',dept:'产品部',title:'产品经理'},
     {id:'sub3',name:'周杰',dept:'研发部',title:'高级工程师'},
+  ],
+  /* 转交过来的目标，不进上级/团队 */
+  other:[
+    {id:'oth1',name:'吴九',dept:'研发部',title:'工程师'},
   ]
 };
 function cloneGoal(g,status,prefix){
@@ -785,6 +789,16 @@ const PERSON_MODULES={
       cloneGoal(MODULES[1].goals[1],'pending_other','zj_'),
     ]}),
   ],
+  /* 吴九：周八转交过来的待审目标 */
+  oth1:[
+    Object.assign(cloneModShell(MODULES[0]),{goals:[
+      cloneGoal(MODULES[0].goals[0],'pending_my_approval','wj_'),
+      cloneGoal(MODULES[0].goals[1],'effective','wj_'),
+    ]}),
+    Object.assign(cloneModShell(MODULES[1]),{goals:[
+      cloneGoal(MODULES[1].goals[0],'pending_my_approval','wj_'),
+    ]}),
+  ],
   /* 刘VP：无可查看目标 */
   sup1:[
     Object.assign(cloneModShell(MODULES[0]),{goals:[]}),
@@ -795,7 +809,7 @@ let currentPersonId='self';
 let peoplePanelOpen=true;
 function findPerson(id){
   if(id==='self')return {group:'self',person:SELF};
-  for(const g of ['superior','subordinate']){
+  for(const g of ['other','superior','subordinate']){
     const p=PEOPLE[g].find(x=>x.id===id);
     if(p)return {group:g,person:p};
   }
@@ -821,10 +835,12 @@ function renderPeople(){
   const el=document.getElementById('peoplePanel');
   if(!el)return;
   let h='<div class="people-group"><button type="button" class="people-item'+(currentPersonId==='self'?' active':'')+'" onclick="selectPerson(\'self\')"><span class="p-name">我的目标</span></button></div>';
-  const groups=[{key:'superior',title:'我的上级'},{key:'subordinate',title:'我的团队'}];
+  const groups=[{key:'other',title:'其他'},{key:'superior',title:'我的上级'},{key:'subordinate',title:'我的团队'}];
   groups.forEach(g=>{
+    const list=PEOPLE[g.key]||[];
+    if(!list.length)return;
     h+='<div class="people-group"><div class="people-group-title">'+g.title+'</div>';
-    PEOPLE[g.key].forEach(p=>{
+    list.forEach(p=>{
       h+='<button type="button" class="people-item'+(p.id===currentPersonId?' active':'')+'" onclick="selectPerson(\''+p.id+'\')"><span class="p-name">'+p.name+'</span><span class="p-meta">'+personMeta(p)+'</span></button>';
     });
     h+='</div>';
