@@ -144,9 +144,9 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .dist-panel-title{font:600 14px/1 var(--f);color:var(--c9)}
 .dist-panel-tools{margin-left:auto;display:flex;align-items:center;justify-content:flex-end;gap:14px;min-width:0}
 .dist-stats{display:flex;align-items:center;justify-content:flex-end;gap:16px;font:400 12px/1 var(--f);color:var(--c5);white-space:nowrap}
-.dist-grid{display:grid;grid-template-columns:4fr 6fr;align-items:stretch}
-.dist-rules{padding:14px 16px;border-right:1px solid var(--dv)}
-.dist-chart{background:var(--sf);padding:14px 16px;min-height:320px}
+.dist-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;align-items:stretch}
+.dist-rules{padding:12px 12px;border-right:1px solid var(--dv);min-width:0;overflow-x:auto;min-height:320px;height:100%;box-sizing:border-box;display:flex;flex-direction:column}
+.dist-chart{background:var(--sf);padding:14px 16px;min-height:320px;min-width:0}
 .dist-collapse-btn{border:none;background:transparent;color:var(--c5);border-radius:var(--r1);padding:4px 8px;font:500 12px/1 var(--f);cursor:pointer;transition:all .12s}
 .dist-collapse-btn:hover{background:var(--pr50);color:var(--pr)}
 .dist-card-collapsed{background:var(--sf);padding:12px 16px}
@@ -166,9 +166,19 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .dist-status-table tbody tr:last-child td{border-bottom:none}
 .dist-status-table tbody tr{cursor:pointer;transition:background .12s}
 .dist-status-table tbody tr:hover,.dist-status-table tbody tr.active{background:var(--pr50)}
+#distConclusion .dist-status-table{table-layout:fixed;width:100%;min-width:100%;height:100%;flex:1 1 auto;border-collapse:collapse}
+#distConclusion .dist-status-table th,#distConclusion .dist-status-table td{padding:6px 4px;font-size:12px;white-space:nowrap;overflow:visible;text-overflow:clip;text-align:center;vertical-align:middle;height:auto}
+#distConclusion .dist-status-table thead th{height:36px;text-align:center}
+#distConclusion .dist-status-table thead th[colspan]{text-align:center}
+#distConclusion .dist-status-table .dist-status{margin:0 auto}
+#distConclusion .dist-status-table tbody tr{height:calc((100% - 36px) / 7)}
+#distConclusion .dist-status-table .dist-rule-cell{color:var(--c6);font-size:12px;vertical-align:middle}
+#distConclusion .dist-status-table .dist-rule-cell[rowspan]{background:color-mix(in srgb,var(--c0) 70%,#fff)}
+#distConclusion .dist-status-table .dist-rule-empty{color:var(--c4)}
 .dist-grade-name{font-weight:600;color:var(--c8)}
-.dist-status{display:inline-flex;align-items:center;padding:3px 8px;border-radius:var(--r1);font:500 11px/1 var(--f);white-space:nowrap}
-.dist-status.ok{color:var(--em700);background:var(--em50)}
+.dist-status{display:inline-flex;align-items:center;justify-content:center;padding:3px 8px;border-radius:var(--r1);font:500 11px/1 var(--f);white-space:nowrap}
+.dist-status.ok{width:22px;height:22px;padding:0;border-radius:50%;color:var(--em700);background:var(--em50)}
+.dist-status.ok svg{width:14px;height:14px;display:block}
 .dist-status.bad{color:var(--ro);background:var(--ro50)}
 .dist-summary-line{display:flex;align-items:center;gap:0;overflow-x:auto;white-space:nowrap;font:500 12px/1 var(--f);color:var(--c6)}
 .dist-summary-item{display:inline-flex;align-items:center;gap:4px}
@@ -389,7 +399,7 @@ body.chat-open .ai-toggle{display:none}
 
 <div class="validate-toast" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span id="toastMsg"></span></div>
 
-<script src="../navigation.js"></script>
+<script src="../navigation.js?v=20261010-logo"></script>
 <script src="../shared/ai-form-assistant.js"></script>
 <script>
 GHR_NAV.init('perf', '结果审定');
@@ -456,6 +466,38 @@ var FORCE_DIST=[
   {grade:'低于预期',min:5,max:10},
   {grade:'远低预期',min:0,max:5}
 ];
+/* 等级分布表：多等级合计占比约束（规则列按条数动态生成） */
+var FORCE_DIST_CONSTRAINTS=[
+  {grades:['远超预期'],op:'lte',pct:10},
+  {grades:['超出预期','远超预期'],op:'lte',pct:20},
+  {grades:['远超预期','超出预期','符合预期+'],op:'lte',pct:50},
+  {grades:['符合预期-','低于预期','远低预期'],op:'gte',pct:10}
+];
+function formatForceConstraintText(c){
+  if(!c)return '—';
+  return (c.op==='gte'?'≥':'≤')+c.pct+'%';
+}
+function formatGradeReqText(minCount,maxCount){
+  if(minCount==null||maxCount==null)return '—';
+  if(minCount===maxCount)return String(minCount);
+  return minCount+'–'+maxCount;
+}
+function evalForceConstraint(c,countByGrade,total){
+  var sum=0;
+  (c.grades||[]).forEach(function(g){sum+=countByGrade[g]||0;});
+  var pct=total>0?(sum*100/total):0;
+  var ok,delta='符合';
+  if(c.op==='gte'){
+    var minCount=Math.ceil(total*c.pct/100);
+    ok=sum>=minCount;
+    if(!ok)delta='+'+(minCount-sum);
+  }else{
+    var maxCount=Math.floor(total*c.pct/100);
+    ok=sum<=maxCount;
+    if(!ok)delta='-'+(sum-maxCount);
+  }
+  return {ok:ok,delta:delta,sum:sum,pct:pct,text:formatForceConstraintText(c)};
+}
 
 var MEMBERS=[
   {name:'谭刚伟', dept:'产品部', role:'高级产品经理', group:'产品组', totalScore:64.6, grade:'符合预期-', indirectGrade:'符合预期', ratifyGrade:'低于预期', reached:true},
@@ -521,6 +563,19 @@ var PAGE_SIZE=10;
 
 var REGION_OPTIONS=['华东区域','华南区域','华北区域'];
 MEMBERS.forEach(function(member,index){member.employeeId='HR'+String(index+1).padStart(4,'0');member.region=REGION_OPTIONS[index%REGION_OPTIONS.length];});
+/* 演示倾斜：抬高高段使规则1–3 不达标，低段仍满足规则4，便于看红/绿「是否符合」 */
+(function applyForceDistDemoSkew(){
+  var plan=[
+    '远超预期','远超预期','远超预期','远超预期','远超预期','远超预期','远超预期','远超预期',
+    '超出预期','超出预期','超出预期','超出预期','超出预期','超出预期','超出预期','超出预期',
+    '符合预期+','符合预期+','符合预期+','符合预期+','符合预期+','符合预期+','符合预期+','符合预期+','符合预期+','符合预期+','符合预期+','符合预期+',
+    '符合预期','符合预期','符合预期','符合预期','符合预期','符合预期','符合预期','符合预期','符合预期','符合预期',
+    '符合预期-','符合预期-','符合预期-','符合预期-','符合预期-',
+    '低于预期','低于预期','低于预期','低于预期','低于预期',
+    '远低预期','远低预期'
+  ];
+  MEMBERS.forEach(function(m,i){if(plan[i])m.ratifyGrade=plan[i];});
+})();
 
 function getFilteredMembers(){
   return MEMBERS.filter(function(m){
@@ -539,7 +594,22 @@ function getDistributionMembers(){
   return MEMBERS.filter(function(m){return currentGroup==='全部'||m.group===currentGroup;});
 }
 
-
+/** 与左侧表「是否符合」同一套复合规则：true=符合 */
+function getGradeComplianceFlags(filtered){
+  var total=filtered.length;
+  var countByGrade={};
+  GRADE_OPTIONS.forEach(function(g){
+    countByGrade[g]=filtered.filter(function(m){return(m.ratifyGrade||m.grade)===g;}).length;
+  });
+  var constraintEvals=FORCE_DIST_CONSTRAINTS.map(function(c){return evalForceConstraint(c,countByGrade,total);});
+  return GRADE_OPTIONS.map(function(grade){
+    var related=[];
+    FORCE_DIST_CONSTRAINTS.forEach(function(c,i){
+      if((c.grades||[]).indexOf(grade)>=0)related.push(constraintEvals[i]);
+    });
+    return !related.filter(function(e){return !e.ok;})[0];
+  });
+}
 
 function renderDist(){
   window._selectedBar=null;
@@ -550,6 +620,11 @@ function renderDist(){
   var afterData=labels.map(function(g){return filtered.filter(function(m){return(m.ratifyGrade||m.grade)===g;}).length;});
   var forceMin=FORCE_DIST.map(function(r){return Math.ceil(total*r.min/100);});
   var forceMax=FORCE_DIST.map(function(r){return Math.floor(total*r.max/100);});
+  var okFlags=getGradeComplianceFlags(filtered);
+  var BAR_OK='#10B981';
+  var BAR_BAD='#F43F5E';
+  var LINE_BEFORE='#A1A1AA';
+  var LINE_STD='#F59E0B';
 
   if(window._distChart)window._distChart.destroy();
   var ctx=document.getElementById('chartDist');
@@ -560,18 +635,28 @@ function renderDist(){
     data:{
       labels:labels,
       datasets:[
-        {label:'当前',data:afterData,backgroundColor:afterData.map(function(v,i){
-          if(v>forceMax[i])return'#F43F5E';if(v<forceMin[i])return'#2563EB';return'#10B981';
-        }),order:2},
-        {label:'调整前',data:beforeData,type:'line',borderColor:'#D4D4D8',backgroundColor:'transparent',borderWidth:2,pointRadius:3,pointBackgroundColor:'#D4D4D8',tension:0.2,order:1},
-        {label:'标准',data:forceMin.map(function(min,i){return Math.round((min+forceMax[i])/2);}),type:'line',borderColor:'#F59E0B',borderWidth:2,borderDash:[4,3],pointRadius:3,pointBackgroundColor:'#F59E0B',tension:0.2,order:1}
+        {label:'当前',data:afterData,backgroundColor:afterData.map(function(v,i){return okFlags[i]?BAR_OK:BAR_BAD;}),order:2},
+        {label:'调整前',data:beforeData,type:'line',borderColor:LINE_BEFORE,backgroundColor:'transparent',borderWidth:2,borderDash:[4,3],pointRadius:3,pointBackgroundColor:LINE_BEFORE,tension:0.2,order:1},
+        {label:'标准',data:forceMin.map(function(min,i){return Math.round((min+forceMax[i])/2);}),type:'line',borderColor:LINE_STD,borderWidth:2,borderDash:[4,3],pointRadius:3,pointBackgroundColor:LINE_STD,tension:0.2,order:1}
       ]
     },
     options:{
       responsive:true,maintainAspectRatio:false,
       animation:false,
       plugins:{
-        legend:{display:true,position:'bottom',align:'start',labels:{boxWidth:10,boxHeight:10,padding:12,font:{size:11,family:'Inter, Noto Sans SC, sans-serif'},usePointStyle:true}},
+        legend:{display:true,position:'bottom',align:'start',labels:{
+          boxWidth:10,boxHeight:10,padding:12,
+          font:{size:11,family:'Inter, Noto Sans SC, sans-serif'},
+          usePointStyle:true,
+          generateLabels:function(){
+            return [
+              {text:'当前·符合',fillStyle:BAR_OK,strokeStyle:BAR_OK,pointStyle:'rectRounded',lineWidth:0,datasetIndex:0},
+              {text:'当前·不符合',fillStyle:BAR_BAD,strokeStyle:BAR_BAD,pointStyle:'rectRounded',lineWidth:0,datasetIndex:0},
+              {text:'调整前',fillStyle:LINE_BEFORE,strokeStyle:LINE_BEFORE,pointStyle:'line',lineWidth:2,lineDash:[4,3],datasetIndex:1},
+              {text:'标准',fillStyle:LINE_STD,strokeStyle:LINE_STD,pointStyle:'line',lineWidth:2,lineDash:[4,3],datasetIndex:2}
+            ];
+          }
+        }},
         tooltip:{callbacks:{title:function(items){return items[0].label;},label:function(ctx){return['调整前人数: '+beforeData[ctx.dataIndex],'当前人数: '+afterData[ctx.dataIndex],'目标人数: '+forceMin[ctx.dataIndex]+'–'+forceMax[ctx.dataIndex]];}}}
       },
       onClick:function(e,elements){
@@ -609,24 +694,60 @@ function renderDist(){
 function renderDistRules(){
   var filtered=getDistributionMembers();
   var total=filtered.length;
-  var allGrades=[];
-  FORCE_DIST.forEach(function(r){
-    var count=filtered.filter(function(m){return(m.ratifyGrade||m.grade)===r.grade;}).length;
-    var minCount=Math.ceil(total*r.min/100);
-    var maxCount=Math.floor(total*r.max/100);
-    var ok=count>=minCount&&count<=maxCount;
-    var delta='符合';
-    if(count<minCount)delta='+'+(minCount-count);
-    else if(count>maxCount)delta='-'+(count-maxCount);
-    allGrades.push({grade:r.grade,count:count,minCount:minCount,maxCount:maxCount,ok:ok,delta:delta});
+  var constraints=FORCE_DIST_CONSTRAINTS;
+  var countByGrade={};
+  GRADE_OPTIONS.forEach(function(g){
+    countByGrade[g]=filtered.filter(function(m){return(m.ratifyGrade||m.grade)===g;}).length;
+  });
+  var constraintEvals=constraints.map(function(c){return evalForceConstraint(c,countByGrade,total);});
+  var forceByGrade={};
+  FORCE_DIST.forEach(function(r){forceByGrade[r.grade]=r;});
+  var allGrades=GRADE_OPTIONS.map(function(grade){
+    var count=countByGrade[grade]||0;
+    var related=[];
+    constraints.forEach(function(c,i){
+      if((c.grades||[]).indexOf(grade)>=0)related.push(constraintEvals[i]);
+    });
+    /* 是否符合：按整套规则（多等级合计占比）判定；本行取相关规则中首个不达标差值 */
+    var fail=related.filter(function(e){return !e.ok;})[0];
+    var ok=!fail;
+    var delta=fail?fail.delta:'符合';
+    var fr=forceByGrade[grade];
+    var minCount=fr!=null?Math.ceil(total*fr.min/100):null;
+    var maxCount=fr!=null?Math.floor(total*fr.max/100):null;
+    return {grade:grade,count:count,ok:ok,delta:delta,reqText:formatGradeReqText(minCount,maxCount)};
   });
   var el=document.getElementById('distConclusion');
   if(!el)return;
-  var html='<table class="dist-status-table"><colgroup><col style="width:30%"><col style="width:24%"><col style="width:18%"><col></colgroup><thead><tr><th>等级</th><th>要求</th><th>实际</th><th>是否符合</th></tr></thead><tbody>';
-  allGrades.forEach(function(d){
-    var required=d.minCount===d.maxCount?d.minCount+'人':d.minCount+'–'+d.maxCount+'人';
-    var statusText=d.ok?'符合':'不符合（'+d.delta+'）';
-    html+='<tr class="'+(currentGrade===d.grade?'active':'')+'" onclick="filterByConclusion(\''+d.grade+'\')"><td><span class="dist-grade-name">'+d.grade+'</span></td><td>'+required+'</td><td>'+d.count+'人</td><td><span class="dist-status '+(d.ok?'ok':'bad')+'">'+statusText+'</span></td></tr>';
+  var ruleCount=constraints.length;
+  var gradeW=14,reqW=12,actualW=10,statusW=12;
+  var ruleW=ruleCount?Math.floor((100-gradeW-reqW-actualW-statusW)/ruleCount):0;
+  var colgroup='<colgroup><col style="width:'+gradeW+'%">';
+  for(var ci=0;ci<ruleCount;ci++)colgroup+='<col style="width:'+ruleW+'%">';
+  colgroup+='<col style="width:'+reqW+'%"><col style="width:'+actualW+'%"><col style="width:'+statusW+'%"></colgroup>';
+  var head='<thead><tr><th>等级</th><th colspan="'+ruleCount+'">分布规则</th><th>要求</th><th>实际</th><th>是否符合</th></tr></thead>';
+  var html='<table class="dist-status-table">'+colgroup+head+'<tbody>';
+  var okIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
+  allGrades.forEach(function(d,gi){
+    var statusHtml=d.ok
+      ?('<span class="dist-status ok" title="符合" aria-label="符合">'+okIcon+'</span>')
+      :('<span class="dist-status bad">'+d.delta+'</span>');
+    html+='<tr class="'+(currentGrade===d.grade?'active':'')+'" onclick="filterByConclusion(\''+d.grade+'\')"><td><span class="dist-grade-name">'+d.grade+'</span></td>';
+    constraints.forEach(function(c){
+      var grades=c.grades||[];
+      var hit=grades.indexOf(d.grade)>=0;
+      if(!hit){
+        html+='<td class="dist-rule-cell dist-rule-empty"></td>';
+        return;
+      }
+      /* 与表行顺序一致的连续等级合并为一条占比约束 */
+      var prev=gi>0?GRADE_OPTIONS[gi-1]:null;
+      if(prev&&grades.indexOf(prev)>=0)return;
+      var span=1;
+      while(gi+span<GRADE_OPTIONS.length&&grades.indexOf(GRADE_OPTIONS[gi+span])>=0)span++;
+      html+='<td class="dist-rule-cell" rowspan="'+span+'">'+formatForceConstraintText(c)+'</td>';
+    });
+    html+='<td>'+d.reqText+'</td><td>'+d.count+'</td><td>'+statusHtml+'</td></tr>';
   });
   html+='</tbody></table>';
   el.innerHTML=html;

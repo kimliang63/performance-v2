@@ -124,7 +124,6 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
           <th style="width:110px">职位</th>
           <th style="width:90px">考核组</th>
           <th style="width:120px">初评等级</th>
-          <th style="width:80px">状态</th>
         </tr>
       </thead>
       <tbody id="tableBody"></tbody>
@@ -134,7 +133,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 </div>
 
 <div class="toast" id="toast"></div>
-<script src="../navigation.js"></script>
+<script src="../navigation.js?v=20261010-logo"></script>
 <script>
 GHR_NAV.init('perf', '初评等级导入');
 (function initHdSummary(){
@@ -145,29 +144,18 @@ GHR_NAV.init('perf', '初评等级导入');
 
 var GRADE_OPTIONS=['远超预期','超出预期','符合预期+','符合预期','符合预期-','低于预期','远低预期'];
 var GRADE_COLORS={'远低预期':'var(--ro)','低于预期':'var(--ro)','符合预期-':'var(--ro)','符合预期':'var(--ac)','符合预期+':'var(--ac)','超出预期':'var(--em)','远超预期':'var(--em700)'};
-var GRADE_BG={'远低预期':'var(--ro50)','低于预期':'var(--ro50)','符合预期-':'var(--ro50)','符合预期':'var(--ac50)','符合预期+':'var(--ac50)','超出预期':'var(--em50)','远超预期':'var(--em50)'};
 
-var FLOW_STATUS_STYLE={
-  '待导入':{bg:'var(--ac50)',color:'var(--ac700)'},
-  '已导入':{bg:'var(--em50)',color:'var(--em700)'}
-};
 function statusOf(emp){
   if(emp.grade)return '已导入';
   return '待导入';
-}
-function statusBadge(emp){
-  var label=statusOf(emp);
-  var st=FLOW_STATUS_STYLE[label]||FLOW_STATUS_STYLE['待导入'];
-  return '<span style="font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px;background:'+st.bg+';color:'+st.color+'">'+label+'</span>';
 }
 function empCell(emp){
   return '<div style="font-weight:500;color:var(--c8)">'+emp.name+'</div><div style="font:400 11px/1 var(--m);color:var(--c5);margin-top:3px">'+emp.employeeId+'</div>';
 }
 function gradeCell(g){
-  if(!g)return '<span style="color:var(--c4)">—</span>';
+  if(!g)return '<span style="font:400 12px/1.4 var(--f);color:var(--c4)">—</span>';
   var color=GRADE_COLORS[g]||'var(--c7)';
-  var bg=GRADE_BG[g]||'var(--c1)';
-  return '<span style="font:500 12px/1 var(--f);padding:3px 8px;border-radius:3px;background:'+bg+';color:'+color+'">'+g+'</span>';
+  return '<span style="font:400 12px/1.4 var(--f);color:'+color+'">'+g+'</span>';
 }
 
 var EMPLOYEES=[
@@ -234,7 +222,6 @@ function render(){
       '<td>'+emp.role+'</td>'+
       '<td>'+emp.group+'</td>'+
       '<td>'+gradeCell(emp.grade)+'</td>'+
-      '<td>'+statusBadge(emp)+'</td>'+
     '</tr>';
   });
   document.getElementById('tableBody').innerHTML=html;

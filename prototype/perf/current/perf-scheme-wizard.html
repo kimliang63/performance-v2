@@ -317,7 +317,7 @@ textarea.form-input{height:auto;padding:8px 10px;resize:vertical;min-height:60px
   </div>
 </div>
 
-<script src="navigation.js"></script>
+<script src="navigation.js?v=20261010-logo"></script>
 <script>
 const I={
   check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
@@ -349,7 +349,7 @@ const STAGES=[
   {id:'interview',name:'绩效面谈',desc:'上级与员工面谈',enabled:true,status:'warn',flow:'绩效面谈流程',autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14}},
   {id:'eval',name:'绩效考核',desc:'考核人评分',enabled:true,status:'active',flow:'通用绩效考核流程',autoStart:{enabled:true,direction:'后',days:3},autoEnd:{enabled:true,direction:'后',days:30},scoreCalculation:{enabled:false,mode:''}},
   {id:'ratify',name:'结果审定',desc:'审定人调整等级',enabled:true,status:'pending',flow:'汇报线逐级审定',autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14}},
-  {id:'inventory',name:'绩效盘点',desc:'能力评价与九宫格校准',enabled:true,status:'pending',flow:'年度绩效盘点流程',autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14},calcInitialCapability:false,forcedDistRule:'标准七级强制分布',forcedDistGroups:[{groupId:'g1',ruleId:'标准七级强制分布',controlMode:'强控'},{groupId:'g2',ruleId:'宽松七级强制分布',controlMode:'弱控'}],capForcedDistRule:'标准三档能力强制分布',capForcedDistGroups:[{groupId:'g1',ruleId:'标准三档能力强制分布',controlMode:'强控'},{groupId:'g2',ruleId:'宽松三档能力强制分布',controlMode:'弱控'}],nineBox:null},
+  {id:'inventory',name:'绩效盘点',desc:'能力评价与九宫格校准',enabled:true,status:'pending',flow:'年度绩效盘点流程',autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14},forcedDistRule:'标准七级强制分布',forcedDistGroups:[{groupId:'g1',ruleId:'标准七级强制分布',controlMode:'强控'},{groupId:'g2',ruleId:'宽松七级强制分布',controlMode:'弱控'}],capForcedDistRule:'标准三档能力强制分布',capForcedDistGroups:[{groupId:'g1',ruleId:'标准三档能力强制分布',controlMode:'强控'},{groupId:'g2',ruleId:'宽松三档能力强制分布',controlMode:'弱控'}],nineBox:null},
   {id:'confirm',name:'结果确认',desc:'员工确认绩效结果',enabled:true,status:'pending',flow:'员工确认流程',autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14}},
 ];
 
@@ -844,6 +844,107 @@ function renderStagesOverview(ct){
   </div>`;
 }
 
+// 强制结束四条都是整句，要和右侧等级下拉排在同一行，平铺会拆掉这一行，所以用下拉。
+const FORCE_END_OPTIONS=[
+  {id:'next',label:'结束流程，进入下一环节'},
+  {id:'skip',label:'结束流程，跳过后续所有环节'},
+  {id:'grade',label:'结束流程，跳过后续所有环节，并默认结果等级'},
+  {id:'adjust',label:'结束流程，跳过后续所有环节，结果等级默认当前调整等级'},
+];
+
+function forceEndPerfNames(){
+  return getSelectedRule().grades.map(function(g){return g.name;});
+}
+function forceEndCapNames(){
+  const rule=getSelectedCapabilityRule();
+  return (rule.levels||[]).map(function(l){return l.name;}).filter(Boolean);
+}
+
+/** 绩效环节一个绩效等级下拉；盘点第 3 种同时有绩效档和能力档。没有等级时不提供第 3 种。 */
+function forceEndGradeOptions(stage){
+  if(!stage||stage.id==='confirm') return [];
+  if(stage.id==='inventory'){
+    const perf=forceEndPerfNames();
+    const cap=forceEndCapNames();
+    return perf.length||cap.length?perf:[];
+  }
+  return forceEndPerfNames();
+}
+
+function ensureForceEnd(stage){
+  const isInv=!!(stage&&stage.id==='inventory');
+  const perfNames=forceEndPerfNames();
+  const capNames=isInv?forceEndCapNames():[];
+  const options=isInv?[]:forceEndGradeOptions(stage);
+  const hasGrade=isInv?(perfNames.length||capNames.length):options.length;
+  const perfDefault=perfNames.indexOf('符合预期-')>=0?'符合预期-':(perfNames[0]||'');
+  if(!stage.forceEnd||typeof stage.forceEnd!=='object'){
+    stage.forceEnd={
+      mode:hasGrade?'grade':'skip',
+      grade:isInv?(capNames[0]||''):(options.indexOf('符合预期-')>=0?'符合预期-':(options[0]||'')),
+      perfGrade:isInv?perfDefault:''
+    };
+  }
+  const fe=stage.forceEnd;
+  if(fe.mode!=='next'&&fe.mode!=='skip'&&fe.mode!=='grade'&&fe.mode!=='adjust') fe.mode=hasGrade?'grade':'skip';
+  if(!hasGrade&&fe.mode==='grade') fe.mode='skip';
+  if(isInv){
+    if(capNames.indexOf(fe.grade)<0) fe.grade=capNames[0]||'';
+    if(perfNames.indexOf(fe.perfGrade)<0) fe.perfGrade=perfDefault;
+  }else if(fe.mode==='grade'&&options.indexOf(fe.grade)<0){
+    fe.grade=options.indexOf('符合预期-')>=0?'符合预期-':(options[0]||'');
+  }
+  return fe;
+}
+
+function setForceEndMode(stageId, mode){
+  const s=form.stages.find(function(x){return x.id===stageId;});
+  if(!s) return;
+  const fe=ensureForceEnd(s);
+  fe.mode=mode==='skip'||mode==='grade'||mode==='adjust'?mode:'next';
+  render();
+}
+
+function setForceEndGrade(stageId, grade){
+  const s=form.stages.find(function(x){return x.id===stageId;});
+  if(!s) return;
+  ensureForceEnd(s).grade=grade;
+}
+function setForceEndPerfGrade(stageId, grade){
+  const s=form.stages.find(function(x){return x.id===stageId;});
+  if(!s) return;
+  ensureForceEnd(s).perfGrade=grade;
+}
+
+function renderForceEndGrades(stage, fe){
+  if(stage.id==='inventory'){
+    const perfOptions=forceEndPerfNames();
+    const capOptions=forceEndCapNames();
+    const perfSel=perfOptions.length?`<span class="form-lb">绩效等级</span><select class="form-input" id="forceEndPerfGrade" style="width:160px" onchange="setForceEndPerfGrade('${stage.id}',this.value)">${perfOptions.map(function(name){return `<option${name===fe.perfGrade?' selected':''}>${name}</option>`;}).join('')}</select>`:'';
+    const capSel=capOptions.length?`<span class="form-lb">能力等级</span><select class="form-input" id="forceEndGrade" style="width:160px" onchange="setForceEndGrade('${stage.id}',this.value)">${capOptions.map(function(name){return `<option${name===fe.grade?' selected':''}>${name}</option>`;}).join('')}</select>`:'';
+    return perfSel+capSel;
+  }
+  const options=forceEndGradeOptions(stage);
+  if(!options.length) return '';
+  return `<select class="form-input" id="forceEndGrade" style="width:160px" onchange="setForceEndGrade('${stage.id}',this.value)">${options.map(function(name){return `<option${name===fe.grade?' selected':''}>${name}</option>`;}).join('')}</select>`;
+}
+
+function renderForceEndRule(stage){
+  const fe=ensureForceEnd(stage);
+  const hasGrade=stage.id==='inventory'?(forceEndPerfNames().length||forceEndCapNames().length):!!forceEndGradeOptions(stage).length;
+  const modes=hasGrade?FORCE_END_OPTIONS:FORCE_END_OPTIONS.filter(function(m){return m.id!=='grade';});
+  const showGrade=hasGrade&&fe.mode==='grade';
+  return `<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
+    <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制结束规则</div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <select class="form-input" id="forceEndMode" style="width:480px" onchange="setForceEndMode('${stage.id}',this.value)">
+        ${modes.map(function(m){return `<option value="${m.id}"${fe.mode===m.id?' selected':''}>${m.label}</option>`;}).join('')}
+      </select>
+      ${showGrade?renderForceEndGrades(stage, fe):''}
+    </div>
+  </div>`;
+}
+
 // ═══ 环节详情 ═══
 function renderStageDetail(ct){
   const s=form.stages.find(s=>s.id===activeSection);
@@ -868,7 +969,6 @@ function renderStageDetail(ct){
 
 function renderGoalCfg(s){
   const models=FLOW_MODELS[s.id]||[];
-  const grades=getSelectedRule().grades;
   const a=ensureStageAuto(s,'start');
   const e=ensureStageAuto(s,'end');
   return `<div class="form-row">
@@ -880,18 +980,11 @@ function renderGoalCfg(s){
     <div class="form-grp"><label class="form-lb">结束方式</label><select class="form-input" onchange="updateStageAuto('${s.id}','end',this.value==='定时自动结束');render()"><option ${e.enabled?'':'selected'}>手动</option><option ${e.enabled?'selected':''}>定时自动结束</option></select></div>
   </div>
   ${e.enabled?`<div id="timeRulePanel-end-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderStageTimingPanel('end',s)}</div>`:''}
-  <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
-    <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制结束规则</div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <span style="font:400 13px/1 var(--f);color:var(--c7)">结束流程并默认结果等级</span>
-      <select class="form-input" style="width:160px">${grades.map(g=>`<option${g.code==='B-'?' selected':''}>${g.name}</option>`).join('')}</select>
-    </div>
-  </div>`;
+  ${renderForceEndRule(s)}`;
 }
 
 function renderEvalCfg(s){
   const models=FLOW_MODELS[s.id]||[];
-  const grades=getSelectedRule().grades;
   const FLOW_NODES={
     '通用绩效考核流程':[{name:'员工自评',type:'处理',weight:20},{name:'直接上级评分',type:'处理',weight:50},{name:'隔级上级评分',type:'审批',weight:0}],
     '简化绩效考核流程':[{name:'员工自评',type:'处理',weight:30},{name:'直接上级评分',type:'处理',weight:70}],
@@ -935,13 +1028,7 @@ function renderEvalCfg(s){
     <tbody>${nodes.map(n=>`<tr><td>${n.name}</td><td><span style="font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px;${n.type==='处理'?'background:var(--pr50);color:var(--pr)':'background:var(--c1);color:var(--c5)'}">${n.type}</span></td><td>${n.type==='处理'?`<input class="form-input" type="number" value="${n.weight}" style="width:60px"> %`:'<span style="font:400 12px/1 var(--f);color:var(--c4)">—</span>'}</td></tr>`).join('')}</tbody></table>
     <div class="wt-sum"><span>总权重：</span><span class="${nodes.filter(n=>n.type==='处理').reduce((s,n)=>s+n.weight,0)===100?'ok':'err'}">${nodes.filter(n=>n.type==='处理').reduce((s,n)=>s+n.weight,0)}%</span><span style="color:var(--c4)">（处理节点需等于 100%）</span></div>
   </div>`:''}
-  <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
-    <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制结束规则</div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <span style="font:400 13px/1 var(--f);color:var(--c7)">结束流程并默认结果等级</span>
-      <select class="form-input" style="width:160px">${grades.map(g=>`<option${g.code==='B-'?' selected':''}>${g.name}</option>`).join('')}</select>
-    </div>
-  </div>`;
+  ${renderForceEndRule(s)}`;
 }
 
 function ensureEvalScoreCalculation(s){
@@ -967,7 +1054,6 @@ function setEvalScoreCalculationMode(mode){
 
 function renderRatifyCfg(s){
   const models=FLOW_MODELS[s.id]||[];
-  const grades=getSelectedRule().grades;
   const a=ensureStageAuto(s,'start');
   const e=ensureStageAuto(s,'end');
   return `<div class="form-row">
@@ -979,13 +1065,7 @@ function renderRatifyCfg(s){
     <div class="form-grp"><label class="form-lb">结束方式</label><select class="form-input" onchange="updateStageAuto('${s.id}','end',this.value==='定时自动结束');render()"><option ${e.enabled?'':'selected'}>手动</option><option ${e.enabled?'selected':''}>定时自动结束</option></select></div>
   </div>
   ${e.enabled?`<div id="timeRulePanel-end-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderStageTimingPanel('end',s)}</div>`:''}
-  <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
-    <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制结束规则</div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <span style="font:400 13px/1 var(--f);color:var(--c7)">结束流程并默认结果等级</span>
-      <select class="form-input" style="width:160px">${grades.map(g=>`<option${g.code==='B-'?' selected':''}>${g.name}</option>`).join('')}</select>
-    </div>
-  </div>
+  ${renderForceEndRule(s)}
   <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
     <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制分布规则</div>
     <div class="form-row tri">
@@ -1130,7 +1210,7 @@ function normalizeForcedDistGroups(list,ruleNames,fallbackRuleId){
 }
 
 function ensureInventoryCfg(s){
-  if(typeof s.calcInitialCapability!=='boolean') s.calcInitialCapability=false;
+  delete s.calcInitialCapability;
   // 兼容旧双下拉字段 → 审定同款骨架字段
   if(!s.forcedDistRule&&(s.perfForcedDistRule||s.forcedDistPerfRule)){
     s.forcedDistRule=s.perfForcedDistRule||s.forcedDistPerfRule;
@@ -1420,11 +1500,7 @@ function renderInventoryCfg(s){
     </div>
   </div>
   ${e.enabled?`<div id="timeRulePanel-end-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderStageTimingPanel('end',s)}</div>`:''}
-  <div style="margin-top:16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-    <span style="font:600 13px/1 var(--f);color:var(--c9)">是否系统计算初评能力</span>
-    <div class="tog ${s.calcInitialCapability?'on':''}" onclick="toggleInventoryCalc('calcInitialCapability')"><div class="tog-track"><div class="tog-knob"></div></div></div>
-    <span class="form-hint" style="line-height:1.4">按照考核组计算360/测评排名后加权换算当前强制分布比例归属等级</span>
-  </div>
+  ${renderForceEndRule(s)}
   <div class="fd-block">
     <div class="fd-block-t">强制分布规则</div>
 
@@ -1485,13 +1561,6 @@ function renderNineBoxBoard(s){
   return html;
 }
 
-function toggleInventoryCalc(field){
-  const s=form.stages.find(x=>x.id==='inventory');
-  if(!s||field!=='calcInitialCapability')return;
-  s[field]=!s[field];
-  render();
-}
-
 function renderConfirmCfg(s){
   const models=FLOW_MODELS[s.id]||[];
   const a=ensureStageAuto(s,'start');
@@ -1513,7 +1582,6 @@ function renderConfirmCfg(s){
 
 function renderInterviewCfg(s){
   const models=FLOW_MODELS[s.id]||[];
-  const grades=getSelectedRule().grades;
   const a=ensureStageAuto(s,'start');
   const e=ensureStageAuto(s,'end');
   return `<div class="form-row">
@@ -1525,13 +1593,7 @@ function renderInterviewCfg(s){
     <div class="form-grp"><label class="form-lb">结束方式</label><select class="form-input" onchange="updateStageAuto('${s.id}','end',this.value==='定时自动结束');render()"><option ${e.enabled?'':'selected'}>手动</option><option ${e.enabled?'selected':''}>定时自动结束</option></select></div>
   </div>
   ${e.enabled?`<div id="timeRulePanel-end-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderStageTimingPanel('end',s)}</div>`:''}
-  <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
-    <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制结束规则</div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <span style="font:400 13px/1 var(--f);color:var(--c7)">结束流程并默认结果等级</span>
-      <select class="form-input" style="width:160px">${grades.map(g=>`<option${g.code==='B-'?' selected':''}>${g.name}</option>`).join('')}</select>
-    </div>
-  </div>
+  ${renderForceEndRule(s)}
 `;
 }
 

@@ -127,7 +127,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
           <th style="width:72px">360排名</th>
           <th style="width:88px">测评得分<div class="hint">0–10</div></th>
           <th style="width:72px">测评排名</th>
-          <th style="width:80px">状态</th>
+          <th style="width:80px">能力</th>
         </tr>
       </thead>
       <tbody id="tableBody"></tbody>
@@ -137,7 +137,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 </div>
 
 <div class="toast" id="toast"></div>
-<script src="../navigation.js"></script>
+<script src="../navigation.js?v=20261010-logo"></script>
 <script>
 GHR_NAV.init('perf', '测评结果导入');
 (function initHdSummary(){
@@ -146,18 +146,14 @@ GHR_NAV.init('perf', '测评结果导入');
   if(el&&name)el.textContent=name;
 })();
 
-var FLOW_STATUS_STYLE={
-  '待导入':{bg:'var(--ac50)',color:'var(--ac700)'},
-  '已导入':{bg:'var(--em50)',color:'var(--em700)'}
-};
 function statusOf(emp){
   if(emp.score360!=null&&emp.assessScore!=null)return '已导入';
   return '待导入';
 }
-function statusBadge(emp){
-  var label=statusOf(emp);
-  var st=FLOW_STATUS_STYLE[label]||FLOW_STATUS_STYLE['待导入'];
-  return '<span style="font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px;background:'+st.bg+';color:'+st.color+'">'+label+'</span>';
+function capCell(v){
+  var color=v==='高'?'var(--em700)':v==='中'?'var(--ac700)':v==='低'?'var(--ro)':'';
+  if(!color)return '<span style="font:400 12px/1.4 var(--f);color:var(--c4)">—</span>';
+  return '<span style="font:400 12px/1.4 var(--f);color:'+color+'">'+v+'</span>';
 }
 function empCell(emp){
   return '<div style="font-weight:500;color:var(--c8)">'+emp.name+'</div><div style="font:400 11px/1 var(--m);color:var(--c5);margin-top:3px">'+emp.employeeId+'</div>';
@@ -168,31 +164,31 @@ function scoreCell(v,empty){
 }
 
 var EMPLOYEES=[
-  {name:'谭刚伟',employeeId:'HR0001',dept:'产品部',role:'高级产品经理',group:'基层干部',score360:null,assessScore:null},
-  {name:'李洋杰',employeeId:'HR0002',dept:'运营部',role:'运营总监',group:'基层干部',score360:3.2,assessScore:6.5},
-  {name:'秦明涛',employeeId:'HR0003',dept:'运营部',role:'内容运营',group:'专员/主管',score360:null,assessScore:null},
-  {name:'孙军军',employeeId:'HR0004',dept:'产品部',role:'产品助理',group:'专员/主管',score360:4.1,assessScore:8.1},
-  {name:'姚辉静',employeeId:'HR0015',dept:'产品部',role:'高级产品经理',group:'基层干部',score360:4.8,assessScore:9.7},
-  {name:'萧玲刚',employeeId:'HR0038',dept:'产品部',role:'产品经理',group:'基层干部',score360:null,assessScore:null},
-  {name:'潘瑞龙',employeeId:'HR0048',dept:'运营部',role:'内容运营',group:'专员/主管',score360:4.7,assessScore:9.5},
-  {name:'魏宁鹏',employeeId:'HR0020',dept:'运营部',role:'高级运营',group:'专员/主管',score360:null,assessScore:null},
-  {name:'钟皓丽',employeeId:'HR0029',dept:'产品部',role:'产品助理',group:'专员/主管',score360:2.9,assessScore:5.8},
-  {name:'胡芳龙',employeeId:'HR0008',dept:'设计部',role:'设计总监',group:'基层干部',score360:null,assessScore:null},
-  {name:'周峰博',employeeId:'HR0012',dept:'设计部',role:'UI设计师',group:'专员/主管',score360:null,assessScore:null},
-  {name:'许恒勇',employeeId:'HR0005',dept:'产品部',role:'产品总监',group:'基层干部',score360:null,assessScore:null},
-  {name:'夏涛阳',employeeId:'HR0007',dept:'设计部',role:'设计总监',group:'基层干部',score360:4.3,assessScore:8.6},
-  {name:'阎瑞博',employeeId:'HR0016',dept:'技术部',role:'工程师',group:'专员/主管',score360:null,assessScore:null}
+  {name:'谭刚伟',employeeId:'HR0001',dept:'产品部',role:'高级产品经理',group:'基层干部',score360:null,assessScore:null,capability:''},
+  {name:'李洋杰',employeeId:'HR0002',dept:'运营部',role:'运营总监',group:'基层干部',score360:3.2,assessScore:6.5,capability:'低'},
+  {name:'秦明涛',employeeId:'HR0003',dept:'运营部',role:'内容运营',group:'专员/主管',score360:null,assessScore:null,capability:''},
+  {name:'孙军军',employeeId:'HR0004',dept:'产品部',role:'产品助理',group:'专员/主管',score360:4.1,assessScore:8.1,capability:'中'},
+  {name:'姚辉静',employeeId:'HR0015',dept:'产品部',role:'高级产品经理',group:'基层干部',score360:4.8,assessScore:9.7,capability:'高'},
+  {name:'萧玲刚',employeeId:'HR0038',dept:'产品部',role:'产品经理',group:'基层干部',score360:null,assessScore:null,capability:''},
+  {name:'潘瑞龙',employeeId:'HR0048',dept:'运营部',role:'内容运营',group:'专员/主管',score360:4.7,assessScore:9.5,capability:'高'},
+  {name:'魏宁鹏',employeeId:'HR0020',dept:'运营部',role:'高级运营',group:'专员/主管',score360:null,assessScore:null,capability:''},
+  {name:'钟皓丽',employeeId:'HR0029',dept:'产品部',role:'产品助理',group:'专员/主管',score360:2.9,assessScore:5.8,capability:'低'},
+  {name:'胡芳龙',employeeId:'HR0008',dept:'设计部',role:'设计总监',group:'基层干部',score360:null,assessScore:null,capability:''},
+  {name:'周峰博',employeeId:'HR0012',dept:'设计部',role:'UI设计师',group:'专员/主管',score360:null,assessScore:null,capability:''},
+  {name:'许恒勇',employeeId:'HR0005',dept:'产品部',role:'产品总监',group:'基层干部',score360:null,assessScore:null,capability:''},
+  {name:'夏涛阳',employeeId:'HR0007',dept:'设计部',role:'设计总监',group:'基层干部',score360:4.3,assessScore:8.6,capability:'中'},
+  {name:'阎瑞博',employeeId:'HR0016',dept:'技术部',role:'工程师',group:'专员/主管',score360:null,assessScore:null,capability:''}
 ];
 
 var MOCK_IMPORT_ROWS=[
-  {employeeId:'HR0001',score360:3.2,assessScore:6.5},
-  {employeeId:'HR0003',score360:4.2,assessScore:8.5},
-  {employeeId:'HR0038',score360:4.6,assessScore:9.2},
-  {employeeId:'HR0020',score360:2.8,assessScore:5.5},
-  {employeeId:'HR0008',score360:3.5,assessScore:7.0},
-  {employeeId:'HR9999',score360:4.0,assessScore:8.0},
-  {employeeId:'HR0005',score360:5.5,assessScore:8.0},
-  {employeeId:'HR0014',score360:4.0,assessScore:12}
+  {employeeId:'HR0001',score360:3.2,assessScore:6.5,capability:'中'},
+  {employeeId:'HR0003',score360:4.2,assessScore:8.5,capability:'高'},
+  {employeeId:'HR0038',score360:4.6,assessScore:9.2,capability:'高'},
+  {employeeId:'HR0020',score360:2.8,assessScore:5.5,capability:'低'},
+  {employeeId:'HR0008',score360:3.5,assessScore:7.0,capability:'中'},
+  {employeeId:'HR9999',score360:4.0,assessScore:8.0,capability:'中'},
+  {employeeId:'HR0005',score360:5.5,assessScore:8.0,capability:'高'},
+  {employeeId:'HR0014',score360:4.0,assessScore:12,capability:'中'}
 ];
 
 var currentPage=1;var PAGE_SIZE=10;var currentStatus='全部';
@@ -244,7 +240,7 @@ function render(){
       '<td style="font-family:var(--m);color:var(--c7)">'+(emp.rank360||'—')+'</td>'+
       '<td>'+scoreCell(emp.assessScore)+'</td>'+
       '<td style="font-family:var(--m);color:var(--c7)">'+(emp.rankAssess||'—')+'</td>'+
-      '<td>'+statusBadge(emp)+'</td>'+
+      '<td>'+capCell(emp.capability)+'</td>'+
     '</tr>';
   });
   document.getElementById('tableBody').innerHTML=html;
@@ -294,6 +290,7 @@ function handleImport(e){
     if(eAssess){failed.push({line:lineNo,employeeId:row.employeeId,name:emp.name,reason:eAssess});return;}
     emp.score360=Math.round(Number(row.score360)*10)/10;
     emp.assessScore=Math.round(Number(row.assessScore)*10)/10;
+    if(row.capability==='高'||row.capability==='中'||row.capability==='低')emp.capability=row.capability;
     success.push({line:lineNo,employeeId:row.employeeId,name:emp.name});
   });
   render();

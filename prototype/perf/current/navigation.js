@@ -145,6 +145,8 @@ const GHR_NAV = {
       }
       .hdr{height:var(--header-h);background:var(--sf);border-bottom:1px solid var(--dv);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:1100}
       .hdr-l{display:flex;align-items:center;gap:14px}
+      .hdr .logo{display:flex;align-items:center;line-height:0}
+      .hdr .logo img{height:26px;width:auto;display:block}
       .menu-btn{display:flex;align-items:center;gap:5px;padding:5px 12px;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r1);font:500 13px/1 var(--f);color:var(--c6);cursor:pointer;transition:all .12s}
       .menu-btn:hover{border-color:var(--c3);color:var(--c8)}
       .menu-btn.on{background:var(--pr50);border-color:var(--pr200);color:var(--pr)}
@@ -258,7 +260,7 @@ const GHR_NAV = {
     hdr.innerHTML = `
       <div class="hdr-l">
         <div class="logo">
-          <span class="logo-t">HR ONE</span>
+          <img src="${this.basePath}shared/hrone-logo.png" alt="HR ONE">
         </div>
         <button class="menu-btn" id="menuBtn" onclick="GHR_NAV.toggleMenu()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
