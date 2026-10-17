@@ -173,9 +173,10 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 #distConclusion .dist-status-table .dist-status{margin:0 auto}
 #distConclusion .dist-status-table tbody tr{height:calc((100% - 36px) / 7)}
 #distConclusion .dist-status-table .dist-rule-cell{color:var(--c6);font-size:12px;vertical-align:middle}
-#distConclusion .dist-status-table .dist-rule-cell[rowspan]{background:color-mix(in srgb,var(--c0) 70%,#fff)}
+#distConclusion .dist-status-table .dist-rule-cell[rowspan]{background:transparent;border-left:1px solid var(--pr);cursor:pointer}
 #distConclusion .dist-status-table .dist-rule-empty{color:var(--c4)}
-#distConclusion .dist-status-table .dist-rule-none{color:var(--c4);text-align:center;background:color-mix(in srgb,var(--c0) 70%,#fff)}
+#distConclusion .dist-status-table .dist-rule-none{color:var(--c4);text-align:center;background:transparent}
+#distConclusion .dist-status-table .dist-grade-cell.rule-selected{border-left:2px solid var(--pr)}
 .dist-grade-name{font-weight:600;color:var(--c8)}
 .dist-status{display:inline-flex;align-items:center;justify-content:center;padding:3px 8px;border-radius:var(--r1);font:500 11px/1 var(--f);white-space:nowrap}
 .dist-status.ok{width:22px;height:22px;padding:0;border-radius:50%;color:var(--em700);background:var(--em50)}
@@ -474,16 +475,26 @@ var FORCE_DIST_CONSTRAINTS=[
   {grades:['远超预期','超出预期','符合预期+'],op:'lte',pct:50},
   {grades:['符合预期-','低于预期','远低预期'],op:'gte',pct:10}
 ];
-/** 分布规则格：按当前分母把 ≤P% / ≥P% 换成人数区间（与合规判定同一套 ceil/floor） */
+/** 人数上下界展示：0=无下界，分母=无上界；双界用「且」 */
+function formatForceRangePeople(minCount,maxCount,total){
+  var n=+total||0;
+  var hasMin=minCount!=null&&minCount>0;
+  var hasMax=maxCount!=null&&(n<=0||maxCount<n);
+  if(hasMin&&hasMax)return '≥'+minCount+'人且≤'+maxCount+'人';
+  if(hasMax)return '≤'+maxCount+'人';
+  if(hasMin)return '≥'+minCount+'人';
+  return '-';
+}
+/** 分布规则格：按当前分母把 ≤P% / ≥P% 换成人数字符（与合规判定同一套 ceil/floor） */
 function formatForceConstraintText(c,total){
   if(!c)return '';
   var n=+total||0;
   if(c.op==='gte'){
     var minCount=Math.ceil(n*c.pct/100);
-    return minCount+'–'+n;
+    return formatForceRangePeople(minCount,n,n);
   }
   var maxCount=Math.floor(n*c.pct/100);
-  return '0–'+maxCount;
+  return formatForceRangePeople(0,maxCount,n);
 }
 function evalForceConstraint(c,countByGrade,total){
   var sum=0;
@@ -566,16 +577,15 @@ var PAGE_SIZE=10;
 
 var REGION_OPTIONS=['华东区域','华南区域','华北区域'];
 MEMBERS.forEach(function(member,index){member.employeeId='HR'+String(index+1).padStart(4,'0');member.region=REGION_OPTIONS[index%REGION_OPTIONS.length];});
-/* 演示倾斜：抬高高段使规则1–3 不达标，低段仍满足规则4，便于看红/绿「是否符合」 */
+/* 演示倾斜：高段超限看调出；低段压到 2 人使规则4 差 +3，看调进 */
 (function applyForceDistDemoSkew(){
   var plan=[
     '远超预期','远超预期','远超预期','远超预期','远超预期','远超预期','远超预期','远超预期',
     '超出预期','超出预期','超出预期','超出预期','超出预期','超出预期','超出预期','超出预期',
     '符合预期+','符合预期+','符合预期+','符合预期+','符合预期+','符合预期+','符合预期+','符合预期+','符合预期+','符合预期+','符合预期+','符合预期+',
     '符合预期','符合预期','符合预期','符合预期','符合预期','符合预期','符合预期','符合预期','符合预期','符合预期',
-    '符合预期-','符合预期-','符合预期-','符合预期-','符合预期-',
-    '低于预期','低于预期','低于预期','低于预期','低于预期',
-    '远低预期','远低预期'
+    '符合预期','符合预期','符合预期','符合预期','符合预期','符合预期','符合预期','符合预期','符合预期','符合预期',
+    '符合预期-','低于预期'
   ];
   MEMBERS.forEach(function(m,i){if(plan[i])m.ratifyGrade=plan[i];});
 })();
@@ -597,61 +607,74 @@ function getDistributionMembers(){
   return MEMBERS.filter(function(m){return currentGroup==='全部'||m.group===currentGroup;});
 }
 
-/** 与左侧表「是否符合」同一套复合规则：true=符合 */
-function getGradeComplianceFlags(filtered){
-  var total=filtered.length;
-  var countByGrade={};
-  GRADE_OPTIONS.forEach(function(g){
-    countByGrade[g]=filtered.filter(function(m){return(m.ratifyGrade||m.grade)===g;}).length;
-  });
-  var constraintEvals=FORCE_DIST_CONSTRAINTS.map(function(c){return evalForceConstraint(c,countByGrade,total);});
-  return GRADE_OPTIONS.map(function(grade){
-    var related=[];
-    FORCE_DIST_CONSTRAINTS.forEach(function(c,i){
-      if((c.grades||[]).indexOf(grade)>=0)related.push(constraintEvals[i]);
-    });
-    return !related.filter(function(e){return !e.ok;})[0];
-  });
-}
-
 /**
- * 标准线用最严差值：对每个等级，收集其参与的各规则整规则差额（及表上首个不达标差额），
- * 取最严（减人取最负，增人取最正；混号取绝对值最大）；全达标则为 0。
+ * 重叠规则名额瀑布分摊（表「是否符合」与图标准线共用）：
+ * 枢轴=「符合预期」；之上(远超→符合+)对 ≤ 超额从上到下分摊；
+ * 之下(符合-→远低)对 ≥ 缺口从下到上分摊。
+ * 每条规则的超额/缺口，先扣更靠边等级已分摊量，余量记到本规则在行进方向上的端点档。
  */
-function getStrictestGradeDeltas(filtered){
+function getAllocatedGradeDeltas(filtered){
   var total=filtered.length;
   var countByGrade={};
   GRADE_OPTIONS.forEach(function(g){
     countByGrade[g]=filtered.filter(function(m){return(m.ratifyGrade||m.grade)===g;}).length;
   });
-  var constraintEvals=FORCE_DIST_CONSTRAINTS.map(function(c){return evalForceConstraint(c,countByGrade,total);});
+  var pivotIdx=GRADE_OPTIONS.indexOf('符合预期');
+  var allocated={};
+  GRADE_OPTIONS.forEach(function(g){allocated[g]=0;});
+  var evals=FORCE_DIST_CONSTRAINTS.map(function(c){return evalForceConstraint(c,countByGrade,total);});
   function parseDelta(ev){
     if(!ev||ev.ok||ev.delta==null||ev.delta==='符合')return 0;
     var n=parseInt(ev.delta,10);
     return isNaN(n)?0:n;
   }
-  function pickStrictest(cands){
-    var fail=cands.filter(function(d){return d!==0;});
-    if(!fail.length)return 0;
-    var neg=fail.filter(function(d){return d<0;});
-    var pos=fail.filter(function(d){return d>0;});
-    if(neg.length&&!pos.length)return Math.min.apply(null,neg);
-    if(pos.length&&!neg.length)return Math.max.apply(null,pos);
-    return fail.reduce(function(a,b){return Math.abs(a)>=Math.abs(b)?a:b;});
+  function gIdx(g){return GRADE_OPTIONS.indexOf(g);}
+  function bottomMost(grades){
+    return grades.reduce(function(a,b){return gIdx(a)>=gIdx(b)?a:b;});
   }
-  return GRADE_OPTIONS.map(function(grade){
-    var cands=[];
-    var firstFail=null;
-    FORCE_DIST_CONSTRAINTS.forEach(function(c,i){
-      if((c.grades||[]).indexOf(grade)<0)return;
-      var ev=constraintEvals[i];
-      var d=parseDelta(ev);
-      cands.push(d);
-      if(!ev.ok&&firstFail===null)firstFail=d;
+  /* 上段 ≤：自上而下；规则底档吸收「整规则超额 − 更高档已分摊」 */
+  for(var ui=0;ui<pivotIdx;ui++){
+    var ug=GRADE_OPTIONS[ui];
+    FORCE_DIST_CONSTRAINTS.forEach(function(c,ri){
+      if(c.op==='gte')return;
+      var grades=c.grades||[];
+      if(grades.indexOf(ug)<0)return;
+      if(bottomMost(grades)!==ug)return;
+      var d=parseDelta(evals[ri]);
+      if(d>=0)return;
+      var overflow=-d,already=0;
+      grades.forEach(function(g){if(allocated[g]<0)already+=-allocated[g];});
+      var need=overflow-already;
+      if(need>0)allocated[ug]-=need;
     });
-    if(firstFail!==null)cands.push(firstFail);
-    return pickStrictest(cands);
-  });
+  }
+  /* 下段 ≥：自下而上；规则底档吸收「整规则缺口 − 更低档已分摊」 */
+  for(var li=GRADE_OPTIONS.length-1;li>pivotIdx;li--){
+    var lg=GRADE_OPTIONS[li];
+    FORCE_DIST_CONSTRAINTS.forEach(function(c,ri){
+      if(c.op!=='gte')return;
+      var grades=c.grades||[];
+      if(grades.indexOf(lg)<0)return;
+      if(bottomMost(grades)!==lg)return;
+      var d=parseDelta(evals[ri]);
+      if(d<=0)return;
+      var shortage=d,already=0;
+      grades.forEach(function(g){if(allocated[g]>0)already+=allocated[g];});
+      var need=shortage-already;
+      if(need>0)allocated[lg]+=need;
+    });
+  }
+  return GRADE_OPTIONS.map(function(g){return allocated[g];});
+}
+
+/** 红/绿柱：分摊Δ为 0 则符合（无规则档恒为 0） */
+function getGradeComplianceFlags(filtered){
+  return getAllocatedGradeDeltas(filtered).map(function(d){return d===0;});
+}
+
+function formatAllocatedDelta(d){
+  if(!d)return '符合';
+  return d>0?('+'+d):String(d);
 }
 
 function renderDist(){
@@ -660,9 +683,9 @@ function renderDist(){
   var labels=GRADE_OPTIONS;
   var beforeData=labels.map(function(g){return filtered.filter(function(m){return m.grade===g;}).length;});
   var afterData=labels.map(function(g){return filtered.filter(function(m){return(m.ratifyGrade||m.grade)===g;}).length;});
-  var okFlags=getGradeComplianceFlags(filtered);
-  var strictDeltas=getStrictestGradeDeltas(filtered);
-  var standardData=afterData.map(function(v,i){return Math.max(0,v+strictDeltas[i]);});
+  var allocDeltas=getAllocatedGradeDeltas(filtered);
+  var okFlags=allocDeltas.map(function(d){return d===0;});
+  var standardData=afterData.map(function(v,i){return Math.max(0,v+allocDeltas[i]);});
   var BAR_OK='#10B981';
   var BAR_BAD='#F43F5E';
   /* 调整前：底层浅灰柱 */
@@ -726,7 +749,7 @@ function renderDist(){
                 '调整前：'+beforeData[i],
                 '当前：'+afterData[i],
                 '标准人数：'+standardData[i],
-                '是否符合：'+formatComplianceTip(strictDeltas[i])
+                '是否符合：'+formatComplianceTip(allocDeltas[i])
               ];
             }
           }
@@ -771,18 +794,11 @@ function renderDistRules(){
   GRADE_OPTIONS.forEach(function(g){
     countByGrade[g]=filtered.filter(function(m){return(m.ratifyGrade||m.grade)===g;}).length;
   });
-  var constraintEvals=constraints.map(function(c){return evalForceConstraint(c,countByGrade,total);});
-  var allGrades=GRADE_OPTIONS.map(function(grade){
+  var allocDeltas=getAllocatedGradeDeltas(filtered);
+  var allGrades=GRADE_OPTIONS.map(function(grade,gi){
     var count=countByGrade[grade]||0;
-    var related=[];
-    constraints.forEach(function(c,i){
-      if((c.grades||[]).indexOf(grade)>=0)related.push(constraintEvals[i]);
-    });
-    /* 是否符合：按整套规则（多等级合计占比）判定；本行取相关规则中首个不达标差值 */
-    var fail=related.filter(function(e){return !e.ok;})[0];
-    var ok=!fail;
-    var delta=fail?fail.delta:'符合';
-    return {grade:grade,count:count,ok:ok,delta:delta};
+    var dNum=allocDeltas[gi]||0;
+    return {grade:grade,count:count,ok:dNum===0,delta:formatAllocatedDelta(dNum)};
   });
   var el=document.getElementById('distConclusion');
   if(!el)return;
@@ -799,7 +815,7 @@ function renderDistRules(){
     var statusHtml=d.ok
       ?('<span class="dist-status ok" title="符合" aria-label="符合">'+okIcon+'</span>')
       :('<span class="dist-status bad">'+d.delta+'</span>');
-    html+='<tr class="'+(currentGrade===d.grade?'active':'')+'" onclick="filterByConclusion(\''+d.grade+'\')"><td><span class="dist-grade-name">'+d.grade+'</span></td>';
+    html+='<tr class="'+(currentGrade===d.grade?'active':'')+'" onclick="filterByConclusion(\''+d.grade+'\')"><td class="dist-grade-cell"><span class="dist-grade-name">'+d.grade+'</span></td>';
     var inAnyRule=constraints.some(function(c){return (c.grades||[]).indexOf(d.grade)>=0;});
     if(!inAnyRule){
       /* 整档无任何规则：四列合并显示 - */
@@ -824,11 +840,55 @@ function renderDistRules(){
   });
   html+='</tbody></table>';
   el.innerHTML=html;
+  bindDistRuleSelection(el);
   var condensed=allGrades.map(function(d){
     return '<span class="dist-summary-item"><span>'+d.grade+'：</span><span class="dist-summary-value '+(d.ok?'ok':'bad')+'">'+d.delta+'</span></span>';
   }).join('');
   var condensedEl=document.getElementById('distCondensed');
   if(condensedEl)condensedEl.innerHTML=condensed;
+}
+
+function clearDistRuleSelection(root){
+  var el=root||document.getElementById('distConclusion');
+  if(!el)return;
+  el.querySelectorAll('.dist-rule-cell.is-selected').forEach(function(td){td.classList.remove('is-selected');});
+  el.querySelectorAll('.dist-grade-cell.rule-selected').forEach(function(td){td.classList.remove('rule-selected');});
+}
+
+function selectDistRuleCell(ruleTd){
+  var wasSelected=ruleTd.classList.contains('is-selected');
+  clearDistRuleSelection();
+  if(wasSelected)return;
+  ruleTd.classList.add('is-selected');
+  var span=parseInt(ruleTd.getAttribute('rowspan')||'1',10)||1;
+  var tr=ruleTd.parentElement;
+  if(!tr||!tr.parentElement)return;
+  var rows=[].slice.call(tr.parentElement.children);
+  var start=rows.indexOf(tr);
+  if(start<0)return;
+  for(var i=0;i<span;i++){
+    var row=rows[start+i];
+    if(!row)break;
+    var gradeTd=row.querySelector('.dist-grade-cell');
+    if(gradeTd)gradeTd.classList.add('rule-selected');
+  }
+}
+
+function bindDistRuleSelection(root){
+  if(!root)return;
+  root.querySelectorAll('.dist-rule-cell[rowspan]').forEach(function(td){
+    td.addEventListener('click',function(e){
+      e.stopPropagation();
+      selectDistRuleCell(td);
+    });
+  });
+  if(!window._distRuleOutsideBound){
+    window._distRuleOutsideBound=true;
+    document.addEventListener('click',function(e){
+      if(e.target.closest&&e.target.closest('#distConclusion .dist-rule-cell[rowspan]'))return;
+      clearDistRuleSelection();
+    });
+  }
 }
 
 function filterByConclusion(grade){
