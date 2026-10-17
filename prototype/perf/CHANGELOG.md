@@ -1,5 +1,21 @@
 # 变更记录
 
+## 2026-10-17 分布规则格改为日历事件 chip
+
+- `demo-ratify-direct.html`、`demo-ratify-indirect.html`、`demo-ratify-hierarchy.html`：真实 `.dist-rule-cell[data-rule]` 改为浅 `--pr50` 底 + `inset 3px` 实色左边条（主题色，非深蓝）；选中规则格用 `--pr100`；覆盖等级列同步浅底+3px 左边条；空/`-` 仍白底，规则格不透明防行 hover 渗色。
+
+## 2026-10-17 分布规则格选中态硬化（无蓝底/无整框）
+
+- `demo-ratify-direct.html`、`demo-ratify-indirect.html`、`demo-ratify-hierarchy.html`：根因是 `tr:hover/active{background:pr50}` + `border-collapse` 下 rowspan 规则格仍透出浅蓝，且 `border-left` 在折叠边框里易看成整框。改为：规则格强制 `#FFF`、左线改 `inset 1px` box-shadow、结论表行 hover 只染非 `.dist-rule-cell`；真实规则加 `data-rule`/`data-span` 绑定点击；选中后仅等级列 `inset 2px`（远超+超出）。
+
+## 2026-10-17 分布规则格去掉选中蓝底
+
+- `demo-ratify-direct.html`、`demo-ratify-indirect.html`、`demo-ratify-hierarchy.html`：撤销 `.is-selected` 的 `color-mix(50%)` 蓝底/加粗/加粗左边框；规则格始终白底 + `1px` 左线；行 hover/active 不渗色；选中反馈仅等级列 `inset 2px` 左边框。
+
+## 2026-10-17 分布规则选中态：50%主题底+加粗
+
+- ~~已撤销~~ `demo-ratify-direct.html`、`demo-ratify-indirect.html`、`demo-ratify-hierarchy.html`：`.dist-rule-cell[rowspan].is-selected` 背景 `color-mix(var(--pr) 50%)`、文字加粗、左边框加粗为 `2px` 主题蓝；未选中仍为透明底 + `1px` 左边框；等级列 `rule-selected` 左边框不变。
+
 ## 2026-10-17 分布规则格左边框与等级选中线
 
 - `demo-ratify-direct.html`、`demo-ratify-indirect.html`、`demo-ratify-hierarchy.html`：`.dist-rule-cell[rowspan]` 左边框改为 `1px solid var(--pr)`；点击规则格（含 rowspan=1）选中后，覆盖等级列左侧出现 `2px` 主题蓝边框，再点或点外部取消。
