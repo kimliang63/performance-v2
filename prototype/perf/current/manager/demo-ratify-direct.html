@@ -473,14 +473,16 @@ var FORCE_DIST_CONSTRAINTS=[
   {grades:['远超预期','超出预期','符合预期+'],op:'lte',pct:50},
   {grades:['符合预期-','低于预期','远低预期'],op:'gte',pct:10}
 ];
-function formatForceConstraintText(c){
-  if(!c)return '—';
-  return (c.op==='gte'?'≥':'≤')+c.pct+'%';
-}
-function formatGradeReqText(minCount,maxCount){
-  if(minCount==null||maxCount==null)return '—';
-  if(minCount===maxCount)return String(minCount);
-  return minCount+'–'+maxCount;
+/** 分布规则格：按当前分母把 ≤P% / ≥P% 换成人数区间（与合规判定同一套 ceil/floor） */
+function formatForceConstraintText(c,total){
+  if(!c)return '';
+  var n=+total||0;
+  if(c.op==='gte'){
+    var minCount=Math.ceil(n*c.pct/100);
+    return minCount+'–'+n;
+  }
+  var maxCount=Math.floor(n*c.pct/100);
+  return '0–'+maxCount;
 }
 function evalForceConstraint(c,countByGrade,total){
   var sum=0;
@@ -496,7 +498,7 @@ function evalForceConstraint(c,countByGrade,total){
     ok=sum<=maxCount;
     if(!ok)delta='-'+(sum-maxCount);
   }
-  return {ok:ok,delta:delta,sum:sum,pct:pct,text:formatForceConstraintText(c)};
+  return {ok:ok,delta:delta,sum:sum,pct:pct,text:formatForceConstraintText(c,total)};
 }
 
 var MEMBERS=[
@@ -700,8 +702,6 @@ function renderDistRules(){
     countByGrade[g]=filtered.filter(function(m){return(m.ratifyGrade||m.grade)===g;}).length;
   });
   var constraintEvals=constraints.map(function(c){return evalForceConstraint(c,countByGrade,total);});
-  var forceByGrade={};
-  FORCE_DIST.forEach(function(r){forceByGrade[r.grade]=r;});
   var allGrades=GRADE_OPTIONS.map(function(grade){
     var count=countByGrade[grade]||0;
     var related=[];
@@ -712,20 +712,17 @@ function renderDistRules(){
     var fail=related.filter(function(e){return !e.ok;})[0];
     var ok=!fail;
     var delta=fail?fail.delta:'符合';
-    var fr=forceByGrade[grade];
-    var minCount=fr!=null?Math.ceil(total*fr.min/100):null;
-    var maxCount=fr!=null?Math.floor(total*fr.max/100):null;
-    return {grade:grade,count:count,ok:ok,delta:delta,reqText:formatGradeReqText(minCount,maxCount)};
+    return {grade:grade,count:count,ok:ok,delta:delta};
   });
   var el=document.getElementById('distConclusion');
   if(!el)return;
   var ruleCount=constraints.length;
-  var gradeW=14,reqW=12,actualW=10,statusW=12;
-  var ruleW=ruleCount?Math.floor((100-gradeW-reqW-actualW-statusW)/ruleCount):0;
+  var gradeW=18,actualW=14,statusW=16;
+  var ruleW=ruleCount?Math.floor((100-gradeW-actualW-statusW)/ruleCount):0;
   var colgroup='<colgroup><col style="width:'+gradeW+'%">';
   for(var ci=0;ci<ruleCount;ci++)colgroup+='<col style="width:'+ruleW+'%">';
-  colgroup+='<col style="width:'+reqW+'%"><col style="width:'+actualW+'%"><col style="width:'+statusW+'%"></colgroup>';
-  var head='<thead><tr><th>等级</th><th colspan="'+ruleCount+'">分布规则</th><th>要求</th><th>实际</th><th>是否符合</th></tr></thead>';
+  colgroup+='<col style="width:'+actualW+'%"><col style="width:'+statusW+'%"></colgroup>';
+  var head='<thead><tr><th>等级</th><th colspan="'+ruleCount+'">分布规则</th><th>实际</th><th>是否符合</th></tr></thead>';
   var html='<table class="dist-status-table">'+colgroup+head+'<tbody>';
   var okIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
   allGrades.forEach(function(d,gi){
@@ -745,9 +742,9 @@ function renderDistRules(){
       if(prev&&grades.indexOf(prev)>=0)return;
       var span=1;
       while(gi+span<GRADE_OPTIONS.length&&grades.indexOf(GRADE_OPTIONS[gi+span])>=0)span++;
-      html+='<td class="dist-rule-cell" rowspan="'+span+'">'+formatForceConstraintText(c)+'</td>';
+      html+='<td class="dist-rule-cell" rowspan="'+span+'">'+formatForceConstraintText(c,total)+'</td>';
     });
-    html+='<td>'+d.reqText+'</td><td>'+d.count+'</td><td>'+statusHtml+'</td></tr>';
+    html+='<td>'+d.count+'</td><td>'+statusHtml+'</td></tr>';
   });
   html+='</tbody></table>';
   el.innerHTML=html;
