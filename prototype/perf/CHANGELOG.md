@@ -1,8 +1,40 @@
 # 变更记录
 
+## 2026-10-17 补充等级分布用户需求说明
+
+- 新增 `docs/deliverables/prd-ratify-dist-overview.md`：按 `demo-ratify-direct.html` 现状整理「等级分布」左表右图（规则区间、是否符合、最严差值标准线、hover）供转交开发。
+
+## 2026-10-17 修正当前柱叠在调整前之上
+
+- `demo-ratify-direct.html`：`chartDist` 按 Chart.js 倒序绘制修正 order（灰底 order2 / 当前 order1 / 标准线 order0），重叠非堆叠，当前在上。
+
+## 2026-10-17 分布图恢复最严差值标准线
+
+- `demo-ratify-direct.html`：`chartDist` 按复合规则最严差额重算标准线（`当前+最严Δ`）；琥珀虚线弱于柱、略强于调整前。
+
 ## 2026-10-17 分布规则表头改为范围
 
 - `demo-ratify-direct.html`：`#distConclusion` 表头「分布规则」改为「分布规则范围」。
+
+## 2026-10-17 分布图调整前线弱化
+
+- `demo-ratify-direct.html`：`chartDist` 调整前改为浅灰细虚线+空心小点（约 65% 透明），图例同步弱化；当前红绿柱保持醒目。
+
+## 2026-10-17 分布图去掉标准线
+
+- `demo-ratify-direct.html`：`chartDist` 移除橙色标准线；仅保留当前红/绿柱与调整前灰虚线，图例同步为三项。
+
+## 2026-10-17 等级分布「实际」改名「当前」
+
+- `demo-ratify-direct.html`：`#distConclusion` 表头「实际」改为「当前」。
+
+## 2026-10-17 无规则合并格底色对齐
+
+- `demo-ratify-direct.html`：`.dist-rule-none` 使用与分布规则合并格相同的 `color-mix` 底色。
+
+## 2026-10-17 无规则等级合并显示-
+
+- `demo-ratify-direct.html`：`#distConclusion` 未参与任何分布规则的等级（如符合预期）四列合并为一格显示 `-`。
 
 ## 2026-10-17 分布规则格改为人数区间
 
