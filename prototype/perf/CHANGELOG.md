@@ -1,8 +1,76 @@
 # 变更记录
 
+## 2026-10-17 分布规则格左边框与等级选中线
+
+- `demo-ratify-direct.html`、`demo-ratify-indirect.html`、`demo-ratify-hierarchy.html`：`.dist-rule-cell[rowspan]` 左边框改为 `1px solid var(--pr)`；点击规则格（含 rowspan=1）选中后，覆盖等级列左侧出现 `2px` 主题蓝边框，再点或点外部取消。
+
+## 2026-10-17 强制分布配置校验（同档反向压力）入 PRD
+
+- `prd-ratify-dist-overview.md`：新增 §9 配置校验——拦同档调入+调出、跨枢轴、空「之间」；不拦同向瀑布重叠。
+
+## 2026-10-17 分布结论四场景对照入 PRD
+
+- `prd-ratify-dist-overview.md`：增补「是否符合」四场景（之上调出/调入、之下调出/调入）与瀑布触发条件、展示与现算法边界（现状仅 1+4）。
+
+## 2026-10-17 重叠规则改为瀑布分摊
+
+- `demo-ratify-direct.html`、`demo-ratify-indirect.html`、`demo-ratify-hierarchy.html`：废除「首个不达标 / 最严差值」贴档；「是否符合」与标准线改为以「符合预期」为枢轴的瀑布分摊——上段 ≤ 超额从上到下、下段 ≥ 缺口从下到上。当前 mock：远超 −3、超出 −3、符合+ ✅、远低 +3。`prd-ratify-dist-overview.md` 重写分摊口径与演算。
+
+## 2026-10-17 演示数据补「需调进」
+
+- `demo-ratify-direct.html`、`demo-ratify-indirect.html`、`demo-ratify-hierarchy.html`：倾斜 mock 将低段（符合-/低于/远低）压到 2 人，规则4 差 **+3**；多出人数并入「符合预期」保持总分母 50。左表「低于预期」等显示红标 `+3`，右图红柱且标准线高于当前。`prd-ratify-dist-overview.md` 增补例子 D。
+
+## 2026-10-17 分布规则范围改大/小于等于人数
+
+- `demo-ratify-direct.html`、`demo-ratify-indirect.html`、`demo-ratify-hierarchy.html`：`分布规则范围` 由 `0–10` 类闭区间改为 `≤10人` / `≥5人`（双界 `≥min人且≤max人`）；0 与分母分别视为无下/上界。`prd-ratify-dist-overview.md` 示例同步。
+
+## 2026-10-17 分布规则合并格左侧蓝线
+
+- `demo-ratify-direct.html`、`demo-ratify-indirect.html`、`demo-ratify-hierarchy.html`：`.dist-rule-cell[rowspan]` 保留透明底，增加 `border-left:2px solid var(--pr)` 标识合并范围；无规则 `-` 格不变。
+
+## 2026-10-17 分布规则合并格去掉底色
+
+- `demo-ratify-direct.html`、`demo-ratify-indirect.html`、`demo-ratify-hierarchy.html`：`.dist-rule-cell[rowspan]` / `.dist-rule-none` 取消浅底色，与普通单元格一致透明。
+
+## 2026-10-17 月度审定页等级分布对齐直线终态
+
+- `demo-ratify-indirect.html`（双线）、`demo-ratify-hierarchy.html`（逐级）：等级分布左表/右图对齐 `demo-ratify-direct.html`——复合规则 rowspan、分布规则范围人数区间、无规则 `-`、调整前灰柱+当前红绿柱+最严差值标准虚线、图例与 hover；演示倾斜数据同步。
+
+## 2026-10-17 补充等级分布用户需求说明
+
+- 新增 `docs/deliverables/prd-ratify-dist-overview.md`：按 `demo-ratify-direct.html` 现状整理「等级分布」左表右图（规则区间、是否符合、最严差值标准线、hover）供转交开发。
+
+## 2026-10-17 修正当前柱叠在调整前之上
+
+- `demo-ratify-direct.html`：`chartDist` 按 Chart.js 倒序绘制修正 order（灰底 order2 / 当前 order1 / 标准线 order0），重叠非堆叠，当前在上。
+
+## 2026-10-17 分布图恢复最严差值标准线
+
+- `demo-ratify-direct.html`：`chartDist` 按复合规则最严差额重算标准线（`当前+最严Δ`）；琥珀虚线弱于柱、略强于调整前。
+
 ## 2026-10-17 分布规则表头改为范围
 
 - `demo-ratify-direct.html`：`#distConclusion` 表头「分布规则」改为「分布规则范围」。
+
+## 2026-10-17 分布图调整前线弱化
+
+- `demo-ratify-direct.html`：`chartDist` 调整前改为浅灰细虚线+空心小点（约 65% 透明），图例同步弱化；当前红绿柱保持醒目。
+
+## 2026-10-17 分布图去掉标准线
+
+- `demo-ratify-direct.html`：`chartDist` 移除橙色标准线；仅保留当前红/绿柱与调整前灰虚线，图例同步为三项。
+
+## 2026-10-17 等级分布「实际」改名「当前」
+
+- `demo-ratify-direct.html`：`#distConclusion` 表头「实际」改为「当前」。
+
+## 2026-10-17 无规则合并格底色对齐
+
+- `demo-ratify-direct.html`：`.dist-rule-none` 使用与分布规则合并格相同的 `color-mix` 底色。
+
+## 2026-10-17 无规则等级合并显示-
+
+- `demo-ratify-direct.html`：`#distConclusion` 未参与任何分布规则的等级（如符合预期）四列合并为一格显示 `-`。
 
 ## 2026-10-17 分布规则格改为人数区间
 
