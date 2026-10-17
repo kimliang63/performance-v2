@@ -1,5 +1,9 @@
 # 变更记录
 
+## 2026-10-17 分布规则表头改为范围
+
+- `demo-ratify-direct.html`：`#distConclusion` 表头「分布规则」改为「分布规则范围」。
+
 ## 2026-10-17 分布规则格改为人数区间
 
 - `demo-ratify-direct.html`：`#distConclusion` 去掉「要求」列；分布规则合并格改为按分母算出的人数区间（如 `0–5`），不再显示百分比。
