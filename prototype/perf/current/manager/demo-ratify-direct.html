@@ -171,12 +171,19 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 #distConclusion .dist-status-table thead th{height:36px;text-align:center}
 #distConclusion .dist-status-table thead th[colspan]{text-align:center}
 #distConclusion .dist-status-table .dist-status{margin:0 auto}
-#distConclusion .dist-status-table tbody tr{height:calc((100% - 36px) / 7)}
-#distConclusion .dist-status-table .dist-rule-cell{color:var(--c6);font-size:12px;vertical-align:middle}
-#distConclusion .dist-status-table .dist-rule-cell[rowspan]{background:transparent;border-left:1px solid var(--pr);cursor:pointer}
+#distConclusion .dist-status-table tbody tr{height:calc((100% - 36px) / 7);background:transparent}
+/* 行 hover/active 只染非规则格，避免 rowspan 规则格透出 pr50 */
+#distConclusion .dist-status-table tbody tr:hover td:not(.dist-rule-cell),
+#distConclusion .dist-status-table tbody tr.active td:not(.dist-rule-cell){background:var(--pr50)}
+#distConclusion .dist-status-table tbody tr:hover,
+#distConclusion .dist-status-table tbody tr.active{background:transparent}
+/* 规则格：空/无规则白底；真实规则=日历事件 chip（浅 --pr 底 + 3px 实色左边条，不透明防 hover 渗色） */
+#distConclusion .dist-status-table .dist-rule-cell{color:var(--c6);font-size:12px;vertical-align:middle;background:#FFF!important;background-color:#FFF!important;border:none!important;box-shadow:none;outline:none}
+#distConclusion .dist-status-table .dist-rule-cell[data-rule]{background:var(--pr50)!important;background-color:var(--pr50)!important;color:var(--pr700);box-shadow:inset 3px 0 0 0 var(--pr);padding-left:10px!important;font-weight:400;cursor:pointer}
+#distConclusion .dist-status-table .dist-rule-cell[data-rule].is-selected{background:var(--pr100)!important;background-color:var(--pr100)!important;color:var(--pr900);box-shadow:inset 3px 0 0 0 var(--pr);font-weight:500}
 #distConclusion .dist-status-table .dist-rule-empty{color:var(--c4)}
-#distConclusion .dist-status-table .dist-rule-none{color:var(--c4);text-align:center;background:transparent}
-#distConclusion .dist-status-table .dist-grade-cell.rule-selected{border-left:2px solid var(--pr)}
+#distConclusion .dist-status-table .dist-rule-none{color:var(--c4);text-align:center}
+#distConclusion .dist-status-table .dist-grade-cell.rule-selected{background:var(--pr50)!important;background-color:var(--pr50)!important;box-shadow:inset 3px 0 0 0 var(--pr)}
 .dist-grade-name{font-weight:600;color:var(--c8)}
 .dist-status{display:inline-flex;align-items:center;justify-content:center;padding:3px 8px;border-radius:var(--r1);font:500 11px/1 var(--f);white-space:nowrap}
 .dist-status.ok{width:22px;height:22px;padding:0;border-radius:50%;color:var(--em700);background:var(--em50)}
@@ -833,7 +840,7 @@ function renderDistRules(){
         if(prev&&grades.indexOf(prev)>=0)return;
         var span=1;
         while(gi+span<GRADE_OPTIONS.length&&grades.indexOf(GRADE_OPTIONS[gi+span])>=0)span++;
-        html+='<td class="dist-rule-cell" rowspan="'+span+'">'+formatForceConstraintText(c,total)+'</td>';
+        html+='<td class="dist-rule-cell" data-rule="1" data-span="'+span+'" rowspan="'+span+'">'+formatForceConstraintText(c,total)+'</td>';
       });
     }
     html+='<td>'+d.count+'</td><td>'+statusHtml+'</td></tr>';
@@ -860,7 +867,7 @@ function selectDistRuleCell(ruleTd){
   clearDistRuleSelection();
   if(wasSelected)return;
   ruleTd.classList.add('is-selected');
-  var span=parseInt(ruleTd.getAttribute('rowspan')||'1',10)||1;
+  var span=parseInt(ruleTd.getAttribute('data-span')||ruleTd.getAttribute('rowspan')||'1',10)||1;
   var tr=ruleTd.parentElement;
   if(!tr||!tr.parentElement)return;
   var rows=[].slice.call(tr.parentElement.children);
@@ -876,7 +883,7 @@ function selectDistRuleCell(ruleTd){
 
 function bindDistRuleSelection(root){
   if(!root)return;
-  root.querySelectorAll('.dist-rule-cell[rowspan]').forEach(function(td){
+  root.querySelectorAll('.dist-rule-cell[data-rule]').forEach(function(td){
     td.addEventListener('click',function(e){
       e.stopPropagation();
       selectDistRuleCell(td);
@@ -885,7 +892,7 @@ function bindDistRuleSelection(root){
   if(!window._distRuleOutsideBound){
     window._distRuleOutsideBound=true;
     document.addEventListener('click',function(e){
-      if(e.target.closest&&e.target.closest('#distConclusion .dist-rule-cell[rowspan]'))return;
+      if(e.target.closest&&e.target.closest('#distConclusion .dist-rule-cell[data-rule]'))return;
       clearDistRuleSelection();
     });
   }
