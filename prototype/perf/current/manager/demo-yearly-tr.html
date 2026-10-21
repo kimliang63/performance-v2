@@ -194,19 +194,20 @@ select.status-filter-select.dim-region{min-width:108px}
 .group-panels-rail.panels-single .group-panel{flex:0 0 auto;width:auto;max-width:none}
 .group-panel:hover{border-color:var(--c3)}
 .group-panel.is-active{border-color:var(--pr200);box-shadow:0 0 0 1px var(--pr100)}
-.group-panel-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:6px 8px;flex-wrap:wrap;flex-shrink:0;box-sizing:border-box;min-height:40px;margin:0;padding:8px 12px;border-bottom:1px solid var(--dv);cursor:pointer}
+.group-panel-hd{display:flex;align-items:center;justify-content:space-between;gap:6px 8px;flex-wrap:wrap;flex-shrink:0;box-sizing:border-box;min-height:40px;margin:0;padding:8px 12px;border-bottom:1px solid var(--dv);cursor:pointer}
 .group-panel-hd:hover .group-panel-name{color:var(--pr)}
-.group-panel-title{display:inline-flex;align-items:baseline;gap:6px;flex:1 1 160px;min-width:160px;white-space:normal}
-.group-panel-name{font:600 14px/1.35 var(--f);color:var(--c9);white-space:normal}
-.group-panel-count{font:500 12px/1 var(--f);color:var(--c5);white-space:nowrap;flex-shrink:0}
-.group-panel-tools{display:inline-flex;align-items:center;gap:10px;flex:1 1 auto;flex-shrink:1;min-width:0;margin-left:auto}
-.group-panel-legend{display:inline-flex;align-items:center;gap:8px;flex-shrink:1;font:400 11px/1.3 var(--f);color:var(--c5);white-space:normal;flex-wrap:wrap;justify-content:flex-end;max-width:100%}
-.group-panel-legend .cap-leg-item{gap:4px}
-.group-panel-legend .cap-leg-bar{width:10px;height:8px;border-radius:2px;background:linear-gradient(90deg,var(--em) 0 50%,var(--ro) 50% 100%)}
+.group-panel-title{display:inline-flex;align-items:center;gap:6px;flex:1 1 160px;min-width:0;white-space:nowrap}
+.group-panel-name{font:600 14px/20px var(--f);color:var(--c9);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.group-panel-count{font:500 12px/20px var(--f);color:var(--c5);white-space:nowrap;flex-shrink:0}
+.group-panel-tools{display:inline-flex;align-items:center;gap:10px;flex:0 1 auto;flex-shrink:1;min-width:0;margin-left:auto}
+.group-panel-legend{display:inline-flex;align-items:center;gap:10px;flex-shrink:0;height:20px;font:400 11px/20px var(--f);color:var(--c5);white-space:nowrap;flex-wrap:nowrap;justify-content:flex-end}
+.group-panel-legend .cap-leg-item{display:inline-flex;align-items:center;gap:4px;height:20px;line-height:20px;flex-shrink:0}
+.group-panel-legend .cap-leg-item i{display:block;flex-shrink:0;font-style:normal}
+.group-panel-legend .cap-leg-bar{width:8px;height:8px;border-radius:1px;background:linear-gradient(90deg,var(--em) 0 50%,var(--ro) 50% 100%)}
 .group-panel-legend .cap-leg-bar.ok{background:#10B981}
 .group-panel-legend .cap-leg-bar.bad{background:#F43F5E}
 .group-panel-legend .cap-leg-bar.before{background:#E4E4E7;box-shadow:inset 0 0 0 1px #D4D4D8}
-.group-panel-legend .cap-leg-line{display:block;width:14px;height:0;border-top:1.5px dashed rgba(245,158,11,.75);flex-shrink:0}
+.group-panel-legend .cap-leg-line{width:12px;height:8px;border:0;background:repeating-linear-gradient(90deg,rgba(245,158,11,.75) 0 3px,transparent 3px 5px);background-size:100% 1.5px;background-repeat:no-repeat;background-position:center}
 .group-panels-toolbar{display:none;flex-shrink:0;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px 0;box-sizing:border-box}
 .eval-list.view-switchable .group-panels-toolbar{display:flex}
 .group-panel-mode-seg{display:none;align-items:center;padding:2px;border:1px solid var(--c2);border-radius:var(--r1);background:var(--c0);gap:0}
@@ -214,9 +215,9 @@ select.status-filter-select.dim-region{min-width:108px}
 .group-panel-mode-btn{height:22px;padding:0 8px;border:0;border-radius:3px;background:transparent;font:500 12px/1 var(--f);color:var(--c5);cursor:pointer}
 .group-panel-mode-btn.on{background:var(--sf);color:var(--pr);box-shadow:0 0 0 1px var(--pr100)}
 .group-panel-mode-btn:hover{color:var(--pr)}
-.group-panel-body{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(160px,1fr);align-items:start;gap:8px;flex:0 0 auto;min-width:0;min-height:max-content;padding:8px 10px 10px;overflow:hidden;width:100%;box-sizing:border-box}
-/* 展开 2×2：卡不够宽时表在上、图在下，避免表头被挤成一字竖排并叠到图上 */
-.group-panels-rail:not(.panels-single) .group-panel-body{grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));align-items:stretch;gap:10px;overflow:hidden;min-height:max-content}
+.group-panel-body{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(112px,.7fr);align-items:start;gap:8px;flex:0 0 auto;min-width:0;min-height:max-content;padding:8px 10px 10px;overflow:hidden;width:100%;box-sizing:border-box}
+/* 展开 2×2：左表右图横行，不折成上下 */
+.group-panels-rail:not(.panels-single) .group-panel-body{grid-template-columns:minmax(0,1.6fr) minmax(112px,.7fr);align-items:start;gap:8px;overflow:hidden;min-height:max-content}
 /* 收起：单卡全宽，图表或统计表二选一（全局开关）；必须 stretch，否则图按内容宽塌成窄条 */
 .group-panels-rail.panels-single .group-panel-body{display:flex;flex-direction:column;grid-template-columns:none;align-items:stretch;gap:8px;overflow:visible;width:100%}
 .group-panels-rail.panels-single .group-panel.mode-list .group-panel-body{min-height:0;overflow:visible}
@@ -236,40 +237,39 @@ select.status-filter-select.dim-region{min-width:108px}
 .group-panel .cap-bars .cap-bar-row.active .cap-bar-track{box-shadow:0 0 0 2px #0F172A}
 .group-panel .cap-bars .cap-bar-range{display:none}
 .group-panel .cap-bars .cap-bar-count{font-size:11px;min-width:16px;color:var(--c8);text-align:right}
-.group-panel .cap-bars .cap-bar-adj{font-size:11px;min-width:28px}
-.group-panel .cap-bars .cap-bar-adj .adj-delta{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:18px;padding:0 6px;border-radius:var(--r1);font:600 11px/1 var(--m)}
-.group-panel .cap-bars .cap-bar-adj .adj-delta.in{color:var(--em700);background:var(--em50)}
-.group-panel .cap-bars .cap-bar-adj .adj-delta.out{color:var(--ro);background:var(--ro50)}
-.group-panel .cap-bars .cap-bar-adj .adj-delta.ok{color:var(--c4);background:transparent;font-weight:500}
 .group-panel .cap-bar-legend{display:none}
 .group-panel .cap-bar-fill,
 .group-panel .cap-bar-before{display:block;position:absolute;left:0;top:0;bottom:0;height:100%;min-height:100%;border-radius:4px}
 .group-panel .cap-bar-before{z-index:0;background:rgba(228,228,231,.95)}
 .group-panel .cap-bar-fill{z-index:1}
 /* 展开考核组卡片：左表已有等级名，右图仅刻度+轨+人数 */
-.group-panels-rail:not(.panels-single) .group-chart-axis{padding:0 32px 0 22px}
+.group-panels-rail:not(.panels-single) .group-chart-axis{height:36px;padding:0 0 0 22px;margin:0}
 .group-panels-rail:not(.panels-single) .cap-bars.cap-bars-card .cap-bar-row{gap:6px}
 .group-panels-rail:not(.panels-single) .cap-bars.cap-bars-card .cap-bar-track{min-width:24px}
-.group-panels-rail:not(.panels-single) .cap-bars.cap-bars-card .cap-bar-adj{min-width:22px}
-/* 收起纵向卡：行内自带等级名；刻度对齐「标签+人数」之后、「调整」之前 */
-.group-panels-rail.panels-single .group-chart-axis{padding:0 34px 0 112px}
+/* 收起纵向卡：行内自带等级名；刻度对齐「标签+人数」之后 */
+.group-panels-rail.panels-single .group-chart-axis{padding:0 0 0 112px}
 .group-panels-rail.panels-single .cap-bars.cap-bars-merged .cap-bar-row > .cap-tag{flex:0 0 84px;min-width:84px;max-width:84px;height:20px;padding:0 6px;font-size:12px;justify-content:flex-start;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;box-sizing:border-box}
 .group-panel .list-stats{min-height:0;overflow:visible;padding:0}
 .group-panels-rail.panels-single .group-panel.mode-list .dist-status-table .col-req{width:28%}
 .group-panels-rail.panels-single .group-panel.mode-list .dist-status-table .col-after{width:18%}
 .group-panel .dist-status-table{width:100%;table-layout:fixed;border-collapse:collapse;font-size:12px}
-.group-panel .dist-status-table th,.group-panel .dist-status-table td{padding:4px 4px;height:26px;text-align:center;border-bottom:1px solid var(--dv);white-space:nowrap;overflow:hidden;text-overflow:clip;vertical-align:middle}
-.group-panel .dist-status-table thead th{height:28px;min-height:28px;padding:4px 6px;font:600 12px/1.2 var(--f);color:var(--c5);background:transparent;border-bottom:1px solid var(--dv);text-align:center;overflow:visible;text-overflow:clip;white-space:nowrap;text-transform:none;letter-spacing:0;writing-mode:horizontal-tb;text-orientation:mixed}
+.group-panel .dist-status-table th,.group-panel .dist-status-table td{padding:4px 4px;height:28px;text-align:center;border-bottom:1px solid var(--dv);white-space:nowrap;overflow:hidden;text-overflow:clip;vertical-align:middle}
+.group-panel .dist-status-table thead th{height:auto;min-height:28px;padding:4px 3px;font:600 12px/1.2 var(--f);color:var(--c5);background:transparent;border-bottom:1px solid var(--dv);text-align:center;overflow:visible;text-overflow:clip;white-space:normal;word-break:normal;overflow-wrap:break-word;text-transform:none;letter-spacing:0;writing-mode:horizontal-tb;text-orientation:mixed}
 .group-panel .dist-status-table col.col-before,
-.group-panel .dist-status-table thead th.col-before{width:14%}
+.group-panel .dist-status-table thead th.col-before{width:16%;white-space:nowrap}
 .group-panel .dist-status-table col.col-status,
-.group-panel .dist-status-table thead th.col-status{width:22%}
-/* 分布规则范围：表头单行完整展示，禁止竖排/换字 */
-.group-panel .dist-status-table thead th.dist-rule-hd{white-space:nowrap;overflow:visible;text-overflow:clip;height:28px;min-height:28px;line-height:1.2;padding:4px 6px;writing-mode:horizontal-tb}
+.group-panel .dist-status-table thead th.col-status{width:26%;white-space:nowrap}
+.group-panels-rail:not(.panels-single) .group-panel .dist-status-table thead th{min-height:36px}
+/* 分布规则范围：表头拆列等分占宽（避免 colspan 把表体挤成窄条），文案从首列溢出铺满 */
+.group-panel .dist-status-table thead th.dist-rule-hd{white-space:nowrap;overflow:visible;text-overflow:clip;height:auto;min-height:28px;line-height:1.2;padding:4px 2px;writing-mode:horizontal-tb;text-orientation:mixed;font:600 11px/1.2 var(--f)}
+.group-panel .dist-status-table thead th.dist-rule-hd.is-start{text-align:center;white-space:nowrap;overflow:visible}
+.group-panel .dist-status-table thead th.dist-rule-hd.is-follow{font-size:0;line-height:0;color:transparent;border-left:0;padding-left:0;padding-right:0;overflow:hidden}
+.group-panel .dist-status-table col.dist-rule-col{min-width:0}
+.group-panel .dist-status-table .dist-rule-cell[rowspan]{height:auto}
 .group-panel .dist-status-table tbody tr:last-child td{border-bottom:0}
 .group-panel .dist-status-table .col-req{width:26%}
-.group-panel .dist-status-table .dist-grade-cell{text-align:left;overflow:visible;text-overflow:clip}
-.group-panel .dist-status-table .dist-rule-cell{overflow:visible;text-overflow:clip;color:var(--c6);background:#FFF!important;border:none!important;box-shadow:none;outline:none;vertical-align:middle}
+.group-panel .dist-status-table .dist-grade-cell{text-align:left;overflow:hidden;text-overflow:clip}
+.group-panel .dist-status-table .dist-rule-cell{box-sizing:border-box;width:auto;min-width:0;overflow:visible;text-overflow:clip;color:var(--c6);background:#FFF!important;border:none!important;box-shadow:none;outline:none;vertical-align:middle;writing-mode:horizontal-tb}
 .group-panel .dist-status-table .dist-rule-cell[data-rule]{background:var(--pr50)!important;color:var(--pr700);box-shadow:inset 3px 0 0 0 var(--pr);padding-left:8px!important;font-weight:400;cursor:pointer;text-align:left}
 .group-panel .dist-status-table .dist-rule-cell[data-rule].is-selected{background:var(--pr100)!important;color:var(--pr900);font-weight:500}
 .group-panel .dist-status-table .dist-rule-empty{color:var(--c4)}
@@ -376,7 +376,9 @@ select.status-filter-select.dim-region{min-width:108px}
 .adj-stack{display:flex;flex-direction:column;gap:2px;align-items:flex-start;min-width:0;max-width:100%}
 .adj-reason{font:400 11px/1.35 var(--f);color:var(--c5);white-space:normal;word-break:break-all;max-width:100%}
 .adj-meta-hint{font:400 12px/1.4 var(--f);color:var(--c6)}
-.dist-status-table thead th.dist-rule-hd{text-align:center}
+.dist-status-table thead th.dist-rule-hd{text-align:center;white-space:nowrap;overflow:visible;writing-mode:horizontal-tb}
+.dist-status-table thead th.dist-rule-hd.is-start{text-align:left}
+.dist-status-table thead th.dist-rule-hd.is-follow{font-size:0;line-height:0;color:transparent;border-left:0;padding-left:0;padding-right:0;overflow:hidden}
 .box-cell-line{display:inline-flex;align-items:center;flex-wrap:wrap;gap:4px;max-height:32px;overflow:hidden;font:400 12px/1.2 var(--f);color:var(--c7)}
 /* 盘点：初评能力仅 chip；能力调整记录单独列 */
 .step-work.split-lr.step-cap .eval-list-scroll .col-dept{width:88px}
@@ -525,7 +527,7 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 #boxGroupPanelsScroll .stats-group-block .group-panel-hd{cursor:default;flex-shrink:0}
 #boxGroupPanelsScroll .stats-group-charts{display:flex;flex-direction:column;gap:10px;padding:8px 10px 10px;min-width:0;min-height:auto;flex:0 0 auto;overflow:visible}
 #boxGroupPanelsScroll .stats-group-charts .stats-block{gap:6px;flex:0 0 auto;min-height:auto;overflow:visible}
-#boxGroupPanelsScroll .stats-group-domain{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));align-items:stretch;gap:10px;min-width:0;overflow:hidden}
+#boxGroupPanelsScroll .stats-group-domain{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(112px,.7fr);align-items:start;gap:8px;min-width:0;overflow:hidden}
 #boxGroupPanelsScroll .stats-group-domain .group-panel-chart{min-width:0;min-height:auto;overflow:visible;display:flex;flex-direction:column;flex:0 0 auto;width:100%}
 #boxGroupPanelsScroll .stats-group-domain .group-panel-table{min-width:0;overflow:visible;width:100%}
 #boxGroupPanelsScroll .cap-bars,
@@ -690,8 +692,24 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .node-adj-tag svg{display:block;width:10px;height:10px}
 .star-label-row{display:inline-flex;align-items:center;justify-content:center;gap:4px;max-width:100%}
 .cap-with-adj{display:inline-flex;align-items:center;gap:6px;max-width:100%}
-.node-adj-fold{display:none} /* 已改为等级名右侧 ✍️，角标停用 */
-.node-adj-mark{display:inline;margin-left:2px;font-size:12px;line-height:1;cursor:help;flex-shrink:0;vertical-align:baseline}
+.eval-list-scroll td.has-node-adj,
+.box9-list-table td.has-node-adj{position:relative;overflow:hidden}
+.eval-list-scroll td.has-node-adj .star-rating,
+.eval-list-scroll td.has-node-adj .cap-with-adj,
+.box9-list-table td.has-node-adj .box-cell-line,
+.box9-list-table td.has-node-adj .box9-cap-txt{position:relative;z-index:2}
+.node-adj-fold{
+  position:absolute;top:0;right:0;width:28px;height:28px;overflow:hidden;
+  z-index:1;pointer-events:none;opacity:.5
+}
+.node-adj-fold-txt{
+  position:absolute;top:3px;right:-14px;width:48px;height:11px;
+  background:var(--pr);color:transparent;
+  font:600 8px/11px var(--f);
+  text-align:center;white-space:nowrap;transform:rotate(45deg);transform-origin:50% 50%;
+  box-shadow:none;pointer-events:none;display:block;user-select:none
+}
+.node-adj-mark{display:none}
 .chip-orig-tag{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;padding:0;border-radius:3px;font:700 9px/1 var(--m);background:var(--c6);color:#fff;flex-shrink:0;margin-left:1px;cursor:help}
 .next-confirm-hint{font:400 12px/1.5 var(--f);color:var(--c7);margin:0 0 12px}
 .next-confirm-list{display:flex;flex-direction:column;gap:8px;max-height:min(48vh,360px);overflow:auto;margin:0;padding:0;list-style:none}
@@ -1515,6 +1533,17 @@ function getCapForceRulesForGroup(groupName){
   }
   return CAP_FORCE_RULES[ruleId]||CAP_FORCE_RULES['标准三档能力强制分布'];
 }
+/** 能力规则 → 瀑布约束：高≤上限、中区间、低≥下限（与绩效同一套 ≤N / ≥N 文案） */
+function capRulesToConstraints(rules){
+  return (rules||[]).map(function(r){
+    if(r.grade==='高')return {grades:['高'],op:'lte',pct:r.max};
+    if(r.grade==='低')return {grades:['低'],op:'gte',pct:r.min};
+    return {grades:[r.grade],op:'between',minPct:r.min,maxPct:r.max};
+  });
+}
+function getCapForceConstraintsForGroup(groupName){
+  return capRulesToConstraints(getCapForceRulesForGroup(groupName));
+}
 function getForceDistRuleIdForGroup(groupName){
   if(SCHEME_CFG.ctrlScope==='group'&&groupName&&groupName!=='全部'){
     return SCHEME_CFG.forcedDistGroups[groupName]||SCHEME_CFG.forcedDistRule;
@@ -1552,6 +1581,9 @@ function formatForceRangePeople(minCount,maxCount,total){
 function formatForceConstraintText(c,total){
   if(!c)return '';
   var n=+total||0;
+  if(c.op==='between'){
+    return formatForceRangePeople(Math.ceil(n*(+c.minPct||0)/100),Math.floor(n*(+c.maxPct||0)/100),n);
+  }
   if(c.op==='gte'){
     return formatForceRangePeople(Math.ceil(n*c.pct/100),n,n);
   }
@@ -1560,6 +1592,10 @@ function formatForceConstraintText(c,total){
 function formatForceConstraintTip(c,total){
   if(!c)return '';
   var n=+total||0;
+  if(c.op==='between'){
+    var lo=+c.minPct||0,hi=+c.maxPct||0;
+    return lo+'%–'+hi+'%，大于等于'+Math.ceil(n*lo/100)+'人且小于等于'+Math.floor(n*hi/100)+'人';
+  }
   var p=+c.pct||0;
   if(c.op==='gte'){
     return '不少于'+p+'%，大于等于'+Math.ceil(n*p/100)+'人';
@@ -1571,7 +1607,13 @@ function evalForceConstraint(c,countByGrade,total){
   (c.grades||[]).forEach(function(g){sum+=countByGrade[g]||0;});
   var pct=total>0?(sum*100/total):0;
   var ok,delta='符合';
-  if(c.op==='gte'){
+  if(c.op==='between'){
+    var minB=Math.ceil(total*(+c.minPct||0)/100);
+    var maxB=Math.floor(total*(+c.maxPct||0)/100);
+    ok=sum>=minB&&sum<=maxB;
+    if(sum<minB)delta='+'+(minB-sum);
+    else if(sum>maxB)delta='-'+(sum-maxB);
+  }else if(c.op==='gte'){
     var minCount=Math.ceil(total*c.pct/100);
     ok=sum>=minCount;
     if(!ok)delta='+'+(minCount-sum);
@@ -1631,6 +1673,20 @@ function getAllocatedGradeDeltasFromCounts(countByGrade,total,constraints){
     });
   }
   return GRADE_OPTIONS.map(function(g){return allocated[g];});
+}
+/** 能力三档各自一条约束：是否符合 = 该档自己的差额（无跨档瀑布分摊） */
+function getAllocatedCapDeltasFromCounts(countByCap,total,constraints){
+  var allocated={};
+  CAP_OPTIONS.forEach(function(g){allocated[g]=0;});
+  (constraints||[]).forEach(function(c){
+    var ev=evalForceConstraint(c,countByCap,total);
+    if(!ev||ev.ok||ev.delta==null||ev.delta==='符合')return;
+    var n=parseInt(ev.delta,10);
+    if(isNaN(n)||!n)return;
+    var grades=c.grades||[];
+    if(grades.length===1)allocated[grades[0]]=n;
+  });
+  return CAP_OPTIONS.map(function(g){return allocated[g];});
 }
 function formatAllocatedDelta(d){
   if(!d)return '符合';
@@ -2374,6 +2430,20 @@ function toggleStatsGroupsExpand(){
 /* 能力分布 ECharts 数据结构（不改本页自定义条形图）：
  * manager/cap-bars-echarts-data.js → buildCapBarsEchartsOption(getCapDistData())
  * series: current=after | beforeAdjust=before | standard=mid | 区间=min–max */
+function attachCapAllocMeta(data,groupName){
+  var labels=data.labels||CAP_OPTIONS;
+  var total=data.total!=null?data.total:(data.after||[]).reduce(function(s,n){return s+(+n||0);},0);
+  var constraints=getCapForceConstraintsForGroup(groupName);
+  var countByCap={};
+  labels.forEach(function(g,i){countByCap[g]=data.after[i]||0;});
+  var allocDeltas=getAllocatedCapDeltasFromCounts(countByCap,total,constraints);
+  data.total=total;
+  data.constraints=constraints;
+  data.allocDeltas=allocDeltas;
+  data.mid=labels.map(function(_,i){return Math.max(0,(data.after[i]||0)+(allocDeltas[i]||0));});
+  return data;
+}
+
 function getCapDistData(){
   syncActiveForceAliases();
   var capLabels=CAP_OPTIONS;
@@ -2383,9 +2453,8 @@ function getCapDistData(){
   var before=capLabels.map(function(g){return pool.filter(function(m){return m.initCapability===g;}).length;});
   var min=rules.map(function(r){return Math.ceil(total*r.min/100);});
   var max=rules.map(function(r){return Math.floor(total*r.max/100);});
-  var mid=min.map(function(lo,i){return Math.round((lo+max[i])/2);});
   var after=capLabels.map(function(g){return pool.filter(function(m){return m.capability===g;}).length;});
-  return {labels:capLabels,before:before,min:min,max:max,mid:mid,after:after};
+  return attachCapAllocMeta({labels:capLabels,before:before,min:min,max:max,after:after,total:total},null);
 }
 
 function attachGradeAllocMeta(data,groupName){
@@ -2437,9 +2506,8 @@ function getCapDistDataForGroup(groupName){
   var before=labels.map(function(g){return pool.filter(function(m){return m.initCapability===g;}).length;});
   var min=rules.map(function(r){return Math.ceil(total*r.min/100);});
   var max=rules.map(function(r){return Math.floor(total*r.max/100);});
-  var mid=min.map(function(lo,i){return standardLinePoint(lo,max[i],total);});
   var after=labels.map(function(g){return pool.filter(function(m){return m.capability===g;}).length;});
-  return {labels:labels,before:before,min:min,max:max,mid:mid,after:after,total:total};
+  return attachCapAllocMeta({labels:labels,before:before,min:min,max:max,after:after,total:total},groupName);
 }
 
 /** 合并统计：各组全量已到达相加（不吃任何列表筛选 / 组 chip） */
@@ -2476,7 +2544,6 @@ function getMergedCapDistData(){
   var after=labels.map(function(){return 0;});
   var min=labels.map(function(){return 0;});
   var max=labels.map(function(){return 0;});
-  var mid=labels.map(function(){return 0;});
   var total=0;
   mergedScopeGroups().forEach(function(g){
     var pool=getStatsMembers(g).filter(function(m){return m.reached;});
@@ -2490,10 +2557,9 @@ function getMergedCapDistData(){
       var hi=Math.floor(n*rules[i].max/100);
       min[i]+=lo;
       max[i]+=hi;
-      mid[i]+=standardLinePoint(lo,hi,n);
     });
   });
-  return {labels:labels,before:before,min:min,max:max,mid:mid,after:after,total:total};
+  return attachCapAllocMeta({labels:labels,before:before,min:min,max:max,after:after,total:total},null);
 }
 
 /* 展开多组卡片展示「目标」；收起纵向单列不展示 */
@@ -2527,28 +2593,10 @@ function formatDistReqText(min,max,total){
   if(lo===hi)return lo+'人';
   return lo+'–'+hi+'人';
 }
-/** 收起态「列表」：能力仍用要求/当前/调整；绩效等级对齐审定「分布规则范围 / 是否符合」 */
+/** 收起态「列表」：绩效/能力都走「分布规则范围 / 是否符合」 */
 function renderCollapsedStatsTableHtml(data,opts){
   opts=opts||{};
-  if(!opts.cap){
-    return renderGradeTableHtml(data,true,Object.assign({},opts,{panel:true}));
-  }
-  var groupName=opts.groupName||null;
-  var rowClick=opts.rowClick||null;
-  var html='<table class="dist-status-table">'+
-    '<colgroup><col style="width:36%"><col class="col-req" style="width:28%"><col class="col-before" style="width:18%"><col class="col-after" style="width:18%"></colgroup>'+
-    '<thead><tr><th>能力</th><th class="col-req">要求</th><th class="col-before">当前</th><th class="col-after">调整</th></tr></thead><tbody>';
-  data.labels.forEach(function(g,i){
-    var required=formatDistReqText(data.min[i],data.max[i],data.total);
-    var before=data.before[i]||0;
-    var actual=data.after[i]||0;
-    var isActive=currentCap===g&&(!groupName||currentGroup===groupName);
-    var click=rowClick?rowClick(g):('filterByCap(\''+g+'\')');
-    var tone=g==='高'?'high':g==='中'?'mid':'low';
-    var labelCell='<span class="cap-tag '+tone+'">'+g+'</span>';
-    html+='<tr class="'+(isActive?'active':'')+'" onclick="'+click+'"><td>'+labelCell+'</td><td class="col-req">'+required+'</td><td class="col-before">'+before+'人</td><td class="col-after">'+formatAdjDeltaHtml(before,actual)+'</td></tr>';
-  });
-  return html+'</tbody></table>';
+  return renderGradeTableHtml(data,true,Object.assign({},opts,{panel:true,cap:!!opts.cap}));
 }
 
 function formatAdjDeltaHtml(before,after){
@@ -2579,28 +2627,7 @@ function groupPanelLegendHtml(){
 }
 
 function renderCapTableHtml(data,showReq,opts){
-  opts=opts||{};
-  var groupName=opts.groupName||null;
-  var rowClick=opts.rowClick||null;
-  var adjMode=opts.adjMode||'gap';
-  if(showReq==null)showReq=shouldShowDistReqCol();
-  var colgroup=showReq
-    ?'<colgroup><col style="width:18%"><col class="col-req" style="width:34%"><col style="width:24%"><col style="width:24%"></colgroup>'
-    :'<colgroup><col style="width:28%"><col style="width:36%"><col style="width:36%"></colgroup>';
-  var head=showReq
-    ?'<thead><tr><th>能力</th><th class="col-req">要求</th><th>当前</th><th>调整</th></tr></thead>'
-    :'<thead><tr><th>能力</th><th>当前</th><th>调整</th></tr></thead>';
-  var html='<table class="dist-status-table">'+colgroup+head+'<tbody>';
-  data.labels.forEach(function(g,i){
-    var tone=g==='高'?'high':g==='中'?'mid':'low';
-    var required=data.min[i]===data.max[i]?data.min[i]+'人':data.min[i]+'–'+data.max[i]+'人';
-    var actual=data.after[i];
-    var adjHtml=adjMode==='delta'?formatAdjDeltaHtml(data.before[i],actual):formatAdjGapHtml(actual,data.min[i],data.max[i]);
-    var isActive=currentCap===g&&(!groupName||currentGroup===groupName);
-    var click=rowClick?rowClick(g):('filterByCap(\''+g+'\')');
-    html+='<tr class="'+(isActive?'active':'')+'" onclick="'+click+'"><td><span class="cap-tag '+tone+'">'+g+'</span></td>'+(showReq?'<td class="col-req">'+required+'</td>':'')+'<td>'+actual+'人</td><td>'+adjHtml+'</td></tr>';
-  });
-  return html+'</tbody></table>';
+  return renderGradeTableHtml(data,showReq,Object.assign({},opts||{},{cap:true}));
 }
 
 /** 规则列等分宽度：占满「分布规则范围」整段（之和 = ruleArea%） */
@@ -2615,53 +2642,118 @@ function buildDistRuleColWidths(ruleCount,gradeW,actualW,statusW){
 }
 function buildDistRuleHeadHtml(ruleCount){
   var n=Math.max(1,ruleCount|0);
-  /* 表头 colspan 跨全部规则列，完整显示「分布规则范围」；表体仍按列等分 */
-  return '<th class="dist-rule-hd" colspan="'+n+'">分布规则范围</th>';
+  /* 表头拆列（与月度审定一致）：避免 colspan 把表体规则格挤成窄条；文案在 is-start 溢出铺满 */
+  var html='';
+  for(var i=0;i<n;i++){
+    html+=i===0
+      ?'<th class="dist-rule-hd is-start">分布规则范围</th>'
+      :'<th class="dist-rule-hd is-follow" aria-hidden="true"></th>';
+  }
+  return html;
 }
-/** 等级分布表：等级 / 分布规则范围 / 当前 / 是否符合（与月度审定同源） */
+/** 重叠规则归成一段：同段内按列等分，单规则段占满「分布规则范围」 */
+function clusterForceConstraintSections(constraints){
+  var list=constraints||[];
+  var used={};
+  var sections=[];
+  list.forEach(function(c,i){
+    if(used[i])return;
+    var set={};
+    (c.grades||[]).forEach(function(g){set[g]=1;});
+    var group=[c];
+    used[i]=true;
+    var changed=true;
+    while(changed){
+      changed=false;
+      list.forEach(function(c2,j){
+        if(used[j])return;
+        if((c2.grades||[]).some(function(g){return set[g];})){
+          used[j]=true;
+          group.push(c2);
+          (c2.grades||[]).forEach(function(g){set[g]=1;});
+          changed=true;
+        }
+      });
+    }
+    sections.push(group);
+  });
+  return sections;
+}
+function sectionForGrade(sections,g){
+  var i,s;
+  for(i=0;i<sections.length;i++){
+    s=sections[i];
+    if(s.some(function(c){return (c.grades||[]).indexOf(g)>=0;}))return s;
+  }
+  return null;
+}
+function distRuleBandHtml(c,span,total,colspan){
+  var extra=colspan&&colspan>1?' colspan="'+colspan+'"':'';
+  return '<td class="dist-rule-cell" data-rule="1" data-span="'+span+'" rowspan="'+span+'"'+extra+' data-tip="'+formatForceConstraintTip(c,total)+'">'+formatForceConstraintText(c,total)+'</td>';
+}
+/** 等级/能力分布表：首列 | 分布规则范围 | 当前 | 是否符合（与月度审定同源瀑布） */
 function renderGradeTableHtml(data,showReq,opts){
   opts=opts||{};
   var groupName=opts.groupName||null;
   var rowClick=opts.rowClick||null;
-  var labels=data.labels||GRADE_OPTIONS;
+  var isPanel=!!opts.panel;
+  var isCap=!!opts.cap;
+  var labels=data.labels||(isCap?CAP_OPTIONS:GRADE_OPTIONS);
   var total=data.total!=null?data.total:(data.after||[]).reduce(function(s,n){return s+(+n||0);},0);
-  var constraints=data.constraints||getForceDistConstraintsForGroup(groupName);
+  var constraints=data.constraints||(isCap?getCapForceConstraintsForGroup(groupName):getForceDistConstraintsForGroup(groupName));
   var allocDeltas=data.allocDeltas;
   if(!allocDeltas){
     var countByGrade={};
     labels.forEach(function(g,i){countByGrade[g]=data.after[i]||0;});
-    allocDeltas=getAllocatedGradeDeltasFromCounts(countByGrade,total,constraints);
+    allocDeltas=isCap
+      ?getAllocatedCapDeltasFromCounts(countByGrade,total,constraints)
+      :getAllocatedGradeDeltasFromCounts(countByGrade,total,constraints);
   }
-  var ruleCount=constraints.length||1;
-  var gradeW=28,actualW=14,statusW=22;
+  var sections=clusterForceConstraintSections(constraints);
+  var ruleCount=1;
+  sections.forEach(function(s){if(s.length>ruleCount)ruleCount=s.length;});
+  var gradeW=isPanel?24:26,actualW=isPanel?12:16,statusW=isPanel?20:26;
   var ruleWidths=buildDistRuleColWidths(ruleCount,gradeW,actualW,statusW);
   var colgroup='<colgroup><col style="width:'+gradeW+'%">';
-  ruleWidths.forEach(function(w){colgroup+='<col style="width:'+w+'%">';});
+  ruleWidths.forEach(function(w){colgroup+='<col class="dist-rule-col" style="width:'+w+'%">';});
   colgroup+='<col class="col-before" style="width:'+actualW+'%"><col class="col-status" style="width:'+statusW+'%"></colgroup>';
-  var head='<thead><tr><th>等级</th>'+buildDistRuleHeadHtml(ruleCount)+'<th class="col-before">当前</th><th class="col-status">是否符合</th></tr></thead>';
+  var firstHead=isCap?'能力':'等级';
+  var head='<thead><tr><th>'+firstHead+'</th>'+buildDistRuleHeadHtml(ruleCount)+'<th class="col-before">当前</th><th class="col-status">是否符合</th></tr></thead>';
   var html='<table class="dist-status-table">'+colgroup+head+'<tbody>';
   labels.forEach(function(g,gi){
     var actual=data.after[gi]||0;
     var dNum=allocDeltas[gi]||0;
-    var isActive=currentGrade===g&&(!groupName||currentGroup===groupName);
-    var click=rowClick?rowClick(g):('filterByGrade(\''+g+'\')');
+    var isActive=isCap
+      ?(currentCap===g&&(!groupName||currentGroup===groupName))
+      :(currentGrade===g&&(!groupName||currentGroup===groupName));
+    var click=rowClick?rowClick(g):(isCap?('filterByCap(\''+g+'\')'):('filterByGrade(\''+g+'\')'));
+    var labelInner=isCap
+      ?'<span class="cap-tag '+(g==='高'?'high':g==='中'?'mid':'low')+'">'+g+'</span>'
+      :'<span class="dist-grade-name">'+g+'</span>';
     html+='<tr class="'+(isActive?'active':'')+'" onclick="'+click+'">'+
-      '<td class="dist-grade-cell"><span class="dist-grade-name">'+g+'</span></td>';
-    var inAnyRule=constraints.some(function(c){return (c.grades||[]).indexOf(g)>=0;});
-    if(!inAnyRule){
+      '<td class="dist-grade-cell">'+labelInner+'</td>';
+    var section=sectionForGrade(sections,g);
+    var prev=gi>0?labels[gi-1]:null;
+    if(!section){
       html+='<td class="dist-rule-cell dist-rule-none" colspan="'+ruleCount+'">-</td>';
+    }else if(section.length===1){
+      var only=section[0];
+      if(!(prev&&(only.grades||[]).indexOf(prev)>=0)){
+        var onlySpan=1;
+        while(gi+onlySpan<labels.length&&(only.grades||[]).indexOf(labels[gi+onlySpan])>=0)onlySpan++;
+        html+=distRuleBandHtml(only,onlySpan,total,ruleCount);
+      }
     }else{
-      constraints.forEach(function(c){
+      section.forEach(function(c){
         var grades=c.grades||[];
         if(grades.indexOf(g)<0){
           html+='<td class="dist-rule-cell dist-rule-empty"></td>';
           return;
         }
-        var prev=gi>0?labels[gi-1]:null;
         if(prev&&grades.indexOf(prev)>=0)return;
         var span=1;
         while(gi+span<labels.length&&grades.indexOf(labels[gi+span])>=0)span++;
-        html+='<td class="dist-rule-cell" data-rule="1" data-span="'+span+'" rowspan="'+span+'" data-tip="'+formatForceConstraintTip(c,total)+'">'+formatForceConstraintText(c,total)+'</td>';
+        html+=distRuleBandHtml(c,span,total,1);
       });
     }
     html+='<td>'+actual+'</td><td>'+formatComplianceStatusHtml(dNum)+'</td></tr>';
@@ -2753,17 +2845,15 @@ function panelRowClick(g,isCap,rowClick){
 }
 
 function panelBarLineHtml(n,before,fill,pctNow,pctBefore){
-  var adjHtml=formatAdjDeltaHtml(before||0,n||0);
   return '<span class="cap-bar-count" title="当前 '+n+'">'+n+'</span>'+
     '<div class="cap-bar-track">'+
       '<div class="cap-bar-before" style="width:'+(pctBefore||0)+'%" title="调整前 '+(before||0)+'"></div>'+
       '<div class="cap-bar-fill" style="width:'+pctNow+'%;background:'+fill+'" title="当前 '+n+'"></div>'+
-    '</div>'+
-    '<span class="cap-bar-adj" title="调整">'+adjHtml+'</span>';
+    '</div>';
 }
 
 function panelBarFill(data,i,isCap){
-  if(!isCap&&data.allocDeltas)return (data.allocDeltas[i]||0)===0?BAR_OK:BAR_BAD;
+  if(data.allocDeltas)return (data.allocDeltas[i]||0)===0?BAR_OK:BAR_BAD;
   return barFillByRange(data.after[i]||0,data.min[i],data.max[i]);
 }
 
@@ -2795,7 +2885,9 @@ function renderPanelBarsPlot(data,opts){
   data.labels.forEach(function(g,i){
     var n=data.after[i]||0;
     var fill=panelBarFill(data,i,isCap);
-    var tip=isCap?formatCapComplianceTip(n,data.min[i],data.max[i]):formatHierarchyComplianceTip((data.allocDeltas||[])[i]||0);
+    var tip=data.allocDeltas
+      ?formatHierarchyComplianceTip((data.allocDeltas||[])[i]||0)
+      :(isCap?formatCapComplianceTip(n,data.min[i],data.max[i]):formatHierarchyComplianceTip(0));
     var labelHtml='';
     if(merged){
       labelHtml=isCap
@@ -2811,7 +2903,7 @@ function renderPanelBarsPlot(data,opts){
   var cls='cap-bars '+(merged?'cap-bars-merged':'cap-bars-card')+(isCap?'':' grade-bars');
   return {html:axisHtml+'<div class="'+cls+'" data-panel-bars="1">'+barsHtml+'</div>',scale:scale,before:before,mid:std,after:data.after,ticks:nice.ticks};
 }
-/** 展开·考核组卡片右侧图：横向柱（月度配色）——左表已有等级名，右图仅刻度+轨+Δ */
+/** 展开·考核组卡片右侧图：横向柱（月度配色）——左表已有等级名，右图仅刻度+轨+人数 */
 function renderGroupCardBarsHtml(data,opts){
   return renderPanelBarsPlot(data,Object.assign({},opts,{merged:false}));
 }
@@ -2893,7 +2985,10 @@ function renderCapListDist(){
   ensureCapListLayout();
   var data=getCapDistData();
   var stats=document.getElementById('listStats');
-  if(stats)stats.innerHTML=renderCapTableHtml(data,false);
+  if(stats){
+    stats.innerHTML=renderCapTableHtml(data,false);
+    bindDistRuleSelection(stats);
+  }
   var bars=document.getElementById('capBars');
   if(!bars)return;
   var painted=renderCapBarsHtml(data);
@@ -2921,7 +3016,7 @@ function renderGradeListDist(){
 function paintDualDomain(statsEl,barsEl,data,isCap){
   if(statsEl){
     statsEl.innerHTML=isCap?renderCapTableHtml(data,false):renderGradeTableHtml(data,false);
-    if(!isCap)bindDistRuleSelection(statsEl);
+    bindDistRuleSelection(statsEl);
   }
   if(!barsEl)return;
   var painted=isCap?renderCapBarsHtml(data):renderGradeBarsHtml(data);
@@ -3905,14 +4000,14 @@ function fieldCellHtml(id,m,idx){
     var prevCap=m.nodeOrig&&m.nodeOrig.capability&&m.nodeOrig.capability!==(m.capability||'')?m.nodeOrig.capability:'';
     var capMark=nodeAdjBadgeHtml(prevCap,m.capability||'');
     var capHtml=m.capability
-      ?('<span class="box9-cap-txt">'+m.capability+'</span>'+capMark)
+      ?('<span class="box9-cap-txt">'+m.capability+'</span>')
       :'<span style="color:var(--c4)">—</span>';
-    return '<td class="col-cap'+(capMark?' has-node-adj':'')+'">'+capHtml+'</td>';
+    return '<td class="col-cap'+(capMark?' has-node-adj':'')+'">'+capMark+capHtml+'</td>';
   }
   if(id==='box'){
     var box=memberBoxName(m);
     var boxMark=boxAdjFoldHtml(m);
-    return '<td class="col-box'+(boxMark?' has-node-adj':'')+'"><span class="box-cell-line">'+(box||'<span style="color:var(--c4)">—</span>')+boxMark+'</span></td>';
+    return '<td class="col-box'+(boxMark?' has-node-adj':'')+'">'+boxMark+'<span class="box-cell-line">'+(box||'<span style="color:var(--c4)">—</span>')+'</span></td>';
   }
   if(id==='action') return '<td class="col-action">'+boxActionHtml(m,idx)+'</td>';
   return extraFieldCell(id,m);
@@ -4089,7 +4184,7 @@ function capSegHtml(idx,m,cls){
   var locked=!!m.submitted;
   var prevCap=m.nodeOrig&&m.nodeOrig.capability&&m.nodeOrig.capability!==(m.capability||'')?m.nodeOrig.capability:'';
   var mark=nodeAdjBadgeHtml(prevCap,m.capability||'');
-  var html='<td'+(cls?' class="'+cls+(mark?' has-node-adj':'')+'"':'')+'><div class="cap-with-adj"><div class="cap-seg'+(locked?' is-locked':'')+'"'+(locked?' title="已提交，不可修改"':'')+'>';
+  var html='<td'+(cls?' class="'+cls+(mark?' has-node-adj':'')+'"':'')+'>'+mark+'<div class="cap-with-adj"><div class="cap-seg'+(locked?' is-locked':'')+'"'+(locked?' title="已提交，不可修改"':'')+'>';
   CAP_OPTIONS.forEach(function(v){
     var tone=v==='高'?'high':v==='中'?'mid':'low';
     var on=m.capability===v?' on':'';
@@ -4099,14 +4194,13 @@ function capSegHtml(idx,m,cls){
       html+='<button class="cap-opt '+tone+on+'" type="button" onclick="setCapability('+idx+',\''+v+'\')">'+v+'</button>';
     }
   });
-  html+='</div>'+mark+'</div></td>';
+  html+='</div></div></td>';
   return html;
 }
 
 function nodeAdjBadgeHtml(from,to){
   if(!from||!to||from===to)return '';
-  var title='本节点已调整：'+from+' → '+to;
-  return '<span class="node-adj-mark" title="'+title+'" aria-label="已调整">✍️</span>';
+  return '<span class="node-adj-fold" aria-hidden="true"><span class="node-adj-fold-txt"></span></span>';
 }
 
 function memberNameHtml(m,idx){
@@ -4122,12 +4216,13 @@ function starGradeCellHtml(m,idx){
   var starColor=shown?(GRADE_COLORS[shown]||'var(--c8)'):'';
   var prevGrade=m.nodeOrig&&m.ratifyGrade&&m.nodeOrig.ratifyGrade&&m.nodeOrig.ratifyGrade!==m.ratifyGrade?m.nodeOrig.ratifyGrade:'';
   var mark=nodeAdjBadgeHtml(prevGrade,m.ratifyGrade||'');
-  var html='<td class="col-freeze-r'+(mark?' has-node-adj':'')+'"><div class="star-rating" data-value="'+starVal+'"><div class="star-row">';
+  var tip=mark?' title="本节点已调整：'+prevGrade+' → '+(m.ratifyGrade||'')+'"':'';
+  var html='<td class="col-freeze-r'+(mark?' has-node-adj':'')+'"'+tip+'>'+mark+'<div class="star-rating" data-value="'+starVal+'"><div class="star-row">';
   for(var v=1;v<=7;v++){
     var on=starVal>0&&v<=starVal;
     html+='<span class="star'+(on?' sel':'')+'" data-v="'+v+'" style="'+(on?'color:'+starColor:'')+'" onclick="setRatifyStar(this,'+idx+','+v+')" onmouseenter="starHover(this,1)" onmouseleave="starHover(this,0)">★</span>';
   }
-  html+='</div><span class="star-label-row"><span class="star-label'+(shown?'':' placeholder')+'" style="color:'+(shown?(GRADE_COLORS[shown]||'var(--c8)'):'var(--c4)')+'">'+(shown||'请选择')+'</span>'+mark+'</span></div></td>';
+  html+='</div><span class="star-label-row"><span class="star-label'+(shown?'':' placeholder')+'" style="color:'+(shown?(GRADE_COLORS[shown]||'var(--c8)'):'var(--c4)')+'">'+(shown||'请选择')+'</span></span></div></td>';
   return html;
 }
 
@@ -5807,7 +5902,7 @@ function boxAdjFoldHtml(m){
   var from=boxFieldText(m.nodeOrig.boxKey)||'';
   var to=boxFieldText(boxKeyOf(m))||'';
   if(from&&to&&from!==to)return nodeAdjBadgeHtml(from,to);
-  return '<span class="node-adj-mark" title="本节点已调整" aria-label="已调整">✍️</span>';
+  return '<span class="node-adj-fold" aria-hidden="true"><span class="node-adj-fold-txt"></span></span>';
 }
 
 function setBoxView(mode){
