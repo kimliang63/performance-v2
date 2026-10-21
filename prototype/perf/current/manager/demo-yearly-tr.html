@@ -91,7 +91,6 @@ body.approve-mode #ratifyMoreBtn,
 body.approve-mode #distOverview,
 body.approve-mode #evalList,
 body.approve-mode #fillFilterDivider,
-body.approve-mode #fillFilterLabel,
 body.approve-mode #fillFilter{display:none !important}
 body.approve-mode #boxPanel{display:flex !important;flex:1 1 0%;min-height:0}
 body.approve-mode .person-chip{cursor:default}
@@ -186,23 +185,28 @@ select.status-filter-select.dim-region{min-width:108px}
 .eval-split-toggle:hover{background:var(--pr50);color:var(--pr)}
 .eval-split-toggle svg{width:14px;height:14px;display:block;transition:transform .15s}
 .eval-split-toggle[aria-expanded="false"] svg{transform:scaleX(-1)}
-.group-panels-scroll{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:auto;gap:12px;padding:12px;overflow:auto;flex:1 1 0%;min-height:0;scrollbar-width:thin;background:var(--c0);align-content:start}
+.group-panels-scroll{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:max-content;gap:12px;padding:12px;overflow:auto;flex:1 1 0%;min-height:0;scrollbar-width:thin;background:var(--c0);align-content:start;align-items:start}
 .group-panels-scroll::-webkit-scrollbar{width:6px;height:6px}
 .group-panels-scroll::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px}
 .group-panels-rail.panels-single .group-panels-scroll{display:flex;flex-direction:column;grid-template-columns:none;gap:12px;padding:12px;align-content:flex-start}
 /* 卡片随内容撑开，不在卡内滚动；滚动只在 .group-panels-scroll */
-.group-panel{display:flex;flex-direction:column;gap:0;min-width:0;min-height:auto;height:auto;padding:0;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);box-shadow:none;overflow:visible;transition:border-color .15s,box-shadow .15s}
+.group-panel{display:flex;flex-direction:column;gap:0;min-width:0;min-height:max-content;height:max-content;align-self:start;padding:0;background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);box-shadow:none;overflow:hidden;transition:border-color .15s,box-shadow .15s}
 .group-panels-rail.panels-single .group-panel{flex:0 0 auto;width:auto;max-width:none}
 .group-panel:hover{border-color:var(--c3)}
 .group-panel.is-active{border-color:var(--pr200);box-shadow:0 0 0 1px var(--pr100)}
-.group-panel-hd{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-shrink:0;box-sizing:border-box;min-height:40px;margin:0;padding:8px 12px;border-bottom:1px solid var(--dv);cursor:pointer}
+.group-panel-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:6px 8px;flex-wrap:wrap;flex-shrink:0;box-sizing:border-box;min-height:40px;margin:0;padding:8px 12px;border-bottom:1px solid var(--dv);cursor:pointer}
 .group-panel-hd:hover .group-panel-name{color:var(--pr)}
-.group-panel-title{display:inline-flex;align-items:baseline;gap:6px;flex:1 1 auto;min-width:0;white-space:normal}
-.group-panel-name{font:600 14px/1.2 var(--f);color:var(--c9);white-space:normal}
+.group-panel-title{display:inline-flex;align-items:baseline;gap:6px;flex:1 1 160px;min-width:160px;white-space:normal}
+.group-panel-name{font:600 14px/1.35 var(--f);color:var(--c9);white-space:normal}
 .group-panel-count{font:500 12px/1 var(--f);color:var(--c5);white-space:nowrap;flex-shrink:0}
-.group-panel-tools{display:inline-flex;align-items:center;gap:10px;flex-shrink:0;margin-left:auto}
-.group-panel-legend{display:inline-flex;align-items:center;gap:10px;flex-shrink:0;font:400 12px/1 var(--f);color:var(--c5);white-space:nowrap}
+.group-panel-tools{display:inline-flex;align-items:center;gap:10px;flex:1 1 auto;flex-shrink:1;min-width:0;margin-left:auto}
+.group-panel-legend{display:inline-flex;align-items:center;gap:8px;flex-shrink:1;font:400 11px/1.3 var(--f);color:var(--c5);white-space:normal;flex-wrap:wrap;justify-content:flex-end;max-width:100%}
 .group-panel-legend .cap-leg-item{gap:4px}
+.group-panel-legend .cap-leg-bar{width:10px;height:8px;border-radius:2px;background:linear-gradient(90deg,var(--em) 0 50%,var(--ro) 50% 100%)}
+.group-panel-legend .cap-leg-bar.ok{background:#10B981}
+.group-panel-legend .cap-leg-bar.bad{background:#F43F5E}
+.group-panel-legend .cap-leg-bar.before{background:#E4E4E7;box-shadow:inset 0 0 0 1px #D4D4D8}
+.group-panel-legend .cap-leg-line{display:block;width:14px;height:0;border-top:1.5px dashed rgba(245,158,11,.75);flex-shrink:0}
 .group-panels-toolbar{display:none;flex-shrink:0;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px 0;box-sizing:border-box}
 .eval-list.view-switchable .group-panels-toolbar{display:flex}
 .group-panel-mode-seg{display:none;align-items:center;padding:2px;border:1px solid var(--c2);border-radius:var(--r1);background:var(--c0);gap:0}
@@ -210,45 +214,79 @@ select.status-filter-select.dim-region{min-width:108px}
 .group-panel-mode-btn{height:22px;padding:0 8px;border:0;border-radius:3px;background:transparent;font:500 12px/1 var(--f);color:var(--c5);cursor:pointer}
 .group-panel-mode-btn.on{background:var(--sf);color:var(--pr);box-shadow:0 0 0 1px var(--pr100)}
 .group-panel-mode-btn:hover{color:var(--pr)}
-.group-panel-body{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(120px,1fr);align-items:start;gap:8px;flex:0 0 auto;min-width:0;min-height:auto;padding:8px 10px 10px;overflow:visible;width:100%;box-sizing:border-box}
+.group-panel-body{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(160px,1fr);align-items:start;gap:8px;flex:0 0 auto;min-width:0;min-height:max-content;padding:8px 10px 10px;overflow:hidden;width:100%;box-sizing:border-box}
+/* 展开 2×2：卡不够宽时表在上、图在下，避免表头被挤成一字竖排并叠到图上 */
+.group-panels-rail:not(.panels-single) .group-panel-body{grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));align-items:stretch;gap:10px;overflow:hidden;min-height:max-content}
 /* 收起：单卡全宽，图表或统计表二选一（全局开关）；必须 stretch，否则图按内容宽塌成窄条 */
 .group-panels-rail.panels-single .group-panel-body{display:flex;flex-direction:column;grid-template-columns:none;align-items:stretch;gap:8px;overflow:visible;width:100%}
 .group-panels-rail.panels-single .group-panel.mode-list .group-panel-body{min-height:0;overflow:visible}
 .group-panels-rail.panels-single .group-panel-chart{flex:0 0 auto;min-height:0;width:100%;align-self:stretch}
-.group-panel-table{min-width:0;min-height:auto;overflow:visible;width:100%}
+.group-panel-table{min-width:0;min-height:auto;overflow:hidden;width:100%}
 .group-panels-rail.panels-single .group-panel.mode-list .group-panel-table{overflow:visible}
-.group-panel-chart{min-width:0;width:100%;display:flex;flex-direction:column;min-height:0;overflow:visible;cursor:default;flex:0 0 auto;box-sizing:border-box}
-.group-chart-axis{display:flex;justify-content:space-between;align-items:flex-end;height:18px;margin:0 0 2px;font:400 12px/1 var(--m);color:var(--c4);flex-shrink:0;user-select:none;box-sizing:border-box;width:100%}
-.group-panel .cap-bars{padding:0;margin:0;border:0;gap:0;flex:0 0 auto;min-height:auto;overflow:visible;display:flex;flex-direction:column;width:100%;box-sizing:border-box}
-.group-panel .cap-bars .cap-bars-plot{gap:0;flex:0 0 auto;justify-content:flex-start;overflow:visible;width:100%;min-width:0;box-sizing:border-box}
-.group-panel .cap-bars .cap-bar-row{min-height:26px;height:26px;padding:0;gap:4px;margin:0;cursor:inherit;width:100%;box-sizing:border-box}
+.group-panel-chart{min-width:0;width:100%;display:flex;flex-direction:column;min-height:0;overflow:hidden;cursor:default;flex:0 0 auto;box-sizing:border-box}
+.group-chart-axis{display:flex;justify-content:space-between;align-items:flex-end;height:18px;margin:0 0 2px;font:400 11px/1 var(--m);color:var(--c4);flex-shrink:0;user-select:none;box-sizing:border-box;width:100%}
+.group-panel .cap-bars{padding:0;margin:0;border:0;gap:0;flex:0 0 auto;min-height:auto;overflow:hidden;display:flex;flex-direction:column;width:100%;box-sizing:border-box}
+.group-panel .cap-bars .cap-bars-plot{gap:0;flex:0 0 auto;justify-content:flex-start;overflow:hidden;width:100%;min-width:0;box-sizing:border-box;position:relative}
+.group-panel .cap-grid-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden;display:block}
+.group-panel .cap-line-svg{overflow:hidden;z-index:3}
+.group-panel .cap-bars .cap-bar-row{min-height:28px;height:28px;padding:0;gap:4px;margin:0;cursor:pointer;width:100%;box-sizing:border-box}
 .group-panel .cap-bars .cap-bar-line{gap:4px;min-width:0;flex:1 1 0%}
-.group-panel .cap-bars .cap-bar-track{height:10px;overflow:hidden;background:transparent !important;flex:1 1 0%;min-width:0}
+.group-panel .cap-bars .cap-bar-track{height:18px;overflow:hidden;background:transparent !important;flex:1 1 0%;min-width:0;border-radius:4px}
 .group-panel .cap-bars .cap-bar-row:hover .cap-bar-track{background:transparent !important}
+.group-panel .cap-bars .cap-bar-row.active .cap-bar-track{box-shadow:0 0 0 2px #0F172A}
 .group-panel .cap-bars .cap-bar-range{display:none}
-.group-panel .cap-bars .cap-bar-count{font-size:12px;min-width:16px;color:var(--c8);text-align:right}
-.group-panel .cap-bars .cap-bar-adj{font-size:12px;min-width:26px}
+.group-panel .cap-bars .cap-bar-count{font-size:11px;min-width:16px;color:var(--c8);text-align:right}
+.group-panel .cap-bars .cap-bar-adj{font-size:11px;min-width:28px}
+.group-panel .cap-bars .cap-bar-adj .adj-delta{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:18px;padding:0 6px;border-radius:var(--r1);font:600 11px/1 var(--m)}
+.group-panel .cap-bars .cap-bar-adj .adj-delta.in{color:var(--em700);background:var(--em50)}
+.group-panel .cap-bars .cap-bar-adj .adj-delta.out{color:var(--ro);background:var(--ro50)}
+.group-panel .cap-bars .cap-bar-adj .adj-delta.ok{color:var(--c4);background:transparent;font-weight:500}
 .group-panel .cap-bar-legend{display:none}
-.group-panel .cap-bar-fill{display:block;min-height:100%}
+.group-panel .cap-bar-fill,
+.group-panel .cap-bar-before{display:block;position:absolute;left:0;top:0;bottom:0;height:100%;min-height:100%;border-radius:4px}
+.group-panel .cap-bar-before{z-index:0;background:rgba(228,228,231,.95)}
+.group-panel .cap-bar-fill{z-index:1}
 /* 展开考核组卡片：左表已有等级名，右图仅刻度+轨+人数 */
 .group-panels-rail:not(.panels-single) .group-chart-axis{padding:0 32px 0 22px}
 .group-panels-rail:not(.panels-single) .cap-bars.cap-bars-card .cap-bar-row{gap:6px}
 .group-panels-rail:not(.panels-single) .cap-bars.cap-bars-card .cap-bar-track{min-width:24px}
+.group-panels-rail:not(.panels-single) .cap-bars.cap-bars-card .cap-bar-adj{min-width:22px}
 /* 收起纵向卡：行内自带等级名；刻度对齐「标签+人数」之后、「调整」之前 */
 .group-panels-rail.panels-single .group-chart-axis{padding:0 34px 0 112px}
 .group-panels-rail.panels-single .cap-bars.cap-bars-merged .cap-bar-row > .cap-tag{flex:0 0 84px;min-width:84px;max-width:84px;height:20px;padding:0 6px;font-size:12px;justify-content:flex-start;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;box-sizing:border-box}
 .group-panel .list-stats{min-height:0;overflow:visible;padding:0}
 .group-panels-rail.panels-single .group-panel.mode-list .dist-status-table .col-req{width:28%}
-.group-panels-rail.panels-single .group-panel.mode-list .dist-status-table .col-before{width:18%}
 .group-panels-rail.panels-single .group-panel.mode-list .dist-status-table .col-after{width:18%}
 .group-panel .dist-status-table{width:100%;table-layout:fixed;border-collapse:collapse;font-size:12px}
-.group-panel .dist-status-table th,.group-panel .dist-status-table td{padding:0 4px;height:26px;text-align:left;border-bottom:1px solid var(--dv);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:middle}
-.group-panel .dist-status-table thead th{height:18px;padding-bottom:2px;font:600 12px/1 var(--f);color:var(--c5);background:transparent;border-bottom:1px solid var(--dv)}
+.group-panel .dist-status-table th,.group-panel .dist-status-table td{padding:4px 4px;height:26px;text-align:center;border-bottom:1px solid var(--dv);white-space:nowrap;overflow:hidden;text-overflow:clip;vertical-align:middle}
+.group-panel .dist-status-table thead th{height:28px;min-height:28px;padding:4px 6px;font:600 12px/1.2 var(--f);color:var(--c5);background:transparent;border-bottom:1px solid var(--dv);text-align:center;overflow:visible;text-overflow:clip;white-space:nowrap;text-transform:none;letter-spacing:0;writing-mode:horizontal-tb;text-orientation:mixed}
+.group-panel .dist-status-table col.col-before,
+.group-panel .dist-status-table thead th.col-before{width:14%}
+.group-panel .dist-status-table col.col-status,
+.group-panel .dist-status-table thead th.col-status{width:22%}
+/* 分布规则范围：表头单行完整展示，禁止竖排/换字 */
+.group-panel .dist-status-table thead th.dist-rule-hd{white-space:nowrap;overflow:visible;text-overflow:clip;height:28px;min-height:28px;line-height:1.2;padding:4px 6px;writing-mode:horizontal-tb}
 .group-panel .dist-status-table tbody tr:last-child td{border-bottom:0}
 .group-panel .dist-status-table .col-req{width:26%}
+.group-panel .dist-status-table .dist-grade-cell{text-align:left;overflow:visible;text-overflow:clip}
+.group-panel .dist-status-table .dist-rule-cell{overflow:visible;text-overflow:clip;color:var(--c6);background:#FFF!important;border:none!important;box-shadow:none;outline:none;vertical-align:middle}
+.group-panel .dist-status-table .dist-rule-cell[data-rule]{background:var(--pr50)!important;color:var(--pr700);box-shadow:inset 3px 0 0 0 var(--pr);padding-left:8px!important;font-weight:400;cursor:pointer;text-align:left}
+.group-panel .dist-status-table .dist-rule-cell[data-rule].is-selected{background:var(--pr100)!important;color:var(--pr900);font-weight:500}
+.group-panel .dist-status-table .dist-rule-empty{color:var(--c4)}
+.group-panel .dist-status-table .dist-rule-none{color:var(--c4);text-align:center}
+.group-panel .dist-status-table .dist-grade-cell.rule-selected{background:var(--pr50)!important;box-shadow:inset 3px 0 0 0 var(--pr)}
+.group-panel .dist-status-table tbody tr:hover td:not(.dist-rule-cell),
+.group-panel .dist-status-table tbody tr.active td:not(.dist-rule-cell){background:var(--pr50)}
+.group-panel .dist-status-table tbody tr:hover,
+.group-panel .dist-status-table tbody tr.active{background:transparent}
+.group-panel .dist-status-table .dist-status{margin:0 auto}
 .group-panel .dist-grade-pill{display:inline-flex;align-items:center;max-width:100%;height:20px;padding:0 6px;border-radius:4px;font:600 12px/1 var(--f);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .group-panel .cap-tag{height:20px;min-width:0;padding:0 6px;font-size:12px}
 .group-panel .adj-delta{font-size:12px}
+/* 规则格悬停 tip：挂 body，避开组卡 overflow 裁切 */
+.dist-rule-tip{position:fixed;z-index:9999;transform:translate(-50%,calc(-100% - 8px));max-width:280px;padding:6px 10px;border-radius:6px;background:rgba(15,23,42,.92);color:#fff;font:400 12px/1.4 var(--f);white-space:nowrap;pointer-events:none;opacity:0;visibility:hidden;box-shadow:0 6px 16px rgba(15,23,42,.18);transition:opacity .08s ease}
+.dist-rule-tip.is-show{opacity:1;visibility:visible}
+.dist-rule-tip::after{content:'';position:absolute;left:50%;bottom:-5px;transform:translateX(-50%);border:5px solid transparent;border-top-color:rgba(15,23,42,.92)}
 /* 按考核组：左表头行高与右组标题对齐，首行数据与右侧内容起始线齐平 */
 .eval-list.view-by-group .eval-list-scroll #memberHead th{box-sizing:border-box;height:44px;padding-top:0;padding-bottom:0;vertical-align:middle}
 .eval-list.view-by-group .eval-list-scroll table{min-width:0;width:100%;table-layout:fixed}
@@ -322,18 +360,23 @@ select.status-filter-select.dim-region{min-width:108px}
 .step-work.split-lr.step-ratify .eval-list-scroll .col-status{width:96px}
 .step-work.split-lr.step-ratify .eval-list-scroll .col-init{width:88px}
 .step-work.split-lr.step-ratify .eval-list-scroll .col-level{width:240px}
-.step-work.split-lr.step-ratify .eval-list-scroll .col-abn-flag{width:140px;min-width:140px}
+.step-work.split-lr.step-ratify .eval-list-scroll .col-abn-flag{width:168px;min-width:168px}
 .step-work.split-lr.step-cap .eval-list-scroll .col-cap-adj{width:168px}
-.step-work.split-lr.step-cap .eval-list-scroll .col-abn-flag{width:140px;min-width:140px}
-.abn-flag-list{display:flex;flex-direction:row;flex-wrap:nowrap;align-items:center;gap:4px;min-width:0}
+.step-work.split-lr.step-cap .eval-list-scroll .col-abn-flag{width:168px;min-width:168px}
+.abn-flag-list{display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;gap:4px;min-width:0}
 .abn-flag-chip{display:inline-flex;align-items:center;height:20px;padding:0 6px;border-radius:4px;border:1px solid #FECACA;background:var(--ro50);color:var(--ro);font:600 12px/1 var(--f);white-space:nowrap;overflow:visible;text-overflow:clip}
-.box9-list-table .col-abn-flag{width:140px;min-width:140px}
+.abn-flag-chip.is-breakthrough{border-color:var(--ac100);background:var(--ac50);color:var(--ac700);cursor:help}
+.box9-list-table .col-abn-flag{width:168px;min-width:168px}
 .box9-list-table .col-hist{width:14%}
 .ratify-chg{font:500 12px/1.3 var(--f);color:var(--c8);word-break:break-all}
 .ratify-chg .ratify-from,.ratify-chg .ratify-to{font-weight:600}
 .adj-line{display:inline-flex;align-items:baseline;flex-wrap:nowrap;white-space:nowrap;max-width:100%;font:400 12px/1.4 var(--f);color:var(--c7)}
 .adj-arrow{margin:0 2px;color:var(--c7);font-weight:400}
 .col-level .adj-grade{font-weight:500}
+.adj-stack{display:flex;flex-direction:column;gap:2px;align-items:flex-start;min-width:0;max-width:100%}
+.adj-reason{font:400 11px/1.35 var(--f);color:var(--c5);white-space:normal;word-break:break-all;max-width:100%}
+.adj-meta-hint{font:400 12px/1.4 var(--f);color:var(--c6)}
+.dist-status-table thead th.dist-rule-hd{text-align:center}
 .box-cell-line{display:inline-flex;align-items:center;flex-wrap:wrap;gap:4px;max-height:32px;overflow:hidden;font:400 12px/1.2 var(--f);color:var(--c7)}
 /* 盘点：初评能力仅 chip；能力调整记录单独列 */
 .step-work.split-lr.step-cap .eval-list-scroll .col-dept{width:88px}
@@ -441,6 +484,8 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .cap-bars.grade-bars .cap-bar-row{gap:8px;min-height:26px;padding:4px 0}
 .cap-bars.grade-bars .cap-tag{font-size:12px;height:22px;padding:0 6px;min-width:44px;max-width:64px;justify-content:flex-start;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cap-bars.grade-bars .cap-bar-track{height:12px}
+.group-panel .cap-bars .cap-bar-track,
+.group-panel .cap-bars.grade-bars .cap-bar-track{height:18px}
 .cap-bars.grade-bars .cap-bar-count{font-size:12px;min-width:18px}
 .cap-bars-plot{position:relative;display:flex;flex-direction:column;gap:10px;min-width:0}
 .cap-line-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3;overflow:visible;display:block}
@@ -480,7 +525,7 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 #boxGroupPanelsScroll .stats-group-block .group-panel-hd{cursor:default;flex-shrink:0}
 #boxGroupPanelsScroll .stats-group-charts{display:flex;flex-direction:column;gap:10px;padding:8px 10px 10px;min-width:0;min-height:auto;flex:0 0 auto;overflow:visible}
 #boxGroupPanelsScroll .stats-group-charts .stats-block{gap:6px;flex:0 0 auto;min-height:auto;overflow:visible}
-#boxGroupPanelsScroll .stats-group-domain{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(120px,1fr);align-items:start;gap:8px;min-width:0;overflow:visible}
+#boxGroupPanelsScroll .stats-group-domain{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));align-items:stretch;gap:10px;min-width:0;overflow:hidden}
 #boxGroupPanelsScroll .stats-group-domain .group-panel-chart{min-width:0;min-height:auto;overflow:visible;display:flex;flex-direction:column;flex:0 0 auto;width:100%}
 #boxGroupPanelsScroll .stats-group-domain .group-panel-table{min-width:0;overflow:visible;width:100%}
 #boxGroupPanelsScroll .cap-bars,
@@ -490,7 +535,7 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 #boxGroupPanelsScroll .group-panel-table .dist-status-table td{
   height:auto;min-height:28px;padding:6px 4px;font-size:12px;line-height:1.35;white-space:nowrap;overflow:visible;text-overflow:clip;vertical-align:middle
 }
-#boxGroupPanelsScroll .group-panel-table .dist-status-table thead th{height:auto;min-height:20px;padding:4px;font-size:12px}
+#boxGroupPanelsScroll .group-panel-table .dist-status-table thead th{height:auto;min-height:20px;padding:4px 6px;font-size:12px;overflow:visible;text-overflow:clip;white-space:nowrap;text-transform:none;letter-spacing:0}
 #boxGroupPanelsScroll .group-panel-table .dist-grade-pill,
 #boxGroupPanelsScroll .group-panel-table .cap-tag{height:22px;font-size:12px;line-height:22px}
 #boxGroupPanelsRail.panels-single .group-panel.mode-list .group-panel-body{overflow:visible}
@@ -503,13 +548,13 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .cap-bars.grade-bars .cap-leg-bar{background:linear-gradient(90deg,var(--em) 0 50%,var(--ro) 50% 100%)}
 .hd-unfilled{display:none;align-items:center;gap:8px;font:400 12px/1 var(--f);color:var(--c6);cursor:pointer;user-select:none;flex-shrink:0}
 .hd-unfilled.on{display:inline-flex}
-#fillFilterDivider,#fillFilterLabel,#fillFilter{display:none}
+#fillFilterDivider,#fillFilter{display:none}
 #fillFilterDivider.on{display:block}
-#fillFilterLabel.on{display:inline}
-#fillFilter.on{display:flex}
-#onlyAbnDivider,#onlyAbnFilter{display:none}
-#onlyAbnDivider.on{display:block}
-#onlyAbnFilter.on{display:flex}
+#fillFilter.on{display:inline-flex;align-items:center;gap:0;padding:2px;background:var(--c1);border-radius:8px;flex-wrap:nowrap}
+#fillFilter .btn{height:28px;padding:0 12px;border:0;border-radius:6px;background:transparent;color:var(--c6);font:500 12px/1 var(--f);box-shadow:none;white-space:nowrap}
+#fillFilter .btn:hover{background:transparent;border:0;color:var(--c8)}
+#fillFilter .btn.btn-active{background:var(--sf);color:var(--pr);font-weight:600;border:0;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+#fillFilter .group-sep{flex:0 0 auto;align-self:center;color:var(--c4);font:400 12px/28px var(--f);pointer-events:none;user-select:none}
 .hd-unfilled input{position:absolute;opacity:0;width:0;height:0;pointer-events:none}
 .hd-sw{position:relative;width:32px;height:18px;border-radius:999px;background:var(--c2);flex-shrink:0;transition:background .15s}
 .hd-sw::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.12);transition:transform .15s}
@@ -580,8 +625,8 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .step-work.split-lr #listStats .dist-status-table th,
 .step-work.split-lr #listStats .dist-status-table td{
   white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
+  overflow:visible;
+  text-overflow:clip;
   padding:7px 6px;
   text-transform:none;
   letter-spacing:0;
@@ -645,7 +690,8 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .node-adj-tag svg{display:block;width:10px;height:10px}
 .star-label-row{display:inline-flex;align-items:center;justify-content:center;gap:4px;max-width:100%}
 .cap-with-adj{display:inline-flex;align-items:center;gap:6px;max-width:100%}
-.node-adj-fold{position:absolute;top:0;left:0;z-index:3;width:0;height:0;border-top:10px solid var(--pr200);border-right:10px solid transparent;cursor:help}
+.node-adj-fold{display:none} /* 已改为等级名右侧 ✍️，角标停用 */
+.node-adj-mark{display:inline;margin-left:2px;font-size:12px;line-height:1;cursor:help;flex-shrink:0;vertical-align:baseline}
 .chip-orig-tag{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;padding:0;border-radius:3px;font:700 9px/1 var(--m);background:var(--c6);color:#fff;flex-shrink:0;margin-left:1px;cursor:help}
 .next-confirm-hint{font:400 12px/1.5 var(--f);color:var(--c7);margin:0 0 12px}
 .next-confirm-list{display:flex;flex-direction:column;gap:8px;max-height:min(48vh,360px);overflow:auto;margin:0;padding:0;list-style:none}
@@ -675,17 +721,30 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .dist-cond-item .delta.bad{color:var(--ro)}
 
 .dist-status-table{width:100%;border-collapse:collapse;table-layout:fixed}
-.dist-status-table th{padding:8px 10px;background:var(--c0);border-bottom:1px solid var(--dv);font:600 12px/1.2 var(--f);color:var(--c6);text-align:left}
-.dist-status-table td{padding:8px 10px;border-bottom:1px solid var(--dv);font:400 12px/1.35 var(--f);color:var(--c6)}
+.dist-status-table th{padding:8px 10px;background:var(--c0);border-bottom:1px solid var(--dv);font:600 12px/1.2 var(--f);color:var(--c6);text-align:center}
+.dist-status-table td{padding:8px 10px;border-bottom:1px solid var(--dv);font:400 12px/1.35 var(--f);color:var(--c6);text-align:center;vertical-align:middle}
 .dist-status-table tbody tr:last-child td{border-bottom:none}
 .dist-status-table tbody tr{cursor:pointer;transition:background .12s}
 .dist-status-table tbody tr:hover{background:var(--pr50)}
 .dist-status-table tbody tr.active{background:color-mix(in srgb,var(--pr) 12%,#fff)}
 .dist-status-table tbody tr.active td{font-weight:600;color:var(--c8)}
 .dist-status-table tbody tr.active td:first-child{box-shadow:inset 3px 0 0 var(--pr)}
+.dist-status-table .dist-grade-cell{text-align:left}
+.dist-status-table .dist-rule-cell{color:var(--c6);background:#FFF!important;border:none!important;box-shadow:none;outline:none;overflow:visible;text-overflow:clip}
+.dist-status-table .dist-rule-cell[data-rule]{background:var(--pr50)!important;color:var(--pr700);box-shadow:inset 3px 0 0 0 var(--pr);padding-left:10px!important;font-weight:400;cursor:pointer;text-align:left}
+.dist-status-table .dist-rule-cell[data-rule].is-selected{background:var(--pr100)!important;color:var(--pr900);font-weight:500}
+.dist-status-table .dist-rule-empty{color:var(--c4)}
+.dist-status-table .dist-rule-none{color:var(--c4);text-align:center}
+.dist-status-table .dist-grade-cell.rule-selected{background:var(--pr50)!important;box-shadow:inset 3px 0 0 0 var(--pr)}
+.dist-status-table tbody tr:hover td:not(.dist-rule-cell),
+.dist-status-table tbody tr.active td:not(.dist-rule-cell){background:var(--pr50)}
+.dist-status-table tbody tr:hover,
+.dist-status-table tbody tr.active{background:transparent}
+.dist-status-table .dist-status{margin:0 auto}
 .dist-grade-name{font-weight:600;color:var(--c8)}
-.dist-status{display:inline-flex;align-items:center;padding:3px 8px;border-radius:var(--r1);font:500 12px/1 var(--f);white-space:nowrap}
-.dist-status.ok{color:var(--em700);background:var(--em50)}
+.dist-status{display:inline-flex;align-items:center;justify-content:center;padding:3px 8px;border-radius:var(--r1);font:500 11px/1 var(--f);white-space:nowrap}
+.dist-status.ok{width:22px;height:22px;padding:0;border-radius:50%;color:var(--em700);background:var(--em50)}
+.dist-status.ok svg{width:14px;height:14px;display:block}
 .dist-status.bad{color:var(--ro);background:var(--ro50)}
 .dist-summary-line{display:flex;align-items:center;gap:0;overflow-x:auto;white-space:nowrap;font:500 12px/1 var(--f);color:var(--c6)}
 .dist-summary-item{display:inline-flex;align-items:center;gap:4px}
@@ -854,7 +913,10 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .box9-hist-combo .hist-line,.box9-hist-combo .reason-line{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;word-break:break-all}
 .box9-hist-combo .reason-line{color:var(--c5)}
 .box9-hist-combo .reason-line:empty,.box9-hist-combo .hist-line:empty{display:none}
-.box9-grade-txt{display:inline;padding:0;border:0;border-radius:0;background:transparent;font:400 12px/1.2 var(--f)}
+.box9-grade-txt{display:inline;padding:0;border:0;border-radius:0;background:transparent;font:400 12px/1.2 var(--f);color:var(--c9)}
+.box9-list-table td.col-grade,
+.box9-list-table td.col-cap{color:var(--c9)}
+.box9-list-table td.col-cap .box9-cap-txt{font:400 12px/1.2 var(--f);color:var(--c9)}
 .box9-abn-tag{display:inline-flex;align-items:center;height:20px;padding:0 6px;border-radius:4px;font:500 12px/1 var(--f);background:var(--ro50);color:var(--ro);white-space:nowrap}
 .box9-abn-ok{font:400 12px/1 var(--f);color:var(--c4)}
 .chip-pop{position:fixed;z-index:2500;width:280px;max-width:calc(100vw - 24px);background:var(--sf);border:1px solid var(--c2);border-radius:var(--r2);box-shadow:0 10px 40px -10px rgba(0,0,0,.14);padding:12px;display:none}
@@ -866,12 +928,16 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .chip-tip.open{visibility:visible}
 .chip-tip.interactive{pointer-events:auto}
 .chip-tip-row{display:flex;gap:10px;padding:3px 0;font:400 12px/1.4 var(--f)}
-.chip-tip-k{width:84px;flex-shrink:0;color:var(--c5)}
+.chip-tip-k{width:96px;flex-shrink:0;color:var(--c5)}
 .chip-tip-v{color:var(--c8);font-weight:500;min-width:0}
 .chip-tip-abn{margin-top:8px;padding:8px 10px;border-radius:var(--r1);background:var(--ro50);border:1px solid #FECDD3;font:400 12px/1.45 var(--f);color:var(--ro)}
+.chip-tip-abn-line{display:block}
+.chip-tip-abn-line+.chip-tip-abn-line{margin-top:4px}
 .chip-tip-abn b{font-weight:600}
-.chip-tip-act{margin-top:10px;padding-top:10px;border-top:1px solid var(--dv)}
+.chip-tip-act{margin-top:10px;padding-top:10px;border-top:1px solid var(--dv);display:flex;flex-direction:column;gap:8px}
 .chip-tip-act .btn{width:100%;justify-content:center}
+.chip-tip-link{align-self:flex-start;border:0;background:transparent;padding:0;font:500 12px/1.4 var(--f);color:var(--pr);cursor:pointer}
+.chip-tip-link:hover{text-decoration:underline}
 .unreached-note{font:400 12px/1.4 var(--f);color:var(--c5);padding:4px 2px 0}
 
 /* ═══ ADJUST MODAL ═══ */
@@ -926,7 +992,7 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .notice-overlay{position:fixed;inset:0;z-index:3000;display:flex;align-items:flex-start;justify-content:center;padding:12vh 16px 24px;background:rgba(0,0,0,.28);opacity:0;pointer-events:none;transition:opacity .2s}
 .notice-overlay.open{opacity:1;pointer-events:all}
 .notice-card{background:var(--sf);border-radius:var(--r3);box-shadow:0 20px 60px rgba(0,0,0,.16);width:420px;max-width:92vw;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;transform:translateY(-8px);transition:transform .2s}
-.notice-card.wide{width:640px}
+.notice-card.wide{width:min(92vw,900px);max-width:92vw}
 .notice-overlay.open .notice-card{transform:translateY(0)}
 .notice-hd{padding:14px 18px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0}
 .notice-title{font:600 16px/1.2 var(--f);color:var(--c9)}
@@ -936,26 +1002,54 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .notice-overlay.warn .notice-title{color:var(--ac700)}
 .notice-overlay:not(.warn) .notice-title{color:var(--em700)}
 .fd-fail-lead{margin:0 0 10px;font:400 12px/1.5 var(--f);color:var(--c7)}
-.fd-fail-foot{margin:12px 0 0;font:500 12px/1.5 var(--f);color:var(--ac700)}
 .fd-fail-table{width:100%;border-collapse:collapse;font:400 12px/1.5 var(--f);background:var(--c0);border:1px solid var(--c2);border-radius:var(--r2);overflow:hidden}
 .fd-fail-table th,.fd-fail-table td{padding:8px 10px;border-bottom:1px solid var(--dv);text-align:left;vertical-align:top}
 .fd-fail-table th{font-weight:600;color:var(--c8);background:var(--sf);white-space:nowrap;position:sticky;top:0;z-index:1}
 .fd-fail-table td{color:var(--c7)}
 .fd-fail-table tr:last-child td{border-bottom:none}
-.fd-fail-table .fd-col-group{width:24%;white-space:nowrap}
-.fd-fail-table .fd-col-grade{width:18%;white-space:nowrap}
-.fd-fail-table .fd-col-advice{width:40%}
-.fd-fail-table .fd-col-action{width:18%;white-space:nowrap;text-align:right}
+.fd-fail-table .fd-col-group{width:14%;white-space:nowrap}
+.fd-fail-table .fd-col-grade{width:10%;white-space:nowrap}
+.fd-fail-table .fd-col-req{width:24%;min-width:180px;white-space:normal}
+.fd-fail-table .fd-col-req .fd-req-line{display:block;line-height:1.45}
+.fd-fail-table .fd-col-advice{width:12%}
+.fd-fail-table .fd-col-list{width:26%;min-width:140px}
+.fd-fail-table .fd-col-action{width:14%;min-width:88px;text-align:right}
 .fd-break-btn{height:28px;padding:0 10px;font-size:12px}
 .fd-break-btn:disabled{opacity:.45;cursor:not-allowed}
-.fd-break-form{margin-top:12px;padding:12px;border:1px solid var(--pr200);border-radius:var(--r2);background:var(--pr50);display:flex;flex-direction:column;gap:10px}
-.fd-break-form-title{font:600 14px/1.3 var(--f);color:var(--c9)}
-.fd-break-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;font:400 12px/1.4 var(--f);color:var(--c6)}
-.fd-break-meta b{font-weight:600;color:var(--c8)}
-.fd-break-form .adj-field{gap:6px}
-.fd-break-form-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:2px}
-.fd-break-form.is-readonly .adj-field select,
-.fd-break-form.is-readonly .adj-field textarea{background:var(--c1);color:var(--c7);pointer-events:none}
+.fd-break-echo{display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+.fd-break-echo-empty{color:var(--c5)}
+.fd-break-echo-chips{display:flex;flex-wrap:wrap;justify-content:flex-start;gap:4px;max-width:100%}
+.fd-break-echo-chip{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:4px;background:var(--pr50);color:var(--pr);font:500 12px/1 var(--f);cursor:default;max-width:96px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fd-break-echo-more{display:inline-flex;align-items:center;height:22px;padding:0 6px;border-radius:4px;background:var(--c1);color:var(--c6);font:500 12px/1 var(--f)}
+.fd-break-echo-tag{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:4px;background:#FFFBEB;color:#B45309;border:1px solid #FDE68A;font:500 12px/1 var(--f);white-space:nowrap}
+.fd-fail-table tr.fd-break-main.is-expanded td{border-bottom-color:transparent;background:var(--pr50)}
+.fd-fail-table tr.fd-break-detail>td{padding:0;background:var(--sf);border-bottom:1px solid var(--dv)}
+.fd-fail-table tr.fd-break-detail:last-child>td{border-bottom:none}
+.fd-break-detail{padding:10px 12px 12px;border-top:1px dashed var(--c2)}
+.fd-break-search{width:100%;box-sizing:border-box;height:34px;padding:0 10px;margin-bottom:6px;border:1px solid var(--c2);border-radius:var(--r1);font:400 12px/1.4 var(--f);color:var(--c8);background:var(--c0);outline:none}
+.fd-break-search:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
+.fd-break-sub-wrap{max-height:240px;overflow:auto;border:1px solid var(--c2);border-radius:var(--r1);background:var(--c0)}
+.fd-break-sub-table{width:100%;border-collapse:collapse;font:400 12px/1.4 var(--f)}
+.fd-break-sub-table th,.fd-break-sub-table td{padding:7px 8px;border-bottom:1px solid var(--dv);text-align:left;vertical-align:middle}
+.fd-break-sub-table th{font-weight:600;color:var(--c8);background:var(--sf);white-space:nowrap;position:sticky;top:0;z-index:1}
+.fd-break-sub-table td{color:var(--c7)}
+.fd-break-sub-table tr:last-child td{border-bottom:none}
+.fd-break-sub-table .fd-break-col-name{white-space:nowrap}
+.fd-break-sub-table .fd-break-sub-name{font-weight:500;color:var(--c8);white-space:nowrap}
+.fd-break-sub-table .fd-break-sub-name .abn-flag-chip{margin-left:4px;height:18px;padding:0 5px;font-size:11px;vertical-align:middle}
+.fd-break-sub-table .fd-break-col-dept{width:72px;white-space:nowrap}
+.fd-break-sub-table .fd-break-col-reason{min-width:160px}
+.fd-break-sub-table .fd-break-col-op{width:72px;white-space:nowrap;text-align:right}
+.fd-break-sub-row.is-hidden{display:none}
+.fd-break-sub-row.is-done td{background:#FFFBEB}
+.fd-break-sub-reason{font:400 12px/1.5 var(--f);color:var(--c7);white-space:pre-wrap;word-break:break-word}
+.fd-break-sub-table .fd-break-reason-input{width:100%;box-sizing:border-box;min-height:32px;padding:5px 8px;border:1px solid var(--c2);border-radius:var(--r1);font:400 12px/1.4 var(--f);color:var(--c8);background:var(--c0);outline:none;resize:vertical}
+.fd-break-sub-table .fd-break-reason-input:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
+.fd-break-sub-table .fd-break-reason-input.is-invalid{border-color:var(--dg,#dc2626)}
+.fd-break-sub-err{display:none;margin-top:3px;font:400 11px/1.3 var(--f);color:var(--dg,#dc2626)}
+.fd-break-sub-table .fd-break-reason-input.is-invalid+.fd-break-sub-err{display:block}
+.fd-break-sub-done{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:4px;background:#FFFBEB;color:#B45309;border:1px solid #FDE68A;font:500 12px/1 var(--f)}
+.fd-break-person-empty{padding:10px;font:400 12px/1.4 var(--f);color:var(--c5)}
 
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .fade-in{animation:fadeIn .2s ease forwards}
@@ -989,17 +1083,12 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
     <div class="pg-hd-right">
       <div class="pg-hd-summary" aria-label="审定上下文"><span class="sum-value">2026年度</span></div>
       <div class="pg-hd-actions">
-        <button class="btn btn-s" type="button" onclick="openRulesModal()" title="查看2026年度人才盘点说明">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-          盘点规则
-        </button>
         <button class="btn btn-p" id="primaryBtn" type="button" onclick="requestPrimary()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>下一步</button>
         <button class="btn btn-danger btn-sm" id="approveRejectBtn" type="button" onclick="openApproveRejectModal()" style="display:none">驳回</button>
         <button class="btn btn-p" id="approvePassBtn" type="button" onclick="approvePass()" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>通过</button>
         <div class="action-more">
           <button class="btn btn-s action-more-trigger" id="ratifyMoreBtn" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="ratifyMoreMenu" onclick="toggleActionMenu(event)">更多<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
           <div class="action-more-menu" id="ratifyMoreMenu" role="menu" aria-labelledby="ratifyMoreBtn">
-            <button class="action-more-item" type="button" role="menuitem" onclick="closeActionMenu();showToast('导出成功','success')">导出</button>
             <button class="action-more-item danger" type="button" role="menuitem" onclick="closeActionMenu();rejectRatify()">驳回</button>
           </div>
         </div>
@@ -1039,6 +1128,10 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
         <div class="filter-row-group">
           <span class="filter-label">考核组</span>
           <div class="filter-actions" id="groupFilter"></div>
+          <button class="btn btn-s btn-sm" type="button" onclick="openRulesModal()" title="查看年度绩效盘点规则">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            查看年度绩效盘点规则
+          </button>
         </div>
         <div class="filter-row-fields">
         <label class="filter-search" aria-label="搜索员工姓名或工号">
@@ -1069,14 +1162,11 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
         <div class="filter-divider" id="levelFilterDivider"></div>
         <span class="filter-label" id="levelFilterLabel">职级</span>
         <div class="filter-actions" id="levelFilter"></div>
-        <div class="filter-divider" id="fillFilterDivider"></div>
-        <span class="filter-label" id="fillFilterLabel">填写状态</span>
-        <div class="filter-actions" id="fillFilter"></div>
         <div class="filter-divider"></div>
         <span class="filter-label" id="statusFilterLabel">提交状态</span>
         <div class="filter-actions" id="statusFilter"></div>
-        <div class="filter-divider" id="onlyAbnDivider"></div>
-        <div class="filter-actions" id="onlyAbnFilter"></div>
+        <div class="filter-divider" id="fillFilterDivider"></div>
+        <div class="filter-actions" id="fillFilter" role="group" aria-label="快速筛选"></div>
         </div>
       </div>
     </div>
@@ -1257,11 +1347,11 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 <div class="rules-overlay" id="rulesModal" aria-hidden="true" onclick="closeRulesModal()">
   <div class="rules-modal" role="dialog" aria-modal="true" aria-labelledby="rulesModalTitle" onclick="event.stopPropagation()">
     <div class="rules-modal-hd">
-      <div class="rules-modal-title" id="rulesModalTitle">2026年度人才盘点说明</div>
+      <div class="rules-modal-title" id="rulesModalTitle">2026年度人才绩效盘点说明</div>
       <button class="adj-modal-close" type="button" aria-label="关闭" onclick="closeRulesModal()">×</button>
     </div>
     <div class="rules-modal-bd">
-      <img src="yearly-tr-rules-2026.jpg" alt="2026年度人才盘点说明：盘点对象、绩效评价、能力评价、九宫格定义与结果应用" width="1600" height="900" loading="lazy">
+      <img src="yearly-tr-rules-2026.jpg" alt="2026年度人才绩效盘点说明（部门负责人审批视角）：绩效评价、能力评价、九宫格落位确认与结果应用" width="1024" height="442" loading="lazy">
     </div>
   </div>
 </div>
@@ -1287,7 +1377,7 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
     </div>
     <div class="notice-bd" id="toastMsg"></div>
     <div class="notice-ft">
-      <button class="btn btn-p" type="button" onclick="closeToast()">知道了</button>
+      <button class="btn btn-p" type="button" id="toastOkBtn" onclick="closeToast()">知道了</button>
     </div>
   </div>
 </div>
@@ -1391,6 +1481,21 @@ var CAP_FORCE_RULES={
     {grade:'低',min:10,max:30}
   ]
 };
+/* 多等级合计占比约束（与月度审定一致；表「分布规则范围 / 是否符合」用） */
+var FORCE_DIST_CONSTRAINTS_BY_RULE={
+  '标准七级强制分布':[
+    {grades:['远超预期'],op:'lte',pct:10},
+    {grades:['超出预期','远超预期'],op:'lte',pct:20},
+    {grades:['远超预期','超出预期','符合预期+'],op:'lte',pct:50},
+    {grades:['符合预期-','低于预期','远低预期'],op:'gte',pct:10}
+  ],
+  '宽松七级强制分布':[
+    {grades:['远超预期'],op:'lte',pct:15},
+    {grades:['超出预期','远超预期'],op:'lte',pct:25},
+    {grades:['远超预期','超出预期','符合预期+'],op:'lte',pct:55},
+    {grades:['符合预期-','低于预期','远低预期'],op:'gte',pct:8}
+  ]
+};
 
 function getForceDistRulesForGroup(groupName){
   var ruleId;
@@ -1410,6 +1515,16 @@ function getCapForceRulesForGroup(groupName){
   }
   return CAP_FORCE_RULES[ruleId]||CAP_FORCE_RULES['标准三档能力强制分布'];
 }
+function getForceDistRuleIdForGroup(groupName){
+  if(SCHEME_CFG.ctrlScope==='group'&&groupName&&groupName!=='全部'){
+    return SCHEME_CFG.forcedDistGroups[groupName]||SCHEME_CFG.forcedDistRule;
+  }
+  return SCHEME_CFG.forcedDistRule;
+}
+function getForceDistConstraintsForGroup(groupName){
+  var ruleId=getForceDistRuleIdForGroup(groupName);
+  return FORCE_DIST_CONSTRAINTS_BY_RULE[ruleId]||FORCE_DIST_CONSTRAINTS_BY_RULE['标准七级强制分布'];
+}
 function getActiveForceDist(){
   return getForceDistRulesForGroup(currentGroup==='全部'?null:currentGroup);
 }
@@ -1423,12 +1538,121 @@ function syncActiveForceAliases(){
   FORCE_DIST=getActiveForceDist();
   CAP_FORCE=getActiveCapForce();
 }
+
+/** 人数上下界展示（格内短文案，不含「人」） */
+function formatForceRangePeople(minCount,maxCount,total){
+  var n=+total||0;
+  var hasMin=minCount!=null&&minCount>0;
+  var hasMax=maxCount!=null&&(n<=0||maxCount<n);
+  if(hasMin&&hasMax)return '≥'+minCount+'且≤'+maxCount;
+  if(hasMax)return '≤'+maxCount;
+  if(hasMin)return '≥'+minCount;
+  return '-';
+}
+function formatForceConstraintText(c,total){
+  if(!c)return '';
+  var n=+total||0;
+  if(c.op==='gte'){
+    return formatForceRangePeople(Math.ceil(n*c.pct/100),n,n);
+  }
+  return formatForceRangePeople(0,Math.floor(n*c.pct/100),n);
+}
+function formatForceConstraintTip(c,total){
+  if(!c)return '';
+  var n=+total||0;
+  var p=+c.pct||0;
+  if(c.op==='gte'){
+    return '不少于'+p+'%，大于等于'+Math.ceil(n*p/100)+'人';
+  }
+  return '不超过'+p+'%，小于等于'+Math.floor(n*p/100)+'人';
+}
+function evalForceConstraint(c,countByGrade,total){
+  var sum=0;
+  (c.grades||[]).forEach(function(g){sum+=countByGrade[g]||0;});
+  var pct=total>0?(sum*100/total):0;
+  var ok,delta='符合';
+  if(c.op==='gte'){
+    var minCount=Math.ceil(total*c.pct/100);
+    ok=sum>=minCount;
+    if(!ok)delta='+'+(minCount-sum);
+  }else{
+    var maxCount=Math.floor(total*c.pct/100);
+    ok=sum<=maxCount;
+    if(!ok)delta='-'+(sum-maxCount);
+  }
+  return {ok:ok,delta:delta,sum:sum,pct:pct,text:formatForceConstraintText(c,total)};
+}
+/**
+ * 重叠规则名额瀑布分摊（与月度审定一致）：
+ * 枢轴=「符合预期」；之上 ≤ 超额从上到下；之下 ≥ 缺口从下到上。
+ */
+function getAllocatedGradeDeltasFromCounts(countByGrade,total,constraints){
+  var allocated={};
+  GRADE_OPTIONS.forEach(function(g){allocated[g]=0;});
+  var evals=(constraints||[]).map(function(c){return evalForceConstraint(c,countByGrade,total);});
+  var pivotIdx=GRADE_OPTIONS.indexOf('符合预期');
+  function parseDelta(ev){
+    if(!ev||ev.ok||ev.delta==null||ev.delta==='符合')return 0;
+    var n=parseInt(ev.delta,10);
+    return isNaN(n)?0:n;
+  }
+  function gIdx(g){return GRADE_OPTIONS.indexOf(g);}
+  function bottomMost(grades){
+    return grades.reduce(function(a,b){return gIdx(a)>=gIdx(b)?a:b;});
+  }
+  for(var ui=0;ui<pivotIdx;ui++){
+    var ug=GRADE_OPTIONS[ui];
+    (constraints||[]).forEach(function(c,ri){
+      if(c.op==='gte')return;
+      var grades=c.grades||[];
+      if(grades.indexOf(ug)<0)return;
+      if(bottomMost(grades)!==ug)return;
+      var d=parseDelta(evals[ri]);
+      if(d>=0)return;
+      var overflow=-d,already=0;
+      grades.forEach(function(g){if(allocated[g]<0)already+=-allocated[g];});
+      var need=overflow-already;
+      if(need>0)allocated[ug]-=need;
+    });
+  }
+  for(var li=GRADE_OPTIONS.length-1;li>pivotIdx;li--){
+    var lg=GRADE_OPTIONS[li];
+    (constraints||[]).forEach(function(c,ri){
+      if(c.op!=='gte')return;
+      var grades=c.grades||[];
+      if(grades.indexOf(lg)<0)return;
+      if(bottomMost(grades)!==lg)return;
+      var d=parseDelta(evals[ri]);
+      if(d<=0)return;
+      var shortage=d,already=0;
+      grades.forEach(function(g){if(allocated[g]>0)already+=allocated[g];});
+      var need=shortage-already;
+      if(need>0)allocated[lg]+=need;
+    });
+  }
+  return GRADE_OPTIONS.map(function(g){return allocated[g];});
+}
+function formatAllocatedDelta(d){
+  if(!d)return '符合';
+  return d>0?('+'+d):String(d);
+}
+function distOkIconSvg(){
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
+}
+function formatComplianceStatusHtml(deltaNum){
+  if(!deltaNum)return '<span class="dist-status ok" title="符合" aria-label="符合">'+distOkIconSvg()+'</span>';
+  return '<span class="dist-status bad">'+formatAllocatedDelta(deltaNum)+'</span>';
+}
 var statsViewMode='list'; /* chart | list —— 默认列表 */
 var statsGroupsExpanded=false; /* 九宫格右侧：默认收起；展开=按考核组 2×2 */
 var listViewMode='detail'; /* detail=收起纵向组卡 | byGroup=展开 2×2；默认收起 */
 var panelBodyMode='list'; /* 收起态全局：默认 list */
 var BAR_OK='#10B981';
 var BAR_BAD='#F43F5E';
+/* 组卡图对齐月度逐级审定 chartDist：灰底柱 + 红绿当前柱 + 琥珀标准虚线 */
+var BAR_BEFORE='rgba(228,228,231,0.95)';
+var LINE_STD='rgba(245,158,11,0.75)';
+var GRADE_TICK_SHORT={'远超预期':'远超','超出预期':'超出','符合预期+':'符合+','符合预期':'符合','符合预期-':'符合-','低于预期':'低于','远低预期':'远低'};
 /** 柱色：当前人数 vs 目标区间（与左表「目标」min–max 一致；调整列正负不单独判定） */
 function barFillByRange(actual,min,max){
   return (actual>=min&&actual<=max)?BAR_OK:BAR_BAD;
@@ -1443,7 +1667,7 @@ function standardLinePoint(min,max,total){
   if(lo>0&&total!=null&&hi>=total)return lo;
   return hi;
 }
-/* 待提交：四组各覆盖 7 档当前≥1（调整前尽量≥1）；部分已填调整等级、部分空（可演示「只看未填写」） */
+/* 待提交：四组各覆盖 7 档当前≥1（调整前尽量≥1）；部分已填调整等级、部分空（可演示「只看已调整」） */
 var PENDING_SUBMIT=[
   '秦明涛','沈宁龙','胡洁颖','陈峰伟','夏龙萍','王波蝶','陆景行','程安然','江晚晴','莫北辰',
   '纪云深','温书衡','裴南星','方予安',
@@ -1558,11 +1782,10 @@ var currentPage=1;
 var PAGE_SIZE=20;
 var currentStep=1;
 var dragging=false;
-var fillFilter=''; /* ''=全部 | 未填写 | 已调整 */
+var fillFilter=''; /* ''=全部 | 已调整 | 异常 */
 var currentLevel='';
 var currentRole='';
 var currentRegion='';
-var onlyAbnormal=false;
 var boxViewMode='grid';
 
 var REGION_OPTIONS=['华东区域','华南区域','华北区域'];
@@ -1671,12 +1894,12 @@ MEMBERS.slice().sort(function(a,b){return b.assessScore-a.assessScore;}).forEach
 (function seedAbnormal(){
   var map={
     '姚辉静':{type:'绩效跨两档',reason:'由符合预期+跨档调至远超预期，需复核依据'},
-    '谭刚伟':{type:'绩效跨两档',reason:'审定从符合预期-跨两档调至远低预期'},
+    '谭刚伟':{type:'绩效跨两档',reason:'相对初评跨两档下调至远低预期，项目紧急止血需保留该评级'},
     '魏宁鹏':{type:'能力跨两档',reason:'能力由高跨档调至低，与测评结果偏差大'},
     '钟皓丽':{type:'能力跨两档',reason:'能力由低跨档调至高，待上级确认'},
     '潘瑞龙':{type:'校准≥2次',reason:'本周期已校准 2 次（领头羊↔穿山甲）'},
     '萧玲刚':{type:'九宫格校准调整',reason:'拖拽调整至领头羊，已记录调整原因'},
-    '董瑞萍':{type:'申请突破',reason:'强制分布申请突破，待 HRBP 复核'}
+    '董瑞萍':{type:'申请突破',reason:'申请突破强制分布上限：专员主管「超出预期」比例超标，关键贡献已复盘确认，待 HRBP 复核'}
   };
   MEMBERS.forEach(function(m){
     var a=map[m.name];
@@ -1686,13 +1909,41 @@ MEMBERS.slice().sort(function(a,b){return b.assessScore-a.assessScore;}).forEach
     if(a.type==='申请突破')m.breakthroughApply=true;
   });
 })();
-/* mock：申请突破标记（与异常标识「申请突破」同源） */
+/* mock：申请突破标记（与异常标识「申请突破」同源；可与绩效↓2 同显） */
 (function seedBreakthroughApply(){
-  ['董瑞萍','阎瑞博'].forEach(function(name){
+  var details={
+    '谭刚伟':{
+      reason:'申请突破强制分布上限：基层管理「远低预期」档已满，因项目紧急止血需保留该评级，待 HRBP 复核',
+      group:'基层管理',side:'绩效',from:'符合预期-',to:'远低预期'
+    },
+    '董瑞萍':{
+      reason:'申请突破强制分布上限：专员主管「超出预期」比例超标，关键贡献已复盘确认，待 HRBP 复核',
+      group:'专员主管',side:'绩效',from:'符合预期-',to:'超出预期'
+    },
+    '阎瑞博':{
+      reason:'申请突破强制分布上限：经理「远超预期」名额已满，项目交付突出申请破限，待 HRBP 复核',
+      group:'经理',side:'绩效',from:'符合预期',to:'远超预期'
+    }
+  };
+  Object.keys(details).forEach(function(name){
     var m=MEMBERS.filter(function(x){return x.name===name;})[0];
     if(!m||!m.reached)return;
+    var d=details[name];
+    var side=d.side||'绩效';
+    var detail={
+      group:d.group,
+      side:side,
+      target:d.to,
+      from:d.from,
+      reason:d.reason,
+      time:'2026-09-18 11:06'
+    };
     m.breakthroughApply=true;
     if(!m.abnormalType)m.abnormalType='申请突破';
+    if(!m.abnormalReason&&d.reason)m.abnormalReason=d.reason;
+    m.breakthroughApplyDetail=detail;
+    m.breakthroughApplyBySide=m.breakthroughApplyBySide||{};
+    m.breakthroughApplyBySide[side]=detail;
   });
 })();
 /* mock：上年盘点格子（box key，tip 展示格子序号 1–9） */
@@ -1772,7 +2023,7 @@ MEMBERS.slice().sort(function(a,b){return b.assessScore-a.assessScore;}).forEach
       {time:'2026-09-14 16:18',who:'赵区总',type:'等级',from:'符合预期+',to:'远超预期',reason:'由符合预期+跨档调至远超预期，需复核依据'}
     ]},
     {name:'谭刚伟',recs:[
-      {time:'2026-09-12 14:55',who:'王总监',type:'等级',from:'符合预期-',to:'远低预期',reason:'审定从符合预期-跨两档调至远低预期'}
+      {time:'2026-09-12 14:55',who:'王总监',type:'等级',from:'符合预期-',to:'远低预期',reason:'相对初评跨两档下调至远低预期，项目紧急止血需保留该评级'}
     ]}
   ].forEach(function(s){
     var m=byName(s.name);
@@ -1800,7 +2051,7 @@ MEMBERS.slice().sort(function(a,b){return b.assessScore-a.assessScore;}).forEach
 (function seedLastRatifyReasons(){
   var samples=[
     {name:'姚辉静',node:'区总审定',who:'赵区总',jobNo:'MG1004',from:'符合预期+',to:'远超预期',reason:'由符合预期+跨档调至远超预期，需复核依据'},
-    {name:'谭刚伟',node:'逐级上级审定',who:'王总监',jobNo:'MG1003',from:'符合预期-',to:'远低预期',reason:'审定从符合预期-跨两档调至远低预期'},
+    {name:'谭刚伟',node:'逐级上级审定',who:'王总监',jobNo:'MG1003',from:'符合预期-',to:'远低预期',reason:'相对初评跨两档下调至远低预期，项目紧急止血需保留该评级'},
     {name:'阎瑞博',node:'间接上级审定',who:'李主管',jobNo:'MG1002',from:'符合预期',to:'远超预期',reason:'项目交付突出，跨档上调至远超预期'},
     {name:'李磊勇',node:'直接上级审定',who:'张经理',jobNo:'MG1001',from:'超出预期',to:'符合预期-',reason:'目标完成度不足，跨档下调并注明依据'},
     {name:'董瑞萍',node:'HRBP审批',who:'陈HRBP',jobNo:'HR2001',from:'符合预期-',to:'超出预期',reason:'复盘后认可关键贡献，跨档上调'}
@@ -1948,8 +2199,8 @@ function isPrimaryAdjusted(m){
 }
 
 function matchFillFilter(m){
-  if(fillFilter==='未填写')return isPrimaryUnfilled(m);
   if(fillFilter==='已调整')return isPrimaryAdjusted(m);
+  if(fillFilter==='异常')return memberHasExceptionFlag(m);
   return true;
 }
 
@@ -1970,7 +2221,6 @@ function syncStatusFilter(){
     opts.map(function(o){return '<option value="'+o.v+'"'+(currentStatus===o.v?' selected':'')+'>'+o.t+'</option>';}).join('')+
     '</select>';
   syncFillFilterUI();
-  syncOnlyAbnormalUI();
 }
 
 function getFilteredMembers(){
@@ -1978,7 +2228,6 @@ function getFilteredMembers(){
     if(currentGroup!=='全部'&&m.group!==currentGroup)return false;
     if(!matchFillFilter(m))return false;
     if(currentStatus&&submitStatusOf(m)!==currentStatus)return false;
-    if(onlyAbnormal&&!memberHasExceptionFlag(m))return false;
     if(currentGrade){
       var gNow=currentStep===1?(m.ratifyGrade||m.grade):m.grade;
       if(gNow!==currentGrade)return false;
@@ -2139,6 +2388,21 @@ function getCapDistData(){
   return {labels:capLabels,before:before,min:min,max:max,mid:mid,after:after};
 }
 
+function attachGradeAllocMeta(data,groupName){
+  var labels=data.labels||GRADE_OPTIONS;
+  var total=data.total!=null?data.total:(data.after||[]).reduce(function(s,n){return s+(+n||0);},0);
+  var constraints=getForceDistConstraintsForGroup(groupName);
+  var countByGrade={};
+  labels.forEach(function(g,i){countByGrade[g]=data.after[i]||0;});
+  var allocDeltas=getAllocatedGradeDeltasFromCounts(countByGrade,total,constraints);
+  data.total=total;
+  data.constraints=constraints;
+  data.allocDeltas=allocDeltas;
+  /* 标准线 = 当前 + 瀑布分摊Δ（≥0），与「是否符合」同源 */
+  data.mid=labels.map(function(_,i){return Math.max(0,(data.after[i]||0)+(allocDeltas[i]||0));});
+  return data;
+}
+
 function getGradeDistData(){
   syncActiveForceAliases();
   var labels=GRADE_OPTIONS;
@@ -2148,9 +2412,8 @@ function getGradeDistData(){
   var before=labels.map(function(g){return pool.filter(function(m){return m.grade===g;}).length;});
   var min=rules.map(function(r){return Math.ceil(total*r.min/100);});
   var max=rules.map(function(r){return Math.floor(total*r.max/100);});
-  var mid=min.map(function(lo,i){return Math.round((lo+max[i])/2);});
   var after=labels.map(function(g){return pool.filter(function(m){return(m.ratifyGrade||m.grade)===g;}).length;});
-  return {labels:labels,before:before,min:min,max:max,mid:mid,after:after};
+  return attachGradeAllocMeta({labels:labels,before:before,min:min,max:max,after:after,total:total},null);
 }
 
 /** 指定考核组的等级分布（面板用；卡头/当前/目标一律组内全量已到达） */
@@ -2162,9 +2425,8 @@ function getGradeDistDataForGroup(groupName){
   var before=labels.map(function(g){return pool.filter(function(m){return m.grade===g;}).length;});
   var min=rules.map(function(r){return Math.ceil(total*r.min/100);});
   var max=rules.map(function(r){return Math.floor(total*r.max/100);});
-  var mid=min.map(function(lo,i){return standardLinePoint(lo,max[i],total);});
   var after=labels.map(function(g){return pool.filter(function(m){return(m.ratifyGrade||m.grade)===g;}).length;});
-  return {labels:labels,before:before,min:min,max:max,mid:mid,after:after,total:total};
+  return attachGradeAllocMeta({labels:labels,before:before,min:min,max:max,after:after,total:total},groupName);
 }
 
 function getCapDistDataForGroup(groupName){
@@ -2190,7 +2452,6 @@ function getMergedGradeDistData(){
   var after=labels.map(function(){return 0;});
   var min=labels.map(function(){return 0;});
   var max=labels.map(function(){return 0;});
-  var mid=labels.map(function(){return 0;});
   var total=0;
   mergedScopeGroups().forEach(function(g){
     var pool=getStatsMembers(g).filter(function(m){return m.reached;});
@@ -2204,11 +2465,10 @@ function getMergedGradeDistData(){
       var hi=Math.floor(n*rules[i].max/100);
       min[i]+=lo;
       max[i]+=hi;
-      /* 合并标准 = 各组该等级目标上限（或不低于时的下限）相加 */
-      mid[i]+=standardLinePoint(lo,hi,n);
     });
   });
-  return {labels:labels,before:before,min:min,max:max,mid:mid,after:after,total:total};
+  /* 合并视图用标准约束 + 合计分母做瀑布（展示口径） */
+  return attachGradeAllocMeta({labels:labels,before:before,min:min,max:max,after:after,total:total},null);
 }
 function getMergedCapDistData(){
   var labels=CAP_OPTIONS;
@@ -2267,31 +2527,25 @@ function formatDistReqText(min,max,total){
   if(lo===hi)return lo+'人';
   return lo+'–'+hi+'人';
 }
-/** 收起态「列表」：统计表 等级|要求|当前(调整前)|调整(实际−当前)，非人员名单 */
+/** 收起态「列表」：能力仍用要求/当前/调整；绩效等级对齐审定「分布规则范围 / 是否符合」 */
 function renderCollapsedStatsTableHtml(data,opts){
   opts=opts||{};
-  var isCap=!!opts.cap;
+  if(!opts.cap){
+    return renderGradeTableHtml(data,true,Object.assign({},opts,{panel:true}));
+  }
   var groupName=opts.groupName||null;
   var rowClick=opts.rowClick||null;
-  var labelHead=isCap?'能力':'等级';
   var html='<table class="dist-status-table">'+
     '<colgroup><col style="width:36%"><col class="col-req" style="width:28%"><col class="col-before" style="width:18%"><col class="col-after" style="width:18%"></colgroup>'+
-    '<thead><tr><th>'+labelHead+'</th><th class="col-req">要求</th><th class="col-before">当前</th><th class="col-after">调整</th></tr></thead><tbody>';
+    '<thead><tr><th>能力</th><th class="col-req">要求</th><th class="col-before">当前</th><th class="col-after">调整</th></tr></thead><tbody>';
   data.labels.forEach(function(g,i){
     var required=formatDistReqText(data.min[i],data.max[i],data.total);
     var before=data.before[i]||0;
     var actual=data.after[i]||0;
-    var isActive=isCap
-      ?(currentCap===g&&(!groupName||currentGroup===groupName))
-      :(currentGrade===g&&(!groupName||currentGroup===groupName));
-    var click=rowClick?rowClick(g):(isCap?('filterByCap(\''+g+'\')'):('filterByGrade(\''+g+'\')'));
-    var labelCell;
-    if(isCap){
-      var tone=g==='高'?'high':g==='中'?'mid':'low';
-      labelCell='<span class="cap-tag '+tone+'">'+g+'</span>';
-    }else{
-      labelCell='<span class="dist-grade-pill" style="background:'+(GRADE_BG[g]||'var(--c1)')+';color:'+(GRADE_COLORS[g]||'var(--c8)')+'">'+g+'</span>';
-    }
+    var isActive=currentCap===g&&(!groupName||currentGroup===groupName);
+    var click=rowClick?rowClick(g):('filterByCap(\''+g+'\')');
+    var tone=g==='高'?'high':g==='中'?'mid':'low';
+    var labelCell='<span class="cap-tag '+tone+'">'+g+'</span>';
     html+='<tr class="'+(isActive?'active':'')+'" onclick="'+click+'"><td>'+labelCell+'</td><td class="col-req">'+required+'</td><td class="col-before">'+before+'人</td><td class="col-after">'+formatAdjDeltaHtml(before,actual)+'</td></tr>';
   });
   return html+'</tbody></table>';
@@ -2317,9 +2571,10 @@ function niceBarScale(vals){
 }
 function groupPanelLegendHtml(){
   return '<div class="group-panel-legend" aria-hidden="true">'+
-    '<span class="cap-leg-item"><i class="cap-leg-dot std"></i>标准</span>'+
-    '<span class="cap-leg-item"><i class="cap-leg-dot"></i>调整前</span>'+
-    '<span class="cap-leg-item"><i class="cap-leg-bar"></i>当前</span>'+
+    '<span class="cap-leg-item"><i class="cap-leg-bar ok"></i>当前·符合</span>'+
+    '<span class="cap-leg-item"><i class="cap-leg-bar bad"></i>当前·不符合</span>'+
+    '<span class="cap-leg-item"><i class="cap-leg-bar before"></i>调整前</span>'+
+    '<span class="cap-leg-item"><i class="cap-leg-line"></i>标准</span>'+
   '</div>';
 }
 
@@ -2348,32 +2603,137 @@ function renderCapTableHtml(data,showReq,opts){
   return html+'</tbody></table>';
 }
 
+/** 规则列等分宽度：占满「分布规则范围」整段（之和 = ruleArea%） */
+function buildDistRuleColWidths(ruleCount,gradeW,actualW,statusW){
+  var n=Math.max(1,ruleCount|0);
+  var ruleArea=Math.max(0,100-gradeW-actualW-statusW);
+  var widths=[];
+  for(var i=0;i<n;i++){
+    widths.push(Math.round(ruleArea*(i+1)/n)-Math.round(ruleArea*i/n));
+  }
+  return widths;
+}
+function buildDistRuleHeadHtml(ruleCount){
+  var n=Math.max(1,ruleCount|0);
+  /* 表头 colspan 跨全部规则列，完整显示「分布规则范围」；表体仍按列等分 */
+  return '<th class="dist-rule-hd" colspan="'+n+'">分布规则范围</th>';
+}
+/** 等级分布表：等级 / 分布规则范围 / 当前 / 是否符合（与月度审定同源） */
 function renderGradeTableHtml(data,showReq,opts){
   opts=opts||{};
   var groupName=opts.groupName||null;
   var rowClick=opts.rowClick||null;
-  var adjMode=opts.adjMode||'gap';
-  var forPanel=!!opts.panel;
-  if(showReq==null)showReq=shouldShowDistReqCol();
-  var colgroup=showReq
-    ?'<colgroup><col style="width:34%"><col class="col-req" style="width:24%"><col style="width:20%"><col style="width:22%"></colgroup>'
-    :'<colgroup><col style="width:40%"><col style="width:30%"><col style="width:30%"></colgroup>';
-  var head=showReq
-    ?'<thead><tr><th>等级</th><th class="col-req">要求</th><th>当前</th><th>调整</th></tr></thead>'
-    :'<thead><tr><th>等级</th><th>当前</th><th>调整</th></tr></thead>';
+  var labels=data.labels||GRADE_OPTIONS;
+  var total=data.total!=null?data.total:(data.after||[]).reduce(function(s,n){return s+(+n||0);},0);
+  var constraints=data.constraints||getForceDistConstraintsForGroup(groupName);
+  var allocDeltas=data.allocDeltas;
+  if(!allocDeltas){
+    var countByGrade={};
+    labels.forEach(function(g,i){countByGrade[g]=data.after[i]||0;});
+    allocDeltas=getAllocatedGradeDeltasFromCounts(countByGrade,total,constraints);
+  }
+  var ruleCount=constraints.length||1;
+  var gradeW=28,actualW=14,statusW=22;
+  var ruleWidths=buildDistRuleColWidths(ruleCount,gradeW,actualW,statusW);
+  var colgroup='<colgroup><col style="width:'+gradeW+'%">';
+  ruleWidths.forEach(function(w){colgroup+='<col style="width:'+w+'%">';});
+  colgroup+='<col class="col-before" style="width:'+actualW+'%"><col class="col-status" style="width:'+statusW+'%"></colgroup>';
+  var head='<thead><tr><th>等级</th>'+buildDistRuleHeadHtml(ruleCount)+'<th class="col-before">当前</th><th class="col-status">是否符合</th></tr></thead>';
   var html='<table class="dist-status-table">'+colgroup+head+'<tbody>';
-  data.labels.forEach(function(g,i){
-    var required=data.min[i]===data.max[i]?data.min[i]+'人':data.min[i]+'–'+data.max[i]+'人';
-    var actual=data.after[i];
-    var adjHtml=adjMode==='delta'?formatAdjDeltaHtml(data.before[i],actual):formatAdjGapHtml(actual,data.min[i],data.max[i]);
+  labels.forEach(function(g,gi){
+    var actual=data.after[gi]||0;
+    var dNum=allocDeltas[gi]||0;
     var isActive=currentGrade===g&&(!groupName||currentGroup===groupName);
     var click=rowClick?rowClick(g):('filterByGrade(\''+g+'\')');
-    var gradeCell=forPanel
-      ?'<span class="dist-grade-pill" style="background:'+(GRADE_BG[g]||'var(--c1)')+';color:'+(GRADE_COLORS[g]||'var(--c8)')+'">'+g+'</span>'
-      :'<span class="dist-grade-name" style="color:'+(GRADE_COLORS[g]||'var(--c8)')+'">'+g+'</span>';
-    html+='<tr class="'+(isActive?'active':'')+'" onclick="'+click+'"><td>'+gradeCell+'</td>'+(showReq?'<td class="col-req">'+required+'</td>':'')+'<td>'+actual+'人</td><td>'+adjHtml+'</td></tr>';
+    html+='<tr class="'+(isActive?'active':'')+'" onclick="'+click+'">'+
+      '<td class="dist-grade-cell"><span class="dist-grade-name">'+g+'</span></td>';
+    var inAnyRule=constraints.some(function(c){return (c.grades||[]).indexOf(g)>=0;});
+    if(!inAnyRule){
+      html+='<td class="dist-rule-cell dist-rule-none" colspan="'+ruleCount+'">-</td>';
+    }else{
+      constraints.forEach(function(c){
+        var grades=c.grades||[];
+        if(grades.indexOf(g)<0){
+          html+='<td class="dist-rule-cell dist-rule-empty"></td>';
+          return;
+        }
+        var prev=gi>0?labels[gi-1]:null;
+        if(prev&&grades.indexOf(prev)>=0)return;
+        var span=1;
+        while(gi+span<labels.length&&grades.indexOf(labels[gi+span])>=0)span++;
+        html+='<td class="dist-rule-cell" data-rule="1" data-span="'+span+'" rowspan="'+span+'" data-tip="'+formatForceConstraintTip(c,total)+'">'+formatForceConstraintText(c,total)+'</td>';
+      });
+    }
+    html+='<td>'+actual+'</td><td>'+formatComplianceStatusHtml(dNum)+'</td></tr>';
   });
   return html+'</tbody></table>';
+}
+
+function ensureDistRuleTip(){
+  var tip=document.getElementById('distRuleTip');
+  if(tip)return tip;
+  tip=document.createElement('div');
+  tip.id='distRuleTip';
+  tip.className='dist-rule-tip';
+  tip.setAttribute('role','tooltip');
+  document.body.appendChild(tip);
+  return tip;
+}
+function showDistRuleTip(td){
+  var text=td.getAttribute('data-tip')||'';
+  if(!text)return;
+  var tip=ensureDistRuleTip();
+  tip.textContent=text;
+  var r=td.getBoundingClientRect();
+  tip.style.left=(r.left+r.width/2)+'px';
+  tip.style.top=r.top+'px';
+  tip.classList.add('is-show');
+}
+function hideDistRuleTip(){
+  var tip=document.getElementById('distRuleTip');
+  if(tip)tip.classList.remove('is-show');
+}
+function clearDistRuleSelection(root){
+  var el=root||document;
+  el.querySelectorAll('.dist-rule-cell.is-selected').forEach(function(td){td.classList.remove('is-selected');});
+  el.querySelectorAll('.dist-grade-cell.rule-selected').forEach(function(td){td.classList.remove('rule-selected');});
+}
+function selectDistRuleCell(ruleTd){
+  var table=ruleTd.closest('table')||ruleTd.parentElement;
+  var wasSelected=ruleTd.classList.contains('is-selected');
+  clearDistRuleSelection(table);
+  if(wasSelected)return;
+  ruleTd.classList.add('is-selected');
+  var span=parseInt(ruleTd.getAttribute('data-span')||ruleTd.getAttribute('rowspan')||'1',10)||1;
+  var tr=ruleTd.parentElement;
+  if(!tr||!tr.parentElement)return;
+  var rows=[].slice.call(tr.parentElement.children);
+  var start=rows.indexOf(tr);
+  if(start<0)return;
+  for(var i=0;i<span;i++){
+    var row=rows[start+i];
+    if(!row)break;
+    var gradeTd=row.querySelector('.dist-grade-cell');
+    if(gradeTd)gradeTd.classList.add('rule-selected');
+  }
+}
+function bindDistRuleSelection(root){
+  if(!root)return;
+  root.querySelectorAll('.dist-rule-cell[data-rule]').forEach(function(td){
+    td.addEventListener('click',function(e){
+      e.stopPropagation();
+      selectDistRuleCell(td);
+    });
+    td.addEventListener('mouseenter',function(){showDistRuleTip(td);});
+    td.addEventListener('mouseleave',hideDistRuleTip);
+  });
+  if(!window._distRuleOutsideBound){
+    window._distRuleOutsideBound=true;
+    document.addEventListener('click',function(e){
+      if(e.target.closest&&e.target.closest('.dist-rule-cell[data-rule]'))return;
+      clearDistRuleSelection();
+    });
+  }
 }
 
 /** 条宽 %：按人数/刻度；非 0 至少可见一截，0 仍 width:0（由灰轨+点表达） */
@@ -2392,21 +2752,40 @@ function panelRowClick(g,isCap,rowClick){
   return rowClick?rowClick(g):(isCap?('filterByCap(\''+g+'\')'):('filterByGrade(\''+g+'\')'));
 }
 
-function panelBarLineHtml(n,before,fill,pctNow){
+function panelBarLineHtml(n,before,fill,pctNow,pctBefore){
   var adjHtml=formatAdjDeltaHtml(before||0,n||0);
   return '<span class="cap-bar-count" title="当前 '+n+'">'+n+'</span>'+
     '<div class="cap-bar-track">'+
+      '<div class="cap-bar-before" style="width:'+(pctBefore||0)+'%" title="调整前 '+(before||0)+'"></div>'+
       '<div class="cap-bar-fill" style="width:'+pctNow+'%;background:'+fill+'" title="当前 '+n+'"></div>'+
     '</div>'+
     '<span class="cap-bar-adj" title="调整">'+adjHtml+'</span>';
 }
 
-/** 展开·考核组卡片右侧图：无等级名（左表已有），仅刻度 + 柱/灰线(调整前)/蓝线(标准)；左人数、右加减 */
-function renderGroupCardBarsHtml(data,opts){
+function panelBarFill(data,i,isCap){
+  if(!isCap&&data.allocDeltas)return (data.allocDeltas[i]||0)===0?BAR_OK:BAR_BAD;
+  return barFillByRange(data.after[i]||0,data.min[i],data.max[i]);
+}
+
+function formatHierarchyComplianceTip(d){
+  if(!d)return '✅符合';
+  if(d<0)return '需调出'+Math.abs(d)+'人';
+  return '需调入'+d+'人';
+}
+function formatCapComplianceTip(after,min,max){
+  if(after>=min&&after<=max)return '✅符合';
+  if(after<min)return '需调入'+(min-after)+'人';
+  return '需调出'+(after-max)+'人';
+}
+function panelBarRowTitle(g,n,before,std,tip){
+  return g+' 调整前 '+(before||0)+' · 当前 '+n+' · 标准 '+(std||0)+' · 是否符合：'+tip;
+}
+function renderPanelBarsPlot(data,opts){
   opts=opts||{};
   var groupName=opts.groupName||null;
   var rowClick=opts.rowClick||null;
   var isCap=!!opts.cap;
+  var merged=!!opts.merged;
   var before=data.before||data.labels.map(function(){return 0;});
   var std=data.mid||data.labels.map(function(_,i){return standardLinePoint(data.min[i],data.max[i],data.total);});
   var nice=niceBarScale(data.after.concat(data.max||[]).concat(before).concat(std));
@@ -2415,41 +2794,30 @@ function renderGroupCardBarsHtml(data,opts){
   var barsHtml='<div class="cap-bars-plot"><svg class="cap-line-svg" aria-hidden="true"></svg>';
   data.labels.forEach(function(g,i){
     var n=data.after[i]||0;
-    var pctNow=panelBarWidthPct(n,scale);
-    var fill=barFillByRange(n,data.min[i],data.max[i]);
-    barsHtml+='<div class="cap-bar-row'+(panelRowActive(g,isCap,groupName)?' active':'')+'" onclick="'+panelRowClick(g,isCap,rowClick)+'" title="'+g+' 当前 '+n+'（要求 '+data.min[i]+'–'+data.max[i]+'）">'+
-      '<div class="cap-bar-line">'+panelBarLineHtml(n,before[i],fill,pctNow)+'</div>'+
-    '</div>';
-  });
-  barsHtml+='</div>';
-  return {html:axisHtml+'<div class="cap-bars cap-bars-card'+(isCap?'':' grade-bars')+'" data-panel-bars="1">'+barsHtml+'</div>',scale:scale,before:before,mid:std,after:data.after};
-}
-
-/** 收起·纵向组卡图：行左侧等级名 + 柱/灰线(调整前)/蓝线(标准)；左人数、右加减 */
-function renderMergedBarsHtml(data,opts){
-  opts=opts||{};
-  var rowClick=opts.rowClick||null;
-  var isCap=!!opts.cap;
-  var before=data.before||data.labels.map(function(){return 0;});
-  var std=data.mid||data.labels.map(function(_,i){return standardLinePoint(data.min[i],data.max[i],data.total);});
-  var nice=niceBarScale(data.after.concat(data.max||[]).concat(before).concat(std));
-  var scale=nice.scale;
-  var axisHtml='<div class="group-chart-axis">'+nice.ticks.map(function(t){return '<span>'+t+'</span>';}).join('')+'</div>';
-  var barsHtml='<div class="cap-bars-plot"><svg class="cap-line-svg" aria-hidden="true"></svg>';
-  data.labels.forEach(function(g,i){
-    var n=data.after[i]||0;
-    var pctNow=panelBarWidthPct(n,scale);
-    var fill=barFillByRange(n,data.min[i],data.max[i]);
-    var labelHtml=isCap
-      ?'<span class="cap-tag '+(g==='高'?'high':g==='中'?'mid':'low')+'" title="'+g+'">'+g+'</span>'
-      :'<span class="cap-tag" style="background:'+(GRADE_BG[g]||'var(--c1)')+';color:'+(GRADE_COLORS[g]||'var(--c7)')+'" title="'+g+'">'+g+'</span>';
-    barsHtml+='<div class="cap-bar-row'+(panelRowActive(g,isCap,null)?' active':'')+'" onclick="'+panelRowClick(g,isCap,rowClick)+'">'+
+    var fill=panelBarFill(data,i,isCap);
+    var tip=isCap?formatCapComplianceTip(n,data.min[i],data.max[i]):formatHierarchyComplianceTip((data.allocDeltas||[])[i]||0);
+    var labelHtml='';
+    if(merged){
+      labelHtml=isCap
+        ?'<span class="cap-tag '+(g==='高'?'high':g==='中'?'mid':'low')+'" title="'+g+'">'+g+'</span>'
+        :'<span class="cap-tag" style="background:'+(GRADE_BG[g]||'var(--c1)')+';color:'+(GRADE_COLORS[g]||'var(--c7)')+'" title="'+g+'">'+(GRADE_TICK_SHORT[g]||g)+'</span>';
+    }
+    barsHtml+='<div class="cap-bar-row'+(panelRowActive(g,isCap,groupName)?' active':'')+'" onclick="'+panelRowClick(g,isCap,rowClick)+'" title="'+panelBarRowTitle(g,n,before[i],std[i],tip)+'">'+
       labelHtml+
-      '<div class="cap-bar-line">'+panelBarLineHtml(n,before[i],fill,pctNow)+'</div>'+
+      '<div class="cap-bar-line">'+panelBarLineHtml(n,before[i],fill,panelBarWidthPct(n,scale),panelBarWidthPct(before[i],scale))+'</div>'+
     '</div>';
   });
   barsHtml+='</div>';
-  return {html:axisHtml+'<div class="cap-bars cap-bars-merged'+(isCap?'':' grade-bars')+'" data-panel-bars="1">'+barsHtml+'</div>',scale:scale,before:before,mid:std,after:data.after};
+  var cls='cap-bars '+(merged?'cap-bars-merged':'cap-bars-card')+(isCap?'':' grade-bars');
+  return {html:axisHtml+'<div class="'+cls+'" data-panel-bars="1">'+barsHtml+'</div>',scale:scale,before:before,mid:std,after:data.after,ticks:nice.ticks};
+}
+/** 展开·考核组卡片右侧图：横向柱（月度配色）——左表已有等级名，右图仅刻度+轨+Δ */
+function renderGroupCardBarsHtml(data,opts){
+  return renderPanelBarsPlot(data,Object.assign({},opts,{merged:false}));
+}
+/** 收起·纵向组卡图：同款横向柱，行内带等级短名 */
+function renderMergedBarsHtml(data,opts){
+  return renderPanelBarsPlot(data,Object.assign({},opts,{merged:true}));
 }
 
 function renderCapBarsHtml(data,opts){
@@ -2498,7 +2866,7 @@ function renderGradeBarsHtml(data,opts){
     var pctNow=Math.min(100,Math.round(n/scale*100));
     var rangeL=Math.min(100,Math.round(data.min[i]/scale*100));
     var rangeW=Math.max(0,Math.min(100-rangeL,Math.round((data.max[i]-data.min[i])/scale*100)));
-    var fill=barFillByRange(n,data.min[i],data.max[i]);
+    var fill=panelBarFill(data,i,false);
     var isActive=currentGrade===g&&(!groupName||currentGroup===groupName);
     var click=rowClick?rowClick(g):('filterByGrade(\''+g+'\')');
     barsHtml+='<div class="cap-bar-row'+(isActive?' active':'')+'" onclick="'+click+'">'+
@@ -2538,7 +2906,10 @@ function renderGradeListDist(){
   ensureCapListLayout();
   var data=getGradeDistData();
   var stats=document.getElementById('listStats');
-  if(stats)stats.innerHTML=renderGradeTableHtml(data,false);
+  if(stats){
+    stats.innerHTML=renderGradeTableHtml(data,false);
+    bindDistRuleSelection(stats);
+  }
   var bars=document.getElementById('capBars');
   if(!bars)return;
   var painted=renderGradeBarsHtml(data);
@@ -2548,7 +2919,10 @@ function renderGradeListDist(){
 }
 
 function paintDualDomain(statsEl,barsEl,data,isCap){
-  if(statsEl)statsEl.innerHTML=isCap?renderCapTableHtml(data,false):renderGradeTableHtml(data,false);
+  if(statsEl){
+    statsEl.innerHTML=isCap?renderCapTableHtml(data,false):renderGradeTableHtml(data,false);
+    if(!isCap)bindDistRuleSelection(statsEl);
+  }
   if(!barsEl)return;
   var painted=isCap?renderCapBarsHtml(data):renderGradeBarsHtml(data);
   barsEl.className=isCap?'cap-bars':'cap-bars grade-bars';
@@ -2569,12 +2943,14 @@ function renderBoxDualGroups(){
     var panelOpts={panel:true,adjMode:'delta',groupName:g,rowClick:null};
     var gradeBars=renderGroupCardBarsHtml(gradeData,{
       groupName:g,
-      rowClick:function(v){return 'filterByGrade(\''+v+'\')';}
+      rowClick:function(v){return 'filterByGrade(\''+v+'\')';},
+      onSelect:function(v){filterByGrade(v);}
     });
     var capBars=renderGroupCardBarsHtml(capData,{
       cap:true,
       groupName:g,
-      rowClick:function(v){return 'filterByCap(\''+v+'\')';}
+      rowClick:function(v){return 'filterByCap(\''+v+'\')';},
+      onSelect:function(v){filterByCap(v);}
     });
     var gradeTable=renderGradeTableHtml(gradeData,true,Object.assign({},panelOpts,{
       rowClick:function(v){return 'filterByGrade(\''+v+'\')';}
@@ -2586,7 +2962,7 @@ function renderBoxDualGroups(){
     html+='<div class="stats-group-block group-panel" data-group="'+g+'">'+
       '<div class="group-panel-hd">'+
         '<div class="group-panel-title"><span class="group-panel-name">'+g+'</span><span class="group-panel-count">'+total+'人</span></div>'+
-        '<div class="group-panel-tools">'+groupPanelLegendHtml()+'</div>'+
+        '<div class="group-panel-tools"></div>'+
       '</div>'+
       '<div class="stats-group-charts">'+
         '<div class="stats-block" data-domain="grade">'+
@@ -2616,10 +2992,11 @@ function renderBoxDualGroups(){
       if(!barsEl||!bars)return;
       var plot=barsEl.querySelector('.cap-bars-plot');
       if(!plot)return;
-      plot._panelDotData={before:bars.before,mid:bars.mid,after:bars.after,scale:bars.scale};
-      paintCapLineOverlay(plot,bars.before,bars.mid,bars.scale,{mode:'stdOnly',connect:true});
+      plot._panelDotData={before:bars.before,mid:bars.mid,after:bars.after,scale:bars.scale,ticks:bars.ticks};
+      paintCapLineOverlay(plot,bars.before,bars.mid,bars.scale,{mode:'stdOnly',connect:true,ticks:bars.ticks});
     });
   });
+  bindDistRuleSelection(host);
 }
 
 function renderBoxDualCollapsed(){
@@ -2641,7 +3018,10 @@ function renderBoxDualCollapsed(){
     if(mode==='list'){
       bodyHtml='<div class="group-panel-table list-stats">'+renderCollapsedStatsTableHtml(d.data,{cap:d.cap})+'</div>';
     }else{
-      painted=renderMergedBarsHtml(d.data,{cap:d.cap});
+      painted=renderMergedBarsHtml(d.data,{
+        cap:d.cap,
+        onSelect:d.cap?function(v){filterByCap(v);}:function(v){filterByGrade(v);}
+      });
       bodyHtml='<div class="group-panel-chart">'+painted.html+'</div>';
     }
     paintedList.push(painted);
@@ -2660,9 +3040,10 @@ function renderBoxDualCollapsed(){
     var barsEl=panel.querySelector('[data-panel-bars="1"]');
     var plot=barsEl&&barsEl.querySelector('.cap-bars-plot');
     if(!plot)return;
-    plot._panelDotData={before:painted.before,mid:painted.mid,after:painted.after,scale:painted.scale};
-    paintCapLineOverlay(plot,painted.before,painted.mid,painted.scale,{mode:'stdOnly',connect:true});
+    plot._panelDotData={before:painted.before,mid:painted.mid,after:painted.after,scale:painted.scale,ticks:painted.ticks};
+    paintCapLineOverlay(plot,painted.before,painted.mid,painted.scale,{mode:'stdOnly',connect:true,ticks:painted.ticks});
   });
+  bindDistRuleSelection(host);
 }
 
 function renderBoxDualDist(){
@@ -2783,15 +3164,14 @@ function renderGroupPanels(){
       var plot=barsEl.querySelector('.cap-bars-plot');
       if(!plot||!plot._panelDotData)return;
       var d=plot._panelDotData;
-      /* 灰线=调整前 · 蓝线=标准 · 柱=当前（绿/红） */
-      paintCapLineOverlay(plot,d.before,d.mid,d.scale,{mode:'stdOnly',connect:true});
+      paintCapLineOverlay(plot,d.before,d.mid,d.scale,{mode:'stdOnly',connect:true,ticks:d.ticks});
     });
   }
   function bindPanelDotData(root,painted){
     var barsEl=root&&root.querySelector('[data-panel-bars="1"]');
     if(!barsEl||!painted)return;
     var plot=barsEl.querySelector('.cap-bars-plot');
-    if(plot)plot._panelDotData={before:painted.before,mid:painted.mid,after:painted.after,scale:painted.scale};
+    if(plot)plot._panelDotData={before:painted.before,mid:painted.mid,after:painted.after,scale:painted.scale,ticks:painted.ticks};
   }
   var collapsed=!isByGroupView();
   var groups=visibleGroupPanelNames();
@@ -2821,7 +3201,7 @@ function renderGroupPanels(){
         bodyHtml='<div class="group-panel-table list-stats">'+renderCollapsedStatsTableHtml(data,{cap:currentStep===2,groupName:g,rowClick:panelOpts.rowClick})+'</div>';
         paintedList.push(null);
       }else{
-        var mergedBars=renderMergedBarsHtml(data,{cap:currentStep===2,rowClick:panelOpts.rowClick});
+        var mergedBars=renderMergedBarsHtml(data,{cap:currentStep===2,groupName:g,rowClick:panelOpts.rowClick});
         bodyHtml='<div class="group-panel-chart">'+mergedBars.html+'</div>';
         paintedList.push(mergedBars);
       }
@@ -2847,6 +3227,7 @@ function renderGroupPanels(){
     if(paintedList[i])bindPanelDotData(panel,paintedList[i]);
   });
   paintPanelDots(scroll);
+  bindDistRuleSelection(scroll);
 }
 
 function ensureDualCharts(stack){
@@ -2872,7 +3253,7 @@ function capRank(v){
 function paintCapLineOverlay(plot,beforeVals,midVals,scale,opts){
   if(!plot)return;
   opts=opts||{};
-  plot._capLineData={beforeVals:beforeVals,midVals:midVals,scale:scale,mode:opts.mode||'std',connect:!!opts.connect};
+  plot._capLineData={beforeVals:beforeVals,midVals:midVals,scale:scale,mode:opts.mode||'std',connect:!!opts.connect,ticks:opts.ticks||[]};
   ensureCapLineObserver(plot);
   scheduleCapLinePaint(plot);
 }
@@ -2919,25 +3300,33 @@ function drawCapLineOverlay(plot){
   var beforeVals=data.beforeVals||[];
   var midVals=data.midVals||[];
   var mode=data.mode||'std';
-  /* 折线只留路径，不画坐标圆点（第1步审定 / 第3步列表共用） */
+  /* 组卡：灰底柱已表达调整前；标准线用月度琥珀虚线 + 刻度网 */
   if(mode==='stdOnly'){
-    var ptsB=[],ptsS=[];
-    var hasBefore=beforeVals.length>0;
+    var ptsS=[];
+    var first=tracks[0].getBoundingClientRect();
+    var last=tracks[tracks.length-1].getBoundingClientRect();
+    var x0=first.left-pr.left;
+    var tw=Math.max(1,first.width);
+    var y0=first.top-pr.top;
+    var y1=last.top-pr.top+last.height;
+    var grid='';
+    (data.ticks||[]).forEach(function(t){
+      var gx=capTrackX(x0,tw,t,scale,0);
+      grid+='<line x1="'+gx.toFixed(1)+'" y1="'+y0.toFixed(1)+'" x2="'+gx.toFixed(1)+'" y2="'+y1.toFixed(1)+'" stroke="#E4E4E7" stroke-width="1"/>';
+    });
     tracks.forEach(function(track,i){
       var tr=track.getBoundingClientRect();
-      var x0=tr.left-pr.left;
-      var y=tr.top-pr.top+tr.height/2;
-      var tw=Math.max(1,tr.width);
-      if(hasBefore)ptsB.push({x:capTrackX(x0,tw,beforeVals[i],scale),y:y});
-      ptsS.push({x:capTrackX(x0,tw,midVals[i],scale),y:y});
+      var tx=tr.left-pr.left;
+      var ty=tr.top-pr.top+tr.height/2;
+      ptsS.push({x:capTrackX(tx,Math.max(1,tr.width),midVals[i],scale),y:ty});
     });
-    var pathB=hasBefore&&data.connect
-      ?'<path fill="none" stroke="#A1A1AA" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" d="'+smoothCapCurve(ptsB)+'"><title>调整前</title></path>'
-      :'';
     var pathS=data.connect
-      ?'<path fill="none" stroke="#2563EB" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" d="'+smoothCapCurve(ptsS)+'"><title>标准</title></path>'
+      ?'<path fill="none" stroke="'+LINE_STD+'" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4 3" d="'+smoothCapCurve(ptsS)+'"><title>标准</title></path>'
       :'';
-    svg.innerHTML=pathB+pathS;
+    var dots=ptsS.map(function(p){
+      return '<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="2" fill="#fff" stroke="'+LINE_STD+'" stroke-width="1.5"/>';
+    }).join('');
+    svg.innerHTML=grid+pathS+dots;
     return;
   }
   if(mode==='beforeAfter'){
@@ -3201,7 +3590,14 @@ function gradeColorHtml(g){
 function lastRatifyHtml(m){
   var adj=m&&m.lastRatifyAdj;
   if(!adj||!adj.to)return '<span style="color:var(--c4)">—</span>';
-  return '<span class="adj-line">'+(m.name||'—')+'：'+gradeColorHtml(adj.from)+'<span class="adj-arrow">-&gt;</span>'+gradeColorHtml(adj.to)+'</span>';
+  var line='<span class="adj-line">'+(m.name||'—')+'：'+gradeColorHtml(adj.from)+'<span class="adj-arrow">-&gt;</span>'+gradeColorHtml(adj.to)+'</span>';
+  /* 相对初评跨 ≥2 档才展示调整原因 */
+  var init=m.grade||'';
+  var to=adj.to||m.ratifyGrade||'';
+  var gap=tierGap(gradeTierIndex(init),gradeTierIndex(to));
+  var reason=String((adj.reason||m.adjustReason||'')).trim();
+  if(gap<2||!reason)return line;
+  return '<div class="adj-stack">'+line+'<span class="adj-reason">'+escapeHtmlText(reason)+'</span></div>';
 }
 function capAdjColor(v){
   if(v==='高')return 'var(--em700)';
@@ -3248,7 +3644,32 @@ function moveDirHint(text){
   if(s.indexOf('下调')>=0)return 'down';
   return '';
 }
-/** 异常标识只出五类文案：绩效±2、能力±2、调整≥2 */
+/** 当前步骤可申请/展示的突破 side：1=绩效 2=能力 3=绩效+能力 */
+function breakthroughSidesForStep(){
+  if(currentStep===1)return ['绩效'];
+  if(currentStep===2)return ['能力'];
+  return ['绩效','能力'];
+}
+function memberBreakthroughDetail(m,side){
+  if(!m)return null;
+  if(side&&m.breakthroughApplyBySide&&m.breakthroughApplyBySide[side])return m.breakthroughApplyBySide[side];
+  var d=m.breakthroughApplyDetail;
+  if(side){
+    if(d&&(d.side||'绩效')===side)return d;
+    if(!d&&(m.breakthroughApply||m.abnormalType==='申请突破')&&side==='绩效'){
+      return {side:'绩效',reason:m.abnormalReason||''};
+    }
+    return null;
+  }
+  if(d)return d;
+  if(m.breakthroughApply||m.abnormalType==='申请突破')return {side:'绩效',reason:m.abnormalReason||''};
+  if(m.breakthroughApplyBySide){
+    var keys=Object.keys(m.breakthroughApplyBySide);
+    if(keys.length)return m.breakthroughApplyBySide[keys[0]];
+  }
+  return null;
+}
+/** 异常标识：绩效±2、能力±2、调整≥2、申请突破（突破仅当前步骤 side） */
 function memberExceptionFlags(m){
   var flags=[];
   if(!m)return flags;
@@ -3270,21 +3691,66 @@ function memberExceptionFlags(m){
   var times=memberAdjustCount(m);
   if(times<2&&(m.abnormalType==='校准次数≥2次'||m.abnormalType==='校准≥2次'))times=2;
   if(times>=2)flags.push({key:'times',dir:''});
+  var sides=breakthroughSidesForStep();
+  for(var si=0;si<sides.length;si++){
+    if(memberBreakthroughDetail(m,sides[si])){flags.push({key:'breakthrough',dir:''});break;}
+  }
   return flags;
 }
-function exceptionFlagTexts(m){
+function breakthroughReasonOf(m){
+  if(!m)return '';
+  var sides=breakthroughSidesForStep();
+  for(var i=0;i<sides.length;i++){
+    var d=memberBreakthroughDetail(m,sides[i]);
+    if(d&&d.reason)return String(d.reason).trim();
+  }
+  if(m.abnormalType==='申请突破'&&m.abnormalReason)return String(m.abnormalReason).trim();
+  return String(m.adjustReason||m.abnormalReason||'').trim();
+}
+function exceptionFlagReasonOf(m,key){
+  if(!m)return '';
+  if(key==='breakthrough')return breakthroughReasonOf(m);
+  if(key==='grade'){
+    if(m.lastRatifyAdj&&m.lastRatifyAdj.reason)return String(m.lastRatifyAdj.reason).trim();
+    if(m.abnormalType&&String(m.abnormalType).indexOf('绩效')>=0&&m.abnormalReason)return String(m.abnormalReason).trim();
+    return String(m.adjustReason||'').trim();
+  }
+  if(key==='cap'){
+    if(m.initCapAdj&&m.initCapAdj.reason)return String(m.initCapAdj.reason).trim();
+    if(m.abnormalType&&String(m.abnormalType).indexOf('能力')>=0&&m.abnormalReason)return String(m.abnormalReason).trim();
+    return String(m.adjustReason||'').trim();
+  }
+  if(key==='times')return String(m.abnormalReason||m.adjustReason||'').trim();
+  return '';
+}
+function exceptionFlagItems(m){
   return memberExceptionFlags(m).map(function(f){
-    if(f.key==='grade')return f.dir==='up'?'绩效↗2':(f.dir==='down'?'绩效↘2':'');
-    if(f.key==='cap')return f.dir==='up'?'能力↗2':(f.dir==='down'?'能力↘2':'');
-    if(f.key==='times')return '调整≥2';
-    return '';
+    if(f.key==='grade'){
+      var gText=f.dir==='up'?'绩效↑2':(f.dir==='down'?'绩效↓2':'');
+      return gText?{key:f.key,text:gText,cls:'',title:'',reason:exceptionFlagReasonOf(m,'grade')}:null;
+    }
+    if(f.key==='cap'){
+      var cText=f.dir==='up'?'能力↑2':(f.dir==='down'?'能力↓2':'');
+      return cText?{key:f.key,text:cText,cls:'',title:'',reason:exceptionFlagReasonOf(m,'cap')}:null;
+    }
+    if(f.key==='times')return {key:f.key,text:'调整≥2',cls:'',title:'',reason:exceptionFlagReasonOf(m,'times')};
+    if(f.key==='breakthrough'){
+      var br=breakthroughReasonOf(m);
+      return {key:f.key,text:'申请突破',cls:'is-breakthrough',title:br,reason:br};
+    }
+    return null;
   }).filter(Boolean);
 }
+function exceptionFlagTexts(m){
+  return exceptionFlagItems(m).map(function(it){return it.text;});
+}
 function exceptionFlagsHtml(m){
-  var labels=exceptionFlagTexts(m);
-  if(!labels.length)return '';
-  return '<div class="abn-flag-list">'+labels.map(function(t){
-    return '<span class="abn-flag-chip">'+t+'</span>';
+  var items=exceptionFlagItems(m);
+  if(!items.length)return '';
+  return '<div class="abn-flag-list">'+items.map(function(it){
+    var tip=it.title?' title="'+escapeHtmlText(it.title)+'"':'';
+    var cls=it.cls?' abn-flag-chip '+it.cls:' abn-flag-chip';
+    return '<span class="'+cls.trim()+'"'+tip+'>'+escapeHtmlText(it.text)+'</span>';
   }).join('')+'</div>';
 }
 
@@ -3403,10 +3869,8 @@ function boxActionHtml(m,idx){
   if(APPROVE_MODE) return '';
   if(!m.reached) return '<span style="color:var(--c4)">—</span>';
   var ICO_ADJ='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>';
-  var ICO_HIST='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 16 14"/></svg>';
   return '<div class="action-stack icon-only">'+
     '<button class="action-icon-btn" type="button" title="调整" aria-label="调整" onclick="openManualAdj('+idx+')">'+ICO_ADJ+'</button>'+
-    '<button class="action-icon-btn" type="button" title="调整记录" aria-label="调整记录" onclick="openAdjHistModal('+idx+')">'+ICO_HIST+'</button>'+
   '</div>';
 }
 function fieldCellHtml(id,m,idx){
@@ -3433,19 +3897,22 @@ function fieldCellHtml(id,m,idx){
   if(id==='grade'){
     var grade=m.ratifyGrade||m.grade||'';
     var gradeHtml=grade
-      ?('<span class="box9-grade-txt" style="color:'+(GRADE_COLORS[grade]||'var(--c7)')+'">'+grade+'</span>')
+      ?('<span class="box9-grade-txt">'+grade+'</span>')
       :'<span style="color:var(--c4)">—</span>';
     return '<td class="col-grade">'+gradeHtml+'</td>';
   }
   if(id==='cap'){
     var prevCap=m.nodeOrig&&m.nodeOrig.capability&&m.nodeOrig.capability!==(m.capability||'')?m.nodeOrig.capability:'';
-    var capFold=nodeAdjBadgeHtml(prevCap,m.capability||'');
-    return '<td class="col-cap'+(capFold?' has-node-adj':'')+'">'+capFold+(m.capability?capTagHtml(m.capability):'<span style="color:var(--c4)">—</span>')+'</td>';
+    var capMark=nodeAdjBadgeHtml(prevCap,m.capability||'');
+    var capHtml=m.capability
+      ?('<span class="box9-cap-txt">'+m.capability+'</span>'+capMark)
+      :'<span style="color:var(--c4)">—</span>';
+    return '<td class="col-cap'+(capMark?' has-node-adj':'')+'">'+capHtml+'</td>';
   }
   if(id==='box'){
     var box=memberBoxName(m);
-    var boxFold=boxAdjFoldHtml(m);
-    return '<td class="col-box'+(boxFold?' has-node-adj':'')+'">'+boxFold+'<span class="box-cell-line">'+(box||'<span style="color:var(--c4)">—</span>')+'</span></td>';
+    var boxMark=boxAdjFoldHtml(m);
+    return '<td class="col-box'+(boxMark?' has-node-adj':'')+'"><span class="box-cell-line">'+(box||'<span style="color:var(--c4)">—</span>')+boxMark+'</span></td>';
   }
   if(id==='action') return '<td class="col-action">'+boxActionHtml(m,idx)+'</td>';
   return extraFieldCell(id,m);
@@ -3538,23 +4005,24 @@ function renderHead(){
     }
   }
   syncFillFilterUI();
-  syncOnlyAbnormalUI();
   syncListViewUI();
 }
 
 function syncFillFilterUI(){
   var box=document.getElementById('fillFilter');
   var div=document.getElementById('fillFilterDivider');
-  var label=document.getElementById('fillFilterLabel');
   if(!box)return;
   var show=currentStep===1||currentStep===2||currentStep===3;
   box.classList.toggle('on',show);
   if(div)div.classList.toggle('on',show);
-  if(label)label.classList.toggle('on',show);
   if(!show)fillFilter='';
-  if(['','未填写','已调整'].indexOf(fillFilter)===-1)fillFilter='';
-  var opts=[{v:'',t:'全部'},{v:'未填写',t:'未填写'},{v:'已调整',t:'已调整'}];
-  box.innerHTML=filterSelectHtml('fillFilterSelect','fillFilterLabel',fillFilter,opts,'filterFill','');
+  if(['','已调整','异常'].indexOf(fillFilter)===-1)fillFilter='';
+  var opts=[{v:'已调整',t:'只看已调整'},{v:'异常',t:'只看异常'}];
+  box.innerHTML=opts.map(function(o,i){
+    var on=fillFilter===o.v;
+    var sep=i?'<span class="group-sep" aria-hidden="true">｜</span>':'';
+    return sep+'<button class="btn btn-s btn-sm'+(on?' btn-active':'')+'" type="button" aria-pressed="'+(on?'true':'false')+'" onclick="filterFill(\''+o.v+'\')">'+o.t+'</button>';
+  }).join('');
 }
 
 var LEVEL_ORDER=['M6','M4','P8','P7','P6','P5','P4'];
@@ -3602,26 +4070,9 @@ function filterRole(v){
 }
 
 function filterFill(mode){
-  fillFilter=mode||'';
+  fillFilter=(mode&&fillFilter===mode)?'':(mode||'');
   currentPage=1;
   syncFillFilterUI();
-  renderAll();
-}
-
-function syncOnlyAbnormalUI(){
-  var box=document.getElementById('onlyAbnFilter');
-  var div=document.getElementById('onlyAbnDivider');
-  if(!box)return;
-  var show=currentStep===1||currentStep===2||currentStep===3;
-  box.classList.toggle('on',show);
-  if(div)div.classList.toggle('on',show);
-  box.innerHTML='<button class="btn btn-s btn-sm'+(onlyAbnormal?' btn-active':'')+'" type="button" onclick="toggleOnlyAbnormal(!onlyAbnormal)">只看异常</button>';
-}
-
-function toggleOnlyAbnormal(on){
-  onlyAbnormal=!!on;
-  currentPage=1;
-  syncOnlyAbnormalUI();
   renderAll();
 }
 
@@ -3637,8 +4088,8 @@ function capSegHtml(idx,m,cls){
   if(!m.reached)return '<td'+(cls?' class="'+cls+'"':'')+'><span style="font:400 12px/1 var(--f);color:var(--c4)">未到达</span></td>';
   var locked=!!m.submitted;
   var prevCap=m.nodeOrig&&m.nodeOrig.capability&&m.nodeOrig.capability!==(m.capability||'')?m.nodeOrig.capability:'';
-  var badge=nodeAdjBadgeHtml(prevCap,m.capability||'');
-  var html='<td'+(cls?' class="'+cls+(badge?' has-node-adj':'')+'"':'')+'><div class="cap-with-adj">'+badge+'<div class="cap-seg'+(locked?' is-locked':'')+'"'+(locked?' title="已提交，不可修改"':'')+'>';
+  var mark=nodeAdjBadgeHtml(prevCap,m.capability||'');
+  var html='<td'+(cls?' class="'+cls+(mark?' has-node-adj':'')+'"':'')+'><div class="cap-with-adj"><div class="cap-seg'+(locked?' is-locked':'')+'"'+(locked?' title="已提交，不可修改"':'')+'>';
   CAP_OPTIONS.forEach(function(v){
     var tone=v==='高'?'high':v==='中'?'mid':'low';
     var on=m.capability===v?' on':'';
@@ -3648,18 +4099,18 @@ function capSegHtml(idx,m,cls){
       html+='<button class="cap-opt '+tone+on+'" type="button" onclick="setCapability('+idx+',\''+v+'\')">'+v+'</button>';
     }
   });
-  html+='</div></div></td>';
+  html+='</div>'+mark+'</div></td>';
   return html;
 }
 
 function nodeAdjBadgeHtml(from,to){
   if(!from||!to||from===to)return '';
   var title='本节点已调整：'+from+' → '+to;
-  return '<span class="node-adj-fold" title="'+title+'"></span>';
+  return '<span class="node-adj-mark" title="'+title+'" aria-label="已调整">✍️</span>';
 }
 
 function memberNameHtml(m,idx){
-  return '<span class="member-name" onmouseenter="onMemberEnter(event,'+idx+')" onmouseleave="hideChipTip()"><span class="member-name-row"><span class="member-name-text">'+m.name+'</span><span class="member-id">('+m.employeeId+')</span></span></span>';
+  return '<span class="member-name" onmouseenter="onMemberEnter(event,'+idx+')" onmouseleave="scheduleHideChipTip()"><span class="member-name-row"><span class="member-name-text">'+m.name+'</span><span class="member-id">('+m.employeeId+')</span></span></span>';
 }
 function memberFreezeCellHtml(m,idx){
   return '<td class="col-freeze-l">'+memberNameHtml(m,idx)+'</td>';
@@ -3670,13 +4121,13 @@ function starGradeCellHtml(m,idx){
   var starVal=ratifyStarValue(shown);
   var starColor=shown?(GRADE_COLORS[shown]||'var(--c8)'):'';
   var prevGrade=m.nodeOrig&&m.ratifyGrade&&m.nodeOrig.ratifyGrade&&m.nodeOrig.ratifyGrade!==m.ratifyGrade?m.nodeOrig.ratifyGrade:'';
-  var badge=nodeAdjBadgeHtml(prevGrade,m.ratifyGrade||'');
-  var html='<td class="col-freeze-r'+(badge?' has-node-adj':'')+'">'+badge+'<div class="star-rating" data-value="'+starVal+'"><div class="star-row">';
+  var mark=nodeAdjBadgeHtml(prevGrade,m.ratifyGrade||'');
+  var html='<td class="col-freeze-r'+(mark?' has-node-adj':'')+'"><div class="star-rating" data-value="'+starVal+'"><div class="star-row">';
   for(var v=1;v<=7;v++){
     var on=starVal>0&&v<=starVal;
     html+='<span class="star'+(on?' sel':'')+'" data-v="'+v+'" style="'+(on?'color:'+starColor:'')+'" onclick="setRatifyStar(this,'+idx+','+v+')" onmouseenter="starHover(this,1)" onmouseleave="starHover(this,0)">★</span>';
   }
-  html+='</div><span class="star-label-row"><span class="star-label'+(shown?'':' placeholder')+'" style="color:'+(shown?(GRADE_COLORS[shown]||'var(--c8)'):'var(--c4)')+'">'+(shown||'请选择')+'</span></span></div></td>';
+  html+='</div><span class="star-label-row"><span class="star-label'+(shown?'':' placeholder')+'" style="color:'+(shown?(GRADE_COLORS[shown]||'var(--c8)'):'var(--c4)')+'">'+(shown||'请选择')+'</span>'+mark+'</span></div></td>';
   return html;
 }
 
@@ -3687,12 +4138,14 @@ function setCapability(idx,value){
   ensureNodeOrig(m);
   var prev=m.capability||'';
   if(prev===value)return;
-  var baseline=prev||m.initCapability||'';
-  if(tierGap(capTierIndex(baseline),capTierIndex(value))>=2){
+  /* 相对初评能力跨档：高↔低（差 2）须填原因 */
+  var initCap=m.initCapability||'';
+  if(tierGap(capTierIndex(initCap),capTierIndex(value))>=2){
     openTierReasonModal({
       mode:'tierCap',
       idx:idx,
-      from:baseline||prev||'—',
+      current:prev||'—',
+      init:initCap||'—',
       to:value,
       title:'校准能力'
     });
@@ -3960,16 +4413,19 @@ function setRatifyStar(el,idx,v){
   var m=MEMBERS[idx];
   if(!m||!grade)return;
   ensureNodeOrig(m);
-  var baseline=m.ratifyGrade||m.grade||'';
-  if(baseline===grade){
+  var current=m.ratifyGrade||m.grade||'';
+  if(current===grade){
     paintStarRating(el.closest('.star-rating'),ratifyStarValue(grade));
     return;
   }
-  if(tierGap(gradeTierIndex(baseline),gradeTierIndex(grade))>=2){
+  /* 相对初评跨档：|调整 − 初评|≥2 须填原因 */
+  var initGrade=m.grade||'';
+  if(tierGap(gradeTierIndex(initGrade),gradeTierIndex(grade))>=2){
     openTierReasonModal({
       mode:'tierGrade',
       idx:idx,
-      from:baseline||'—',
+      current:current||'—',
+      init:initGrade||'—',
       to:grade,
       title:'调整等级'
     });
@@ -4093,6 +4549,7 @@ function closeToast(){
   var msgEl=document.getElementById('toastMsg');
   if(card)card.classList.remove('wide');
   if(msgEl)msgEl.classList.remove('has-html');
+  syncFdToastFooterBtn();
 }
 function showToast(msg,type,opts){
   opts=opts||{};
@@ -4110,9 +4567,13 @@ function showToast(msg,type,opts){
     msgEl.classList.remove('has-html');
   }
   if(card)card.classList.toggle('wide',!!opts.wide);
-  if(titleEl)titleEl.textContent=type==='warn'?'提示':'操作成功';
+  if(titleEl){
+    if(opts.title)titleEl.textContent=opts.title;
+    else titleEl.textContent=type==='warn'?'提示':'操作成功';
+  }
   t.className='notice-overlay open'+(type==='warn'?' warn':'');
   t.setAttribute('aria-hidden','false');
+  syncFdToastFooterBtn();
   // 校验类需用户确认；成功类仍可自动关闭，避免打断操作
   if(type!=='warn'){
     _toastTimer=setTimeout(function(){closeToast();},2800);
@@ -4302,11 +4763,68 @@ function distScopeLabels(side){
   return ['全部'];
 }
 
+/** 调整要求：剩余 = 需调整人数 − 已申请突破人数；满足则 ✅ */
+function fdBreakRemainOf(row){
+  var n=Math.max(0,+row.delta||0);
+  var applied=fdBreakApplyItems(_fdBreakCtx.applies[fdBreakRowKey(row)]).length;
+  return Math.max(0,n-applied);
+}
 function formatForceDistAdvice(row){
-  if(row.direction==='over'){
-    return '实际 '+row.actual+' 人 / 上限 '+row.limit+' 人，需减少 '+row.delta+' 人';
+  var remain=fdBreakRemainOf(row);
+  if(remain<=0)return '✅';
+  if(row.direction==='over')return '-'+remain+'人';
+  return '+'+remain+'人';
+}
+function fdBreakRowsSatisfied(rows){
+  rows=rows||(_fdBreakCtx&&_fdBreakCtx.rows)||[];
+  return !!rows.length&&rows.every(function(row){return fdBreakRemainOf(row)<=0;});
+}
+function isFdFailToastOpen(){
+  var t=document.getElementById('toast');
+  if(!t||!t.classList.contains('open'))return false;
+  var msg=document.getElementById('toastMsg');
+  return !!(msg&&msg.querySelector('.fd-fail-table'));
+}
+function syncFdToastFooterBtn(){
+  var btn=document.getElementById('toastOkBtn');
+  if(!btn)return;
+  btn.textContent=(isFdFailToastOpen()&&fdBreakRowsSatisfied())?'确定':'知道了';
+}
+
+/** 失败表「要求」列：覆盖该等级的分布规则 tip，多条各占一行 */
+function formatForceDistReqLines(row){
+  var total=+row.total||0;
+  var lines=[];
+  if(row.side==='能力'){
+    var capRules=getCapForceRulesForGroup(row.group==='全部'?null:row.group);
+    var capRule=null;
+    for(var i=0;i<capRules.length;i++){
+      if(capRules[i].grade===row.grade){capRule=capRules[i];break;}
+    }
+    if(capRule){
+      if(capRule.min>0){
+        lines.push(formatForceConstraintTip({op:'gte',pct:capRule.min},total));
+      }
+      if(capRule.max!=null&&(total<=0||Math.floor(total*capRule.max/100)<total)){
+        lines.push(formatForceConstraintTip({op:'lte',pct:capRule.max},total));
+      }
+    }
+  }else{
+    var constraints=getForceDistConstraintsForGroup(row.group==='全部'?null:row.group);
+    constraints.forEach(function(c){
+      if((c.grades||[]).indexOf(row.grade)>=0){
+        lines.push(formatForceConstraintTip(c,total));
+      }
+    });
   }
-  return '不低于 '+row.minPct+'%，实际 '+row.actual+' 人，需增加 '+row.delta+' 人';
+  return lines;
+}
+function renderForceDistReqHtml(row){
+  var lines=formatForceDistReqLines(row);
+  if(!lines.length)return '<span class="fd-req-line">-</span>';
+  return lines.map(function(t){
+    return '<span class="fd-req-line">'+escapeHtmlText(t)+'</span>';
+  }).join('');
 }
 
 function escapeHtmlText(s){
@@ -4317,13 +4835,17 @@ function escapeHtmlText(s){
     .replace(/"/g,'&quot;');
 }
 
+/** 展示用考核组名：去掉末尾（…）/(…) 后缀，不拼 side */
+function stripGroupParenSuffix(s){
+  return String(s==null?'':s).replace(/[（(][^）)]*[）)]\s*$/g,'').trim();
+}
 function forceDistGroupLabel(row){
-  var g=row.group==='全部'?'全部':row.group;
-  return g+(row.side?'（'+row.side+'）':'');
+  var g=row&&row.group==='全部'?'全部':(row&&row.group||'');
+  return stripGroupParenSuffix(g);
 }
 
-/** 强制分布突破申请（弹窗内嵌表单，不另开层） */
-var _fdBreakCtx={rows:[],applies:{},formIdx:-1,formReadonly:false};
+/** 强制分布突破申请：考核组行下展开子表（每人一行填原因），名单列回显 */
+var _fdBreakCtx={rows:[],applies:{},expandIdx:-1,expandReadonly:false,draftReasons:{},searchQ:''};
 
 function fdBreakRowKey(row){
   return String(row.group||'')+'|'+String(row.side||'')+'|'+String(row.grade||'');
@@ -4345,143 +4867,316 @@ function fdBreakCandidates(row){
   });
 }
 
-/** 强制分布未达标表：考核组 | 等级 | 调整建议 | 操作 */
-function renderForceDistFailTable(rows){
-  _fdBreakCtx.rows=rows||[];
-  var body=_fdBreakCtx.rows.map(function(row,i){
-    var key=fdBreakRowKey(row);
-    var applied=_fdBreakCtx.applies[key];
-    var cands=fdBreakCandidates(row);
-    var btn;
-    if(applied){
-      btn='<button type="button" class="btn btn-s btn-sm fd-break-btn" onclick="openFdBreakForm('+i+',true)">已申请</button>';
-    }else if(!cands.length){
-      btn='<button type="button" class="btn btn-s btn-sm fd-break-btn" disabled title="没有可调入的人">申请突破</button>';
-    }else{
-      btn='<button type="button" class="btn btn-s btn-sm fd-break-btn" onclick="openFdBreakForm('+i+',false)">申请突破</button>';
-    }
-    return '<tr>'+
-      '<td class="fd-col-group">'+escapeHtmlText(forceDistGroupLabel(row))+'</td>'+
-      '<td class="fd-col-grade">'+escapeHtmlText(row.grade)+'</td>'+
-      '<td class="fd-col-advice">'+escapeHtmlText(formatForceDistAdvice(row))+'</td>'+
-      '<td class="fd-col-action">'+btn+'</td>'+
+function memberHasBreakthrough(m,side){
+  if(!m)return false;
+  if(side)return !!memberBreakthroughDetail(m,side);
+  return !!(memberBreakthroughDetail(m)||m.breakthroughApply||m.abnormalType==='申请突破');
+}
+function memberBreakLabel(m){
+  if(!m)return '';
+  return String(m.name||'')+'('+(m.employeeId||'')+')';
+}
+function fdBreakApplyItems(applied){
+  if(!applied)return [];
+  if(Array.isArray(applied.items))return applied.items;
+  if(applied.memberIdx!=null)return [applied];
+  return [];
+}
+function fdBreakAppliedIdxSet(items){
+  var set={};
+  (items||[]).forEach(function(it){if(it&&it.memberIdx!=null)set[it.memberIdx]=true;});
+  return set;
+}
+function fdBreakRemainingCandidates(row){
+  var appliedSet=fdBreakAppliedIdxSet(fdBreakApplyItems(_fdBreakCtx.applies[fdBreakRowKey(row)]));
+  return fdBreakCandidates(row).filter(function(m){
+    var i=MEMBERS.indexOf(m);
+    return i>=0&&!appliedSet[i];
+  });
+}
+function fdBreakBreakthroughChipHtml(m,side){
+  var d=memberBreakthroughDetail(m,side||'绩效');
+  if(!d)return '';
+  var tip=d.reason||m.abnormalReason||'已申请突破';
+  return '<span class="abn-flag-chip is-breakthrough" title="'+escapeHtmlText(tip)+'">申请突破</span>';
+}
+
+/** 「申请突破名单」列：姓名 chips + 已申请人数；无人时 — */
+function buildFdBreakListHtml(row){
+  var items=fdBreakApplyItems(_fdBreakCtx.applies[fdBreakRowKey(row)]);
+  if(!items.length)return '<span class="fd-break-echo-empty">—</span>';
+  var maxShow=3;
+  var chips=items.slice(0,maxShow).map(function(it){
+    var tip=it.reason||'已申请突破';
+    return '<span class="fd-break-echo-chip" title="'+escapeHtmlText(tip)+'">'+escapeHtmlText(it.name||'')+'</span>';
+  }).join('');
+  if(items.length>maxShow){
+    chips+='<span class="fd-break-echo-more" title="共 '+items.length+' 人">+'+
+      (items.length-maxShow)+'</span>';
+  }
+  return '<div class="fd-break-echo">'+
+      '<div class="fd-break-echo-chips">'+chips+'</div>'+
+      '<span class="fd-break-echo-tag">已申请 · '+items.length+'人</span>'+
+    '</div>';
+}
+
+/** 「操作」列：申请突破 / 继续申请 / 查看 / 收起 */
+function buildFdBreakActionHtml(idx,row){
+  if(_fdBreakCtx.expandIdx===idx){
+    return '<button type="button" class="btn btn-s btn-sm fd-break-btn" onclick="collapseFdBreakDetail()">收起</button>';
+  }
+  var items=fdBreakApplyItems(_fdBreakCtx.applies[fdBreakRowKey(row)]);
+  if(items.length){
+    var remain=fdBreakRemainingCandidates(row);
+    return remain.length
+      ?'<button type="button" class="btn btn-s btn-sm fd-break-btn" onclick="toggleFdBreakDetail('+idx+',false)">继续申请</button>'
+      :'<button type="button" class="btn btn-s btn-sm fd-break-btn" onclick="toggleFdBreakDetail('+idx+',true)">查看</button>';
+  }
+  var cands=fdBreakCandidates(row);
+  if(!cands.length){
+    return '<button type="button" class="btn btn-s btn-sm fd-break-btn" disabled title="没有可调入的人">申请突破</button>';
+  }
+  return '<button type="button" class="btn btn-s btn-sm fd-break-btn" onclick="toggleFdBreakDetail('+idx+',false)">申请突破</button>';
+}
+
+function fdBreakMemberSearchText(m){
+  if(!m)return '';
+  return [m.name,m.employeeId,m.dept,fdBreakCurrentOf(m)].map(function(v){return String(v||'');}).join(' ');
+}
+
+/** 展开明细内嵌子表：姓名(工号) / 部门 / 申请原因 / 操作 */
+function buildFdBreakSubTableHtml(row,appliedItems,readonly){
+  var side=(row&&row.side)||'绩效';
+  var q=String(_fdBreakCtx.searchQ||'').trim().toLowerCase();
+  var drafts=_fdBreakCtx.draftReasons||{};
+  var entries=[];
+  (appliedItems||[]).forEach(function(it){
+    var mi=it.memberIdx;
+    var m=(mi!=null&&MEMBERS[mi])?MEMBERS[mi]:null;
+    entries.push({
+      mi:mi,
+      m:m,
+      name:m?m.name:(it.name||''),
+      empId:m?(m.employeeId||''):(it.empId||''),
+      dept:m?(m.dept||'—'):'—',
+      reason:it.reason||'',
+      done:true,
+      search:fdBreakMemberSearchText(m)||((it.name||'')+' '+(it.empId||''))
+    });
+  });
+  if(!readonly){
+    fdBreakRemainingCandidates(row).forEach(function(m){
+      var mi=MEMBERS.indexOf(m);
+      if(mi<0)return;
+      entries.push({
+        mi:mi,
+        m:m,
+        name:m.name||'',
+        empId:m.employeeId||'',
+        dept:m.dept||'—',
+        reason:drafts[mi]||'',
+        done:false,
+        search:fdBreakMemberSearchText(m)
+      });
+    });
+  }
+  if(!entries.length){
+    return '<div class="fd-break-person-empty" id="fdBreakPersonEmpty">暂无可选人员</div>';
+  }
+  var visible=0;
+  var body=entries.map(function(en){
+    var hit=!q||String(en.search||'').toLowerCase().indexOf(q)>=0;
+    if(hit)visible++;
+    var nameLabel=escapeHtmlText(en.name||'—')+'('+escapeHtmlText(en.empId||'—')+')';
+    var nameCell='<span class="fd-break-sub-name">'+nameLabel+
+      (en.done?'<span class="abn-flag-chip is-breakthrough">申请突破</span>':'')+
+      ((!en.done&&en.m)?fdBreakBreakthroughChipHtml(en.m,side):'')+
+      '</span>';
+    var reasonCell=en.done
+      ?'<div class="fd-break-sub-reason">'+escapeHtmlText(en.reason||'—')+'</div>'
+      :'<textarea class="fd-break-reason-input" rows="1" data-mi="'+en.mi+'" placeholder="请填写申请突破的原因"'+
+        ' oninput="fdBreakOnReasonInput('+en.mi+',this)">'+escapeHtmlText(en.reason||'')+'</textarea>'+
+        '<div class="fd-break-sub-err">请填写申请原因</div>';
+    var opCell=en.done
+      ?'<span class="fd-break-sub-done">已申请</span>'
+      :'<button type="button" class="btn btn-p btn-sm" onclick="saveFdBreakPerson('+en.mi+')">保存</button>';
+    return '<tr class="fd-break-sub-row'+(en.done?' is-done':'')+(hit?'':' is-hidden')+'"'+
+      ' data-mi="'+en.mi+'" data-label="'+escapeHtmlText(en.search)+'">'+
+      '<td class="fd-break-col-name">'+nameCell+'</td>'+
+      '<td class="fd-break-col-dept">'+escapeHtmlText(en.dept||'—')+'</td>'+
+      '<td class="fd-break-col-reason">'+reasonCell+'</td>'+
+      '<td class="fd-break-col-op">'+opCell+'</td>'+
     '</tr>';
   }).join('');
+  var emptyRow=visible?'':'<tr id="fdBreakPersonEmpty"><td colspan="4" class="fd-break-person-empty">无匹配人员</td></tr>';
+  return '<div class="fd-break-sub-wrap" id="fdBreakPersonList">'+
+    '<table class="fd-break-sub-table" aria-label="申请突破人员明细">'+
+      '<thead><tr><th class="fd-break-col-name">姓名(工号)</th><th class="fd-break-col-dept">部门</th>'+
+      '<th class="fd-break-col-reason">申请原因</th><th class="fd-break-col-op">操作</th></tr></thead>'+
+      '<tbody>'+body+emptyRow+'</tbody>'+
+    '</table></div>';
+}
+
+function buildFdBreakDetailHtml(idx,row){
+  var readonly=!!_fdBreakCtx.expandReadonly;
+  var appliedItems=fdBreakApplyItems(_fdBreakCtx.applies[fdBreakRowKey(row)]);
+  var remain=readonly?[]:fdBreakRemainingCandidates(row);
+  var html='<div class="fd-break-detail" id="fdBreakDetail">';
+  if(appliedItems.length||remain.length){
+    html+='<input type="search" class="fd-break-search" id="fdBreakSearch" placeholder="搜索姓名 / 工号"'+
+      ' value="'+escapeHtmlText(_fdBreakCtx.searchQ||'')+'"'+
+      ' oninput="fdBreakOnSearch(this.value)" autocomplete="off">'+
+      buildFdBreakSubTableHtml(row,appliedItems,readonly);
+  }else{
+    html+='<div class="fd-break-person-empty">暂无可选人员</div>';
+  }
+  html+='</div>';
+  return html;
+}
+
+function fdBreakOnReasonInput(mi,el){
+  if(!_fdBreakCtx.draftReasons)_fdBreakCtx.draftReasons={};
+  _fdBreakCtx.draftReasons[mi]=el?el.value:'';
+  if(el)el.classList.remove('is-invalid');
+}
+
+function fdBreakOnSearch(q){
+  _fdBreakCtx.searchQ=String(q||'');
+  var wrap=document.getElementById('fdBreakPersonList');
+  if(!wrap)return;
+  var needle=String(q||'').trim().toLowerCase();
+  var visible=0;
+  Array.prototype.slice.call(wrap.querySelectorAll('.fd-break-sub-row')).forEach(function(el){
+    var label=(el.getAttribute('data-label')||el.textContent||'').toLowerCase();
+    var hit=!needle||label.indexOf(needle)>=0;
+    el.classList.toggle('is-hidden',!hit);
+    if(hit)visible++;
+  });
+  var empty=document.getElementById('fdBreakPersonEmpty');
+  var tbody=wrap.querySelector('tbody');
+  if(!visible){
+    if(!empty&&tbody){
+      empty=document.createElement('tr');
+      empty.id='fdBreakPersonEmpty';
+      empty.innerHTML='<td colspan="4" class="fd-break-person-empty">无匹配人员</td>';
+      tbody.appendChild(empty);
+    }
+  }else if(empty&&empty.parentNode){
+    empty.parentNode.removeChild(empty);
+  }
+}
+
+/** 强制分布未达标表：考核组 | 等级 | 要求 | 调整要求 | 申请突破名单 | 操作 */
+function renderForceDistFailTable(rows){
+  _fdBreakCtx.rows=rows||[];
+  if(_fdBreakCtx.expandIdx>=_fdBreakCtx.rows.length)_fdBreakCtx.expandIdx=-1;
+  var body=_fdBreakCtx.rows.map(function(row,i){
+    var expanded=_fdBreakCtx.expandIdx===i;
+    var main='<tr class="fd-break-main'+(expanded?' is-expanded':'')+'" data-fd-idx="'+i+'">'+
+      '<td class="fd-col-group">'+escapeHtmlText(forceDistGroupLabel(row))+'</td>'+
+      '<td class="fd-col-grade">'+escapeHtmlText(row.grade)+'</td>'+
+      '<td class="fd-col-req">'+renderForceDistReqHtml(row)+'</td>'+
+      '<td class="fd-col-advice">'+escapeHtmlText(formatForceDistAdvice(row))+'</td>'+
+      '<td class="fd-col-list">'+buildFdBreakListHtml(row)+'</td>'+
+      '<td class="fd-col-action">'+buildFdBreakActionHtml(i,row)+'</td>'+
+    '</tr>';
+    if(!expanded)return main;
+    return main+
+      '<tr class="fd-break-detail" data-fd-idx="'+i+'">'+
+        '<td colspan="6">'+buildFdBreakDetailHtml(i,row)+'</td>'+
+      '</tr>';
+  }).join('');
   return '<table class="fd-fail-table">'+
-    '<thead><tr><th class="fd-col-group">考核组</th><th class="fd-col-grade">等级</th><th class="fd-col-advice">调整建议</th><th class="fd-col-action">操作</th></tr></thead>'+
+    '<thead><tr><th class="fd-col-group">考核组</th><th class="fd-col-grade">等级</th><th class="fd-col-req">要求</th><th class="fd-col-advice">调整要求</th><th class="fd-col-list">申请突破名单</th><th class="fd-col-action">操作</th></tr></thead>'+
     '<tbody>'+body+'</tbody></table>';
 }
 
 function buildFdBreakToastHtml(rows){
-  var actionTip=currentStep>=3?'无法提交':'无法继续';
-  return '<p class="fd-fail-lead">强制分布未达标：</p>'+
-    renderForceDistFailTable(rows)+
-    '<div id="fdBreakFormHost"></div>'+
-    '<p class="fd-fail-foot">'+actionTip+'</p>';
+  return '<p class="fd-fail-lead">以下考核组/等级不符合要求，请调整</p>'+
+    renderForceDistFailTable(rows);
+}
+
+/** 刷新强控 toast / 弱控弹窗内失败表 */
+function refreshFdBreakTableUI(){
+  if(!_fdBreakCtx.rows||!_fdBreakCtx.rows.length)return;
+  var tableHtml=renderForceDistFailTable(_fdBreakCtx.rows);
+  var msgEl=document.getElementById('toastMsg');
+  var warnBody=document.getElementById('forceDistWarnBody');
+  var toastOpen=document.getElementById('toast');
+  toastOpen=toastOpen&&toastOpen.classList.contains('open');
+  var warnOpen=document.getElementById('forceDistWarnModal');
+  warnOpen=warnOpen&&warnOpen.classList.contains('open');
+  if(msgEl&&(toastOpen||msgEl.querySelector('.fd-fail-table'))){
+    msgEl.innerHTML=buildFdBreakToastHtml(_fdBreakCtx.rows);
+    msgEl.classList.add('has-html');
+  }
+  if(warnBody&&(warnOpen||warnBody.querySelector('.fd-fail-table'))){
+    warnBody.innerHTML='<p class="fd-fail-lead">以下范围未满足强制分布规则，弱控模式下可继续：</p>'+tableHtml;
+  }
+  syncFdToastFooterBtn();
 }
 
 function refreshFdBreakToastBody(){
-  var msgEl=document.getElementById('toastMsg');
-  if(!msgEl||!_fdBreakCtx.rows||!_fdBreakCtx.rows.length)return;
-  msgEl.innerHTML=buildFdBreakToastHtml(_fdBreakCtx.rows);
-  msgEl.classList.add('has-html');
-  if(_fdBreakCtx.formIdx>=0){
-    renderFdBreakFormIntoHost(_fdBreakCtx.formIdx,_fdBreakCtx.formReadonly);
-  }
+  refreshFdBreakTableUI();
 }
 
-function openFdBreakForm(idx,readonly){
+function collapseFdBreakDetail(){
+  if(!_fdBreakCtx)return;
+  _fdBreakCtx.expandIdx=-1;
+  _fdBreakCtx.expandReadonly=false;
+  _fdBreakCtx.draftReasons={};
+  _fdBreakCtx.searchQ='';
+  refreshFdBreakTableUI();
+}
+
+function toggleFdBreakDetail(idx,readonly){
   var row=_fdBreakCtx.rows[idx];
   if(!row)return;
-  var key=fdBreakRowKey(row);
-  var applied=_fdBreakCtx.applies[key];
-  if(!readonly&&applied)readonly=true;
-  if(!readonly&&!fdBreakCandidates(row).length)return;
-  _fdBreakCtx.formIdx=idx;
-  _fdBreakCtx.formReadonly=!!readonly;
-  renderFdBreakFormIntoHost(idx,!!readonly);
-  var host=document.getElementById('fdBreakFormHost');
-  if(host&&host.scrollIntoView)host.scrollIntoView({behavior:'smooth',block:'nearest'});
-}
-
-function cancelFdBreakForm(){
-  _fdBreakCtx.formIdx=-1;
-  _fdBreakCtx.formReadonly=false;
-  var host=document.getElementById('fdBreakFormHost');
-  if(host)host.innerHTML='';
-}
-
-function renderFdBreakFormIntoHost(idx,readonly){
-  var host=document.getElementById('fdBreakFormHost');
-  var row=_fdBreakCtx.rows[idx];
-  if(!host||!row)return;
-  var key=fdBreakRowKey(row);
-  var applied=_fdBreakCtx.applies[key];
-  var cands=fdBreakCandidates(row);
-  var opts='<option value="">请选择人员</option>'+cands.map(function(m){
-    var i=MEMBERS.indexOf(m);
-    var sel=applied&&applied.memberIdx===i?' selected':'';
-    return '<option value="'+i+'"'+sel+'>'+escapeHtmlText(m.name+'('+m.employeeId+')')+'</option>';
-  }).join('');
-  if(readonly&&applied&&cands.every(function(m){return MEMBERS.indexOf(m)!==applied.memberIdx;})){
-    opts='<option value="'+applied.memberIdx+'" selected>'+escapeHtmlText(applied.name+'('+applied.empId+')')+'</option>';
+  if(_fdBreakCtx.expandIdx===idx){
+    collapseFdBreakDetail();
+    return;
   }
-  var reasonVal=applied?escapeHtmlText(applied.reason||''):'';
-  var actions=readonly
-    ?'<button type="button" class="btn btn-s" onclick="cancelFdBreakForm()">关闭</button>'
-    :'<button type="button" class="btn btn-s" onclick="cancelFdBreakForm()">取消</button>'+
-     '<button type="button" class="btn btn-p" onclick="submitFdBreakApply()">提交申请</button>';
-  host.innerHTML=
-    '<div class="fd-break-form'+(readonly?' is-readonly':'')+'" id="fdBreakForm">'+
-      '<div class="fd-break-form-title">'+(readonly?'已申请突破':'申请突破')+'</div>'+
-      '<div class="fd-break-meta">'+
-        '<div>考核组：<b>'+escapeHtmlText(forceDistGroupLabel(row))+'</b></div>'+
-        '<div>目标等级：<b>'+escapeHtmlText(row.grade)+'</b></div>'+
-      '</div>'+
-      '<div class="adj-field" id="fdBreakPersonField">'+
-        '<label class="adj-field-label" for="fdBreakPerson">人员<span class="req">*</span></label>'+
-        '<select id="fdBreakPerson"'+(readonly?' disabled':'')+'>'+opts+'</select>'+
-        '<div class="adj-field-err">请选择人员</div>'+
-      '</div>'+
-      '<div class="adj-field" id="fdBreakReasonField">'+
-        '<label class="adj-field-label" for="fdBreakReason">申请原因<span class="req">*</span></label>'+
-        '<textarea id="fdBreakReason" rows="3" placeholder="请填写申请突破的原因"'+(readonly?' disabled':'')+'>'+reasonVal+'</textarea>'+
-        '<div class="adj-field-err">请填写申请原因</div>'+
-      '</div>'+
-      '<div class="fd-break-form-actions">'+actions+'</div>'+
-    '</div>';
+  var appliedItems=fdBreakApplyItems(_fdBreakCtx.applies[fdBreakRowKey(row)]);
+  readonly=!!readonly;
+  if(!readonly){
+    if(appliedItems.length){
+      if(!fdBreakRemainingCandidates(row).length)readonly=true;
+    }else if(!fdBreakCandidates(row).length){
+      return;
+    }
+  }
+  _fdBreakCtx.expandIdx=idx;
+  _fdBreakCtx.expandReadonly=readonly;
+  _fdBreakCtx.draftReasons={};
+  _fdBreakCtx.searchQ='';
+  refreshFdBreakTableUI();
 }
 
-function submitFdBreakApply(){
-  var idx=_fdBreakCtx.formIdx;
-  var row=_fdBreakCtx.rows[idx];
-  if(!row||_fdBreakCtx.formReadonly)return;
-  var personField=document.getElementById('fdBreakPersonField');
-  var reasonField=document.getElementById('fdBreakReasonField');
-  var personSel=document.getElementById('fdBreakPerson');
-  var reasonEl=document.getElementById('fdBreakReason');
-  if(personField)personField.classList.remove('invalid');
-  if(reasonField)reasonField.classList.remove('invalid');
-  var mi=personSel?parseInt(personSel.value,10):-1;
-  var reason=(reasonEl&&reasonEl.value||'').trim();
-  var ok=true;
-  if(!(mi>=0)||!MEMBERS[mi]){if(personField)personField.classList.add('invalid');ok=false;}
-  if(!reason){if(reasonField)reasonField.classList.add('invalid');ok=false;}
-  if(!ok)return;
-  var m=MEMBERS[mi];
+/** 兼容旧调用名（不再使用 #fdBreakModal） */
+function openFdBreakModal(idx,readonly){toggleFdBreakDetail(idx,readonly);}
+function closeFdBreakModal(){collapseFdBreakDetail();}
+function openFdBreakForm(idx,readonly){toggleFdBreakDetail(idx,readonly);}
+function cancelFdBreakForm(){collapseFdBreakDetail();}
+
+function applyOneFdBreakMember(m,row,reason){
   var from=fdBreakCurrentOf(m,row.side);
   var to=row.grade;
-  m.breakthroughApply=true;
-  if(!m.abnormalType)m.abnormalType='申请突破';
-  m.breakthroughApplyDetail={
+  var ts=adjTimestamp();
+  var side=row.side||'绩效';
+  var detail={
     group:row.group,
-    side:row.side,
+    side:side,
     target:to,
     from:from,
     reason:reason,
-    time:adjTimestamp()
+    time:ts
   };
-  if(row.side==='能力'){
+  m.breakthroughApply=true;
+  if(!m.abnormalType)m.abnormalType='申请突破';
+  m.breakthroughApplyDetail=detail;
+  m.breakthroughApplyBySide=m.breakthroughApplyBySide||{};
+  m.breakthroughApplyBySide[side]=detail;
+  if(side==='能力'){
     m.initCapAdj={
       node:'强制分布突破申请',
       who:'当前用户',
@@ -4501,23 +5196,36 @@ function submitFdBreakApply(){
     };
   }
   pushMemberAdjHist(m,{
-    time:adjTimestamp(),
+    time:ts,
     who:'当前用户',
-    type:row.side==='能力'?'能力':'等级',
+    type:side==='能力'?'能力':'等级',
     from:from,
     to:to,
     reason:reason
   });
-  _fdBreakCtx.applies[fdBreakRowKey(row)]={
-    memberIdx:mi,
-    name:m.name,
-    empId:m.employeeId||'',
-    reason:reason,
-    from:from,
-    to:to
-  };
-  _fdBreakCtx.formIdx=-1;
-  _fdBreakCtx.formReadonly=false;
+  return {memberIdx:MEMBERS.indexOf(m),name:m.name,empId:m.employeeId||'',reason:reason,from:from,to:to,side:side};
+}
+function saveFdBreakPerson(mi){
+  var idx=_fdBreakCtx.expandIdx;
+  var row=_fdBreakCtx.rows[idx];
+  mi=mi==null?-1:mi;
+  if(!row||_fdBreakCtx.expandReadonly||!(mi>=0)||!MEMBERS[mi])return;
+  var ta=document.querySelector('#fdBreakPersonList .fd-break-reason-input[data-mi="'+mi+'"]');
+  if(!_fdBreakCtx.draftReasons)_fdBreakCtx.draftReasons={};
+  if(ta)_fdBreakCtx.draftReasons[mi]=ta.value;
+  if(ta)ta.classList.remove('is-invalid');
+  var reason=String(_fdBreakCtx.draftReasons[mi]||'').trim();
+  if(!reason){
+    if(ta)ta.classList.add('is-invalid');
+    return;
+  }
+  var appliedSet=fdBreakAppliedIdxSet(fdBreakApplyItems(_fdBreakCtx.applies[fdBreakRowKey(row)]));
+  if(appliedSet[mi])return;
+  var prev=fdBreakApplyItems(_fdBreakCtx.applies[fdBreakRowKey(row)]);
+  var item=applyOneFdBreakMember(MEMBERS[mi],row,reason);
+  _fdBreakCtx.applies[fdBreakRowKey(row)]={items:prev.concat([item])};
+  delete _fdBreakCtx.draftReasons[mi];
+  if(!fdBreakRemainingCandidates(row).length)_fdBreakCtx.expandReadonly=true;
   refreshFdBreakToastBody();
   if(currentStep===3){
     if(typeof renderBox==='function')renderBox();
@@ -4525,11 +5233,16 @@ function submitFdBreakApply(){
     renderMembers();
   }
 }
+/** 兼容旧调用名 */
+function submitFdBreakApply(mi){saveFdBreakPerson(mi);}
 
 function showForceDistBlockToast(info){
-  _fdBreakCtx.formIdx=-1;
-  _fdBreakCtx.formReadonly=false;
-  showToast(buildFdBreakToastHtml(info.rows||[]),'warn',{html:true,wide:true});
+  closeFdBreakModal();
+  showToast(buildFdBreakToastHtml(info.rows||[]),'warn',{
+    html:true,
+    wide:true,
+    title:'请调整等级'
+  });
 }
 
 /** 按控制范围逐组校验；返回 {rows:[{group,grade,actual,limit,direction,delta,...}], isStrong} 或 null */
@@ -4559,6 +5272,85 @@ function collectForceDistFails(opts){
   if(!rows.length)return null;
   return {rows:rows,isStrong:true};
 }
+
+/** 默认 mock：其余缺口预填已申请，只留 1 人待突破，便于一次保存后全部 ✅ */
+function seedFdBreakAppliesDemo(){
+  if(!_fdBreakCtx||!_fdBreakCtx.applies)return;
+  var info=collectForceDistFails({grade:true,cap:true});
+  if(!info||!info.rows||!info.rows.length)return;
+  function foldExistingBreakthroughs(){
+    MEMBERS.forEach(function(m,mi){
+      if(!m||!m.reached)return;
+      ['绩效','能力'].forEach(function(side){
+        var d=memberBreakthroughDetail(m,side);
+        if(!d)return;
+        var key=String(d.group||m.group||'')+'|'+side+'|'+String(d.target||'');
+        var fail=null;
+        info.rows.forEach(function(r){if(fdBreakRowKey(r)===key)fail=r;});
+        if(!fail)return;
+        var prev=fdBreakApplyItems(_fdBreakCtx.applies[key]);
+        if(fdBreakAppliedIdxSet(prev)[mi])return;
+        _fdBreakCtx.applies[key]={items:prev.concat([{
+          memberIdx:mi,
+          name:m.name,
+          empId:m.employeeId||'',
+          reason:d.reason||'已申请突破',
+          from:d.from||'',
+          to:d.target||'',
+          side:side
+        }])};
+      });
+    });
+  }
+  function remainOf(row){
+    return Math.max(0,(+row.delta||0)-fdBreakApplyItems(_fdBreakCtx.applies[fdBreakRowKey(row)]).length);
+  }
+  function pickReservedKey(){
+    var i,row,remain,best=null,bestRemain=9999;
+    for(i=0;i<info.rows.length;i++){
+      row=info.rows[i];
+      if(row.side!=='绩效'||row.direction!=='over')continue;
+      remain=remainOf(row);
+      if(remain===1)return fdBreakRowKey(row);
+      if(remain>1&&remain<bestRemain){bestRemain=remain;best=fdBreakRowKey(row);}
+    }
+    for(i=0;i<info.rows.length;i++){
+      row=info.rows[i];
+      remain=remainOf(row);
+      if(remain>=1)return fdBreakRowKey(row);
+    }
+    return best;
+  }
+  foldExistingBreakthroughs();
+  var reservedKey=pickReservedKey();
+  info.rows.forEach(function(row){
+    var key=fdBreakRowKey(row);
+    var prev=fdBreakApplyItems(_fdBreakCtx.applies[key]);
+    var need=Math.max(0,(+row.delta||0)-prev.length);
+    if(key===reservedKey)need=Math.max(0,need-1);
+    if(need<=0)return;
+    var appliedSet=fdBreakAppliedIdxSet(prev);
+    var extra=[];
+    fdBreakCandidates(row).forEach(function(m){
+      if(extra.length>=need)return;
+      var mi=MEMBERS.indexOf(m);
+      if(mi<0||appliedSet[mi])return;
+      extra.push({
+        memberIdx:mi,
+        name:m.name,
+        empId:m.employeeId||'',
+        reason:'已申请突破强制分布：'+forceDistGroupLabel(row)+'「'+row.grade+'」'+
+          (row.direction==='over'?'上限已满':'人数不足')+'，待 HRBP 复核',
+        from:fdBreakCurrentOf(m,row.side),
+        to:row.grade,
+        side:row.side||'绩效'
+      });
+      appliedSet[mi]=true;
+    });
+    if(extra.length)_fdBreakCtx.applies[key]={items:prev.concat(extra)};
+  });
+}
+seedFdBreakAppliesDemo();
 
 function forceDistCheckOptsForStep(){
   if(currentStep===1)return {grade:true,cap:false};
@@ -5015,7 +5807,7 @@ function boxAdjFoldHtml(m){
   var from=boxFieldText(m.nodeOrig.boxKey)||'';
   var to=boxFieldText(boxKeyOf(m))||'';
   if(from&&to&&from!==to)return nodeAdjBadgeHtml(from,to);
-  return '<span class="node-adj-fold" title="本节点已调整"></span>';
+  return '<span class="node-adj-mark" title="本节点已调整" aria-label="已调整">✍️</span>';
 }
 
 function setBoxView(mode){
@@ -5154,11 +5946,15 @@ function openTierReasonModal(opts){
   if(APPROVE_MODE||!opts)return;
   var m=MEMBERS[opts.idx];
   if(!m||!m.reached)return;
+  var currentLabel=opts.current||opts.from||'—';
+  var initLabel=opts.init||opts.from||'—';
+  var toLabel=opts.to||'—';
   pendingAdj={
     mode:opts.mode,
     idx:opts.idx,
-    from:opts.from,
-    to:opts.to,
+    from:currentLabel,
+    init:initLabel,
+    to:toLabel,
     manual:false,
     needGrade:false
   };
@@ -5171,19 +5967,28 @@ function openTierReasonModal(opts){
   var reasonField=document.getElementById('adjReasonField');
   var reasonInput=document.getElementById('adjReasonInput');
   if(title)title.textContent=opts.title||'跨档调整';
+  var gapN=opts.mode==='tierCap'
+    ?tierGap(capTierIndex(initLabel),capTierIndex(toLabel))
+    :tierGap(gradeTierIndex(initLabel),gradeTierIndex(toLabel));
   if(meta){
-    var kindLabel=opts.mode==='tierCap'?'能力':'等级';
-    meta.innerHTML='将 <b>'+m.name+'</b> 的'+kindLabel+'从「'+(opts.from||'—')+'」调整到「'+(opts.to||'—')+'」'+
-      '<br>跨 2 档及以上须填写调整原因';
+    var job=m.employeeId||'—';
+    var metaHtml=escapeHtmlText(m.name||'')+'('+escapeHtmlText(job)+')：当前「'+escapeHtmlText(currentLabel)+'」→ 调整为「'+escapeHtmlText(toLabel)+'」';
+    if(gapN>=2){
+      metaHtml+='<br><span class="adj-meta-hint">相对初评('+escapeHtmlText(initLabel)+')跨 '+gapN+' 档调整，须填写调整原因</span>';
+    }
+    meta.innerHTML=metaHtml;
   }
   if(boxField){boxField.style.display='none';boxField.classList.remove('invalid');}
   if(gradeField){gradeField.style.display='none';gradeField.classList.remove('invalid');}
-  if(reasonField){reasonField.style.display='';reasonField.classList.remove('invalid');}
-  if(reasonInput)reasonInput.value='';
+  if(reasonField){
+    reasonField.style.display=gapN>=2?'':'none';
+    reasonField.classList.remove('invalid');
+  }
+  if(reasonInput)reasonInput.value=m.adjustReason||'';
   var modal=document.getElementById('adjModal');
   modal.classList.add('open');
   modal.setAttribute('aria-hidden','false');
-  setTimeout(function(){if(reasonInput)reasonInput.focus();},40);
+  setTimeout(function(){if(reasonInput&&gapN>=2)reasonInput.focus();},40);
 }
 
 function fillAdjBoxSelect(selectedKey,excludeKey){
@@ -5447,30 +6252,32 @@ function closeChipPop(){
 
 var chipTipTimer=null;
 function nameTipHtml(m,idx){
-  var boxKey=m.capability?(perfBand(m)+'-'+m.capability):'';
-  var box=boxKey?(boxFieldText(boxKey)||'—'):'—';
-  var prevNum=m.prevBox?boxNumOf(m.prevBox):0;
+  var prevBox=m.prevBox?(boxFieldText(m.prevBox)||String(boxNumOf(m.prevBox)||'—')):'—';
   var rows=[
-    ['姓名',m.name],
-    ['工号',m.employeeId],
-    ['部门',m.dept],
-    ['职位',m.role],
-    ['职级',m.level],
-    ['累计司龄(年)',m.tenure],
-    ['考核组',m.group],
-    ['划分区域',m.region],
-    ['审定绩效',(m.ratifyGrade||m.grade||'—')+'（'+perfBand(m)+'）'],
-    ['能力',m.capability||'—'],
-    ['九宫格',box],
-    ['上年盘点结果',prevNum||'—']
+    ['姓名(工号)',m.name+'('+(m.employeeId||'—')+')'],
+    ['当前部门',m.dept||'—'],
+    ['职位',m.role||'—'],
+    ['职级',m.level||'—'],
+    ['考核组',m.group||'—'],
+    ['初评绩效等级',m.grade||'—'],
+    ['初评能力等级',m.initCapability||'—'],
+    ['上年格子',prevBox]
   ];
   var html=rows.map(function(r){return '<div class="chip-tip-row"><span class="chip-tip-k">'+r[0]+'</span><span class="chip-tip-v">'+r[1]+'</span></div>';}).join('');
-  var abnLabels=exceptionFlagTexts(m);
-  if(abnLabels.length){
-    html+='<div class="chip-tip-abn"><b>'+abnLabels.join('、')+'</b></div>';
+  var abnItems=exceptionFlagItems(m);
+  if(abnItems.length){
+    html+='<div class="chip-tip-abn">'+abnItems.map(function(it){
+      var line='<b>'+escapeHtmlText(it.text)+'</b>';
+      if(it.reason)line+=' '+escapeHtmlText(it.reason);
+      return '<div class="chip-tip-abn-line">'+line+'</div>';
+    }).join('')+'</div>';
   }
-  if(idx!=null&&!APPROVE_MODE&&currentStep===3&&m.reached){
-    html+='<div class="chip-tip-act"><button class="btn btn-s btn-sm" type="button" onclick="event.stopPropagation();hideChipTip();openManualAdj('+idx+')">调整格子…</button></div>';
+  if(idx!=null&&!APPROVE_MODE){
+    var acts='<button class="chip-tip-link" type="button" onclick="event.stopPropagation();openAdjHistModal('+idx+')">调整记录</button>';
+    if(currentStep===3&&m.reached){
+      acts+='<button class="btn btn-s btn-sm" type="button" onclick="event.stopPropagation();hideChipTip();openManualAdj('+idx+')">调整格子…</button>';
+    }
+    html+='<div class="chip-tip-act">'+acts+'</div>';
   }
   return html;
 }
@@ -5494,8 +6301,8 @@ function onMemberEnter(event,idx){
     if(!m||!el)return;
     var tip=document.getElementById('chipTip');
     if(tip.parentNode!==document.body)document.body.appendChild(tip);
-    tip.classList.remove('interactive');
-    tip.innerHTML=nameTipHtml(m);
+    tip.classList.toggle('interactive',!APPROVE_MODE);
+    tip.innerHTML=nameTipHtml(m,idx);
     tip.classList.add('open');
     placeNearChip(el,tip,8);
   },80);
@@ -5510,7 +6317,7 @@ function onChipEnter(event,idx){
     if(!m||!el)return;
     var tip=document.getElementById('chipTip');
     if(tip.parentNode!==document.body)document.body.appendChild(tip);
-    tip.classList.toggle('interactive',!APPROVE_MODE&&currentStep===3);
+    tip.classList.toggle('interactive',!APPROVE_MODE);
     tip.innerHTML=nameTipHtml(m,idx);
     tip.classList.add('open');
     placeNearChip(el,tip,8);
@@ -5539,6 +6346,22 @@ function hideChipTip(){
 applyApproveMode();
 if(APPROVE_MODE)goStep(3);
 else renderAll();
+
+/* 演示：?showUnfilledModal=1 清空若干人调整等级并弹出「未填写」提示卡（仅 query 生效） */
+(function demoShowUnfilledModal(){
+  try{
+    if(new URLSearchParams(location.search).get('showUnfilledModal')!=='1')return;
+  }catch(e){return;}
+  if(APPROVE_MODE)return;
+  currentStep=1;
+  updateStepUI();
+  ['秦明涛','许恒勇','孙秀刚','夏涛阳','沈宁龙'].forEach(function(name){
+    var m=MEMBERS.filter(function(x){return x.name===name;})[0];
+    if(m&&m.reached)m.ratifyGrade='';
+  });
+  renderAll();
+  setTimeout(function(){requestPrimary();},80);
+})();
 
 </script>
 </body>
