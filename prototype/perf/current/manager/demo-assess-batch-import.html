@@ -58,6 +58,25 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 }
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .fade-in{animation:fadeIn .2s ease forwards}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:2600;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--sf);border-radius:var(--r3);box-shadow:0 20px 60px rgba(0,0,0,.15);width:480px;max-width:92vw;display:flex;flex-direction:column;overflow:hidden}
+.modal-hd{padding:14px 18px;border-bottom:1px solid var(--dv);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.modal-title{font:600 16px/1.2 var(--f);color:var(--c9)}
+.modal-close{width:28px;height:28px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:transparent;color:var(--c5);font-size:18px;line-height:1}
+.modal-close:hover{background:var(--c1);color:var(--c7)}
+.modal-bd{padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.modal-ft{padding:12px 18px;border-top:1px solid var(--dv);display:flex;justify-content:flex-end;gap:8px}
+.submit-hint{font:400 13px/1.5 var(--f);color:var(--c7);margin:0}
+.submit-hint b{font-weight:600;color:var(--c9)}
+.submit-empty{font:400 13px/1.5 var(--f);color:var(--c6);padding:4px 0;margin:0}
+.submit-list-label{font:600 12px/1 var(--f);color:var(--c6)}
+.submit-list{display:flex;flex-direction:column;gap:8px;max-height:min(48vh,360px);overflow:auto;margin:0;padding:0;list-style:none}
+.submit-item{display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--c2);border-radius:var(--r2);background:var(--c0);white-space:nowrap}
+.submit-name{font:600 13px/1.3 var(--f);color:var(--c8)}
+.submit-id{font:400 12px/1 var(--m);color:var(--c5)}
+.submit-sep{font:400 12px/1 var(--f);color:var(--c3)}
+.submit-meta{font:400 12px/1.4 var(--f);color:var(--c6)}
 </style>
 </head>
 <body>
@@ -133,6 +152,20 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
       <tbody id="tableBody"></tbody>
     </table>
     <div class="pager" id="pager"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="submitModal" aria-hidden="true" onclick="closeSubmitConfirm()">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="submitModalTitle" onclick="event.stopPropagation()">
+    <div class="modal-hd">
+      <div class="modal-title" id="submitModalTitle">确认提交</div>
+      <button class="modal-close" type="button" aria-label="关闭" onclick="closeSubmitConfirm()">×</button>
+    </div>
+    <div class="modal-bd" id="submitModalBody"></div>
+    <div class="modal-ft">
+      <button class="btn btn-s" type="button" onclick="closeSubmitConfirm()">取消</button>
+      <button class="btn btn-p" type="button" id="submitModalOk" onclick="confirmAssessImport()">确认提交</button>
+    </div>
   </div>
 </div>
 
@@ -301,7 +334,40 @@ function handleImport(e){
   e.target.value='';
 }
 
+function getUnimported(){
+  return EMPLOYEES.filter(function(e){return statusOf(e)==='待导入';});
+}
+
 function submitAssessImport(){
+  var pending=getUnimported();
+  var body=document.getElementById('submitModalBody');
+  var modal=document.getElementById('submitModal');
+  if(!body||!modal)return;
+  if(!pending.length){
+    body.innerHTML='<p class="submit-empty">全部人员已导入测评结果，确认提交？</p>';
+  }else{
+    var rows=pending.map(function(emp){
+      return '<li class="submit-item"><span class="submit-name">'+emp.name+'<span class="submit-id">('+emp.employeeId+')</span></span><span class="submit-sep">|</span><span class="submit-meta">'+(emp.dept||'—')+'</span><span class="submit-sep">|</span><span class="submit-meta">'+(emp.group||'—')+'</span></li>';
+    }).join('');
+    body.innerHTML='<p class="submit-hint">尚有 <b>'+pending.length+'</b> 人未导入测评结果。提交后仅已导入人员生效。</p>'+
+      '<div class="submit-list-label">未导入名单</div>'+
+      '<ul class="submit-list">'+rows+'</ul>';
+  }
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden','false');
+  var ok=document.getElementById('submitModalOk');
+  if(ok)ok.focus();
+}
+
+function closeSubmitConfirm(){
+  var modal=document.getElementById('submitModal');
+  if(!modal)return;
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden','true');
+}
+
+function confirmAssessImport(){
+  closeSubmitConfirm();
   var success=[];var failed=[];
   EMPLOYEES.forEach(function(emp){
     if(emp.score360==null||emp.assessScore==null){
@@ -316,6 +382,11 @@ function submitAssessImport(){
   console.info('测评正式提交校验结果',{success:success,failed:failed});
 }
 function showToast(msg,type){var t=document.getElementById('toast');t.textContent=msg;t.className='toast '+(type||'success')+' show';setTimeout(function(){t.classList.remove('show')},4000);}
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Escape')return;
+  var modal=document.getElementById('submitModal');
+  if(modal&&modal.classList.contains('open'))closeSubmitConfirm();
+});
 render();
 </script>
 </body>

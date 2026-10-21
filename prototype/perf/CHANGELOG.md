@@ -1,5 +1,187 @@
 # 变更记录
 
+## 2026-10-21 九宫格名单「调整记录」并入姓名悬停卡
+
+- `demo-yearly-tr.html`：名单操作列去掉时钟「调整记录」图标；悬停姓名/人员 chip 打开原人员卡，点卡内「调整记录」打开同一弹窗。操作列只留铅笔「调整」。
+
+## 2026-10-20 组卡 2×2 表头竖排/叠图修复
+
+- `demo-yearly-tr.html`：展开组卡去掉「是否符合」80px 与 px/% 混用 colgroup；表头强制横排 nowrap。卡不够宽时表在上、图在下（auto-fit），标准虚线裁在图内，不再叠到表上。
+
+## 2026-10-20 测评导入确认名单改单行
+
+- `demo-assess-batch-import.html`：提交确认框未导入名单改为单行 `姓名(工号) | 部门 | 考核组`，考核组取 mock `group`。
+
+## 2026-10-20 组卡「是否符合」列宽 + 横向柱对齐月度
+
+- `demo-yearly-tr.html`：组卡 `.dist-status-table`「是否符合」列固定 80px、去掉省略号，表头完整显示。
+- 组卡图保持横向 `cap-bar-row`（不改轴向）：灰底「调整前」+ 红/绿「当前」+ 琥珀虚线「标准」+ Δ chip + 刻度网，点行仍走 `selectGroupGradeRow` / `selectGroupCapRow`。
+
+## 2026-10-20 测评导入提交前确认未导入名单
+
+- `demo-assess-batch-import.html`：点「提交」先弹出确认框，列出未导入人员（姓名+工号，同列表列）；取消不提交，确认后才走原提交结果 toast。全员已导入时仍二次确认。
+
+## 2026-10-20 组卡分布图对齐月度逐级审定
+
+- `demo-yearly-tr.html`：右侧组卡 `.group-panel-chart` 改为复用月度 `demo-ratify-hierarchy.html` 的 Chart.js 柱线（灰底「调整前」、红绿「当前」、琥珀虚线「标准」）；点柱仍走 `selectGroupGradeRow` / `selectGroupCapRow`。左表列宽与「是否符合」表头不加省略号的改动未动。
+
+## 2026-10-20 组卡分布表「是否符合」列加宽
+
+- `demo-yearly-tr.html`：右侧组卡 `.dist-status-table` 去掉表头 `ellipsis`；「当前 / 是否符合」列加宽（16% / 22%），表头完整显示不再出现「当前是…」。
+
+## 2026-10-20 FD 失败 toast 一次突破即可满足
+
+- `demo-yearly-tr.html`：默认 mock 预填其余突破申请，只留 1 人缺口；全部「调整要求」为 ✅ 后底部主按钮「知道了」改为「确定」，仍走 `closeToast`。
+
+## 2026-10-20 强制分布失败 toast 标题
+
+- `demo-yearly-tr.html`：强控失败提示卡标题「当前等级不符合强制分布规则要求」→「请调整等级」（仅 FD fail）。
+
+## 2026-10-20 调整要求随突破申请动态扣减
+
+- `demo-yearly-tr.html`：失败表「调整要求」按 `需调整 − 已申请` 计算；剩余为 0 显示 ✅，否则仍为 `-N人` / `+N人`；子表保存「已申请」后随名单列一并刷新。
+
+## 2026-10-20 突破展开明细精简
+
+- `demo-yearly-tr.html`：展开明细去掉重复「收起」、提示文、标题栏、「当前等级」与独立「工号」列；姓名改为 `姓名(工号)`；收起只留操作列。
+
+## 2026-10-20 突破展开改为人员子行表
+
+- `demo-yearly-tr.html`：展开明细去掉 `button.fd-break-person-item` 列表 + 独立原因面板；改为嵌套子表（姓名 / 工号 / 部门 / 当前等级 / 申请原因 / 操作）；原因列内联编辑，保存后只读并显示「已申请」；搜索过滤子行；展开收起、名单 chips、步骤 side 隔离不变。
+
+## 2026-10-20 申请突破合并到考核组行下展开
+
+- `demo-yearly-tr.html`：去掉 `#fdBreakModal` 主流程；点「申请突破 / 继续申请 / 查看」在该考核组行下展开明细；点选一人填原因后「保存」；结果留在展开区且「申请突破名单」列 chips 同步；操作列支持「收起」。仍保留一人一原因、仅当前步骤 side、考核组去括号后缀。
+
+## 2026-10-20 申请突破人员列表支持收起
+
+- `demo-yearly-tr.html`：`#fdBreakModal` 人员字段标题增加「收起 / 展开」；收起后隐藏 `#fdBreakPersonList`，保留已选 chips 与搜索；打开默认展开，搜索聚焦/输入时自动展开。
+
+## 2026-10-20 FD 失败表考核组去括号 + 突破仅当前步骤
+
+- `demo-yearly-tr.html`：失败表/突破弹窗考核组不再拼 `（绩效）`/`（能力）`，并剥离末尾括号后缀；申请突破按当前步骤 side 隔离（名单 chip、弹窗已申请标记、按 side 存 `breakthroughApplyBySide`），不串步骤。
+
+## 2026-10-19 FD 失败表新增「申请突破名单」列
+
+- `demo-yearly-tr.html`：未达标表在「调整要求」与「操作」之间新增「申请突破名单」列；姓名 chips +「已申请 · N人」迁入该列，悬停仍看原因；无人时显示 `—`；「申请突破 / 继续申请 / 查看」仅留在操作列。
+
+## 2026-10-19 申请突破改为独立弹窗
+
+- `demo-yearly-tr.html`：去掉失败表行内展开的 checkbox 墙；点「申请突破」打开独立弹窗（考核组/目标等级、搜索+多选、每人原因）；提交后操作列回显姓名 chips +「已申请 · N人」，悬停看原因；可「继续申请」或「查看」；已突破者琥珀色 badge。
+
+## 2026-10-19 申请突破支持多人各填原因
+
+- `demo-yearly-tr.html`：行内「申请突破」表单人员改为多选勾选列表；每勾选一人展开独立「申请原因* · 姓名(工号)」文本框；未选人时无原因区且提交禁用；提交校验每人原因非空后一次写入多人突破；名单中已有「申请突破」者旁显示琥珀色 chip。
+
+## 2026-10-19 申请突破改为行内展开
+
+- `demo-yearly-tr.html`：强制分布未达标表点「申请突破」/「已申请」时，在该行下方展开子行表单（人员、原因、取消/提交），不再使用底部 `#fdBreakFormHost`；同时仅一行展开，取消/再点收起；校验与提交 mock 逻辑不变。
+
+## 2026-10-19 强制分布失败弹窗与「要求」列加宽
+
+- `demo-yearly-tr.html`：`.notice-card.wide` 由 640px 改为 `min(92vw, 900px)`；`.fd-col-req` 增加 `min-width:220px`，单条规则 tip 少换行，多条规则仍分行。
+
+## 2026-10-19 FD 失败表「调整要求」精简
+
+- `demo-yearly-tr.html`：`th.fd-col-advice`「调整建议」→「调整要求」；单元格仅显示 `+/-N人`（超限 `-1人`、不足 `+3人`），去掉「实际/上限/需减少」长文案。
+
+## 2026-10-19 强制分布失败 toast 文案与「要求」列
+
+- `demo-yearly-tr.html`：强控失败提示卡去掉底部「无法继续／无法提交」；标题「当前等级不符合强制分布规则要求」（仅 FD fail）；lead「以下考核组/等级不符合要求，请调整」；表在「等级」旁新增「要求」列，列出覆盖该等级的分布规则 tip（多条分行，与组卡悬停 tip 同文案）。
+
+## 2026-10-19 演示：未填写等级提示卡 query
+
+- `demo-yearly-tr.html`：`?showUnfilledModal=1` 时临时清空若干人调整等级并调用 `requestPrimary()`，弹出「请先完成绩效等级：…未填写」提示卡；无该参数时行为不变。
+
+## 2026-10-19 盘点规则按钮文案
+
+- `demo-yearly-tr.html`：`openRulesModal()` 按钮可见文案与 title 改为「查看年度绩效盘点规则」。
+
+## 2026-10-19 节点调整标识改为等级名右侧 ✍️
+
+- `demo-yearly-tr.html`：停用 `.node-adj-fold` 左上角蓝三角；相对本节点初评有调整时，在等级名 / 能力文案右侧追加 `✍️`（悬停仍显示「本节点已调整：A → B」）；星级列、校准能力段、九宫格能力/格子列同步。
+
+## 2026-10-19 快速筛选改为行末平铺芯片
+
+- `demo-yearly-tr.html`：去掉 `#fillFilterSelect` 下拉与「快速筛选」标签；「只看已调整 / 只看异常」平铺为行末 segment 芯片（样式对齐考核组）；互斥，再点取消=全部。
+
+## 2026-10-19 快速筛选合并：只看已调整 / 只看异常
+
+- `demo-yearly-tr.html`：原「填写状态」（全部/未填写/已调整）与独立「只看异常」合并为 `#fillFilterSelect` 三选一：全部 | 只看已调整 | 只看异常；去掉 `#onlyAbnFilter`。只看已调整=当前步已填调整等级/能力；只看异常=有异常标识。
+
+## 2026-10-19 人员 tip / 分布规则表头 / 调整弹窗文案
+
+- `demo-yearly-tr.html`：姓名悬停 tip 仅保留「姓名(工号)、当前部门、职位、职级、考核组、初评绩效等级、初评能力等级、上年格子」；异常区每项单独一行（标识 + 调整原因）。
+- 组卡「分布规则范围」表头 colspan 跨全部规则列，禁止省略号截断；表体规则格仍等分占宽。
+- `#adjModalMeta`：`{姓名}({工号})：当前「x」→ 调整为「y」`；≥2 档相对初评时第二行 `相对初评({初评})跨 N 档调整，须填写调整原因`（1 档不弹原因）。
+
+## 2026-10-19 年度盘点列表/弹窗/分布规则微调
+
+- `demo-yearly-tr.html`：异常标识 `↗↘` 改为垂直 `↑↓`；九宫格名单 `.col-grade` / `.col-cap` 正文黑色；「更多」去掉导出。
+- 分布规则范围：多规则列等分占满整段宽度（表头拆列，避免 colspan 挤窄）；月度审定三页同步。
+- 调整原因相对**初评**：`|调整−初评|≥2` 才须填/展示；弹窗文案改为「姓名：初评「x」→ 调整为「y」」+「相对初评跨 2 档，须填写调整原因」；列表 `col-level` 第二行展示原因。
+
+## 2026-10-19 年度盘点分组面板对齐审定等级分布表
+
+- `demo-yearly-tr.html`：右侧 `.group-panel-body` 绩效等级表由「等级 / 要求 / 当前 / 调整」改为与月度审定一致的「等级 / 分布规则范围 / 当前 / 是否符合」；规则格 ≤N/≥N 浅底左边条 + 悬停 tip；无规则档显示 `-`；是否符合为 ✅ 或 ±N 红 chip（组内分母瀑布分摊）。能力表仍保留要求/调整。同步作用于第1/2步组卡与第3步九宫格右侧组卡。
+
+## 2026-10-19 审定分布：应调出超本档当前不封顶 Δ
+
+- `prd-ratify-dist-overview.md`：§5.4 补充「应调出超过本档当前」——是否符合仍显示完整 −x，标准人数可落到 0；实际可调看出「当前」列。
+
+## 2026-10-19 分布规则格自定义悬停 tip
+
+- `demo-ratify-direct.html` / `indirect` / `hierarchy`：`.dist-rule-cell` 用 `data-tip` + 挂 `body` 的 fixed `.dist-rule-tip`，悬停即时显示「不超过/不少于…人」；避免原生 `title` 延迟与 `.dist-panel overflow:hidden` 裁切。
+
+## 2026-10-19 分布规则格去掉「人」+ 悬停完整口径
+
+- `demo-ratify-direct.html` / `indirect` / `hierarchy`：`.dist-rule-cell` 格内改为 `≤25` / `≥5`（不含「人」）；`title` 悬停展示「不超过/不少于{P}%，小于等于/大于等于{N}人」。
+- `docs/deliverables/prd-ratify-dist-overview.md`：展示示例与悬停口径同步。
+
+## 2026-10-19 异常标识增加「申请突破」
+
+- `current/manager/demo-yearly-tr.html`：`abn-flag-list` 支持琥珀色 chip「申请突破」；悬停 `title` 展示申请/调整原因。首行谭刚伟同时展示「绩效↘2」+「申请突破」；董瑞萍、阎瑞博亦有 mock 突破标记。
+
+## 2026-10-19 「盘点规则」挪到考核组右侧
+
+- `current/manager/demo-yearly-tr.html`：「盘点规则」从页头 `pg-hd-actions` 移到筛选行「考核组」右侧（`btn-s btn-sm`），仍调用 `openRulesModal()`。
+
+## 2026-10-17 审定页去掉待调整统计 + 筛选重置
+
+- `demo-ratify-direct.html`、`demo-ratify-indirect.html`、`demo-ratify-hierarchy.html`：`#statRow` 去掉「待调整」；`#distFilters` 右侧增加「重置」（搜索/部门/区域清空，考核组→全部，是否到达→已到达）。
+- `docs/deliverables/prd-ratify-dist-overview.md`：概览统计口径同步去掉待调整。
+
+## 2026-10-17 活动详情结束时间提示去掉悬停说明
+
+- `current/perf-activity-detail.html`：`.stage-end-hint` 仅保留行内「计划…结束 / 将于…自动结束」正文，移除 tip 浮层与 hover。
+
+## 2026-10-17 活动详情结束时间提示改为「计划…结束」
+
+- `current/perf-activity-detail.html`：`.stage-current` 内仅保留一处结束时间提示（统计与环节管理之间）；手动参考文案改为「计划YYYY-MM-DD HH:mm结束」（id=5 → `计划2027-01-01 18:00结束`）；定时自动结束用「将于…自动结束」（id=10）；去掉琥珀色 chip，改为灰色正文。
+- `current/perf-scenario-nav.html`：入口说明同步为「计划结束提示」。
+
+## 2026-10-17 参考结束提示对比度与默认落地修复
+
+- `current/perf-activity-detail.html`：根因是默认无 `?id` 时落到 id=1（无 `stageTiming`，看不到提示），且 id=5 上原文是浅灰正文易被忽略。改为默认/非法 id 落地 id=5；提示挪到「当前环节」名称右侧，琥珀色 chip（参考）/蓝色 chip（自动结束）；文案「参考结束 YYYY-MM-DD · 仅提示」。
+- `current/perf-scenario-nav.html`：活动详情入口改为 `?id=5`。
+
+## 2026-10-17 活动详情当前环节展示参考/自动结束提示
+
+- `current/perf-activity-detail.html`：当前环节信息栏右侧展示灰色「参考结束 YYYY-MM-DD（仅提示，不会自动结束）」或「自动结束 YYYY-MM-DD」；悬停可看方案向导同款说明；仅提示无动作。
+
+## 2026-10-17 参考结束时间支持编辑偏移
+
+- `current/perf-scheme-wizard.html`：开启方式=手动时的「参考结束时间」前/后天数可编辑并写入 `autoEnd` 偏移、实时刷新建议日期（仍不设 `autoEnd.enabled`）；面板透明度略提至 0.9。
+
+## 2026-10-17 开启方式=手动时展示结束时间参考提示
+
+- `current/perf-scheme-wizard.html`：各环节开启方式为「手动」且未开「定时自动结束」时，仍渲染结束时间配置，文案为参考提示（不写入 `autoEnd.enabled`）；选「定时自动结束」时保持原可编辑自动结束行为。
+
+## 2026-10-17 年度盘点规则海报替换
+
+- `current/manager/yearly-tr-rules-2026.jpg`：替换为新版「2026年度人才绩效盘点说明」（绩效评价 / 能力评价 / 九宫格落位确认 / 结果应用）。
+- `demo-yearly-tr.html`：规则弹层标题与 `alt` 同步新海报；`width`/`height` 改为 1024×442。
+
 ## 2026-10-17 分布规则格改为日历事件 chip
 
 - `demo-ratify-direct.html`、`demo-ratify-indirect.html`、`demo-ratify-hierarchy.html`：真实 `.dist-rule-cell[data-rule]` 改为浅 `--pr50` 底 + `inset 3px` 实色左边条（主题色，非深蓝）；选中规则格用 `--pr100`；覆盖等级列同步浅底+3px 左边条；空/`-` 仍白底，规则格不透明防行 hover 渗色。

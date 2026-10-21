@@ -327,6 +327,11 @@ tbody tr:last-child td{border-bottom:none}
   font:600 11px/1 var(--f);flex-shrink:0;
 }
 .stage-current-info:hover .stage-combined-tip{display:block}
+.stage-end-hint{
+  display:inline-flex;align-items:center;flex-shrink:0;
+  font:400 12px/1 var(--f);color:var(--c6);user-select:none;
+}
+.stage-end-hint.is-auto{color:var(--c6)}
 .stage-mgmt{position:relative;display:inline-flex;align-items:center;flex-shrink:0}
 .stage-mgmt-btn{
   display:inline-flex;align-items:center;gap:4px;height:26px;padding:0 10px;
@@ -424,12 +429,12 @@ let ACTIVITIES=[
   {id:2,name:'2026年Q3标准季度考核方案',schemeType:'季度',schemeName:'标准季度考核方案',cycle:'2026年Q3（2026/07/01 - 2026/09/30）',cycleId:'c3',creationSource:'auto',currentStage:'',stageStatus:'',stageProgress:'0/5',anomalyCount:0,dynamicAssessment:'locked',empCount:0,status:'not_started',admins:['王总监','赵敏'],admin:'王总监',description:'标准季度考核待启动',creator:'系统自动',createTime:'2026/07/01 00:00',updater:'系统自动',updateTime:'2026/07/01 00:00'},
   {id:3,name:'2026年Q1标准季度考核方案',schemeType:'季度',schemeName:'标准季度考核方案',cycle:'2026年Q1（2026/01/01 - 2026/03/31）',cycleId:'c1',creationSource:'auto',currentStage:'结果确认',stageStatus:'已结束',stageProgress:'5/5',anomalyCount:0,dynamicAssessment:'locked',empCount:96,status:'ended_normal',admins:['王总监','赵敏'],admin:'王总监',description:'Q1季度考核已正常结束',creator:'系统自动',createTime:'2026/01/01 00:00',updater:'系统自动',updateTime:'2026/04/10 09:00'},
   {id:4,name:'2025年度绩效方案 v1',schemeType:'年度',schemeName:'年度绩效方案 v1',cycle:'2025年度（2025/01/01 - 2025/12/31）',cycleId:'c7',creationSource:'auto',currentStage:'结果确认',stageStatus:'已结束',stageProgress:'5/5',anomalyCount:0,dynamicAssessment:'locked',empCount:210,status:'ended_normal',admins:['刘VP','王总监'],admin:'刘VP',description:'2025年度考核已正常结束',creator:'系统自动',createTime:'2025/01/01 00:00',updater:'刘VP',updateTime:'2026/01/15 17:00'},
-  {id:5,name:'2026年6月员工月度绩效考核',schemeType:'月度',schemeName:'员工月度绩效考核',cycle:'2026年6月（2026/06/01 - 2026/06/30）',cycleId:'c11',creationSource:'auto',currentStage:'目标制定',stageStatus:'处理中',stageProgress:'1/5',anomalyCount:1,dynamicAssessment:'dynamic',empCount:45,status:'active',admins:['赵敏'],admin:'赵敏',description:'月度考核进行中',creator:'系统自动',createTime:'2026/06/01 00:00',updater:'赵敏',updateTime:'2026/06/15 10:00'},
+  {id:5,name:'2026年6月员工月度绩效考核',schemeType:'月度',schemeName:'员工月度绩效考核',cycle:'2026年6月（2026/06/01 - 2026/06/30）',cycleId:'c11',creationSource:'auto',currentStage:'目标制定',stageStatus:'处理中',stageProgress:'1/5',anomalyCount:1,dynamicAssessment:'dynamic',empCount:45,status:'active',admins:['赵敏'],admin:'赵敏',description:'月度考核进行中',creator:'系统自动',createTime:'2026/06/01 00:00',updater:'赵敏',updateTime:'2026/06/15 10:00',stageTiming:{'目标制定':{startManual:true,autoEnd:false,refEndDate:'2027-01-01 18:00'}}},
   {id:6,name:'2026年7月员工月度绩效考核',schemeType:'月度',schemeName:'员工月度绩效考核',cycle:'2026年7月（2026/07/01 - 2026/07/31）',cycleId:'c12',creationSource:'auto',currentStage:'',stageStatus:'',stageProgress:'0/5',anomalyCount:0,dynamicAssessment:'dynamic',empCount:0,status:'not_started',admins:['赵敏'],admin:'赵敏',description:'月度考核待启动',creator:'系统自动',createTime:'2026/07/01 00:00',updater:'系统自动',updateTime:'2026/07/01 00:00'},
   {id:7,name:'2026年H1半年度考核方案',schemeType:'半年度',schemeName:'半年度考核方案',cycle:'2026年H1（2026/01/01 - 2026/06/30）',cycleId:'c5',creationSource:'auto',currentStage:'结果审定',stageStatus:'处理中',stageProgress:'4/5',anomalyCount:2,dynamicAssessment:'locked',empCount:85,status:'active',admins:['王总监','刘VP','赵敏'],admin:'王总监',description:'半年度考核进行中',creator:'系统自动',createTime:'2026/01/01 00:00',updater:'王总监',updateTime:'2026/06/25 16:00'},
   {id:8,name:'2026年5月员工月度绩效考核',schemeType:'月度',schemeName:'员工月度绩效考核',cycle:'2026年5月（2026/05/01 - 2026/05/31）',cycleId:'c10',creationSource:'auto',currentStage:'结果确认',stageStatus:'已暂停',stageProgress:'5/5',anomalyCount:0,dynamicAssessment:'dynamic',empCount:42,status:'paused',admins:['赵敏'],admin:'赵敏',description:'月度考核已暂停',creator:'系统自动',createTime:'2026/05/01 00:00',updater:'赵敏',updateTime:'2026/05/28 11:00'},
   {id:9,name:'2026年4月员工月度绩效考核',schemeType:'月度',schemeName:'员工月度绩效考核',cycle:'2026年4月（2026/04/01 - 2026/04/30）',cycleId:'c9',creationSource:'auto',currentStage:'结果确认',stageStatus:'已结束',stageProgress:'5/5',anomalyCount:0,dynamicAssessment:'dynamic',empCount:40,status:'ended_normal',admins:['赵敏'],admin:'赵敏',description:'月度考核已结束',creator:'系统自动',createTime:'2026/04/01 00:00',updater:'系统自动',updateTime:'2026/05/05 09:00'},
-  {id:10,name:'仓储部补录考核',schemeType:'季度',schemeName:'仓储特殊考核方案',cycle:'2026年Q2（2026/04/01 - 2026/06/30）',cycleId:'c2',creationSource:'manual',currentStage:'绩效考核',stageStatus:'处理中',stageProgress:'3/5',anomalyCount:0,dynamicAssessment:'dynamic',empCount:12,status:'active',admins:['赵敏'],admin:'赵敏',description:'仓储部补录',creator:'赵敏（SSC）',createTime:'2026/05/15',updater:'赵敏（SSC）',updateTime:'2026/06/18 09:00'},
+  {id:10,name:'仓储部补录考核',schemeType:'季度',schemeName:'仓储特殊考核方案',cycle:'2026年Q2（2026/04/01 - 2026/06/30）',cycleId:'c2',creationSource:'manual',currentStage:'绩效考核',stageStatus:'处理中',stageProgress:'3/5',anomalyCount:0,dynamicAssessment:'dynamic',empCount:12,status:'active',admins:['赵敏'],admin:'赵敏',description:'仓储部补录',creator:'赵敏（SSC）',createTime:'2026/05/15',updater:'赵敏（SSC）',updateTime:'2026/06/18 09:00',stageTiming:{'绩效考核':{startManual:false,autoEnd:true,endDate:'2026-07-31 18:00'}}},
   {id:11,name:'新员工转正考核',schemeType:'月度',schemeName:'试用期考核方案',cycle:'2026年7月（2026/07/01 - 2026/07/31）',cycleId:'c12',creationSource:'manual',currentStage:'',stageStatus:'',stageProgress:'0/5',anomalyCount:0,dynamicAssessment:'dynamic',empCount:3,status:'not_started',admins:['赵敏'],admin:'赵敏',description:'新入职员工转正考核',creator:'赵敏（SSC）',createTime:'2026/07/01 09:00',updater:'赵敏（SSC）',updateTime:'2026/07/01 09:00'},
   {id:12,name:'2025年补录考核',schemeType:'年度',schemeName:'年度绩效方案 v1',cycle:'2025年度（2025/01/01 - 2025/12/31）',cycleId:'c7',creationSource:'manual',currentStage:'结果确认',stageStatus:'已终止',stageProgress:'5/5',anomalyCount:0,dynamicAssessment:'locked',empCount:5,status:'ended_early',admins:['王总监'],admin:'王总监',description:'补录活动因数据口径异常提前终止',creator:'王总监（SSC）',createTime:'2025/12/20 10:00',updater:'王总监（SSC）',updateTime:'2026/01/10 16:00'}
 ];
@@ -580,6 +585,20 @@ function hasImportCompletedForStage(emp,stage){
   if(!stage||stage==='结果确认')return false;
   return (emp.importCompletedStages||[]).indexOf(stage)>=0;
 }
+/** 当前环节结束时间提示（仅 .stage-current）：手动参考 →「计划…结束」；定时自动结束 →「将于…自动结束」。仅行内展示，无悬停说明。 */
+function getStageEndHint(a){
+  if(!a||!a.currentStage||!a.stageTiming) return null;
+  var t=a.stageTiming[a.currentStage];
+  if(!t) return null;
+  if(t.autoEnd&&t.endDate){
+    return {kind:'auto',text:'将于'+t.endDate+'自动结束'};
+  }
+  if(t.startManual&&!t.autoEnd&&t.refEndDate){
+    return {kind:'ref',text:'计划'+t.refEndDate+'结束'};
+  }
+  return null;
+}
+
 function getActivityStageOrder(a){
   return a&&a.schemeType==='月度'
     ? STAGE_ORDER.filter(function(stage){return stage!=='绩效面谈';})
@@ -760,6 +779,7 @@ function renderEmployeeList(){
     return {name,total,done,active,pending,exception,pct:Math.round(done/total*100),color:stageColors[idx]};
   });
   const currentStageName=a.currentStage||'未开启';
+  const stageEndHint=getStageEndHint(a);
   const nextStageName=getNextStageName(a);
   const openStageLabel=nextStageName?'开启'+nextStageName+'环节':'已无下一环节';
   const flowStatusOptions=PARTICIPANT_STAGE_STATUSES;
@@ -825,6 +845,9 @@ function renderEmployeeList(){
             </div>
           </div>
         </div>
+        ${stageEndHint?`
+        <span class="stage-current-sep"></span>
+        <span class="stage-end-hint${stageEndHint.kind==='auto'?' is-auto':''}">${stageEndHint.text}</span>`:''}
         ${canUseToolbar?`
         <span class="stage-current-sep"></span>
         <div class="stage-mgmt">
@@ -1076,7 +1099,9 @@ function renderApp(){
 }
 
 let currentView='employees'; // 独立详情页默认展示参与人
-let currentDetailId=parseInt(new URLSearchParams(window.location.search).get('id'))||1;
+/* 默认落地 id=5：有手动开启+计划结束时间，首屏即可看到「计划…结束」提示；无参/非法 id 也回落到可演示活动 */
+let currentDetailId=parseInt(new URLSearchParams(window.location.search).get('id'),10);
+if(!Number.isFinite(currentDetailId)||!ACTIVITIES.some(function(a){return a.id===currentDetailId;})) currentDetailId=5;
 let currentEmployeeIdx=null;
 let empFilter={flowStatus:'',exception:'',group:'',dept:'',search:''};
 let manualAddParticipantState={group:'默认组',search:'',selected:new Set()};

@@ -979,7 +979,7 @@ function renderGoalCfg(s){
   <div class="form-row">
     <div class="form-grp"><label class="form-lb">结束方式</label><select class="form-input" onchange="updateStageAuto('${s.id}','end',this.value==='定时自动结束');render()"><option ${e.enabled?'':'selected'}>手动</option><option ${e.enabled?'selected':''}>定时自动结束</option></select></div>
   </div>
-  ${e.enabled?`<div id="timeRulePanel-end-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderStageTimingPanel('end',s)}</div>`:''}
+  ${renderStageEndTimingSection(s)}
   ${renderForceEndRule(s)}`;
 }
 
@@ -1006,7 +1006,7 @@ function renderEvalCfg(s){
     <div class="form-grp"><label class="form-lb">结束方式</label><select class="form-input" onchange="updateStageAuto('${s.id}','end',this.value==='定时自动结束');render()"><option ${e.enabled?'':'selected'}>手动</option><option ${e.enabled?'selected':''}>定时自动结束</option></select></div>
   </div>
   ${a.enabled?`<div id="timeRulePanel-start-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderStageTimingPanel('start',s)}</div>`:''}
-  ${e.enabled?`<div id="timeRulePanel-end-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderStageTimingPanel('end',s)}</div>`:''}
+  ${renderStageEndTimingSection(s)}
   <div style="margin-top:16px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:16px">
       <div>
@@ -1064,7 +1064,7 @@ function renderRatifyCfg(s){
   <div class="form-row">
     <div class="form-grp"><label class="form-lb">结束方式</label><select class="form-input" onchange="updateStageAuto('${s.id}','end',this.value==='定时自动结束');render()"><option ${e.enabled?'':'selected'}>手动</option><option ${e.enabled?'selected':''}>定时自动结束</option></select></div>
   </div>
-  ${e.enabled?`<div id="timeRulePanel-end-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderStageTimingPanel('end',s)}</div>`:''}
+  ${renderStageEndTimingSection(s)}
   ${renderForceEndRule(s)}
   <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
     <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制分布规则</div>
@@ -1499,7 +1499,7 @@ function renderInventoryCfg(s){
       </select>
     </div>
   </div>
-  ${e.enabled?`<div id="timeRulePanel-end-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderStageTimingPanel('end',s)}</div>`:''}
+  ${renderStageEndTimingSection(s)}
   ${renderForceEndRule(s)}
   <div class="fd-block">
     <div class="fd-block-t">强制分布规则</div>
@@ -1573,7 +1573,7 @@ function renderConfirmCfg(s){
   <div class="form-row">
     <div class="form-grp"><label class="form-lb">结束方式</label><select class="form-input" onchange="updateStageAuto('${s.id}','end',this.value==='定时自动结束');render()"><option ${e.enabled?'':'selected'}>手动</option><option ${e.enabled?'selected':''}>定时自动结束</option></select></div>
   </div>
-  ${e.enabled?`<div id="timeRulePanel-end-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderStageTimingPanel('end',s)}</div>`:''}
+  ${renderStageEndTimingSection(s)}
   <div style="margin-top:12px;padding:10px 12px;background:var(--pr50);border:1px solid var(--pr100);border-radius:var(--r1)">
     <div style="font:500 12px/1.4 var(--f);color:var(--pr)">流程包含分支：员工确认「同意」→ 流程结束；员工确认「不同意」→ 通知 HRBP 知悉 → 流程结束</div>
   </div>
@@ -1592,7 +1592,7 @@ function renderInterviewCfg(s){
   <div class="form-row">
     <div class="form-grp"><label class="form-lb">结束方式</label><select class="form-input" onchange="updateStageAuto('${s.id}','end',this.value==='定时自动结束');render()"><option ${e.enabled?'':'selected'}>手动</option><option ${e.enabled?'selected':''}>定时自动结束</option></select></div>
   </div>
-  ${e.enabled?`<div id="timeRulePanel-end-${s.id}" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">${renderStageTimingPanel('end',s)}</div>`:''}
+  ${renderStageEndTimingSection(s)}
   ${renderForceEndRule(s)}
 `;
 }
@@ -1979,31 +1979,57 @@ function formatStageConflict(conflict,pad){
   return '⚠ 上一环节「'+conflict.prevStageName+'」自动结束于 '+conflict.prevEndDate.getFullYear()+'-'+pad(conflict.prevEndDate.getMonth()+1)+'-'+pad(conflict.prevEndDate.getDate())+'<br>'+
     '&nbsp;&nbsp;&nbsp;&nbsp;当前环节开启时间早于上一环节结束时间，请检查';
 }
-function renderStageTimingPanel(type,stage){
+/** 结束时间面板：定时结束=可编辑；开启方式=手动且未开定时结束=参考提示（可改偏移，不写 autoEnd.enabled） */
+function renderStageEndTimingSection(stage){
+  var a=ensureStageAuto(stage,'start');
+  var e=ensureStageAuto(stage,'end');
+  if(e.enabled){
+    return '<div id="timeRulePanel-end-'+stage.id+'" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)">'+renderStageTimingPanel('end',stage,false)+'</div>';
+  }
+  if(!a.enabled){
+    return '<div id="timeRulePanel-end-'+stage.id+'" style="margin-top:12px;padding:14px 16px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2);opacity:.9">'+renderStageTimingPanel('end',stage,true)+'</div>';
+  }
+  return '';
+}
+function renderStageTimingPanel(type,stage,hintOnly){
   var a=ensureStageAuto(stage,type);
   var label=type==='start'?'开启':'结束';
   var max=getCycleDayLimit();
   var previewId='timeRulePreview-'+type+'-'+stage.id;
   var pad=function(n){return String(n).padStart(2,'0');};
   var resultDate=calcStageDate(a);
-  var conflict=checkStageConflict(stage,type);
+  var conflict=hintOnly?null:checkStageConflict(stage,type);
   var desc=formatStageTimingDesc(a);
-  return '<div style="font:500 12px/1 var(--f);color:var(--c6);margin-bottom:10px">自动'+label+'时间</div>'+
-    '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px">'+
-      '<span style="font:400 13px/1 var(--f);color:var(--c7)">周期开始</span>'+
+  var title=hintOnly?('参考'+label+'时间'):('自动'+label+'时间');
+  var titleColor=hintOnly?'var(--c5)':'var(--c6)';
+  var labelColor=hintOnly?'var(--c5)':'var(--c7)';
+  var ctrl='<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px">'+
+      '<span style="font:400 13px/1 var(--f);color:'+labelColor+'">周期开始</span>'+
       '<select class="form-input" style="width:80px" onchange="setStageTimingField(\''+stage.id+'\',\''+type+'\',\'direction\',this.value)">'+
         '<option value="前" '+(a.direction==='前'?'selected':'')+'>前</option>'+
         '<option value="后" '+(a.direction==='后'?'selected':'')+'>后</option>'+
       '</select>'+
       '<input class="form-input" type="number" value="'+a.days+'" min="1" max="'+max+'" style="width:60px" oninput="setStageTimingDays(\''+stage.id+'\',\''+type+'\',this.value,this)">'+
-      '<span style="font:400 13px/1 var(--f);color:var(--c7)">天</span>'+
-    '</div>'+
-    '<div id="'+previewId+'" style="margin-top:10px;padding:8px 12px;background:var(--pr50);border:1px solid var(--pr100);border-radius:var(--r1);font:400 12px/1.3 var(--f);color:var(--pr700)">'+
-      '📅 预览：预计自动'+label+'日期 '+resultDate.getFullYear()+'-'+pad(resultDate.getMonth()+1)+'-'+pad(resultDate.getDate())+'（'+desc+'）'+
-    '</div>'+
-    '<div id="timeRuleConflict-'+type+'-'+stage.id+'" style="margin-top:8px;padding:8px 12px;background:var(--ro50);border:1px solid var(--ro100);border-radius:var(--r1);font:400 12px/1.3 var(--f);color:var(--ro);display:'+(conflict?'block':'none')+'">'+
-      formatStageConflict(conflict,pad)+
+      '<span style="font:400 13px/1 var(--f);color:'+labelColor+'">天</span>'+
     '</div>';
+  var previewBg=hintOnly?'var(--c1)':'var(--pr50)';
+  var previewBd=hintOnly?'var(--dv)':'var(--pr100)';
+  var previewFg=hintOnly?'var(--c5)':'var(--pr700)';
+  var previewTxt=hintOnly
+    ?('📅 参考：建议'+label+'日期 '+resultDate.getFullYear()+'-'+pad(resultDate.getMonth()+1)+'-'+pad(resultDate.getDate())+'（'+desc+'）')
+    :('📅 预览：预计自动'+label+'日期 '+resultDate.getFullYear()+'-'+pad(resultDate.getMonth()+1)+'-'+pad(resultDate.getDate())+'（'+desc+'）');
+  var hint=hintOnly
+    ?'<div class="form-hint" style="margin-bottom:10px">参考提示：开启方式为手动时，此结束时间仅作计划参考，系统不会按此自动结束。若需定时结束，请将「结束方式」设为「定时自动结束」。</div>'
+    :'';
+  return '<div style="font:500 12px/1 var(--f);color:'+titleColor+';margin-bottom:10px">'+title+'</div>'+
+    hint+
+    ctrl+
+    '<div id="'+previewId+'" style="margin-top:10px;padding:8px 12px;background:'+previewBg+';border:1px solid '+previewBd+';border-radius:var(--r1);font:400 12px/1.3 var(--f);color:'+previewFg+'">'+
+      previewTxt+
+    '</div>'+
+    (hintOnly?'':'<div id="timeRuleConflict-'+type+'-'+stage.id+'" style="margin-top:8px;padding:8px 12px;background:var(--ro50);border:1px solid var(--ro100);border-radius:var(--r1);font:400 12px/1.3 var(--f);color:var(--ro);display:'+(conflict?'block':'none')+'">'+
+      formatStageConflict(conflict,pad)+
+    '</div>');
 }
 function setStageTimingField(stageId,type,field,value){
   var stage=form.stages.find(function(s){return s.id===stageId;});
@@ -2035,8 +2061,12 @@ function updateStageTimingPreview(type,stageId){
   var label=type==='start'?'开启':'结束';
   var resultDate=calcStageDate(a);
   var desc=formatStageTimingDesc(a);
+  var isHint=type==='end'&&!a.enabled;
+  el.innerHTML=isHint
+    ?('📅 参考：建议'+label+'日期 '+resultDate.getFullYear()+'-'+pad(resultDate.getMonth()+1)+'-'+pad(resultDate.getDate())+'（'+desc+'）')
+    :('📅 预览：预计自动'+label+'日期 '+resultDate.getFullYear()+'-'+pad(resultDate.getMonth()+1)+'-'+pad(resultDate.getDate())+'（'+desc+'）');
+  if(isHint) return;
   var conflict=checkStageConflict(stage,type);
-  el.innerHTML='📅 预览：预计自动'+label+'日期 '+resultDate.getFullYear()+'-'+pad(resultDate.getMonth()+1)+'-'+pad(resultDate.getDate())+'（'+desc+'）';
   var conflictEl=document.getElementById('timeRuleConflict-'+type+'-'+stageId);
   if(conflictEl){
     conflictEl.style.display=conflict?'block':'none';

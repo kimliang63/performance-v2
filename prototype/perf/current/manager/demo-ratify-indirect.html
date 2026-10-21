@@ -47,6 +47,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .btn-sm{height:28px;padding:0 10px;font-size:12px}
 
 .dist-filters{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);margin-bottom:12px;padding:8px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.filter-reset{margin-left:auto}
 .filter-label{font:500 13px/1 var(--f);color:var(--c6)}
 .filter-actions{display:flex;gap:8px}
 .filter-divider{width:1px;height:20px;background:var(--c2)}
@@ -179,6 +180,12 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 #distConclusion .dist-status-table .dist-rule-cell{color:var(--c6);font-size:12px;vertical-align:middle;background:#FFF!important;background-color:#FFF!important;border:none!important;box-shadow:none;outline:none}
 #distConclusion .dist-status-table .dist-rule-cell[data-rule]{background:var(--pr50)!important;background-color:var(--pr50)!important;color:var(--pr700);box-shadow:inset 3px 0 0 0 var(--pr);padding-left:10px!important;font-weight:400;cursor:pointer}
 #distConclusion .dist-status-table .dist-rule-cell[data-rule].is-selected{background:var(--pr100)!important;background-color:var(--pr100)!important;color:var(--pr900);box-shadow:inset 3px 0 0 0 var(--pr);font-weight:500}
+/* 规则格悬停说明：挂 body 的 fixed tip，避开 .dist-panel overflow:hidden 裁切 */
+.dist-rule-tip{position:fixed;z-index:9999;transform:translate(-50%,calc(-100% - 8px));max-width:280px;padding:6px 10px;border-radius:6px;background:rgba(15,23,42,.92);color:#fff;font:400 12px/1.4 var(--f);white-space:nowrap;pointer-events:none;opacity:0;visibility:hidden;box-shadow:0 6px 16px rgba(15,23,42,.18);transition:opacity .08s ease}
+.dist-rule-tip.is-show{opacity:1;visibility:visible}
+.dist-rule-tip::after{content:'';position:absolute;left:50%;bottom:-5px;transform:translateX(-50%);border:5px solid transparent;border-top-color:rgba(15,23,42,.92)}
+#distConclusion .dist-status-table thead th.dist-rule-hd{text-align:center}
+#distConclusion .dist-status-table thead th.dist-rule-hd.is-follow{font-size:0;line-height:0;color:transparent;border-left:0}
 #distConclusion .dist-status-table .dist-rule-empty{color:var(--c4)}
 #distConclusion .dist-status-table .dist-rule-none{color:var(--c4);text-align:center}
 #distConclusion .dist-status-table .dist-grade-cell.rule-selected{background:var(--pr50)!important;background-color:var(--pr50)!important;box-shadow:inset 3px 0 0 0 var(--pr)}
@@ -294,7 +301,6 @@ body.chat-open .ai-toggle{display:none}
         <div class="action-more">
           <button class="btn btn-s action-more-trigger" id="ratifyMoreBtn" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="ratifyMoreMenu" onclick="toggleActionMenu(event)">更多<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
           <div class="action-more-menu" id="ratifyMoreMenu" role="menu" aria-labelledby="ratifyMoreBtn">
-            <button class="action-more-item" type="button" role="menuitem" onclick="closeActionMenu();showToast('导出成功','success')">导出</button>
             <button class="action-more-item danger" type="button" role="menuitem" onclick="closeActionMenu();rejectRatify()">驳回</button>
           </div>
         </div>
@@ -308,11 +314,10 @@ body.chat-open .ai-toggle{display:none}
       <h2 class="dist-panel-title" id="distPanelTitle">等级分布</h2>
       <div class="dist-summary-line" id="distCondensed" aria-label="等级符合情况"></div>
       <div class="dist-panel-tools">
-        <div class="dist-stats" id="statRow" aria-label="等级分布统计">
+        <div class="dist-stats" id="statRow" aria-label="等级分布统计：总人数、已到达、未到达">
           <span>总人数 <b style="font-family:var(--m);font-weight:600;color:var(--c9)" id="statTotal">—</b></span>
           <span>已到达 <b style="font-family:var(--m);font-weight:600;color:var(--em)" id="statReached">—</b></span>
           <span>未到达 <b style="font-family:var(--m);font-weight:600;color:var(--ac)" id="statUnreached">—</b></span>
-          <span>待调整 <b style="font-family:var(--m);font-weight:600;color:var(--pr)" id="statPending">—</b></span>
         </div>
         <button class="btn btn-s btn-sm header-toggle" id="distToggleBtn" type="button" aria-expanded="true" aria-controls="distExpanded distCondensed" onclick="toggleDistCard()">收起<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
       </div>
@@ -376,6 +381,7 @@ body.chat-open .ai-toggle{display:none}
       <button class="btn btn-s btn-sm btn-active" onclick="filterStatus('已到达',this)">已到达</button>
       <button class="btn btn-s btn-sm" onclick="filterStatus('未到达',this)">未到达</button>
     </div>
+    <button class="btn btn-s btn-sm filter-reset" id="filterResetBtn" type="button" onclick="resetFilters()">重置</button>
   </div>
 
   <!-- 团队成员列表 -->
@@ -480,14 +486,14 @@ var FORCE_DIST_CONSTRAINTS=[
   {grades:['远超预期','超出预期','符合预期+'],op:'lte',pct:50},
   {grades:['符合预期-','低于预期','远低预期'],op:'gte',pct:10}
 ];
-/** 人数上下界展示：0=无下界，分母=无上界；双界用「且」 */
+/** 人数上下界展示（格内短文案，不含「人」）：0=无下界，分母=无上界；双界用「且」 */
 function formatForceRangePeople(minCount,maxCount,total){
   var n=+total||0;
   var hasMin=minCount!=null&&minCount>0;
   var hasMax=maxCount!=null&&(n<=0||maxCount<n);
-  if(hasMin&&hasMax)return '≥'+minCount+'人且≤'+maxCount+'人';
-  if(hasMax)return '≤'+maxCount+'人';
-  if(hasMin)return '≥'+minCount+'人';
+  if(hasMin&&hasMax)return '≥'+minCount+'且≤'+maxCount;
+  if(hasMax)return '≤'+maxCount;
+  if(hasMin)return '≥'+minCount;
   return '-';
 }
 /** 分布规则格：按当前分母把 ≤P% / ≥P% 换成人数字符（与合规判定同一套 ceil/floor） */
@@ -500,6 +506,23 @@ function formatForceConstraintText(c,total){
   }
   var maxCount=Math.floor(n*c.pct/100);
   return formatForceRangePeople(0,maxCount,n);
+}
+/** 悬停说明：百分比 + 带「人」的人数口径 */
+function formatForceConstraintTip(c,total){
+  if(!c)return '';
+  var n=+total||0;
+  var p=+c.pct||0;
+  if(c.op==='gte'){
+    var minCount=Math.ceil(n*p/100);
+    return '不少于'+p+'%，大于等于'+minCount+'人';
+  }
+  if(c.op==='between'||c.op==='range'){
+    var lo=Math.ceil(n*(+c.minPct||0)/100);
+    var hi=Math.floor(n*(+c.maxPct||p)/100);
+    return '不少于'+(+c.minPct||0)+'%且不超过'+(+c.maxPct||p)+'%，大于等于'+lo+'人且小于等于'+hi+'人';
+  }
+  var maxCount=Math.floor(n*p/100);
+  return '不超过'+p+'%，小于等于'+maxCount+'人';
 }
 function evalForceConstraint(c,countByGrade,total){
   var sum=0;
@@ -807,13 +830,20 @@ function renderDistRules(){
   });
   var el=document.getElementById('distConclusion');
   if(!el)return;
-  var ruleCount=constraints.length;
+  var ruleCount=constraints.length||1;
   var gradeW=18,actualW=14,statusW=16;
-  var ruleW=ruleCount?Math.floor((100-gradeW-actualW-statusW)/ruleCount):0;
+  var ruleArea=100-gradeW-actualW-statusW;
   var colgroup='<colgroup><col style="width:'+gradeW+'%">';
-  for(var ci=0;ci<ruleCount;ci++)colgroup+='<col style="width:'+ruleW+'%">';
+  for(var ci=0;ci<ruleCount;ci++){
+    var rw=Math.round(ruleArea*(ci+1)/ruleCount)-Math.round(ruleArea*ci/ruleCount);
+    colgroup+='<col style="width:'+rw+'%">';
+  }
   colgroup+='<col style="width:'+actualW+'%"><col style="width:'+statusW+'%"></colgroup>';
-  var head='<thead><tr><th>等级</th><th colspan="'+ruleCount+'">分布规则范围</th><th>当前</th><th>是否符合</th></tr></thead>';
+  var head='<thead><tr><th>等级</th>';
+  for(var hi=0;hi<ruleCount;hi++){
+    head+=hi===0?'<th class="dist-rule-hd is-start">分布规则范围</th>':'<th class="dist-rule-hd is-follow" aria-hidden="true"></th>';
+  }
+  head+='<th>当前</th><th>是否符合</th></tr></thead>';
   var html='<table class="dist-status-table">'+colgroup+head+'<tbody>';
   var okIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
   allGrades.forEach(function(d,gi){
@@ -838,7 +868,7 @@ function renderDistRules(){
         if(prev&&grades.indexOf(prev)>=0)return;
         var span=1;
         while(gi+span<GRADE_OPTIONS.length&&grades.indexOf(GRADE_OPTIONS[gi+span])>=0)span++;
-        html+='<td class="dist-rule-cell" data-rule="1" data-span="'+span+'" rowspan="'+span+'">'+formatForceConstraintText(c,total)+'</td>';
+        html+='<td class="dist-rule-cell" data-rule="1" data-span="'+span+'" rowspan="'+span+'" data-tip="'+formatForceConstraintTip(c,total)+'">'+formatForceConstraintText(c,total)+'</td>';
       });
     }
     html+='<td>'+d.count+'</td><td>'+statusHtml+'</td></tr>';
@@ -879,6 +909,30 @@ function selectDistRuleCell(ruleTd){
   }
 }
 
+function ensureDistRuleTip(){
+  var tip=document.getElementById('distRuleTip');
+  if(tip)return tip;
+  tip=document.createElement('div');
+  tip.id='distRuleTip';
+  tip.className='dist-rule-tip';
+  tip.setAttribute('role','tooltip');
+  document.body.appendChild(tip);
+  return tip;
+}
+function showDistRuleTip(td){
+  var text=td.getAttribute('data-tip')||'';
+  if(!text)return;
+  var tip=ensureDistRuleTip();
+  tip.textContent=text;
+  var r=td.getBoundingClientRect();
+  tip.style.left=(r.left+r.width/2)+'px';
+  tip.style.top=r.top+'px';
+  tip.classList.add('is-show');
+}
+function hideDistRuleTip(){
+  var tip=document.getElementById('distRuleTip');
+  if(tip)tip.classList.remove('is-show');
+}
 function bindDistRuleSelection(root){
   if(!root)return;
   root.querySelectorAll('.dist-rule-cell[data-rule]').forEach(function(td){
@@ -886,6 +940,8 @@ function bindDistRuleSelection(root){
       e.stopPropagation();
       selectDistRuleCell(td);
     });
+    td.addEventListener('mouseenter',function(){showDistRuleTip(td);});
+    td.addEventListener('mouseleave',hideDistRuleTip);
   });
   if(!window._distRuleOutsideBound){
     window._distRuleOutsideBound=true;
@@ -972,17 +1028,13 @@ function updateStats(filtered){
   var total=distributionMembers.length;
   var reached=distributionMembers.filter(function(m){return m.reached;}).length;
   var unreached=total-reached;
-  var pending=distributionMembers.filter(function(m){return m.reached&&!m.ratifyGrade;}).length;
   document.getElementById('statTotal').textContent=total;
   document.getElementById('statReached').textContent=reached;
   document.getElementById('statUnreached').textContent=unreached;
-  document.getElementById('statPending').textContent=pending;
   var hdTotal=document.getElementById('hdTotal');
   var hdReached=document.getElementById('hdReached');
-  var hdPending=document.getElementById('hdPending');
   if(hdTotal)hdTotal.textContent=total+'人';
   if(hdReached)hdReached.textContent=reached+'人';
-  if(hdPending)hdPending.textContent=pending+'人';
   var listReached=filtered.filter(function(m){return m.reached;}).length;
   var listUnreached=filtered.length-listReached;
   var summary=document.getElementById('listSummary');
@@ -1008,6 +1060,23 @@ function filterStatus(status,btn){
 }
 function filterKeyword(keyword){
   currentKeyword=keyword.trim();currentPage=1;
+  renderMembers();
+}
+function resetFilters(){
+  currentKeyword='';
+  currentGroup='全部';
+  currentStatus='已到达';
+  currentDepartments.splice(0,currentDepartments.length);
+  currentRegions.splice(0,currentRegions.length);
+  currentPage=1;
+  var search=document.getElementById('memberSearch');
+  if(search)search.value='';
+  closeTreeFilters();
+  document.querySelectorAll('#departmentTree input[type="checkbox"],#regionTree input[type="checkbox"]').forEach(function(input){input.checked=false;});
+  updateTreeFilterCount('department');
+  updateTreeFilterCount('region');
+  setActiveBtn('groupFilter',document.querySelector('#groupFilter .btn'));
+  setActiveBtn('statusFilter',document.querySelector('#statusFilter .btn'));
   renderMembers();
 }
 function closeTreeFilters(){
