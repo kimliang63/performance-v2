@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>年度绩效盘点 — 原型与需求对照缺口</title>
+<style>
+  :root { --c9:#18181B; --c8:#27272A; --c7:#3F3F46; --c6:#52525B; --c5:#71717A; --c2:#E4E4E7; --c1:#F4F4F5; --c0:#FAFAFA; --pr:#2563EB; --ok:#059669; --warn:#D97706; --bad:#E11D48; --bd:#E4E4E7; }
+  * { box-sizing: border-box; }
+  body { margin:0; font:15px/1.7 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif; color:var(--c9); background:#fff; }
+  .wrap { max-width:880px; margin:0 auto; padding:32px 28px 96px; }
+  h1 { font:700 26px/1.3 inherit; margin:0 0 8px; }
+  h2 { font:700 18px/1.35 inherit; margin:36px 0 12px; padding-top:14px; border-top:1px solid var(--bd); }
+  p, li { color:var(--c7); }
+  .meta { color:var(--c5); font-size:13px; margin-bottom:18px; }
+  a { color:var(--pr); }
+  .lead { background:#EFF6FF; border:1px solid #BFDBFE; border-radius:10px; padding:14px 16px; color:#1E3A8A; }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 8px; }
+  .chip { display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:999px; font-size:12px; font-weight:600; }
+  .chip b { font-size:14px; }
+  .chip.miss { background:#FEF2F2; color:#9F1239; }
+  .chip.diff { background:#FFFBEB; color:#92400E; }
+  .chip.prd { background:#F5F3FF; color:#5B21B6; }
+  .chip.proto { background:#ECFDF5; color:#065F46; }
+  ol.gap { margin:8px 0 0; padding-left:22px; }
+  ol.gap li { margin:8px 0; }
+  .tag { display:inline-block; font-size:11px; font-weight:650; padding:1px 6px; border-radius:4px; margin-right:4px; vertical-align:1px; }
+  .tag.page { background:var(--c1); color:var(--c6); }
+  .note { font-size:13px; color:var(--c5); margin-top:8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>年度绩效盘点：原型还差什么</h1>
+  <p class="meta">
+    对照对象：飞书需求 <a href="https://ztn.larkenterprise.com/wiki/ZbDrwXZQtiTYcikizZrcwwUJnTe">年度绩效盘点 PRD</a>
+    与当前原型（未改代码）。<br>
+    给业务同学看：下面四组是「系统还没做 / 做得不一样 / 需求有原型没有 / 原型多出来的」。
+  </p>
+
+  <div class="lead">
+    一句话：盘点主流程（面谈 → 导入 → 三步校准 → 审批 → 报表）原型里能走通，但等级「绩效/能力」分类、排名列、花名册一批字段、历史导入、多考核组流程合并，以及审批页标题，都还对不上需求。
+  </div>
+
+  <div class="chips">
+    <span class="chip miss">原型缺 <b>10</b></span>
+    <span class="chip diff">做法不一致 <b>10</b></span>
+    <span class="chip prd">需求有、原型无 <b>7</b></span>
+    <span class="chip proto">原型有、需求没写 <b>6</b></span>
+  </div>
+
+  <h2>1. 原型缺 — 需求写了，页面上还没有</h2>
+  <ol class="gap">
+    <li><span class="tag page">等级规则</span>没有「类型：绩效 / 能力」，列表也不能按类型筛选；历史规则没法批量改成「绩效」。</li>
+    <li><span class="tag page">方案</span>没有「是否系统计算初评能力」（向导里这项已经拿掉了）。</li>
+    <li><span class="tag page">导入 / 校准 / 报表</span>都没有这四列：360 排名(%)、360 排名(占位)、测评排名(%)、测评排名(占位)。</li>
+    <li><span class="tag page">初评 / 测评导入</span>没有「全路径部门、当前部门、职级」。</li>
+    <li><span class="tag page">盘点结果报表</span>没有历史数据导入，也没有初评/最终绩效、初评/最终能力、初评/最终格子。</li>
+    <li>没有单独的「多考核组流程合并」能力。</li>
+    <li><span class="tag page">花名册</span>缺：职族、职类、工作地区、入职日期、当前处理人、当前节点。</li>
+    <li><span class="tag page">活动</span>四条强制结束（进入下一环节 / 跳过且不写等级 / 写方案默认等级 / 写当前调整等级）没有独立执行页，只有方案配置 + 活动里一条旧「系统强制结束」样例。</li>
+    <li><span class="tag page">审批</span>页标题不是「{年份}{周期}{活动}结果终审」，现在写的是「COE/CHO 审批」。</li>
+    <li>九宫格没有按需求拆成两套标识：「绩效申请突破」和「能力申请突破」。</li>
+  </ol>
+
+  <h2>2. 原型不一致 — 有这个功能，但和需求写法对不上</h2>
+  <ol class="gap">
+    <li>步骤条可以点着来回切；需求要求只能靠「下一步 / 提交」往前走。</li>
+    <li>能力审定默认列比需求多：多了 360、测评、异常、校准能力。需求默认只要姓名、部门、提交状态、初评能力、调整记录。</li>
+    <li>九宫格列表默认列是绩效等级 / 能力 / 格子 / 操作，不是需求的「初评绩效 + 初评能力」。</li>
+    <li>九宫格视图不只显示「名称 + 异常」，还有人芯片、拖拽、+N、全屏。</li>
+    <li>异常文案是「绩效跨两档 / 申请突破 / 校准≥2次 / 九宫格校准调整」，不是需求的「上调/下调 2 档 + 绩效/能力突破」。</li>
+    <li>调整记录是「节点｜姓名｜工号 + 从→到」，不是「调整人：原等级 → 调整等级」。</li>
+    <li>测评导入页标题是「测评结果导入」，能力列叫「能力」，不是「初评能力等级」。</li>
+    <li>面谈截图允许 webp；需求只写 png / jpg / jpeg。</li>
+    <li>方案强制结束文案是「结果等级默认当前调整等级」；需求是「并默认当前调整等级」。活动节还有「跳过且不写任何等级」，向导里对应「结束流程，跳过后续所有环节」。</li>
+    <li>旧截图 <code>scheme-inventory-config.png</code> 仍是旧盘点配置（含提交方式、系统计算初评能力），和现在向导不一致。旧图没有替换。</li>
+  </ol>
+
+  <h2>3. 需求有、原型无 — 需求清单里写了，原型完全没做</h2>
+  <ol class="gap">
+    <li>盘点结果 · 历史数据导入。</li>
+    <li>多考核组流程合并。</li>
+    <li>等级类型字段，以及把历史数据刷成「绩效」。</li>
+    <li>报表 360 列、占位排名列；盘点结果的初评/最终绩效与格子。</li>
+    <li>导入模板「带出当前节点可导入名单」（现在只有 toast「模板已下载」）。</li>
+    <li>驳回后「当前环节已填数据全部作废」没有演示。</li>
+    <li>符合强制分布后，清除已有突破标识：没有完整闭环。</li>
+  </ol>
+  <p class="note">飞书「需求背景 / 需求分析」原文就是空的，这里没有编造。</p>
+
+  <h2>4. 原型有、需求没写 — 原型多出来的，需求里没点名</h2>
+  <ol class="gap">
+    <li>审定页等级分布瀑布（左表右图、分摊差值、标准线）。飞书只写「参考月度逐级审定」。</li>
+    <li>星级改档、右侧冻结核准列、九宫格拖拽与全屏。</li>
+    <li>方案强制分布「提交方式」（全部 / 单个 / 按部门 / 按层级 / 按区域）。当前飞书环节设置没写这一项。</li>
+    <li>确认页仍展示「历史月度绩效结果」卡。飞书只写沿用确认流程。</li>
+    <li>面谈页 AI 助手。</li>
+    <li>飞书通知演示页，以及步骤条可回点（正式需求禁止回退）。</li>
+  </ol>
+</div>
+</body>
+</html>

@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>年度绩效盘点 — 需求说明书（本地对照稿）</title>
+<style>
+  :root { --c9:#18181B; --c7:#3F3F46; --c6:#52525B; --c5:#71717A; --c2:#E4E4E7; --c1:#F4F4F5; --c0:#FAFAFA; --pr:#2563EB; --bd:#E4E4E7; }
+  * { box-sizing: border-box; }
+  body { margin:0; font:14px/1.65 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif; color:var(--c9); background:#fff; }
+  .wrap { max-width:1080px; margin:0 auto; padding:28px 28px 80px; }
+  h1 { font:700 26px/1.3 inherit; margin:0 0 8px; }
+  h2 { font:700 20px/1.3 inherit; margin:36px 0 12px; padding-top:8px; border-top:1px solid var(--bd); }
+  h3 { font:650 16px/1.4 inherit; margin:22px 0 8px; }
+  h4 { font:650 14px/1.4 inherit; margin:16px 0 6px; }
+  p, li { color:var(--c7); }
+  a { color:var(--pr); }
+  .meta { color:var(--c5); font-size:13px; margin-bottom:20px; }
+  .note { background:#EFF6FF; border:1px solid #BFDBFE; border-radius:8px; padding:12px 14px; color:#1E3A8A; font-size:13px; }
+  .note.ok { background:#ECFDF5; border-color:#A7F3D0; color:#065F46; }
+  table { width:100%; border-collapse:collapse; margin:10px 0 18px; font-size:13px; }
+  th, td { border:1px solid var(--bd); padding:8px 10px; vertical-align:top; }
+  th { background:var(--c1); text-align:left; font-weight:600; }
+  td.feat { width:140px; font-weight:600; }
+  td.shot { width:320px; }
+  img.shot { display:block; width:100%; max-width:520px; height:auto; border:1px solid var(--bd); border-radius:6px; background:#fff; }
+  figcaption { font-size:12px; color:var(--c5); margin:4px 0 10px; }
+  ol, ul { margin:6px 0 8px; padding-left:20px; }
+  ol ol, ul ul { margin:2px 0; }
+  .empty { color:var(--c5); font-style:italic; }
+  .toc a { text-decoration:none; }
+  .toc li { margin:4px 0; }
+  code { font:12px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace; background:var(--c1); padding:1px 5px; border-radius:4px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>年度绩效盘点 — 需求说明书（本地对照稿）</h1>
+  <p class="meta">
+    来源：<a href="https://ztn.larkenterprise.com/wiki/ZbDrwXZQtiTYcikizZrcwwUJnTe">飞书 Wiki</a>
+    （文档 ID <code>Zf4ndrJ0Pontk8xOHKVcvg8DnYd</code>，读取时 revision 3224）<br>
+    本地工作稿：<code>docs/deliverables/prd-yearly-inventory.html</code>　·　截图目录：<code>tmp/prd-screenshots/</code><br>
+    未改飞书原文。本地仅补「系统截图」空格，并填入飞书标明「ai补充」的九宫格默认名。
+  </p>
+
+  <div class="note ok">
+    <b>本次本地补全</b>
+    <ul>
+      <li>补截图（飞书「原型图」列为空，或不在本地）：等级规则新增弹窗、方案考核模板、基本信息、环节设置（沿用既有图 + 本次新拍强制结束/盘点配置）、强制结束规则、面谈、初评等级导入、测评/初评能力导入、逐级校准三步、审批、结果确认、测评报表、盘点报表。</li>
+      <li>新拍且此前不存在：<code>scheme-grade-rule-type.png</code>、<code>scheme-force-end.png</code>。其余沿用 <code>tmp/prd-screenshots/</code> 既有文件，未覆盖。</li>
+      <li>填写「ai补充」：九宫格默认序号与名称（来自飞书排序规则 + 当前原型 <code>BOX_NAMES</code> / <code>BOX_KEYS_ORDER</code>，未另造产品规则）。</li>
+    </ul>
+  </div>
+
+  <h2 id="toc">目录</h2>
+  <ol class="toc">
+    <li><a href="#hist">版本历史</a></li>
+    <li><a href="#overview">需求概述</a>
+      <ol>
+        <li><a href="#bg">需求背景</a></li>
+        <li><a href="#analysis">需求分析</a></li>
+        <li><a href="#scope">版本范围 &amp; 功能清单</a></li>
+      </ol>
+    </li>
+    <li><a href="#func">功能说明</a>
+      <ol>
+        <li><a href="#grade">基础配置｜等级规则</a></li>
+        <li><a href="#scheme">绩效方案</a></li>
+        <li><a href="#activity">绩效活动</a></li>
+        <li><a href="#flow">年度绩效盘点流程</a></li>
+        <li><a href="#form">绩效盘点表单</a></li>
+        <li><a href="#report">报表</a></li>
+      </ol>
+    </li>
+  </ol>
+
+  <h2 id="hist">版本历史</h2>
+  <table>
+    <tr><th>版本/状态</th><th>作者</th><th>参与者</th><th>起止日期</th><th>备注</th></tr>
+    <tr><td>0.1</td><td>梁景悦</td><td>/</td><td>2026-10-13</td><td>创建文档</td></tr>
+  </table>
+
+  <h2 id="overview">需求概述</h2>
+  <h3 id="bg">需求背景</h3>
+  <p class="empty">飞书原文为空，本地不补写。</p>
+  <h3 id="analysis">需求分析</h3>
+  <p class="empty">飞书原文为空，本地不补写。</p>
+
+  <h3 id="scope">版本范围 &amp; 功能清单</h3>
+  <table>
+    <tr><th>模块</th><th>功能点</th><th>功能描述</th></tr>
+    <tr><td>等级规则</td><td>绩效/能力等级标签</td><td>增加绩效/能力分类</td></tr>
+    <tr><td rowspan="2">方案管理</td><td>年度绩效&amp;盘点模板</td><td>面谈 - 绩效&amp;盘点 - 结果确认</td></tr>
+    <tr><td>环节配置</td><td></td></tr>
+    <tr><td>绩效流程</td><td>年度绩效盘点流程</td><td>
+      <ol>
+        <li>初评等级导入 → 初评能力导入 → 逐级校准 → 逐级审批</li>
+        <li>多考核组流程合并</li>
+      </ol>
+    </td></tr>
+    <tr><td rowspan="4">绩效表单</td><td>初评等级导入</td><td>批量导入线下计算的年度绩效初评等级</td></tr>
+    <tr><td>初评能力导入</td><td>批量导入线下计算的能力等级与测评、360 得分、排名</td></tr>
+    <tr><td>逐级绩效盘点校准</td><td>绩效校准；能力校准；九宫格校准；强制分布规则管控；申请突破</td></tr>
+    <tr><td>逐级审批</td><td>仅审批</td></tr>
+    <tr><td rowspan="2">报表</td><td>盘点结果</td><td>历史数据导入；报表数据生成&amp;查询</td></tr>
+    <tr><td>测评结果</td><td>报表数据生成&amp;查询</td></tr>
+  </table>
+
+  <h2 id="func">功能说明</h2>
+
+  <h3 id="grade">2.1 基础配置｜等级规则</h3>
+  <table>
+    <tr><th>功能入口</th><td>HRONE / 绩效管理 / 绩效基础配置 / 等级规则</td></tr>
+    <tr><th>数据权限</th><td>按现有方案处理</td></tr>
+    <tr><th>多语言</th><td>按通用规范处理</td></tr>
+  </table>
+  <table>
+    <tr><th class="feat">功能点</th><th class="shot">原型图</th><th>需求说明</th></tr>
+    <tr>
+      <td class="feat">等级规则</td>
+      <td class="shot">
+        <img class="shot" src="../../tmp/prd-screenshots/scheme-grade-rule-type.png" alt="等级规则新增">
+        <figcaption>本次补拍 · 当前原型「新增规则」弹窗（尚无「类型：绩效/能力」字段）</figcaption>
+      </td>
+      <td>
+        <ol>
+          <li>列表：新增类型字段展示和筛选（方案）</li>
+          <li>等级规则新增类型字段：必填，单选，枚举值：绩效 / 能力</li>
+          <li>历史数据该字段批量刷成「绩效」</li>
+        </ol>
+      </td>
+    </tr>
+  </table>
+
+  <h3 id="scheme">2.2 绩效方案</h3>
+  <table>
+    <tr><th>功能入口</th><td>HRONE / 绩效管理 / 方案&amp;活动 / 绩效方案</td></tr>
+    <tr><th>数据权限</th><td>按现有方案处理</td></tr>
+    <tr><th>多语言</th><td>按通用规范处理</td></tr>
+  </table>
+  <table>
+    <tr><th class="feat">功能点</th><th class="shot">原型图</th><th>需求说明</th></tr>
+    <tr>
+      <td class="feat">考核模板</td>
+      <td class="shot">
+        <img class="shot" src="../../tmp/prd-screenshots/scheme-template-stages.png" alt="考核阶段配置">
+        <figcaption>既有图 · 年度模板考核阶段开关（审定与盘点互斥）</figcaption>
+      </td>
+      <td>
+        <ol>
+          <li>年度绩效模板改成：绩效面谈、绩效盘点、结果确认
+            <ol>
+              <li>新增绩效盘点环节</li>
+              <li>手动编辑时，结果审定、绩效盘点仅可选择一项，按最后开启的为准</li>
+            </ol>
+          </li>
+        </ol>
+      </td>
+    </tr>
+    <tr>
+      <td class="feat">基本信息</td>
+      <td class="shot">
+        <img class="shot" src="../../tmp/prd-screenshots/scheme-basic-grade-cap.png" alt="绩效/能力等级">
+        <figcaption>既有图 · 「绩效/能力等级」与盘点能力规则</figcaption>
+      </td>
+      <td>
+        <ol>
+          <li>原「强制分布规则」标题改为「绩效/能力等级」</li>
+          <li>增加能力规则选择
+            <ol>
+              <li>环节包含绩效盘点时出现</li>
+              <li>必填，默认为空，单选，仅可选择类型为「能力」、启用中的等级规则</li>
+              <li>选择控件交互与绩效等级一致</li>
+            </ol>
+          </li>
+        </ol>
+      </td>
+    </tr>
+    <tr>
+      <td class="feat">环节设置</td>
+      <td class="shot">
+        <img class="shot" src="../../tmp/prd-screenshots/scheme-inventory-config.png" alt="绩效盘点环节（既有）">
+        <figcaption>既有图 · 盘点环节配置（历史截帧，未覆盖）</figcaption>
+        <img class="shot" src="../../tmp/prd-screenshots/scheme-force-end.png" alt="绩效盘点环节当前">
+        <figcaption>本次补拍 · 当前原型盘点环节：强制结束 + 强制分布</figcaption>
+      </td>
+      <td>
+        <ol>
+          <li>考核流程、开始规则、结束规则：功能沿用其他环节已有逻辑</li>
+          <li>强制结束规则：必填，单选，默认为空。枚举值：
+            <ol>
+              <li>结束流程，进入下一环节 — 仅面谈环节适用</li>
+              <li>结束流程，跳过后续所有环节，并默认结果等级（现有规则） — 绩效盘点环节出现绩效等级、能力等级两个选择控件，分别设置默认结果等级</li>
+              <li>结束流程，跳过后续所有环节，并默认当前调整等级 — 仅审定、绩效盘点环节适用</li>
+            </ol>
+          </li>
+          <li>强制分布规则
+            <ol>
+              <li>按绩效/能力展示当前配置的考核组强制分布规则；多个考核组时按一个考核组一个规则设置</li>
+              <li>控制模式：必填，单选，默认强控；枚举：强控、弱控</li>
+              <li>强制分布规则：必填，单选，默认为空；取启用中、绑定当前已选绩效/能力等级规则的数据</li>
+              <li>选择强制分布规则后显示规则配置详情</li>
+            </ol>
+          </li>
+          <li>九宫格规则
+            <ol>
+              <li>默认按绩效 × 能力 3 档展示；横轴能力从低到高 3 档，纵轴绩效从高到低 3 档</li>
+              <li>矩阵按右上到左下排序，默认序号与名称如下，名称可修改（<b>原「ai补充」，已按飞书第 1 条 + 当前原型默认名填入</b>）：
+                <table>
+                  <tr><th>序号</th><th>位置</th><th>绩效轴 × 能力轴</th><th>默认名称</th></tr>
+                  <tr><td>1</td><td>右上</td><td>高绩效 × 高能力</td><td>领头羊</td></tr>
+                  <tr><td>2</td><td>中上</td><td>高绩效 × 中能力</td><td>穿山甲</td></tr>
+                  <tr><td>3</td><td>右中</td><td>中绩效 × 高能力</td><td>白龙马</td></tr>
+                  <tr><td>4</td><td>左上</td><td>高绩效 × 低能力</td><td>老黄牛</td></tr>
+                  <tr><td>5</td><td>正中</td><td>中绩效 × 中能力</td><td>工蜜蜂</td></tr>
+                  <tr><td>6</td><td>右下</td><td>低绩效 × 高能力</td><td>水上漂</td></tr>
+                  <tr><td>7</td><td>左中</td><td>中绩效 × 低能力</td><td>空心竹</td></tr>
+                  <tr><td>8</td><td>中下</td><td>低绩效 × 中能力</td><td>老爷车</td></tr>
+                  <tr><td>9</td><td>左下</td><td>低绩效 × 低能力</td><td>寄居蟹</td></tr>
+                </table>
+                <p>编号顺序对齐原型 <code>BOX_KEYS_ORDER</code>：高-高 → 高-中 → 中-高 → 高-低 → 中-中 → 低-高 → 中-低 → 低-中 → 低-低。</p>
+              </li>
+              <li>绩效/能力等级选择：必填，多选，默认为空；等级从基本信息绑定的绩效/能力等级中获取。每一格子绑定能力、绩效等级，可多选，但同一轴上能力不可重复。例：第一列（高能力）格子 1/3/6 的绩效等级不可重复；1 选了远超预期，则 3、6 不可再选。</li>
+            </ol>
+          </li>
+        </ol>
+      </td>
+    </tr>
+  </table>
+
+  <h3 id="activity">2.3 绩效活动</h3>
+  <table>
+    <tr><th class="feat">功能点</th><th class="shot">原型图</th><th>需求说明</th></tr>
+    <tr>
+      <td class="feat">增加强制结束流转规则</td>
+      <td class="shot">
+        <img class="shot" src="../../tmp/prd-screenshots/scheme-force-end.png" alt="强制结束规则">
+        <figcaption>本次补拍 · 方案盘点环节「强制结束规则」（活动执行页无独立配置 UI）</figcaption>
+      </td>
+      <td>
+        <ol>
+          <li>结束流程，进入下一环节：环节结束时，当前所有未完成的被考核人流程终止，后续环节不终止，随下一环节开始时一并流入下一环节，开启流程</li>
+          <li>结束流程，跳过后续所有环节：环节结束时，当前所有未完成的被考核人终止流程，不写入任何最终等级信息</li>
+          <li>结束流程，跳过后续所有环节，并默认结果等级：现有功能，仅设置项名称修改；未完成人员终止，后续环节标记终止，最终等级按方案配置等级写入</li>
+          <li>结束流程，跳过后续所有环节，并默认当前调整等级：未完成人员终止，后续环节标记终止，最终等级取终止时流程中最新已填写的调整等级</li>
+        </ol>
+      </td>
+    </tr>
+  </table>
+
+  <h3 id="flow">2.4 年度绩效盘点流程</h3>
+  <table>
+    <tr><th class="feat">功能点</th><th>需求说明</th></tr>
+    <tr><td class="feat">面谈流程</td><td>沿用已有绩效面谈流程</td></tr>
+    <tr><td class="feat">结果确认</td><td>沿用已有结果确认流程</td></tr>
+    <tr>
+      <td class="feat">盘点绩效</td>
+      <td>
+        <ul>
+          <li>参考飞书「预置流程」，年度逐级审定</li>
+          <li>消息通知参考飞书「消息通知」</li>
+        </ul>
+      </td>
+    </tr>
+  </table>
+
+  <h3 id="form">2.5 绩效盘点表单</h3>
+  <table>
+    <tr><th class="feat">功能点</th><th class="shot">原型图</th><th>需求说明</th></tr>
+    <tr>
+      <td class="feat">面谈</td>
+      <td class="shot">
+        <img class="shot" src="../../tmp/prd-screenshots/form-interview.png" alt="绩效面谈">
+        <figcaption>既有图 · 员工面谈</figcaption>
+      </td>
+      <td>
+        <ol>
+          <li>顶部：标题「绩效面谈」、周期、被考核人</li>
+          <li>月度绩效结果：展示当前月份往前 12 个月的月度/季度绩效最终等级</li>
+          <li>飞书链接：必填，默认为空，单行文本，必须 URL，长度 1000</li>
+          <li>飞书总结截图：必填，默认为空；点击/拖拽上传；仅 1 张；png/jpg/jpeg</li>
+        </ol>
+      </td>
+    </tr>
+    <tr>
+      <td class="feat">初评等级导入</td>
+      <td class="shot">
+        <img class="shot" src="../../tmp/prd-screenshots/form-grade-import.png" alt="初评等级导入">
+        <figcaption>既有图 · 初评等级导入</figcaption>
+      </td>
+      <td>
+        <ol>
+          <li>数据源：待办跳转；展示当前节点需本处理人审批的人员与初评等级；初评默认空，导入后展示</li>
+          <li>展示字段：被考核人信息、考核组、全路径部门、当前部门、职位、职级、初评等级</li>
+          <li>下载模板：带出当前表单可导入人员名单</li>
+          <li>导入校验：工号匹配当前节点可导入名单；初评绩效等级匹配活动绑定的绩效等级规则</li>
+        </ol>
+      </td>
+    </tr>
+    <tr>
+      <td class="feat">测评结果与初评能力导入</td>
+      <td class="shot">
+        <img class="shot" src="../../tmp/prd-screenshots/form-assess-import.png" alt="测评结果导入">
+        <figcaption>既有图 · 测评结果导入（当前原型标题如此）</figcaption>
+      </td>
+      <td>
+        <ol>
+          <li>数据源：待办跳转；展示测评、360、初评能力；默认空，导入后展示</li>
+          <li>展示字段：被考核人、考核组、全路径部门、当前部门、职位、职级、360 得分、360 排名(%)、360 排名(占位)、测评得分、测评排名(%)、测评排名(占位)、初评能力等级</li>
+          <li>下载模板：带出可导入人员名单</li>
+          <li>导入：工号须属当前节点名单；360/测评仅可数字与小数；360 得分、两套排名、测评得分、初评能力等级均非必填</li>
+        </ol>
+      </td>
+    </tr>
+    <tr>
+      <td class="feat">年度绩效&amp;盘点逐级校准表单</td>
+      <td class="shot">
+        <img class="shot" src="../../tmp/prd-screenshots/form-yearly-step1-ratify.png" alt="绩效审定">
+        <figcaption>既有图 · 步骤 1 绩效审定</figcaption>
+        <img class="shot" src="../../tmp/prd-screenshots/form-yearly-step2-talent.png" alt="能力审定">
+        <figcaption>既有图 · 步骤 2 能力审定</figcaption>
+        <img class="shot" src="../../tmp/prd-screenshots/form-yearly-step3-box9.png" alt="九宫格校准">
+        <figcaption>既有图 · 步骤 3 九宫格校准</figcaption>
+      </td>
+      <td>
+        <h4>数据源与步骤</h4>
+        <ol>
+          <li>待办跳转；展示当前处理人节点全部考核组、将经过本处理人的员工</li>
+          <li>三步：绩效审定、能力审定、九宫格校准；只可通过点提交进入下一步</li>
+          <li>数据分三类：未到达（预测含本处理人但未流入）、待提交（已流入）、已提交（本处理人已提交）</li>
+          <li>默认按职级排序值降序</li>
+        </ol>
+        <h4>列表字段</h4>
+        <ul>
+          <li>员工信息｜三步均显示：花名册（姓名(工号)、当前部门、全路径部门、职位、职级、职族、职类、工作地区、划分区域、入职日期、累计司龄、直接上级(工号)）。姓名 hover：姓名(工号)、当前部门、职位、职级、考核组、初评绩效等级、初评能力等级、上年格子、异常标识+调整原因</li>
+          <li>活动信息：考核组、提交状态、调整记录、异常标识、当前处理人、当前节点。调整记录：调整人(节点处理人)：原等级 → 调整等级；跨 2 档才展示原因，超长省略不换行</li>
+          <li>绩效信息｜仅绩效审定、九宫格可见：初评绩效等级、调整绩效等级、调整记录（只看绩效）、异常标识</li>
+          <li>能力信息｜仅能力审定、九宫格可见：360 得分/排名(%)/排名(占位)、测评得分/排名(%)/排名(占位)、初评能力、调整能力、能力调整记录、异常标识</li>
+          <li>九宫格信息｜仅九宫格可见：上年格子、初评格子、调整格子、异常标识、全部调整记录。初评格子由初评绩效+初评能力按九宫格配置算出</li>
+        </ul>
+        <h4>字段显示/隐藏</h4>
+        <ul>
+          <li>支持勾选显示/隐藏</li>
+          <li>默认显示：绩效审定 = 姓名(工号)、当前部门、提交状态、初评绩效等级、调整记录；能力审定 = 姓名(工号)、当前部门、提交状态、初评能力等级、调整记录；九宫格｜格子 = 只展示名称和异常标识；九宫格｜列表 = 姓名(工号)、当前部门、提交状态、初评绩效等级、初评能力等级、调整记录、异常标识</li>
+        </ul>
+        <h4>异常标识</h4>
+        <ol>
+          <li>枚举：绩效上调 2 档、绩效下调 2 档、能力上调 2 档、能力下调 2 档、校准次数大于等于 2 次、绩效申请突破、能力申请突破。只在对应环节展示对应标识</li>
+          <li>绩效上/下调 2 档：调整等级对比<strong>初评等级</strong>上/下 ≥ 2 档。例：符合预期 → 超出预期 = 绩效上调 2 档</li>
+          <li>能力上/下调 2 档：对比初评能力 ≥ 2 档</li>
+          <li>校准次数 ≥ 2：逐级审定中累计九宫格被调整超过 2 次；以提交流程为准，同一节点内反复调整不计入</li>
+          <li>绩效/能力申请突破：由各步提交时强制分布提醒中申请而来；九宫格仍按绩效、能力强制分布分别判断</li>
+        </ol>
+        <h4>操作交互</h4>
+        <ul>
+          <li>点击【查看年度绩效盘点规则】弹出弹窗查看规则海报
+            <ul>
+              <li>弹窗标题：2026年度人才绩效盘点说明，展示规则海报</li>
+              <li>海报可滚动查看；点遮罩、关闭或 Esc 关闭</li>
+            </ul>
+          </li>
+          <li>筛选：考核组（默认全部，含未到达/已提交）；姓名/工号；部门、划分区域、职位、职级；提交状态默认待提交；只看已调整（本处理人调整过的绩效/能力/格子）；只看异常</li>
+          <li>绩效审定用星星控件，星数=当前等级数，默认填入上一节点等级；等级文字颜色取等级规则；首个逐级节点取初评导入，之后取上一审定节点</li>
+          <li>相对初评跨 2 档须填原因（提示含姓名工号、当前→调整、相对初评跨档）；原因必填，最多 2000 字；本节点只保留最新一条，若不跨 2 档则清空原因；本节点调过的展示调整标识</li>
+          <li>能力审定用平铺选项，取数/颜色/跨 2 档与绩效相同</li>
+          <li>数据实时保存，关页再开仍为调整后等级</li>
+        </ul>
+        <h4>格子调整</h4>
+        <ul>
+          <li>默认按初评绩效/能力换算格子</li>
+          <li>九宫格视图可拖动；相对初评跨 2 档须填原因；目标格含多个绩效/能力等级时弹窗手选其一</li>
+          <li>列表视图点调整：手选目标格、原因、等级，规则同上</li>
+        </ul>
+        <h4>下一步 / 提交</h4>
+        <ul>
+          <li>绩效/能力审定按钮为「下一步」，九宫格为「提交」。下一步不提交流程，只保存；只有提交才流转下一节点。驳回上一节点后，当前环节所有已填数据作废</li>
+          <li>校验所有人已填调整等级/格子，否则弹窗点名</li>
+          <li>按考核组校验强制分布；不符合则弹窗（样式参考原型）。可对某考核组/等级申请突破：选人 + 填原因；已有突破标识的人在选择控件中标出。九宫格仍分别提交绩效、能力突破。若本次已符合分布，则清除已有突破标识</li>
+          <li>二次确认弹窗（校验通过后弹出，取消不进入下一步/不提交）
+            <ul>
+              <li>绩效/能力审定：标题「确认进入下一步」，按钮「进入下一步」；九宫格：标题「确认提交」，按钮「确认提交」</li>
+              <li>有人调整：列出本节点已调整人员（姓名、工号、调整摘要），文案「本节点已调整以下 N 人的结果，确认后继续：」</li>
+              <li>无人调整：文案「本节点未调整任何人的结果，确认进入下一步/提交？」</li>
+            </ul>
+          </li>
+        </ul>
+        <h4>图表</h4>
+        <ul>
+          <li>按考核组展示强制分布满足情况，含图表、列表；默认列表；多组按考核组顺序
+            <ul>
+              <li>看板顶栏「图表 | 列表」全局切换（默认列表）；收起时各组同步只显示所选样式</li>
+            </ul>
+          </li>
+          <li>统计口径参考月度绩效逐级审定</li>
+          <li>默认收起、竖排；展开后同一考核组列表+图表横向，一组一卡</li>
+          <li>分组看板：绩效审定、能力审定在名单右侧常驻；九宫格仅列表视图显示，九宫格视图隐藏</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td class="feat">审批</td>
+      <td class="shot">
+        <img class="shot" src="../../tmp/prd-screenshots/form-yearly-approve.png" alt="COE/CHO 审批">
+        <figcaption>既有图 · COE/CHO 审批（只读九宫格）</figcaption>
+      </td>
+      <td>
+        <ol>
+          <li>样式与逐级校准一致，仅展示九宫格步骤。页面标题 = {年份}{周期名称}{活动名称}结果终审。例：2026年度HRAS年度绩效盘点结果终审</li>
+          <li>通过：流转下一节点</li>
+          <li>驳回：只可驳回到上一级</li>
+        </ol>
+      </td>
+    </tr>
+  </table>
+
+  <p>流程节「结果确认」无独立原型图列。本地附既有确认页截图，便于对照「沿用已有结果确认」：</p>
+  <img class="shot" src="../../tmp/prd-screenshots/form-result-confirm.png" alt="结果确认">
+  <figcaption>既有图 · 结果确认（飞书流程节未要求配图，仅本地附上）</figcaption>
+
+  <h3 id="report">2.6 报表</h3>
+  <table>
+    <tr><th>功能入口</th><td>HRONE / 绩效管理 / 绩效报表 / 测评结果、盘点结果</td></tr>
+    <tr><th>数据权限</th><td>按 AMS 部门权限</td></tr>
+    <tr><th>多语言</th><td>按通用规范处理</td></tr>
+  </table>
+  <table>
+    <tr><th class="feat">功能点</th><th class="shot">原型图</th><th>需求说明</th></tr>
+    <tr>
+      <td class="feat">测评结果</td>
+      <td class="shot">
+        <img class="shot" src="../../tmp/prd-screenshots/report-assessment.png" alt="测评结果报表">
+        <figcaption>既有图 · 测评结果报表</figcaption>
+      </td>
+      <td>
+        <p><b>数据源</b>：按用户数据权限；测评结果导入已成功提交的人员结果。</p>
+        <ol>
+          <li>列表：被考核人、工号、当前部门、职位、年份、周期、活动名称、考核组、360 得分、360 排名(%)、360 排名(占位)、测评得分、测评排名(%)、测评排名(占位)、更新时间</li>
+          <li>筛选按筛选方案规范；导出模板见飞书「导出模板」；异步导出按现有规范</li>
+        </ol>
+      </td>
+    </tr>
+    <tr>
+      <td class="feat">盘点结果</td>
+      <td class="shot">
+        <img class="shot" src="../../tmp/prd-screenshots/report-inventory.png" alt="盘点结果报表">
+        <figcaption>既有图 · 盘点结果报表</figcaption>
+      </td>
+      <td>
+        <p><b>数据源</b>：按用户数据权限查看盘点结果。</p>
+        <ol>
+          <li>列表：被考核人、工号、当前部门、职位、年份、周期、考核活动、考核组、初评绩效等级、最终绩效等级、初评能力等级、最终能力等级、初评格子、最终格子、更新时间</li>
+          <li>筛选按规范；导出模板同上；异步导出按现有规范</li>
+        </ol>
+      </td>
+    </tr>
+  </table>
+
+  <p class="meta">对照用原型（未改）：<a href="http://127.0.0.1:8793/manager/demo-yearly-tr.html">demo-yearly-tr.html</a>　·　<a href="http://127.0.0.1:8793/perf-scheme-wizard.html">方案向导</a>　·　等级分布专项说明见 <a href="./prd-ratify-dist-overview.md">prd-ratify-dist-overview.md</a></p>
+</div>
+</body>
+</html>

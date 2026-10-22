@@ -97,12 +97,56 @@ body.approve-mode .person-chip{cursor:default}
 body.approve-mode .box9-cell.drag-over{border-color:inherit;background:inherit}
 
 .dist-filters{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0;flex:1 1 auto;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;box-sizing:border-box;height:auto;padding:0;margin:0;background:transparent;border-radius:0;box-shadow:none;row-gap:8px}
-.filter-row-group{display:flex;align-items:center;gap:8px;flex:1 1 100%;min-width:100%}
-#groupFilter{display:inline-flex;align-items:center;gap:0;padding:2px;background:var(--c1);border-radius:8px;flex-wrap:nowrap}
-#groupFilter .btn{height:28px;padding:0 12px;border:0;border-radius:6px;background:transparent;color:var(--c6);font:500 12px/1 var(--f);box-shadow:none;white-space:nowrap}
-#groupFilter .btn:hover{background:transparent;border:0;color:var(--c8)}
-#groupFilter .btn.btn-active{background:var(--sf);color:var(--pr);font-weight:600;border:0;box-shadow:0 1px 2px rgba(0,0,0,.06)}
-#groupFilter .group-sep{flex:0 0 auto;align-self:center;color:var(--c4);font:400 12px/28px var(--f);pointer-events:none;user-select:none}
+.list-tabs-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex:0 0 auto;
+  width:100%;
+  min-width:0;
+  padding:0 16px;
+  margin:0;
+  background:var(--sf);
+  border-bottom:1px solid var(--dv);
+  box-sizing:border-box;
+}
+.list-tabs,#groupFilter.list-tabs{
+  display:flex;
+  align-items:stretch;
+  gap:4px;
+  flex:1 1 auto;
+  width:auto;
+  min-width:0;
+  padding:0;
+  margin:0;
+  background:transparent;
+  border-bottom:0;
+  overflow-x:auto;
+  overflow-y:hidden;
+  scrollbar-width:thin;
+  box-sizing:border-box;
+}
+.list-tabs .list-tab,#groupFilter .list-tab{
+  position:relative;
+  height:40px;
+  padding:0 14px;
+  border:0;
+  border-bottom:2px solid transparent;
+  margin-bottom:-1px;
+  background:transparent;
+  color:var(--c6);
+  font:500 13px/40px var(--f);
+  white-space:nowrap;
+  cursor:pointer;
+  box-shadow:none;
+  flex-shrink:0;
+}
+.list-tabs .list-tab:hover,#groupFilter .list-tab:hover{color:var(--pr);background:transparent}
+.list-tabs .list-tab.is-active,#groupFilter .list-tab.is-active{
+  color:var(--pr);
+  font-weight:600;
+  border-bottom-color:var(--pr);
+}
 .filter-label{font:500 12px/1 var(--f);color:var(--c6);flex-shrink:0;white-space:nowrap}
 .filter-actions{display:flex;gap:6px;flex-wrap:nowrap;align-items:center;flex-shrink:0}
 select.status-filter-select{appearance:none;height:28px;min-width:88px;padding:0 26px 0 8px;border:1px solid var(--c2);border-radius:var(--r1);font:500 12px/1 var(--f);color:var(--c8);background-color:var(--sf);background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23A1A1AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;cursor:pointer;outline:none;font-family:inherit;transition:border-color .12s,box-shadow .12s}
@@ -131,7 +175,8 @@ select.status-filter-select.dim-region{min-width:108px}
 .tree-node input{accent-color:var(--pr);width:14px;height:14px}
 .tree-popover-ft{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-top:1px solid var(--dv)}
 .tree-clear{border:0;background:transparent;color:var(--c5);font:500 12px/1 var(--f);cursor:pointer}.tree-clear:hover{color:var(--pr)}
-.filter-row-fields{display:flex;align-items:center;gap:8px;flex:1 1 100%;min-width:100%;flex-wrap:wrap;row-gap:8px}
+.filter-row-fields{display:flex;align-items:center;gap:8px;flex:1 1 100%;min-width:0;flex-wrap:wrap;row-gap:8px}
+.filter-rules-btn{margin-left:auto;flex-shrink:0;height:28px}
 .field-vis{position:absolute;top:0;right:8px;z-index:8;width:28px;height:28px;margin:0}
 .field-vis-btn{width:28px;height:28px;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;color:var(--c5);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
 .field-vis-btn svg{width:14px;height:14px;display:block}
@@ -566,7 +611,9 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .hd-unfilled.abn-filter input:checked+.hd-sw{background:#F59E0B}
 .step-work{display:flex;flex-direction:column;gap:0;flex:1;min-height:0}
 .step-work #evalList .eval-list-hd,
-.step-work #boxPanel .box9-hd{position:relative;z-index:3}
+.step-work #evalList .list-tabs-row,
+.step-work #boxPanel .box9-hd,
+.step-work #boxPanel .list-tabs-row{position:relative;z-index:3;flex-shrink:0}
 .step-work #pager{position:relative;z-index:3;background:var(--sf);flex-shrink:0;padding-left:16px;padding-right:16px}
 .step-work.split-lr #evalList,
 .step-work.split-lr #boxPanel{
@@ -948,14 +995,13 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 .chip-tip-row{display:flex;gap:10px;padding:3px 0;font:400 12px/1.4 var(--f)}
 .chip-tip-k{width:96px;flex-shrink:0;color:var(--c5)}
 .chip-tip-v{color:var(--c8);font-weight:500;min-width:0}
-.chip-tip-abn{margin-top:8px;padding:8px 10px;border-radius:var(--r1);background:var(--ro50);border:1px solid #FECDD3;font:400 12px/1.45 var(--f);color:var(--ro)}
-.chip-tip-abn-line{display:block}
-.chip-tip-abn-line+.chip-tip-abn-line{margin-top:4px}
-.chip-tip-abn b{font-weight:600}
-.chip-tip-act{margin-top:10px;padding-top:10px;border-top:1px solid var(--dv);display:flex;flex-direction:column;gap:8px}
+.chip-tip-abn{margin-top:8px;padding:0;background:transparent;border:0}
+.chip-tip-abn-item+.chip-tip-abn-item{margin-top:8px}
+.chip-tip-abn-title{display:block;font:600 12px/1.3 var(--f);color:var(--ro)}
+.chip-tip-abn-title.is-breakthrough{color:var(--ac700)}
+.chip-tip-abn-body{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:2px;font:400 12px/1.45 var(--f);color:var(--c8)}
+.chip-tip-act{margin-top:10px;padding-top:10px;border-top:1px solid var(--dv)}
 .chip-tip-act .btn{width:100%;justify-content:center}
-.chip-tip-link{align-self:flex-start;border:0;background:transparent;padding:0;font:500 12px/1.4 var(--f);color:var(--pr);cursor:pointer}
-.chip-tip-link:hover{text-decoration:underline}
 .unreached-note{font:400 12px/1.4 var(--f);color:var(--c5);padding:4px 2px 0}
 
 /* ═══ ADJUST MODAL ═══ */
@@ -1139,18 +1185,10 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
     </div>
   </section>
 
-  <!-- 团队成员列表：筛选并入标题行 -->
+  <!-- 团队成员列表：筛选 → Tab → 列表 -->
   <div class="eval-list" id="evalList">
     <div class="eval-list-hd">
       <div class="dist-filters" id="distFilters">
-        <div class="filter-row-group">
-          <span class="filter-label">考核组</span>
-          <div class="filter-actions" id="groupFilter"></div>
-          <button class="btn btn-s btn-sm" type="button" onclick="openRulesModal()" title="查看年度绩效盘点规则">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-            查看年度绩效盘点规则
-          </button>
-        </div>
         <div class="filter-row-fields">
         <label class="filter-search" aria-label="搜索员工姓名或工号">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -1187,6 +1225,13 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
         <div class="filter-actions" id="fillFilter" role="group" aria-label="快速筛选"></div>
         </div>
       </div>
+    </div>
+    <div class="list-tabs-row">
+      <div class="list-tabs" id="groupFilter" role="tablist" aria-label="考核组"></div>
+      <button class="btn btn-s btn-sm filter-rules-btn" type="button" onclick="openRulesModal()" title="查看年度绩效盘点规则">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        查看年度绩效盘点规则
+      </button>
     </div>
     <div class="eval-list-split" id="evalSplit">
       <div class="eval-list-main">
@@ -4335,11 +4380,10 @@ function setActiveBtn(containerId,btn){
   if(btn)btn.classList.add('btn-active');
 }
 
-function filterGroup(group,btn){
+function filterGroup(group){
   currentGroup=group;currentPage=1;
   syncPanelBandForGroup(group);
   syncActiveForceAliases();
-  setActiveBtn('groupFilter',btn);
   renderAll();
   if(isByGroupView()&&group!=='全部')requestAnimationFrame(function(){scrollGroupPanelIntoView(group);});
 }
@@ -4349,9 +4393,9 @@ function renderGroupFilter(){
   if(!box)return;
   if(currentGroup!=='全部'&&ASSESS_GROUPS.indexOf(currentGroup)<0)currentGroup='全部';
   var labels=['全部'].concat(ASSESS_GROUPS);
-  box.innerHTML=labels.map(function(g,i){
-    var sep=i?'<span class="group-sep" aria-hidden="true">｜</span>':'';
-    return sep+'<button class="btn btn-s btn-sm'+(currentGroup===g?' btn-active':'')+'" type="button" onclick="filterGroup(\''+g+'\',this)">'+g+'</button>';
+  box.innerHTML=labels.map(function(g){
+    var on=currentGroup===g;
+    return '<button class="list-tab'+(on?' is-active':'')+'" type="button" role="tab" aria-selected="'+(on?'true':'false')+'" onclick="filterGroup(\''+g+'\')">'+g+'</button>';
   }).join('');
   syncActiveForceAliases();
 }
@@ -5563,14 +5607,22 @@ function confirmNextStep(){
 
 function placeFilters(){
   var filters=document.getElementById('distFilters');
+  var tabs=document.getElementById('groupFilter');
+  var tabRow=tabs&&(tabs.closest('.list-tabs-row')||tabs);
   if(!filters)return;
-  // 三步统一：筛选并入内容卡标题行（名单 / 九宫格）
+  // 三步统一：筛选在内容卡顶栏，考核组 Tab + 盘点规则在筛选下方
   if(currentStep===3){
     var boxHd=document.querySelector('#boxPanel .box9-hd');
-    if(boxHd)boxHd.insertBefore(filters,boxHd.firstChild);
+    if(boxHd){
+      boxHd.insertBefore(filters,boxHd.firstChild);
+      if(tabRow)boxHd.after(tabRow);
+    }
   }else{
     var listHd=document.querySelector('#evalList .eval-list-hd');
-    if(listHd)listHd.appendChild(filters);
+    if(listHd){
+      listHd.appendChild(filters);
+      if(tabRow)listHd.after(tabRow);
+    }
   }
   placeFieldBtn();
 }
@@ -6362,17 +6414,13 @@ function nameTipHtml(m,idx){
   var abnItems=exceptionFlagItems(m);
   if(abnItems.length){
     html+='<div class="chip-tip-abn">'+abnItems.map(function(it){
-      var line='<b>'+escapeHtmlText(it.text)+'</b>';
-      if(it.reason)line+=' '+escapeHtmlText(it.reason);
-      return '<div class="chip-tip-abn-line">'+line+'</div>';
+      var block='<div class="chip-tip-abn-title'+(it.cls?' '+it.cls:'')+'">'+escapeHtmlText(it.text)+'</div>';
+      if(it.reason)block+='<div class="chip-tip-abn-body">'+escapeHtmlText(it.reason)+'</div>';
+      return '<div class="chip-tip-abn-item">'+block+'</div>';
     }).join('')+'</div>';
   }
   if(idx!=null&&!APPROVE_MODE){
-    var acts='<button class="chip-tip-link" type="button" onclick="event.stopPropagation();openAdjHistModal('+idx+')">调整记录</button>';
-    if(currentStep===3&&m.reached){
-      acts+='<button class="btn btn-s btn-sm" type="button" onclick="event.stopPropagation();hideChipTip();openManualAdj('+idx+')">调整格子…</button>';
-    }
-    html+='<div class="chip-tip-act">'+acts+'</div>';
+    html+='<div class="chip-tip-act"><button class="btn btn-s btn-sm" type="button" onclick="event.stopPropagation();openAdjHistModal('+idx+')">调整记录</button></div>';
   }
   return html;
 }
