@@ -40,6 +40,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoo
 .btn-s{background:var(--sf);color:var(--c6);border:1px solid var(--c2)}.btn-s:hover{border-color:var(--c3);color:var(--c8);background:var(--c0)}
 .btn-d{background:var(--ro50);color:var(--ro);border:1px solid var(--ro100)}.btn-d:hover{background:var(--ro100)}
 .btn-sm{height:28px;padding:0 10px;font-size:12px}
+.btn-t{background:transparent;color:var(--c6);border:none;padding:0 8px;height:28px;font-size:12px}.btn-t:hover{color:var(--pr);background:var(--pr50)}
 .btn[disabled]{opacity:.4;cursor:not-allowed;pointer-events:none}
 
 /* ═══ LAYOUT ═══ */
@@ -213,9 +214,21 @@ textarea.form-input{height:auto;padding:8px 10px;resize:vertical;min-height:60px
 .stage-pending{font:500 10px/1 var(--f);padding:2px 6px;border-radius:3px;background:var(--c1);color:var(--c5)}
 
 /* ═══ RULE BUILDER ═══ */
+.rule-block{border:1px solid var(--dv);border-radius:var(--r1);background:var(--c0);overflow:hidden}
+.rule-block-hd{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--dv)}
+.rule-block-t{font:600 12px/1 var(--f);color:var(--c6)}
+.rule-block-hd .btn-t{color:var(--ro)}
+.rule-block-hd .btn-t:hover{color:var(--ro);background:var(--ro50)}
+.rule-block-bd{padding:10px 12px}
+.rule-block-ft{display:flex;align-items:center;gap:8px;margin-top:2px}
 .rule-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.rule-row:last-child{margin-bottom:0}
 .rule-row select,.rule-row input{height:32px;padding:0 8px;border:1px solid var(--c2);border-radius:var(--r1);font:400 12px/1 var(--f);color:var(--c7);background:var(--sf);outline:none}
 .rule-row select:focus,.rule-row input:focus{border-color:var(--pr)}
+.rule-and{width:24px;flex-shrink:0;font:500 12px/32px var(--f);color:var(--c6);text-align:center}
+.rule-or{display:flex;align-items:center;gap:8px;margin:6px 0;font:500 12px/1 var(--f);color:var(--c5)}
+.rule-or::before,.rule-or::after{content:'';flex:1;height:1px;background:var(--dv)}
+.rule-or span{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:20px;padding:0 8px;border:1px solid var(--c2);border-radius:3px;background:var(--sf);font:500 12px/20px var(--f);color:var(--c6)}
 
 /* ═══ AUTO REMOVE RULES ═══ */
 .ar-panel{transition:opacity .15s}
@@ -354,9 +367,15 @@ const STAGES=[
 ];
 
 const LEAVE_TYPES=['年假','病假','事假','婚假','产假','陪产假','育儿假','工伤假','无薪假'];
+const RULE_FIELDS=['部门','职位','职级','划分区域','人员类型','人员状态','选择人员','排除人员'];
 const GROUPS=[
-  {id:'g1',name:'默认考核组',rules:[{field:'部门',op:'属于',val:'产品部,技术部,市场部'}],evalRule:'通用评价规则',isDefault:true,autoRemove:{enabled:true,resignation:{enabled:true,days:7},leaveStart:{enabled:true,leaveTypes:['产假','育儿假'],days:7},leaveEnd:{enabled:true,leaveTypes:['产假','育儿假'],days:7},conditions:['resignation','leaveStart','leaveEnd']}},
-  {id:'g2',name:'仓储特殊组',rules:[{field:'部门',op:'等于',val:'仓储部'},{field:'职级',op:'属于',val:'L5,L6'}],evalRule:'仓储评价规则',isDefault:false,autoRemove:{enabled:false,resignation:{enabled:false,days:7},leaveStart:{enabled:false,leaveTypes:[],days:7},leaveEnd:{enabled:false,leaveTypes:[],days:7},conditions:[]}},
+  {id:'g1',name:'默认考核组',rules:[
+    {conditions:[{field:'部门',op:'属于',val:'产品部'},{field:'职位',op:'等于',val:'产品经理'}]},
+    {conditions:[{field:'部门',op:'属于',val:'技术部'},{field:'职位',op:'等于',val:'工程师'}]}
+  ],evalRule:'通用评价规则',isDefault:true,autoRemove:{enabled:true,resignation:{enabled:true,days:7},leaveStart:{enabled:true,leaveTypes:['产假','育儿假'],days:7},leaveEnd:{enabled:true,leaveTypes:['产假','育儿假'],days:7},conditions:['resignation','leaveStart','leaveEnd']}},
+  {id:'g2',name:'仓储特殊组',rules:[
+    {conditions:[{field:'部门',op:'等于',val:'仓储部'},{field:'职级',op:'属于',val:'L5,L6'}]}
+  ],evalRule:'仓储评价规则',isDefault:false,autoRemove:{enabled:false,resignation:{enabled:false,days:7},leaveStart:{enabled:false,leaveTypes:[],days:7},leaveEnd:{enabled:false,leaveTypes:[],days:7},conditions:[]}},
 ];
 
 const FLOW_MODELS={
@@ -774,9 +793,83 @@ function renderBasicInfo(ct){
   setTimeout(function(){ updateAutoCreatePreview(); }, 0);
 }
 
+// ═══ 考核组人员范围：规则内条件 AND，规则之间 OR ═══
+function emptyCondition(){return {field:'部门',op:'等于',val:''};}
+function emptyRule(){return {conditions:[emptyCondition()]};}
+function normalizeGroupRules(grp){
+  if(!grp.rules) grp.rules=[];
+  if(grp.rules.length&&grp.rules[0]&&!grp.rules[0].conditions&&grp.rules[0].field){
+    grp.rules=[{conditions:grp.rules.map(function(r){return {field:r.field||'部门',op:r.op||'等于',val:r.val||''};})}];
+  }
+  grp.rules.forEach(function(rule){
+    if(!rule.conditions||!rule.conditions.length) rule.conditions=[emptyCondition()];
+  });
+  return grp.rules;
+}
+function addScopeRule(gi){
+  normalizeGroupRules(form.groups[gi]).push(emptyRule());
+  render();
+}
+function addScopeCondition(gi,ri){
+  normalizeGroupRules(form.groups[gi])[ri].conditions.push(emptyCondition());
+  render();
+}
+function removeScopeRule(gi,ri){
+  normalizeGroupRules(form.groups[gi]).splice(ri,1);
+  render();
+}
+function removeScopeCondition(gi,ri,ci){
+  var rules=normalizeGroupRules(form.groups[gi]);
+  rules[ri].conditions.splice(ci,1);
+  if(!rules[ri].conditions.length) rules.splice(ri,1);
+  render();
+}
+function setScopeField(gi,ri,ci,field){
+  var c=form.groups[gi].rules[ri].conditions[ci];
+  c.field=field;c.val='';
+  render();
+}
+function setScopeVal(gi,ri,ci,val){
+  form.groups[gi].rules[ri].conditions[ci].val=val;
+}
+function renderFieldSelect(gi,ri,ci,field){
+  return '<select onchange="setScopeField('+gi+','+ri+','+ci+',this.value)">'+
+    RULE_FIELDS.map(function(f){return '<option'+(field===f?' selected':'')+'>'+f+'</option>';}).join('')+
+  '</select>';
+}
+function renderScopeConditionRow(gi,ri,ci,c,condCount){
+  var isManual=c.field==='选择人员';
+  var isExclude=c.field==='排除人员';
+  var ph=isManual?'搜索并选择人员…':isExclude?'搜索并排除人员…':'请输入';
+  var minW=isManual||isExclude?'200':'120';
+  return '<div class="rule-row">'+
+    '<span class="rule-and">'+(ci===0?'':'且')+'</span>'+
+    renderFieldSelect(gi,ri,ci,c.field)+
+    '<input value="'+escHtml(c.val)+'" style="flex:1;min-width:'+minW+'px" placeholder="'+ph+'" oninput="setScopeVal('+gi+','+ri+','+ci+',this.value)">'+
+    (condCount>=2?'<button class="btn btn-s btn-sm" style="color:var(--ro)" title="删除条件" onclick="removeScopeCondition('+gi+','+ri+','+ci+')">'+I.trash+'</button>':'')+
+  '</div>';
+}
+function renderScopeRules(gi,grp){
+  var rules=normalizeGroupRules(grp);
+  var html=rules.map(function(rule,ri){
+    var n=rule.conditions.length;
+    var block='<div class="rule-block">'+
+      '<div class="rule-block-hd"><span class="rule-block-t">规则'+(ri+1)+'</span>'+
+        '<button class="btn btn-t btn-sm" onclick="removeScopeRule('+gi+','+ri+')">删除规则</button></div>'+
+      '<div class="rule-block-bd">'+
+      rule.conditions.map(function(c,ci){return renderScopeConditionRow(gi,ri,ci,c,n);}).join('')+
+      '<div class="rule-block-ft">'+
+        '<span class="rule-and"></span>'+
+        '<button class="btn btn-s btn-sm" onclick="addScopeCondition('+gi+','+ri+')">'+I.plus+' 添加条件</button>'+
+      '</div></div></div>';
+    if(ri<rules.length-1) block+='<div class="rule-or"><span>或</span></div>';
+    return block;
+  }).join('');
+  return html;
+}
+
 // ═══ 考核组 ═══
 function renderGroups(ct){
-  const RULE_FIELDS=['部门','职位','职级','划分区域','人员类型','人员状态','选择人员','排除人员'];
   ct.innerHTML=`<div class="fi">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
       <span style="font:600 15px/1 var(--f);color:var(--c9)">考核组配置</span>
@@ -800,16 +893,11 @@ function renderGroups(ct){
           <div class="form-row"><div class="form-grp"><label class="form-lb">名称 <span class="req">*</span></label><input class="form-input" value="${grp.name}" oninput="form.groups[${gi}].name=this.value;renderSidebar()"></div></div>
         </div>
         <div style="padding-bottom:12px;border-bottom:1px solid var(--dv);margin-bottom:12px">
-          <div style="font:600 12px/1 var(--f);color:var(--c6);margin-bottom:10px">二、添加人员规则</div>
-          ${grp.rules.map((r,ri)=>{
-            const isManual=r.field==='选择人员';
-            const isExclude=r.field==='排除人员';
-            return `<div class="rule-row">
-            <select onchange="form.groups[${gi}].rules[${ri}].field=this.value;form.groups[${gi}].rules[${ri}].val='';render()"><option ${r.field==='部门'?'selected':''}>部门</option><option ${r.field==='职位'?'selected':''}>职位</option><option ${r.field==='职级'?'selected':''}>职级</option><option ${r.field==='划分区域'?'selected':''}>划分区域</option><option ${r.field==='人员类型'?'selected':''}>人员类型</option><option ${r.field==='人员状态'?'selected':''}>人员状态</option><option ${r.field==='选择人员'?'selected':''}>选择人员</option><option ${r.field==='排除人员'?'selected':''}>排除人员</option></select>
-            <input value="${r.val}" style="flex:1;min-width:${isManual||isExclude?'200':'120'}px" placeholder="${isManual?'搜索并选择人员…':isExclude?'搜索并排除人员…':'请输入'}" oninput="form.groups[${gi}].rules[${ri}].val=this.value">
-            <button class="btn btn-s btn-sm" style="color:var(--ro)" onclick="form.groups[${gi}].rules.splice(${ri},1);render()">${I.trash}</button>
-          </div>`}).join('')}
-          <button class="btn btn-s btn-sm" onclick="form.groups[${gi}].rules.push({field:'部门',op:'等于',val:''});render()">${I.plus} 添加规则</button>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+            <span style="font:600 12px/1 var(--f);color:var(--c6)">二、添加人员规则</span>
+            <button class="btn btn-s btn-sm" onclick="addScopeRule(${gi})">${I.plus} 添加规则</button>
+          </div>
+          ${renderScopeRules(gi,grp)}
         </div>
         ${renderAutoRemovePanel(grp,gi)}
       </div>
@@ -820,7 +908,7 @@ function renderGroups(ct){
 
 function addGroup(){
   const id='g'+(form.groups.length+1);
-  form.groups.push({id,name:'新考核组',rules:[{field:'部门',op:'等于',val:''}],evalRule:'通用评价规则',autoRemove:emptyAutoRemove()});
+  form.groups.push({id,name:'新考核组',rules:[emptyRule()],evalRule:'通用评价规则',autoRemove:emptyAutoRemove()});
   render();
 }
 
@@ -2125,6 +2213,7 @@ document.addEventListener('click',function(e){
 // Initialize navigation first to create the content container
 GHR_NAV.init('perf', '绩效方案');
 applyTemplate(curTemplate); // 默认年度：面谈→盘点→确认（审定默认关，列表可见可单独开启）
+if(location.hash==='#groups') activeSection='groups';
 render();
 </script>
 </body>
