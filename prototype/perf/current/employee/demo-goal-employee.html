@@ -82,19 +82,31 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .people-panel{width:220px;flex-shrink:0;align-self:flex-start;background:transparent;border:0;border-right:1px solid var(--dv);border-radius:0;box-shadow:none;padding:12px 0;position:sticky;top:72px;max-height:calc(100vh - 96px);overflow:auto}
 .people-group{padding:4px 0 10px}
 .people-group+.people-group{border-top:1px solid var(--dv);padding-top:10px}
-.people-group-title{font:600 11px/1 var(--f);color:var(--c5);letter-spacing:.4px;text-transform:uppercase;padding:4px 14px 8px}
+.people-group-title{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 14px;font:400 13px/1.2 var(--f);color:var(--c9);background:transparent}
+.people-group-toggle{width:20px;height:20px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:var(--r1);background:transparent;color:inherit;cursor:pointer;padding:0}
+.people-group-toggle:hover{background:var(--c1)}
+.people-group-chevron{width:12px;height:12px;display:block;transition:transform .15s}
+.people-group.collapsed .people-group-chevron{transform:rotate(-90deg)}
+.people-group.collapsed .people-group-body{display:none}
 .people-item{display:flex;flex-direction:column;gap:3px;padding:8px 14px;cursor:pointer;transition:background .12s;border:0;background:transparent;width:100%;text-align:left;font-family:inherit}
 .people-item:hover{background:var(--c0)}
 .people-item.active{background:var(--pr50)}
-.people-item .p-name{font:600 13px/1.2 var(--f);color:var(--c9)}
-.people-item.active .p-name{color:var(--pr)}
+.people-item .p-head{display:flex;align-items:center;gap:6px;min-width:0}
+.people-item .p-name{font:400 12px/1.2 var(--f);color:var(--c9);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.people-item.is-self .p-name{font-size:13px}
+.people-item.active .p-name{color:var(--pr);font-weight:600}
 .people-item .p-meta{font:400 12px/1.3 var(--f);color:var(--c5)}
+.p-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.p-dot.submitted{background:var(--pr);animation:pulse 2s ease-in-out infinite}
+.p-dot.effective,.p-dot.approved{background:var(--em700)}
+.p-dot.rejected{background:var(--ro)}
+.p-dot.empty,.p-dot.none{background:var(--c4)}
 .goal-main{flex:1;min-width:0;padding:12px 16px 16px}
 .goal-split.panel-collapsed{gap:0}
 .goal-split.panel-collapsed .people-panel{display:none;border-right:0}
 .viewing-bar{display:flex;align-items:center;gap:8px;padding:4px 4px 12px;margin-bottom:0;background:transparent;border:0;border-radius:0;font:500 13px/1.3 var(--f);color:var(--c8)}
 .viewing-bar .vb-text{font:500 13px/1.3 var(--f);color:var(--c8);min-width:0}
-.vb-toggle{width:24px;height:24px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:var(--r1);background:transparent;color:var(--c5);cursor:pointer;padding:0;transition:all .12s}
+.vb-toggle{width:24px;height:24px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--c2);border-radius:var(--r1);background:transparent;color:var(--c5);cursor:pointer;padding:0;transition:all .12s}
 .vb-toggle:hover{background:var(--c1);color:var(--pr)}
 .vb-toggle svg{width:14px;height:14px;display:block}
 #moduleContainer > .mod-empty{background:transparent;border-radius:0;box-shadow:none;padding:48px 20px}
@@ -728,19 +740,19 @@ let langFieldKey=null;
 let kpiFilterCat='全部', kpiFilterType='全部', kpiFilterNature='全部';
 
 /* ═══ 人员切换（对齐我的目标）═══ */
-const SELF={id:'self',name:'林晓',dept:'产品部',title:'产品经理'};
+const SELF={id:'self',name:'林晓',empNo:'HR1001',dept:'产品部',title:'产品经理'};
 const PEOPLE={
   superior:[
-    {id:'sup1',name:'刘VP',dept:'产品中心',title:'产品副总裁'},
+    {id:'sup1',name:'刘VP',empNo:'HR0100',dept:'产品中心',title:'产品副总裁'},
   ],
   subordinate:[
-    {id:'sub1',name:'张明',dept:'产品部',title:'高级产品经理'},
-    {id:'sub2',name:'李华',dept:'产品部',title:'产品经理'},
-    {id:'sub3',name:'周杰',dept:'研发部',title:'高级工程师'},
+    {id:'sub1',name:'张明',empNo:'HR0201',dept:'产品部',title:'高级产品经理'},
+    {id:'sub2',name:'李华',empNo:'HR0202',dept:'产品部',title:'产品经理'},
+    {id:'sub3',name:'周杰',empNo:'HR0203',dept:'研发部',title:'高级工程师'},
   ],
   /* 转交过来的目标，不进上级/团队 */
   other:[
-    {id:'oth1',name:'吴九',dept:'研发部',title:'工程师'},
+    {id:'oth1',name:'吴九',empNo:'HR0301',dept:'研发部',title:'工程师'},
   ]
 };
 function cloneGoal(g,status,prefix){
@@ -807,6 +819,12 @@ const PERSON_MODULES={
 };
 let currentPersonId='self';
 let peoplePanelOpen=true;
+const groupCollapsed={other:false,superior:false,subordinate:false};
+const PEOPLE_CHEVRON='<svg class="people-group-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
+function togglePeopleGroup(key){
+  groupCollapsed[key]=!groupCollapsed[key];
+  renderPeople();
+}
 function findPerson(id){
   if(id==='self')return {group:'self',person:SELF};
   for(const g of ['other','superior','subordinate']){
@@ -831,19 +849,39 @@ function hasPendingMyApproval(mods){
 }
 function personLine(p){return p.name+'｜'+p.dept+'｜'+p.title}
 function personMeta(p){return p.dept+'｜'+p.title}
+function personName(p){return p.name+'('+(p.empNo||'—')+')'}
+function personFlowStatus(id){
+  if(id==='self')return {label:'目标制定',tone:'submitted'};
+  const raw=PERSON_MODULES[id]||[];
+  const all=[];
+  raw.forEach(m=>{(m.goals||[]).forEach(g=>all.push(g));});
+  const visible=all.filter(isViewableOtherGoal);
+  if(visible.some(g=>g.status==='pending_my_approval'))return {label:'直线上级审批',tone:'submitted'};
+  if(visible.length)return {label:'已生效',tone:'effective'};
+  if(all.some(g=>g.status==='pending_other'))return {label:'间接上级审批',tone:'submitted'};
+  if(all.some(g=>g.status==='draft'||g.status==='filling'))return {label:'目标制定',tone:'submitted'};
+  return {label:'无目标',tone:'empty'};
+}
+function peopleStatusHtml(id){
+  const st=personFlowStatus(id);
+  return '<span class="p-dot '+(st?st.tone:'empty')+'"></span>';
+}
 function renderPeople(){
   const el=document.getElementById('peoplePanel');
   if(!el)return;
-  let h='<div class="people-group"><button type="button" class="people-item'+(currentPersonId==='self'?' active':'')+'" onclick="selectPerson(\'self\')"><span class="p-name">我的目标</span></button></div>';
+  let h='<div class="people-group"><button type="button" class="people-item is-self'+(currentPersonId==='self'?' active':'')+'" onclick="selectPerson(\'self\')"><span class="p-head">'+peopleStatusHtml('self')+'<span class="p-name">我的目标</span></span></button></div>';
   const groups=[{key:'other',title:'其他'},{key:'superior',title:'我的上级'},{key:'subordinate',title:'我的团队'}];
   groups.forEach(g=>{
     const list=PEOPLE[g.key]||[];
     if(!list.length)return;
-    h+='<div class="people-group"><div class="people-group-title">'+g.title+'</div>';
+    const collapsed=!!groupCollapsed[g.key];
+    h+='<div class="people-group'+(collapsed?' collapsed':'')+'">';
+    h+='<div class="people-group-title"><span>'+g.title+'</span><button type="button" class="people-group-toggle" onclick="togglePeopleGroup(\''+g.key+'\')" aria-expanded="'+(collapsed?'false':'true')+'" aria-label="'+(collapsed?'展开':'收起')+g.title+'">'+PEOPLE_CHEVRON+'</button></div>';
+    h+='<div class="people-group-body">';
     list.forEach(p=>{
-      h+='<button type="button" class="people-item'+(p.id===currentPersonId?' active':'')+'" onclick="selectPerson(\''+p.id+'\')"><span class="p-name">'+p.name+'</span><span class="p-meta">'+personMeta(p)+'</span></button>';
+      h+='<button type="button" class="people-item'+(p.id===currentPersonId?' active':'')+'" onclick="selectPerson(\''+p.id+'\')"><span class="p-head">'+peopleStatusHtml(p.id)+'<span class="p-name">'+p.name+'</span></span><span class="p-meta">'+personMeta(p)+'</span></button>';
     });
-    h+='</div>';
+    h+='</div></div>';
   });
   el.innerHTML=h;
 }
@@ -901,6 +939,7 @@ function approveOthersGoals(){
   if(!raw)return;
   raw.forEach(m=>{m.goals.forEach(g=>{if(g.status==='pending_my_approval')g.status='effective'})});
   showToast('已通过','success');
+  renderPeople();
   render();
 }
 function rejectOthersGoals(){
@@ -909,6 +948,7 @@ function rejectOthersGoals(){
   if(!raw)return;
   raw.forEach(m=>{m.goals.forEach(g=>{if(g.status==='pending_my_approval')g.status='rejected'})});
   showToast('已驳回','success');
+  renderPeople();
   render();
 }
 function togglePeoplePanel(){
