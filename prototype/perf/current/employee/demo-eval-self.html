@@ -49,9 +49,8 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .eval-module-table.quant-table th:nth-child(4),.eval-module-table.quant-table th:nth-child(5){padding-left:8px;padding-right:8px}
 .eval-module-table tbody tr:last-child td{border-bottom:none}
 .eval-module-table tbody tr:hover td{background:var(--c0)}
-.eval-mod-icon{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#FFF}
-.eval-mod-icon svg{width:13px;height:13px}
-.eval-mod-name{font:600 13px/1 var(--f);color:var(--c7);text-transform:uppercase;letter-spacing:.4px}
+.eval-mod-icon{width:3px;height:14px;border-radius:2px;flex-shrink:0;display:block;padding:0}
+.eval-mod-name{font:600 16px/1.3 var(--f);color:var(--c7);text-transform:uppercase;letter-spacing:.4px}
 .eval-mod-stats{display:flex;align-items:center;gap:14px;color:var(--c6)}
 .eval-mod-weight,.eval-mod-count{font:600 14px/1 var(--f);color:var(--c8)}
 .eval-mod-weight{font-family:var(--m)}
@@ -111,8 +110,7 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
 
 /* ═══ HISTORY CARD ═══ */
 .hist-card{background:var(--sf);border-radius:var(--r3);box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:16px}
-.hist-hd{font:600 14px/1 var(--f);color:var(--c9);margin-bottom:16px;display:flex;align-items:center;gap:8px}
-.hist-hd svg{width:16px;height:16px;color:var(--pr)}
+.hist-hd{font:600 14px/1 var(--f);color:var(--c9);margin-bottom:16px}
 .hist-body{display:flex;gap:20px;align-items:stretch}
 .hist-annual{min-width:160px;padding:16px 20px;background:linear-gradient(135deg,var(--pr50),var(--vi50));border-radius:var(--r2);display:flex;flex-direction:column;justify-content:center;align-items:center;border:1px solid var(--pr100)}
 .hist-annual-label{font:500 11px/1 var(--f);color:var(--c5);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
@@ -375,11 +373,10 @@ var overallComment='';
 function renderModuleContainer(){
   var html='<div class="eval-modules">';
   MODULES.forEach(function(mod,mi){
-    var modIcon=mod.name==='KPI'?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>';
     var isQuantModule=mod.name==='KPI';
     html+='<section class="eval-module-card" aria-labelledby="eval_module_'+mi+'">'+
       '<div class="eval-module-hd"><div class="eval-module-main">'+
-      '<div class="eval-mod-icon" style="background:'+mod.color+'">'+modIcon+'</div>'+
+      '<div class="eval-mod-icon" style="background:'+mod.color+'" aria-hidden="true"></div>'+
       '<span class="eval-mod-name" id="eval_module_'+mi+'">'+mod.name+'</span></div>'+
       '<div class="eval-mod-stats"><span class="eval-mod-weight">'+mod.weight+'%</span><span class="eval-mod-count">'+mod.goals.length+' 个目标</span></div>'+
       '</div>'+

@@ -78,9 +78,8 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .eval-module-card+.eval-module-card{border-top:1px solid var(--dv);margin-top:12px;padding-top:4px}
 .eval-module-hd{display:flex;align-items:center;gap:12px;min-height:50px;padding:13px 4px;border-bottom:0;background:var(--c0)}
 .eval-module-main{display:flex;align-items:center;gap:12px;min-width:0;flex:1}
-.eval-mod-icon{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#FFF}
-.eval-mod-icon svg{width:13px;height:13px}
-.eval-module-hd .eval-mod-name{font:600 13px/1 var(--f);color:var(--c7);text-transform:uppercase;letter-spacing:.4px}
+.eval-mod-icon{width:3px;height:14px;border-radius:2px;flex-shrink:0;display:block;padding:0}
+.eval-module-hd .eval-mod-name{font:600 16px/1.3 var(--f);color:var(--c7);text-transform:uppercase;letter-spacing:.4px}
 .eval-mod-stats{display:flex;align-items:center;gap:14px}
 .eval-mod-stats .eval-mod-weight,.eval-mod-count{padding:0;background:transparent;border-radius:0;font:500 12px/1 var(--f);color:var(--c6)}
 .eval-mod-stats .eval-mod-weight{font-family:var(--m)}
@@ -184,8 +183,7 @@ textarea.edit-cell::placeholder{color:var(--c4)}
 
 /* ═══ HISTORY CARD（大卡片内不再套一层阴影卡） ═══ */
 .hist-card{background:transparent;border-radius:0;box-shadow:none;padding:8px 0 16px;margin-bottom:12px;border-bottom:1px solid var(--dv)}
-.hist-hd{font:600 14px/1 var(--f);color:var(--c9);margin-bottom:16px;display:flex;align-items:center;gap:8px}
-.hist-hd svg{width:16px;height:16px;color:var(--pr)}
+.hist-hd{font:600 14px/1 var(--f);color:var(--c9);margin-bottom:16px}
 .hist-body{display:flex;gap:16px;align-items:stretch}
 .hist-annual{width:130px;flex-shrink:0;padding:20px 16px;background:var(--pr50);border:1px solid var(--pr100);border-radius:var(--r2);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
 .hist-annual-year{font:500 12px/1 var(--f);color:var(--c5);margin-bottom:8px}
@@ -525,7 +523,7 @@ function renderHistory(){
   var lastAnnual=ANNUAL_RESULTS[ANNUAL_RESULTS.length-1];
   var sClass=GRADE_S[lastAnnual.grade]||'s3';
   var html='<div class="hist-card">'+
-    '<div class="hist-hd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>历史绩效统计</div>'+
+    '<div class="hist-hd">历史绩效统计</div>'+
     '<div class="hist-body">'+
     '<div class="hist-annual"><div class="hist-annual-year">'+lastAnnual.year+' 年度</div><div class="hist-annual-code">'+lastAnnual.grade+'</div></div>'+
     '<div class="hist-monthly">';
@@ -560,14 +558,12 @@ var directComment='';
 function renderModuleContainer(){
   var person=currentPerson();
   var personName=person.name;
-  var personAv=personInitial(person);
   var indirectComment=personName+indirectCommentBase;
   var html='<div class="eval-modules">';
   MODULES.forEach(function(mod,mi){
     var isQuantModule=mod.name==='KPI';
-    var modIcon=isQuantModule?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>';
     html+='<section class="eval-module-card" aria-labelledby="direct_module_'+mi+'">'+
-      '<div class="eval-module-hd"><div class="eval-module-main"><div class="eval-mod-icon" style="background:'+mod.color+'">'+modIcon+'</div><span class="eval-mod-name" id="direct_module_'+mi+'">'+mod.name+'</span></div>'+
+      '<div class="eval-module-hd"><div class="eval-module-main"><div class="eval-mod-icon" style="background:'+mod.color+'" aria-hidden="true"></div><span class="eval-mod-name" id="direct_module_'+mi+'">'+mod.name+'</span></div>'+
       '<div class="eval-mod-stats"><span class="eval-mod-weight">'+mod.weight+'%</span><span class="eval-mod-count">'+mod.goals.length+' 个目标</span></div></div>'+
       '<div class="eval-module-table'+(isQuantModule?'':' has-sticky-direct')+'"><table><colgroup>'+(isQuantModule?'<col style="width:20%"><col style="width:8%"><col><col style="width:104px"><col style="width:64px">':'<col style="width:18%"><col style="width:7%"><col><col style="width:20%"><col style="width:112px"><col style="width:112px"><col style="width:150px">')+'</colgroup>'+
       (isQuantModule?'<thead><tr><th>指标名称</th><th>权重</th><th>衡量标准</th><th>完成值</th><th>得分</th></tr></thead>':'<thead><tr><th>指标名称</th><th>权重</th><th>衡量标准</th><th>完成情况</th><th>员工自评</th><th>双线上级评价</th><th class="sticky-col-direct">直线上级评价</th></tr></thead>')+'<tbody>';
@@ -602,8 +598,7 @@ function renderModuleContainer(){
 
   // 初评等级 - 评星
   html+='<div style="background:transparent;border-radius:0;box-shadow:none;margin-top:16px;padding:16px 4px;border-top:1px solid var(--dv)">'+
-    '<div style="font:600 14px/1 var(--f);color:var(--c9);margin-bottom:6px">初评等级</div>'+
-    '<div style="font:400 12px/1 var(--f);color:var(--c5);margin-bottom:12px">请根据被考核人表现选择初评等级</div>'+
+    '<div style="font:600 14px/1 var(--f);color:var(--c9);margin-bottom:12px">初评等级</div>'+
     '<div class="star-rating" id="initGradeStars" data-value="0"><div class="star-row">';
   for(var si=1;si<=5;si++){
     html+='<span class="star" data-v="'+si+'" onclick="setInitGradeStar(this,'+si+')" onmouseenter="starHoverInit(this,1)" onmouseleave="starHoverInit(this,0)">★</span>';
@@ -616,25 +611,16 @@ function renderModuleContainer(){
   html+='<div style="background:transparent;border-radius:0;box-shadow:none;margin-top:16px;overflow:hidden;border-top:1px solid var(--dv)">'+
     '<div style="padding:16px 4px;border-bottom:1px solid var(--dv)"><span style="font:600 15px/1 var(--f);color:var(--c9)">总评语</span></div>'+
     '<div style="padding:16px 4px;border-bottom:1px solid var(--dv)">'+
-      '<div style="font:500 13px/1 var(--f);color:var(--c8);margin-bottom:8px;display:flex;align-items:center;gap:6px">'+
-        '<span style="width:22px;height:22px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">'+personAv+'</span>'+
-        '员工评语（'+personName+'）'+
-      '</div>'+
-      '<div style="font:400 13px/1.6 var(--f);color:var(--c7);padding-left:28px">'+employeeComment+'</div>'+
+      '<div style="font:500 13px/1 var(--f);color:var(--c8);margin-bottom:8px">员工评语｜'+personName+'</div>'+
+      '<div style="font:400 13px/1.6 var(--f);color:var(--c7)">'+employeeComment+'</div>'+
     '</div>'+
     '<div style="padding:16px 4px;border-bottom:1px solid var(--dv)">'+
-      '<div style="font:500 13px/1 var(--f);color:var(--c8);margin-bottom:8px;display:flex;align-items:center;gap:6px">'+
-        '<span style="width:22px;height:22px;border-radius:50%;background:var(--vi);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">刘</span>'+
-        '双线上级评语'+
-      '</div>'+
-      '<div style="font:400 13px/1.6 var(--f);color:var(--c7);padding-left:28px">'+indirectComment+'</div>'+
+      '<div style="font:500 13px/1 var(--f);color:var(--c8);margin-bottom:8px">双线上级评语｜刘VP</div>'+
+      '<div style="font:400 13px/1.6 var(--f);color:var(--c7)">'+indirectComment+'</div>'+
     '</div>'+
     '<div style="padding:16px 4px">'+
-      '<div style="font:500 13px/1 var(--f);color:var(--c8);margin-bottom:8px;display:flex;align-items:center;gap:6px">'+
-        '<span style="width:22px;height:22px;border-radius:50%;background:var(--pr);display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--f);color:#FFF;flex-shrink:0">王</span>'+
-        '直线上级评语'+
-      '</div>'+
-      '<textarea class="edit-cell" id="directComment" placeholder="填写直线上级评语…" oninput="directComment=this.value" style="margin-left:28px;width:calc(100% - 28px)">'+directComment+'</textarea>'+
+      '<div style="font:500 13px/1 var(--f);color:var(--c8);margin-bottom:8px">直线上级评语｜王总监</div>'+
+      '<textarea class="edit-cell" id="directComment" placeholder="填写直线上级评语…" oninput="directComment=this.value">'+directComment+'</textarea>'+
     '</div>'+
   '</div>';
 
