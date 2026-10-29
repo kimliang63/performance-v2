@@ -284,6 +284,101 @@ tbody tr:last-child td{border-bottom:none}
 .info-item-label{font:500 12px/1 var(--f);color:var(--c5);margin-bottom:4px}
 .info-item-value{font:400 13px/1.4 var(--f);color:var(--c9)}
 
+/* 环节时间：弹窗月历，颜色只按节点状态 */
+.act-cal-modal{
+  width:min(1120px,calc(100vw - 48px));
+  max-width:calc(100vw - 48px);
+  max-height:min(760px,calc(100vh - 48px));
+  display:flex;flex-direction:column;
+}
+.act-cal-modal.is-empty{width:min(420px,calc(100vw - 48px))}
+.act-cal-modal .modal-hd{flex:none;position:relative;z-index:5;overflow:visible}
+.act-cal-modal .modal-close:focus{outline:none;background:var(--c1);color:var(--c7)}
+.act-cal-modal .modal-hd-t{display:flex;align-items:center;gap:8px}
+.act-status-hd-ops{display:flex;align-items:center;gap:2px;flex:none}
+.act-status-hd-ops .stage-mgmt-btn{height:28px;color:var(--c7)}
+.act-status-scroll{position:relative;z-index:1;padding:14px 22px 18px}
+.act-status-block+.act-status-block{margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)}
+.act-status-h{font:600 13px/1 var(--f);color:var(--c9);margin:0 0 10px}
+.act-status-sub{font:600 12px/1 var(--f);color:var(--c8);margin:12px 0 6px}
+.act-status-rows{display:flex;flex-direction:column;gap:8px}
+.act-status-row{display:flex;align-items:flex-start;gap:12px;font:400 13px/1.5 var(--f);color:var(--c8)}
+.act-status-k{width:72px;flex:none;color:var(--c5)}
+.act-status-v{min-width:0;display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+.act-cal-summary{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;margin:0 0 8px;min-width:0}
+.act-cal-metrics{display:flex;align-items:flex-end;flex-wrap:nowrap;gap:8px 28px;min-width:0;flex:none}
+.act-cal-metric{display:inline-flex;align-items:flex-end;gap:4px;white-space:nowrap;font:400 13px/1 var(--f);color:var(--c7)}
+.act-cal-metric-num{font:600 20px/1 var(--f);color:var(--c9)}
+.act-cal-metric-num.is-em{color:var(--em700)}
+.act-cal-metric-label{font:400 13px/1 var(--f);color:var(--c7)}
+.act-cal-stages{display:flex;flex:1 1 auto;flex-wrap:wrap;align-items:center;justify-content:flex-end;min-width:0}
+.act-cal-stage-list{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:8px;min-width:0}
+.act-cal-stage{display:inline-flex;align-items:center;gap:6px;flex:none;padding:3px 8px;border-radius:4px;background:var(--c1);font:400 13px/1 var(--f);color:var(--c8);white-space:nowrap}
+.act-cal-stage-name{font:400 13px/1 var(--f);color:var(--c8)}
+.act-cal-stage-frac{font:600 13px/1 var(--f);font-variant-numeric:tabular-nums;color:var(--c9)}
+.act-cal-stage-state{font:400 13px/1 var(--f)}
+.act-cal-month-hd{display:flex;align-items:center;gap:12px;min-width:0;margin:0 0 6px}
+.act-cal-brief{
+  flex:0 1 auto;min-width:0;margin:0 0 0 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  text-align:left;font:400 12px/1.45 var(--f);color:var(--c7);
+}
+.act-cal-brief-time.is-due{color:var(--ro)}
+.act-cal-region{
+  display:inline-flex;align-items:center;height:20px;padding:0 6px;
+  border-radius:4px;background:var(--c1);color:var(--c6);
+  font:500 12px/1 var(--f);
+}
+.act-cal-legend{
+  display:flex;flex-wrap:nowrap;align-items:center;gap:6px 16px;
+  flex:none;white-space:nowrap;
+  font:400 13px/1 var(--f);color:var(--c6);
+}
+.act-cal-legend span{display:inline-flex;align-items:center;gap:6px}
+.act-cal-swatch{width:12px;height:12px;border-radius:3px;flex:none;box-sizing:border-box}
+.act-cal-swatch.is-run{background:var(--pr)}
+.act-cal-swatch.is-wait{background:#fff;box-shadow:inset 0 0 0 1px var(--c3)}
+.act-cal-swatch.is-done{background:var(--em50);box-shadow:inset 0 0 0 1px var(--em)}
+.act-cal-scroll{overflow-x:hidden;overflow-y:auto;padding:10px 22px 12px;min-height:0;flex:1;overscroll-behavior:contain}
+.act-cal-months{display:flex;flex-direction:column;gap:12px}
+.act-cal-month{min-width:0}
+.act-cal-month-t{flex:none;font:500 13px/1 var(--f);color:var(--c7);margin:0}
+.act-cal-grid{border:1px solid var(--c2);border-radius:var(--r1);overflow:hidden;background:var(--sf)}
+.act-cal-dow{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));background:var(--c0);border-bottom:1px solid var(--dv)}
+.act-cal-dow span{text-align:center;font:500 11px/1 var(--f);color:var(--c5);padding:5px 0}
+.act-cal-week{
+  display:grid;grid-template-columns:repeat(7,minmax(0,1fr));
+  grid-template-rows:28px;grid-auto-rows:30px;
+  border-top:1px solid var(--dv);min-width:0;align-content:start;
+}
+.act-cal-dow+.act-cal-week{border-top:none}
+.act-cal-day{padding:3px 4px 0;font:500 11px/1 var(--f);color:var(--c6);min-width:0;z-index:0}
+.act-cal-day.is-weekend{color:var(--c4)}
+.act-cal-day.is-out{background:var(--c0)}
+.act-cal-day+.act-cal-day{box-shadow:inset 1px 0 0 var(--dv)}
+.act-cal-bar{
+  appearance:none;-webkit-appearance:none;box-sizing:border-box;
+  z-index:1;align-self:center;justify-self:center;
+  height:18px;width:calc(100% - 6px);min-width:0;max-width:calc(100% - 6px);margin:0;padding:0 6px;
+  display:flex;align-items:center;gap:2px;overflow:hidden;white-space:nowrap;
+  border-radius:4px;border:none;background:transparent;cursor:pointer;
+  font:500 12px/1 var(--f);text-align:left;box-shadow:none;
+}
+.act-cal-bar.is-run{background:color-mix(in srgb, var(--pr) 18%, transparent);color:var(--pr)}
+.act-cal-bar.is-wait{background:color-mix(in srgb, var(--c5) 18%, transparent);color:var(--c5)}
+.act-cal-bar.is-done{background:color-mix(in srgb, var(--em) 18%, transparent);color:var(--em700)}
+.act-cal-bar.is-run.is-on{background:color-mix(in srgb, var(--pr) 28%, transparent)}
+.act-cal-bar.is-wait.is-on{background:color-mix(in srgb, var(--c5) 28%, transparent)}
+.act-cal-bar.is-done.is-on{background:color-mix(in srgb, var(--em) 28%, transparent)}
+.act-cal-name{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:500 12px/1 var(--f)}
+.act-cal-tag{flex:none;font:500 12px/1 var(--f);opacity:.9}
+.act-cal-tag::before{content:'·';margin:0 3px 0 1px;font-weight:400;opacity:.55}
+.act-cal-bar.is-on{z-index:2;box-shadow:none}
+.act-cal-bar:focus,.act-cal-bar:focus-visible{outline:none;box-shadow:none}
+.act-cal-empty{font:400 13px/1.5 var(--f);color:var(--c6)}
+.act-cal-side{display:flex;align-items:center;justify-content:flex-start;gap:8px;flex-wrap:wrap;margin:0 0 12px;min-width:0;max-width:100%}
+.act-remind-slot{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0;max-width:100%}
+.act-remind-note{font:400 12px/1.4 var(--f);color:var(--c6);white-space:normal;overflow-wrap:anywhere}
+
 /* ═══ STAGE PROGRESS ═══ */
 .stage-bar-wrap{
   display:flex;align-items:center;gap:10px;padding:12px 0;flex-wrap:wrap;
@@ -313,23 +408,32 @@ tbody tr:last-child td{border-bottom:none}
 .stage-tooltip-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 .stage-current{
   position:relative;display:flex;align-items:center;gap:8px;
-  padding:4px 4px 4px 12px;border:1px solid var(--c2);border-radius:var(--r2);
-  background:var(--sf);cursor:default;flex-shrink:0;white-space:nowrap;
+  padding:2px 4px 2px 4px;border:1px solid var(--c2);border-radius:var(--r2);
+  background:var(--sf);cursor:default;flex-shrink:0;white-space:nowrap;max-width:100%;
 }
-.stage-current-info{display:flex;align-items:center;gap:8px;position:relative;min-width:0}
+.stage-current-info{
+  display:flex;align-items:center;gap:8px;position:relative;min-width:0;
+  margin:0;padding:6px 8px;border:none;border-radius:var(--r1);
+  background:transparent;color:inherit;font:inherit;font-family:inherit;
+  cursor:pointer;text-align:left;white-space:nowrap;
+}
+.stage-current-info:hover{background:var(--c0)}
+.stage-current-info:focus{outline:none}
+.stage-current-info:focus-visible{box-shadow:inset 0 0 0 2px var(--pr)}
 .stage-current-sep{width:1px;height:14px;background:var(--c2);flex-shrink:0}
 .stage-current-stats{display:flex;align-items:center;gap:12px;padding:2px 0}
 .stage-current-stats .stat-num{font:700 14px/1 var(--f)}
 .stage-current-stats .stat-label{font:400 12px/1 var(--f);color:var(--c6)}
-.stage-current-hint{
-  display:inline-flex;align-items:center;justify-content:center;
-  width:18px;height:18px;border-radius:50%;background:var(--c1);color:var(--c5);
-  font:600 11px/1 var(--f);flex-shrink:0;
+.stage-mini-tag{
+  display:inline-flex;align-items:center;height:18px;margin-left:6px;padding:0 5px;border-radius:4px;
+  background:var(--c1);color:var(--c6);font:500 11px/1 var(--f);flex:none;
 }
-.stage-current-info:hover .stage-combined-tip{display:block}
+.act-status-v .stage-mini-tag{margin-left:0}
+.stage-mini-tag.is-auto{background:var(--pr50);color:var(--pr700)}
+.stage-remind-brief{font:400 12px/1 var(--f);color:var(--c6);flex-shrink:0}
 .stage-end-hint{
-  display:inline-flex;align-items:center;flex-shrink:0;
-  font:400 12px/1 var(--f);color:var(--c6);user-select:none;
+  display:inline-flex;align-items:center;gap:0;flex-shrink:0;
+  font:400 12px/1 var(--f);color:var(--c6);
 }
 .stage-end-hint.is-auto{color:var(--c6)}
 .stage-mgmt{position:relative;display:inline-flex;align-items:center;flex-shrink:0}
@@ -438,7 +542,14 @@ let ACTIVITIES=[
   {id:11,name:'新员工转正考核',schemeType:'月度',schemeName:'试用期考核方案',cycle:'2026年7月（2026/07/01 - 2026/07/31）',cycleId:'c12',creationSource:'manual',currentStage:'',stageStatus:'',stageProgress:'0/5',anomalyCount:0,dynamicAssessment:'dynamic',empCount:3,status:'not_started',admins:['赵敏'],admin:'赵敏',description:'新入职员工转正考核',creator:'赵敏（SSC）',createTime:'2026/07/01 09:00',updater:'赵敏（SSC）',updateTime:'2026/07/01 09:00'},
   {id:12,name:'2025年补录考核',schemeType:'年度',schemeName:'年度绩效方案 v1',cycle:'2025年度（2025/01/01 - 2025/12/31）',cycleId:'c7',creationSource:'manual',currentStage:'结果确认',stageStatus:'已终止',stageProgress:'5/5',anomalyCount:0,dynamicAssessment:'locked',empCount:5,status:'ended_early',admins:['王总监'],admin:'王总监',description:'补录活动因数据口径异常提前终止',creator:'王总监（SSC）',createTime:'2025/12/20 10:00',updater:'王总监（SSC）',updateTime:'2026/01/10 16:00'}
 ];
-ACTIVITIES.forEach(function(a){a.plan=a.schemeName;});
+ACTIVITIES.forEach(function(a){
+  a.plan=a.schemeName;
+  if(!a.region) a.region='国内';
+});
+[5,7,11].forEach(function(id){
+  var overseas=ACTIVITIES.find(function(a){return a.id===id;});
+  if(overseas) overseas.region='海外';
+});
 
 const STAGE_ORDER=['目标制定','绩效面谈','绩效考核','结果审定','结果确认'];
 const PARTICIPANT_STAGE_STATUSES=['未开始','进行中','已暂停','已完成','已终止','导入完成'];
@@ -585,18 +696,462 @@ function hasImportCompletedForStage(emp,stage){
   if(!stage||stage==='结果确认')return false;
   return (emp.importCompletedStages||[]).indexOf(stage)>=0;
 }
-/** 当前环节结束时间提示（仅 .stage-current）：手动参考 →「计划…结束」；定时自动结束 →「将于…自动结束」。仅行内展示，无悬停说明。 */
-function getStageEndHint(a){
-  if(!a||!a.currentStage||!a.stageTiming) return null;
-  var t=a.stageTiming[a.currentStage];
-  if(!t) return null;
-  if(t.autoEnd&&t.endDate){
-    return {kind:'auto',text:'将于'+t.endDate+'自动结束'};
+var ACTIVITY_NODE_NAMES={
+  '目标制定':['员工填写目标','间接上级审批','直接上级审批'],
+  '绩效面谈':['员工填写面谈记录','上级审批'],
+  '绩效考核':['员工自评','直接上级评分','隔级上级评分'],
+  '结果审定':['直接上级评级','间接上级评级','HRBP审批'],
+  '结果确认':['员工确认']
+};
+function parseActivityCycle(a){
+  var m=String(a&&a.cycle||'').match(/(\d{4})\/(\d{2})\/(\d{2})\s*-\s*(\d{4})\/(\d{2})\/(\d{2})/);
+  if(!m) return {start:new Date(2026,5,1).getTime(), end:new Date(2026,5,30).getTime()};
+  return {start:new Date(+m[1], +m[2]-1, +m[3]).getTime(), end:new Date(+m[4], +m[5]-1, +m[6]).getTime()};
+}
+function formatActivityClock(ms, hour){
+  var d=new Date(ms);
+  var p=function(n){return String(n).padStart(2,'0');};
+  return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(hour)+':00';
+}
+function activityMonthAnchor(a){
+  var range=parseActivityCycle(a);
+  var d=new Date(range.start);
+  var y=d.getFullYear(), mo=d.getMonth();
+  return {y:y, mo:mo, last:new Date(y, mo+1, 0).getDate()};
+}
+/** 节点按原顺序排进周期开始的那一个月。上一段 18:00 结束后，下一段从后一天 09:00 开始。 */
+function activityNodeDayRanges(count, lastDay){
+  var ranges=[];
+  var i;
+  if(count<=lastDay){
+    var base=Math.floor(lastDay/count);
+    var extra=lastDay%count;
+    var day=1;
+    for(i=0;i<count;i++){
+      var len=base+(i<extra?1:0);
+      ranges.push({start:day, end:day+len-1, startHour:9, endHour:18});
+      day+=len;
+    }
+    return ranges;
   }
-  if(t.startManual&&!t.autoEnd&&t.refEndDate){
-    return {kind:'ref',text:'计划'+t.refEndDate+'结束'};
+  var pairs=[[9,12],[13,15],[16,18]];
+  for(i=0;i<count;i++){
+    var pair=pairs[i%pairs.length];
+    var d=Math.min(lastDay, i+1);
+    var prev=ranges[ranges.length-1];
+    var startHour=pair[0], endHour=pair[1];
+    if(prev&&prev.end===d&&startHour<=prev.endHour){
+      startHour=Math.min(17, prev.endHour+1);
+      endHour=Math.min(18, Math.max(startHour+1, endHour));
+    }
+    ranges.push({start:d, end:d, startHour:startHour, endHour:endHour});
+  }
+  return ranges;
+}
+function buildActivityStages(a){
+  var order=getActivityStageOrder(a);
+  var month=activityMonthAnchor(a);
+  var currentIndex=Math.max(0, order.indexOf(a&&a.currentStage));
+  var flatCount=0;
+  order.forEach(function(name){ flatCount+=(ACTIVITY_NODE_NAMES[name]||[name]).length; });
+  var dayRanges=activityNodeDayRanges(Math.max(1, flatCount), month.last);
+  var cursor=0;
+  return order.map(function(name, si){
+    var names=ACTIVITY_NODE_NAMES[name]||[name];
+    var timing=a.stageTiming&&a.stageTiming[name];
+    var startAuto, endAuto;
+    if(timing){
+      startAuto=timing.startManual===false||timing.autoStart===true;
+      endAuto=!!timing.autoEnd;
+    }else if(a.id===10&&name==='绩效考核'){
+      startAuto=true; endAuto=true;
+    }else if(a.id===5){
+      startAuto=false; endAuto=false;
+    }else{
+      startAuto=si<currentIndex;
+      endAuto=si<currentIndex;
+    }
+    var nodes=names.map(function(nodeName){
+      var slot=dayRanges[cursor++]||dayRanges[dayRanges.length-1];
+      var startMs=new Date(month.y, month.mo, slot.start).getTime();
+      var endMs=new Date(month.y, month.mo, slot.end).getTime();
+      return {name:nodeName, start:formatActivityClock(startMs, slot.startHour), end:formatActivityClock(endMs, slot.endHour)};
+    });
+    return {name:name, startAuto:startAuto, endAuto:endAuto, nodes:nodes};
+  });
+}
+function clockWithRef(text, isAuto){
+  return text+(isAuto?'':' 参考');
+}
+/** 当前环节起止：时间来自节点月历，短标记只区分参考 / 到点。 */
+function getStageClock(a){
+  if(!a||!a.currentStage) return null;
+  var cur=buildActivityStages(a).filter(function(s){return s.name===a.currentStage;})[0];
+  if(!cur||!cur.nodes.length) return null;
+  return {
+    start:cur.nodes[0].start,
+    end:cur.nodes[cur.nodes.length-1].end,
+    startAuto:!!cur.startAuto,
+    endAuto:!!cur.endAuto
+  };
+}
+function parseActivityClockMs(text){
+  var m=String(text||'').match(/(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2})/);
+  if(!m) return null;
+  return new Date(+m[1], +m[2]-1, +m[3], +m[4], +m[5], 0, 0).getTime();
+}
+/** 演示上的「现在」：当前环节开始当天中午；开始已到或已过中午，则取开始后 1 小时。不用电脑今天。 */
+function activityDemoNow(startMs){
+  var d=new Date(startMs);
+  var noon=new Date(d.getFullYear(), d.getMonth(), d.getDate(), 12, 0, 0, 0).getTime();
+  if(startMs<noon) return noon;
+  return startMs+60*60*1000;
+}
+function formatNextExecWhen(ms){
+  var d=new Date(ms);
+  var p=function(n){return String(n).padStart(2,'0');};
+  return p(d.getMonth()+1)+'/'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes());
+}
+function nextRemindAfter(nowMs, nodeEndMs, cfg){
+  if(!cfg||!cfg.enabled||nodeEndMs==null) return null;
+  var end=new Date(nodeEndMs);
+  var endKey=end.getFullYear()*10000+(end.getMonth()+1)*100+end.getDate();
+  var day=new Date(nowMs);
+  day.setHours(0,0,0,0);
+  var last=new Date(end.getFullYear(), end.getMonth(), end.getDate()).getTime();
+  var guard=0;
+  while(day.getTime()<=last&&guard<400){
+    guard++;
+    var key=day.getFullYear()*10000+(day.getMonth()+1)*100+day.getDate();
+    var times=key===endKey?(cfg.endOn?cfg.endTimes:[]):(cfg.dayOn?cfg.times:[]);
+    for(var i=0;i<(times||[]).length;i++){
+      var parts=String(times[i]).split(':');
+      var ms=new Date(day.getFullYear(), day.getMonth(), day.getDate(), +parts[0]||0, +parts[1]||0, 0, 0).getTime();
+      if(ms>nowMs) return ms;
+    }
+    day.setDate(day.getDate()+1);
   }
   return null;
+}
+/** 横幅只显示下一次执行：当前节点开始（未到）、当前节点结束、下一次催办，取「现在」之后最早的一个。 */
+function getNextExecBrief(a){
+  if(!a||!a.currentStage) return null;
+  var closed=a.stageStatus==='已结束'||a.stageStatus==='已完成'||a.stageStatus==='已终止'||a.status==='ended_normal'||a.status==='ended_early';
+  if(closed) return null;
+  var stages=buildActivityStages(a);
+  var si=getActivityStageOrder(a).indexOf(a.currentStage);
+  var st=si>=0?stages[si]:null;
+  var node=st&&st.nodes&&st.nodes[0];
+  if(!node) return null;
+  var startMs=parseActivityClockMs(node.start);
+  var endMs=parseActivityClockMs(node.end);
+  if(startMs==null) return null;
+  var now=activityDemoNow(startMs);
+  var cands=[];
+  if(startMs>now) cands.push({ms:startMs, auto:!!st.startAuto});
+  if(endMs!=null&&endMs>now) cands.push({ms:endMs, auto:!!st.endAuto});
+  var remind=nextRemindAfter(now, endMs, readSchemeAutoRemind());
+  if(remind!=null) cands.push({ms:remind, auto:true});
+  if(!cands.length) return null;
+  cands.sort(function(x,y){ return x.ms-y.ms; });
+  return {text:'下次 '+formatNextExecWhen(cands[0].ms), auto:!!cands[0].auto};
+}
+var REMIND_TZ_OPTIONS=['GMT-8','GMT-5','GMT-3','GMT+0','GMT+1','GMT+2','GMT+3','GMT+8','GMT+9'];
+var REMIND_END_DEFAULT=['09:00','11:00','13:00','15:00','17:00','19:00','21:00'];
+function normRemindClockAct(val,fallback){
+  var m=String(val||'').match(/^(\d{2}:\d{2})/);
+  return m?m[1]:fallback;
+}
+function normRemindTzAct(val){
+  var raw=String(val||'').replace(/\s+/g,'').toUpperCase();
+  var m=raw.match(/^GMT([+-])0*(\d{1,2})(?::?(\d{2}))?$/);
+  if(!m) return 'GMT+8';
+  var label='GMT'+m[1]+String(parseInt(m[2],10));
+  return REMIND_TZ_OPTIONS.indexOf(label)>=0?label:'GMT+8';
+}
+function normalizeRemindClocksAct(list){
+  var seen={};
+  var out=[];
+  (list||[]).forEach(function(t){
+    var c=normRemindClockAct(t,'');
+    if(!c||seen[c]) return;
+    seen[c]=1;
+    out.push(c);
+  });
+  out.sort();
+  return out;
+}
+function normalizeRemindDayTimesAct(saved){
+  if(saved&&Array.isArray(saved.times)) return normalizeRemindClocksAct(saved.times);
+  if(saved&&saved.time){
+    var c=normRemindClockAct(saved.time,'');
+    return c?[c]:['09:00'];
+  }
+  return ['09:00'];
+}
+function normalizeRemindEndTimes(saved){
+  if(saved&&Array.isArray(saved.endTimes)) return normalizeRemindClocksAct(saved.endTimes);
+  return REMIND_END_DEFAULT.slice();
+}
+function readSchemeAutoRemind(){
+  var cfg={enabled:true,tz:'GMT+8',dayOn:true,times:['09:00'],endOn:true,endTimes:REMIND_END_DEFAULT.slice()};
+  try{
+    var raw=localStorage.getItem('hrone-perf-scheme-autoRemind');
+    if(!raw) return cfg;
+    var saved=JSON.parse(raw);
+    if(!saved||typeof saved!=='object') return cfg;
+    cfg.enabled=!!saved.enabled;
+    cfg.tz=normRemindTzAct(saved.tz);
+    cfg.times=normalizeRemindDayTimesAct(saved);
+    cfg.endTimes=normalizeRemindEndTimes(saved);
+    cfg.dayOn=typeof saved.dayOn==='boolean'?saved.dayOn:cfg.times.length>0;
+    cfg.endOn=typeof saved.endOn==='boolean'?saved.endOn:cfg.endTimes.length>0;
+  }catch(e){}
+  return cfg;
+}
+function renderActivityRemind(){
+  var cfg=readSchemeAutoRemind();
+  if(!cfg.enabled) return '';
+  var parts=[];
+  if(cfg.dayOn&&cfg.times.length) parts.push('每天 '+cfg.times.map(escAct).join('、'));
+  if(cfg.endOn&&cfg.endTimes.length) parts.push('结束当天 '+cfg.endTimes.map(escAct).join('、'));
+  if(!parts.length) return '';
+  return '<span class="act-remind-note">'+escAct(cfg.tz)+' · '+parts.join('；')+'</span>';
+}
+var activityCalPick={id:0,key:''};
+var activityCalDetailMap={};
+function escAct(s){
+  return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+/** 当前环节的第一个节点为进行中；它前面已结束，后面未开始。不用电脑当天日期。 */
+function activityCalNodeState(a, stageIndex, nodeIndex){
+  var order=getActivityStageOrder(a);
+  var cur=order.indexOf(a&&a.currentStage);
+  if(cur<0) return 'wait';
+  var closed=a.stageStatus==='已结束'||a.stageStatus==='已完成'||a.stageStatus==='已终止'||a.status==='ended_normal'||a.status==='ended_early';
+  if(closed) return stageIndex<=cur?'done':'wait';
+  if(stageIndex<cur) return 'done';
+  if(stageIndex>cur) return 'wait';
+  if(nodeIndex===0) return 'run';
+  return 'wait';
+}
+function parseActivityClock(text){
+  var m=String(text||'').match(/(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2})/);
+  if(!m) return null;
+  return {y:+m[1],mo:+m[2],d:+m[3],key:(+m[1])*10000+(+m[2])*100+(+m[3])};
+}
+function activityCalMonths(minKey,maxKey){
+  var y=Math.floor(minKey/10000), mo=Math.floor(minKey/100)%100;
+  var y2=Math.floor(maxKey/10000), mo2=Math.floor(maxKey/100)%100;
+  var out=[];
+  while(y<y2||(y===y2&&mo<=mo2)){
+    out.push({y:y,mo:mo});
+    mo++;
+    if(mo>12){mo=1;y++;}
+    if(out.length>24) break;
+  }
+  return out;
+}
+function activityCalWeeks(y,mo){
+  var first=new Date(y,mo-1,1);
+  var last=new Date(y,mo,0).getDate();
+  var lead=(first.getDay()+6)%7;
+  var cells=[];
+  var i;
+  for(i=0;i<lead;i++) cells.push(null);
+  for(var d=1;d<=last;d++) cells.push({y:y,mo:mo,d:d,key:y*10000+mo*100+d});
+  while(cells.length%7) cells.push(null);
+  var weeks=[];
+  for(i=0;i<cells.length;i+=7) weeks.push(cells.slice(i,i+7));
+  return weeks;
+}
+function pickActivityCalNode(key){
+  key=String(key);
+  if(!activityCalDetailMap[key]) return;
+  activityCalPick={id:activityCalPick.id,key:key};
+  var card=document.getElementById('actCalCard');
+  if(!card) return;
+  var bars=card.querySelectorAll('.act-cal-bar');
+  for(var i=0;i<bars.length;i++){
+    var on=bars[i].getAttribute('data-key')===key;
+    bars[i].classList.toggle('is-on',on);
+    bars[i].setAttribute('aria-pressed',on?'true':'false');
+  }
+  var brief=document.getElementById('actCalBrief');
+  if(brief) brief.innerHTML=activityCalBriefInner(key);
+}
+function renderActivityStageTimes(a){
+  var stages=buildActivityStages(a);
+  var flat=[];
+  var legend='<span><i class="act-cal-swatch is-run"></i>进行中</span>'
+    +'<span><i class="act-cal-swatch is-wait"></i>未开始</span>'
+    +'<span><i class="act-cal-swatch is-done"></i>已结束</span>';
+  stages.forEach(function(st,si){
+    (st.nodes||[]).forEach(function(n,ni){
+      var ps=parseActivityClock(n.start), pe=parseActivityClock(n.end);
+      if(!ps||!pe) return;
+      var key=si+'-'+ni;
+      var manual=!(st.startAuto&&st.endAuto);
+      flat.push({
+        key:key,name:n.name,stage:st.name,ni:ni,
+        ds:ps.key,de:pe.key,manual:manual,state:activityCalNodeState(a,si,ni),
+        startMs:parseActivityClockMs(n.start),endMs:parseActivityClockMs(n.end),
+        startAuto:!!st.startAuto,endAuto:!!st.endAuto
+      });
+    });
+  });
+  activityCalDetailMap={};
+  flat.forEach(function(n){
+    activityCalDetailMap[n.key]={name:n.name,startMs:n.startMs,endMs:n.endMs,startAuto:n.startAuto,endAuto:n.endAuto,run:n.state==='run'};
+  });
+  if(!flat.length){
+    return {empty:true,legend:legend,monthsHtml:'',selectedKey:''};
+  }
+  var currentKey='';
+  flat.forEach(function(n){ if(!currentKey&&n.state==='run') currentKey=n.key; });
+  if(!currentKey) currentKey=flat[0].key;
+  if(activityCalPick.id!==a.id||!activityCalDetailMap[activityCalPick.key]) activityCalPick={id:a.id,key:currentKey};
+  var selectedKey=activityCalPick.key;
+  var minK=flat[0].ds, maxK=flat[0].de;
+  flat.forEach(function(n){ if(n.ds<minK) minK=n.ds; if(n.de>maxK) maxK=n.de; });
+  var months=activityCalMonths(minK,maxK).filter(function(month){
+    var start=month.y*10000+month.mo*100+1;
+    var end=month.y*10000+month.mo*100+31;
+    return flat.some(function(n){ return n.de>=start&&n.ds<=end; });
+  });
+  var monthBlocks=months.map(function(month){
+    return {
+      month:month,
+      weeks:activityCalWeeks(month.y,month.mo).map(function(week){
+        var segs=[];
+        flat.forEach(function(n){
+          var c0=-1,c1=-1,firstKey=0;
+          for(var i=0;i<7;i++){
+            var cell=week[i];
+            if(!cell) continue;
+            if(cell.key>=n.ds&&cell.key<=n.de){
+              if(c0<0){ c0=i; firstKey=cell.key; }
+              c1=i;
+            }
+          }
+          if(c0<0) return;
+          segs.push({n:n,c0:c0,c1:c1,isFirst:firstKey===n.ds,week:week});
+        });
+        segs.sort(function(a,b){ return a.c0-b.c0||(b.c1-b.c0)-(a.c1-a.c0); });
+        var laneEnds=[];
+        segs.forEach(function(seg){
+          var lane=-1;
+          for(var i=0;i<laneEnds.length;i++){
+            if(laneEnds[i]<seg.c0){ lane=i; break; }
+          }
+          if(lane<0){ lane=laneEnds.length; laneEnds.push(seg.c1); }
+          else laneEnds[lane]=seg.c1;
+          seg.lane=lane;
+        });
+        return {week:week,segs:segs};
+      })
+    };
+  });
+  var byKey={};
+  monthBlocks.forEach(function(block){
+    block.weeks.forEach(function(wk){
+      wk.segs.forEach(function(seg){
+        (byKey[seg.n.key]=byKey[seg.n.key]||[]).push(seg);
+      });
+    });
+  });
+  Object.keys(byKey).forEach(function(key){
+    var list=byKey[key];
+    var label=list[0];
+    list.forEach(function(seg){
+      var span=seg.c1-seg.c0+1;
+      var best=label.c1-label.c0+1;
+      if(span>best||(span===best&&seg.isFirst&&!label.isFirst)) label=seg;
+    });
+    list.forEach(function(seg){
+      var span=seg.c1-seg.c0+1;
+      seg.showTags=seg===label;
+      seg.showName=seg.showTags||span>=2;
+    });
+  });
+  var briefHtml=activityCalBriefInner(selectedKey);
+  var monthsHtml=monthBlocks.map(function(block, monthIndex){
+    var weeksHtml=block.weeks.map(function(wk){
+      var rows=1;
+      wk.segs.forEach(function(seg){ if(seg.lane+2>rows) rows=seg.lane+2; });
+      var days=wk.week.map(function(cell,i){
+        var cls='act-cal-day'+(cell?'': ' is-out')+(cell&&i>=5?' is-weekend':'');
+        return '<div class="'+cls+'" style="grid-column:'+(i+1)+';grid-row:1 / span '+rows+'">'+(cell?cell.d:'')+'</div>';
+      }).join('');
+      var bars=wk.segs.map(function(seg){
+        var n=seg.n;
+        var inner='';
+        if(seg.showName){
+          inner='<span class="act-cal-name">'+escAct(n.name)+'</span>';
+          if(seg.showTags&&n.manual) inner+='<span class="act-cal-tag">参考</span>';
+        }
+        var on=n.key===selectedKey;
+        return '<button type="button" class="act-cal-bar '+(n.manual?'manual':'auto')+' is-'+n.state+(on?' is-on':'')+'" data-key="'+n.key+'" aria-label="'+escAct(n.name+(n.manual?'，参考':''))+'" aria-pressed="'+(on?'true':'false')+'" title="'+escAct(n.name)+'" onclick="pickActivityCalNode(\''+n.key+'\')" style="grid-column:'+(seg.c0+1)+' / '+(seg.c1+2)+';grid-row:'+(seg.lane+2)+'">'+inner+'</button>';
+      }).join('');
+      return '<div class="act-cal-week">'+days+bars+'</div>';
+    }).join('');
+    var dow=['一','二','三','四','五','六','日'].map(function(ch){return '<span>'+ch+'</span>';}).join('');
+    var month=block.month;
+    var head='<div class="act-cal-month-t">'+month.y+'年'+month.mo+'月</div>';
+    if(monthIndex===0){
+      head+='<div class="act-cal-legend">'+legend+'</div>';
+      head+='<div class="act-cal-brief" id="actCalBrief">'+briefHtml+'</div>';
+    }
+    return '<div class="act-cal-month"><div class="act-cal-month-hd">'+head+'</div><div class="act-cal-grid"><div class="act-cal-dow">'+dow+'</div>'+weeksHtml+'</div></div>';
+  }).join('');
+  return {empty:false,legend:legend,monthsHtml:'<div class="act-cal-months">'+monthsHtml+'</div>',selectedKey:selectedKey};
+}
+var actCalScrollLock=null;
+function lockActivityCalScroll(){
+  var ct=document.querySelector('.ct');
+  actCalScrollLock={body:document.body.style.overflow,ct:ct,ctOverflow:ct?ct.style.overflow:''};
+  document.body.style.overflow='hidden';
+  if(ct) ct.style.overflow='hidden';
+}
+function unlockActivityCalScroll(){
+  if(!actCalScrollLock) return;
+  document.body.style.overflow=actCalScrollLock.body||'';
+  if(actCalScrollLock.ct) actCalScrollLock.ct.style.overflow=actCalScrollLock.ctOverflow||'';
+  actCalScrollLock=null;
+}
+function closeActivityCalModal(opts){
+  var ov=document.getElementById('actCalModal');
+  if(!ov) return;
+  ov.remove();
+  unlockActivityCalScroll();
+  if(opts&&opts.silent) return;
+  var btn=document.getElementById('actStatusOpenBtn');
+  if(btn) btn.focus();
+}
+function openActivityStatusModal(){
+  var a=ACTIVITIES.find(function(x){return x.id===currentDetailId;});
+  if(!a){ GHR_NAV.showToast('未找到当前活动'); return; }
+  if(document.getElementById('actCalModal')) closeActivityCalModal({silent:true});
+  activityCalPick={id:0,key:''};
+  var built=renderActivityStageTimes(a);
+  var closeBtn='<button type="button" class="modal-close" aria-label="关闭" onclick="closeActivityCalModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>';
+  var head='<div class="modal-hd"><div id="actCalTitle" class="modal-hd-t">活动日历</div><div class="act-status-hd-ops">'+stageMgmtMarkup('empStageModalDd')+closeBtn+'</div></div>';
+  var calInner=built.empty
+    ? '<div class="act-cal-empty">该活动还没有节点时间</div>'
+    : '<div id="actCalCard">'+built.monthsHtml+'</div>';
+  var ov=document.createElement('div');
+  ov.id='actCalModal';
+  ov.className='modal-ov on';
+  ov.innerHTML='<div class="modal act-cal-modal act-status-modal" role="dialog" aria-modal="true" aria-labelledby="actCalTitle">'+head
+    +'<div class="act-cal-scroll act-status-scroll">'
+    +activityDoneColumnHtml(a)
+    +calInner
+    +'</div></div>';
+  ov.addEventListener('click',function(e){ if(e.target===ov) closeActivityCalModal(); });
+  document.body.appendChild(ov);
+  lockActivityCalScroll();
+  var btn=ov.querySelector('.modal-close');
+  if(btn) btn.focus();
 }
 
 function getActivityStageOrder(a){
@@ -749,24 +1304,18 @@ function buildPersonalFlowNodes(emp){
   ];
 }
 
-function renderEmployeeList(){
-  const a=ACTIVITIES.find(x=>x.id===currentDetailId);
-  if(!a) return '';
-  const st=STATUS_MAP[a.status];
-  const canOperate=a.status==='active';
-  const canUseToolbar=canOperate||a.status==='not_started';
-  const canAddParticipant=a.status==='not_started'||(canOperate&&a.currentStage==='目标制定');
-  const showStageImport=!!getStageImportLabel(a.currentStage);
+function getStageBoard(a){
   const assessCount=EMPLOYEE_LIST.length;
   const inProgressCount=EMPLOYEE_LIST.filter(r=>getParticipantStageStatus(r,a)==='进行中').length;
   const completedCount=EMPLOYEE_LIST.filter(r=>getParticipantStageStatus(r,a)==='已完成').length;
   const flowExceptionCount=EMPLOYEE_LIST.filter(r=>r.flowOpeningException).length;
   const notStartedCount=EMPLOYEE_LIST.filter(r=>getParticipantStageStatus(r,a)==='未开始').length;
-  const stageCompletionRate=assessCount?Math.round(completedCount/assessCount*100):0;
+  const stageCompletionRate=(function(){
+    if(!assessCount) return '0.00';
+    var bp=Math.round(completedCount/assessCount*10000);
+    return Math.floor(bp/100)+'.'+('0'+(bp%100)).slice(-2);
+  })();
   const exceptionCount=EMPLOYEE_LIST.filter(r=>r.exception!=='正常考核').length;
-  const displayedEmployees=getDisplayedEmployees();
-
-  // 业务环节是活动级唯一状态；个人差异只在当前环节流程节点内。
   const stageNames=getActivityStageOrder(a);
   const stageColors=['var(--pr)','var(--vi)','var(--ac)','var(--em)','var(--ro)'];
   const currentStageIdx=Math.max(0,stageNames.indexOf(a.currentStage));
@@ -778,10 +1327,122 @@ function renderEmployeeList(){
     const exception=idx===currentStageIdx?exceptionCount:0;
     return {name,total,done,active,pending,exception,pct:Math.round(done/total*100),color:stageColors[idx]};
   });
+  return {assessCount,inProgressCount,completedCount,flowExceptionCount,notStartedCount,stageCompletionRate,stageNames,stageColors,currentStageIdx,stageStats};
+}
+function stageMgmtMarkup(ddId){
+  var a=ACTIVITIES.find(function(x){return x.id===currentDetailId;});
+  if(!a||!(a.status==='active'||a.status==='not_started')) return '';
+  var nextStageName=getNextStageName(a);
+  var openStageLabel=nextStageName?'开启'+nextStageName+'环节':'已无下一环节';
+  var openItem=nextStageName
+    ? `<div style="display:flex;align-items:center;gap:8px;padding:8px 14px;font:400 13px/1 var(--f);color:var(--pr);cursor:pointer;font-weight:500" onclick="openNextStage('${nextStageName}');toggleEmpDropdown('${ddId}')"><span style="width:16px;text-align:center;font-size:12px">▶</span><span>${openStageLabel}</span></div>`
+    : `<div style="display:flex;align-items:center;gap:8px;padding:8px 14px;font:400 13px/1 var(--f);color:var(--c4);cursor:not-allowed"><span style="width:16px;text-align:center;font-size:12px">▶</span><span>${openStageLabel}</span></div>`;
+  return `<div class="stage-mgmt">
+    <button type="button" class="stage-mgmt-btn" onclick="toggleEmpDropdown('${ddId}')" aria-haspopup="menu">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>
+      环节管理 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div id="${ddId}" style="display:none;position:absolute;top:calc(100% + 4px);right:0;background:var(--sf);border:1px solid var(--c3);border-radius:var(--r1);box-shadow:0 6px 16px rgba(0,0,0,.08);min-width:160px;z-index:220;padding:4px 0">
+      ${openItem}
+      <div style="height:1px;background:var(--dv);margin:4px 0"></div>
+      <div style="display:flex;align-items:center;gap:8px;padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="showForceEndStageDlg();toggleEmpDropdown('${ddId}')"><span style="width:16px;text-align:center;font-size:12px">■</span><span>结束当前环节</span></div>
+      <div style="display:flex;align-items:center;gap:8px;padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="GHR_NAV.showToast('已暂停当前全局环节下全部未终态流程');toggleEmpDropdown('${ddId}')"><span style="width:16px;text-align:center;font-size:12px">⏸</span><span>暂停环节</span></div>
+      <div style="display:flex;align-items:center;gap:8px;padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="GHR_NAV.showToast('已恢复当前全局环节下全部未终态流程');toggleEmpDropdown('${ddId}')"><span style="width:16px;text-align:center;font-size:12px">▶</span><span>继续环节</span></div>
+    </div>
+  </div>`;
+}
+function activityExecNow(a){
+  if(!a||!a.currentStage) return null;
+  var stages=buildActivityStages(a);
+  var si=getActivityStageOrder(a).indexOf(a.currentStage);
+  var st=si>=0?stages[si]:null;
+  var node=st&&st.nodes&&st.nodes[0];
+  if(!node) return null;
+  var startMs=parseActivityClockMs(node.start);
+  if(startMs==null) return null;
+  return activityDemoNow(startMs);
+}
+function activityNodeShownExec(startMs, endMs, startAuto, endAuto, now){
+  if(startMs!=null&&(now==null||startMs>now)) return {ms:startMs, auto:!!startAuto, open:true};
+  if(endMs!=null) return {ms:endMs, auto:!!endAuto, open:false};
+  return null;
+}
+function activityNextNodeExec(a){
+  var now=activityExecNow(a);
+  if(now==null) return null;
+  var stages=buildActivityStages(a);
+  var i,j,st,nodes,n,startMs,endMs;
+  for(i=0;i<stages.length;i++){
+    st=stages[i];
+    nodes=st.nodes||[];
+    for(j=0;j<nodes.length;j++){
+      n=nodes[j];
+      startMs=parseActivityClockMs(n.start);
+      endMs=parseActivityClockMs(n.end);
+      if(startMs!=null&&startMs>now) return {name:n.name, ms:startMs, auto:!!st.startAuto, open:true};
+      if(endMs!=null&&endMs>now&&(startMs==null||startMs<=now)) return {name:n.name, ms:endMs, auto:!!st.endAuto, open:false};
+    }
+  }
+  return null;
+}
+function activityNodeExecHtml(item, now){
+  if(!item||!item.name||item.ms==null) return '';
+  var due=!item.auto&&now!=null&&item.ms<=now;
+  var time='<span class="act-cal-brief-time'+(due?' is-due':'')+'">'+escAct(formatNextExecWhen(item.ms))+'</span>';
+  var name=escAct(item.name);
+  var verb=item.open?'开启':'结束';
+  if(item.auto) return name+'将在 '+time+' '+verb;
+  return '请在 '+time+' '+verb+name;
+}
+function activityNextExecHtml(a){
+  var next=activityNextNodeExec(a);
+  return next?activityNodeExecHtml(next, activityExecNow(a)):'';
+}
+function activityCalBriefInner(key){
+  var d=activityCalDetailMap[key];
+  var a=ACTIVITIES.find(function(x){return x.id===currentDetailId;});
+  if(!d||d.run) return activityNextExecHtml(a);
+  var now=activityExecNow(a);
+  var shown=activityNodeShownExec(d.startMs, d.endMs, d.startAuto, d.endAuto, now);
+  if(!shown) return '';
+  shown.name=d.name;
+  return activityNodeExecHtml(shown, now);
+}
+function activityDoneColumnHtml(a){
+  var board=getStageBoard(a);
+  var stages=board.stageStats.map(function(s){
+    var label=s.active>0?'进行中':s.done===s.total?'已完成':'未开始';
+    var color=label==='进行中'?'var(--pr)':label==='已完成'?'var(--em700)':'var(--c5)';
+    return '<span class="act-cal-stage">'
+      +'<span class="act-cal-stage-name">'+escAct(s.name)+'</span>'
+      +'<span class="act-cal-stage-frac">'+s.done+'/'+s.total+'</span>'
+      +'<span class="act-cal-stage-state" style="color:'+color+'">'+label+'</span></span>';
+  }).join('');
+  return '<div class="act-cal-summary">'
+    +'<div class="act-cal-metrics">'
+    +'<span class="act-cal-metric"><span class="act-cal-metric-num">'+board.assessCount+'</span><span class="act-cal-metric-label">考核人数</span></span>'
+    +'<span class="act-cal-metric"><span class="act-cal-metric-num is-em">'+board.completedCount+'</span><span class="act-cal-metric-label">已完成</span></span>'
+    +'<span class="act-cal-metric"><span class="act-cal-metric-num is-em">'+board.stageCompletionRate+'%</span><span class="act-cal-metric-label">完成率</span></span>'
+    +'</div>'
+    +'<div class="act-cal-stages"><div class="act-cal-stage-list">'+stages+'</div></div></div>';
+}
+function renderEmployeeList(){
+  const a=ACTIVITIES.find(x=>x.id===currentDetailId);
+  if(!a) return '';
+  const st=STATUS_MAP[a.status];
+  const canOperate=a.status==='active';
+  const canUseToolbar=canOperate||a.status==='not_started';
+  const canAddParticipant=a.status==='not_started'||(canOperate&&a.currentStage==='目标制定');
+  const showStageImport=!!getStageImportLabel(a.currentStage);
+  const board=getStageBoard(a);
+  const assessCount=board.assessCount;
+  const completedCount=board.completedCount;
+  const stageCompletionRate=board.stageCompletionRate;
+  const stageColors=board.stageColors;
+  const currentStageIdx=board.currentStageIdx;
+  const displayedEmployees=getDisplayedEmployees();
   const currentStageName=a.currentStage||'未开启';
-  const stageEndHint=getStageEndHint(a);
-  const nextStageName=getNextStageName(a);
-  const openStageLabel=nextStageName?'开启'+nextStageName+'环节':'已无下一环节';
+  const nextExecHtml=activityNextExecHtml(a);
   const flowStatusOptions=PARTICIPANT_STAGE_STATUSES;
 
   return `<div>
@@ -792,7 +1453,7 @@ function renderEmployeeList(){
     <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px">
       <div>
         <div style="font:700 20px/1.3 var(--f);color:var(--c9);display:flex;align-items:center;gap:10px">${a.name}<span class="cell-status ${st.cls}">${st.label}</span></div>
-        <div style="font:400 13px/1 var(--f);color:var(--c6);margin-top:6px">考核周期：${a.cycle}<span style="margin:0 8px;color:var(--c4)">|</span>考核关系：${a.dynamicAssessment==='dynamic'?'动态':'锁定'}</div>
+        <div style="font:400 13px/1 var(--f);color:var(--c6);margin-top:6px">考核周期：${a.cycle}<span style="margin:0 8px;color:var(--c4)">|</span>范围：${a.region||'国内'}<span style="margin:0 8px;color:var(--c4)">|</span>考核关系：${a.dynamicAssessment==='dynamic'?'动态':'锁定'}</div>
       </div>
       <div style="display:flex;gap:8px">
         <button class="btn btn-s" onclick="viewSchemeDetail()">活动详情</button>
@@ -814,71 +1475,23 @@ function renderEmployeeList(){
     </div>
     <div style="display:flex;align-items:center;gap:12px;padding:12px 0;flex-wrap:wrap">
       <!-- 左：当前环节统计 + 环节管理（同一卡片） -->
-      <div class="stage-current" aria-label="当前环节与人员统计，悬停查看明细">
-        <div class="stage-current-info">
-          <span style="font:500 12px/1 var(--f);color:var(--c5)">当前环节</span>
+      <div class="stage-current">
+        <button type="button" class="stage-current-info" id="actStatusOpenBtn" onclick="openActivityStatusModal()" aria-haspopup="dialog" aria-label="查看日历、活动状态和完成情况">
+          <span style="font:500 12px/1 var(--f);color:var(--c5)">当前</span>
           <span style="font:600 14px/1 var(--f);color:${stageColors[currentStageIdx]}">${currentStageName}</span>
           <span class="stage-current-sep"></span>
           <span class="stage-current-stats">
-            <span><span class="stat-num" style="color:var(--c9)">${assessCount}</span> <span class="stat-label">考核人数</span></span>
-            <span><span class="stat-num" style="color:var(--em700)">${stageCompletionRate}%</span> <span class="stat-label">完成率</span></span>
+            <span class="stat-num"><span style="color:var(--em700)">${completedCount}</span><span style="color:var(--c9)">/${assessCount}</span> <span style="color:var(--em700)">${stageCompletionRate}%</span></span>
           </span>
-          <span class="stage-current-hint" aria-hidden="true">?</span>
-          <div class="stage-combined-tip">
-            <div class="stage-combined-sec">
-              <div class="stage-combined-title">人员统计</div>
-              <div class="stage-people-tip-row"><span>考核人数</span><span class="stage-people-tip-val">${assessCount}</span></div>
-              <div class="stage-people-tip-row"><span>进行中</span><span class="stage-people-tip-val" style="color:var(--pr)">${inProgressCount}</span></div>
-              <div class="stage-people-tip-row"><span>已完成</span><span class="stage-people-tip-val" style="color:var(--em700)">${completedCount}</span></div>
-              <div class="stage-people-tip-row"><span>流程异常</span><span class="stage-people-tip-val" style="color:var(--ac700)">${flowExceptionCount}</span></div>
-              <div class="stage-people-tip-row"><span>未开始</span><span class="stage-people-tip-val" style="color:var(--c5)">${notStartedCount}</span></div>
-            </div>
-            <div class="stage-combined-sec">
-              <div class="stage-combined-title">全局业务环节进度</div>
-              <div class="stage-combined-note">同一时刻只有一个环节进行中；人员差异见流程节点。</div>
-              ${stageStats.map((s,i)=>`<div class="stage-tooltip-row" style="padding:4px 0;${i<stageStats.length-1?'border-bottom:1px solid var(--dv)':''}">
-                <span style="display:flex;align-items:center;gap:6px;min-width:80px;color:var(--c7)"><span class="stage-tooltip-dot" style="background:${s.color}"></span>${s.name}</span>
-                <span style="font-family:var(--m);color:var(--c5)">${s.done}/${s.total}</span>
-                <span style="flex:1;height:4px;border-radius:2px;background:var(--c1);overflow:hidden;min-width:60px"><span style="display:block;height:100%;border-radius:2px;background:${s.color};width:${s.pct}%"></span></span>
-                <span style="font:500 11px/1 var(--f);padding:1px 6px;border-radius:3px;${s.active>0?'color:var(--pr);background:var(--pr50)':s.done===s.total?'color:var(--em700);background:var(--em50)':'color:var(--c5);background:var(--c1)'}">${s.active>0?'进行中':s.done===s.total?'已完成':'未开始'}</span>
-              </div>`).join('')}
-            </div>
-          </div>
-        </div>
-        ${stageEndHint?`
-        <span class="stage-current-sep"></span>
-        <span class="stage-end-hint${stageEndHint.kind==='auto'?' is-auto':''}">${stageEndHint.text}</span>`:''}
-        ${canUseToolbar?`
-        <span class="stage-current-sep"></span>
-        <div class="stage-mgmt">
-          <button type="button" class="stage-mgmt-btn" onclick="toggleEmpDropdown('empStageDd')" aria-haspopup="true">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>
-            环节管理 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-          </button>
-          <div id="empStageDd" style="display:none;position:absolute;top:calc(100% + 4px);right:0;background:var(--sf);border:1px solid var(--c3);border-radius:var(--r1);box-shadow:0 6px 16px rgba(0,0,0,.08);min-width:160px;z-index:220;padding:4px 0">
-            ${nextStageName?`<div style="display:flex;align-items:center;gap:8px;padding:8px 14px;font:400 13px/1 var(--f);color:var(--pr);cursor:pointer;font-weight:500" onclick="openNextStage('${nextStageName}');toggleEmpDropdown('empStageDd')">
-              <span style="width:16px;text-align:center;font-size:12px">▶</span><span>${openStageLabel}</span>
-            </div>`:`<div style="display:flex;align-items:center;gap:8px;padding:8px 14px;font:400 13px/1 var(--f);color:var(--c4);cursor:not-allowed">
-              <span style="width:16px;text-align:center;font-size:12px">▶</span><span>${openStageLabel}</span>
-            </div>`}
-            <div style="height:1px;background:var(--dv);margin:4px 0"></div>
-            <div style="display:flex;align-items:center;gap:8px;padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="showForceEndStageDlg();toggleEmpDropdown('empStageDd')">
-              <span style="width:16px;text-align:center;font-size:12px">■</span><span>结束当前环节</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px;padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="GHR_NAV.showToast('已暂停当前全局环节下全部未终态流程');toggleEmpDropdown('empStageDd')">
-              <span style="width:16px;text-align:center;font-size:12px">⏸</span><span>暂停环节</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px;padding:8px 14px;font:400 13px/1 var(--f);color:var(--c7);cursor:pointer" onclick="GHR_NAV.showToast('已恢复当前全局环节下全部未终态流程');toggleEmpDropdown('empStageDd')">
-              <span style="width:16px;text-align:center;font-size:12px">▶</span><span>继续环节</span>
-            </div>
-          </div>
-        </div>`:''}
+          ${nextExecHtml?`<span class="stage-current-sep"></span><span class="stage-end-hint">${nextExecHtml}</span>`:''}
+        </button>
+        ${canUseToolbar?`<span class="stage-current-sep"></span>${stageMgmtMarkup('empStageDd')}`:''}
       </div>
 
       <span style="flex:1"></span>
 
-      <!-- 右：功能栏 -->
-      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+      <!-- 右：功能栏。换行后仍靠右，和原来的操作区对齐 -->
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-left:auto">
         ${canUseToolbar?`
         <!-- 添加人员 -->
         <div style="position:relative;display:inline-flex">
@@ -950,7 +1563,6 @@ function renderEmployeeList(){
         <tbody>
           ${displayedEmployees.length?displayedEmployees.map((r,i)=>{
             const originalIndex=EMPLOYEE_LIST.indexOf(r);
-            // 等级颜色映射
             const gradeColor={'远超预期':'var(--ro)','超出预期':'var(--em700)','超出预期+':'var(--em700)','符合预期':'var(--pr)','符合预期+':'var(--ac700)','符合预期-':'var(--vi)','低于预期':'var(--c6)'};
             const gradeBg={'远超预期':'var(--ro50)','超出预期':'var(--em50)','超出预期+':'var(--em50)','符合预期':'var(--pr50)','符合预期+':'var(--ac50)','符合预期-':'var(--vi50)','低于预期':'var(--c1)'};
             const gColor=gradeColor[r.grade]||null;
@@ -1086,6 +1698,7 @@ function renderEmployeeDetail(){
 }
 
 function renderApp(){
+  if(document.getElementById('actCalModal')) closeActivityCalModal({silent:true});
   const ct=document.getElementById('ct') || document.getElementById('app');
   if(!ct) return;
   if(!ACTIVITIES.some(function(a){return a.id===currentDetailId;})){
@@ -1099,7 +1712,7 @@ function renderApp(){
 }
 
 let currentView='employees'; // 独立详情页默认展示参与人
-/* 默认落地 id=5：有手动开启+计划结束时间，首屏即可看到「计划…结束」提示；无参/非法 id 也回落到可演示活动 */
+/* 默认落地 id=5；无参/非法 id 也回落到可演示活动 */
 let currentDetailId=parseInt(new URLSearchParams(window.location.search).get('id'),10);
 if(!Number.isFinite(currentDetailId)||!ACTIVITIES.some(function(a){return a.id===currentDetailId;})) currentDetailId=5;
 let currentEmployeeIdx=null;
@@ -2023,7 +2636,9 @@ function onModalOverlayClick(e){
 // ESC 关闭弹窗
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){
-    if(document.getElementById('manualAddParticipantModal'))closeManualAddParticipantModal();
+    if(document.querySelector('.force-end-stage-ov')) document.querySelector('.force-end-stage-ov').remove();
+    else if(document.getElementById('actCalModal')) closeActivityCalModal();
+    else if(document.getElementById('manualAddParticipantModal'))closeManualAddParticipantModal();
     else if(modalState.type)closeModal();
   }
 });

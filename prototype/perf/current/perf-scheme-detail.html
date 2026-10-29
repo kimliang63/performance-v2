@@ -73,11 +73,28 @@ const SCHEME={
     ],evalRule:'仓储评价规则',autoRemove:{enabled:false,resignation:{enabled:false,days:7},leaveStart:{enabled:false,leaveTypes:[],days:7},leaveEnd:{enabled:false,leaveTypes:[],days:7},conditions:[]}},
   ],
   stages:[
-    {name:'目标制定',desc:'员工/上级填写绩效目标',flow:'通用目标制定流程',enabled:true,autoStart:{enabled:false,direction:'前',days:7},autoEnd:{enabled:false,direction:'后',days:7}},
-    {name:'绩效面谈',desc:'上级与员工面谈',flow:'绩效面谈流程',enabled:true,autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14}},
-    {name:'绩效考核',desc:'考核人评分',flow:'通用绩效考核流程',enabled:true,autoStart:{enabled:true,direction:'后',days:3},autoEnd:{enabled:true,direction:'后',days:30},scoreCalculation:{enabled:false,mode:''}},
-    {name:'结果审定',desc:'审定人调整等级',flow:'汇报线逐级审定',enabled:true,autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14}},
-    {name:'结果确认',desc:'员工确认绩效结果',flow:'员工确认流程',enabled:true,autoStart:{enabled:false,direction:'后',days:7},autoEnd:{enabled:false,direction:'后',days:14}},
+    {name:'目标制定',desc:'员工/上级填写绩效目标',flow:'通用目标制定流程',enabled:true,autoStart:{enabled:false},autoEnd:{enabled:false},nodes:[
+      {name:'员工填写目标',start:'2026-04-01 09:00',end:'2026-04-10 18:00'},
+      {name:'间接上级审批',start:'2026-04-11 09:00',end:'2026-04-16 18:00'},
+      {name:'直接上级审批',start:'2026-04-17 09:00',end:'2026-04-20 18:00'}
+    ]},
+    {name:'绩效面谈',desc:'上级与员工面谈',flow:'绩效面谈流程',enabled:true,autoStart:{enabled:false},autoEnd:{enabled:false},nodes:[
+      {name:'员工填写面谈记录',start:'2026-04-21 09:00',end:'2026-04-28 18:00'},
+      {name:'上级审批',start:'2026-04-29 09:00',end:'2026-05-06 18:00'}
+    ]},
+    {name:'绩效考核',desc:'考核人评分',flow:'通用绩效考核流程',enabled:true,autoStart:{enabled:true},autoEnd:{enabled:true},scoreCalculation:{enabled:false,mode:''},nodes:[
+      {name:'员工自评',start:'2026-05-07 09:00',end:'2026-05-18 18:00'},
+      {name:'直接上级评分',start:'2026-05-19 09:00',end:'2026-05-28 18:00'},
+      {name:'隔级上级评分',start:'2026-05-29 09:00',end:'2026-06-08 18:00'}
+    ]},
+    {name:'结果审定',desc:'审定人调整等级',flow:'汇报线逐级审定',enabled:true,autoStart:{enabled:false},autoEnd:{enabled:false},nodes:[
+      {name:'直接上级评级',start:'2026-06-09 09:00',end:'2026-06-14 18:00'},
+      {name:'间接上级评级',start:'2026-06-15 09:00',end:'2026-06-18 18:00'},
+      {name:'HRBP审批',start:'2026-06-19 09:00',end:'2026-06-22 18:00'}
+    ]},
+    {name:'结果确认',desc:'员工确认绩效结果',flow:'员工确认流程',enabled:true,autoStart:{enabled:false},autoEnd:{enabled:false},timeGrain:'stage',stageWindow:{start:'2026-06-23 09:00',end:'2026-06-30 18:00'},nodes:[
+      {name:'员工确认',start:'2026-06-23 09:00',end:'2026-06-30 18:00'}
+    ]},
   ],
   forcedDist:{name:'标准七级强制分布',grades:[
     {code:'A',name:'远超预期',op:'不超过',pct:5},
@@ -90,6 +107,7 @@ const SCHEME={
   ]},
   ratifySubmitMode:'按层级提交',
   autoCreate:{enabled:true,monthly:{direction:'前',days:7},quarterly:{direction:'前',days:7},semiannual:{direction:'前',days:14},annual:{direction:'前',days:30}},
+  autoRemind:{enabled:true,tz:'GMT+8',dayOn:true,times:['09:00'],endOn:true,endTimes:['09:00','11:00','13:00','15:00','17:00','19:00','21:00']},
   admins:['EMP0047'],
 };
 
@@ -159,11 +177,99 @@ function renderAutoRemoveSummary(raw){
     '<div style="font:600 12px/1 var(--f);color:var(--c6);margin-bottom:6px">移除人员规则</div>'+body+'</div>';
 }
 
-function formatStageTiming(a){
-  if(!a||!a.enabled) return '';
-  var dir=a.direction==='后'?'后':'前';
-  var days=parseInt(a.days,10)||0;
-  return '周期开始'+dir+' '+days+' 天';
+var REMIND_TZ_OPTIONS=['GMT-8','GMT-5','GMT-3','GMT+0','GMT+1','GMT+2','GMT+3','GMT+8','GMT+9'];
+var REMIND_END_DEFAULT=['09:00','11:00','13:00','15:00','17:00','19:00','21:00'];
+function normRemindClock(val,fallback){
+  var m=String(val||'').match(/^(\d{2}:\d{2})/);
+  return m?m[1]:fallback;
+}
+function normRemindTz(val){
+  var raw=String(val||'').replace(/\s+/g,'').toUpperCase();
+  var m=raw.match(/^GMT([+-])0*(\d{1,2})(?::?(\d{2}))?$/);
+  if(!m) return 'GMT+8';
+  var label='GMT'+m[1]+String(parseInt(m[2],10));
+  return REMIND_TZ_OPTIONS.indexOf(label)>=0?label:'GMT+8';
+}
+function normalizeRemindClocks(list){
+  var seen={};
+  var out=[];
+  (list||[]).forEach(function(t){
+    var c=normRemindClock(t,'');
+    if(!c||seen[c]) return;
+    seen[c]=1;
+    out.push(c);
+  });
+  out.sort();
+  return out;
+}
+function normalizeRemindDayTimes(saved){
+  if(saved&&Array.isArray(saved.times)) return normalizeRemindClocks(saved.times);
+  if(saved&&saved.time){
+    var c=normRemindClock(saved.time,'');
+    return c?[c]:['09:00'];
+  }
+  return ['09:00'];
+}
+function normalizeRemindEndTimes(saved){
+  if(saved&&Array.isArray(saved.endTimes)) return normalizeRemindClocks(saved.endTimes);
+  return REMIND_END_DEFAULT.slice();
+}
+function syncSchemeRemind(){
+  try{
+    var raw=localStorage.getItem('hrone-perf-scheme-autoRemind');
+    if(!raw){
+      SCHEME.autoRemind.tz=normRemindTz(SCHEME.autoRemind.tz);
+      SCHEME.autoRemind.times=normalizeRemindDayTimes(SCHEME.autoRemind);
+      SCHEME.autoRemind.endTimes=normalizeRemindEndTimes(SCHEME.autoRemind);
+      if(typeof SCHEME.autoRemind.dayOn!=='boolean') SCHEME.autoRemind.dayOn=SCHEME.autoRemind.times.length>0;
+      if(typeof SCHEME.autoRemind.endOn!=='boolean') SCHEME.autoRemind.endOn=SCHEME.autoRemind.endTimes.length>0;
+      delete SCHEME.autoRemind.time;
+      return;
+    }
+    var saved=JSON.parse(raw);
+    if(!saved||typeof saved!=='object') return;
+    var times=normalizeRemindDayTimes(saved);
+    var ends=normalizeRemindEndTimes(saved);
+    SCHEME.autoRemind={
+      enabled:!!saved.enabled,
+      tz:normRemindTz(saved.tz),
+      dayOn:typeof saved.dayOn==='boolean'?saved.dayOn:times.length>0,
+      times:times,
+      endOn:typeof saved.endOn==='boolean'?saved.endOn:ends.length>0,
+      endTimes:ends
+    };
+  }catch(e){}
+}
+function formatAutoRemind(ar){
+  if(!ar||!ar.enabled) return {active:false,text:'未开启'};
+  var days=ar.dayOn?normalizeRemindClocks(ar.times):[];
+  var ends=ar.endOn?normalizeRemindClocks(ar.endTimes):[];
+  if(!days.length&&!ends.length) return {active:false,text:'未开启'};
+  var parts=[];
+  if(days.length) parts.push('每天 '+days.map(escHtml).join('、'));
+  if(ends.length) parts.push('结束当天 '+ends.map(escHtml).join('、'));
+  return {active:true,text:escHtml(normRemindTz(ar.tz))+' · '+parts.join('；')};
+}
+function formatNodeClock(iso){
+  return String(iso||'').replace('T',' ').slice(0,16);
+}
+function formatNodeTimes(st){
+  var startMark=(st.autoStart&&st.autoStart.enabled)?'定时开启':'手动开启';
+  var endMark=(st.autoEnd&&st.autoEnd.enabled)?'定时开启':'手动开启';
+  function clock(iso, mark){
+    var t=formatNodeClock(iso);
+    if(!t) return '—';
+    return t+' · '+mark;
+  }
+  if(st.timeGrain==='stage'){
+    var w=st.stageWindow||{};
+    return '<div style="margin-top:8px;font:400 12px/1.7 var(--f);color:var(--c7)">按环节 · 开始时间 '+escHtml(clock(w.start,startMark))+' · 结束时间 '+escHtml(clock(w.end,endMark))+'</div>';
+  }
+  var nodes=st.nodes||[];
+  if(!nodes.length) return '';
+  return '<div style="margin-top:8px">'+nodes.map(function(n){
+    return '<div style="font:400 12px/1.7 var(--f);color:var(--c7)">'+escHtml(n.name)+'　开始时间 '+escHtml(clock(n.start,startMark))+'　结束时间 '+escHtml(clock(n.end,endMark))+'</div>';
+  }).join('')+'</div>';
 }
 
 function formatEvalScoreCalculation(c){
@@ -174,6 +280,7 @@ function formatEvalScoreCalculation(c){
 }
 
 function render(){
+  syncSchemeRemind();
   const s=SCHEME;
   const ct=document.getElementById('ct')||document.getElementById('app');
   if(!ct) return;
@@ -198,6 +305,9 @@ function render(){
         ${s.autoCreate?`
         <div><lbl>自动创建活动</lbl><val style="color:var(--em)">${s.autoCreate.enabled?'已开启':'已关闭'}</val></div>
         ${s.autoCreate.enabled?`<div><lbl>创建时间</lbl><val>${s.cycleType==='月度'?'周期开始'+s.autoCreate.monthly.direction+' '+s.autoCreate.monthly.days+' 天':s.cycleType==='季度'?'周期开始'+s.autoCreate.quarterly.direction+' '+s.autoCreate.quarterly.days+' 天':s.cycleType==='半年度'?'周期开始'+s.autoCreate.semiannual.direction+' '+s.autoCreate.semiannual.days+' 天':'周期开始'+s.autoCreate.annual.direction+' '+s.autoCreate.annual.days+' 天'}</val></div>`:''}
+        `:''}
+        ${s.autoRemind?`
+        <div style="grid-column:span 2;min-width:0"><lbl>自动催办</lbl><val style="overflow-wrap:anywhere">${formatAutoRemind(s.autoRemind).text}</val></div>
         `:''}
       </div>
     </div>
@@ -230,9 +340,12 @@ function render(){
     <div class="card">
       <div class="card-hd"><span class="card-bar" style="background:var(--ac)"></span><span class="card-title">考核环节</span></div>
       <div style="display:flex;flex-direction:column;gap:6px">
-        ${s.stages.map(st=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--dv);border-radius:var(--r1)">
-          <div><span style="font:500 13px/1 var(--f);color:var(--c9)">${st.name}</span><span style="font:400 12px/1 var(--f);color:var(--c5);margin-left:8px">${st.desc}</span></div>
-          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end"><span style="font:400 11px/1 var(--f);color:var(--c5);font-family:var(--m)">${st.flow}</span><span style="font:500 11px/1 var(--f);padding:2px 8px;border-radius:3px;background:var(--em50);color:var(--em700)">${st.enabled?'已启用':'已停用'}</span>${st.name==='绩效考核'?`<span style="font:400 11px/1 var(--f);color:var(--c7)">系统计算：${formatEvalScoreCalculation(st.scoreCalculation)}</span>`:''}${st.name==='结果审定'?`<span style="font:400 11px/1 var(--f);color:var(--c7)">提交方式：${s.ratifySubmitMode||'—'}</span>`:''}${st.autoStart&&st.autoStart.enabled?`<span style="font:400 11px/1 var(--f);color:var(--pr);margin-left:2px">自动开启: ${formatStageTiming(st.autoStart)}</span>`:''}${st.autoEnd&&st.autoEnd.enabled?`<span style="font:400 11px/1 var(--f);color:var(--ac700);margin-left:2px">自动结束: ${formatStageTiming(st.autoEnd)}</span>`:''}</div>
+        ${s.stages.map(st=>`<div style="padding:10px 14px;border:1px solid var(--dv);border-radius:var(--r1)">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+            <div><span style="font:500 13px/1 var(--f);color:var(--c9)">${st.name}</span><span style="font:400 12px/1 var(--f);color:var(--c5);margin-left:8px">${st.desc}</span></div>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end"><span style="font:400 11px/1 var(--f);color:var(--c5);font-family:var(--m)">${st.flow}</span><span style="font:500 11px/1 var(--f);padding:2px 8px;border-radius:3px;background:var(--em50);color:var(--em700)">${st.enabled?'已启用':'已停用'}</span>${st.name==='绩效考核'?`<span style="font:400 11px/1 var(--f);color:var(--c7)">系统计算：${formatEvalScoreCalculation(st.scoreCalculation)}</span>`:''}${st.name==='结果审定'?`<span style="font:400 11px/1 var(--f);color:var(--c7)">提交方式：${s.ratifySubmitMode||'—'}</span>`:''}<span style="font:400 11px/1 var(--f);color:var(--c6)">开始时间 ${st.autoStart&&st.autoStart.enabled?'定时开启':'手动开启'} / 结束时间 ${st.autoEnd&&st.autoEnd.enabled?'定时开启':'手动开启'}</span></div>
+          </div>
+          ${formatNodeTimes(st)}
         </div>`).join('')}
       </div>
     </div>

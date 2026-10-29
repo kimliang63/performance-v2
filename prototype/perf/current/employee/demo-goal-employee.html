@@ -93,11 +93,12 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);min-height:100vh;
 .people-item.active{background:var(--pr50)}
 .people-item .p-head{display:flex;align-items:center;gap:6px;min-width:0}
 .people-item .p-name{font:400 12px/1.2 var(--f);color:var(--c9);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.people-item.is-self{min-height:50px;justify-content:center}
 .people-item.is-self .p-name{font-size:13px}
 .people-item.active .p-name{color:var(--pr);font-weight:600}
 .people-item .p-meta{font:400 12px/1.3 var(--f);color:var(--c5)}
 .p-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.p-dot.submitted{background:var(--pr);animation:pulse 2s ease-in-out infinite}
+.p-dot.submitted{background:var(--pr)}
 .p-dot.effective,.p-dot.approved{background:var(--em700)}
 .p-dot.rejected{background:var(--ro)}
 .p-dot.empty,.p-dot.none{background:var(--c4)}
@@ -356,6 +357,7 @@ textarea.inp{min-height:60px;resize:vertical;font-family:var(--f);line-height:1.
 .kpi-card-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
 .kpi-tag{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:3px;font:400 10px/1 var(--f)}
 .kpi-tag.type{background:var(--pr50);color:var(--pr)}
+.kpi-tag.type.qual{background:var(--em50);color:var(--em700)}
 .kpi-tag.nature{background:var(--vi50);color:var(--vi)}
 .kpi-tag.unit{background:var(--ac50);color:var(--ac700)}
 .kpi-tag.rule{background:var(--c1);color:var(--c6)}
@@ -869,7 +871,7 @@ function peopleStatusHtml(id){
 function renderPeople(){
   const el=document.getElementById('peoplePanel');
   if(!el)return;
-  let h='<div class="people-group"><button type="button" class="people-item is-self'+(currentPersonId==='self'?' active':'')+'" onclick="selectPerson(\'self\')"><span class="p-head">'+peopleStatusHtml('self')+'<span class="p-name">我的目标</span></span></button></div>';
+  let h='<div class="people-group"><button type="button" class="people-item is-self'+(currentPersonId==='self'?' active':'')+'" onclick="selectPerson(\'self\')"><span class="p-head">'+peopleStatusHtml('self')+'<span class="p-name">我的目标（'+SELF.name+'）</span></span></button></div>';
   const groups=[{key:'other',title:'其他'},{key:'superior',title:'我的上级'},{key:'subordinate',title:'我的团队'}];
   groups.forEach(g=>{
     const list=PEOPLE[g.key]||[];
@@ -1557,7 +1559,7 @@ function renderKpiList(){
   document.getElementById('kpiList').innerHTML=filtered.map(k=>`<div class="kpi-card ${selectedKpiId===k.id?'selected':''}" onclick="selectedKpiId='${k.id}';renderKpiList()">
     <div class="kpi-card-hd"><span class="kpi-card-name">${k.name}</span><span class="kpi-card-cat">${k.category}</span></div>
     <div class="kpi-card-tags">
-      <span class="kpi-tag type">${k.type}</span>
+      <span class="kpi-tag type${k.type==='定性'?' qual':''}">${k.type}</span>
       <span class="kpi-tag nature">${k.nature}</span>
       <span class="kpi-tag unit">单位: ${k.unit}</span>
     </div>
