@@ -421,6 +421,8 @@ select.status-filter-select.dim-region{min-width:108px}
 .adj-stack{display:flex;flex-direction:column;gap:2px;align-items:flex-start;min-width:0;max-width:100%}
 .adj-reason{font:400 11px/1.35 var(--f);color:var(--c5);white-space:normal;word-break:break-all;max-width:100%}
 .adj-meta-hint{font:400 12px/1.4 var(--f);color:var(--c6)}
+.adj-top-grade-hint{display:none;padding:8px 10px;border-radius:var(--r1);background:var(--ac50);color:var(--ac700);font:400 12px/1.55 var(--f);word-break:break-word}
+.adj-top-grade-hint.is-on{display:block}
 .dist-status-table thead th.dist-rule-hd{text-align:center;white-space:nowrap;overflow:visible;writing-mode:horizontal-tb}
 .dist-status-table thead th.dist-rule-hd.is-start{text-align:left}
 .dist-status-table thead th.dist-rule-hd.is-follow{font-size:0;line-height:0;color:transparent;border-left:0;padding-left:0;padding-right:0;overflow:hidden}
@@ -1323,6 +1325,7 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
     </div>
     <div class="adj-modal-bd">
       <div class="adj-modal-meta" id="adjModalMeta"></div>
+      <div class="adj-top-grade-hint" id="adjTopGradeHint" role="status"></div>
       <div class="adj-field" id="adjBoxField" style="display:none">
         <label class="adj-field-label" for="adjBoxSelect">调整到格子<span class="req">*</span></label>
         <select id="adjBoxSelect" onchange="onAdjBoxChange()"></select>
@@ -1330,7 +1333,7 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
       </div>
       <div class="adj-field" id="adjGradeField" style="display:none">
         <label class="adj-field-label" for="adjGradeSelect">调整后的绩效等级<span class="req">*</span></label>
-        <select id="adjGradeSelect"></select>
+        <select id="adjGradeSelect" onchange="onAdjGradeChange()"></select>
         <div class="adj-field-err">请选择绩效等级</div>
       </div>
       <div class="adj-field" id="adjReasonField">
@@ -1342,6 +1345,21 @@ select.edit-cell:focus{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr50)}
     <div class="adj-modal-ft">
       <button class="btn btn-s" type="button" onclick="closeAdjModal()">取消</button>
       <button class="btn btn-p" type="button" onclick="confirmAdjModal()">确定</button>
+    </div>
+  </div>
+</div>
+
+<div class="adj-modal-overlay" id="topGradeNoticeModal" aria-hidden="true" onclick="closeTopGradeNotice()">
+  <div class="adj-modal" role="dialog" aria-modal="true" aria-labelledby="topGradeNoticeTitle" aria-describedby="topGradeNoticeBody" onclick="event.stopPropagation()">
+    <div class="adj-modal-hd">
+      <div class="adj-modal-title" id="topGradeNoticeTitle">提示</div>
+      <button class="adj-modal-close" type="button" aria-label="关闭" onclick="closeTopGradeNotice()">×</button>
+    </div>
+    <div class="adj-modal-bd">
+      <div class="adj-top-grade-hint is-on" id="topGradeNoticeBody"></div>
+    </div>
+    <div class="adj-modal-ft">
+      <button class="btn btn-p" type="button" onclick="closeTopGradeNotice()">知道了</button>
     </div>
   </div>
 </div>
@@ -4547,6 +4565,50 @@ function paintStarRating(rating,v){
     label.classList.toggle('placeholder',!grade);
   }
 }
+function topPerfGrade(){
+  return GRADE_OPTIONS[0]||'';
+}
+function isTopPerfGrade(g){
+  return !!g&&g===topPerfGrade();
+}
+function topPerfGradeNoticeText(){
+  return '⚠️ 本次提报年度绩效结果为：'+topPerfGrade()+'，目前仅为系统提报，最终结果以线下BU评审确认为准。';
+}
+function syncAdjTopGradeHint(grade){
+  var el=document.getElementById('adjTopGradeHint');
+  if(!el)return;
+  var show=isTopPerfGrade(grade);
+  el.classList.toggle('is-on',show);
+  el.textContent=show?topPerfGradeNoticeText():'';
+}
+function closeTopGradeNotice(){
+  var modal=document.getElementById('topGradeNoticeModal');
+  if(!modal)return;
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden','true');
+}
+function openTopGradeNotice(){
+  var modal=document.getElementById('topGradeNoticeModal');
+  var body=document.getElementById('topGradeNoticeBody');
+  if(!modal)return;
+  if(body)body.textContent=topPerfGradeNoticeText();
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden','false');
+}
+function notifyTopPerfGradeChange(grade){
+  if(isTopPerfGrade(grade))openTopGradeNotice();
+  else closeTopGradeNotice();
+}
+function pendingAdjTargetGrade(){
+  if(!pendingAdj)return '';
+  if(pendingAdj.mode==='tierGrade')return pendingAdj.to||'';
+  if(pendingAdj.mode==='tierCap')return '';
+  if(pendingAdj.needGrade){
+    var sel=document.getElementById('adjGradeSelect');
+    return (sel&&sel.value)||'';
+  }
+  return '';
+}
 function setRatifyStar(el,idx,v){
   var grade=GRADE_OPTIONS[7-v];
   var m=MEMBERS[idx];
@@ -4560,6 +4622,7 @@ function setRatifyStar(el,idx,v){
   /* 相对初评跨档：|调整 − 初评|≥2 须填原因 */
   var initGrade=m.grade||'';
   if(tierGap(gradeTierIndex(initGrade),gradeTierIndex(grade))>=2){
+    closeTopGradeNotice();
     openTierReasonModal({
       mode:'tierGrade',
       idx:idx,
@@ -4573,6 +4636,7 @@ function setRatifyStar(el,idx,v){
   applyGradeChange(m,grade,'');
   updateStats(getFilteredMembers());
   renderMembers();
+  notifyTopPerfGradeChange(grade);
 }
 function starHover(el,entering){
   var rating=el.closest('.star-rating');
@@ -4626,10 +4690,14 @@ document.addEventListener('keydown',function(event){
     closeAdjHistModal();
     closeRulesModal();
     closeNextConfirm();
+    closeTopGradeNotice();
   }
 });
 document.getElementById('adjModal').addEventListener('click',function(e){
   if(e.target===this)closeAdjModal();
+});
+document.getElementById('topGradeNoticeModal').addEventListener('click',function(e){
+  if(e.target===this)closeTopGradeNotice();
 });
 document.getElementById('adjHistModal').addEventListener('click',function(e){
   if(e.target===this)closeAdjHistModal();
@@ -6087,6 +6155,7 @@ function closeAdjModal(){
     var el=document.getElementById(id);
     if(el)el.classList.remove('invalid');
   });
+  syncAdjTopGradeHint('');
 }
 
 function openTierReasonModal(opts){
@@ -6107,6 +6176,7 @@ function openTierReasonModal(opts){
   };
   hideChipTip();
   closeChipPop();
+  closeTopGradeNotice();
   var title=document.getElementById('adjModalTitle');
   var meta=document.getElementById('adjModalMeta');
   var boxField=document.getElementById('adjBoxField');
@@ -6132,6 +6202,7 @@ function openTierReasonModal(opts){
     reasonField.classList.remove('invalid');
   }
   if(reasonInput)reasonInput.value=m.adjustReason||'';
+  syncAdjTopGradeHint(pendingAdjTargetGrade());
   var modal=document.getElementById('adjModal');
   modal.classList.add('open');
   modal.setAttribute('aria-hidden','false');
@@ -6168,6 +6239,7 @@ function syncAdjGradeField(){
     gradeField.style.display='none';
     gradeSelect.innerHTML='';
   }
+  syncAdjTopGradeHint(pendingAdjTargetGrade());
 }
 
 function refreshAdjMeta(){
@@ -6192,6 +6264,9 @@ function onAdjBoxChange(){
   refreshAdjMeta();
   syncAdjGradeField();
 }
+function onAdjGradeChange(){
+  syncAdjTopGradeHint(pendingAdjTargetGrade());
+}
 
 function openAdjModal(idx,perf,cap,manual){
   if(APPROVE_MODE)return;
@@ -6203,6 +6278,7 @@ function openAdjModal(idx,perf,cap,manual){
   pendingAdj={mode:'box',idx:idx,perf:perf,cap:cap,needGrade:fromPerf!==perf,fromPerf:fromPerf,fromCap:fromCap,manual:!!manual};
   hideChipTip();
   closeChipPop();
+  closeTopGradeNotice();
   var title=document.getElementById('adjModalTitle');
   if(title)title.textContent='校准调整';
   var boxField=document.getElementById('adjBoxField');
@@ -6222,6 +6298,7 @@ function openAdjModal(idx,perf,cap,manual){
     syncAdjGradeField();
   }
   reasonInput.value=m.adjustReason||'';
+  syncAdjTopGradeHint(pendingAdjTargetGrade());
   var modal=document.getElementById('adjModal');
   modal.classList.add('open');
   modal.setAttribute('aria-hidden','false');
