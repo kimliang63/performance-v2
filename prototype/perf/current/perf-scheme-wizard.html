@@ -97,8 +97,18 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoo
 .form-sec-hd:hover{background:var(--c0)}
 .form-sec-hd-l{display:flex;align-items:center;gap:8px}
 .form-sec-t{font:600 14px/1.3 var(--f);color:var(--c9)}
+.form-sec-hd.force-end-hd{justify-content:flex-start;cursor:default;background:var(--sf)}
+.form-sec-hd.force-end-hd .form-sec-hd-l::before{content:'';width:3px;height:14px;border-radius:2px;background:var(--pr);flex-shrink:0}
+.form-sec-hd.force-end-hd:hover{background:var(--sf)}
 .form-sec-hd svg{width:14px;height:14px;color:var(--c4);transition:transform .2s}
 .form-sec.open .form-sec-hd svg{transform:rotate(180deg)}
+.stage-mode-seg{display:inline-flex;align-items:center;padding:2px;background:var(--c1);border-radius:6px;gap:2px}
+.stage-mode-seg button{height:26px;padding:0 10px;border:0;border-radius:4px;background:transparent;color:var(--c5);font:500 12px/1 var(--f);cursor:pointer}
+.stage-mode-seg button.on{background:var(--sf);color:var(--pr);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.stage-group-tabs{display:flex;align-items:center;gap:6px;padding:10px 20px;border-bottom:1px solid var(--dv);background:var(--c0);overflow-x:auto}
+.stage-group-tab{flex:none;height:30px;padding:0 12px;border:1px solid var(--c2);border-radius:6px;background:var(--sf);color:var(--c6);font:500 12px/1 var(--f);cursor:pointer;white-space:nowrap}
+.stage-group-tab.on{border-color:var(--pr);background:var(--pr50);color:var(--pr)}
+.stage-group-tab small{font-size:10px;color:var(--c4);margin-left:5px}.stage-group-tab.on small{color:var(--pr)}
 .form-sec-bd{padding:16px 20px}
 .form-sec.open .form-sec-bd{display:block}
 .form-sec-bd{display:none}
@@ -110,6 +120,9 @@ body{font-family:var(--f);background:var(--bg);color:var(--c7);-webkit-font-smoo
 .form-lb .req{color:var(--ro);margin-left:2px}
 .form-input{height:34px;padding:0 10px;border:1px solid var(--c2);border-radius:var(--r1);font:400 13px/1 var(--f);color:var(--c9);background:var(--sf);transition:border-color .12s;outline:none}
 .form-input:focus{border-color:var(--pr)}
+.ac-switch-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:nowrap}
+.ac-switch-left{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.ac-preview{margin-left:auto;font:400 12px/1 var(--f);color:var(--c5);white-space:nowrap;flex-shrink:0}
 #autoRemindRoot,#autoRemindPanel{min-width:0;max-width:100%}
 .remind-head{display:flex;align-items:center;justify-content:flex-start;flex-wrap:wrap;gap:10px;min-width:0;max-width:100%}
 .remind-head-on{margin-bottom:4px}
@@ -170,32 +183,51 @@ textarea.form-input{height:auto;padding:8px 10px;resize:vertical;min-height:60px
 .tbl .act button:hover{background:var(--c1);color:var(--c7)}
 .tbl .act button.del:hover{background:var(--ro50);color:var(--ro)}
 .tbl .act button svg{width:14px;height:14px}
-/* 环节时间：标题一行；开启方式在「开始时间」「结束时间」名称下面 */
-.time-box{margin-top:4px;padding:12px 14px 14px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)}
+/* 环节时间：标题+到点开关/参考标记一行；按环节开始/结束同一行；按节点保持两列表格 */
+.time-box{margin-top:4px;padding:12px 14px 14px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2);overflow-x:auto}
 .time-box-hd{display:flex;align-items:center;gap:12px;margin-bottom:10px;min-width:0}
-.time-box-title{font:600 13px/1 var(--f);color:var(--c9);min-width:0}
+.time-box-hd-l{display:flex;align-items:center;gap:8px;min-width:0;flex:none}
+.time-box-title{font:600 13px/1 var(--f);color:var(--c9);flex:none}
+.time-box-mark{display:inline-flex;align-items:center;height:20px;padding:0 6px;border-radius:3px;font:500 12px/20px var(--f);flex:none;white-space:nowrap}
+.time-box-mark.on{background:var(--pr50);color:var(--pr)}
+.time-box-mark.off{background:var(--c1);color:var(--c5)}
 .time-seg{display:inline-flex;border:1px solid var(--c2);border-radius:var(--r1);overflow:hidden;flex-shrink:0;margin-left:auto;background:var(--sf)}
 .time-seg button{height:28px;padding:0 12px;border:0;background:transparent;color:var(--c6);font:500 12px/1 var(--f);cursor:pointer;font-family:inherit;white-space:nowrap}
 .time-seg button+button{border-left:1px solid var(--c2)}
 .time-seg button:hover{background:var(--c0);color:var(--c8)}
 .time-seg button.on{background:var(--pr50);color:var(--pr);font-weight:600}
-.time-lines{display:grid;grid-template-columns:120px minmax(220px,260px);column-gap:12px;row-gap:14px;align-items:start;justify-content:start}
-.time-name-stack{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-width:120px}
-.time-name-stack .time-col-name{height:34px;display:flex;align-items:center}
-.time-lines select.form-input{width:120px;height:28px;appearance:none;-webkit-appearance:none}
-.time-lines input.form-input{width:100%;min-width:0}
+.time-line-row{display:flex;align-items:center;gap:8px;min-width:0}
+.time-line-row + .time-line-row{margin-top:6px}
+.time-line-row .time-col-name{width:36px;flex:none}
 .time-box .form-row{margin-bottom:0}
-.time-box .tbl{width:100%;table-layout:fixed;background:var(--sf);border-radius:var(--r1)}
-.time-box .tbl th{position:static;background:var(--sf);white-space:normal;vertical-align:middle}
-.time-box .tbl td{vertical-align:middle;background:var(--sf);overflow:hidden}
+.time-box .tbl{width:100%;table-layout:auto;background:var(--sf);border-radius:var(--r1)}
+.time-box .tbl th{position:static;background:var(--sf);white-space:nowrap;vertical-align:middle}
+.time-box .tbl td{vertical-align:middle;background:var(--sf);overflow:visible}
 .time-box .tbl tr:last-child td{border-bottom:none}
 .time-box .tbl tr:hover td{background:var(--c0)}
-.time-box .tbl td .form-input{width:100%;min-width:0;max-width:100%}
-.time-th-pair{display:flex;flex-direction:column;align-items:flex-start;gap:6px;width:max-content;max-width:100%;min-width:0}
-.time-th-pair .time-col-name{white-space:nowrap;line-height:1.2}
-.time-th-pair select.form-input{width:120px;max-width:none;flex:none;height:28px;appearance:none;-webkit-appearance:none}
 .time-col-name{font:600 12px/1 var(--f);color:var(--c5)}
 .time-node{display:block;font:500 13px/1.3 var(--f);color:var(--c8);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.time-rule{min-width:0}
+.time-rule-row{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;width:max-content;max-width:100%}
+.time-rule-ctrls{display:flex;align-items:center;gap:6px;flex-wrap:nowrap;flex:none}
+.time-rule-unit{font:400 12px/1 var(--f);color:var(--c6);flex:none;white-space:nowrap}
+.time-rule-next{font:400 11px/1 var(--f);color:var(--c5);white-space:nowrap;flex:none}
+.time-box .time-rule .form-input{height:34px;min-height:34px;padding:0 8px;font-size:12px;flex:none;max-width:none}
+.time-box .tbl td .time-rule .form-input,.time-lines .time-rule .form-input{min-width:0;max-width:none;height:34px}
+.time-box .time-rule .time-rule-kind{width:88px}
+.time-box .time-rule .time-rule-anchor,.time-box .time-rule .time-rule-bound{width:80px}
+.time-box .time-rule .time-rule-dir{width:52px}
+.time-box .time-rule .time-rule-n{width:52px;padding:0 6px}
+.time-box .time-rule .time-rule-clock{width:96px}
+.time-rule.err .form-input{border-color:var(--ro)}
+.time-rule.err .time-rule-next{color:var(--ro);white-space:normal}
+.time-rule.err .time-rule-row{flex-wrap:wrap}
+.time-box .tbl col.time-node-col{width:96px}
+.time-box .tbl col.time-kind-col{width:44px}
+.time-box .tbl td.time-kind{font:500 12px/1 var(--f);color:var(--c5);padding-right:4px;white-space:nowrap}
+.time-node-block{padding:8px 0;border-bottom:1px solid var(--dv)}
+.time-node-block:last-child{border-bottom:none}
+.time-node-block .time-node{margin-bottom:6px}
 
 /* ═══ 九宫格看板（对齐 demo-yearly-tr：绩效纵×能力横） ═══ */
 .wiz-box9-board{padding:14px;background:var(--c0);border:1px solid var(--dv);border-radius:var(--r2)}
@@ -410,11 +442,11 @@ const STAGES=[
 const LEAVE_TYPES=['年假','病假','事假','婚假','产假','陪产假','育儿假','工伤假','无薪假'];
 const RULE_FIELDS=['部门','职位','职级','划分区域','人员类型','人员状态','选择人员','排除人员'];
 const GROUPS=[
-  {id:'g1',name:'默认考核组',rules:[
+  {id:'g1',name:'默认考核组',peopleCount:86,rules:[
     {conditions:[{field:'部门',op:'属于',val:'产品部'},{field:'职位',op:'等于',val:'产品经理'}]},
     {conditions:[{field:'部门',op:'属于',val:'技术部'},{field:'职位',op:'等于',val:'工程师'}]}
   ],evalRule:'通用评价规则',isDefault:true,autoRemove:{enabled:true,resignation:{enabled:true,days:7},leaveStart:{enabled:true,leaveTypes:['产假','育儿假'],days:7},leaveEnd:{enabled:true,leaveTypes:['产假','育儿假'],days:7},conditions:['resignation','leaveStart','leaveEnd']}},
-  {id:'g2',name:'仓储特殊组',rules:[
+  {id:'g2',name:'仓储特殊组',peopleCount:24,rules:[
     {conditions:[{field:'部门',op:'等于',val:'仓储部'},{field:'职级',op:'属于',val:'L5,L6'}]}
   ],evalRule:'仓储评价规则',isDefault:false,autoRemove:{enabled:false,resignation:{enabled:false,days:7},leaveStart:{enabled:false,leaveTypes:[],days:7},leaveEnd:{enabled:false,leaveTypes:[],days:7},conditions:[]}},
 ];
@@ -441,6 +473,70 @@ const ADMIN_LIST=[
 // ═══ 状态 ═══
 let activeSection='basic', activeGroup='g1';
 
+function deepClone(value){return JSON.parse(JSON.stringify(value));}
+function stageConfigSnapshot(stage){
+  const copy={};
+  Object.keys(stage||{}).forEach(function(key){
+    if(key!=='configMode'&&key!=='groupConfigs'&&key!=='activeGroupId') copy[key]=deepClone(stage[key]);
+  });
+  return copy;
+}
+function ensureStageMode(stage){
+  if(stage.configMode!=='byGroup') stage.configMode='unified';
+  if(!stage.groupConfigs||typeof stage.groupConfigs!=='object'||Array.isArray(stage.groupConfigs)) stage.groupConfigs={};
+  const groups=form&&Array.isArray(form.groups)?form.groups:[];
+  if(!groups.some(function(g){return g.id===stage.activeGroupId;})) stage.activeGroupId=groups[0]?groups[0].id:'';
+  return stage;
+}
+function ensureStageGroupConfigs(stage,reset){
+  ensureStageMode(stage);
+  if(reset) stage.groupConfigs={};
+  (form.groups||[]).forEach(function(group){
+    if(!stage.groupConfigs[group.id]) stage.groupConfigs[group.id]=stageConfigSnapshot(stage);
+  });
+  return stage.groupConfigs;
+}
+function getBaseStage(stageId){
+  return form.stages.find(function(stage){return stage.id===stageId;});
+}
+function getStageConfig(stageOrId){
+  const stage=typeof stageOrId==='string'?getBaseStage(stageOrId):stageOrId;
+  if(!stage) return null;
+  ensureStageMode(stage);
+  if(stage.configMode!=='byGroup') return stage;
+  ensureStageGroupConfigs(stage,false);
+  return stage.groupConfigs[stage.activeGroupId]||stage;
+}
+function setStageConfigMode(stageId,mode){
+  const stage=getBaseStage(stageId);
+  if(!stage) return;
+  ensureStageMode(stage);
+  if(mode==='byGroup'){
+    if(stage.configMode!=='byGroup') ensureStageGroupConfigs(stage,true);
+    stage.configMode='byGroup';
+    render();
+    return;
+  }
+  if(stage.configMode!=='byGroup') return;
+  const current=getStageConfig(stage);
+  const message='切回统一配置后将使用当前考核组配置覆盖统一配置，其他考核组差异将不再生效';
+  if(!window.confirm(message)) return;
+  const snapshot=stageConfigSnapshot(current);
+  Object.keys(stage).forEach(function(key){
+    if(key!=='id'&&key!=='name'&&key!=='desc'&&key!=='status'&&key!=='configMode'&&key!=='groupConfigs'&&key!=='activeGroupId') delete stage[key];
+  });
+  Object.keys(snapshot).forEach(function(key){stage[key]=deepClone(snapshot[key]);});
+  stage.configMode='unified';
+  stage.groupConfigs={};
+  render();
+}
+function selectStageGroup(stageId,groupId){
+  const stage=getBaseStage(stageId);
+  if(!stage||(form.groups||[]).every(function(group){return group.id!==groupId;})) return;
+  stage.activeGroupId=groupId;
+  ensureStageGroupConfigs(stage,false);
+  render();
+}
 /** 方案未配考核组时的演示用示意组 */
 const DEMO_DIST_GROUPS=[
   {id:'demo-g1',name:'默认考核组'},
@@ -459,7 +555,7 @@ let form={
   grades:JSON.parse(JSON.stringify(GRADES)),
   stages:JSON.parse(JSON.stringify(STAGES)),
   groups:JSON.parse(JSON.stringify(GROUPS)),
-  autoCreate:{enabled:true,monthly:{direction:'前',days:7},quarterly:{direction:'前',days:7},semiannual:{direction:'前',days:14},annual:{direction:'前',days:30}},
+  autoCreate:{enabled:true,model:'scheme',rule:'offset',fixedDay:28,monthly:{direction:'前',days:7},quarterly:{direction:'前',days:7},semiannual:{direction:'前',days:14},annual:{direction:'前',days:30}},
   autoRemind:{enabled:true,tz:'GMT+8',dayOn:true,times:['09:00'],endOn:true,endTimes:['09:00','11:00','13:00','15:00','17:00','19:00','21:00']},
   dynamicAssessment:'locked',
   admins:['EMP0088'],
@@ -725,66 +821,16 @@ function renderBasicInfo(ct){
           <div class="form-grp"><label class="form-lb">描述</label><textarea class="form-input" placeholder="请输入" maxlength="100" oninput="form.desc=this.value">${form.desc}</textarea><div class="form-hint">${form.desc.length}/100</div></div>
         </div>
         <div style="margin-top:8px;padding-top:16px;border-top:1px solid var(--dv)">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-            <span style="font:600 13px/1 var(--f);color:var(--c9)">自动创建活动</span>
-            <div class="tog ${form.autoCreate.enabled?'on':''}" onclick="toggleAutoCreate()"><div class="tog-track"><div class="tog-knob"></div></div></div>
+          <div class="ac-switch-row">
+            <div class="ac-switch-left">
+              <span style="font:600 13px/1 var(--f);color:var(--c9)">自动创建活动与环节</span>
+              <div class="tog ${form.autoCreate.enabled?'on':''}" onclick="toggleAutoCreate()"><div class="tog-track"><div class="tog-knob"></div></div></div>
+            </div>
+            ${form.autoCreate.enabled?`<span id="autoCreatePreview" class="ac-preview">${formatAutoCreatePreview(getAutoCreateDate())}</span>`:''}
           </div>
-          <div id="autoCreatePanel" style="opacity:${form.autoCreate.enabled?'1':'0.5'};pointer-events:${form.autoCreate.enabled?'auto':'none'};transition:opacity .15s">
-            ${form.cycleType==='月度'?`
-            <div class="form-row">
-              <div class="form-grp">
-                <div style="display:flex;align-items:center;gap:8px">
-                  <span style="font:400 13px/1 var(--f);color:var(--c7)">周期开始</span>
-                  <select class="form-input" style="width:80px" onchange="form.autoCreate.monthly.direction=this.value;updateAutoCreatePreview()"><option ${form.autoCreate.monthly.direction==='前'?'selected':''}>前</option><option ${form.autoCreate.monthly.direction==='后'?'selected':''}>后</option></select>
-                  <input class="form-input" type="number" value="${form.autoCreate.monthly.days}" min="1" max="15" style="width:60px" oninput="form.autoCreate.monthly.days=parseInt(this.value)||7;updateAutoCreatePreview()">
-                  <span style="font:400 13px/1 var(--f);color:var(--c7)">天，自动创建下月考核活动</span>
-                </div>
-              </div>
-            </div>
-            `:form.cycleType==='季度'?`
-            <div class="form-row">
-              <div class="form-grp">
-                <div style="display:flex;align-items:center;gap:8px">
-                  <span style="font:400 13px/1 var(--f);color:var(--c7)">周期开始</span>
-                  <select class="form-input" style="width:80px" onchange="form.autoCreate.quarterly.direction=this.value;updateAutoCreatePreview()"><option ${form.autoCreate.quarterly.direction==='前'?'selected':''}>前</option><option ${form.autoCreate.quarterly.direction==='后'?'selected':''}>后</option></select>
-                  <input class="form-input" type="number" value="${form.autoCreate.quarterly.days}" min="1" max="90" style="width:60px" oninput="form.autoCreate.quarterly.days=parseInt(this.value)||7;updateAutoCreatePreview()">
-                  <span style="font:400 13px/1 var(--f);color:var(--c7)">天，自动创建下季考核活动</span>
-                </div>
-              </div>
-            </div>
-            `:form.cycleType==='半年度'?`
-            <div class="form-row">
-              <div class="form-grp">
-                <div style="display:flex;align-items:center;gap:8px">
-                  <span style="font:400 13px/1 var(--f);color:var(--c7)">周期开始</span>
-                  <select class="form-input" style="width:80px" onchange="form.autoCreate.semiannual.direction=this.value;updateAutoCreatePreview()"><option ${form.autoCreate.semiannual.direction==='前'?'selected':''}>前</option><option ${form.autoCreate.semiannual.direction==='后'?'selected':''}>后</option></select>
-                  <input class="form-input" type="number" value="${form.autoCreate.semiannual.days}" min="1" max="180" style="width:60px" oninput="form.autoCreate.semiannual.days=parseInt(this.value)||14;updateAutoCreatePreview()">
-                  <span style="font:400 13px/1 var(--f);color:var(--c7)">天，自动创建下半年度考核活动</span>
-                </div>
-              </div>
-            </div>
-            `:`
-            <div class="form-row">
-              <div class="form-grp">
-                <div style="display:flex;align-items:center;gap:8px">
-                  <span style="font:400 13px/1 var(--f);color:var(--c7)">周期开始</span>
-                  <select class="form-input" style="width:80px" onchange="form.autoCreate.annual.direction=this.value;updateAutoCreatePreview()"><option ${form.autoCreate.annual.direction==='前'?'selected':''}>前</option><option ${form.autoCreate.annual.direction==='后'?'selected':''}>后</option></select>
-                  <input class="form-input" type="number" value="${form.autoCreate.annual.days}" min="1" max="365" style="width:60px" oninput="form.autoCreate.annual.days=parseInt(this.value)||30;updateAutoCreatePreview()">
-                  <span style="font:400 13px/1 var(--f);color:var(--c7)">天，自动创建下年度考核活动</span>
-                </div>
-              </div>
-            </div>
-            `}
-            <div id="autoCreatePreview" style="margin-top:8px;padding:10px 14px;background:var(--pr50);border:1px solid var(--pr100);border-radius:var(--r1);font:400 12px/1.3 var(--f);color:var(--pr700)"></div>
-            <div style="margin-top:12px">
-              <span style="font:500 12px/1 var(--f);color:var(--c6);display:block;margin-bottom:6px">动态考核关系</span>
-              <div style="display:flex;gap:20px">
-                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font:400 13px/1 var(--f);color:var(--c7)" onclick="form.dynamicAssessment='locked'"><div style="width:16px;height:16px;border-radius:50%;border:2px solid ${form.dynamicAssessment==='locked'?'var(--pr)':'var(--c3)'};display:flex;align-items:center;justify-content:center">${form.dynamicAssessment==='locked'?'<div style="width:8px;height:8px;border-radius:50%;background:var(--pr)"></div>':''}</div>开启时锁定考核关系</label>
-                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font:400 13px/1 var(--f);color:var(--c7)" onclick="form.dynamicAssessment='dynamic'"><div style="width:16px;height:16px;border-radius:50%;border:2px solid ${form.dynamicAssessment==='dynamic'?'var(--pr)':'var(--c3)'};display:flex;align-items:center;justify-content:center">${form.dynamicAssessment==='dynamic'?'<div style="width:8px;height:8px;border-radius:50%;background:var(--pr)"></div>':''}</div>每次开启时动态匹配</label>
-              </div>
-              <div style="font:400 11px/1 var(--f);color:var(--c4);margin-top:4px">${form.dynamicAssessment==='locked'?'锁定：活动发起时快照考核关系，后续不随组织调整变化':'动态：每次环节启动时实时查询当前汇报关系'}</div>
-            </div>
-            <div style="margin-top:8px;font:400 11px/1 var(--f);color:var(--c4)">说明：开启后系统将在指定时间自动创建考核活动</div>
+          <div id="autoCreatePanel" style="display:${form.autoCreate.enabled?'block':'none'}">
+            ${renderAutoCreateRuleRow()}
+            ${renderDynamicAssessment()}
           </div>
         </div>
         ${renderAutoRemindBlock()}
@@ -950,8 +996,13 @@ function renderGroups(ct){
 }
 
 function addGroup(){
-  const id='g'+(form.groups.length+1);
-  form.groups.push({id,name:'新考核组',rules:[emptyRule()],evalRule:'通用评价规则',autoRemove:emptyAutoRemove()});
+  let seq=1,id='';
+  do{id='g'+seq++;}while(form.groups.some(function(group){return group.id===id;}));
+  form.groups.push({id,name:'新考核组',peopleCount:0,rules:[emptyRule()],evalRule:'通用评价规则',autoRemove:emptyAutoRemove()});
+  form.stages.forEach(function(stage){
+    ensureStageMode(stage);
+    if(stage.configMode==='byGroup') stage.groupConfigs[id]=stageConfigSnapshot(stage);
+  });
   render();
 }
 
@@ -1029,7 +1080,7 @@ function ensureForceEnd(stage){
 }
 
 function setForceEndMode(stageId, mode){
-  const s=form.stages.find(function(x){return x.id===stageId;});
+  const s=getStageConfig(stageId);
   if(!s) return;
   const fe=ensureForceEnd(s);
   fe.mode=mode==='skip'||mode==='grade'||mode==='adjust'?mode:'next';
@@ -1037,12 +1088,12 @@ function setForceEndMode(stageId, mode){
 }
 
 function setForceEndGrade(stageId, grade){
-  const s=form.stages.find(function(x){return x.id===stageId;});
+  const s=getStageConfig(stageId);
   if(!s) return;
   ensureForceEnd(s).grade=grade;
 }
 function setForceEndPerfGrade(stageId, grade){
-  const s=form.stages.find(function(x){return x.id===stageId;});
+  const s=getStageConfig(stageId);
   if(!s) return;
   ensureForceEnd(s).perfGrade=grade;
 }
@@ -1066,8 +1117,8 @@ function renderForceEndRule(stage){
   const modes=hasGrade?FORCE_END_OPTIONS:FORCE_END_OPTIONS.filter(function(m){return m.id!=='grade';});
   const showGrade=hasGrade&&fe.mode==='grade';
   return `<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dv)">
-    <div style="font:600 13px/1 var(--f);color:var(--c9);margin-bottom:12px">强制结束规则</div>
-    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+    <div class="form-sec-hd force-end-hd"><div class="form-sec-hd-l"><span class="form-sec-t">强制结束规则</span></div></div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px">
       <select class="form-input" id="forceEndMode" style="width:480px" onchange="setForceEndMode('${stage.id}',this.value)">
         ${modes.map(function(m){return `<option value="${m.id}"${fe.mode===m.id?' selected':''}>${m.label}</option>`;}).join('')}
       </select>
@@ -1078,8 +1129,10 @@ function renderForceEndRule(stage){
 
 // ═══ 环节详情 ═══
 function renderStageDetail(ct){
-  const s=form.stages.find(s=>s.id===activeSection);
-  if(!s){renderStagesOverview(ct);return}
+  const stage=form.stages.find(s=>s.id===activeSection);
+  if(!stage){renderStagesOverview(ct);return}
+  ensureStageMode(stage);
+  const s=getStageConfig(stage);
   let cfg='';
   if(s.id==='goal') cfg=renderGoalCfg(s);
   else if(s.id==='eval') cfg=renderEvalCfg(s);
@@ -1089,9 +1142,22 @@ function renderStageDetail(ct){
   else if(s.id==='interview') cfg=renderInterviewCfg(s);
   else cfg=`<div class="form-hint">该环节待业务方确认后配置。</div>`;
 
+  const groups=form.groups||[];
+  const groupTabs=stage.configMode==='byGroup'?`<div class="stage-group-tabs" role="tablist" aria-label="${stage.name}考核组">
+    ${groups.length?groups.map(function(group){
+      const count=Number.isFinite(group.peopleCount)?`<small>${group.peopleCount}人</small>`:'';
+      return `<button type="button" class="stage-group-tab ${stage.activeGroupId===group.id?'on':''}" onclick="event.stopPropagation();selectStageGroup('${stage.id}','${group.id}')">${escHtml(group.name)}${count}</button>`;
+    }).join(''):'<span class="form-hint">请先在「考核组」步骤新增考核组</span>'}
+  </div>`:'';
   ct.innerHTML=`<div class="fi">
     <div class="form-sec open">
-      <div class="form-sec-hd"><div class="form-sec-hd-l"><span class="form-sec-t">${s.name}</span><span style="font:400 12px/1 var(--f);color:var(--c5);margin-left:8px">${s.desc}</span></div></div>
+      <div class="form-sec-hd"><div class="form-sec-hd-l"><span class="form-sec-t">${stage.name}</span><span style="font:400 12px/1 var(--f);color:var(--c5);margin-left:8px">${stage.desc}</span></div>
+        <div class="stage-mode-seg" role="group" aria-label="配置粒度" onclick="event.stopPropagation()">
+          <button type="button" class="${stage.configMode==='unified'?'on':''}" onclick="setStageConfigMode('${stage.id}','unified')">统一配置</button>
+          <button type="button" class="${stage.configMode==='byGroup'?'on':''}" onclick="setStageConfigMode('${stage.id}','byGroup')">按考核组配置</button>
+        </div>
+      </div>
+      ${groupTabs}
       <div class="form-sec-bd">${cfg}</div>
     </div>
     ${renderNavButtons()}
@@ -1113,13 +1179,18 @@ function renderEvalCfg(s){
     '通用绩效考核流程':[{name:'员工自评',type:'处理',weight:20},{name:'直接上级评分',type:'处理',weight:50},{name:'隔级上级评分',type:'审批',weight:0}],
     '简化绩效考核流程':[{name:'员工自评',type:'处理',weight:30},{name:'直接上级评分',type:'处理',weight:70}],
   };
-  const nodes=FLOW_NODES[s.flow]||FLOW_NODES['通用绩效考核流程'];
+  const flowNodes=FLOW_NODES[s.flow]||FLOW_NODES['通用绩效考核流程'];
+  if(!s.evalRule) s.evalRule='通用评价规则';
+  if(!s.nodeWeights||typeof s.nodeWeights!=='object') s.nodeWeights={};
+  const nodes=flowNodes.map(function(node){
+    return Object.assign({},node,{weight:s.nodeWeights[node.name]==null?node.weight:s.nodeWeights[node.name]});
+  });
   const EVAL_RULES=['通用评价规则','仓储评价规则','销售评价规则','研发评价规则'];
   const calc=ensureEvalScoreCalculation(s);
   return `<div class="form-row">
     <div class="form-grp"><label class="form-lb">流程模型</label><select class="form-input" onchange="setStageFlow('eval',this.value)">${models.map(m=>`<option ${s.flow===m?'selected':''}>${m}</option>`).join('')}</select></div>
     <div class="form-grp"><label class="form-lb">评价规则 <span class="req">*</span></label>
-      <select class="form-input"><option>通用评价规则</option>${EVAL_RULES.filter(r=>r!=='通用评价规则').map(r=>`<option>${r}</option>`).join('')}</select>
+      <select class="form-input" onchange="setEvalRule(this.value)">${EVAL_RULES.map(r=>`<option ${s.evalRule===r?'selected':''}>${r}</option>`).join('')}</select>
       <div class="form-hint">引用自基础设置 → 评价规则</div>
     </div>
   </div>
@@ -1142,7 +1213,7 @@ function renderEvalCfg(s){
   </div>
   ${calc.enabled&&calc.mode?`<div style="margin-top:16px"><label class="form-lb" style="margin-bottom:8px;display:block">节点权重分配 <span style="font:400 11px/1 var(--f);color:var(--c4)">（节点由流程模型「${s.flow}」决定，仅处理节点可配置权重）</span></label>
     <table class="tbl"><thead><tr><th>节点名称</th><th>节点类型</th><th>权重(%)</th></tr></thead>
-    <tbody>${nodes.map(n=>`<tr><td>${n.name}</td><td><span style="font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px;${n.type==='处理'?'background:var(--pr50);color:var(--pr)':'background:var(--c1);color:var(--c5)'}">${n.type}</span></td><td>${n.type==='处理'?`<input class="form-input" type="number" value="${n.weight}" style="width:60px"> %`:'<span style="font:400 12px/1 var(--f);color:var(--c4)">—</span>'}</td></tr>`).join('')}</tbody></table>
+    <tbody>${nodes.map(n=>`<tr><td>${n.name}</td><td><span style="font:500 11px/1 var(--f);padding:2px 6px;border-radius:3px;${n.type==='处理'?'background:var(--pr50);color:var(--pr)':'background:var(--c1);color:var(--c5)'}">${n.type}</span></td><td>${n.type==='处理'?`<input class="form-input" type="number" value="${n.weight}" style="width:60px" onchange="setEvalNodeWeight('${n.name}',this.value)"> %`:'<span style="font:400 12px/1 var(--f);color:var(--c4)">—</span>'}</td></tr>`).join('')}</tbody></table>
     <div class="wt-sum"><span>总权重：</span><span class="${nodes.filter(n=>n.type==='处理').reduce((s,n)=>s+n.weight,0)===100?'ok':'err'}">${nodes.filter(n=>n.type==='处理').reduce((s,n)=>s+n.weight,0)}%</span><span style="color:var(--c4)">（处理节点需等于 100%）</span></div>
   </div>`:''}
   ${renderForceEndRule(s)}`;
@@ -1155,22 +1226,35 @@ function ensureEvalScoreCalculation(s){
   return s.scoreCalculation;
 }
 function toggleEvalScoreCalculation(){
-  const s=form.stages.find(stage=>stage.id==='eval');
+  const s=getStageConfig('eval');
   if(!s)return;
   const calc=ensureEvalScoreCalculation(s);
   calc.enabled=!calc.enabled;
   render();
 }
 function setEvalScoreCalculationMode(mode){
-  const s=form.stages.find(stage=>stage.id==='eval');
+  const s=getStageConfig('eval');
   if(!s)return;
   const calc=ensureEvalScoreCalculation(s);
   calc.mode=mode==='totalScoreAndGrade'?'totalScoreAndGrade':'totalScore';
   render();
 }
+function setEvalRule(value){
+  const s=getStageConfig('eval');
+  if(s) s.evalRule=value;
+}
+function setEvalNodeWeight(nodeName,value){
+  const s=getStageConfig('eval');
+  if(!s) return;
+  if(!s.nodeWeights||typeof s.nodeWeights!=='object') s.nodeWeights={};
+  s.nodeWeights[nodeName]=Math.max(0,Math.min(100,parseInt(value,10)||0));
+}
 
 function renderRatifyCfg(s){
   const models=FLOW_MODELS[s.id]||[];
+  if(!s.forcedDistRule) s.forcedDistRule=form.forcedDistRule||FORCED_DIST_RULES[0].name;
+  if(!s.forcedDistControl) s.forcedDistControl='强控';
+  if(!s.ratifySubmitMode) s.ratifySubmitMode=form.ratifySubmitMode||'';
   return `<div class="form-row">
     <div class="form-grp"><label class="form-lb">流程模型</label><select class="form-input" onchange="setStageFlow('ratify',this.value)">${models.map(m=>`<option ${s.flow===m?'selected':''}>${m}</option>`).join('')}</select></div>
   </div>
@@ -1181,26 +1265,26 @@ function renderRatifyCfg(s){
     <div class="form-row tri">
       <div class="form-grp">
         <label class="form-lb">关联强制分布规则 <span class="req">*</span></label>
-        <select class="form-input" onchange="form.forcedDistRule=this.value;render()">
-          ${FORCED_DIST_RULES.map(r=>`<option ${form.forcedDistRule===r.name?'selected':''}>${r.name}</option>`).join('')}
+        <select class="form-input" onchange="setRatifyForcedDistRule(this.value)">
+          ${FORCED_DIST_RULES.map(r=>`<option ${s.forcedDistRule===r.name?'selected':''}>${r.name}</option>`).join('')}
         </select>
       </div>
       <div class="form-grp">
         <label class="form-lb">控制模式 <span class="req">*</span></label>
-        <select class="form-input"><option>强控</option><option>弱控</option></select>
+        <select class="form-input" onchange="setRatifyControlMode(this.value)"><option ${s.forcedDistControl==='强控'?'selected':''}>强控</option><option ${s.forcedDistControl==='弱控'?'selected':''}>弱控</option></select>
       </div>
       <div class="form-grp">
         <label class="form-lb" for="ratifySubmitMode">提交方式 <span class="req">*</span></label>
         <select class="form-input" id="ratifySubmitMode" required onchange="setRatifySubmitMode(this.value)">
-          <option value="" ${form.ratifySubmitMode?'':'selected'} disabled>请选择</option>
-          ${RATIFY_SUBMIT_MODES.map(mode=>`<option value="${mode}" ${form.ratifySubmitMode===mode?'selected':''}>${mode}</option>`).join('')}
+          <option value="" ${s.ratifySubmitMode?'':'selected'} disabled>请选择</option>
+          ${RATIFY_SUBMIT_MODES.map(mode=>`<option value="${mode}" ${s.ratifySubmitMode===mode?'selected':''}>${mode}</option>`).join('')}
         </select>
       </div>
     </div>
     <div style="margin-top:16px;padding:14px 16px;background:var(--c0);border-radius:var(--r2);border:1px solid var(--dv)">
-      <div style="font:600 12px/1 var(--f);color:var(--c8);margin-bottom:10px">当前规则：${form.forcedDistRule}</div>
+      <div style="font:600 12px/1 var(--f);color:var(--c8);margin-bottom:10px">当前规则：${s.forcedDistRule}</div>
       ${(()=>{
-        const rule=FORCED_DIST_RULES.find(r=>r.name===form.forcedDistRule);
+        const rule=FORCED_DIST_RULES.find(r=>r.name===s.forcedDistRule);
         if(!rule||!rule.grades) return '';
         return `<table class="tbl" style="margin:0"><thead><tr><th>等级名称</th><th>计算规则</th><th>比例上限(%)</th></tr></thead><tbody>${rule.grades.map(g=>`<tr>
           <td style="font:500 13px/1 var(--f);color:var(--c9)">${g.name}</td>
@@ -1288,14 +1372,22 @@ function defaultNineBoxCells(){
 
 function onGradeRuleChange(value){
   form.gradeRule=value;
-  const s=form.stages.find(x=>x.id==='inventory');
-  if(s) s.nineBox=defaultNineBoxCells(); // 等级规则切换后按新包含等级重建默认九格
+  const base=getBaseStage('inventory');
+  if(base){
+    base.nineBox=defaultNineBoxCells();
+    Object.keys(base.groupConfigs||{}).forEach(function(groupId){base.groupConfigs[groupId].nineBox=defaultNineBoxCells();});
+  }
   render();
 }
 
 /** 盘点强制分布用的考核组列表（方案为空时用示意组） */
 function getDistSchemeGroups(){
   if(Array.isArray(form.groups)&&form.groups.length){
+    const inventory=getBaseStage('inventory');
+    if(inventory&&inventory.configMode==='byGroup'){
+      const selected=form.groups.find(function(group){return group.id===inventory.activeGroupId;});
+      return selected?[{id:selected.id,name:selected.name||selected.id}]:[];
+    }
     return form.groups.map(g=>({id:g.id,name:g.name||g.id}));
   }
   return DEMO_DIST_GROUPS.slice();
@@ -1380,7 +1472,7 @@ function ensureInventoryCfg(s){
 }
 
 function setInvGroupDistRule(side,groupId,ruleId){
-  const s=form.stages.find(x=>x.id==='inventory');
+  const s=getStageConfig('inventory');
   if(!s)return;
   ensureInventoryCfg(s);
   const list=side==='cap'?s.capForcedDistGroups:s.forcedDistGroups;
@@ -1391,7 +1483,7 @@ function setInvGroupDistRule(side,groupId,ruleId){
 }
 
 function setInvGroupDistControl(side,groupId,controlMode){
-  const s=form.stages.find(x=>x.id==='inventory');
+  const s=getStageConfig('inventory');
   if(!s)return;
   ensureInventoryCfg(s);
   const mode=controlMode==='弱控'?'弱控':'强控';
@@ -1460,7 +1552,7 @@ function renderGroupForcedDistPanel(side,s){
 }
 
 function setNineBoxCell(i,field,value){
-  const s=form.stages.find(x=>x.id==='inventory');
+  const s=getStageConfig('inventory');
   if(!s)return;
   ensureInventoryCfg(s);
   const cell=s.nineBox[i];
@@ -1524,7 +1616,7 @@ function toggleNineBoxPerfMs(ev,i){
 }
 
 function toggleNineBoxPerfGrade(i,grade,checked){
-  const s=form.stages.find(x=>x.id==='inventory');
+  const s=getStageConfig('inventory');
   if(!s)return;
   ensureInventoryCfg(s);
   const cell=s.nineBox[i];
@@ -1681,11 +1773,120 @@ function toggleTimeout(stageId,value){
   if(el) el.style.display=value==='超时自动结束'?'block':'none';
 }
 
-// ═══ 自动创建活动 ═══
+// ═══ 自动创建活动与环节 ═══
+function ensureAutoCreate(){
+  if(!form.autoCreate) form.autoCreate={enabled:false,model:'scheme'};
+  var ac=form.autoCreate;
+  if(ac.rule!=='fixedDay') ac.rule='offset';
+  var d=parseInt(ac.fixedDay,10);
+  if(!d||d<1) d=28;
+  if(d>28) d=28;
+  ac.fixedDay=d;
+  return ac;
+}
+function getAutoCreateCycleKey(){
+  var ct=form.cycleType||'月度';
+  if(ct==='季度') return 'quarterly';
+  if(ct==='半年度') return 'semiannual';
+  if(ct==='年度') return 'annual';
+  return 'monthly';
+}
+function getAutoCreateOffset(){
+  var ac=ensureAutoCreate();
+  var key=getAutoCreateCycleKey();
+  if(!ac[key]) ac[key]={direction:'前',days:getCycleDayDefault()};
+  if(ac[key].direction!=='前'&&ac[key].direction!=='后') ac[key].direction='前';
+  return ac[key];
+}
+function getAutoCreatePeriodLabel(){
+  var ct=form.cycleType||'月度';
+  if(ct==='季度') return '下季考核活动';
+  if(ct==='半年度') return '下半年度考核活动';
+  if(ct==='年度') return '下年度考核活动';
+  return '下月考核活动';
+}
+function getAutoCreateNextCycleStart(){
+  var ct=form.cycleType||'月度';
+  if(ct==='月度'){
+    var now=new Date();
+    return new Date(now.getFullYear(),now.getMonth()+1,1);
+  }
+  if(ct==='季度') return new Date('2026-10-01');
+  if(ct==='半年度') return new Date('2026-07-01');
+  return new Date('2027-01-01');
+}
+function getAutoCreateDate(){
+  var ac=ensureAutoCreate();
+  var start=getAutoCreateNextCycleStart();
+  if(ac.rule==='fixedDay') return new Date(start.getFullYear(),start.getMonth()-1,ac.fixedDay);
+  var off=getAutoCreateOffset();
+  var days=parseInt(off.days,10)||getCycleDayDefault();
+  var sign=off.direction==='后'?1:-1;
+  return new Date(start.getTime()+sign*days*86400000);
+}
+function formatAutoCreatePreview(date){
+  var pad=function(n){return String(n).padStart(2,'0');};
+  return '下次活动将于 '+date.getFullYear()+'/'+pad(date.getMonth()+1)+'/'+pad(date.getDate())+' 创建';
+}
+function renderAutoCreateRuleRow(){
+  var ac=ensureAutoCreate();
+  var off=getAutoCreateOffset();
+  var max=getCycleDayLimit();
+  var ruleSel='<select class="form-input" style="width:100px" onchange="setAutoCreateRule(this.value)">'+
+    '<option value="offset"'+(ac.rule==='offset'?' selected':'')+'>相对天数</option>'+
+    '<option value="fixedDay"'+(ac.rule==='fixedDay'?' selected':'')+'>固定日期</option>'+
+  '</select>';
+  var body=ac.rule==='fixedDay'
+    ?('<span style="font:400 13px/1 var(--f);color:var(--c7)">周期开始前的</span>'+
+      '<input class="form-input" type="number" value="'+ac.fixedDay+'" min="1" max="28" style="width:60px" oninput="setAutoCreateFixedDay(this.value,this)">'+
+      '<span style="font:400 13px/1 var(--f);color:var(--c7)">号</span>')
+    :('<span style="font:400 13px/1 var(--f);color:var(--c7)">周期开始</span>'+
+      '<select class="form-input" style="width:80px" onchange="setAutoCreateOffset(\'direction\',this.value)">'+
+        '<option value="前"'+(off.direction==='前'?' selected':'')+'>前</option>'+
+        '<option value="后"'+(off.direction==='后'?' selected':'')+'>后</option>'+
+      '</select>'+
+      '<input class="form-input" type="number" value="'+off.days+'" min="1" max="'+max+'" style="width:60px" oninput="setAutoCreateOffsetDays(this.value,this)">'+
+      '<span style="font:400 13px/1 var(--f);color:var(--c7)">天</span>');
+  return '<div class="form-row" style="grid-template-columns:1fr;margin-bottom:12px"><div class="form-grp">'+
+    '<div style="display:flex;align-items:center;gap:8px;flex-wrap:nowrap">'+
+      ruleSel+body+
+    '</div></div></div>';
+}
+function renderDynamicAssessment(){
+  return '<div style="margin-top:12px">'+
+    '<span style="font:500 12px/1 var(--f);color:var(--c6);display:block;margin-bottom:6px">动态考核关系</span>'+
+    '<div style="display:flex;gap:20px">'+
+      '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font:400 13px/1 var(--f);color:var(--c7)" onclick="form.dynamicAssessment=\'locked\';render()"><div style="width:16px;height:16px;border-radius:50%;border:2px solid '+(form.dynamicAssessment==='locked'?'var(--pr)':'var(--c3)')+';display:flex;align-items:center;justify-content:center">'+(form.dynamicAssessment==='locked'?'<div style="width:8px;height:8px;border-radius:50%;background:var(--pr)"></div>':'')+'</div>开启时锁定考核关系</label>'+
+      '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font:400 13px/1 var(--f);color:var(--c7)" onclick="form.dynamicAssessment=\'dynamic\';render()"><div style="width:16px;height:16px;border-radius:50%;border:2px solid '+(form.dynamicAssessment==='dynamic'?'var(--pr)':'var(--c3)')+';display:flex;align-items:center;justify-content:center">'+(form.dynamicAssessment==='dynamic'?'<div style="width:8px;height:8px;border-radius:50%;background:var(--pr)"></div>':'')+'</div>每次开启时动态匹配</label>'+
+    '</div></div>';
+}
+function setAutoCreateRule(val){
+  ensureAutoCreate().rule=val==='fixedDay'?'fixedDay':'offset';
+  render();
+}
+function setAutoCreateFixedDay(val,el){
+  var d=parseInt(val,10);
+  if(!d||d<1) d=1;
+  if(d>28) d=28;
+  ensureAutoCreate().fixedDay=d;
+  if(el&&String(el.value)!==String(d)&&val!=='') el.value=d;
+  updateAutoCreatePreview();
+}
+function setAutoCreateOffset(field,value){
+  getAutoCreateOffset()[field]=value;
+  updateAutoCreatePreview();
+}
+function setAutoCreateOffsetDays(val,el){
+  var max=getCycleDayLimit();
+  var d=parseInt(val,10)||getCycleDayDefault();
+  if(d<1) d=1;
+  if(d>max) d=max;
+  getAutoCreateOffset().days=d;
+  if(el&&String(el.value)!==String(d)&&val!=='') el.value=d;
+  updateAutoCreatePreview();
+}
 function toggleAutoCreate(){
-  form.autoCreate.enabled=!form.autoCreate.enabled;
-  var panel=document.getElementById('autoCreatePanel');
-  if(panel){ panel.style.opacity=form.autoCreate.enabled?'1':'0.5'; panel.style.pointerEvents=form.autoCreate.enabled?'auto':'none'; }
+  ensureAutoCreate().enabled=!form.autoCreate.enabled;
   render();
 }
 
@@ -1869,28 +2070,15 @@ function addRemindEndTime(){ addRemindClock('endTimes','remindEndAdd'); }
 function refreshAutoCreatePanel(){
   var panel=document.getElementById('autoCreatePanel');
   if(!panel) return;
-  var t=form.autoCreate;
-  var ct=form.cycleType;
-  var html='';
-  if(ct==='月度'){
-    html='<div class="form-row"><div class="form-grp"><label class="form-lb">创建规则</label><div style="display:flex;align-items:center;gap:8px"><span style="font:400 13px/1 var(--f);color:var(--c7)">周期开始</span><select class="form-input" style="width:80px" onchange="form.autoCreate.monthly.direction=this.value;updateAutoCreatePreview()"><option '+(t.monthly.direction==='前'?'selected':'')+'>前</option><option '+(t.monthly.direction==='后'?'selected':'')+'>后</option></select><input class="form-input" type="number" value="'+t.monthly.days+'" min="1" max="15" style="width:60px" oninput="form.autoCreate.monthly.days=parseInt(this.value)||7;updateAutoCreatePreview()"><span style="font:400 13px/1 var(--f);color:var(--c7)">天，自动创建下月考核活动</span></div></div></div>';
-  }else if(ct==='季度'){
-    html='<div class="form-row"><div class="form-grp"><label class="form-lb">创建规则</label><div style="display:flex;align-items:center;gap:8px"><span style="font:400 13px/1 var(--f);color:var(--c7)">周期开始</span><select class="form-input" style="width:80px" onchange="form.autoCreate.quarterly.direction=this.value;updateAutoCreatePreview()"><option '+(t.quarterly.direction==='前'?'selected':'')+'>前</option><option '+(t.quarterly.direction==='后'?'selected':'')+'>后</option></select><input class="form-input" type="number" value="'+t.quarterly.days+'" min="1" max="90" style="width:60px" oninput="form.autoCreate.quarterly.days=parseInt(this.value)||7;updateAutoCreatePreview()"><span style="font:400 13px/1 var(--f);color:var(--c7)">天，自动创建下季考核活动</span></div></div></div>';
-  }else if(ct==='半年度'){
-    html='<div class="form-row"><div class="form-grp"><label class="form-lb">创建规则</label><div style="display:flex;align-items:center;gap:8px"><span style="font:400 13px/1 var(--f);color:var(--c7)">周期开始</span><select class="form-input" style="width:80px" onchange="form.autoCreate.semiannual.direction=this.value;updateAutoCreatePreview()"><option '+(t.semiannual.direction==='前'?'selected':'')+'>前</option><option '+(t.semiannual.direction==='后'?'selected':'')+'>后</option></select><input class="form-input" type="number" value="'+t.semiannual.days+'" min="1" max="180" style="width:60px" oninput="form.autoCreate.semiannual.days=parseInt(this.value)||14;updateAutoCreatePreview()"><span style="font:400 13px/1 var(--f);color:var(--c7)">天，自动创建下半年度考核活动</span></div></div></div>';
-  }else{
-    html='<div class="form-row"><div class="form-grp"><label class="form-lb">创建规则</label><div style="display:flex;align-items:center;gap:8px"><span style="font:400 13px/1 var(--f);color:var(--c7)">周期开始</span><select class="form-input" style="width:80px" onchange="form.autoCreate.annual.direction=this.value;updateAutoCreatePreview()"><option '+(t.annual.direction==='前'?'selected':'')+'>前</option><option '+(t.annual.direction==='后'?'selected':'')+'>后</option></select><input class="form-input" type="number" value="'+t.annual.days+'" min="1" max="365" style="width:60px" oninput="form.autoCreate.annual.days=parseInt(this.value)||30;updateAutoCreatePreview()"><span style="font:400 13px/1 var(--f);color:var(--c7)">天，自动创建下年度考核活动</span></div></div></div>';
-  }
-  panel.innerHTML=html+'<div id="autoCreatePreview" style="margin-top:8px;padding:10px 14px;background:var(--pr50);border:1px solid var(--pr100);border-radius:var(--r1);font:400 12px/1.3 var(--f);color:var(--pr700)"></div><div style="margin-top:12px"><span style="font:500 12px/1 var(--f);color:var(--c6);display:block;margin-bottom:6px">动态考核关系</span><div style="display:flex;gap:20px"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font:400 13px/1 var(--f);color:var(--c7)" onclick="form.dynamicAssessment=\'locked\'"><div style="width:16px;height:16px;border-radius:50%;border:2px solid '+(form.dynamicAssessment==='locked'?'var(--pr)':'var(--c3)')+';display:flex;align-items:center;justify-content:center">'+(form.dynamicAssessment==='locked'?'<div style="width:8px;height:8px;border-radius:50%;background:var(--pr)"></div>':'')+'</div>开启时锁定考核关系</label><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font:400 13px/1 var(--f);color:var(--c7)" onclick="form.dynamicAssessment=\'dynamic\'"><div style="width:16px;height:16px;border-radius:50%;border:2px solid '+(form.dynamicAssessment==='dynamic'?'var(--pr)':'var(--c3)')+';display:flex;align-items:center;justify-content:center">'+(form.dynamicAssessment==='dynamic'?'<div style="width:8px;height:8px;border-radius:50%;background:var(--pr)"></div>':'')+'</div>每次开启时动态匹配</label></div><div style="font:400 11px/1 var(--f);color:var(--c4);margin-top:4px">'+(form.dynamicAssessment==='locked'?'锁定：活动发起时快照考核关系，后续不随组织调整变化':'动态：每次环节启动时实时查询当前汇报关系')+'</div></div><div style="margin-top:8px;font:400 11px/1 var(--f);color:var(--c4)">说明：开启后系统将在指定时间自动创建考核活动</div>';
+  panel.style.display=form.autoCreate&&form.autoCreate.enabled?'block':'none';
+  panel.innerHTML=renderAutoCreateRuleRow()+renderDynamicAssessment();
 }
 
 function onCycleTypeChange(val){
   form.cycleType=val;
   clampAllStageTimingDays();
   reseedNodeTimes();
-  refreshAutoCreatePanel();
-  updateAutoCreatePreview();
-  renderSidebar();
+  render();
 }
 
 function toggleFormAdmin(cb){
@@ -1952,23 +2140,9 @@ function getMonthlyPreview(day){
 }
 
 function updateAutoCreatePreview(){
-  const el=document.getElementById('autoCreatePreview');
-  if(!el)return;
-  const ct=form.cycleType;
-  const t=form.autoCreate;
-  const pad=function(n){return String(n).padStart(2,'0');};
-  var createDate;
-  if(ct==='月度'){
-    var m=form.autoCreate.monthly;
-    var now=new Date();
-    var nextMonth=new Date(now.getFullYear(),now.getMonth()+1,1);
-    createDate=new Date(nextMonth.getTime()+(m.direction==='前'?-1:1)*m.days*86400000);
-  }else{
-    var cfg=ct==='季度'?t.quarterly:ct==='半年度'?t.semiannual:t.annual;
-    var nextCycle=new Date(ct==='季度'?'2026-10-01':ct==='半年度'?'2026-07-01':'2027-01-01');
-    createDate=new Date(nextCycle.getTime()+(cfg.direction==='前'?-1:1)*cfg.days*86400000);
-  }
-  el.innerHTML='<span style="font:500 12px/1 var(--f);color:var(--pr700)">📅 下次活动将于 '+createDate.getFullYear()+'/'+pad(createDate.getMonth()+1)+'/'+pad(createDate.getDate())+' 创建</span>';
+  var el=document.getElementById('autoCreatePreview');
+  if(!el) return;
+  el.textContent=formatAutoCreatePreview(getAutoCreateDate());
 }
 
 function renderAutoCreate(ct){
@@ -2218,7 +2392,7 @@ function formatStageTimingDesc(a){
 }
 function checkStageConflict(stage,type){
   if(type!=='start') return null;
-  var stages=form.stages.filter(function(s){return s.enabled;});
+  var stages=form.stages.map(function(s){return getStageConfig(s);}).filter(function(s){return s&&s.enabled;});
   var idx=-1;
   for(var i=0;i<stages.length;i++){ if(stages[i].id===stage.id){ idx=i; break; } }
   if(idx<=0) return null;
@@ -2236,7 +2410,7 @@ function formatStageConflict(conflict,pad){
   return '⚠ 上一环节「'+conflict.prevStageName+'」自动结束于 '+conflict.prevEndDate.getFullYear()+'-'+pad(conflict.prevEndDate.getMonth()+1)+'-'+pad(conflict.prevEndDate.getDate())+'<br>'+
     '&nbsp;&nbsp;&nbsp;&nbsp;当前环节开启时间早于上一环节结束时间，请检查';
 }
-/** 结束时间面板：结束方式为自动时可编辑；开始方式为手动且未开自动结束时只作参考（不写 autoEnd.enabled） */
+/** 结束时间面板：自动创建开启时可编辑；关闭时只作参考 */
 function renderStageEndTimingSection(stage){
   var a=ensureStageAuto(stage,'start');
   var e=ensureStageAuto(stage,'end');
@@ -2276,7 +2450,7 @@ function renderStageTimingPanel(type,stage,hintOnly){
     ?('📅 参考：建议'+label+'日期 '+resultDate.getFullYear()+'-'+pad(resultDate.getMonth()+1)+'-'+pad(resultDate.getDate())+'（'+desc+'）')
     :('📅 预览：预计自动'+label+'日期 '+resultDate.getFullYear()+'-'+pad(resultDate.getMonth()+1)+'-'+pad(resultDate.getDate())+'（'+desc+'）');
   var hint=hintOnly
-    ?'<div class="form-hint" style="margin-bottom:10px">参考提示：开始方式为手动时，此结束时间仅作计划参考，系统不会按此自动结束。若需到点结束，请将「结束方式」设为「自动」。</div>'
+    ?'<div class="form-hint" style="margin-bottom:10px">参考提示：自动创建关闭时，此结束时间仅作计划参考。若需到点结束，请开启「自动创建活动」。</div>'
     :'';
   return '<div style="font:500 12px/1 var(--f);color:'+titleColor+';margin-bottom:10px">'+title+'</div>'+
     hint+
@@ -2289,14 +2463,14 @@ function renderStageTimingPanel(type,stage,hintOnly){
     '</div>');
 }
 function setStageTimingField(stageId,type,field,value){
-  var stage=form.stages.find(function(s){return s.id===stageId;});
+  var stage=getStageConfig(stageId);
   if(!stage) return;
   var a=ensureStageAuto(stage,type);
   a[field]=value;
   updateStageTimingPreview(type,stageId);
 }
 function setStageTimingDays(stageId,type,raw,inputEl){
-  var stage=form.stages.find(function(s){return s.id===stageId;});
+  var stage=getStageConfig(stageId);
   if(!stage) return;
   var a=ensureStageAuto(stage,type);
   var max=getCycleDayLimit();
@@ -2311,7 +2485,7 @@ function setStageTimingDays(stageId,type,raw,inputEl){
 function updateStageTimingPreview(type,stageId){
   var el=document.getElementById('timeRulePreview-'+type+'-'+stageId);
   if(!el) return;
-  var stage=form.stages.find(function(s){return s.id===stageId;});
+  var stage=getStageConfig(stageId);
   if(!stage) return;
   var a=ensureStageAuto(stage,type);
   var pad=function(n){return String(n).padStart(2,'0');};
@@ -2331,7 +2505,7 @@ function updateStageTimingPreview(type,stageId){
   }
 }
 function updateStageAuto(stageId,type,enabled){
-  var stage=form.stages.find(function(s){return s.id===stageId;});
+  var stage=getStageConfig(stageId);
   if(!stage) return;
   var a=ensureStageAuto(stage,type);
   a.enabled=enabled;
@@ -2350,36 +2524,178 @@ var FLOW_NODE_NAMES={
   '员工确认流程':['员工确认'],
   '绩效面谈流程':['员工填写面谈记录','上级审批']
 };
-function mockCycleBounds(){
+function cycleTimePad(n){return String(n).padStart(2,'0');}
+function getStageTimeDayLimit(){
   var ct=form.cycleType||'月度';
-  if(ct==='季度') return [Date.parse('2026-04-01T00:00:00'), Date.parse('2026-06-30T00:00:00')];
-  if(ct==='半年度') return [Date.parse('2026-01-01T00:00:00'), Date.parse('2026-06-30T00:00:00')];
-  if(ct==='年度') return [Date.parse('2026-01-01T00:00:00'), Date.parse('2026-12-31T00:00:00')];
-  return [Date.parse('2026-06-01T00:00:00'), Date.parse('2026-06-30T00:00:00')];
+  if(ct==='月度') return 31;
+  if(ct==='季度') return 90;
+  if(ct==='半年度') return 180;
+  return 365;
 }
-function toNodeDt(ms,hour){
-  var d=new Date(ms);
-  var p=function(n){return String(n).padStart(2,'0');};
-  return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'T'+p(hour)+':00';
+function getDemoCycleRange(){
+  var ct=form.cycleType||'月度';
+  var now=new Date();
+  var y=now.getFullYear(), m=now.getMonth();
+  if(ct==='月度') return {start:new Date(y,m,1), end:new Date(y,m+1,0)};
+  if(ct==='季度'){
+    var q=Math.floor(m/3)*3;
+    return {start:new Date(y,q,1), end:new Date(y,q+3,0)};
+  }
+  if(ct==='半年度'){
+    var h=m<6?0:6;
+    return {start:new Date(y,h,1), end:new Date(y,h+6,0)};
+  }
+  return {start:new Date(y,0,1), end:new Date(y,11,31)};
 }
-function fillSeededNodeTimes(){
-  var bounds=mockCycleBounds();
-  var stages=form.stages||[];
-  var count=stages.length||1;
-  var span=Math.max(1, bounds[1]-bounds[0]);
-  stages.forEach(function(stage,si){
-    var names=FLOW_NODE_NAMES[stage.flow]||[stage.name];
-    if(!stage.nodes) return;
-    var seg0=bounds[0]+span*si/count;
-    var seg1=bounds[0]+span*(si+1)/count;
-    stage.nodes.forEach(function(n,ni){
-      if(!n.seeded||(n.start&&n.end)) return;
-      var a0=seg0+(seg1-seg0)*ni/Math.max(1,names.length);
-      var a1=seg0+(seg1-seg0)*(ni+1)/Math.max(1,names.length);
-      n.start=toNodeDt(a0,9);
-      n.end=toNodeDt(a1,18);
-      n.seeded=true;
-    });
+function isCycleTime(v){
+  return !!(v&&typeof v==='object'&&!Array.isArray(v)&&(v.rule||v.anchor||v.dir||v.time||typeof v.n==='number'));
+}
+function stageIndexOf(stage){
+  var i=(form.stages||[]).findIndex(function(item){return item&&item.id===stage.id;});
+  return i<0?0:i;
+}
+function defaultCycleTime(si,ni,isEnd){
+  var n=1+si*5+ni*2+(isEnd?2:0);
+  var max=getStageTimeDayLimit();
+  if(n>max) n=max;
+  if(n<1) n=1;
+  return {rule:'offset',anchor:'cycleStart',dir:'after',n:n,time:isEnd?'18:00':'09:00'};
+}
+function isoToCycleTime(iso, fallback){
+  var m=String(iso||'').replace(' ','T').match(/^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2}))?/);
+  if(!m) return Object.assign({}, fallback||defaultCycleTime(0,0,false));
+  var d=new Date(+m[1],+m[2]-1,+m[3]);
+  var fbTime=(fallback&&fallback.time)||'09:00';
+  var time=cycleTimePad(m[4]||fbTime.slice(0,2))+':'+cycleTimePad(m[5]||fbTime.slice(3,5));
+  var range=getDemoCycleRange();
+  var days=Math.round((d-new Date(range.start.getFullYear(),range.start.getMonth(),range.start.getDate()))/86400000);
+  if(days>=0) return {rule:'offset',anchor:'cycleStart',dir:'after',n:Math.max(1,days||1),time:time};
+  return {rule:'offset',anchor:'cycleStart',dir:'before',n:Math.max(1,-days),time:time};
+}
+function normalizeCycleTime(v, fallback){
+  var t;
+  if(isCycleTime(v)) t={rule:v.rule,anchor:v.anchor,dir:v.dir,n:v.n,time:v.time};
+  else if(typeof v==='string'&&v) t=isoToCycleTime(v, fallback);
+  else t=Object.assign({}, fallback||defaultCycleTime(0,0,false));
+  t.rule=t.rule==='fixedDay'?'fixedDay':'offset';
+  t.anchor=t.anchor==='cycleEnd'?'cycleEnd':'cycleStart';
+  t.dir=(t.dir==='after'||t.dir==='后')?'after':'before';
+  var max=t.rule==='fixedDay'?28:getStageTimeDayLimit();
+  var n=parseInt(t.n,10);
+  if(!n||n<1) n=(fallback&&fallback.n)||1;
+  if(n>max) n=max;
+  t.n=n;
+  t.time=normRemindClock(t.time,(fallback&&fallback.time)||'09:00');
+  return t;
+}
+function resolveCycleTime(t){
+  t=normalizeCycleTime(t, defaultCycleTime(0,0,false));
+  var range=getDemoCycleRange();
+  var parts=(t.time||'09:00').split(':');
+  var hh=parseInt(parts[0],10)||0, mm=parseInt(parts[1],10)||0;
+  var d;
+  if(t.rule==='fixedDay'){
+    if(t.dir==='before') d=new Date(range.start.getFullYear(), range.start.getMonth()-1, t.n, hh, mm, 0);
+    else d=new Date(range.end.getFullYear(), range.end.getMonth()+1, t.n, hh, mm, 0);
+  }else{
+    var base=t.anchor==='cycleEnd'?range.end:range.start;
+    var sign=t.dir==='after'?1:-1;
+    d=new Date(base.getFullYear(), base.getMonth(), base.getDate()+sign*t.n, hh, mm, 0);
+  }
+  return d;
+}
+function formatCycleTimeNext(t){
+  var d=resolveCycleTime(t);
+  return '最近 '+d.getFullYear()+'/'+cycleTimePad(d.getMonth()+1)+'/'+cycleTimePad(d.getDate())+' '+cycleTimePad(d.getHours())+':'+cycleTimePad(d.getMinutes());
+}
+function cycleTimeInvalid(start,end){
+  return resolveCycleTime(end)-resolveCycleTime(start)<=0;
+}
+function cycleTimeSel(cls, onchange, options, value){
+  return '<select class="form-input '+cls+'" onchange="'+onchange+'">'+
+    options.map(function(o){return '<option value="'+o.v+'"'+(o.v===value?' selected':'')+'>'+o.l+'</option>';}).join('')+
+  '</select>';
+}
+function renderCycleTimeControl(stageId, kind, index, which, t, invalid){
+  var call='setCycleTimeField(\''+stageId+'\',\''+kind+'\','+index+',\''+which+'\',';
+  var row;
+  if(t.rule==='fixedDay'){
+    row=cycleTimeSel('time-rule-kind', call+'\'rule\',this.value)', [{v:'offset',l:'相对天数'},{v:'fixedDay',l:'固定日期'}], t.rule)+
+      cycleTimeSel('time-rule-bound', call+'\'dir\',this.value)', [{v:'before',l:'周期前'},{v:'after',l:'周期后'}], t.dir)+
+      '<span class="time-rule-unit">的</span>'+
+      '<input class="form-input time-rule-n" type="number" min="1" max="28" value="'+t.n+'" oninput="'+call+'\'n\',this.value)">'+
+      '<span class="time-rule-unit">号</span>'+
+      '<input class="form-input time-rule-clock" type="time" value="'+t.time+'" onchange="'+call+'\'time\',this.value)">';
+  }else{
+    row=cycleTimeSel('time-rule-kind', call+'\'rule\',this.value)', [{v:'offset',l:'相对天数'},{v:'fixedDay',l:'固定日期'}], t.rule)+
+      cycleTimeSel('time-rule-anchor', call+'\'anchor\',this.value)', [{v:'cycleStart',l:'周期开始'},{v:'cycleEnd',l:'周期结束'}], t.anchor)+
+      cycleTimeSel('time-rule-dir', call+'\'dir\',this.value)', [{v:'before',l:'前'},{v:'after',l:'后'}], t.dir)+
+      '<input class="form-input time-rule-n" type="number" min="1" max="'+getStageTimeDayLimit()+'" value="'+t.n+'" oninput="'+call+'\'n\',this.value)">'+
+      '<span class="time-rule-unit">天</span>'+
+      '<input class="form-input time-rule-clock" type="time" value="'+t.time+'" onchange="'+call+'\'time\',this.value)">';
+  }
+  var hint=formatCycleTimeNext(t)+(invalid?' · 结束须晚于开始':'');
+  return '<div class="time-rule'+(invalid?' err':'')+'" id="timeRule-'+stageId+'-'+kind+'-'+index+'-'+which+'">'+
+    '<div class="time-rule-row">'+
+      '<div class="time-rule-ctrls">'+row+'</div>'+
+      '<span class="time-rule-next" id="timeNext-'+stageId+'-'+kind+'-'+index+'-'+which+'">'+hint+'</span>'+
+    '</div>'+
+  '</div>';
+}
+function getCycleTimeHolder(stage, kind, index){
+  if(kind==='window') return ensureStageWindow(stage);
+  return (ensureStageNodes(stage)||[])[index];
+}
+function setCycleTimeField(stageId, kind, index, which, field, value){
+  var stage=getStageConfig(stageId);
+  if(!stage||(which!=='start'&&which!=='end')) return;
+  var holder=getCycleTimeHolder(stage, kind, index);
+  if(!holder) return;
+  var si=stageIndexOf(stage);
+  var fallback=defaultCycleTime(si, kind==='node'?index:0, which==='end');
+  var t=normalizeCycleTime(holder[which], fallback);
+  holder[which]=t;
+  holder.seeded=false;
+  if(field==='rule'){
+    t.rule=value==='fixedDay'?'fixedDay':'offset';
+    if(t.rule==='fixedDay'){
+      if(t.n>28) t.n=28;
+      t.dir='before';
+    }
+    render();
+    return;
+  }
+  if(field==='anchor') t.anchor=value==='cycleEnd'?'cycleEnd':'cycleStart';
+  if(field==='dir') t.dir=value==='after'?'after':'before';
+  if(field==='n'){
+    var max=t.rule==='fixedDay'?28:getStageTimeDayLimit();
+    var d=parseInt(value,10)||1;
+    if(d<1) d=1;
+    if(d>max) d=max;
+    t.n=d;
+  }
+  if(field==='time') t.time=normRemindClock(value, t.time||fallback.time);
+  paintCycleTimePair(stageId, kind, index);
+}
+function paintCycleTimePair(stageId, kind, index){
+  var stage=getStageConfig(stageId);
+  if(!stage) return;
+  var start, end;
+  if(kind==='window'){
+    var w=ensureStageWindow(stage);
+    start=w.start; end=w.end;
+  }else{
+    var n=(ensureStageNodes(stage)||[])[index];
+    if(!n) return;
+    start=n.start; end=n.end;
+  }
+  var bad=cycleTimeInvalid(start, end);
+  ['start','end'].forEach(function(which){
+    var wrap=document.getElementById('timeRule-'+stageId+'-'+kind+'-'+index+'-'+which);
+    var next=document.getElementById('timeNext-'+stageId+'-'+kind+'-'+index+'-'+which);
+    var t=which==='start'?start:end;
+    if(wrap){ if(bad) wrap.classList.add('err'); else wrap.classList.remove('err'); }
+    if(next) next.textContent=formatCycleTimeNext(t)+(bad?' · 结束须晚于开始':'');
   });
 }
 function ensureStageNodes(stage){
@@ -2387,134 +2703,201 @@ function ensureStageNodes(stage){
   var prev=Array.isArray(stage.nodes)?stage.nodes:[];
   var byName={};
   prev.forEach(function(n){ if(n&&n.name) byName[n.name]=n; });
-  stage.nodes=names.map(function(name){
-    var old=byName[name];
-    if(old&&old.start&&old.end&&old.seeded===false) return {name:name,start:old.start,end:old.end,seeded:false};
-    return {name:name,start:'',end:'',seeded:true};
+  var si=stageIndexOf(stage);
+  stage.nodes=names.map(function(name,index){
+    var old=byName[name]||{};
+    return {
+      name:name,
+      start:normalizeCycleTime(old.start, defaultCycleTime(si,index,false)),
+      end:normalizeCycleTime(old.end, defaultCycleTime(si,index,true)),
+      seeded:old.seeded===false?false:true
+    };
   });
-  fillSeededNodeTimes();
   return stage.nodes;
 }
 function reseedNodeTimes(){
   (form.stages||[]).forEach(function(stage){
-    (stage.nodes||[]).forEach(function(n){
-      if(n.seeded!==false){ n.start=''; n.end=''; n.seeded=true; }
+    collectStageTimeConfigs(stage).forEach(function(item){
+      var cfg=item.cfg||stage;
+      var si=stageIndexOf(stage);
+      (cfg.nodes||[]).forEach(function(n,ni){
+        if(n.seeded===false) return;
+        n.start=defaultCycleTime(si,ni,false);
+        n.end=defaultCycleTime(si,ni,true);
+        n.seeded=true;
+      });
+      if(cfg.stageWindow&&cfg.stageWindow.seeded!==false){
+        cfg.stageWindow.start=defaultCycleTime(si,0,false);
+        cfg.stageWindow.end=defaultCycleTime(si,0,true);
+        cfg.stageWindow.seeded=true;
+      }
     });
-    if(stage.stageWindow&&stage.stageWindow.seeded!==false){
-      stage.stageWindow.start='';
-      stage.stageWindow.end='';
-      stage.stageWindow.seeded=true;
-    }
   });
-  fillSeededNodeTimes();
-  fillSeededStageWindows();
 }
 function setStageFlow(stageId,flow){
-  var stage=form.stages.find(function(s){return s.id===stageId;});
+  var stage=getStageConfig(stageId);
   if(!stage||stage.flow===flow) return;
   stage.flow=flow;
   stage.nodes=[];
   render();
 }
-function setNodeTime(stageId,index,field,value){
-  var stage=form.stages.find(function(s){return s.id===stageId;});
-  if(!stage) return;
-  var nodes=ensureStageNodes(stage);
-  var n=nodes[index];
-  if(!n||(field!=='start'&&field!=='end')) return;
-  n[field]=value;
-  n.seeded=false;
+function stageTimeId(stage){
+  var id=stage&&stage.id;
+  if(id==='assess') return 'eval';
+  return id||'';
+}
+function stageAllowsNodeTime(stage){
+  var id=stageTimeId(stage);
+  return id==='goal'||id==='eval'||id==='interview';
 }
 function ensureStageTimeGrain(stage){
+  if(!stage) return 'stage';
+  if(!stageAllowsNodeTime(stage)){
+    if(stage.timeGrain!=='stage') stage.timeGrain='stage';
+    return 'stage';
+  }
   if(stage.timeGrain!=='stage') stage.timeGrain='node';
   return stage.timeGrain;
 }
-function fillSeededStageWindows(){
-  var bounds=mockCycleBounds();
-  var stages=form.stages||[];
-  var count=stages.length||1;
-  var span=Math.max(1, bounds[1]-bounds[0]);
-  stages.forEach(function(stage,si){
-    if(!stage.stageWindow||typeof stage.stageWindow!=='object') stage.stageWindow={start:'',end:'',seeded:true};
-    var w=stage.stageWindow;
-    if(w.seeded===false) return;
-    if(w.start&&w.end) return;
-    var seg0=bounds[0]+span*si/count;
-    var seg1=bounds[0]+span*(si+1)/count;
-    w.start=toNodeDt(seg0,9);
-    w.end=toNodeDt(seg1,18);
-    w.seeded=true;
-  });
-}
 function ensureStageWindow(stage){
-  fillSeededStageWindows();
+  var si=stageIndexOf(stage);
+  if(!stage.stageWindow||typeof stage.stageWindow!=='object') stage.stageWindow={seeded:true};
+  stage.stageWindow.start=normalizeCycleTime(stage.stageWindow.start, defaultCycleTime(si,0,false));
+  stage.stageWindow.end=normalizeCycleTime(stage.stageWindow.end, defaultCycleTime(si,0,true));
   return stage.stageWindow;
 }
-function setStageWindowTime(stageId,field,value){
-  var stage=form.stages.find(function(s){return s.id===stageId;});
-  if(!stage||(field!=='start'&&field!=='end')) return;
-  var w=ensureStageWindow(stage);
-  w[field]=value;
-  w.seeded=false;
-}
 function setStageTimeGrain(stageId,grain){
-  var stage=form.stages.find(function(s){return s.id===stageId;});
+  var stage=getStageConfig(stageId);
   if(!stage) return;
-  stage.timeGrain=grain==='stage'?'stage':'node';
+  if(!stageAllowsNodeTime(stage)&&grain!=='stage') return;
+  stage.timeGrain=grain==='stage'||!stageAllowsNodeTime(stage)?'stage':'node';
   render();
 }
-// 开启方式放在「开始时间」「结束时间」下面，不和名称排成一串。两个选项仍用下拉，避免再占名称那一行。定时开启=到点开关，手动开启=时间只作参考。
-function stageModeSelect(stage,type){
-  var on=!!ensureStageAuto(stage,type).enabled;
-  var label=type==='start'?'开始时间的开启方式':'结束时间的开启方式';
-  return '<select class="form-input" aria-label="'+label+'" onchange="updateStageAuto(\''+stage.id+'\',\''+type+'\',this.value===\'定时开启\');render()">'+
-    '<option value="定时开启"'+(on?' selected':'')+'>定时开启</option>'+
-    '<option value="手动开启"'+(on?'':' selected')+'>手动开启</option>'+
-  '</select>';
+function isSchemeAutoCreateOn(){
+  return !!(form.autoCreate&&form.autoCreate.enabled);
+}
+function collectStageTimeConfigs(stage){
+  if(!stage) return [];
+  if(stage.configMode==='byGroup'){
+    ensureStageGroupConfigs(stage,false);
+    return (form.groups||[]).map(function(group){
+      return {group:group, cfg:stage.groupConfigs[group.id], stage:stage};
+    });
+  }
+  return [{group:null, cfg:stage, stage:stage}];
+}
+function migrateLegacyAutoCreate(){
+  if(!form.autoCreate) form.autoCreate={enabled:false};
+  if(form.autoCreate.model==='scheme') return;
+  var configs=[];
+  (form.stages||[]).forEach(function(stage){
+    if(!stage||stage.enabled===false) return;
+    collectStageTimeConfigs(stage).forEach(function(item){
+      if(item.cfg) configs.push(item.cfg);
+    });
+  });
+  form.autoCreate.enabled=configs.length>0&&configs.every(function(cfg){
+    return cfg.autoStart&&cfg.autoStart.enabled&&cfg.autoEnd&&cfg.autoEnd.enabled;
+  });
+  form.autoCreate.model='scheme';
+}
+function stageTimesComplete(cfg){
+  if(!cfg) return true;
+  var grain=ensureStageTimeGrain(cfg);
+  if(grain==='stage'){
+    var w=ensureStageWindow(cfg);
+    return isCycleTime(w.start)&&isCycleTime(w.end);
+  }
+  var nodes=ensureStageNodes(cfg);
+  return nodes.length>0&&nodes.every(function(n){return n&&isCycleTime(n.start)&&isCycleTime(n.end);});
+}
+function validateStageTimes(){
+  if(!isSchemeAutoCreateOn()) return true;
+  var i,j,stage,items,item;
+  for(i=0;i<(form.stages||[]).length;i++){
+    stage=form.stages[i];
+    if(!stage||!stage.enabled) continue;
+    items=collectStageTimeConfigs(stage);
+    for(j=0;j<items.length;j++){
+      item=items[j];
+      if(!item.cfg) continue;
+      if(!stageTimesComplete(item.cfg)){
+        alert(item.group
+          ?('自动创建已开启，请为「'+stage.name+'」考核组「'+item.group.name+'」配齐开始和结束时间')
+          :('自动创建已开启，请为「'+stage.name+'」配齐开始和结束时间'));
+        activeSection=stage.id;
+        if(item.group) stage.activeGroupId=item.group.id;
+        render();
+        return false;
+      }
+    }
+  }
+  return true;
 }
 function renderStageNodeTimes(stage){
   var nodes=ensureStageNodes(stage);
   var grain=ensureStageTimeGrain(stage);
   var win=ensureStageWindow(stage);
+  var autoOn=isSchemeAutoCreateOn();
+  var canNode=stageAllowsNodeTime(stage);
+  if(!canNode) grain='stage';
   var body;
+  function timeLine(label, kind, index, which, t, bad){
+    return '<div class="time-line-row"><span class="time-col-name">'+label+'</span>'+
+      renderCycleTimeControl(stage.id,kind,index,which,t,bad)+'</div>';
+  }
   if(grain==='stage'){
-    body='<div class="time-lines">'+
-      '<div class="time-name-stack"><span class="time-col-name">开始时间</span>'+stageModeSelect(stage,'start')+'</div>'+
-      '<input class="form-input" type="datetime-local" aria-label="开始时间" value="'+win.start+'" onchange="setStageWindowTime(\''+stage.id+'\',\'start\',this.value)">'+
-      '<div class="time-name-stack"><span class="time-col-name">结束时间</span>'+stageModeSelect(stage,'end')+'</div>'+
-      '<input class="form-input" type="datetime-local" aria-label="结束时间" value="'+win.end+'" onchange="setStageWindowTime(\''+stage.id+'\',\'end\',this.value)">'+
-    '</div>';
+    var winBad=cycleTimeInvalid(win.start, win.end);
+    body=timeLine('开始','window',0,'start',win.start,winBad)+timeLine('结束','window',0,'end',win.end,winBad);
   }else{
-    var rows=nodes.map(function(n,i){
-      return '<tr>'+
-        '<td><span class="time-node" title="'+escHtml(n.name)+'">'+escHtml(n.name)+'</span></td>'+
-        '<td><input class="form-input" type="datetime-local" aria-label="'+escHtml(n.name)+'开始时间" value="'+n.start+'" onchange="setNodeTime(\''+stage.id+'\','+i+',\'start\',this.value)"></td>'+
-        '<td><input class="form-input" type="datetime-local" aria-label="'+escHtml(n.name)+'结束时间" value="'+n.end+'" onchange="setNodeTime(\''+stage.id+'\','+i+',\'end\',this.value)"></td>'+
-      '</tr>';
+    body=nodes.map(function(n,i){
+      var bad=cycleTimeInvalid(n.start, n.end);
+      return '<div class="time-node-block">'+
+        '<div class="time-node" title="'+escHtml(n.name)+'">'+escHtml(n.name)+'</div>'+
+        timeLine('开始','node',i,'start',n.start,bad)+
+        timeLine('结束','node',i,'end',n.end,bad)+
+      '</div>';
     }).join('');
-    body='<table class="tbl"><colgroup><col style="width:128px"><col><col></colgroup><thead><tr>'+
-      '<th>节点</th>'+
-      '<th><div class="time-th-pair"><span class="time-col-name">开始时间</span>'+stageModeSelect(stage,'start')+'</div></th>'+
-      '<th><div class="time-th-pair"><span class="time-col-name">结束时间</span>'+stageModeSelect(stage,'end')+'</div></th>'+
-    '</tr></thead><tbody>'+rows+'</tbody></table>';
   }
   return '<div class="time-box">'+
     '<div class="time-box-hd">'+
-      '<span class="time-box-title">环节时间</span>'+
-      '<div class="time-seg" role="group" aria-label="时间设置粒度">'+
-        '<button type="button" class="'+(grain==='stage'?'on':'')+'" onclick="setStageTimeGrain(\''+stage.id+'\',\'stage\')">按环节</button>'+
-        '<button type="button" class="'+(grain==='node'?'on':'')+'" onclick="setStageTimeGrain(\''+stage.id+'\',\'node\')">按节点</button>'+
+      '<div class="time-box-hd-l">'+
+        '<span class="time-box-title">环节时间</span>'+
+        '<span class="time-box-mark '+(autoOn?'on':'off')+'">'+(autoOn?'自动':'手动')+'</span>'+
       '</div>'+
+      (canNode
+        ?('<div class="time-seg" role="group" aria-label="时间设置粒度">'+
+            '<button type="button" class="'+(grain==='stage'?'on':'')+'" onclick="setStageTimeGrain(\''+stage.id+'\',\'stage\')">按环节</button>'+
+            '<button type="button" class="'+(grain==='node'?'on':'')+'" onclick="setStageTimeGrain(\''+stage.id+'\',\'node\')">按节点</button>'+
+          '</div>')
+        :'<span class="time-box-mark off">按环节</span>')+
     '</div>'+
     body+'</div>';
 }
 
 // ═══ 导航 ═══
-function selSection(id){activeSection=id;render()}
-function setRatifySubmitMode(value){form.ratifySubmitMode=value}
+function selSection(id){activeSection=id==='assess'?'eval':id;render()}
+function setRatifySubmitMode(value){
+  const s=getStageConfig('ratify');
+  if(s) s.ratifySubmitMode=value;
+  const base=getBaseStage('ratify');
+  if(base&&base.configMode!=='byGroup') form.ratifySubmitMode=value;
+}
+function setRatifyForcedDistRule(value){
+  const s=getStageConfig('ratify');
+  if(s) s.forcedDistRule=value;
+  const base=getBaseStage('ratify');
+  if(base&&base.configMode!=='byGroup') form.forcedDistRule=value;
+  render();
+}
+function setRatifyControlMode(value){
+  const s=getStageConfig('ratify');
+  if(s) s.forcedDistControl=value==='弱控'?'弱控':'强控';
+}
 function validateRatifySubmitMode(){
   const ratifyStage=form.stages.find(s=>s.id==='ratify');
-  if(ratifyStage&&ratifyStage.enabled&&!form.ratifySubmitMode){
+  const ratifyCfg=ratifyStage&&getStageConfig(ratifyStage);
+  if(ratifyStage&&ratifyStage.enabled&&ratifyCfg&&!ratifyCfg.ratifySubmitMode&&!form.ratifySubmitMode){
     alert('请选择提交方式');
     activeSection='ratify';
     render();
@@ -2528,7 +2911,8 @@ function goNextSection(id){
 }
 function validateScheme(){
   if(!form.name){alert('请填写方案名称');activeSection='basic';render();return false}
-  return validateRatifySubmitMode();
+  if(!validateRatifySubmitMode()) return false;
+  return validateStageTimes();
 }
 function toggleSec(el){el.closest('.form-sec').classList.toggle('open')}
 function submit(){if(!validateScheme())return;alert('方案已提交：'+form.name)}
@@ -2554,12 +2938,18 @@ document.addEventListener('click',function(e){
 // Initialize navigation first to create the content container
 GHR_NAV.init('perf', '绩效方案');
 applyTemplate(curTemplate); // 默认年度：面谈→盘点→确认（审定默认关，列表可见可单独开启）
+migrateLegacyAutoCreate();
 form.stages.forEach(function(s){ ensureStageNodes(s); });
 (function(){
   var hash=(location.hash||'').replace(/^#/,'');
+  if(hash==='assess') hash='eval';
   if(hash==='basic'||hash==='groups'||hash==='stages'){ activeSection=hash; return; }
-  var st=(form.stages||[]).find(function(s){return s.id===hash&&s.enabled;});
-  if(st) activeSection=hash;
+  var st=(form.stages||[]).find(function(s){return s.id===hash;});
+  if(st){
+    st.enabled=true;
+    enforceRatifyInventoryMutex(st.id);
+    activeSection=hash;
+  }
 })();
 loadAutoRemind();
 render();
